@@ -86,7 +86,7 @@ circles = arange(0.,90.+delat,delat).tolist()+\
 m.drawparallels(ax,circles,labels=[1,0,0,1])
 # draw meridians
 delon = 60.
-meridians = arange(-120,180,delon)
+meridians = arange(-180,180,delon)
 m.drawmeridians(ax,meridians,labels=[1,0,0,1])
 ax.set_xticks([]) # no ticks
 ax.set_yticks([])
@@ -94,7 +94,7 @@ title('Cylindrical Equidistant')
 print 'plotting Cylindrical Equidistant example, close plot window to proceed ...'
 show()
 
-m = Basemap(lons[0],-80.,lons[-1],80.,\
+m = Basemap(-180.,-80.,180.,80.,\
             resolution='c',area_thresh=10000.,projection='merc',\
             lon_0=0.5*(lons[0]+lons[-1]),lat_ts=20.)
 # define grid (nx x ny regularly spaced native projection grid)
