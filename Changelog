@@ -1,11 +1,13 @@
-20041229:  initial release
-20050119:  fixed glitches in drawing of parallels and meridians.
-20050121:  proj.4 is now called via a C-library interface, instead
-           of using the proj command-line tool via os.popen.
+20050203:  version 0.1 released on SF.
+20050202:  Changed LineCollections.color to set_color in a try/except block.
+           (color was a typo in 0.71 and is deprecated).
+20050130:  no user visible changes.  Uses new pyrex generated
+           C extension interface to proj.4 which is twice as
+           fast as the Thuban one.
 20050124:  some code reorg, fixed bugs in S. Hem. projections.
            xmin,xmax,ymin,ymax Basemap instance variables renamed
            to llcrnrx,urcrnrx,llcrnry,urcrnry. Added __call__
            and makegrid methods to Basemap class.
-20050130:  no user visible changes.  Uses new pyrex generated
-           C extension interface to proj.4 which is twice as
-           fast as the Thuban one.
+20050121:  proj.4 is now called via a C-library interface, instead
+           of using the proj command-line tool via os.popen.
+20050119:  fixed glitches in drawing of parallels and meridians.

@@ -5,7 +5,7 @@ using matplotlib.
 
 **Requirements**
 
-numarray 1.1 (or higher), matplotlib 0.71 (or higher) extension modules.
+numarray 1.1 (or higher)
 
 **Copyright**
 
@@ -31,7 +31,7 @@ PERFORMANCE OF THIS SOFTWARE.
 
 **Documentation** 
 
-see Lib/basemap.py docstrings.
+see basemap.py docstrings.
 
 see scripts in 'examples' directory for example usage.
 
