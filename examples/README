@@ -4,3 +4,5 @@ test.py exercises all the available map projections by plotting the etopo
 contour_demo.py demonstrates the use of contour and pcolor with map projections.
 
 plotmap.py is the example on the matplotlib 'screenshots' page.
+
+nytolondon.py shows how to draw a great circle on a map (NY to London)
