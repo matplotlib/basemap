@@ -5,6 +5,7 @@ import numarray as N
 from numarray import nd_image
 import sys, os, pylab, bisect
 from proj import Proj
+from greatcircle import GreatCircle
 
 _datadir = os.path.join(sys.prefix,'share/basemap')
 
@@ -435,7 +436,7 @@ class Basemap:
 	xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection in ['merc','cyl']:
-            lons = N.arange(self.llcrnrlon,self.urcrnrlon,1).astype('f')
+            lons = N.arange(self.llcrnrlon,self.urcrnrlon+1,1).astype('f')
         else:
             lons = N.arange(0,362,1).astype('f')
         # make sure latmax degree parallel is drawn if projection not merc or cyl
@@ -710,6 +711,17 @@ class Basemap:
         # make sure axis ticks are turned off
         ax.set_xticks([]) 
         ax.set_yticks([])
+
+    def gcpoints(self,lon1,lat1,lon2,lat2,npoints):
+        """
+        compute npoints points along a great circle with endpoints
+        (lon1,lat1) and (lon2,lat2).  Returns numarrays x,y
+        with map projection coordinates.
+        """
+        gc = GreatCircle(lon1,lat1,lon2,lat2)
+        lons, lats = gc.points(npoints)
+        x, y = self(lons, lats)
+        return x,y
 
 def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest',cval=0.0,order=3):
     """
