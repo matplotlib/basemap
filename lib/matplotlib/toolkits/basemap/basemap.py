@@ -3,7 +3,7 @@ from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
 import numarray as N
 from numarray import nd_image
-import sys, os, pylab, bisect
+import sys, os, pylab
 from proj import Proj
 from greatcircle import GreatCircle
 
@@ -59,7 +59,7 @@ class Basemap:
 >>> title('Cylindrical Equidistant')
 >>> show()
 
- Version: 0.2 (20050404)
+ Version: 0.2.1 (20050405)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -549,7 +549,7 @@ class Basemap:
                 for i,n in enumerate([nl,nr]):
                     # don't bother if close to the first label.
                     if i and abs(nr-nl) < 100: continue
-                    if n > 0:
+                    if n >= 0:
                         if side == 'l':
         	            pylab.text(self.llcrnrx-xoffset,yy[n],latlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
                         elif side == 'r':
@@ -698,7 +698,7 @@ class Basemap:
                     if self.projection not in ['merc','cyl'] and lat > latmax: continue
                     # don't bother if close to the first label.
                     if i and abs(nr-nl) < 100: continue
-                    if n > 0:
+                    if n >= 0:
                         if side == 'l':
         	            pylab.text(self.llcrnrx-xoffset,yy[n],lonlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
                         elif side == 'r':
@@ -714,14 +714,42 @@ class Basemap:
 
     def gcpoints(self,lon1,lat1,lon2,lat2,npoints):
         """
-        compute npoints points along a great circle with endpoints
-        (lon1,lat1) and (lon2,lat2).  Returns numarrays x,y
-        with map projection coordinates.
+ compute npoints points along a great circle with endpoints
+ (lon1,lat1) and (lon2,lat2).  Returns numarrays x,y
+ with map projection coordinates.
         """
         gc = GreatCircle(lon1,lat1,lon2,lat2)
         lons, lats = gc.points(npoints)
         x, y = self(lons, lats)
         return x,y
+
+    def drawgreatcircle(self,ax,lon1,lat1,lon2,lat2,dtheta=0.002,color='k', \
+                       linewidth=1.,linestyle='-',dashes=[None,None]):
+        """
+ draw a great circle on the map.
+
+ ax - current axis instance.
+ lon1,lat1 - longitude,latitude of one endpoint of the great circle.
+ lon2,lat2 - longitude,latitude of the other endpoint of the great circle.
+ dtheta - interval between points on arc in radians (default=0.002).
+ color - color to draw great circle (default black).
+ linewidth - line width for great circle (default 1.)
+ linestyle - line style for great circle (default '-', i.e. solid).
+ dashes - dash pattern for great circle (default [None,None], i.e. solid).
+
+ Note:  cannot handle situations in which the great circle intersects
+ the edge of the map projection domain, and then re-enters the domain.
+        """
+        gc = GreatCircle(lon1,lat1,lon2,lat2)
+        # points have spacing of dtheta radians.
+        npoints = int(gc.distance/dtheta)+1
+        lons, lats = gc.points(npoints)
+        x, y = self(lons, lats)
+        l = Line2D(x,y,linewidth=linewidth,linestyle=linestyle)
+        l.set_color(color)
+        if dashes[0] is not None:
+            l.set_dashes(dashes)
+        ax.add_line(l)
 
 def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest',cval=0.0,order=3):
     """

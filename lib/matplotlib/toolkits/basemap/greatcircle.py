@@ -1,9 +1,6 @@
 import math
 import numarray as N
 
-_dg2rad = math.pi/180.
-_rad2dg = 180./math.pi
-
 class GreatCircle:
     """
     from Ed Williams' 'Aviation Formulary'
@@ -24,10 +21,10 @@ class GreatCircle:
         antipodal - True if start and end points are antipodal.
         """
         # convert to radians from degrees.
-        lat1 = lat1*_dg2rad
-        lon1 = lon1*_dg2rad
-        lat2 = lat2*_dg2rad
-        lon2 = lon2*_dg2rad
+        lat1 = math.radians(lat1)
+        lon1 = math.radians(lon1)
+        lat2 = math.radians(lat2)
+        lon2 = math.radians(lon2)
         self.lat1 = lat1
         self.lat2 = lat2
         self.lon1 = lon1
@@ -49,7 +46,7 @@ class GreatCircle:
         input parameter npoints is the number of points
         to compute.
 
-        Returns lons, lats (Numeric arrays with longitudes and latitudes
+        Returns lons, lats (lists with longitudes and latitudes
         of intermediate points in degrees).
 
         For example npoints=10 will return arrays lons,lats of 10
@@ -73,7 +70,9 @@ class GreatCircle:
         z = A*math.sin(lat1)               +B*math.sin(lat2)
         lats=N.arctan2(z,N.sqrt(x**2+y**2))
         lons=N.arctan2(y,x)
-        return lons*_rad2dg,lats*_rad2dg
+        lons = map(math.degrees,lons.tolist())
+        lats = map(math.degrees,lats.tolist())
+        return lons,lats
 
 if __name__ == '__main__':
     lon1 = float(raw_input('enter longitude of start point:'))
@@ -84,5 +83,5 @@ if __name__ == '__main__':
     print 'distance along great circle (in radians) = ',gc.distance
     print 'lon/lat for 10 equally spaced points along great circle:'
     lons,lats = gc.points(10)
-    for lon,lat in zip(lons.tolist(),lats.tolist()):
+    for lon,lat in zip(lons,lats):
         print lon,lat
