@@ -1,3 +1,6 @@
+20050331:  version 0.1.2 - now can handle negative longitudes (patch
+           from Michael Brady). basemap.interp can now handle irregular
+           (but still rectilinear) lat/lon grids.
 20050203:  version 0.1 released on SF.
 20050202:  Changed LineCollections.color to set_color in a try/except block.
            (color was a typo in 0.71 and is deprecated).
