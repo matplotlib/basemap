@@ -424,9 +424,8 @@ class Basemap:
   parallels are labelled where they intersect the left, right, top or 
   bottom of the plot. For example labels=[1,0,0,1] will cause parallels
   to be labelled where they intersect the left and bottom of the plot,
-  but not the right and top. Labels are located with a precision of 0.1
-  degrees and are drawn using mathtext.
- font - mathtext font used for labels ('rm','tt','it' or 'cal', default 'rm'.
+  but not the right and top. Labels are drawn using mathtext.
+ font - mathtext font used for labels ('rm','tt','it' or 'cal', default 'rm').
  fontsize - font size in points for labels (default 12).
         """
         # don't draw meridians past latmax, always draw parallel at latmax.
@@ -580,9 +579,8 @@ class Basemap:
   meridians are labelled where they intersect the left, right, top or 
   bottom of the plot. For example labels=[1,0,0,1] will cause meridians
   to be labelled where they intersect the left and bottom of the plot,
-  but not the right and top. Labels are located with a precision of 0.1
-  degrees and are drawn using mathtext.
- font - mathtext font used for labels ('rm','tt','it' or 'cal', default 'rm'.
+  but not the right and top. Labels are drawn using mathtext.
+ font - mathtext font used for labels ('rm','tt','it' or 'cal', default 'rm').
  fontsize - font size in points for labels (default 12).
         """
         # don't draw meridians past latmax, always draw parallel at latmax.
