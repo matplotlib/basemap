@@ -345,7 +345,10 @@ class Basemap:
  antialiased - antialiasing switch for coastlines (default True).
         """
         coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
-        coastlines.color(color)
+        try:
+            coastlines.set_color(color)
+        except: # this was a typo that existed in matplotlib-0.71 and earlier
+            coastlines.color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
 
@@ -359,7 +362,10 @@ class Basemap:
  antialiased - antialiasing switch for country boundaries (default True).
         """
         coastlines = LineCollection(self.cntrysegs,antialiaseds=(antialiased,))
-        coastlines.color(color)
+        try:
+            coastlines.set_color(color)
+        except: # this was a typo that existed in matplotlib-0.71 and earlier
+            coastlines.color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
 
@@ -373,7 +379,10 @@ class Basemap:
  antialiased - antialiasing switch for state boundaries (default True).
         """
         coastlines = LineCollection(self.statesegs,antialiaseds=(antialiased,))
-        coastlines.color(color)
+        try:
+            coastlines.set_color(color)
+        except: # this was a typo that existed in matplotlib-0.71 and earlier
+            coastlines.color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
 
