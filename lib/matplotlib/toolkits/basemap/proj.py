@@ -178,7 +178,6 @@ class Proj:
         x = self.llcrnrx+dx*N.indices((ny,nx))[1,:,:]
         y = self.llcrnry+dy*N.indices((ny,nx))[0,:,:]
         lons, lats = self(x, y, inverse=True)
-        lons = N.where(lons < 0, lons+360, lons)
         # mercator coordinate is plain longitude in x.
         if self.projparams['proj'] == 'merc':
             dx = (self.urcrnrlon-self.llcrnrlon)/(nx-1)
