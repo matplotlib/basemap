@@ -66,7 +66,7 @@ topoin,lons = shiftgrid(180.,topoin,lons,start=False)
 print 'min/max etopo20 data:'
 print min(ravel(topoin)),max(ravel(topoin))
 
-m = Basemap(lons[0],lats[0],lons[-1],lats[-1],\
+m = Basemap(-180.,-90,180.,90.,\
             resolution='c',area_thresh=10000.,projection='cyl')
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
@@ -83,13 +83,11 @@ m.drawcoastlines(ax)
 delat = 30.
 circles = arange(0.,90.+delat,delat).tolist()+\
           arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(ax,circles)
+m.drawparallels(ax,circles,labels=[1,0,0,1])
 # draw meridians
 delon = 60.
-lon1 = int(lons[0]/delon)*delon
-lon2 = (int(lons[-1]/delon)+1)*delon
-meridians = arange(lon1,lon2,delon)
-m.drawmeridians(ax,meridians)
+meridians = arange(-120,180,delon)
+m.drawmeridians(ax,meridians,labels=[1,0,0,1])
 ax.set_xticks([]) # no ticks
 ax.set_yticks([])
 title('Cylindrical Equidistant')
@@ -105,7 +103,7 @@ lonsout, latsout = m.makegrid(nx,ny)
 topodat = interp(topoin,lons,lats,lonsout,latsout)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
-fig.add_axes([0.1,0.1,0.8,0.8])
+fig.add_axes([0.1,0.1,0.75,0.75])
 im = imshow(topodat,cm.jet,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
 ax = gca() # get current axis instance
 m.drawcoastlines(ax)
@@ -113,12 +111,12 @@ m.drawcountries(ax)
 m.drawstates(ax)
 m.fillcontinents(ax)
 # draw parallels
-m.drawparallels(ax,circles)
+m.drawparallels(ax,circles,labels=[1,1,1,1])
 # draw meridians
-m.drawmeridians(ax,meridians)
+m.drawmeridians(ax,meridians,labels=[1,1,1,1])
 ax.set_xticks([]) # no ticks
 ax.set_yticks([])
-title('Mercator')
+title('Mercator',y=1.1)
 print 'plotting Mercator example, close plot window to proceed ...'
 show()
 
@@ -133,9 +131,9 @@ lonsout, latsout = m.makegrid(nx,ny)
 topodat = interp(topoin,lons,lats,lonsout,latsout)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
-ax = fig.add_axes([0.1,0.1,0.75,0.75])
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = imshow(topodat,cm.jet,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
-cax = axes([0.875, 0.1, 0.05, 0.75])
+cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines(ax)
@@ -146,11 +144,11 @@ m.drawstates(ax)
 delat = 20.
 circles = arange(0.,90.+delat,delat).tolist()+\
           arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(ax,circles)
+m.drawparallels(ax,circles,labels=[1,1,0,1])
 # draw meridians
 delon = 30.
-meridians = arange(0.,360.,delon)
-m.drawmeridians(ax,meridians)
+meridians = arange(10.,360.,delon)
+m.drawmeridians(ax,meridians,labels=[1,1,0,1])
 ax.set_xticks([]) # no ticks
 ax.set_yticks([])
 title('Lambert Conformal Conic')
@@ -169,10 +167,10 @@ lonsout = where(lonsout < lons[0], lonsout+360., lonsout)
 topodat = interp(topoin,lons,lats,lonsout,latsout)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
-ax = fig.add_axes([0.1,0.1,0.75,0.75])
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = imshow(topodat,cm.jet,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
 im.set_clim(-4000.,3000.)
-cax = axes([0.875, 0.1, 0.05, 0.75])
+cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines(ax)
@@ -181,14 +179,14 @@ m.drawcountries(ax)
 delat = 20.
 circles = arange(0.,90.+delat,delat).tolist()+\
           arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(ax,circles)
+m.drawparallels(ax,circles,labels=[1,1,1,1])
 # draw meridians
 delon = 30.
-meridians = arange(0.,360.,delon)
-m.drawmeridians(ax,meridians)
+meridians = arange(10.,360.,delon)
+m.drawmeridians(ax,meridians,labels=[1,1,1,1])
 ax.set_xticks([]) # no ticks
 ax.set_yticks([])
-title('Albers Equal Area Conic')
+title('Albers Equal Area Conic',y=1.075)
 print 'plotting Albers Equal Area example, close plot window to proceed ...'
 show()
 
@@ -208,9 +206,9 @@ lonsout = where(lonsout < lons[0], lonsout+360., lonsout)
 topodat = interp(topoin,lons,lats,lonsout,latsout)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
-ax = fig.add_axes([0.1,0.1,0.75,0.75])
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = imshow(topodat,cm.jet,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
-cax = axes([0.875, 0.1, 0.05, 0.75])
+cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines(ax)
@@ -219,10 +217,10 @@ m.drawcountries(ax)
 # draw parallels
 m.drawparallels(ax,circles)
 # draw meridians
-m.drawmeridians(ax,meridians)
+m.drawmeridians(ax,meridians,labels=[1,1,1,1])
 ax.set_xticks([]) # no ticks
 ax.set_yticks([])
-title('Polar Stereographic')
+title('Polar Stereographic',y=1.075)
 print 'plotting Stereographic example, close plot window to proceed ...'
 show()
 
@@ -238,9 +236,9 @@ lonsout = where(lonsout < lons[0], lonsout+360., lonsout)
 topodat = interp(topoin,lons,lats,lonsout,latsout)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
-ax = fig.add_axes([0.1,0.1,0.75,0.75])
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = imshow(topodat,cm.jet,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
-cax = axes([0.875, 0.1, 0.05, 0.75])
+cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines(ax)
@@ -250,10 +248,10 @@ m.drawstates(ax)
 # draw parallels
 m.drawparallels(ax,circles)
 # draw meridians
-m.drawmeridians(ax,meridians)
+m.drawmeridians(ax,meridians,labels=[1,1,1,1])
 ax.set_xticks([]) # no ticks
 ax.set_yticks([])
-title('Lambert Azimuthal Equal Area')
+title('Lambert Azimuthal Equal Area',y=1.075)
 print 'plotting Lambert Azimuthal example, close plot window to proceed ...'
 show()
 print 'done'

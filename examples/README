@@ -3,6 +3,4 @@ test.py exercises all the available map projections by plotting the etopo
 
 contour_demo.py demonstrates the use of contour and pcolor with map projections.
 
-labelled_mercator.py is an example of how to label parallels on meridians.
-
 plotmap.py is the example on the matplotlib 'screenshots' page.

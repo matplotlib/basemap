@@ -23,10 +23,10 @@ lonsout = where(lonsout < 0., lonsout + 360., lonsout)
 topodat = interp(topoin,lons,lats,lonsout,latsout)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
-ax = fig.add_axes([0.1,0.1,0.75,0.75])
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = imshow(topodat,cm.jet,extent=(m.xmin, m.xmax, m.ymin, m.ymax),origin='lower')
 
-cax = axes([0.875, 0.1, 0.05, 0.75])
+cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 
 axes(ax)  # make the original axes current again
@@ -38,12 +38,11 @@ m.drawstates(ax)
 delat = 20.
 parallels = arange(0.,90.+delat,delat).tolist()+\
           arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(ax,parallels)
+m.drawparallels(ax,parallels,labels=[1,1,0,1])
 # draw meridians
 delon = 30.
-meridians = arange(0.,360.,delon)
-m.drawmeridians(ax,meridians)
-ax.set_xticks([]) # no ticks
-ax.set_yticks([])
+meridians = arange(10.,360.,delon)
+m.drawmeridians(ax,meridians,labels=[1,1,0,1])
+
 title('ETOPO Topography - Lambert Conformal Conic')
 show()
