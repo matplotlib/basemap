@@ -1,0 +1,6 @@
+test.py exercises all the available map projections by plotting the etopo 
+20 minute bathymetry/topography data using imshow.
+
+contour_demo.py demonstrates the use of contour and pcolor with map projections.
+
+plotmap.py is the example on the matplotlib 'screenshots' page.
