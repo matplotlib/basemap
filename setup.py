@@ -39,6 +39,7 @@ setup(
   name              = "basemap",
   version           = "0.1",
   description       = "Plot data on map projections with matplotlib",
+  url               = "http://matplotlib.sourceforge.net/toolkits.html",
   author            = "Jeff Whitaker",
   author_email      = "jeffrey.s.whitaker@noaa.gov",
   data_files        = [('share/basemap',['data/countries_c.txt','data/states_c.txt','data/countries_l.txt','data/states_l.txt','data/gshhs_c.txt','data/gshhs_l.txt'])],
