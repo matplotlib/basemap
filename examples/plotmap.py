@@ -18,6 +18,8 @@ m = Basemap(-145.5,1.,-2.566,46.352,\
 # define grid (nx x ny regularly spaced native projection grid)
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 lonsout, latsout = m.makegrid(nx,ny)
+# make sure there are no neg lons.
+lonsout = where(lonsout < 0., lonsout + 360., lonsout)
 topodat = interp(topoin,lons,lats,lonsout,latsout)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
