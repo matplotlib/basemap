@@ -150,9 +150,14 @@ class Basemap:
 
         # extend longitudes around the earth a second time
         # (in case projection region straddles Greenwich meridian).
+        # also include negative longitudes, so valid longitudes
+        # can range from -360 to 720.
         coastlons2 = [lon+360. for lon in coastlons]
         cntrylons2 = [lon+360. for lon in cntrylons]
         statelons2 = [lon+360. for lon in statelons]
+        coastlons3 = [lon-360. for lon in coastlons]
+        cntrylons3 = [lon-360. for lon in cntrylons]
+        statelons3 = [lon-360. for lon in statelons]
 
         # set up projections using Proj class.
         self.projection = projection
@@ -221,27 +226,33 @@ class Basemap:
         # transform coastline polygons to native map coordinates.
         xc,yc = proj(N.array(coastlons,'f'),N.array(coastlats,'f'))
         xc2,yc2 = proj(N.array(coastlons2,'f'),N.array(coastlats,'f'))
+        xc3,yc3 = proj(N.array(coastlons3,'f'),N.array(coastlats,'f'))
         if projection == 'merc': yc2=yc
         # set up segments in form needed for LineCollection,
         # ignoring 'inf' values that are off the map, and skipping
         # polygons that have an area > area_thresh..
         segments = [zip(xc[i0:i1],yc[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh]
         segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh and max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        self.coastsegs = segments+segments2
+        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh and max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        self.coastsegs = segments+segments2+segments3
 
         # same as above for country polygons.
         xc,yc = proj(N.array(cntrylons,'f'),N.array(cntrylats,'f'))
         xc2,yc2 = proj(N.array(cntrylons2,'f'),N.array(cntrylats,'f'))
+        xc3,yc3 = proj(N.array(cntrylons2,'f'),N.array(cntrylats,'f'))
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:])]
         segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        self.cntrysegs = segments+segments2
+        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        self.cntrysegs = segments+segments2+segments3
 
         # same as above for state polygons.
         xc,yc = proj(N.array(statelons,'f'),N.array(statelats,'f'))
         xc2,yc2 = proj(N.array(statelons2,'f'),N.array(statelats,'f'))
+        xc3,yc3 = proj(N.array(statelons3,'f'),N.array(statelats,'f'))
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:])]
         segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        self.statesegs = segments+segments2
+        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        self.statesegs = segments+segments2+segments3
 
         # store coast polygons for filling.
         # special treatment (kludge) for Antarctica.
@@ -266,6 +277,11 @@ class Basemap:
                     y.append(-90)
                     x.insert(0,720.)
                     y.insert(0,-90)
+                if x[-1] == -360.000 and y[-1] < -68.: 
+                    x.append(-360.)
+                    y.append(-90)
+                    x.insert(0,0.)
+                    y.insert(0,-90)
             elif projection == 'merc':
                 if x[-1] == 0.000 and y[-1] < ya: # close antarctica
                     x.append(0.)
@@ -276,6 +292,11 @@ class Basemap:
                     x.append(360.)
                     y.append(ysp)
                     x.insert(0,720.)
+                    y.insert(0,ysp)
+                if x[-1] == -360.000 and y[-1] < ya: 
+                    x.append(-360.)
+                    y.append(ysp)
+                    x.insert(0,0.)
                     y.insert(0,ysp)
             self.coastpolygons.append((x,y))
 
