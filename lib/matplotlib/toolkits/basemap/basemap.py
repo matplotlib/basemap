@@ -534,7 +534,7 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
     """
  dataout = interp(datain,lonsin,latsin,lonsout,latsout,mode='constant',cval=0.0,order=3)
 
- interpolate data (datain) on a regularly spaced lat/lon grid (with lons=lonsin
+ interpolate data (datain) on a rectilinear lat/lon grid (with lons=lonsin
  lats=latsin) to a grid with lons=lonsout, lats=latsout.
 
  datain is a rank-2 array with 1st dimension corresponding to longitude,
@@ -559,28 +559,52 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
  for nearest neighbor interpolation (nd_image only allows 1-6) - if
  order=0 bounds checking is done even if checkbounds=False.
     """
-    # lons and lats must be monotonically increasing.
-    # lonsin, latsin assumed equally spaced.
-    # make sure lonsin, latsin increasing.
+    # lonsin and latsin must be monotonically increasing.
     if lonsin[-1]-lonsin[0] < 0 or latsin[-1]-latsin[0] < 0:
         raise ValueError, 'lonsin and latsin must be increasing!'
-    # make sure lonsin, latsin are regularly spaced.
-    delon = lonsin[1:]-lonsin[0:-1]
-    delat = latsin[1:]-latsin[0:-1]
-    if max(delat)-min(delat) > 1.e-4 or max(delon)-min(delon) > 1.e-4:
-        raise ValueError, 'lat/lon grid must be uniform!'
     # optionally, check that lonsout,latsout are 
     # within region defined by lonsin,latsin.
+    # (this check is always done if nearest neighbor 
+    # interpolation (order=0) requested).
     if checkbounds or order == 0:
         if min(N.ravel(lonsout)) < min(lonsin) or \
            max(N.ravel(lonsout)) > max(lonsin) or \
            min(N.ravel(latsout)) < min(latsin) or \
            max(N.ravel(latsout)) > max(latsin):
             raise ValueError, 'latsout or lonsout outside range of latsin or lonsin'
-    xcoords = (len(lonsin)-1)*(lonsout-lonsin[0])/(lonsin[-1]-lonsin[0])
-    ycoords = (len(latsin)-1)*(latsout-latsin[0])/(latsin[-1]-latsin[0])
+    # compute grid coordinates of output grid.
+    delon = lonsin[1:]-lonsin[0:-1]
+    delat = latsin[1:]-latsin[0:-1]
+    if max(delat)-min(delat) < 1.e-4 and max(delon)-min(delon) < 1.e-4:
+        # regular input grid.
+        xcoords = (len(lonsin)-1)*(lonsout-lonsin[0])/(lonsin[-1]-lonsin[0])
+        ycoords = (len(latsin)-1)*(latsout-latsin[0])/(latsin[-1]-latsin[0])
+    else:
+        # irregular (but still rectilinear) input grid.
+        lonsoutflat = N.ravel(lonsout)
+        latsoutflat = N.ravel(latsout)
+        ix = N.searchsorted(lonsin,lonsoutflat)-1
+        iy = N.searchsorted(latsin,latsoutflat)-1
+        xcoords = N.zeros(ix.shape,'f')
+        ycoords = N.zeros(iy.shape,'f')
+        for n,i in enumerate(ix):
+            if i < 0:
+                xcoords[n] = -1 # outside of range on lonsin (lower end)
+            elif i >= len(lonsin)-1:
+                xcoords[n] = len(lonsin) # outside range on upper end.
+            else:
+                xcoords[n] = float(i)+(lonsoutflat[n]-lonsin[i])/(lonsin[i+1]-lonsin[i])
+        xcoords = N.reshape(xcoords,lonsout.shape)
+        for m,j in enumerate(iy):
+            if j < 0:
+                ycoords[m] = -1 # outside of range of latsin (on lower end)
+            elif j >= len(latsin)-1:
+                ycoords[m] = len(latsin) # outside range on upper end
+            else:
+                ycoords[m] = float(j)+(latsoutflat[m]-latsin[j])/(latsin[j+1]-latsin[j])
+        ycoords = N.reshape(ycoords,latsout.shape)
     coords = [ycoords,xcoords]
-    # interpolate to projection grid using numarray.nd_image spline filter.
+    # interpolate to output grid using numarray.nd_image spline filter.
     if order:
         return nd_image.map_coordinates(datain,coords,mode=mode,cval=cval,order=order)
     else:
