@@ -741,6 +741,8 @@ class Basemap:
  the edge of the map projection domain, and then re-enters the domain.
         """
         gc = GreatCircle(lon1,lat1,lon2,lat2)
+        if gc.antipodal:
+            raise ValueError,'cannot draw great circle whose endpoints are antipodal'
         # points have spacing of dtheta radians.
         npoints = int(gc.distance/dtheta)+1
         lons, lats = gc.points(npoints)
