@@ -9,11 +9,13 @@ include examples/etopo20.pickle
 include examples/500hgt.pickle
 include examples/plotmap.py
 include examples/contour_demo.py
+include examples/nytolondon.py
 include examples/README
 include lib/matplotlib/toolkits/__init__.py
 include lib/matplotlib/toolkits/basemap/__init__.py
 include lib/matplotlib/toolkits/basemap/basemap.py
 include lib/matplotlib/toolkits/basemap/proj.py
+include lib/matplotlib/toolkits/basemap/greatcircle.py
 include data/countries_l.txt
 include data/countries_c.txt
 include data/states_l.txt
