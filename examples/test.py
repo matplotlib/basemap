@@ -60,8 +60,8 @@ def addcyclic(arrin,lonsin):
 topodict = cPickle.load(open('etopo20.pickle','rb'))
 topoin = topodict['data']; lons = topodict['lons']; lats = topodict['lats']
 
-# shift data so lons go from 0 to 360 instead of 20 to 380.
-topoin,lons = shiftgrid(360.,topoin,lons,start=False)
+# shift data so lons go from -180 to 180 instead of 20 to 380.
+topoin,lons = shiftgrid(180.,topoin,lons,start=False)
 
 print 'min/max etopo20 data:'
 print min(ravel(topoin)),max(ravel(topoin))
