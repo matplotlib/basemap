@@ -1,10 +1,6 @@
 from matplotlib.toolkits.basemap import Basemap, interp
 from pylab import *
 import cPickle
-from matplotlib import __version__
-
-if __version__ <= '0.70':
-    print 'warning - contour example will not work with this version of matplotlib if axes.patch is not applied'
 
 # read in data on lat/lon grid.
 datadict = cPickle.load(open('500hgt.pickle','rb'))
