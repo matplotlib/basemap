@@ -32,7 +32,7 @@ class Basemap:
  Example Usage:
  (this example plus others can be run by running test.py in the examples dir)
 
->>> from basemap import *
+>>> from matplotlib.toolkits.basemap import Basemap
 >>> import cPickle
 >>> from pylab import *
 >>> # read in topo data from pickle (on a regular lat/lon grid)
@@ -58,7 +58,7 @@ class Basemap:
 >>> title('Cylindrical Equidistant')
 >>> show()
 
- Version: 20050130
+ Version: 0.1 (20050203)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
