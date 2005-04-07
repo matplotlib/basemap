@@ -1,3 +1,8 @@
+20050410:  version 0.2.1 - add gcpoints and drawgreatcircles methods.
+           Added intermediate resolution coastline and political 
+           boundary databases. Fixed bug in filling continents,
+           and another bug in drawing parallels/meridians. Added
+           'ireland.py' example.
 20050404:  version 0.2 - drawparallels and drawmeridians can now
            draw labels at edge of map.
 20050331:  version 0.1.2 - now can handle negative longitudes (patch
