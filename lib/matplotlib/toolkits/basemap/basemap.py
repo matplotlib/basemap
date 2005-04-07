@@ -59,7 +59,7 @@ class Basemap:
 >>> title('Cylindrical Equidistant')
 >>> show()
 
- Version: 0.2.1 (20050405)
+ Version: 0.2.1 (20050410)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -78,9 +78,10 @@ class Basemap:
  
  optional keyword parameters:
  
- resolution - resolution of coastline database to use. Can be 'c' (crude, 
-  roughly 25 km resolution) or 'l' (low, roughly 5 km resolution). Default 'c'.
-  Coastline data is from the GSHHS 
+ resolution - resolution of coastline database to use. Can be 'c' (crude), 
+  'l' (low), or 'i' (intermediate). Resolution drops off by roughly 80%
+  between datasets.  Higher res datasets are much slower to draw.
+  Default 'c'. Coastline data is from the GSHHS
   (http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html).
  area_thresh - coastline with an area smaller than area_thresh in km^2
   will not be plotted.  Default 10,000.
@@ -344,10 +345,13 @@ class Basemap:
             ya = N.clip(ya, self.ymin, self.ymax)
         # check to see if all four corners of domain in polygon (if so,
         # don't draw since it will just fill in the whole map).
-            test1 = N.fabs(xa-self.xmax) < 10.
-            test2 = N.fabs(xa-self.xmin) < 10.
-            test3 = N.fabs(ya-self.ymax) < 10.
-            test4 = N.fabs(ya-self.ymin) < 10.
+            delx = 10; dely = 10
+            if self.projection in ['cyl','merc']: delx = 0.1
+            if self.projection in ['cyl']: dely = 0.1
+            test1 = N.fabs(xa-self.xmax) < delx
+            test2 = N.fabs(xa-self.xmin) < delx
+            test3 = N.fabs(ya-self.ymax) < dely
+            test4 = N.fabs(ya-self.ymin) < dely
             hasp1 = sum(test1*test3)
             hasp2 = sum(test2*test3)
             hasp4 = sum(test2*test4)
@@ -723,7 +727,7 @@ class Basemap:
         x, y = self(lons, lats)
         return x,y
 
-    def drawgreatcircle(self,ax,lon1,lat1,lon2,lat2,dtheta=0.002,color='k', \
+    def drawgreatcircle(self,ax,lon1,lat1,lon2,lat2,dtheta=0.02,color='k', \
                        linewidth=1.,linestyle='-',dashes=[None,None]):
         """
  draw a great circle on the map.
@@ -731,7 +735,7 @@ class Basemap:
  ax - current axis instance.
  lon1,lat1 - longitude,latitude of one endpoint of the great circle.
  lon2,lat2 - longitude,latitude of the other endpoint of the great circle.
- dtheta - interval between points on arc in radians (default=0.002).
+ dtheta - interval between points on arc in radians (default=0.02).
  color - color to draw great circle (default black).
  linewidth - line width for great circle (default 1.)
  linestyle - line style for great circle (default '-', i.e. solid).
