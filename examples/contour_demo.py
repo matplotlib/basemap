@@ -19,12 +19,8 @@ lonsout = where(lonsout < 0., lonsout + 360., lonsout)
 hgt = interp(hgt,lons,lats,lonsout,latsout)
 dx = (m.xmax-m.xmin)/(nx-1)
 dy = (m.ymax-m.ymin)/(ny-1)  
-x = m.xmin+dx*indices((ny,nx))[1,:,:]
-y = m.ymin+dy*indices((ny,nx))[0,:,:]
-
-#m = Basemap(lons[0],lats[0],lons[-1],lats[-1],\
-#              resolution='c',area_thresh=10000.,projection='cyl')
-#x, y = meshgrid(lons, lats)
+x = m.llcrnrx+dx*indices((ny,nx))[1,:,:]
+y = m.llcrnry+dy*indices((ny,nx))[0,:,:]
 
 fig = figure(figsize=(8,8))
 
@@ -40,9 +36,10 @@ for np,plot in enumerate(plots):
     if plot == 'pcolor':
         pcolor(x,y,hgt,shading='flat')
     elif plot == 'imshow':
-        im = imshow(hgt,extent=(m.xmin, m.xmax, m.ymin, m.ymax),origin='lower')
+        im = imshow(hgt,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
     elif plot == 'contour':
-        levels, colls = contour(hgt,x=x,y=y,levels=20,linewidths=1.,colors='k')
+        levels, colls = contour(x,y,hgt,15,linewidths=0.5,colors='k')
+        levels, colls = contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
 
     # set size of plot to match aspect ratio of map.
     ax = gca()
@@ -55,10 +52,7 @@ for np,plot in enumerate(plots):
     axis([m.xmin, m.xmax, m.ymin, m.ymax])  
     
     # draw map.
-    if plot in ['pcolor','imshow']:                                         
-        m.drawcoastlines(ax)
-    else:
-        m.fillcontinents(ax,color='gray')
+    m.drawcoastlines(ax)
 	
     # draw parallels
     delat = 30.
@@ -70,8 +64,6 @@ for np,plot in enumerate(plots):
     meridians = arange(0.,360.,delon)
     m.drawmeridians(ax,meridians,labels=[1,1,1,1],fontsize=10)
 
-    ax.set_xticks([]) # no ticks
-    ax.set_yticks([])
     title('500 hPa Height - '+plot,y=1.075)
 
 show()
