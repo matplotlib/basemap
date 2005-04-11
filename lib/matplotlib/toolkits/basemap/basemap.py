@@ -103,8 +103,8 @@ class Basemap:
   equal area projections.
  lat_0 - central latitude (y-axis origin) - used by stereographic and
   lambert azimuthal projections).
- lon_0 - central meridian (x-axis origin - used by lambert conformal
-  and lambert azimuthal and stereographic projections).
+ lon_0 - central meridian (x-axis origin - used by lambert conformal,
+  lambert azimuthal and stereographic projections).
         """     
 
         # read in coastline data.
@@ -771,11 +771,11 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
  of datain grid in increasing order (i.e. from Greenwich meridian eastward, and
  South Pole northward)
 
- lonsout, latsout are rank-2 Numeric arrays containing lons and lats out desired
+ lonsout, latsout are rank-2 Numeric arrays containing lons and lats of desired
  output grid (typically a native map projection grid).
 
  If checkbounds=True, values of lonsout and latsout are checked to see that
- they lie within the range specified by lonsin and latsing.  Default is
+ they lie within the range specified by lonsin and latsin.  Default is
  False, and values outside the borders are handled in the manner described
  by the 'mode' parameter (default mode='nearest', which means the nearest
  boundary value is used). See section 20.2 of the numarray docs for 
