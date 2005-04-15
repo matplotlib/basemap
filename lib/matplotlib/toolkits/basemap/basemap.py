@@ -785,30 +785,34 @@ class Basemap:
  spherical coordinate system, not map projection coordinates). 
         """
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
+        # interpolate to map projection coordinates.
         uin = interp(uin,lons,lats,lonsout,latsout)
         vin = interp(vin,lons,lats,lonsout,latsout)
         if preserve_magnitude:
+            # compute original magnitude.
             mag = pylab.sqrt(uin**2+vin**2)
         rad2dg = 180./math.pi
-        # for cyl, yn=y+0.1, xn=x
-        # for merc, xn=x
+        tiny = 1.e-5
+        delta = 0.1
         coslats = pylab.cos(latsout/rad2dg)
-        #coslats = pylab.ones(latsout.shape, latsout.typecode())
-        xn,yn = self(lonsout,pylab.where(latsout+0.1<90.,latsout+0.1,latsout))
-        # for merc, cyl ye=y, xe=xe+0.1
-        lonse = pylab.where(coslats>1.e-5,lonsout+(0.1/coslats),lonsout)
+        # use dx/dlongitude, dx/dlatitude, dy/dlongitude and dy/dlatitude
+        # to transform vector to map projection coordinates.
+        # dlongitude is delta degrees at equator, dlatitude is delta degrees.
+        xn,yn = self(lonsout,pylab.where(latsout+delta<90.,latsout+delta,latsout))
+        # at poles, derivs w/respect to longitude will be zero.
+        lonse = pylab.where(coslats>tiny,lonsout+(delta/coslats),lonsout)
         xe,ye = self(lonse,latsout)
-        # for cyl and merc, uout = uin
-        uout = uin*(xe-x)*10.*coslats + vin*(xn-x)*10.
-        # for cyl, vout = vin
-        vout = uin*(ye-y)*10.*coslats + vin*(yn-y)*10.
-        # make sure uout, vout not exactly zero (quiver will raise
+        uout = uin*(xe-x)*(coslats/delta) + vin*(xn-x)/delta
+        vout = uin*(ye-y)*(coslats/delta) + vin*(yn-y)/delta
+        # make sure uout, vout not too small (quiver will raise
         # an exception when trying to rescale vectors).
-        uout = pylab.where(pylab.fabs(uout)<1.e-5,1.e-5,uout)
-        vout = pylab.where(pylab.fabs(vout)<1.e-5,1.e-5,vout)
+        uout = pylab.where(pylab.fabs(uout)<tiny,tiny,uout)
+        vout = pylab.where(pylab.fabs(vout)<tiny,tiny,vout)
+        # fix units. 
         if self.projection != 'cyl':
             uout = uout*rad2dg/self.rsphere
             vout = vout*rad2dg/self.rsphere
+        # rescale magnitude.
         if preserve_magnitude:
             magout = pylab.sqrt(uout**2+vout**2)
             uout = uout*mag/magout
