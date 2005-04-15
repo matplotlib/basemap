@@ -780,10 +780,9 @@ class Basemap:
  to x and y).
  if returnxy=True, the x and y values of the native map projection grid
  are also returned (default False).
- if preserve_magnitude=True (default), the magnitude of the vector in
- spherical coordinates is preserved, only the direction is modified
- (so the length of the vector represents wind speed relative to the
- real world, not the map projection world).
+ if preserve_magnitude=True (default), the vector magnitude is preserved
+ (so that length of vectors represents magnitude of vector relative to
+ spherical coordinate system, not map projection coordinates). 
         """
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         uin = interp(uin,lons,lats,lonsout,latsout)
@@ -791,15 +790,22 @@ class Basemap:
         if preserve_magnitude:
             mag = pylab.sqrt(uin**2+vin**2)
         rad2dg = 180./math.pi
-        # for cyl, yn=y+0.01, xn=x
+        # for cyl, yn=y+0.1, xn=x
         # for merc, xn=x
-        xn,yn = self(lonsout,pylab.where(latsout+0.01<90.,latsout+0.01,latsout))
-        # for merc, cyl ye=y, xe=xe+0.01
-        xe,ye = self(lonsout+0.01,latsout)
+        coslats = pylab.cos(latsout/rad2dg)
+        #coslats = pylab.ones(latsout.shape, latsout.typecode())
+        xn,yn = self(lonsout,pylab.where(latsout+0.1<90.,latsout+0.1,latsout))
+        # for merc, cyl ye=y, xe=xe+0.1
+        lonse = pylab.where(coslats>1.e-5,lonsout+(0.1/coslats),lonsout)
+        xe,ye = self(lonse,latsout)
         # for cyl and merc, uout = uin
-        uout = uin*(xe-x)*100. + vin*(xn-x)*100
+        uout = uin*(xe-x)*10.*coslats + vin*(xn-x)*10.
         # for cyl, vout = vin
-        vout = uin*(ye-y)*100. + vin*(yn-y)*100.
+        vout = uin*(ye-y)*10.*coslats + vin*(yn-y)*10.
+        # make sure uout, vout not exactly zero (quiver will raise
+        # an exception when trying to rescale vectors).
+        uout = pylab.where(pylab.fabs(uout)<1.e-5,1.e-5,uout)
+        vout = pylab.where(pylab.fabs(vout)<1.e-5,1.e-5,vout)
         if self.projection != 'cyl':
             uout = uout*rad2dg/self.rsphere
             vout = vout*rad2dg/self.rsphere
