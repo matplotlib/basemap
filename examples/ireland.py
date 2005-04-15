@@ -11,14 +11,14 @@ ax = gca() # get current axis instance
 ax.update_datalim(((m.llcrnrx, m.llcrnry),(m.urcrnrx,m.urcrnry)))
 ax.set_xlim((m.llcrnrx, m.urcrnrx))
 ax.set_ylim((m.llcrnry, m.urcrnry))
-m.drawcoastlines(ax)
-m.fillcontinents(ax)
+m.drawcoastlines()
+m.fillcontinents()
 # draw parallels
 circles = arange(50,60,1).tolist()
-m.drawparallels(ax,circles,labels=[1,1,1,1])
+m.drawparallels(circles,labels=[1,1,1,1])
 # draw meridians
 meridians = arange(-12,0,1)
-m.drawmeridians(ax,meridians,labels=[1,1,1,1])
+m.drawmeridians(meridians,labels=[1,1,1,1])
 title("Crude Res Coastlines ('c')",y=1.075)
 show()
 
@@ -31,12 +31,12 @@ ax = gca() # get current axis instance
 ax.update_datalim(((m.llcrnrx, m.llcrnry),(m.urcrnrx,m.urcrnry)))
 ax.set_xlim((m.llcrnrx, m.urcrnrx))
 ax.set_ylim((m.llcrnry, m.urcrnry))
-m.drawcoastlines(ax)
-m.fillcontinents(ax)
+m.drawcoastlines()
+m.fillcontinents()
 # draw parallels
-m.drawparallels(ax,circles,labels=[1,1,1,1])
+m.drawparallels(circles,labels=[1,1,1,1])
 # draw meridians
-m.drawmeridians(ax,meridians,labels=[1,1,1,1])
+m.drawmeridians(meridians,labels=[1,1,1,1])
 title("Low Res Coastlines ('l')",y=1.075)
 show()
 
@@ -49,11 +49,11 @@ ax = gca() # get current axis instance
 ax.update_datalim(((m.llcrnrx, m.llcrnry),(m.urcrnrx,m.urcrnry)))
 ax.set_xlim((m.llcrnrx, m.urcrnrx))
 ax.set_ylim((m.llcrnry, m.urcrnry))
-m.drawcoastlines(ax)
-m.fillcontinents(ax)
+m.drawcoastlines()
+m.fillcontinents()
 # draw parallels
-m.drawparallels(ax,circles,labels=[1,1,1,1])
+m.drawparallels(circles,labels=[1,1,1,1])
 # draw meridians
-m.drawmeridians(ax,meridians,labels=[1,1,1,1])
+m.drawmeridians(meridians,labels=[1,1,1,1])
 title("Intermediate Res Coastlines ('i')",y=1.075)
 show()
