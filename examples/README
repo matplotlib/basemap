@@ -1,3 +1,5 @@
+simpletest.py is the simple example given in the Basemap docstrings.
+
 test.py exercises all the available map projections by plotting the etopo 
 20 minute bathymetry/topography data using imshow.
 
