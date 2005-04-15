@@ -1,4 +1,4 @@
-from matplotlib.toolkits.basemap import Basemap, interp, shiftgrid
+from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import *
 import cPickle
 
