@@ -14,14 +14,14 @@ ax = gca() # get current axis instance
 ax.update_datalim(((m.llcrnrx, m.llcrnry),(m.urcrnrx,m.urcrnry)))
 ax.set_xlim((m.llcrnrx, m.urcrnrx))
 ax.set_ylim((m.llcrnry, m.urcrnry))
-m.drawcoastlines(ax)
-m.fillcontinents(ax)
+m.drawcoastlines()
+m.fillcontinents()
 # draw parallels
 circles = [35,45,55]
-m.drawparallels(ax,circles,labels=[1,1,0,1])
+m.drawparallels(circles,labels=[1,1,0,1])
 # draw meridians
 meridians = [-90,-60,-30,0,30]
-m.drawmeridians(ax,meridians,labels=[1,1,0,1])
+m.drawmeridians(meridians,labels=[1,1,0,1])
 # nylat, nylon are lat/lon of New York
 nylat = 40.78
 nylon = -73.98
@@ -29,6 +29,6 @@ nylon = -73.98
 lonlat = 51.53
 lonlon = 0.08
 # draw the great circle.
-m.drawgreatcircle(ax,nylon,nylat,lonlon,lonlat,linewidth=2,color='b')
+m.drawgreatcircle(nylon,nylat,lonlon,lonlat,linewidth=2,color='b')
 title('Great Circle from New York to London')
 show()
