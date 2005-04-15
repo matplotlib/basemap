@@ -34,7 +34,7 @@ class Basemap:
 
 >>> from matplotlib.toolkits.basemap import Basemap
 >>> import cPickle
->>> from import *
+>>> from import pylab *
 >>> # read in topo data from pickle (on a regular lat/lon grid)
 >>> topodict = cPickle.load(open('etopo20.pickle','rb'))
 >>> etopo = topodict['data']; lons = topodict['lons']; lats = topodict['lats']
@@ -42,19 +42,16 @@ class Basemap:
 >>> xsize = rcParams['figure.figsize'][0]
 >>> fig=figure(figsize=(xsize,m.aspect*xsize))
 >>> fig.add_axes([0.1,0.1,0.8,0.8])
->>> im = imshow(etopo,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
->>> ax = gca() # get current axis instance
+>>> im = m.imshow(etopo)
 >>> # draw coastlines and fill continents.
->>> m.drawcoastlines(ax)
->>> m.fillcontinents(ax)
->>> # draw parallels
+>>> m.drawcoastlines()
+>>> m.fillcontinents()
+>>> # draw parallels, label on bottom.
 >>> circles = arange(-90.,120.,30.)
->>> m.drawparallels(ax,circles)
->>> # draw meridians
+>>> m.drawparallels(circles,labels=[0,0,0,1])
+>>> # draw meridians, label on left.
 >>> meridians = arange(0.,390.,60.)
->>> m.drawmeridians(ax,meridians)
->>> ax.set_xticks([]) # no ticks
->>> ax.set_yticks([])
+>>> m.drawmeridians(meridians,labels=[1,0,0,0])
 >>> title('Cylindrical Equidistant')
 >>> show()
 
@@ -228,7 +225,9 @@ class Basemap:
         xc,yc = proj(pylab.array(coastlons,'f'),pylab.array(coastlats,'f'))
         xc2,yc2 = proj(pylab.array(coastlons2,'f'),pylab.array(coastlats,'f'))
         xc3,yc3 = proj(pylab.array(coastlons3,'f'),pylab.array(coastlats,'f'))
-        if projection == 'merc': yc2=yc
+        if projection == 'merc': 
+            yc2=yc
+            yc3=yc
         # set up segments in form needed for LineCollection,
         # ignoring 'inf' values that are off the map, and skipping
         # polygons that have an area > area_thresh..
@@ -240,7 +239,10 @@ class Basemap:
         # same as above for country polygons.
         xc,yc = proj(pylab.array(cntrylons,'f'),pylab.array(cntrylats,'f'))
         xc2,yc2 = proj(pylab.array(cntrylons2,'f'),pylab.array(cntrylats,'f'))
-        xc3,yc3 = proj(pylab.array(cntrylons2,'f'),pylab.array(cntrylats,'f'))
+        xc3,yc3 = proj(pylab.array(cntrylons3,'f'),pylab.array(cntrylats,'f'))
+        if projection == 'merc': 
+            yc2=yc
+            yc3=yc
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:])]
         segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
         segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
@@ -250,6 +252,9 @@ class Basemap:
         xc,yc = proj(pylab.array(statelons,'f'),pylab.array(statelats,'f'))
         xc2,yc2 = proj(pylab.array(statelons2,'f'),pylab.array(statelats,'f'))
         xc3,yc3 = proj(pylab.array(statelons3,'f'),pylab.array(statelats,'f'))
+        if projection == 'merc': 
+            yc2=yc
+            yc3=yc
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:])]
         segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
         segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
@@ -327,13 +332,14 @@ class Basemap:
         """
         return self.projtran.makegrid(nx,ny,returnxy=returnxy)
 
-    def fillcontinents(self,ax,color=0.8):
+    def fillcontinents(self,color=0.8):
         """
  Fill continents.
 
- ax - current axis instance.
  color - color to fill continents (default gray).
         """
+        # get current axes instance.
+        ax = pylab.gca()
         # define corners of map domain.
         p1 = (self.llcrnrx,self.llcrnry); p2 = (self.urcrnrx,self.urcrnry)
         p3 = (self.llcrnrx,self.urcrnry); p4 = (self.urcrnrx,self.llcrnry)
@@ -362,15 +368,16 @@ class Basemap:
                 poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0)
                 ax.add_patch(poly)
 
-    def drawcoastlines(self,ax,linewidth=1.,color='k',antialiased=1):
+    def drawcoastlines(self,linewidth=1.,color='k',antialiased=1):
         """
  Draw coastlines.
 
- ax - current axis instance.
  linewidth - coastline width (default 1.)
  color - coastline color (default black)
  antialiased - antialiasing switch for coastlines (default True).
         """
+        # get current axes instance.
+        ax = pylab.gca()
         coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
         try:
             coastlines.set_color(color)
@@ -379,15 +386,16 @@ class Basemap:
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
 
-    def drawcountries(self,ax,linewidth=0.5,color='k',antialiased=1):
+    def drawcountries(self,linewidth=0.5,color='k',antialiased=1):
         """
  Draw country boundaries.
 
- ax - current axis instance.
  linewidth - country boundary line width (default 0.5)
  color - country boundary line color (default black)
  antialiased - antialiasing switch for country boundaries (default True).
         """
+        # get current axes instance.
+        ax = pylab.gca()
         coastlines = LineCollection(self.cntrysegs,antialiaseds=(antialiased,))
         try:
             coastlines.set_color(color)
@@ -396,15 +404,16 @@ class Basemap:
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
 
-    def drawstates(self,ax,linewidth=0.5,color='k',antialiased=1):
+    def drawstates(self,linewidth=0.5,color='k',antialiased=1):
         """
  Draw state boundaries in Americas.
 
- ax - current axis instance.
  linewidth - state boundary line width (default 0.5)
  color - state boundary line color (default black)
  antialiased - antialiasing switch for state boundaries (default True).
         """
+        # get current axes instance.
+        ax = pylab.gca()
         coastlines = LineCollection(self.statesegs,antialiaseds=(antialiased,))
         try:
             coastlines.set_color(color)
@@ -413,13 +422,12 @@ class Basemap:
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
 
-    def drawparallels(self,ax,circles,color='k',linewidth=1., \
+    def drawparallels(self,circles,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0], \
                       font='rm',fontsize=12):
         """
  draw parallels (latitude lines).
 
- ax - current axis instance.
  circles - list containing latitude values to draw (in degrees).
  color - color to draw parallels (default black).
  linewidth - line width for parallels (default 1.)
@@ -434,6 +442,8 @@ class Basemap:
  font - mathtext font used for labels ('rm','tt','it' or 'cal', default 'rm').
  fontsize - font size in points for labels (default 12).
         """
+        # get current axes instance.
+        ax = pylab.gca()
         # don't draw meridians past latmax, always draw parallel at latmax.
         latmax = 80.
         # offset for labels.
@@ -566,13 +576,12 @@ class Basemap:
         ax.set_xticks([]) 
         ax.set_yticks([])
 
-    def drawmeridians(self,ax,meridians,color='k',linewidth=1., \
+    def drawmeridians(self,meridians,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0],\
                       font='rm',fontsize=12):
         """
  draw meridians (longitude lines).
 
- ax - current axis instance.
  meridians - list containing longitude values to draw (in degrees).
  color - color to draw meridians (default black).
  linewidth - line width for meridians (default 1.)
@@ -587,6 +596,8 @@ class Basemap:
  font - mathtext font used for labels ('rm','tt','it' or 'cal', default 'rm').
  fontsize - font size in points for labels (default 12).
         """
+        # get current axes instance.
+        ax = pylab.gca()
         # don't draw meridians past latmax, always draw parallel at latmax.
         latmax = 80. # not used for cyl, merc projections.
         # offset for labels.
@@ -724,12 +735,11 @@ class Basemap:
         x, y = self(lons, lats)
         return x,y
 
-    def drawgreatcircle(self,ax,lon1,lat1,lon2,lat2,dtheta=0.02,color='k', \
+    def drawgreatcircle(self,lon1,lat1,lon2,lat2,dtheta=0.02,color='k', \
                        linewidth=1.,linestyle='-',dashes=[None,None]):
         """
  draw a great circle on the map.
 
- ax - current axis instance.
  lon1,lat1 - longitude,latitude of one endpoint of the great circle.
  lon2,lat2 - longitude,latitude of the other endpoint of the great circle.
  dtheta - interval between points on arc in radians (default=0.02).
@@ -741,6 +751,8 @@ class Basemap:
  Note:  cannot handle situations in which the great circle intersects
  the edge of the map projection domain, and then re-enters the domain.
         """
+        # get current axes instance.
+        ax = pylab.gca()
         gc = GreatCircle(lon1,lat1,lon2,lat2)
         if gc.antipodal:
             raise ValueError,'cannot draw great circle whose endpoints are antipodal'
@@ -821,6 +833,75 @@ class Basemap:
             return uout,vout,x,y
         else:
             return uout,vout
+
+    def imshow(self, *args, **kwargs):
+        """
+ Display an image over the map (see pylab imshow documentation).
+ extent and origin keywords set automatically so will be drawn
+ over map region.
+        """
+        kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
+        kwargs['origin']='lower'
+        return pylab.imshow(*args,  **kwargs)
+
+    def pcolor(self, *args, **kwargs):
+        """
+ Make a pseudo-color plot over the map (see pylab pcolor documentation).
+        """
+        pylab.pcolor(*args, **kwargs)
+        corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
+        # get current axes instance.
+        ax = pylab.gca()
+        ax.update_datalim( corners )                                          
+        ax.set_xlim((self.llcrnrx, self.urcrnrx))
+        ax.set_ylim((self.llcrnry, self.urcrnry))
+
+    def contour(self, *args, **kwargs):
+        """
+ Make a contour plot over the map (see pylab contour documentation).
+        """
+        levels, colls = pylab.contour(*args, **kwargs)
+        corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
+        # get current axes instance.
+        ax = pylab.gca()
+        ax.update_datalim( corners )                                          
+        ax.set_xlim((self.llcrnrx, self.urcrnrx))
+        ax.set_ylim((self.llcrnry, self.urcrnry))
+        return levels,colls
+
+    def contourf(self, *args, **kwargs):
+        """
+ Make a filled contour plot over the map (see pylab documentation).
+        """
+        levels, colls = pylab.contourf(*args, **kwargs)
+        corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
+        # get current axes instance.
+        ax = pylab.gca()
+        ax.update_datalim( corners )                                          
+        ax.set_xlim((self.llcrnrx, self.urcrnrx))
+        ax.set_ylim((self.llcrnry, self.urcrnry))
+        return levels,colls
+
+    def quiver(self, x, y, u, v, scale=None, **kwargs):
+        """
+ Make a vector plot (u, v) with arrows on the map projection grid (x,y)
+ If scale is specified, it is used to scale the vectors. If scale=None 
+ (default) arrows are scaled to longest one is equal to the maximum
+ distance between grid points.   
+ See pylab quiver documentation for allowed keyword arguments.
+        """
+        ny = x.shape[0]; nx = x.shape[1]
+        if scale is None:
+            scale = max([(self.xmax-self.xmin)/(nx-1),(self.ymax-self.ymin)/(ny-1)])
+        else:
+            scale = scale
+        pylab.quiver(x,y,u,v,scale, **kwargs)
+        corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
+        # get current axes instance.
+        ax = pylab.gca()
+        ax.update_datalim( corners )                                          
+        ax.set_xlim((self.llcrnrx, self.urcrnrx))
+        ax.set_ylim((self.llcrnry, self.urcrnry))
 
 def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest',cval=0.0,order=3):
     """
