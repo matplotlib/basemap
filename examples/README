@@ -3,9 +3,12 @@ test.py exercises all the available map projections by plotting the etopo
 
 contour_demo.py demonstrates the use of contour and pcolor with map projections.
 
-plotmap.py is the example on the matplotlib 'screenshots' page.
+plotmap.py is the example on the matplotlib 'screenshots' page (included
+in test.py).
 
 nytolondon.py shows how to draw a great circle on a map (NY to London)
 
 ireland.py draws maps of ireland with the crude, low and intermediate
 resolution boundary datasets.
+
+quiver_demo.py shows how to plot wind vectors on a map.
