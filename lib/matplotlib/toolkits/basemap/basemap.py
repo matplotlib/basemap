@@ -1,13 +1,12 @@
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
-import numarray as N
 from numarray import nd_image
-import sys, os, pylab
+import sys, os, pylab, math
 from proj import Proj
 from greatcircle import GreatCircle
 
-_datadir = os.path.join(sys.prefix,'share/basemap')
+_datadir = os.path.join(sys.prefix,'share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1]))
 
 class Basemap:
 
@@ -59,7 +58,7 @@ class Basemap:
 >>> title('Cylindrical Equidistant')
 >>> show()
 
- Version: 0.2.1 (20050410)
+ Version: 0.3 (20050415)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -216,7 +215,7 @@ class Basemap:
         self.xmax = proj.xmax
         self.ymin = proj.ymin
         self.ymax = proj.ymax
-        if projection == 'cyl' or projection == 'merc':
+        if projection == 'cyl':
             self.aspect = (urcrnrlat-llcrnrlat)/(urcrnrlon-llcrnrlon)
         else:
             self.aspect = (proj.ymax-proj.ymin)/(proj.xmax-proj.xmin)
@@ -226,9 +225,9 @@ class Basemap:
         self.urcrnry = proj.urcrnry
 
         # transform coastline polygons to native map coordinates.
-        xc,yc = proj(N.array(coastlons,'f'),N.array(coastlats,'f'))
-        xc2,yc2 = proj(N.array(coastlons2,'f'),N.array(coastlats,'f'))
-        xc3,yc3 = proj(N.array(coastlons3,'f'),N.array(coastlats,'f'))
+        xc,yc = proj(pylab.array(coastlons,'f'),pylab.array(coastlats,'f'))
+        xc2,yc2 = proj(pylab.array(coastlons2,'f'),pylab.array(coastlats,'f'))
+        xc3,yc3 = proj(pylab.array(coastlons3,'f'),pylab.array(coastlats,'f'))
         if projection == 'merc': yc2=yc
         # set up segments in form needed for LineCollection,
         # ignoring 'inf' values that are off the map, and skipping
@@ -239,29 +238,32 @@ class Basemap:
         self.coastsegs = segments+segments2+segments3
 
         # same as above for country polygons.
-        xc,yc = proj(N.array(cntrylons,'f'),N.array(cntrylats,'f'))
-        xc2,yc2 = proj(N.array(cntrylons2,'f'),N.array(cntrylats,'f'))
-        xc3,yc3 = proj(N.array(cntrylons2,'f'),N.array(cntrylats,'f'))
+        xc,yc = proj(pylab.array(cntrylons,'f'),pylab.array(cntrylats,'f'))
+        xc2,yc2 = proj(pylab.array(cntrylons2,'f'),pylab.array(cntrylats,'f'))
+        xc3,yc3 = proj(pylab.array(cntrylons2,'f'),pylab.array(cntrylats,'f'))
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:])]
         segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
         segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
         self.cntrysegs = segments+segments2+segments3
 
         # same as above for state polygons.
-        xc,yc = proj(N.array(statelons,'f'),N.array(statelats,'f'))
-        xc2,yc2 = proj(N.array(statelons2,'f'),N.array(statelats,'f'))
-        xc3,yc3 = proj(N.array(statelons3,'f'),N.array(statelats,'f'))
+        xc,yc = proj(pylab.array(statelons,'f'),pylab.array(statelats,'f'))
+        xc2,yc2 = proj(pylab.array(statelons2,'f'),pylab.array(statelats,'f'))
+        xc3,yc3 = proj(pylab.array(statelons3,'f'),pylab.array(statelats,'f'))
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:])]
         segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
         segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
         self.statesegs = segments+segments2+segments3
 
         # store coast polygons for filling.
-        # special treatment (kludge) for Antarctica.
-        self.coastpolygons=[]
+	self.coastpolygons = []
         if projection == 'merc': 
             xsp,ysp = proj(0.,-89.9) # s. pole coordinates.
             xa,ya = proj(0.,-68.0) # edge of antarctica.
+	    x0,y0 = proj(0.,0.)
+	    xm360,ym360 = proj(-360.,0.)
+	    x360,y360 = proj(360.,0.)
+	    x720,y720 = proj(720.,0.)
         for seg in self.coastsegs:
             x = [lon for lon,lat in seg]
             y = [lat for lon,lat in seg]
@@ -285,20 +287,20 @@ class Basemap:
                     x.insert(0,0.)
                     y.insert(0,-90)
             elif projection == 'merc':
-                if x[-1] == 0.000 and y[-1] < ya: # close antarctica
-                    x.append(0.)
+                if math.fabs(x[-1]-x0) < 1. and y[-1] < ya: # close antarctica
+                    x.append(x0)
                     y.append(ysp)
-                    x.insert(0,360.)
+                    x.insert(0,x360)
                     y.insert(0,ysp)
-                if x[-1] == 360.000 and y[-1] < ya: 
-                    x.append(360.)
+                if math.fabs(x[-1]-x360) < 1. and y[-1] < ya: 
+                    x.append(x360)
                     y.append(ysp)
-                    x.insert(0,720.)
+                    x.insert(0,x720)
                     y.insert(0,ysp)
-                if x[-1] == -360.000 and y[-1] < ya: 
-                    x.append(-360.)
+                if math.fabs(x[-1]-xm360) < 1. and y[-1] < ya: 
+                    x.append(xm360)
                     y.append(ysp)
-                    x.insert(0,0.)
+                    x.insert(0,x0)
                     y.insert(0,ysp)
             self.coastpolygons.append((x,y))
 
@@ -313,19 +315,17 @@ class Basemap:
  For cylindrical equidistant projection ('cyl'), this
  does nothing (i.e. x,y == lon,lat).
 
- For mercator projection ('merc'), x == lon, but y has units
- of meters.
-
  lon,lat can be either scalar floats or N arrays.
         """
         return self.projtran(x,y,inverse=inverse)
  
-    def makegrid(self,nx,ny):
+    def makegrid(self,nx,ny,returnxy=False):
         """
  return arrays of shape (ny,nx) containing lon,lat coordinates of
  an equally spaced native projection grid.
+ if returnxy = True, the x,y values of the grid are returned also.
         """
-        return self.projtran.makegrid(nx,ny)
+        return self.projtran.makegrid(nx,ny,returnxy=returnxy)
 
     def fillcontinents(self,ax,color=0.8):
         """
@@ -338,20 +338,21 @@ class Basemap:
         p1 = (self.llcrnrx,self.llcrnry); p2 = (self.urcrnrx,self.urcrnry)
         p3 = (self.llcrnrx,self.urcrnry); p4 = (self.urcrnrx,self.llcrnry)
         for x,y in self.coastpolygons:
-            xa = N.array(x,'f')
-            ya = N.array(y,'f')
+            xa = pylab.array(x,'f')
+            ya = pylab.array(y,'f')
         # clip to map domain.
-            xa = N.clip(xa, self.xmin, self.xmax)
-            ya = N.clip(ya, self.ymin, self.ymax)
+            xa = pylab.clip(xa, self.xmin, self.xmax)
+            ya = pylab.clip(ya, self.ymin, self.ymax)
         # check to see if all four corners of domain in polygon (if so,
         # don't draw since it will just fill in the whole map).
             delx = 10; dely = 10
-            if self.projection in ['cyl','merc']: delx = 0.1
-            if self.projection in ['cyl']: dely = 0.1
-            test1 = N.fabs(xa-self.xmax) < delx
-            test2 = N.fabs(xa-self.xmin) < delx
-            test3 = N.fabs(ya-self.ymax) < dely
-            test4 = N.fabs(ya-self.ymin) < dely
+            if self.projection in ['cyl']:
+                delx = 0.1
+                dely = 0.1
+            test1 = pylab.fabs(xa-self.xmax) < delx
+            test2 = pylab.fabs(xa-self.xmin) < delx
+            test3 = pylab.fabs(ya-self.ymax) < dely
+            test4 = pylab.fabs(ya-self.ymin) < dely
             hasp1 = sum(test1*test3)
             hasp2 = sum(test2*test3)
             hasp4 = sum(test2*test4)
@@ -440,9 +441,9 @@ class Basemap:
 	xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection in ['merc','cyl']:
-            lons = N.arange(self.llcrnrlon,self.urcrnrlon+1,1).astype('f')
+            lons = pylab.arange(self.llcrnrlon,self.urcrnrlon+1,1).astype('f')
         else:
-            lons = N.arange(0,362,1).astype('f')
+            lons = pylab.arange(0,362,1).astype('f')
         # make sure latmax degree parallel is drawn if projection not merc or cyl
         try:
             circlesl = circles.tolist()
@@ -456,24 +457,24 @@ class Basemap:
         xdelta = 0.1*(self.xmax-self.xmin)
         ydelta = 0.1*(self.ymax-self.ymin)
         for circ in circlesl:
-            lats = circ*N.ones(len(lons),'f')
+            lats = circ*pylab.ones(len(lons),'f')
             x,y = self(lons,lats)
             # remove points outside domain.
-            testx = N.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
-            x = N.compress(testx, x)
-            y = N.compress(testx, y)
-            testy = N.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
-            x = N.compress(testy, x)
-            y = N.compress(testy, y)
+            testx = pylab.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
+            x = pylab.compress(testx, x)
+            y = pylab.compress(testx, y)
+            testy = pylab.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
+            x = pylab.compress(testy, x)
+            y = pylab.compress(testy, y)
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
                 # (not necessary for mercator or cylindrical).
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
-                dist = N.sqrt(xd+yd)
+                dist = pylab.sqrt(xd+yd)
                 split = dist > 500000.
-                if N.sum(split) and self.projection not in ['merc','cyl']:
-                   ind = (N.compress(split,pylab.squeeze(split*N.indices(xd.shape)))+1).tolist()
+                if pylab.asum(split) and self.projection not in ['merc','cyl']:
+                   ind = (pylab.compress(split,pylab.squeeze(split*pylab.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
                    iprev = 0
@@ -498,8 +499,6 @@ class Basemap:
         # if so, find x,y location of intersection and draw a label there.
         if self.projection == 'cyl':
             dx = 0.01; dy = 0.01
-        elif self.projection == 'merc':
-            dx = 0.01; dy = 1000
         else:
             dx = 1000; dy = 1000
         for dolab,side in zip(labels,['l','r','t','b']):
@@ -509,27 +508,27 @@ class Basemap:
             if side in ['l','r']:
 	        nmax = int((self.ymax-self.ymin)/dy+1)
                 if self.urcrnry < self.llcrnry:
-	            yy = self.llcrnry-dy*N.arange(nmax)
+	            yy = self.llcrnry-dy*pylab.arange(nmax)
                 else:
-	            yy = self.llcrnry+dy*N.arange(nmax)
+	            yy = self.llcrnry+dy*pylab.arange(nmax)
                 if side == 'l':
-	            lons,lats = self(self.llcrnrx*N.ones(yy.shape,'f'),yy,inverse=True)
+	            lons,lats = self(self.llcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
                 else:
-	            lons,lats = self(self.urcrnrx*N.ones(yy.shape,'f'),yy,inverse=True)
-                lons = N.where(lons < 0, lons+360, lons)
+	            lons,lats = self(self.urcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
+                lons = pylab.where(lons < 0, lons+360, lons)
                 lons = [int(lon*10) for lon in lons.tolist()]
                 lats = [int(lat*10) for lat in lats.tolist()]
             else:
 	        nmax = int((self.xmax-self.xmin)/dx+1)
                 if self.urcrnrx < self.llcrnrx:
-	            xx = self.llcrnrx-dx*N.arange(nmax)
+	            xx = self.llcrnrx-dx*pylab.arange(nmax)
                 else:
-	            xx = self.llcrnrx+dx*N.arange(nmax)
+	            xx = self.llcrnrx+dx*pylab.arange(nmax)
                 if side == 'b':
-	            lons,lats = self(xx,self.llcrnry*N.ones(xx.shape,'f'),inverse=True)
+	            lons,lats = self(xx,self.llcrnry*pylab.ones(xx.shape,'f'),inverse=True)
                 else:
-	            lons,lats = self(xx,self.urcrnry*N.ones(xx.shape,'f'),inverse=True)
-                lons = N.where(lons < 0, lons+360, lons)
+	            lons,lats = self(xx,self.urcrnry*pylab.ones(xx.shape,'f'),inverse=True)
+                lons = pylab.where(lons < 0, lons+360, lons)
                 lons = [int(lon*10) for lon in lons.tolist()]
                 lats = [int(lat*10) for lat in lats.tolist()]
 	    for lat in circles:
@@ -544,7 +543,7 @@ class Basemap:
                 except:
                     nr = -1
                 if lat<0:
-        	    latlab = r'$\%s{%g\/^{\circ}\/S}$'%(font,N.fabs(lat))
+        	    latlab = r'$\%s{%g\/^{\circ}\/S}$'%(font,pylab.fabs(lat))
         	elif lat>0:
         	    latlab = r'$\%s{%g\/^{\circ}\/N}$'%(font,lat)
         	else:
@@ -595,30 +594,30 @@ class Basemap:
 	xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection not in ['merc','cyl']:
-            lats = N.arange(-latmax,latmax+1).astype('f')
+            lats = pylab.arange(-latmax,latmax+1).astype('f')
         else:
-            lats = N.arange(-90,91).astype('f')
+            lats = pylab.arange(-90,91).astype('f')
         xdelta = 0.1*(self.xmax-self.xmin)
         ydelta = 0.1*(self.ymax-self.ymin)
         for merid in meridians:
-            lons = merid*N.ones(len(lats),'f')
+            lons = merid*pylab.ones(len(lats),'f')
             x,y = self(lons,lats)
             # remove points outside domain.
-            testx = N.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
-            x = N.compress(testx, x)
-            y = N.compress(testx, y)
-            testy = N.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
-            x = N.compress(testy, x)
-            y = N.compress(testy, y)
+            testx = pylab.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
+            x = pylab.compress(testx, x)
+            y = pylab.compress(testx, y)
+            testy = pylab.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
+            x = pylab.compress(testy, x)
+            y = pylab.compress(testy, y)
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
                 # (not necessary for mercator or cylindrical).
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
-                dist = N.sqrt(xd+yd)
+                dist = pylab.sqrt(xd+yd)
                 split = dist > 500000.
-                if N.sum(split) and self.projection not in ['merc','cyl']:
-                   ind = (N.compress(split,pylab.squeeze(split*N.indices(xd.shape)))+1).tolist()
+                if pylab.asum(split) and self.projection not in ['merc','cyl']:
+                   ind = (pylab.compress(split,pylab.squeeze(split*pylab.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
                    iprev = 0
@@ -643,8 +642,6 @@ class Basemap:
         # if so, find x,y location of intersection and draw a label there.
         if self.projection == 'cyl':
             dx = 0.01; dy = 0.01
-        elif self.projection == 'merc':
-            dx = 0.01; dy = 1000
         else:
             dx = 1000; dy = 1000
         for dolab,side in zip(labels,['l','r','t','b']):
@@ -654,27 +651,27 @@ class Basemap:
             if side in ['l','r']:
 	        nmax = int((self.ymax-self.ymin)/dy+1)
                 if self.urcrnry < self.llcrnry:
-	            yy = self.llcrnry-dy*N.arange(nmax)
+	            yy = self.llcrnry-dy*pylab.arange(nmax)
                 else:
-	            yy = self.llcrnry+dy*N.arange(nmax)
+	            yy = self.llcrnry+dy*pylab.arange(nmax)
                 if side == 'l':
-	            lons,lats = self(self.llcrnrx*N.ones(yy.shape,'f'),yy,inverse=True)
+	            lons,lats = self(self.llcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
                 else:
-	            lons,lats = self(self.urcrnrx*N.ones(yy.shape,'f'),yy,inverse=True)
-                lons = N.where(lons < 0, lons+360, lons)
+	            lons,lats = self(self.urcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
+                lons = pylab.where(lons < 0, lons+360, lons)
                 lons = [int(lon*10) for lon in lons.tolist()]
                 lats = [int(lat*10) for lat in lats.tolist()]
             else:
 	        nmax = int((self.xmax-self.xmin)/dx+1)
                 if self.urcrnrx < self.llcrnrx:
-	            xx = self.llcrnrx-dx*N.arange(nmax)
+	            xx = self.llcrnrx-dx*pylab.arange(nmax)
                 else:
-	            xx = self.llcrnrx+dx*N.arange(nmax)
+	            xx = self.llcrnrx+dx*pylab.arange(nmax)
                 if side == 'b':
-	            lons,lats = self(xx,self.llcrnry*N.ones(xx.shape,'f'),inverse=True)
+	            lons,lats = self(xx,self.llcrnry*pylab.ones(xx.shape,'f'),inverse=True)
                 else:
-	            lons,lats = self(xx,self.urcrnry*N.ones(xx.shape,'f'),inverse=True)
-                lons = N.where(lons < 0, lons+360, lons)
+	            lons,lats = self(xx,self.urcrnry*pylab.ones(xx.shape,'f'),inverse=True)
+                lons = pylab.where(lons < 0, lons+360, lons)
                 lons = [int(lon*10) for lon in lons.tolist()]
                 lats = [int(lat*10) for lat in lats.tolist()]
             for lon in meridians:
@@ -690,7 +687,7 @@ class Basemap:
                 except:
                     nr = -1
         	if lon>180:
-        	    lonlab = r'$\%s{%g\/^{\circ}\/W}$'%(font,N.fabs(lon-360))
+        	    lonlab = r'$\%s{%g\/^{\circ}\/W}$'%(font,pylab.fabs(lon-360))
         	elif lon<180 and lon != 0:
         	    lonlab = r'$\%s{%g\/^{\circ}\/E}$'%(font,lon)
         	else:
@@ -757,6 +754,64 @@ class Basemap:
             l.set_dashes(dashes)
         ax.add_line(l)
 
+    def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False):
+        """
+ transform a scalar field (datin) from a lat/lon grid with longitudes
+ lons and latitudes lats to a (ny,nx) native map projection grid.
+ if returnxy=True, the x and y values of the native map projection grid
+ are also returned.
+        """
+        if returnxy:
+            lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
+            datout = interp(datin,lons,lats,lonsout,latsout)
+            return datout, x, y
+        else:
+            lonsout, latsout = self.makegrid(nx,ny)
+            datout = interp(datin,lons,lats,lonsout,latsout)
+            return datout
+
+    def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,preserve_magnitude=True):
+        """
+ transform a vector field (uin,vin) from a lat/lon grid with longitudes
+ lons and latitudes lats to a (ny,nx) native map projection grid.
+ The input vector field is defined in spherical coordinates (it
+ has eastward and northward components) while the output
+ vector field is defined in map projection coordinates (relative
+ to x and y).
+ if returnxy=True, the x and y values of the native map projection grid
+ are also returned (default False).
+ if preserve_magnitude=True (default), the magnitude of the vector in
+ spherical coordinates is preserved, only the direction is modified
+ (so the length of the vector represents wind speed relative to the
+ real world, not the map projection world).
+        """
+        lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
+        uin = interp(uin,lons,lats,lonsout,latsout)
+        vin = interp(vin,lons,lats,lonsout,latsout)
+        if preserve_magnitude:
+            mag = pylab.sqrt(uin**2+vin**2)
+        rad2dg = 180./math.pi
+        # for cyl, yn=y+0.01, xn=x
+        # for merc, xn=x
+        xn,yn = self(lonsout,pylab.where(latsout+0.01<90.,latsout+0.01,latsout))
+        # for merc, cyl ye=y, xe=xe+0.01
+        xe,ye = self(lonsout+0.01,latsout)
+        # for cyl and merc, uout = uin
+        uout = uin*(xe-x)*100. + vin*(xn-x)*100
+        # for cyl, vout = vin
+        vout = uin*(ye-y)*100. + vin*(yn-y)*100.
+        if self.projection != 'cyl':
+            uout = uout*rad2dg/self.rsphere
+            vout = vout*rad2dg/self.rsphere
+        if preserve_magnitude:
+            magout = pylab.sqrt(uout**2+vout**2)
+            uout = uout*mag/magout
+            vout = vout*mag/magout
+        if returnxy:
+            return uout,vout,x,y
+        else:
+            return uout,vout
+
 def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest',cval=0.0,order=3):
     """
  dataout = interp(datain,lonsin,latsin,lonsout,latsout,mode='constant',cval=0.0,order=3)
@@ -794,10 +849,10 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
     # (this check is always done if nearest neighbor 
     # interpolation (order=0) requested).
     if checkbounds or order == 0:
-        if min(N.ravel(lonsout)) < min(lonsin) or \
-           max(N.ravel(lonsout)) > max(lonsin) or \
-           min(N.ravel(latsout)) < min(latsin) or \
-           max(N.ravel(latsout)) > max(latsin):
+        if min(pylab.ravel(lonsout)) < min(lonsin) or \
+           max(pylab.ravel(lonsout)) > max(lonsin) or \
+           min(pylab.ravel(latsout)) < min(latsin) or \
+           max(pylab.ravel(latsout)) > max(latsin):
             raise ValueError, 'latsout or lonsout outside range of latsin or lonsin'
     # compute grid coordinates of output grid.
     delon = lonsin[1:]-lonsin[0:-1]
@@ -808,12 +863,12 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
         ycoords = (len(latsin)-1)*(latsout-latsin[0])/(latsin[-1]-latsin[0])
     else:
         # irregular (but still rectilinear) input grid.
-        lonsoutflat = N.ravel(lonsout)
-        latsoutflat = N.ravel(latsout)
-        ix = N.searchsorted(lonsin,lonsoutflat)-1
-        iy = N.searchsorted(latsin,latsoutflat)-1
-        xcoords = N.zeros(ix.shape,'f')
-        ycoords = N.zeros(iy.shape,'f')
+        lonsoutflat = pylab.ravel(lonsout)
+        latsoutflat = pylab.ravel(latsout)
+        ix = pylab.searchsorted(lonsin,lonsoutflat)-1
+        iy = pylab.searchsorted(latsin,latsoutflat)-1
+        xcoords = pylab.zeros(ix.shape,'f')
+        ycoords = pylab.zeros(iy.shape,'f')
         for n,i in enumerate(ix):
             if i < 0:
                 xcoords[n] = -1 # outside of range on lonsin (lower end)
@@ -821,7 +876,7 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
                 xcoords[n] = len(lonsin) # outside range on upper end.
             else:
                 xcoords[n] = float(i)+(lonsoutflat[n]-lonsin[i])/(lonsin[i+1]-lonsin[i])
-        xcoords = N.reshape(xcoords,lonsout.shape)
+        xcoords = pylab.reshape(xcoords,lonsout.shape)
         for m,j in enumerate(iy):
             if j < 0:
                 ycoords[m] = -1 # outside of range of latsin (on lower end)
@@ -829,7 +884,7 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
                 ycoords[m] = len(latsin) # outside range on upper end
             else:
                 ycoords[m] = float(j)+(latsoutflat[m]-latsin[j])/(latsin[j+1]-latsin[j])
-        ycoords = N.reshape(ycoords,latsout.shape)
+        ycoords = pylab.reshape(ycoords,latsout.shape)
     coords = [ycoords,xcoords]
     # interpolate to output grid using numarray.nd_image spline filter.
     if order:
@@ -837,7 +892,55 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
     else:
         # nearest neighbor interpolation if order=0.
         # uses index arrays, so first convert to numarray.
-        datatmp = N.array(datain,datain.typecode())
-        xi = N.around(xcoords).astype('i')
-        yi = N.around(ycoords).astype('i')
+        datatmp = pylab.array(datain,datain.typecode())
+        xi = pylab.around(xcoords).astype('i')
+        yi = pylab.around(ycoords).astype('i')
         return datatmp[yi,xi]
+
+def shiftgrid(lon0,datain,lonsin,start=True):
+    """ 
+ shift global lat/lon grid east or west.
+ assumes wraparound (or cyclic point) is included.
+
+ lon0:  starting longitude for shifted grid 
+        (ending longitude if start=False). lon0 must be on
+        input grid (with the range of lonsin).
+ datain:  original data.
+ lonsin:  original longitudes.
+ start[True]: if True, lon0 represents he starting longitude 
+ of the new grid. if False, lon0 is the ending longitude.
+
+ returns dataout,lonsout (data and longitudes on shifted grid).
+    """
+    if pylab.fabs(lonsin[-1]-lonsin[0]-360.) > 1.e-4:
+        raise ValueError, 'cyclic point not included'
+    if lon0 < lonsin[0] or lon0 > lonsin[-1]:
+        raise ValueError, 'lon0 outside of range of lonsin'
+    i0 = pylab.argsort(pylab.fabs(lonsin-lon0))[0]
+    dataout = pylab.zeros(datain.shape,datain.typecode())
+    lonsout = pylab.zeros(lonsin.shape,lonsin.typecode())
+    if start:
+        lonsout[0:len(lonsin)-i0] = lonsin[i0:]
+    else:
+        lonsout[0:len(lonsin)-i0] = lonsin[i0:]-360.
+    dataout[:,0:len(lonsin)-i0] = datain[:,i0:]
+    if start:
+        lonsout[len(lonsin)-i0:] = lonsin[1:i0+1]+360.
+    else:
+        lonsout[len(lonsin)-i0:] = lonsin[1:i0+1]
+    dataout[:,len(lonsin)-i0:] = datain[:,1:i0+1]
+    return dataout,lonsout
+
+def addcyclic(arrin,lonsin):
+   """
+ add cyclic (wraparound) point in longitude.
+   """
+   nlats = arrin.shape[0]
+   nlons = arrin.shape[1]
+   arrout  = pylab.zeros((nlats,nlons+1),arrin.typecode())
+   arrout[:,0:nlons] = arrin[:,:]
+   arrout[:,nlons] = arrin[:,0]
+   lonsout = pylab.zeros(nlons+1,lonsin.typecode())
+   lonsout[0:nlons] = lonsin[:]
+   lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
+   return arrout,lonsout
