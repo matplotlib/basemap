@@ -1,26 +1,21 @@
-from matplotlib.toolkits.basemap import Basemap, interp
+from matplotlib.toolkits.basemap import Basemap, interp, shiftgrid
 from pylab import *
 import cPickle
 
 # read in data on lat/lon grid.
 datadict = cPickle.load(open('500hgt.pickle','rb'))
 hgt = datadict['data']; lons = datadict['lons']; lats = datadict['lats']
+# shift data so lons go from -180 to 180 instead of 0 to 360.
+hgt,lons = shiftgrid(180.,hgt,lons,start=False)
 
 # set up map projection (lambert azimuthal equal area).
 m = Basemap(-135.,-20.,45.,-20.,
              resolution='c',area_thresh=10000.,projection='laea',
              lat_0=90.,lon_0=-90.)
-# interpolate to map projection grid.
-nx = 101
-ny = 101
-lonsout, latsout = m.makegrid(nx,ny)
-# get rid of negative lons.
-lonsout = where(lonsout < 0., lonsout + 360., lonsout)
-hgt = interp(hgt,lons,lats,lonsout,latsout)
-dx = (m.xmax-m.xmin)/(nx-1)
-dy = (m.ymax-m.ymin)/(ny-1)  
-x = m.llcrnrx+dx*indices((ny,nx))[1,:,:]
-y = m.llcrnry+dy*indices((ny,nx))[0,:,:]
+
+# transform to map projection coordinates.
+nx = 101; ny = 101
+hgt,x,y = m.transform_scalar(hgt,lons,lats,nx,ny,returnxy=True)
 
 fig = figure(figsize=(8,8))
 
@@ -47,9 +42,9 @@ for np,plot in enumerate(plots):
     b = 0.5 - 0.5*w*m.aspect; h = w*m.aspect
     #l = 0.5 - 0.5*h/m.aspect; w = h/m.aspect
     ax.set_position([l,b,w,h])
-    corners = ((m.xmin,m.ymin), (m.xmax,m.ymax))
+    corners = ((m.llcrnrx,m.llcrnry), (m.urcrnrx,m.urcrnry))
     ax.update_datalim( corners )                                          
-    axis([m.xmin, m.xmax, m.ymin, m.ymax])  
+    axis([m.llcrnrx, m.urcrnrx, m.llcrnry, m.urcrnry])  
     
     # draw map.
     m.drawcoastlines(ax)

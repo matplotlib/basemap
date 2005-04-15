@@ -2,7 +2,7 @@
 # lambert conformal conic map projection, drawing coastlines, state and
 # country boundaries, and parallels/meridians.
 
-from matplotlib.toolkits.basemap import Basemap, interp
+from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import *
 import cPickle
 
@@ -10,17 +10,16 @@ import cPickle
 # longitudes go from 20 to 380.
 topodict = cPickle.load(open('etopo20.pickle','rb'))
 topoin = topodict['data']; lons = topodict['lons']; lats = topodict['lats']
+# shift data so lons go from -180 to 180 instead of 20 to 380.
+topoin,lons = shiftgrid(180.,topoin,lons,start=False)
 
 # setup of basemap ('lcc' = lambert conformal conic).
 m = Basemap(-145.5,1.,-2.566,46.352,\
             resolution='c',area_thresh=10000.,projection='lcc',\
             lat_1=50.,lon_0=-107.)
-# define grid (nx x ny regularly spaced native projection grid)
+# transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-lonsout, latsout = m.makegrid(nx,ny)
-# make sure there are no neg lons.
-lonsout = where(lonsout < 0., lonsout + 360., lonsout)
-topodat = interp(topoin,lons,lats,lonsout,latsout)
+topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
