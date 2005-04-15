@@ -10,6 +10,7 @@
            point minus longitude of lower left corner of map).
            setup.py now installs in data in python-version-numbered
            dir (so you can have separate copies for diff python versions).
+           Fixed aspect ratio of mercator plots.
 20050410:  version 0.2.1 - add gcpoints and drawgreatcircles methods.
            Added intermediate resolution coastline and political 
            boundary databases. Fixed bug in filling continents,
