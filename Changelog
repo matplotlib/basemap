@@ -1,15 +1,13 @@
 20040415:  version 0.3
            Added transform_scalar and transform_vector methods for
            interpolating scalar and vector fields to a map projection
-           grid.  Added shiftgrid and addcyclic convenience function.
+           grid.  Added shiftgrid and addcyclic convenience functions.
            Added quiver_demo.py example illustrating how to plot
            wind vectors on a map. Updated examples to use 
            transform_scalar instead of calling interp directly.
            Mercator x coordinate units changed from degrees to meters
-           (x = rsphere*deltalon, where deltalon is longitude of
-           point minus longitude of lower left corner of map).
-           setup.py now installs in data in python-version-numbered
-           dir (so you can have separate copies for diff python versions).
+           setup.py now installs data in python-version-numbered directory.
+           (so you can have separate copies for different python versions).
            Fixed aspect ratio of mercator plots.
 20050410:  version 0.2.1 - add gcpoints and drawgreatcircles methods.
            Added intermediate resolution coastline and political 
