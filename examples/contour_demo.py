@@ -20,44 +20,40 @@ hgt,x,y = m.transform_scalar(hgt,lons,lats,nx,ny,returnxy=True)
 fig = figure(figsize=(8,8))
 
 plots = ['contour','pcolor']
+#plots = ['contour','imshow']
 
 for np,plot in enumerate(plots):
 
     fig.add_subplot(1,2,np+1)
-    #fig.add_subplot(2,1,np+1)
+    ax = gca()
 
     # plot data.
     print plot+' plot ...'
     if plot == 'pcolor':
-        pcolor(x,y,hgt,shading='flat')
+        m.pcolor(x,y,hgt,shading='flat')
     elif plot == 'imshow':
-        im = imshow(hgt,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
+        im = m.imshow(hgt)
     elif plot == 'contour':
-        levels, colls = contour(x,y,hgt,15,linewidths=0.5,colors='k')
-        levels, colls = contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
+        levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+        levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
 
     # set size of plot to match aspect ratio of map.
-    ax = gca()
     l,b,w,h = ax.get_position()
     b = 0.5 - 0.5*w*m.aspect; h = w*m.aspect
-    #l = 0.5 - 0.5*h/m.aspect; w = h/m.aspect
     ax.set_position([l,b,w,h])
-    corners = ((m.llcrnrx,m.llcrnry), (m.urcrnrx,m.urcrnry))
-    ax.update_datalim( corners )                                          
-    axis([m.llcrnrx, m.urcrnrx, m.llcrnry, m.urcrnry])  
     
     # draw map.
-    m.drawcoastlines(ax)
+    m.drawcoastlines()
 	
     # draw parallels
     delat = 30.
     delon = 90.
     circles = arange(10.,90.+delat,delat).tolist()
-    m.drawparallels(ax,circles,labels=[0,0,1,1])
+    m.drawparallels(circles,labels=[0,0,1,1])
 
     # draw meridians
     meridians = arange(0.,360.,delon)
-    m.drawmeridians(ax,meridians,labels=[1,1,1,1],fontsize=10)
+    m.drawmeridians(meridians,labels=[1,1,1,1],fontsize=10)
 
     title('500 hPa Height - '+plot,y=1.075)
 

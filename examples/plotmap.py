@@ -23,25 +23,23 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-im = imshow(topodat,cm.jet,extent=(m.xmin, m.xmax, m.ymin, m.ymax),origin='lower')
-
+im = m.imshow(topodat,cm.jet)
 cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
-
 axes(ax)  # make the original axes current again
-m.drawcoastlines(ax)
-m.drawcountries(ax)
-m.drawstates(ax)
-#m.fillcontinents(ax)
+m.drawcoastlines()
+m.drawcountries()
+m.drawstates()
+#m.fillcontinents()
 # draw parallels
 delat = 20.
 parallels = arange(0.,90.+delat,delat).tolist()+\
           arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(ax,parallels,labels=[1,1,0,1])
+m.drawparallels(parallels,labels=[1,1,0,1])
 # draw meridians
 delon = 30.
 meridians = arange(10.,360.,delon)
-m.drawmeridians(ax,meridians,labels=[1,1,0,1])
+m.drawmeridians(meridians,labels=[1,1,0,1])
 
 title('ETOPO Topography - Lambert Conformal Conic')
 show()

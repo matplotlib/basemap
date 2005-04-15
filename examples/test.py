@@ -23,25 +23,23 @@ m = Basemap(-180.,-90,180.,90.,\
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.75,0.75])
-im = imshow(topoin,cm.jet,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
+im = m.imshow(topoin,cm.jet)
 cax = axes([0.875, 0.1, 0.05, 0.75])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
-m.drawcoastlines(ax)
-#m.drawcountries(ax)
-#m.drawstates(ax)
-#m.fillcontinents(ax)
+m.drawcoastlines()
+#m.drawcountries()
+#m.drawstates()
+#m.fillcontinents()
 # draw parallels
 delat = 30.
 circles = arange(0.,90.+delat,delat).tolist()+\
           arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(ax,circles,labels=[1,0,0,1])
+m.drawparallels(circles,labels=[1,0,0,1])
 # draw meridians
 delon = 60.
 meridians = arange(-180,180,delon)
-m.drawmeridians(ax,meridians,labels=[1,0,0,1])
-ax.set_xticks([]) # no ticks
-ax.set_yticks([])
+m.drawmeridians(meridians,labels=[1,0,0,1])
 title('Cylindrical Equidistant')
 print 'plotting Cylindrical Equidistant example, close plot window to proceed ...'
 show()
@@ -55,18 +53,15 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 fig.add_axes([0.1,0.1,0.75,0.75])
-im = imshow(topodat,cm.jet,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
-ax = gca() # get current axis instance
-m.drawcoastlines(ax)
-m.drawcountries(ax)
-m.drawstates(ax)
-m.fillcontinents(ax)
+im = m.imshow(topodat,cm.jet)
+m.drawcoastlines()
+m.drawcountries()
+m.drawstates()
+m.fillcontinents()
 # draw parallels
-m.drawparallels(ax,circles,labels=[1,1,1,1])
+m.drawparallels(circles,labels=[1,1,1,1])
 # draw meridians
-m.drawmeridians(ax,meridians,labels=[1,1,1,1])
-ax.set_xticks([]) # no ticks
-ax.set_yticks([])
+m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Mercator',y=1.1)
 print 'plotting Mercator example, close plot window to proceed ...'
 show()
@@ -80,25 +75,23 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-im = imshow(topodat,cm.jet,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
+im = m.imshow(topodat,cm.jet)
 cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
-m.drawcoastlines(ax)
-m.drawcountries(ax)
-m.drawstates(ax)
-#m.fillcontinents(ax)
+m.drawcoastlines()
+m.drawcountries()
+m.drawstates()
+#m.fillcontinents()
 # draw parallels
 delat = 20.
 circles = arange(0.,90.+delat,delat).tolist()+\
           arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(ax,circles,labels=[1,1,0,1])
+m.drawparallels(circles,labels=[1,1,0,1])
 # draw meridians
 delon = 30.
 meridians = arange(10.,360.,delon)
-m.drawmeridians(ax,meridians,labels=[1,1,0,1])
-ax.set_xticks([]) # no ticks
-ax.set_yticks([])
+m.drawmeridians(meridians,labels=[1,1,0,1])
 title('Lambert Conformal Conic')
 print 'plotting Lambert Conformal example, close plot window to proceed ...'
 show()
@@ -112,24 +105,22 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-im = imshow(topodat,cm.jet,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
+im = m.imshow(topodat,cm.jet)
 im.set_clim(-4000.,3000.)
 cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
-m.drawcoastlines(ax)
-m.drawcountries(ax)
+m.drawcoastlines()
+m.drawcountries()
 # draw parallels
 delat = 20.
 circles = arange(0.,90.+delat,delat).tolist()+\
           arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(ax,circles,labels=[1,1,1,1])
+m.drawparallels(circles,labels=[1,1,1,1])
 # draw meridians
 delon = 30.
 meridians = arange(10.,360.,delon)
-m.drawmeridians(ax,meridians,labels=[1,1,1,1])
-ax.set_xticks([]) # no ticks
-ax.set_yticks([])
+m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Albers Equal Area Conic',y=1.075)
 print 'plotting Albers Equal Area example, close plot window to proceed ...'
 show()
@@ -148,19 +139,17 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-im = imshow(topodat,cm.jet,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
+im = m.imshow(topodat,cm.jet)
 cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
-m.drawcoastlines(ax)
-m.drawcountries(ax)
-#m.fillcontinents(ax)
+m.drawcoastlines()
+m.drawcountries()
+#m.fillcontinents()
 # draw parallels
-m.drawparallels(ax,circles)
+m.drawparallels(circles)
 # draw meridians
-m.drawmeridians(ax,meridians,labels=[1,1,1,1])
-ax.set_xticks([]) # no ticks
-ax.set_yticks([])
+m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Polar Stereographic',y=1.075)
 print 'plotting Stereographic example, close plot window to proceed ...'
 show()
@@ -175,20 +164,18 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-im = imshow(topodat,cm.jet,extent=(m.llcrnrx,m.urcrnrx,m.llcrnry,m.urcrnry),origin='lower')
+im = m.imshow(topodat,cm.jet)
 cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
-m.drawcoastlines(ax)
-m.drawcountries(ax)
-m.drawstates(ax)
-#m.fillcontinents(ax)
+m.drawcoastlines()
+m.drawcountries()
+m.drawstates()
+#m.fillcontinents()
 # draw parallels
-m.drawparallels(ax,circles)
+m.drawparallels(circles)
 # draw meridians
-m.drawmeridians(ax,meridians,labels=[1,1,1,1])
-ax.set_xticks([]) # no ticks
-ax.set_yticks([])
+m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Lambert Azimuthal Equal Area',y=1.075)
 print 'plotting Lambert Azimuthal example, close plot window to proceed ...'
 show()

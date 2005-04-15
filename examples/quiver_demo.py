@@ -39,28 +39,22 @@ print max(ravel(spd))
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-levels, colls = contourf(xp,yp,pdat,15,cmap=cm.jet,colors=None)
-
-scale = max([(m.xmax-m.xmin)/(nxv-1),(m.ymax-m.ymin)/(nyv-1)])
-quiver(xv,yv,udat,vdat,scale)
-ax=gca()
-corners = ((m.llcrnrx,m.llcrnry), (m.urcrnrx,m.urcrnry))
-ax.update_datalim( corners )                                          
-axis([m.llcrnrx, m.urcrnrx, m.llcrnry, m.urcrnry])  
+levels, colls = m.contourf(xp,yp,pdat,15,cmap=cm.jet,colors=None)
+m.quiver(xv,yv,udat,vdat)
 cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
-m.drawcoastlines(ax)
-m.drawcountries(ax)
+m.drawcoastlines()
+m.drawcountries()
 # draw parallels
 delat = 20.
 circles = arange(0.,90.+delat,delat).tolist()+\
           arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(ax,circles,labels=[1,1,1,1])
+m.drawparallels(circles,labels=[1,1,1,1])
 # draw meridians
 delon = 45.
 meridians = arange(-180,180,delon)
-m.drawmeridians(ax,meridians,labels=[1,1,1,1])
+m.drawmeridians(meridians,labels=[1,1,1,1])
 ax.set_xticks([]) # no ticks
 ax.set_yticks([])
 title('Surface Winds Winds and Pressure',y=1.075)
@@ -86,28 +80,22 @@ print max(ravel(spd))
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-levels, colls = contourf(xp,yp,pdat,15,cmap=cm.jet,colors=None)
-
-scale = max([(m.xmax-m.xmin)/(nxv-1),(m.ymax-m.ymin)/(nyv-1)])
-quiver(xv,yv,udat,vdat,scale)
-ax=gca()
-corners = ((m.llcrnrx,m.llcrnry), (m.urcrnrx,m.urcrnry))
-ax.update_datalim( corners )                                          
-axis([m.llcrnrx, m.urcrnrx, m.llcrnry, m.urcrnry])  
+levels, colls = m.contourf(xp,yp,pdat,15,cmap=cm.jet,colors=None)
+m.quiver(xv,yv,udat,vdat)
 cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
-m.drawcoastlines(ax)
-m.drawcountries(ax)
+m.drawcoastlines()
+m.drawcountries()
 # draw parallels
 delat = 30.
 circles = arange(0.,90.+delat,delat).tolist()+\
           arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(ax,circles,labels=[1,0,0,1])
+m.drawparallels(circles,labels=[1,0,0,1])
 # draw meridians
 delon = 60.
 meridians = arange(-180,180,delon)
-m.drawmeridians(ax,meridians,labels=[1,0,0,1])
+m.drawmeridians(meridians,labels=[1,0,0,1])
 ax.set_xticks([]) # no ticks
 ax.set_yticks([])
 title('Surface Winds Winds and Pressure',y=1.075)
@@ -133,28 +121,22 @@ print max(ravel(spd))
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-levels, colls = contourf(xp,yp,pdat,15,cmap=cm.jet,colors=None)
-
-scale = max([(m.xmax-m.xmin)/(nxv-1),(m.ymax-m.ymin)/(nyv-1)])
-quiver(xv,yv,udat,vdat,scale)
-ax=gca()
-corners = ((m.llcrnrx,m.llcrnry), (m.urcrnrx,m.urcrnry))
-ax.update_datalim( corners )                                          
-axis([m.llcrnrx, m.urcrnrx, m.llcrnry, m.urcrnry])  
+levels, colls = m.contourf(xp,yp,pdat,15,cmap=cm.jet,colors=None)
+m.quiver(xv,yv,udat,vdat)
 cax = axes([0.875, 0.1, 0.05, 0.7])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
-m.drawcoastlines(ax)
-m.drawcountries(ax)
+m.drawcoastlines()
+m.drawcountries()
 # draw parallels
 delat = 30.
 circles = arange(0.,90.+delat,delat).tolist()+\
           arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(ax,circles,labels=[1,0,0,1])
+m.drawparallels(circles,labels=[1,0,0,1])
 # draw meridians
 delon = 60.
 meridians = arange(-180,180,delon)
-m.drawmeridians(ax,meridians,labels=[1,0,0,1])
+m.drawmeridians(meridians,labels=[1,0,0,1])
 ax.set_xticks([]) # no ticks
 ax.set_yticks([])
 title('Surface Winds Winds and Pressure',y=1.075)
