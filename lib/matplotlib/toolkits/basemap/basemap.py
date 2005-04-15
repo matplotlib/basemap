@@ -30,7 +30,8 @@ class Basemap:
  llcrnrx,llcrnry,urcrnrx,urcrnry - corners of map domain in projection coordinates.
 
  Example Usage:
- (this example plus others can be run by running test.py in the examples dir)
+ (this example plus others can be found in the examples directory of
+  the source distribution)
 
 >>> from matplotlib.toolkits.basemap import Basemap
 >>> import cPickle
