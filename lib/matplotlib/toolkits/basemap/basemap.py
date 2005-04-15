@@ -773,6 +773,10 @@ class Basemap:
  lons and latitudes lats to a (ny,nx) native map projection grid.
  if returnxy=True, the x and y values of the native map projection grid
  are also returned.
+ 
+ data on a lat/lon grid must be transformed to map projection coordinates
+ before it can be plotted on the map (with the contour, contourf,
+ imshow or pcolor class methods).
         """
         if returnxy:
             lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
@@ -796,6 +800,9 @@ class Basemap:
  if preserve_magnitude=True (default), the vector magnitude is preserved
  (so that length of vectors represents magnitude of vector relative to
  spherical coordinate system, not map projection coordinates). 
+
+ vectors on a lat/lon grid must be transformed to map projection coordinates
+ before they be plotted on the map (with the quiver class method).
         """
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         # interpolate to map projection coordinates.
