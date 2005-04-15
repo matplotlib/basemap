@@ -48,10 +48,10 @@ class Basemap:
 >>> m.fillcontinents()
 >>> # draw parallels, label on bottom.
 >>> circles = arange(-90.,120.,30.)
->>> m.drawparallels(circles,labels=[0,0,0,1])
+>>> m.drawparallels(circles,labels=[1,0,0,0])
 >>> # draw meridians, label on left.
 >>> meridians = arange(0.,390.,60.)
->>> m.drawmeridians(meridians,labels=[1,0,0,0])
+>>> m.drawmeridians(meridians,labels=[0,0,0,1])
 >>> title('Cylindrical Equidistant')
 >>> show()
 
