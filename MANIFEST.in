@@ -7,8 +7,10 @@ include src/*
 include examples/test.py
 include examples/etopo20.pickle
 include examples/500hgt.pickle
+include examples/fcover.dat
 include examples/plotmap.py
 include examples/contour_demo.py
+include examples/quiver_demo.py
 include examples/nytolondon.py
 include examples/ireland.py
 include examples/README
