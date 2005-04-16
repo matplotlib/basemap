@@ -12,7 +12,7 @@ d2r = math.pi/180.
 # define a regular 2.5x2.5 degree grid
 delat= 2.5
 nlons = 144
-nlats = (nlons/2)+1
+nlats = 37
 lons = delat*arange(nlons)
 lats = 90.-delat*arange(nlats)
 lons, lats = meshgrid(lons, lats)
@@ -28,7 +28,7 @@ lats = array(lats,'f')
 rcrit = 500.
 
 # set up lambert azimuthal map centered on N. Pole.
-m = Basemap(-150.,-20.826,30.,-20.826,
+m = Basemap(-150.,0.,30.,0.,
             resolution='c',area_thresh=10000.,projection='laea',\
             lat_0=90.,lon_0=-105.,lat_ts=90.)
 
@@ -36,6 +36,8 @@ print len(lons), ' obs before thinning'
 
 # calculate distance between each ob and all preceding obs in list.
 # throw out those that are closer than rcrit.
+import time
+time1 = time.clock()
 nob = 0
 lats_out = []
 lons_out = []
@@ -47,6 +49,7 @@ for lon,lat in zip(lons,lats):
           lons_out.append(lon)
    nob = nob + 1
 
+print time.clock()-time1
 print len(lons_out), ' obs after thinning'
 
 # transform lons and lats to map coordinates.
