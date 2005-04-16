@@ -14,3 +14,6 @@ ireland.py draws maps of ireland with the crude, low and intermediate
 resolution boundary datasets.
 
 quiver_demo.py shows how to plot wind vectors on a map.
+
+randompoints.py demonstrates the use of scatter to plot randomly distributed
+points on the earth.
