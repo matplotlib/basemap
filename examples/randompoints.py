@@ -29,15 +29,13 @@ rcrit = 500.
 
 # set up lambert azimuthal map centered on N. Pole.
 m = Basemap(-150.,0.,30.,0.,
-            resolution='c',area_thresh=10000.,projection='laea',\
+            resolution='c',area_thresh=10000.,projection='stere',\
             lat_0=90.,lon_0=-105.,lat_ts=90.)
 
 print len(lons), ' obs before thinning'
 
 # calculate distance between each ob and all preceding obs in list.
 # throw out those that are closer than rcrit.
-import time
-time1 = time.clock()
 nob = 0
 lats_out = []
 lons_out = []
@@ -49,7 +47,6 @@ for lon,lat in zip(lons,lats):
           lons_out.append(lon)
    nob = nob + 1
 
-print time.clock()-time1
 print len(lons_out), ' obs after thinning'
 
 # transform lons and lats to map coordinates.
@@ -72,7 +69,7 @@ m.scatter(xx,yy,marker='o',c='k',s=25,zorder=10)
 m.drawcoastlines()
 m.fillcontinents()
 # draw parallels and meridians.
-delat = 30.
+delat = 20.
 circles = arange(0.,90.,delat).tolist()+\
           arange(-delat,-90,-delat).tolist()
 m.drawparallels(circles)
