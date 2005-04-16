@@ -842,6 +842,29 @@ class Basemap:
         else:
             return uout,vout
 
+    def set_axes_limits(self):
+        """set axis limits for map domain using current axes instance."""
+        # get current axes instance.
+        ax = pylab.gca()
+        corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
+        ax.update_datalim( corners )                                          
+        ax.set_xlim((self.llcrnrx, self.urcrnrx))
+        ax.set_ylim((self.llcrnry, self.urcrnry))
+
+    def scatter(self, *args, **kwargs):
+        """
+ Plot points with markers on the map (see pylab scatter documentation).
+        """
+        pylab.scatter(*args, **kwargs)
+        self.set_axes_limits()
+
+    def plot(self, *args, **kwargs):
+        """
+ Draw lines and/or markers on the map (see pylab plot documentation).
+        """
+        pylab.plot(*args, **kwargs)
+        self.set_axes_limits()
+
     def imshow(self, *args, **kwargs):
         """
  Display an image over the map (see pylab imshow documentation).
@@ -857,24 +880,14 @@ class Basemap:
  Make a pseudo-color plot over the map (see pylab pcolor documentation).
         """
         pylab.pcolor(*args, **kwargs)
-        corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
-        # get current axes instance.
-        ax = pylab.gca()
-        ax.update_datalim( corners )                                          
-        ax.set_xlim((self.llcrnrx, self.urcrnrx))
-        ax.set_ylim((self.llcrnry, self.urcrnry))
+        self.set_axes_limits()
 
     def contour(self, *args, **kwargs):
         """
  Make a contour plot over the map (see pylab contour documentation).
         """
         levels, colls = pylab.contour(*args, **kwargs)
-        corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
-        # get current axes instance.
-        ax = pylab.gca()
-        ax.update_datalim( corners )                                          
-        ax.set_xlim((self.llcrnrx, self.urcrnrx))
-        ax.set_ylim((self.llcrnry, self.urcrnry))
+        self.set_axes_limits()
         return levels,colls
 
     def contourf(self, *args, **kwargs):
@@ -882,12 +895,7 @@ class Basemap:
  Make a filled contour plot over the map (see pylab documentation).
         """
         levels, colls = pylab.contourf(*args, **kwargs)
-        corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
-        # get current axes instance.
-        ax = pylab.gca()
-        ax.update_datalim( corners )                                          
-        ax.set_xlim((self.llcrnrx, self.urcrnrx))
-        ax.set_ylim((self.llcrnry, self.urcrnry))
+        self.set_axes_limits()
         return levels,colls
 
     def quiver(self, x, y, u, v, scale=None, **kwargs):
@@ -904,12 +912,7 @@ class Basemap:
         else:
             scale = scale
         pylab.quiver(x,y,u,v,scale, **kwargs)
-        corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
-        # get current axes instance.
-        ax = pylab.gca()
-        ax.update_datalim( corners )                                          
-        ax.set_xlim((self.llcrnrx, self.urcrnrx))
-        ax.set_ylim((self.llcrnry, self.urcrnry))
+        self.set_axes_limits()
 
 def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest',cval=0.0,order=3):
     """
