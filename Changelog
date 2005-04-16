@@ -9,8 +9,9 @@
            setup.py now installs data in python-version-numbered directory.
            (so you can have separate copies for different python versions).
            Fixed aspect ratio of mercator plots.
-           Added contourf,contour,pcolor and quiver methods.
-           ax instance no longer needed as a method argument.
+           Added set_axes_limits,plot,scatter,contourf,contour,
+           pcolor and quiver methods.
+           axes instance no longer a method argument (API change).
 20050410:  version 0.2.1 - add gcpoints and drawgreatcircles methods.
            Added intermediate resolution coastline and political 
            boundary databases. Fixed bug in filling continents,
