@@ -368,6 +368,8 @@ class Basemap:
                 xy = zip(xa.tolist(),ya.tolist())
                 poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0)
                 ax.add_patch(poly)
+        # set axes limits to fit map region.
+        self.set_axes_limits()
 
     def drawcoastlines(self,linewidth=1.,color='k',antialiased=1):
         """
