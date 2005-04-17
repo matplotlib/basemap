@@ -40,7 +40,7 @@ datadir ='share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])
 
 setup(
   name              = "basemap",
-  version           = "0.3",
+  version           = "0.3.1",
   description       = "Plot data on map projections with matplotlib",
   url               = "http://matplotlib.sourceforge.net/toolkits.html",
   author            = "Jeff Whitaker",
