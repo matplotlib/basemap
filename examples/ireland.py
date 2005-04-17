@@ -7,10 +7,7 @@ m = Basemap(-11.,51.,-5.,56.,
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 fig.add_axes([0.1,0.1,0.8,0.8])
-ax = gca() # get current axis instance
-ax.update_datalim(((m.llcrnrx, m.llcrnry),(m.urcrnrx,m.urcrnry)))
-ax.set_xlim((m.llcrnrx, m.urcrnrx))
-ax.set_ylim((m.llcrnry, m.urcrnry))
+# draw coastlines and fill continents.
 m.drawcoastlines()
 m.fillcontinents()
 # draw parallels
@@ -27,10 +24,7 @@ m = Basemap(-11.,51.,-5.,56.,
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 fig.add_axes([0.1,0.1,0.8,0.8])
-ax = gca() # get current axis instance
-ax.update_datalim(((m.llcrnrx, m.llcrnry),(m.urcrnrx,m.urcrnry)))
-ax.set_xlim((m.llcrnrx, m.urcrnrx))
-ax.set_ylim((m.llcrnry, m.urcrnry))
+# draw coastlines and fill continents.
 m.drawcoastlines()
 m.fillcontinents()
 # draw parallels
@@ -45,10 +39,7 @@ m = Basemap(-11.,51.,-5.,56.,
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 fig.add_axes([0.1,0.1,0.8,0.8])
-ax = gca() # get current axis instance
-ax.update_datalim(((m.llcrnrx, m.llcrnry),(m.urcrnrx,m.urcrnry)))
-ax.set_xlim((m.llcrnrx, m.urcrnrx))
-ax.set_ylim((m.llcrnry, m.urcrnry))
+# draw coastlines and fill continents.
 m.drawcoastlines()
 m.fillcontinents()
 # draw parallels
