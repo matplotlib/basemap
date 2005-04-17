@@ -736,18 +736,16 @@ class Basemap:
         x, y = self(lons, lats)
         return x,y
 
-    def drawgreatcircle(self,lon1,lat1,lon2,lat2,dtheta=0.02,color='k', \
-                       linewidth=1.,linestyle='-',dashes=[None,None]):
+    def drawgreatcircle(self,lon1,lat1,lon2,lat2,dtheta=0.02,**kwargs):
         """
  draw a great circle on the map.
 
  lon1,lat1 - longitude,latitude of one endpoint of the great circle.
  lon2,lat2 - longitude,latitude of the other endpoint of the great circle.
- dtheta - interval between points on arc in radians (default=0.02).
- color - color to draw great circle (default black).
- linewidth - line width for great circle (default 1.)
- linestyle - line style for great circle (default '-', i.e. solid).
- dashes - dash pattern for great circle (default [None,None], i.e. solid).
+ dtheta - increment in radians to compute points for drawing great circle
+  (default 0.02).
+ Other keyword arguments control plotting of great circle line - see
+ pylab plot documentation.
 
  Note:  cannot handle situations in which the great circle intersects
  the edge of the map projection domain, and then re-enters the domain.
@@ -761,11 +759,7 @@ class Basemap:
         npoints = int(gc.distance/dtheta)+1
         lons, lats = gc.points(npoints)
         x, y = self(lons, lats)
-        l = Line2D(x,y,linewidth=linewidth,linestyle=linestyle)
-        l.set_color(color)
-        if dashes[0] is not None:
-            l.set_dashes(dashes)
-        ax.add_line(l)
+        self.plot(x,y,**kwargs)
 
     def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False):
         """
