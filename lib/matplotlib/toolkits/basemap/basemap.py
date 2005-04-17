@@ -386,6 +386,8 @@ class Basemap:
             coastlines.color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
+        # set axes limits to fit map region.
+        self.set_axes_limits()
 
     def drawcountries(self,linewidth=0.5,color='k',antialiased=1):
         """
@@ -404,6 +406,8 @@ class Basemap:
             coastlines.color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
+        # set axes limits to fit map region.
+        self.set_axes_limits()
 
     def drawstates(self,linewidth=0.5,color='k',antialiased=1):
         """
@@ -422,6 +426,8 @@ class Basemap:
             coastlines.color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
+        # set axes limits to fit map region.
+        self.set_axes_limits()
 
     def drawparallels(self,circles,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0], \
@@ -576,6 +582,8 @@ class Basemap:
         # make sure axis ticks are turned off
         ax.set_xticks([]) 
         ax.set_yticks([])
+        # set axes limits to fit map region.
+        self.set_axes_limits()
 
     def drawmeridians(self,meridians,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0],\
@@ -724,6 +732,8 @@ class Basemap:
         # make sure axis ticks are turned off
         ax.set_xticks([]) 
         ax.set_yticks([])
+        # set axes limits to fit map region.
+        self.set_axes_limits()
 
     def gcpoints(self,lon1,lat1,lon2,lat2,npoints):
         """
