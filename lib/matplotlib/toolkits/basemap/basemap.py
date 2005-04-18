@@ -56,7 +56,7 @@ class Basemap:
 >>> title('Cylindrical Equidistant')
 >>> show()
 
- Version: 0.3 (20050415)
+ Version: 0.3.1 (20050417)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
