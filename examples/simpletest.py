@@ -4,7 +4,9 @@ from pylab import *
 # read in topo data from pickle (on a regular lat/lon grid)
 topodict = cPickle.load(open('etopo20.pickle','rb'))
 etopo = topodict['data']; lons = topodict['lons']; lats = topodict['lats']
+# create Basemap instance (global cylindrical equidistant is default)
 m = Basemap(lons[0],lats[0],lons[-1],lats[-1])
+# create figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 fig.add_axes([0.1,0.1,0.8,0.8])
