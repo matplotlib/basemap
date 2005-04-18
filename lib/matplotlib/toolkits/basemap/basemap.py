@@ -6,7 +6,7 @@ import sys, os, pylab, math
 from proj import Proj
 from greatcircle import GreatCircle
 
-# look in sys.path for directory containing basemap files if
+# look in sys.prefix for directory containing basemap files if
 # BASEMAP_DATA_PATH env var not set.
 _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
