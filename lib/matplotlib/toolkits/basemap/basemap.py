@@ -773,12 +773,19 @@ class Basemap:
         x, y = self(lons, lats)
         self.plot(x,y,**kwargs)
 
-    def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False):
+    def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False,**kwargs):
         """
  transform a scalar field (datin) from a lat/lon grid with longitudes
  lons and latitudes lats to a (ny,nx) native map projection grid.
+
+ lons, lats must be rank-1 arrays containing longitudes and latitudes
+ (in degrees) of datain grid in increasing order
+ (i.e. from Greenwich meridian eastward, and South Pole northward).
+
  if returnxy=True, the x and y values of the native map projection grid
  are also returned.
+
+ See interp documentation for meaning of extra keyword arguments.
  
  data on a lat/lon grid must be transformed to map projection coordinates
  before it can be plotted on the map (with the contour, contourf,
@@ -786,34 +793,43 @@ class Basemap:
         """
         if returnxy:
             lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
-            datout = interp(datin,lons,lats,lonsout,latsout)
+            datout = interp(datin,lons,lats,lonsout,latsout,**kwargs)
             return datout, x, y
         else:
             lonsout, latsout = self.makegrid(nx,ny)
-            datout = interp(datin,lons,lats,lonsout,latsout)
+            datout = interp(datin,lons,lats,lonsout,latsout,**kwargs)
             return datout
 
-    def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,preserve_magnitude=True):
+    def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,preserve_magnitude=True,**kwargs):
         """
  transform a vector field (uin,vin) from a lat/lon grid with longitudes
  lons and latitudes lats to a (ny,nx) native map projection grid.
+
+ lons, lats must be rank-1 arrays containing longitudes and latitudes
+ (in degrees) of datain grid in increasing order
+ (i.e. from Greenwich meridian eastward, and South Pole northward).
+
  The input vector field is defined in spherical coordinates (it
  has eastward and northward components) while the output
  vector field is defined in map projection coordinates (relative
  to x and y).
+
  if returnxy=True, the x and y values of the native map projection grid
  are also returned (default False).
+
  if preserve_magnitude=True (default), the vector magnitude is preserved
  (so that length of vectors represents magnitude of vector relative to
  spherical coordinate system, not map projection coordinates). 
+
+ See interp documentation for meaning of extra keyword arguments.
 
  vectors on a lat/lon grid must be transformed to map projection coordinates
  before they be plotted on the map (with the quiver class method).
         """
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         # interpolate to map projection coordinates.
-        uin = interp(uin,lons,lats,lonsout,latsout)
-        vin = interp(vin,lons,lats,lonsout,latsout)
+        uin = interp(uin,lons,lats,lonsout,latsout,**kwargs)
+        vin = interp(vin,lons,lats,lonsout,latsout,**kwargs)
         if preserve_magnitude:
             # compute original magnitude.
             mag = pylab.sqrt(uin**2+vin**2)
@@ -930,11 +946,11 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
  datain is a rank-2 array with 1st dimension corresponding to longitude,
  2nd dimension latitude.
 
- lonsin, latsin are rank-1 Numeric arrays containing longitudes and latitudes
+ lonsin, latsin are rank-1 arrays containing longitudes and latitudes
  of datain grid in increasing order (i.e. from Greenwich meridian eastward, and
  South Pole northward)
 
- lonsout, latsout are rank-2 Numeric arrays containing lons and lats of desired
+ lonsout, latsout are rank-2 arrays containing lons and lats of desired
  output grid (typically a native map projection grid).
 
  If checkbounds=True, values of lonsout and latsout are checked to see that
