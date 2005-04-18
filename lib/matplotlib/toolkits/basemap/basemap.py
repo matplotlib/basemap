@@ -6,7 +6,11 @@ import sys, os, pylab, math
 from proj import Proj
 from greatcircle import GreatCircle
 
-_datadir = os.path.join(sys.prefix,'share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1]))
+# look in sys.path for directory containing basemap files if
+# BASEMAP_DATA_PATH env var not set.
+_datadir = os.environ.get('BASEMAP_DATA_PATH')
+if not _datadir:
+   _datadir = os.path.join(sys.prefix,'share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])) 
 
 class Basemap:
 
@@ -779,13 +783,13 @@ class Basemap:
  lons and latitudes lats to a (ny,nx) native map projection grid.
 
  lons, lats must be rank-1 arrays containing longitudes and latitudes
- (in degrees) of datain grid in increasing order
+ (in degrees) of datin grid in increasing order
  (i.e. from Greenwich meridian eastward, and South Pole northward).
 
  if returnxy=True, the x and y values of the native map projection grid
  are also returned.
 
- See interp documentation for meaning of extra keyword arguments.
+ See interp documentation for meaning of extra keyword arguments (**kwargs).
  
  data on a lat/lon grid must be transformed to map projection coordinates
  before it can be plotted on the map (with the contour, contourf,
@@ -806,7 +810,7 @@ class Basemap:
  lons and latitudes lats to a (ny,nx) native map projection grid.
 
  lons, lats must be rank-1 arrays containing longitudes and latitudes
- (in degrees) of datain grid in increasing order
+ (in degrees) of datin grid in increasing order
  (i.e. from Greenwich meridian eastward, and South Pole northward).
 
  The input vector field is defined in spherical coordinates (it
@@ -821,7 +825,7 @@ class Basemap:
  (so that length of vectors represents magnitude of vector relative to
  spherical coordinate system, not map projection coordinates). 
 
- See interp documentation for meaning of extra keyword arguments.
+ See interp documentation for meaning of extra keyword arguments (**kwargs).
 
  vectors on a lat/lon grid must be transformed to map projection coordinates
  before they be plotted on the map (with the quiver class method).
