@@ -1,5 +1,4 @@
 # example demonstrating how to draw a great circle on a map.
-import matplotlib
 from matplotlib.toolkits.basemap import Basemap
 from pylab import *
 
@@ -7,6 +6,7 @@ from pylab import *
 m = Basemap(-90.,30.,30.,60.,\
             resolution='c',area_thresh=10000.,projection='merc',\
             lat_ts=20.)
+# make figure with aspect ratio that matches map region.
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 fig.add_axes([0.1,0.1,0.8,0.8])
