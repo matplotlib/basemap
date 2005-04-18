@@ -1,5 +1,5 @@
 from pylab import *
-import math, sys, random
+import math, random
 from matplotlib.toolkits.basemap import Basemap
 
 def get_dist(lon1,lons,lat1,lats):
@@ -59,6 +59,7 @@ for xi,yi in zip(x,y):
         xx.append(xi)
         yy.append(yi)
 # plot them as filled circles on the map.
+# first, create figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 fig.add_axes([0.1,0.1,0.8,0.8])

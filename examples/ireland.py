@@ -1,9 +1,10 @@
-import matplotlib
 from matplotlib.toolkits.basemap import Basemap
 from pylab import *
 
+# create Basemap instance. Use 'crude' resolution coastlines.
 m = Basemap(-11.,51.,-5.,56.,
             resolution='c',area_thresh=1000.,projection='cyl')
+# create figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 fig.add_axes([0.1,0.1,0.8,0.8])
@@ -19,8 +20,10 @@ m.drawmeridians(meridians,labels=[1,1,1,1])
 title("Crude Res Coastlines ('c')",y=1.075)
 show()
 
+# create Basemap instance. Use 'low' resolution coastlines.
 m = Basemap(-11.,51.,-5.,56.,
             resolution='l',area_thresh=1000.,projection='cyl')
+# create figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 fig.add_axes([0.1,0.1,0.8,0.8])
@@ -34,8 +37,10 @@ m.drawmeridians(meridians,labels=[1,1,1,1])
 title("Low Res Coastlines ('l')",y=1.075)
 show()
 
+# create Basemap instance. Use 'intermediate' resolution coastlines.
 m = Basemap(-11.,51.,-5.,56.,
             resolution='i',area_thresh=1000.,projection='cyl')
+# create figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 fig.add_axes([0.1,0.1,0.8,0.8])
