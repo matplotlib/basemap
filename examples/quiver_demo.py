@@ -36,12 +36,15 @@ print min(ravel(pdat)),max(ravel(pdat))
 spd = sqrt(udat**2+vdat**2)
 print max(ravel(spd))
 
+# setup figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# plot filled contours over map
 levels, colls = m.contourf(xp,yp,pdat,15,cmap=cm.jet,colors=None)
+# plot wind vectors over map.
 m.quiver(xv,yv,udat,vdat)
-cax = axes([0.875, 0.1, 0.05, 0.7])
+cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -77,12 +80,15 @@ print min(ravel(pdat)),max(ravel(pdat))
 spd = sqrt(udat**2+vdat**2)
 print max(ravel(spd))
 
+# setup figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# plot filled contours over map
 levels, colls = m.contourf(xp,yp,pdat,15,cmap=cm.jet,colors=None)
+# plot wind vectors over map.
 m.quiver(xv,yv,udat,vdat)
-cax = axes([0.875, 0.1, 0.05, 0.7])
+cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -118,12 +124,15 @@ print min(ravel(pdat)),max(ravel(pdat))
 spd = sqrt(udat**2+vdat**2)
 print max(ravel(spd))
 
+# setup figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# plot filled contours over map
 levels, colls = m.contourf(xp,yp,pdat,15,cmap=cm.jet,colors=None)
+# plot wind vectors over map.
 m.quiver(xv,yv,udat,vdat)
-cax = axes([0.875, 0.1, 0.05, 0.7])
+cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
