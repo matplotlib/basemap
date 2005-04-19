@@ -35,6 +35,15 @@ see basemap.py docstrings.
 
 see scripts in 'examples' directory for example usage.
 
+**Install**
+
+just run 'python setup.py install' 
+
+for a non-standard install (python setup.py install --home=<dir>,
+or python setup.py install --prefix=<dir>), the environment
+variable BASEMAP_DATA_PATH must be set to the directory where the
+data files (gshhs*.txt, countries*.txt and states*.txt) are installed. 
+
 **Contact**
 
 Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
