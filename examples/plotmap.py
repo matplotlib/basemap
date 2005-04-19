@@ -37,11 +37,11 @@ m.drawstates()
 delat = 20.
 parallels = arange(0.,90.+delat,delat).tolist()+\
           arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(parallels,labels=[1,1,0,1])
+m.drawparallels(parallels,labels=[1,1,0,1]) # labels on left, right, bottom.
 # draw meridians
 delon = 30.
 meridians = arange(10.,360.,delon)
-m.drawmeridians(meridians,labels=[1,1,0,1])
+m.drawmeridians(meridians,labels=[1,1,0,1]) # labels on left, right, bottom.
 
 title('ETOPO Topography - Lambert Conformal Conic')
 show()
