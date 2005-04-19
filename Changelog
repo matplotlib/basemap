@@ -1,4 +1,7 @@
 20040420:  version 0.3.2 - code cleanups and docstring typo fixes.
+           env var BASEMAP_DATA_PATH can now be used to point to
+           data files in a non-standard install (i.e using --prefix
+           or --home).
 20040415:  version 0.3
            Added transform_scalar and transform_vector methods for
            interpolating scalar and vector fields to a map projection
