@@ -43,11 +43,13 @@ class Basemap:
 >>> # read in topo data from pickle (on a regular lat/lon grid)
 >>> topodict = cPickle.load(open('etopo20.pickle','rb'))
 >>> etopo = topodict['data']; lons = topodict['lons']; lats = topodict['lats']
+>>> # setup map projection (global cylindrical equidistant is default)
 >>> m = Basemap(lons[0],lats[0],lons[-1],lats[-1])
+>>> # setup figure with same aspect ratio as map.
 >>> xsize = rcParams['figure.figsize'][0]
 >>> fig=figure(figsize=(xsize,m.aspect*xsize))
 >>> fig.add_axes([0.1,0.1,0.8,0.8])
->>> im = m.imshow(etopo)
+>>> im = m.imshow(etopo) # plot image over map.
 >>> # draw coastlines and fill continents.
 >>> m.drawcoastlines()
 >>> m.fillcontinents()
@@ -758,10 +760,10 @@ class Basemap:
 
  lon1,lat1 - longitude,latitude of one endpoint of the great circle.
  lon2,lat2 - longitude,latitude of the other endpoint of the great circle.
- dtheta - increment in radians to compute points for drawing great circle
-  (default 0.02).
- Other keyword arguments control plotting of great circle line - see
- pylab plot documentation.
+ dtheta - points on great circle computed every dtheta radians (default 0.02).
+
+ Other keyword arguments (**kwargs) control plotting of great circle line,
+ see pylab plot documentation for details.
 
  Note:  cannot handle situations in which the great circle intersects
  the edge of the map projection domain, and then re-enters the domain.
@@ -869,7 +871,9 @@ class Basemap:
             return uout,vout
 
     def set_axes_limits(self):
-        """set axis limits for map domain using current axes instance."""
+        """
+ Set axis limits for map domain using current axes instance.
+        """
         # get current axes instance.
         ax = pylab.gca()
         corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
@@ -894,7 +898,7 @@ class Basemap:
     def imshow(self, *args, **kwargs):
         """
  Display an image over the map (see pylab imshow documentation).
- extent and origin keywords set automatically so will be drawn
+ extent and origin keywords set automatically so image will be drawn
  over map region.
         """
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
@@ -930,7 +934,9 @@ class Basemap:
  If scale is specified, it is used to scale the vectors. If scale=None 
  (default) arrows are scaled to longest one is equal to the maximum
  distance between grid points.   
- See pylab quiver documentation for allowed keyword arguments.
+
+ Extra keyword arguments (**kwargs) passed to pylab.quiver (see pylab 
+ quiver documentation for details).
         """
         ny = x.shape[0]; nx = x.shape[1]
         if scale is None:
@@ -1061,7 +1067,7 @@ def shiftgrid(lon0,datain,lonsin,start=True):
 
 def addcyclic(arrin,lonsin):
    """
- add cyclic (wraparound) point in longitude.
+ Add cyclic (wraparound) point in longitude.
    """
    nlats = arrin.shape[0]
    nlons = arrin.shape[1]
