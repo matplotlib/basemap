@@ -27,7 +27,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with imshow.
 im = m.imshow(topodat,cm.jet)
 # use pcolor (looks very similar to imshow, but slower).
-#m.pcolor(x,y,topodat,shading='flat')
+#p = m.pcolor(x,y,topodat,shading='flat')
 # plot contour lines over map (colors is a list so neg contours will
 # not be dashed).
 #levels, colls = m.contour(x,y,topodat,15,linewidths=0.5,colors=['k','k'])
@@ -36,10 +36,14 @@ im = m.imshow(topodat,cm.jet)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
+# plot blue dot on boulder, colorado and label it as such.
+xpt,ypt = m(-104.237,40.125) 
+m.plot([xpt],[ypt],'bo') #
+text(xpt+100000,ypt+100000,'Boulder')
+# draw coastlines and political boundaries.
 m.drawcoastlines()
 m.drawcountries()
 m.drawstates()
-#m.fillcontinents()
 # draw parallels
 delat = 20.
 parallels = arange(0.,90.+delat,delat).tolist()+\
