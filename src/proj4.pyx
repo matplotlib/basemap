@@ -3,7 +3,7 @@ Make changes to this file, not the c-wrappers that Pyrex generates."""
 
 import math
 
-cdef double _rad2dg
+cdef double _rad2dg, _dg2rad
 _rad2dg = 180./math.pi
 _dg2rad = math.pi/180.
 
