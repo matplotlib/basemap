@@ -44,15 +44,12 @@ text(xpt+100000,ypt+100000,'Boulder')
 m.drawcoastlines()
 m.drawcountries()
 m.drawstates()
-# draw parallels
-delat = 20.
-parallels = arange(0.,90.+delat,delat).tolist()+\
-          arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(parallels,labels=[1,1,0,1]) # labels on left, right, bottom.
-# draw meridians
-delon = 30.
-meridians = arange(10.,360.,delon)
-m.drawmeridians(meridians,labels=[1,1,0,1]) # labels on left, right, bottom.
+# draw parallels and meridians.
+# label on left, right and bottom of map.
+parallels = arange(0.,80,20.)
+m.drawparallels(parallels,labels=[1,1,0,1])
+meridians = arange(10.,360.,30.)
+m.drawmeridians(meridians,labels=[1,1,0,1])
 
 title('ETOPO Topography - Lambert Conformal Conic')
 show()
