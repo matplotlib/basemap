@@ -62,7 +62,7 @@ class Basemap:
 >>> title('Cylindrical Equidistant')
 >>> show()
 
- Version: 0.3.2 (20050420)
+ Version: 0.3.3 (20050427)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -111,12 +111,13 @@ class Basemap:
         """     
 
         # read in coastline data.
-        coastlons = []; coastlats = []; coastsegind = []; coastsegarea = []
+        coastlons = []; coastlats = []; coastsegind = []; coastsegarea = []; coastsegtype = []
         i = 0  # the current ind
         for line in open(os.path.join(_datadir,'gshhs_'+resolution+'.txt')):
             linesplit = line.split()
             if line.startswith('P'):
                 coastsegind.append(i)
+                coastsegtype.append(int(linesplit[3]))
                 coastsegarea.append(float(linesplit[5]))
                 continue
             # lon/lat
@@ -239,9 +240,13 @@ class Basemap:
         # ignoring 'inf' values that are off the map, and skipping
         # polygons that have an area > area_thresh..
         segments = [zip(xc[i0:i1],yc[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh]
+        segtypes = [i for a,i in zip(coastsegarea[:-1],coastsegtype[:-1]) if a > area_thresh]
         segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh and max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+        segtypes2 = [i for a,i0,i1,i in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if a > area_thresh and max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
         segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh and max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        segtypes3 = [i for a,i0,i1,i in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if a > area_thresh and max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
         self.coastsegs = segments+segments2+segments3
+        self.coastsegtypes = segtypes+segtypes2+segtypes3
 
         # same as above for country polygons.
         xc,yc = proj(pylab.array(cntrylons,'f'),pylab.array(cntrylats,'f'))
@@ -269,6 +274,7 @@ class Basemap:
 
         # store coast polygons for filling.
 	self.coastpolygons = []
+        self.coastpolygontypes = []
         if projection == 'merc': 
             xsp,ysp = proj(0.,-89.9) # s. pole coordinates.
             xa,ya = proj(0.,-68.0) # edge of antarctica.
@@ -276,7 +282,7 @@ class Basemap:
 	    xm360,ym360 = proj(-360.,0.)
 	    x360,y360 = proj(360.,0.)
 	    x720,y720 = proj(720.,0.)
-        for seg in self.coastsegs:
+        for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
             x = [lon for lon,lat in seg]
             y = [lat for lon,lat in seg]
             # the antarctic polygon is a nuisance, since it
@@ -315,6 +321,7 @@ class Basemap:
                     x.insert(0,x0)
                     y.insert(0,ysp)
             self.coastpolygons.append((x,y))
+            self.coastpolygontypes.append(segtype)
 
     def __call__(self,x,y,inverse=False):
         """
@@ -347,9 +354,12 @@ class Basemap:
         """
         # get current axes instance.
         ax = pylab.gca()
+        # get axis background color.
+        axisbgc = ax.get_axis_bgcolor()
         # define corners of map domain.
         p1 = (self.llcrnrx,self.llcrnry); p2 = (self.urcrnrx,self.urcrnry)
         p3 = (self.llcrnrx,self.urcrnry); p4 = (self.urcrnrx,self.llcrnry)
+        np = 0
         for x,y in self.coastpolygons:
             xa = pylab.array(x,'f')
             ya = pylab.array(y,'f')
@@ -372,8 +382,12 @@ class Basemap:
             hasp3 = sum(test1*test4)
             if not hasp1 or not hasp2 or not hasp3 or not hasp4:
                 xy = zip(xa.tolist(),ya.tolist())
-                poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0)
+                if self.coastpolygontypes[np] != 2:
+                    poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0)
+                else: # lakes filled with background color.
+                    poly = Polygon(xy,facecolor=axisbgc,edgecolor=axisbgc,linewidth=0)
                 ax.add_patch(poly)
+            np = np + 1
         # set axes limits to fit map region.
         self.set_axes_limits()
 
