@@ -1,8 +1,11 @@
-20040420:  version 0.3.2 - code cleanups and docstring typo fixes.
+2005????:  version 0.3.3
+           fillcontinents modified to not fill lakes (they
+           are actually still filled, but with axis background color).
+20050420:  version 0.3.2 - code cleanups and docstring typo fixes.
            env var BASEMAP_DATA_PATH can now be used to point to
            data files in a non-standard install (i.e using --prefix
            or --home).
-20040415:  version 0.3
+20050415:  version 0.3
            Added transform_scalar and transform_vector methods for
            interpolating scalar and vector fields to a map projection
            grid.  Added shiftgrid and addcyclic convenience functions.
