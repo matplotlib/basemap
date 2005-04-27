@@ -62,13 +62,14 @@ for xi,yi in zip(x,y):
 # first, create figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
-fig.add_axes([0.1,0.1,0.8,0.8])
+# background color will be used for 'wet' areas.
+fig.add_axes([0.1,0.1,0.8,0.8],axisbg='aqua')
 # use zorder=10 to make sure markers are drawn last.
 # (otherwise they are covered up when continents are filled)
 m.scatter(xx,yy,marker='o',c='k',s=25,zorder=10)
 # draw coasts and fill continents.
 m.drawcoastlines()
-m.fillcontinents()
+m.fillcontinents(color='coral')
 # draw parallels and meridians.
 delat = 20.
 circles = arange(0.,90.,delat).tolist()+\
