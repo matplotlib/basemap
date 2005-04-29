@@ -29,7 +29,7 @@ rcrit = 500.
 
 # set up lambert azimuthal map centered on N. Pole.
 m = Basemap(-150.,0.,30.,0.,
-            resolution='c',area_thresh=10000.,projection='stere',\
+            resolution='l',area_thresh=10000.,projection='stere',\
             lat_0=90.,lon_0=-105.,lat_ts=90.)
 
 print len(lons), ' obs before thinning'
@@ -68,7 +68,7 @@ fig.add_axes([0.1,0.1,0.8,0.8],axisbg='aqua')
 # (otherwise they are covered up when continents are filled)
 m.scatter(xx,yy,marker='o',c='k',s=25,zorder=10)
 # draw coasts and fill continents.
-m.drawcoastlines()
+m.drawcoastlines(linewidth=0.5)
 m.fillcontinents(color='coral')
 # draw parallels and meridians.
 delat = 20.
