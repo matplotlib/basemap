@@ -25,7 +25,7 @@ class Basemap:
  
  Useful instance variables:
  
- projection - map projection ('cyl','merc','lcc','aea','laea' or 'stere')
+ projection - map projection ('cyl','merc','lcc','aea','laea', 'tmerc' or 'stere')
  aspect - map aspect ratio (size of y dimension / size of x dimension).
  llcrnrlon - longitude of lower left hand corner of the desired map domain.
  llcrnrlon - latitude of lower left hand corner of the desired map domain.      
@@ -90,7 +90,7 @@ class Basemap:
   will not be plotted.  Default 10,000.
  projection - map projection.  'cyl' - cylindrical equidistant, 'merc' -
   mercator, 'lcc' - lambert conformal conic, 'stere' - stereographic,
-  'aea' - albers equal area conic, and 
+  'aea' - albers equal area conic, 'tmerc' - transverse mercator, and 
   'laea' - lambert azimuthal equal area currently available.  Default 'cyl'.
  rsphere - radius of the sphere used to define map projection (default
   6371009 meters, close to the arithmetic mean radius of the earth).
@@ -104,10 +104,10 @@ class Basemap:
   equal area projections.
  lat_2 - second standard parallel for lambert conformal and albers
   equal area projections.
- lat_0 - central latitude (y-axis origin) - used by stereographic and
-  lambert azimuthal projections).
+ lat_0 - central latitude (y-axis origin) - used by stereographic 
+  transverse mercator, and lambert azimuthal projections).
  lon_0 - central meridian (x-axis origin - used by lambert conformal,
-  lambert azimuthal and stereographic projections).
+  lambert azimuthal, transverse mercator and stereographic projections).
         """     
 
         # read in coastline data.
@@ -198,7 +198,7 @@ class Basemap:
             projparams['lon_0'] = lon_0
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
         elif projection == 'laea':
-            if None or lat_0 is None or lon_0 is None:
+            if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Lambert Azimuthal basemap'
             projparams['lat_0'] = lat_0
             projparams['lon_0'] = lon_0
@@ -207,6 +207,12 @@ class Basemap:
             if lat_ts is None:
                 raise ValueError, 'must specify lat_ts for Mercator basemap'
             projparams['lat_ts'] = lat_ts
+            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+        elif projection == 'tmerc':
+            if lat_0 is None or lon_0 is None:
+                raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator basemap'
+            projparams['lat_0'] = lat_0
+            projparams['lon_0'] = lon_0
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
         elif projection == 'cyl':
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
@@ -322,6 +328,42 @@ class Basemap:
                     y.insert(0,ysp)
             self.coastpolygons.append((x,y))
             self.coastpolygontypes.append(segtype)
+
+        # remove those segments/polygons that don't intersect map region.
+        coastsegs = []
+        coastpolygons = []
+        coastpolygontypes = []
+        for seg,poly,segtype in zip(self.coastsegs,self.coastpolygons,self.coastsegtypes):
+            if self._insidemap(seg):
+                coastsegs.append(seg)
+                coastpolygontypes.append(segtype)
+                coastpolygons.append(poly)
+        self.coastsegs = coastsegs
+        self.coastpolygons = coastpolygons
+        self.coastpolygontypes = coastpolygontypes
+        states = []
+        for seg in self.statesegs:
+            if self._insidemap(seg):
+                states.append(seg)
+        self.statesegs = states
+        countries = []
+        for seg in self.cntrysegs:
+            if self._insidemap(seg):
+                countries.append(seg)
+        self.cntrysegs = countries
+
+    def _insidemap(self,seg):
+        """returns True if any point in segment is inside map region"""
+        xx = [x for x,y in seg]
+        yy = [y for x,y in seg]
+        isin = False
+        for x,y in zip(xx,yy):
+            if x < self.llcrnrx or x > self.urcrnrx or y < self.llcrnry or y > self.urcrnry:
+                pass
+            else:
+                isin = True
+                break
+        return isin
 
     def __call__(self,x,y,inverse=False):
         """
@@ -480,9 +522,9 @@ class Basemap:
 	xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection in ['merc','cyl']:
-            lons = pylab.arange(self.llcrnrlon,self.urcrnrlon+1,1).astype('f')
+            lons = pylab.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype('f')
         else:
-            lons = pylab.arange(0,362,1).astype('f')
+            lons = pylab.arange(0,360.1,0.1).astype('f')
         # make sure latmax degree parallel is drawn if projection not merc or cyl
         try:
             circlesl = circles.tolist()
@@ -636,9 +678,9 @@ class Basemap:
 	xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection not in ['merc','cyl']:
-            lats = pylab.arange(-latmax,latmax+1).astype('f')
+            lats = pylab.arange(-latmax,latmax+0.1,0.1).astype('f')
         else:
-            lats = pylab.arange(-90,91).astype('f')
+            lats = pylab.arange(-90,90.1,0.1).astype('f')
         xdelta = 0.1*(self.xmax-self.xmin)
         ydelta = 0.1*(self.ymax-self.ymin)
         for merid in meridians:
