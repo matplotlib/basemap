@@ -72,7 +72,38 @@ title('Mercator',y=1.1)
 print 'plotting Mercator example, close plot window to proceed ...'
 show()
 
-# setup lamber conformal map projection (North America).
+# setup transverse mercator basemap.
+m = Basemap(170.,-45,10.,45.,\
+            resolution='c',area_thresh=10000.,projection='tmerc',\
+            lat_0=0.,lon_0=-90.)
+xsize = rcParams['figure.figsize'][0]
+fig=figure(figsize=(xsize/m.aspect,xsize))
+fig.add_axes([0.125,0.2,0.6,0.6])
+# transform to nx x ny regularly spaced native projection grid
+ny = len(lats)
+nx = ny/m.aspect
+topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
+# plot image over map.
+im = m.imshow(topodat,cm.jet)
+# get current axis instance.
+ax = gca()
+cax = axes([0.8, 0.2, 0.075, 0.6]) # setup colorbar axes.
+colorbar(tickfmt='%d', cax=cax) # draw colorbar
+axes(ax)  # make the original axes current again
+m.drawcoastlines()
+# draw parallels
+delat = 20.
+circles = arange(-80.,100.,delat)
+m.drawparallels(circles,labels=[1,0,0,0],fontsize=10)
+# draw meridians
+delon = 20.
+meridians = arange(-180,180,delon)
+m.drawmeridians(meridians,labels=[1,0,0,0],fontsize=10)
+title('Transverse Mercator Projection')
+print 'plotting Transverse Mercator example, close plot window to proceed ...'
+show()
+
+# setup lambert conformal map projection (North America).
 m = Basemap(-145.5,1.,-2.566,46.352,\
             resolution='c',area_thresh=10000.,projection='lcc',\
             lat_1=50.,lon_0=-107.)
