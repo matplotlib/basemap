@@ -15,9 +15,11 @@ if not _datadir:
 class Basemap:
 
     """
- Set up a basemap with a given map projection (cylindrical equidistant,
- mercator, lambert conformal conic, lambert azimuthal equal area,
- albers equal area conic and stereographic are currently available).
+ Set up a basemap with one of 10 supported map projections
+ (cylindrical equidistant, mercator,
+ transverse mercator, miller cylindrical, lambert conformal conic,
+ azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
+ albers equal area conic or stereographic).
  Doesn't actually draw anything, but sets up the map projection class and
  creates the coastline and political boundary polygons in native map 
  projection coordinates.  Requires matplotlib and numarray.
@@ -25,7 +27,8 @@ class Basemap:
  
  Useful instance variables:
  
- projection - map projection ('cyl','merc','lcc','aea','laea', 'tmerc' or 'stere')
+ projection - map projection ('cyl','merc','mill','lcc','eqdc','aea','aeqd',
+  'laea', 'tmerc' or 'stere')
  aspect - map aspect ratio (size of y dimension / size of x dimension).
  llcrnrlon - longitude of lower left hand corner of the desired map domain.
  llcrnrlon - latitude of lower left hand corner of the desired map domain.      
@@ -90,8 +93,10 @@ class Basemap:
   will not be plotted.  Default 10,000.
  projection - map projection.  'cyl' - cylindrical equidistant, 'merc' -
   mercator, 'lcc' - lambert conformal conic, 'stere' - stereographic,
-  'aea' - albers equal area conic, 'tmerc' - transverse mercator, and 
-  'laea' - lambert azimuthal equal area currently available.  Default 'cyl'.
+  'aea' - albers equal area conic, 'tmerc' - transverse mercator,  
+  'aeqd' - azimuthal equidistant, 'miller' - miller cylindrical,
+  'eqdc' - equidistant conic, and 'laea' - lambert azimuthal equal area
+  are currently available.  Default 'cyl'.
  rsphere - radius of the sphere used to define map projection (default
   6371009 meters, close to the arithmetic mean radius of the earth).
   
@@ -100,14 +105,15 @@ class Basemap:
  
  lat_ts - latitude of natural origin (used for mercator and stereographic
   projections).
- lat_1 - first standard parallel for lambert conformal and albers
-  equal area projections.
- lat_2 - second standard parallel for lambert conformal and albers
-  equal area projections.
+ lat_1 - first standard parallel for lambert conformal, albers
+  equal area projection and equidistant conic projections.
+ lat_2 - second standard parallel for lambert conformal, albers
+  equal area projection and equidistant conic projections.
  lat_0 - central latitude (y-axis origin) - used by stereographic 
-  transverse mercator, and lambert azimuthal projections).
+  transverse mercator, miller cylindrical and lambert azimuthal projections).
  lon_0 - central meridian (x-axis origin - used by lambert conformal,
-  lambert azimuthal, transverse mercator and stereographic projections).
+  lambert azimuthal, equidistant conic, transverse mercator, oblique mercator,
+  miller cylindrical and stereographic projections).
         """     
 
         # read in coastline data.
@@ -183,6 +189,13 @@ class Basemap:
                  projparams['lat_2'] = lat_2
             projparams['lon_0'] = lon_0
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+        elif projection == 'eqdc':
+            if lat_1 is None or lat_2 is None or lon_0 is None:
+                raise ValueError, 'must specify lat_1, lat_2 and lon_0 for Equidistant Conic basemap'
+            projparams['lat_1'] = lat_1
+            projparams['lat_2'] = lat_2
+            projparams['lon_0'] = lon_0
+            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
         elif projection == 'aea':
             if lat_1 is None or lat_2 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_1, lat_2 and lon_0 for Albers Equal Area basemap'
@@ -211,6 +224,18 @@ class Basemap:
         elif projection == 'tmerc':
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator basemap'
+            projparams['lat_0'] = lat_0
+            projparams['lon_0'] = lon_0
+            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+        elif projection == 'aeqd':
+            if lat_0 is None or lon_0 is None:
+                raise ValueError, 'must specify lat_0 and lon_0 for Azimuthal Equidistant basemap'
+            projparams['lat_0'] = lat_0
+            projparams['lon_0'] = lon_0
+            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+        elif projection == 'mill':
+            if lat_0 is None or lon_0 is None:
+                raise ValueError, 'must specify lat_0 and lon_0 for Miller Cylindtrical basemap'
             projparams['lat_0'] = lat_0
             projparams['lon_0'] = lon_0
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
@@ -358,9 +383,7 @@ class Basemap:
         yy = [y for x,y in seg]
         isin = False
         for x,y in zip(xx,yy):
-            if x < self.llcrnrx or x > self.urcrnrx or y < self.llcrnry or y > self.urcrnry:
-                pass
-            else:
+            if x >= self.xmin and x <= self.xmax and y >= self.ymin and y <= self.ymax:
                 isin = True
                 break
         return isin
