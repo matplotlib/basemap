@@ -1,3 +1,7 @@
+20050505:  version 0.4
+           added support for miller cylindrical, equidistant conic,
+           and azimuthal equidistant projections.  Bugs fixed in 
+           coastline drawing and continent filling methods.
 20050427:  version 0.3.3
            fillcontinents modified to not fill lakes (they
            are actually still filled, but with axis background color).
