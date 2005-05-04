@@ -65,7 +65,7 @@ class Basemap:
 >>> title('Cylindrical Equidistant')
 >>> show()
 
- Version: 0.3.3 (20050427)
+ Version: 0.4 (20050505)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -234,10 +234,10 @@ class Basemap:
             projparams['lon_0'] = lon_0
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
         elif projection == 'mill':
-            if lat_0 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_0 and lon_0 for Miller Cylindtrical basemap'
-            projparams['lat_0'] = lat_0
-            projparams['lon_0'] = lon_0
+            if lat_0 is not None:
+                projparams['lat_0'] = lat_0
+            if lon_0 is not None:
+                projparams['lon_0'] = lon_0
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
         elif projection == 'cyl':
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
@@ -264,7 +264,7 @@ class Basemap:
         xc,yc = proj(pylab.array(coastlons,'f'),pylab.array(coastlats,'f'))
         xc2,yc2 = proj(pylab.array(coastlons2,'f'),pylab.array(coastlats,'f'))
         xc3,yc3 = proj(pylab.array(coastlons3,'f'),pylab.array(coastlats,'f'))
-        if projection == 'merc': 
+        if projection == 'merc' or projection == 'miller': 
             yc2=yc
             yc3=yc
         # set up segments in form needed for LineCollection,
@@ -283,7 +283,7 @@ class Basemap:
         xc,yc = proj(pylab.array(cntrylons,'f'),pylab.array(cntrylats,'f'))
         xc2,yc2 = proj(pylab.array(cntrylons2,'f'),pylab.array(cntrylats,'f'))
         xc3,yc3 = proj(pylab.array(cntrylons3,'f'),pylab.array(cntrylats,'f'))
-        if projection == 'merc': 
+        if projection == 'merc' or projection == 'miller': 
             yc2=yc
             yc3=yc
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:])]
@@ -295,7 +295,7 @@ class Basemap:
         xc,yc = proj(pylab.array(statelons,'f'),pylab.array(statelats,'f'))
         xc2,yc2 = proj(pylab.array(statelons2,'f'),pylab.array(statelats,'f'))
         xc3,yc3 = proj(pylab.array(statelons3,'f'),pylab.array(statelats,'f'))
-        if projection == 'merc': 
+        if projection == 'merc' or projection == 'miller': 
             yc2=yc
             yc3=yc
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:])]
@@ -306,7 +306,7 @@ class Basemap:
         # store coast polygons for filling.
 	self.coastpolygons = []
         self.coastpolygontypes = []
-        if projection == 'merc': 
+        if projection == 'merc' or projection ==  'miller': 
             xsp,ysp = proj(0.,-89.9) # s. pole coordinates.
             xa,ya = proj(0.,-68.0) # edge of antarctica.
 	    x0,y0 = proj(0.,0.)
@@ -335,7 +335,7 @@ class Basemap:
                     y.append(-90)
                     x.insert(0,0.)
                     y.insert(0,-90)
-            elif projection == 'merc':
+            elif projection == 'merc' or projection == 'miller':
                 if math.fabs(x[-1]-x0) < 1. and y[-1] < ya: # close antarctica
                     x.append(x0)
                     y.append(ysp)
@@ -356,33 +356,47 @@ class Basemap:
 
         # remove those segments/polygons that don't intersect map region.
         coastsegs = []
-        coastpolygons = []
-        coastpolygontypes = []
-        for seg,poly,segtype in zip(self.coastsegs,self.coastpolygons,self.coastsegtypes):
-            if self._insidemap(seg):
+        coastsegtypes = []
+        for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
+            if self._insidemap_seg(seg):
                 coastsegs.append(seg)
-                coastpolygontypes.append(segtype)
-                coastpolygons.append(poly)
+                coastsegtypes.append(segtype)
         self.coastsegs = coastsegs
-        self.coastpolygons = coastpolygons
-        self.coastpolygontypes = coastpolygontypes
+        self.coastsegtypes = coastsegtypes
+        polygons = []
+        polygontypes = []
+        for poly,polytype in zip(self.coastpolygons,self.coastpolygontypes):
+            if self._insidemap_poly(poly):
+                polygons.append(poly)
+                polygontypes.append(polytype)
+        self.coastpolygons = polygons
+        self.coastpolygontypes = polygontypes
         states = []
         for seg in self.statesegs:
-            if self._insidemap(seg):
+            if self._insidemap_seg(seg):
                 states.append(seg)
         self.statesegs = states
         countries = []
         for seg in self.cntrysegs:
-            if self._insidemap(seg):
+            if self._insidemap_seg(seg):
                 countries.append(seg)
         self.cntrysegs = countries
 
-    def _insidemap(self,seg):
+    def _insidemap_seg(self,seg):
         """returns True if any point in segment is inside map region"""
         xx = [x for x,y in seg]
         yy = [y for x,y in seg]
         isin = False
         for x,y in zip(xx,yy):
+            if x >= self.xmin and x <= self.xmax and y >= self.ymin and y <= self.ymax:
+                isin = True
+                break
+        return isin
+
+    def _insidemap_poly(self,poly):
+        """returns True if any point in polygon is inside map region"""
+        isin = False
+        for x,y in zip(poly[0],poly[1]):
             if x >= self.xmin and x <= self.xmax and y >= self.ymin and y <= self.ymax:
                 isin = True
                 break
@@ -421,26 +435,20 @@ class Basemap:
         ax = pylab.gca()
         # get axis background color.
         axisbgc = ax.get_axis_bgcolor()
-        # define corners of map domain.
-        p1 = (self.llcrnrx,self.llcrnry); p2 = (self.urcrnrx,self.urcrnry)
-        p3 = (self.llcrnrx,self.urcrnry); p4 = (self.urcrnrx,self.llcrnry)
         np = 0
         for x,y in self.coastpolygons:
             xa = pylab.array(x,'f')
             ya = pylab.array(y,'f')
-        # clip to map domain.
-            xa = pylab.clip(xa, self.xmin, self.xmax)
-            ya = pylab.clip(ya, self.ymin, self.ymax)
         # check to see if all four corners of domain in polygon (if so,
         # don't draw since it will just fill in the whole map).
             delx = 10; dely = 10
             if self.projection in ['cyl']:
                 delx = 0.1
                 dely = 0.1
-            test1 = pylab.fabs(xa-self.xmax) < delx
-            test2 = pylab.fabs(xa-self.xmin) < delx
-            test3 = pylab.fabs(ya-self.ymax) < dely
-            test4 = pylab.fabs(ya-self.ymin) < dely
+            test1 = pylab.fabs(xa-self.urcrnrx) < delx
+            test2 = pylab.fabs(xa-self.llcrnrx) < delx
+            test3 = pylab.fabs(ya-self.urcrnry) < dely
+            test4 = pylab.fabs(ya-self.llcrnry) < dely
             hasp1 = sum(test1*test3)
             hasp2 = sum(test2*test3)
             hasp4 = sum(test2*test4)
@@ -544,16 +552,16 @@ class Basemap:
 	yoffset = (self.urcrnry-self.llcrnry)/100./self.aspect
 	xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
-        if self.projection in ['merc','cyl']:
+        if self.projection in ['merc','cyl','mill']:
             lons = pylab.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype('f')
         else:
             lons = pylab.arange(0,360.1,0.1).astype('f')
-        # make sure latmax degree parallel is drawn if projection not merc or cyl
+        # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = circles.tolist()
         except:
             circlesl = circles
-        if self.projection not in ['merc','cyl']:
+        if self.projection not in ['merc','cyl','mill']:
             if max(circlesl) > 0 and latmax not in circlesl: 
                 circlesl.append(latmax)
             if min(circlesl) < 0 and -latmax not in circlesl: 
@@ -572,12 +580,12 @@ class Basemap:
             y = pylab.compress(testy, y)
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
-                # (not necessary for mercator or cylindrical).
+                # (not necessary for mercator or cylindrical or miller).
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
                 dist = pylab.sqrt(xd+yd)
                 split = dist > 500000.
-                if pylab.asum(split) and self.projection not in ['merc','cyl']:
+                if pylab.asum(split) and self.projection not in ['merc','cyl','mill']:
                    ind = (pylab.compress(split,pylab.squeeze(split*pylab.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
@@ -607,8 +615,8 @@ class Basemap:
             dx = 1000; dy = 1000
         for dolab,side in zip(labels,['l','r','t','b']):
             if not dolab: continue
-            # for cyl or merc, don't draw parallels on top or bottom.
-            if self.projection in ['cyl','merc'] and side in ['t','b']: continue
+            # for cyl, merc or miller, don't draw parallels on top or bottom.
+            if self.projection in ['cyl','merc','mill'] and side in ['t','b']: continue
             if side in ['l','r']:
 	        nmax = int((self.ymax-self.ymin)/dy+1)
                 if self.urcrnry < self.llcrnry:
@@ -695,12 +703,12 @@ class Basemap:
         # get current axes instance.
         ax = pylab.gca()
         # don't draw meridians past latmax, always draw parallel at latmax.
-        latmax = 80. # not used for cyl, merc projections.
+        latmax = 80. # not used for cyl, merc or miller projections.
         # offset for labels.
 	yoffset = (self.urcrnry-self.llcrnry)/100./self.aspect
 	xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
-        if self.projection not in ['merc','cyl']:
+        if self.projection not in ['merc','cyl','mill']:
             lats = pylab.arange(-latmax,latmax+0.1,0.1).astype('f')
         else:
             lats = pylab.arange(-90,90.1,0.1).astype('f')
@@ -718,12 +726,12 @@ class Basemap:
             y = pylab.compress(testy, y)
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
-                # (not necessary for mercator or cylindrical).
+                # (not necessary for mercator or cylindrical or miller).
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
                 dist = pylab.sqrt(xd+yd)
                 split = dist > 500000.
-                if pylab.asum(split) and self.projection not in ['merc','cyl']:
+                if pylab.asum(split) and self.projection not in ['merc','cyl','mill']:
                    ind = (pylab.compress(split,pylab.squeeze(split*pylab.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
@@ -753,8 +761,8 @@ class Basemap:
             dx = 1000; dy = 1000
         for dolab,side in zip(labels,['l','r','t','b']):
             if not dolab: continue
-            # for cyl or merc, don't draw meridians on left or right.
-            if self.projection in ['cyl','merc'] and side in ['l','r']: continue
+            # for cyl, merc or miller, don't draw meridians on left or right.
+            if self.projection in ['cyl','merc','mill'] and side in ['l','r']: continue
             if side in ['l','r']:
 	        nmax = int((self.ymax-self.ymin)/dy+1)
                 if self.urcrnry < self.llcrnry:
@@ -802,8 +810,8 @@ class Basemap:
                 # meridians can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     lat = lats[n]/10.
-                    # no meridians > latmax for projections other than merc,cyl.
-                    if self.projection not in ['merc','cyl'] and lat > latmax: continue
+                    # no meridians > latmax for projections other than merc,cyl,miller.
+                    if self.projection not in ['merc','cyl','mill'] and lat > latmax: continue
                     # don't bother if close to the first label.
                     if i and abs(nr-nl) < 100: continue
                     if n >= 0:

@@ -12,7 +12,7 @@ class Proj:
  __call__ method compute transformations.
  See docstrings for __init__ and __call__ for details.
 
- Version: 0.3.2 (20050420)
+ Version: 0.4 (20050505)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -108,8 +108,11 @@ class Proj:
             return x,y # for cyl, this does nothing.
         else:
             outx,outy = self._proj4.fwd(x,y)
-            if self.projection == 'merc': # for merc, x = rsphere*cos(lat_ts)*deltalon
-                coslat = math.cos(math.radians(self.projparams['lat_ts']))
+            if self.projection in ['merc','mill']: # for merc, x = rsphere*cos(lat_ts)*deltalon
+                if self.projection == 'merc':
+                    coslat = math.cos(math.radians(self.projparams['lat_ts']))
+                else:
+                    coslat = 1.
                 try: # x a sequence
                     outx = [self.rsphere*coslat*math.radians(xi-self.llcrnrlon) for xi in x]
                 except: # x a scalar
@@ -121,8 +124,12 @@ class Proj:
             return x,y
         else:
             outx,outy = self._proj4.inv(x,y)
-            if self.projection == 'merc': # for merc, cos(lat_ts)*deltalon = x/rsphere
-                coslat = math.cos(math.radians(self.projparams['lat_ts']))
+            if self.projection in ['merc','mill']: # for merc, cos(lat_ts)*deltalon = x/rsphere
+
+                if self.projection == 'merc':
+                    coslat = math.cos(math.radians(self.projparams['lat_ts']))
+                else:
+                    coslat = 1.
                 try: # x a sequence
                     outx = [(xi/(self.rsphere*coslat))*(180./math.pi) + self.llcrnrlon for xi in x]
                 except: # x a scalar
