@@ -103,7 +103,7 @@ class Basemap:
   the the radii of the major and minor axes of an ellipsoid. Note: sometimes
   an ellipsoid is specified by the major axis and an 'inverse flattening
   parameter' (if).  The minor axis (b) can be computed from the major axis (a) 
-  and if using the formula if = a/(a-b).
+  and the inverse flattening parameter using the formula if = a/(a-b).
 
  The following parameters are map projection parameters which all default to 
  None.  Not all parameters are used by all projections, some are ignored.
