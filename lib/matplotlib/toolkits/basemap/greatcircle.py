@@ -5,6 +5,8 @@ class GreatCircle:
     """
     from Ed Williams' 'Aviation Formulary'
     (http://williams.best.vwh.net/avform.htm)
+
+    Assumes earth is perfect sphere (not an ellipsoid).
     """
     def __init__(self,lon1,lat1,lon2,lat2):
         """
