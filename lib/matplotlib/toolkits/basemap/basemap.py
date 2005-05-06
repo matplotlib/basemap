@@ -65,12 +65,12 @@ class Basemap:
 >>> title('Cylindrical Equidistant')
 >>> show()
 
- Version: 0.4 (20050505)
+ Version: 0.4.1 (20050509)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
     def __init__(self,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,\
-        resolution='c',area_thresh=10000.,projection='cyl',rsphere=6371009.,\
+        resolution='c',area_thresh=10000.,projection='cyl',rsphere=6370997,\
         lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None):
         """
  create a Basemap instance.
@@ -94,12 +94,17 @@ class Basemap:
  projection - map projection.  'cyl' - cylindrical equidistant, 'merc' -
   mercator, 'lcc' - lambert conformal conic, 'stere' - stereographic,
   'aea' - albers equal area conic, 'tmerc' - transverse mercator,  
-  'aeqd' - azimuthal equidistant, 'miller' - miller cylindrical,
+  'aeqd' - azimuthal equidistant, 'mill' - miller cylindrical,
   'eqdc' - equidistant conic, and 'laea' - lambert azimuthal equal area
   are currently available.  Default 'cyl'.
  rsphere - radius of the sphere used to define map projection (default
-  6371009 meters, close to the arithmetic mean radius of the earth).
-  
+  6370997 meters, close to the arithmetic mean radius of the earth). If
+  given as a sequence, the first two elements are interpreted as
+  the the radii of the major and minor axes of an ellipsoid. Note: sometimes
+  an ellipsoid is specified by the major axis and an 'inverse flattening
+  parameter' (if).  The minor axis (b) can be computed from the major axis (a) 
+  and if using the formula if = a/(a-b).
+
  The following parameters are map projection parameters which all default to 
  None.  Not all parameters are used by all projections, some are ignored.
  
@@ -179,8 +184,15 @@ class Basemap:
         self.urcrnrlat = urcrnrlat
         projparams = {}
         projparams['proj'] = projection
-        projparams['R'] = rsphere
-        self.rsphere = rsphere
+        # rsphere is arithmetic mean of polar and equatorial radii.
+        try:
+            projparams['a'] = rsphere[0]
+            projparams['b'] = rsphere[1]
+            self.rsphere = 0.5*(rsphere[0]+rsphere[1])
+        except:
+            projparams['R'] = rsphere
+            self.rsphere = rsphere
+
         if projection == 'lcc':
             if lat_1 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_1 and lon_0 for Lambert Conformal basemap'
@@ -264,9 +276,10 @@ class Basemap:
         xc,yc = proj(pylab.array(coastlons,'f'),pylab.array(coastlats,'f'))
         xc2,yc2 = proj(pylab.array(coastlons2,'f'),pylab.array(coastlats,'f'))
         xc3,yc3 = proj(pylab.array(coastlons3,'f'),pylab.array(coastlats,'f'))
-        if projection == 'merc' or projection == 'miller': 
-            yc2=yc
-            yc3=yc
+        if projection == 'merc' or projection == 'mill': 
+            yc2 = yc
+            yc3 = yc
+
         # set up segments in form needed for LineCollection,
         # ignoring 'inf' values that are off the map, and skipping
         # polygons that have an area > area_thresh..
@@ -283,7 +296,7 @@ class Basemap:
         xc,yc = proj(pylab.array(cntrylons,'f'),pylab.array(cntrylats,'f'))
         xc2,yc2 = proj(pylab.array(cntrylons2,'f'),pylab.array(cntrylats,'f'))
         xc3,yc3 = proj(pylab.array(cntrylons3,'f'),pylab.array(cntrylats,'f'))
-        if projection == 'merc' or projection == 'miller': 
+        if projection == 'merc' or projection == 'mill': 
             yc2=yc
             yc3=yc
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:])]
@@ -295,7 +308,7 @@ class Basemap:
         xc,yc = proj(pylab.array(statelons,'f'),pylab.array(statelats,'f'))
         xc2,yc2 = proj(pylab.array(statelons2,'f'),pylab.array(statelats,'f'))
         xc3,yc3 = proj(pylab.array(statelons3,'f'),pylab.array(statelats,'f'))
-        if projection == 'merc' or projection == 'miller': 
+        if projection == 'merc' or projection == 'mill': 
             yc2=yc
             yc3=yc
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:])]
@@ -306,7 +319,7 @@ class Basemap:
         # store coast polygons for filling.
 	self.coastpolygons = []
         self.coastpolygontypes = []
-        if projection == 'merc' or projection ==  'miller': 
+        if projection == 'merc' or projection ==  'mill': 
             xsp,ysp = proj(0.,-89.9) # s. pole coordinates.
             xa,ya = proj(0.,-68.0) # edge of antarctica.
 	    x0,y0 = proj(0.,0.)
@@ -335,7 +348,7 @@ class Basemap:
                     y.append(-90)
                     x.insert(0,0.)
                     y.insert(0,-90)
-            elif projection == 'merc' or projection == 'miller':
+            elif projection == 'merc' or projection == 'mill':
                 if math.fabs(x[-1]-x0) < 1. and y[-1] < ya: # close antarctica
                     x.append(x0)
                     y.append(ysp)

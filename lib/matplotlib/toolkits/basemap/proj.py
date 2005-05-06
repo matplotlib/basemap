@@ -12,7 +12,7 @@ class Proj:
  __call__ method compute transformations.
  See docstrings for __init__ and __call__ for details.
 
- Version: 0.4 (20050505)
+ Version: 0.4.1 (20050509)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -44,8 +44,8 @@ class Proj:
         # (no other checking done in proj parameters)
         if 'proj' not in projparams.keys():
             raise KeyError, "need to specify proj parameter"
-        if 'R' not in projparams.keys():
-            raise KeyError, "need to specify R parameter (sphere radius)"
+        if 'R' not in projparams.keys() and 'a' and 'b' not in projparams.keys():
+            raise KeyError, "need to specify R (perfect sphere radius), or a and b (major and minor sphere radii)"
         # build proj string.
         self.proj4cmd = []
         for key,value in map(None,projparams.keys(),projparams.values()):
@@ -55,7 +55,10 @@ class Proj:
             else:
                 self.proj4cmd.append('+'+key+"="+str(value)+' ')
         self.projection = projparams['proj']
-        self.rsphere = projparams['R']
+        try:
+            self.rsphere = projparams['R']
+        except:
+            self.rsphere = 0.5*(projparams['a']+projparams['b'])
         self.llcrnrlon = llcrnrlon
         self.llcrnrlat = llcrnrlat
         if self.projection != 'cyl':
