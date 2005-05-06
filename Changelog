@@ -1,3 +1,9 @@
+20050509:  version 0.4.1
+           Miller projection was erroneously referred to by the name
+           'miller' (instead of 'mill') - fixed.  Added the ability
+           to specify the major and minor sphere radii by specifying
+           the 'rsphere' keyword in __init__ to be a tuple instead of
+           a scalar.
 20050505:  version 0.4
            added support for miller cylindrical, equidistant conic,
            and azimuthal equidistant projections.  Bugs fixed in 
