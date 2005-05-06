@@ -14,7 +14,8 @@ topoin = topodict['data']; lons = topodict['lons']; lats = topodict['lats']
 topoin,lons = shiftgrid(180.,topoin,lons,start=False)
 
 # setup of basemap ('lcc' = lambert conformal conic).
-m = Basemap(-145.5,1.,-2.566,46.352,\
+# use major and minor sphere radii from WGS84 ellipsoid.
+m = Basemap(-145.5,1.,-2.566,46.352,rsphere=(6378137.00,6356752.314),\
             resolution='c',area_thresh=10000.,projection='lcc',\
             lat_1=50.,lon_0=-107.)
 # transform to nx x ny regularly spaced native projection grid
