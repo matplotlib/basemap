@@ -184,7 +184,8 @@ class Basemap:
         self.urcrnrlat = urcrnrlat
         projparams = {}
         projparams['proj'] = projection
-        # rsphere is arithmetic mean of polar and equatorial radii.
+        # rsphere instance variable is the
+        # arithmetic mean of polar and equatorial radii.
         try:
             projparams['a'] = rsphere[0]
             projparams['b'] = rsphere[1]
@@ -909,7 +910,7 @@ class Basemap:
             datout = interp(datin,lons,lats,lonsout,latsout,**kwargs)
             return datout
 
-    def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,preserve_magnitude=True,**kwargs):
+    def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,**kwargs):
         """
  transform a vector field (uin,vin) from a lat/lon grid with longitudes
  lons and latitudes lats to a (ny,nx) native map projection grid.
@@ -920,15 +921,11 @@ class Basemap:
 
  The input vector field is defined in spherical coordinates (it
  has eastward and northward components) while the output
- vector field is defined in map projection coordinates (relative
- to x and y).
+ vector field is rotated to map projection coordinates (relative
+ to x and y). The magnitude of the vector is preserved.
 
  if returnxy=True, the x and y values of the native map projection grid
  are also returned (default False).
-
- if preserve_magnitude=True (default), the vector magnitude is preserved
- (so that length of vectors represents magnitude of vector relative to
- spherical coordinate system, not map projection coordinates). 
 
  See interp documentation for meaning of extra keyword arguments (**kwargs).
 
@@ -939,35 +936,15 @@ class Basemap:
         # interpolate to map projection coordinates.
         uin = interp(uin,lons,lats,lonsout,latsout,**kwargs)
         vin = interp(vin,lons,lats,lonsout,latsout,**kwargs)
-        if preserve_magnitude:
-            # compute original magnitude.
-            mag = pylab.sqrt(uin**2+vin**2)
-        rad2dg = 180./math.pi
-        tiny = 1.e-5
-        delta = 0.1
-        coslats = pylab.cos(latsout/rad2dg)
-        # use dx/dlongitude, dx/dlatitude, dy/dlongitude and dy/dlatitude
-        # to transform vector to map projection coordinates.
-        # dlongitude is delta degrees at equator, dlatitude is delta degrees.
-        xn,yn = self(lonsout,pylab.where(latsout+delta<90.,latsout+delta,latsout))
-        # at poles, derivs w/respect to longitude will be zero.
-        lonse = pylab.where(coslats>tiny,lonsout+(delta/coslats),lonsout)
-        xe,ye = self(lonse,latsout)
-        uout = uin*(xe-x)*(coslats/delta) + vin*(xn-x)/delta
-        vout = uin*(ye-y)*(coslats/delta) + vin*(yn-y)/delta
-        # make sure uout, vout not too small (quiver will raise
-        # an exception when trying to rescale vectors).
-        uout = pylab.where(pylab.fabs(uout)<tiny,tiny,uout)
-        vout = pylab.where(pylab.fabs(vout)<tiny,tiny,vout)
-        # fix units. 
-        if self.projection != 'cyl':
-            uout = uout*rad2dg/self.rsphere
-            vout = vout*rad2dg/self.rsphere
-        # rescale magnitude.
-        if preserve_magnitude:
-            magout = pylab.sqrt(uout**2+vout**2)
-            uout = uout*mag/magout
-            vout = vout*mag/magout
+        # rotate from geographic to map coordinates.
+        delta = 0.1 # incement in latitude used to estimate derivatives.
+        xn,yn = self(lonsout,pylab.where(latsout+delta<90.,latsout+delta,latsout-delta))
+        dxdlat = pylab.where(latsout+delta<90.,(xn-x)/(latsout+delta),(x-xn)/(latsout+delta))
+        dydlat = pylab.where(latsout+delta<90.,(yn-y)/(latsout+delta),(y-yn)/(latsout+delta))
+        # northangle is the angle between true north and the y axis.
+        northangle = pylab.arctan2(dxdlat,dydlat)
+        uout = uin*pylab.cos(northangle) + vin*pylab.sin(northangle)
+        vout = vin*pylab.cos(northangle) - uin*pylab.sin(northangle)
         if returnxy:
             return uout,vout,x,y
         else:
