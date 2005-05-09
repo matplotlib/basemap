@@ -93,6 +93,67 @@ title('Mercator',y=1.1)
 print 'plotting Mercator example, close plot window to proceed ...'
 show()
 
+# setup cassini-soldner basemap.
+m = Basemap(-6.,49,4,59.,\
+            resolution='l',area_thresh=1000.,projection='cass',\
+            lat_0=54.,lon_0=-2.)
+xsize = rcParams['figure.figsize'][0]
+fig=figure(figsize=(xsize/m.aspect,xsize))
+fig.add_axes([0.125,0.2,0.6,0.6])
+# transform to nx x ny regularly spaced native projection grid
+nx = int((m.xmax-m.xmin)/20000.)+1; ny = int((m.ymax-m.ymin)/20000.)+1
+topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
+# plot image over map.
+im = m.imshow(topodat,cm.jet)
+# get current axis instance.
+ax = gca()
+cax = axes([0.8, 0.2, 0.075, 0.6]) # setup colorbar axes.
+colorbar(tickfmt='%d', cax=cax) # draw colorbar
+axes(ax)  # make the original axes current again
+m.drawcoastlines()
+# draw parallels
+delat = 2.
+circles = arange(40.,70.,delat)
+m.drawparallels(circles,labels=[1,0,0,1],fontsize=10)
+# draw meridians
+delon = 2.
+meridians = arange(-10,10,delon)
+m.drawmeridians(meridians,labels=[1,0,0,1],fontsize=10)
+title('Cassini-Soldner Projection')
+print 'plotting Cassini-Soldner example, close plot window to proceed ...'
+show()
+
+# setup gnomonic basemap.
+m = Basemap(-95.,-52,-35.,15.,\
+            resolution='c',area_thresh=10000.,projection='gnom',\
+            lat_0=-10.,lon_0=-60.)
+xsize = rcParams['figure.figsize'][0]
+fig=figure(figsize=(xsize/m.aspect,xsize))
+fig.add_axes([0.125,0.2,0.6,0.6])
+# transform to nx x ny regularly spaced native projection grid
+nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
+topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
+# plot image over map.
+im = m.imshow(topodat,cm.jet)
+# get current axis instance.
+ax = gca()
+cax = axes([0.8, 0.2, 0.075, 0.6]) # setup colorbar axes.
+colorbar(tickfmt='%d', cax=cax) # draw colorbar
+axes(ax)  # make the original axes current again
+m.drawcoastlines()
+m.drawcountries()
+# draw parallels
+delat = 20.
+circles = arange(-80.,100.,delat)
+m.drawparallels(circles,labels=[1,0,0,1],fontsize=10)
+# draw meridians
+delon = 20.
+meridians = arange(-180,180,delon)
+m.drawmeridians(meridians,labels=[1,0,0,1],fontsize=10)
+title('Gnomonic Projection')
+print 'plotting Gnomonic example, close plot window to proceed ...'
+show()
+
 # setup transverse mercator basemap.
 m = Basemap(170.,-45,10.,45.,\
             resolution='c',area_thresh=10000.,projection='tmerc',\
@@ -101,8 +162,7 @@ xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize/m.aspect,xsize))
 fig.add_axes([0.125,0.2,0.6,0.6])
 # transform to nx x ny regularly spaced native projection grid
-ny = len(lats)
-nx = ny/m.aspect
+nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
