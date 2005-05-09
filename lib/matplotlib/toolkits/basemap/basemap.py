@@ -493,6 +493,9 @@ class Basemap:
             coastlines.color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
+        # make sure axis ticks are turned off
+        ax.set_xticks([]) 
+        ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits()
 
@@ -639,6 +642,8 @@ class Basemap:
 	            lons,lats = self(self.llcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
                 else:
 	            lons,lats = self(self.urcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
+                if max(lons) > 1.e20 or max(lats) > 1.e20:
+                    raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 lons = pylab.where(lons < 0, lons+360, lons)
                 lons = [int(lon*10) for lon in lons.tolist()]
                 lats = [int(lat*10) for lat in lats.tolist()]
@@ -652,6 +657,9 @@ class Basemap:
 	            lons,lats = self(xx,self.llcrnry*pylab.ones(xx.shape,'f'),inverse=True)
                 else:
 	            lons,lats = self(xx,self.urcrnry*pylab.ones(xx.shape,'f'),inverse=True)
+                if max(lons) > 1.e20 or max(lats) > 1.e20:
+                    raise ValueError,'inverse transformation undefined - please adjust the map projection region'
+                lons = pylab.where(lons < 0, lons+360, lons)
                 lons = pylab.where(lons < 0, lons+360, lons)
                 lons = [int(lon*10) for lon in lons.tolist()]
                 lats = [int(lat*10) for lat in lats.tolist()]
@@ -785,6 +793,9 @@ class Basemap:
 	            lons,lats = self(self.llcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
                 else:
 	            lons,lats = self(self.urcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
+                if max(lons) > 1.e20 or max(lats) > 1.e20:
+                    raise ValueError,'inverse transformation undefined - please adjust the map projection region'
+                lons = pylab.where(lons < 0, lons+360, lons)
                 lons = pylab.where(lons < 0, lons+360, lons)
                 lons = [int(lon*10) for lon in lons.tolist()]
                 lats = [int(lat*10) for lat in lats.tolist()]
@@ -798,6 +809,9 @@ class Basemap:
 	            lons,lats = self(xx,self.llcrnry*pylab.ones(xx.shape,'f'),inverse=True)
                 else:
 	            lons,lats = self(xx,self.urcrnry*pylab.ones(xx.shape,'f'),inverse=True)
+                if max(lons) > 1.e20 or max(lats) > 1.e20:
+                    raise ValueError,'inverse transformation undefined - please adjust the map projection region'
+                lons = pylab.where(lons < 0, lons+360, lons)
                 lons = pylab.where(lons < 0, lons+360, lons)
                 lons = [int(lon*10) for lon in lons.tolist()]
                 lats = [int(lat*10) for lat in lats.tolist()]
