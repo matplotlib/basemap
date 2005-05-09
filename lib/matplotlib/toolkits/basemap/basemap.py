@@ -15,11 +15,11 @@ if not _datadir:
 class Basemap:
 
     """
- Set up a basemap with one of 10 supported map projections
+ Set up a basemap with one of a dozen supported map projections
  (cylindrical equidistant, mercator,
  transverse mercator, miller cylindrical, lambert conformal conic,
  azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
- albers equal area conic or stereographic).
+ albers equal area conic, gnomonic, cassini-soldner or stereographic).
  Doesn't actually draw anything, but sets up the map projection class and
  creates the coastline and political boundary polygons in native map 
  projection coordinates.  Requires matplotlib and numarray.
@@ -28,7 +28,7 @@ class Basemap:
  Useful instance variables:
  
  projection - map projection ('cyl','merc','mill','lcc','eqdc','aea','aeqd',
-  'laea', 'tmerc' or 'stere')
+  'laea', 'tmerc', 'cass', 'gnom' or 'stere')
  aspect - map aspect ratio (size of y dimension / size of x dimension).
  llcrnrlon - longitude of lower left hand corner of the desired map domain.
  llcrnrlon - latitude of lower left hand corner of the desired map domain.      
@@ -65,7 +65,7 @@ class Basemap:
 >>> title('Cylindrical Equidistant')
 >>> show()
 
- Version: 0.4.1 (20050509)
+ Version: 0.4.2 (20050510)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -95,8 +95,9 @@ class Basemap:
   mercator, 'lcc' - lambert conformal conic, 'stere' - stereographic,
   'aea' - albers equal area conic, 'tmerc' - transverse mercator,  
   'aeqd' - azimuthal equidistant, 'mill' - miller cylindrical,
-  'eqdc' - equidistant conic, and 'laea' - lambert azimuthal equal area
-  are currently available.  Default 'cyl'.
+  'eqdc' - equidistant conic, 'laea' - lambert azimuthal equal area,
+  'cass' - cassini-soldner (transverse cylindrical equidistant),
+  and 'gnom' - gnomonic are currently available.  Default 'cyl'.
  rsphere - radius of the sphere used to define map projection (default
   6370997 meters, close to the arithmetic mean radius of the earth). If
   given as a sequence, the first two elements are interpreted as
@@ -184,15 +185,11 @@ class Basemap:
         self.urcrnrlat = urcrnrlat
         projparams = {}
         projparams['proj'] = projection
-        # rsphere instance variable is the
-        # arithmetic mean of polar and equatorial radii.
         try:
             projparams['a'] = rsphere[0]
             projparams['b'] = rsphere[1]
-            self.rsphere = 0.5*(rsphere[0]+rsphere[1])
         except:
             projparams['R'] = rsphere
-            self.rsphere = rsphere
 
         if projection == 'lcc':
             if lat_1 is None or lon_0 is None:
@@ -234,7 +231,7 @@ class Basemap:
                 raise ValueError, 'must specify lat_ts for Mercator basemap'
             projparams['lat_ts'] = lat_ts
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
-        elif projection == 'tmerc':
+        elif projection in ['tmerc','gnom','cass'] :
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator basemap'
             projparams['lat_0'] = lat_0
