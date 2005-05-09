@@ -41,7 +41,7 @@ lats_out = []
 lons_out = []
 for lon,lat in zip(lons,lats):
    if nob:
-      r = (m.rsphere/1000.)*get_dist(lon,lons[0:nob],lat,lats[0:nob])
+      r = (m.projtran.rmajor/1000.)*get_dist(lon,lons[0:nob],lat,lats[0:nob])
       if min(r) > rcrit: 
           lats_out.append(lat)
           lons_out.append(lon)
