@@ -15,8 +15,8 @@ if not _datadir:
 class Basemap:
 
     """
- Set up a basemap with one of a dozen supported map projections
- (cylindrical equidistant, mercator,
+ Set up a basemap with one of 13 supported map projections
+ (cylindrical equidistant, mercator, polyconic,
  transverse mercator, miller cylindrical, lambert conformal conic,
  azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
  albers equal area conic, gnomonic, cassini-soldner or stereographic).
@@ -28,7 +28,7 @@ class Basemap:
  Useful instance variables:
  
  projection - map projection ('cyl','merc','mill','lcc','eqdc','aea','aeqd',
-  'laea', 'tmerc', 'cass', 'gnom' or 'stere')
+  'laea', 'tmerc', 'cass', 'gnom', 'poly' or 'stere')
  aspect - map aspect ratio (size of y dimension / size of x dimension).
  llcrnrlon - longitude of lower left hand corner of the desired map domain.
  llcrnrlon - latitude of lower left hand corner of the desired map domain.      
@@ -97,6 +97,7 @@ class Basemap:
   'aeqd' - azimuthal equidistant, 'mill' - miller cylindrical,
   'eqdc' - equidistant conic, 'laea' - lambert azimuthal equal area,
   'cass' - cassini-soldner (transverse cylindrical equidistant),
+  'poly' - polyconic
   and 'gnom' - gnomonic are currently available.  Default 'cyl'.
  rsphere - radius of the sphere used to define map projection (default
   6370997 meters, close to the arithmetic mean radius of the earth). If
@@ -231,7 +232,7 @@ class Basemap:
                 raise ValueError, 'must specify lat_ts for Mercator basemap'
             projparams['lat_ts'] = lat_ts
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
-        elif projection in ['tmerc','gnom','cass'] :
+        elif projection in ['tmerc','gnom','cass','poly'] :
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator basemap'
             projparams['lat_0'] = lat_0
