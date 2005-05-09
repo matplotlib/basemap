@@ -1,7 +1,10 @@
-200505??:  version 0.4.2
+20050510:  version 0.4.2
            transform_vector now does a simple rotation of the vector
            from geographic to map coordinates, preserving the vector
            magnitude (removed 'preserve_magnitude' keyword).
+           Minor bugs in Miller and Mercator projections fixed.
+           Added Gnomonic and Cassini-Soldner projections
+           (now an even dozen projections supported).
 20050509:  version 0.4.1
            Miller projection was erroneously referred to by the name
            'miller' (instead of 'mill') - fixed.  Added the ability
