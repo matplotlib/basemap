@@ -3,8 +3,8 @@
            from geographic to map coordinates, preserving the vector
            magnitude (removed 'preserve_magnitude' keyword).
            Minor bugs in Miller and Mercator projections fixed.
-           Added Gnomonic and Cassini-Soldner projections
-           (now an even dozen projections supported).
+           Added Gnomonic, Cassini-Soldner and Polyconic projections
+           (now 13 projections supported).
 20050509:  version 0.4.1
            Miller projection was erroneously referred to by the name
            'miller' (instead of 'mill') - fixed.  Added the ability
