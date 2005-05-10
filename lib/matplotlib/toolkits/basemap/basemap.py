@@ -195,8 +195,12 @@ class Basemap:
         projparams = {}
         projparams['proj'] = projection
         try:
-            projparams['a'] = rsphere[0]
-            projparams['b'] = rsphere[1]
+            if rsphere[0] > rsphere[1]:
+                projparams['a'] = rsphere[0]
+                projparams['b'] = rsphere[1]
+            else:
+                projparams['a'] = rsphere[1]
+                projparams['b'] = rsphere[0]
         except:
             projparams['R'] = rsphere
 
