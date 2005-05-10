@@ -184,6 +184,38 @@ title('Transverse Mercator Projection')
 print 'plotting Transverse Mercator example, close plot window to proceed ...'
 show()
 
+# setup oblique mercator basemap.
+m = Basemap(-130.,39.,-124.,60.,\
+            resolution='l',area_thresh=1000.,projection='omerc',\
+            lon_2=-140,lat_2=55,lon_1=-120,lat_1=40)
+xsize = rcParams['figure.figsize'][0]
+fig=figure(figsize=(xsize/m.aspect,xsize))
+fig.add_axes([0.125,0.2,0.6,0.6])
+# transform to nx x ny regularly spaced native projection grid
+nx = int((m.xmax-m.xmin)/20000.)+1; ny = int((m.ymax-m.ymin)/20000.)+1
+topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
+# plot image over map.
+im = m.imshow(topodat,cm.jet)
+# get current axis instance.
+ax = gca()
+cax = axes([0.8, 0.2, 0.075, 0.6]) # setup colorbar axes.
+colorbar(tickfmt='%d', cax=cax) # draw colorbar
+axes(ax)  # make the original axes current again
+m.drawcoastlines()
+m.drawcountries()
+m.drawstates()
+# draw parallels
+delat = 3.
+circles = arange(40,60,delat)
+m.drawparallels(circles,labels=[1,0,0,0],fontsize=10)
+# draw meridians
+delon = 3.
+meridians = arange(-140,-120,delon)
+m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
+title('Oblique Mercator Projection')
+print 'plotting Oblique Mercator example, close plot window to proceed ...'
+show()
+
 # setup polyconic basemap.
 m = Basemap(-35.,-30.,80.,50.,\
             resolution='c',area_thresh=1000.,projection='poly',\
