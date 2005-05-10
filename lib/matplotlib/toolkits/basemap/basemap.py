@@ -15,8 +15,8 @@ if not _datadir:
 class Basemap:
 
     """
- Set up a basemap with one of 13 supported map projections
- (cylindrical equidistant, mercator, polyconic,
+ Set up a basemap with one of 14 supported map projections
+ (cylindrical equidistant, mercator, polyconic, oblique mercator,
  transverse mercator, miller cylindrical, lambert conformal conic,
  azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
  albers equal area conic, gnomonic, cassini-soldner or stereographic).
@@ -28,7 +28,7 @@ class Basemap:
  Useful instance variables:
  
  projection - map projection ('cyl','merc','mill','lcc','eqdc','aea','aeqd',
-  'laea', 'tmerc', 'cass', 'gnom', 'poly' or 'stere')
+  'laea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly' or 'stere')
  aspect - map aspect ratio (size of y dimension / size of x dimension).
  llcrnrlon - longitude of lower left hand corner of the desired map domain.
  llcrnrlon - latitude of lower left hand corner of the desired map domain.      
@@ -71,7 +71,8 @@ class Basemap:
 
     def __init__(self,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,\
         resolution='c',area_thresh=10000.,projection='cyl',rsphere=6370997,\
-        lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None):
+        lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
+        lon_1=None,lon_2=None):
         """
  create a Basemap instance.
  
@@ -97,7 +98,7 @@ class Basemap:
   'aeqd' - azimuthal equidistant, 'mill' - miller cylindrical,
   'eqdc' - equidistant conic, 'laea' - lambert azimuthal equal area,
   'cass' - cassini-soldner (transverse cylindrical equidistant),
-  'poly' - polyconic
+  'poly' - polyconic, 'omerc' - oblique mercator,
   and 'gnom' - gnomonic are currently available.  Default 'cyl'.
  rsphere - radius of the sphere used to define map projection (default
   6370997 meters, close to the arithmetic mean radius of the earth). If
@@ -113,11 +114,17 @@ class Basemap:
  lat_ts - latitude of natural origin (used for mercator and stereographic
   projections).
  lat_1 - first standard parallel for lambert conformal, albers
-  equal area projection and equidistant conic projections.
+  equal area projection and equidistant conic projections. Latitude of one
+  of the two points on the projection centerline for oblique mercator.
  lat_2 - second standard parallel for lambert conformal, albers
-  equal area projection and equidistant conic projections.
+  equal area projection and equidistant conic projections. Latitude of one
+  of the two points on the projection centerline for oblique mercator.
+ lon_1 - Longitude of one of the two points on the projection centerline
+  for oblique mercator.
+ lon_2 - Longitude of one of the two points on the projection centerline
+  for oblique mercator.
  lat_0 - central latitude (y-axis origin) - used by stereographic, polyconic, 
-  transverse mercator, miller cylindrical, cassini-soldner,
+  transverse mercator, miller cylindrical, cassini-soldner, oblique mercator,
   gnomonic, equidistant conic and lambert azimuthal projections).
  lon_0 - central meridian (x-axis origin) - used by stereographic, polyconic, 
   transverse mercator, miller cylindrical, cassini-soldner,
@@ -238,6 +245,14 @@ class Basemap:
                 raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator basemap'
             projparams['lat_0'] = lat_0
             projparams['lon_0'] = lon_0
+            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+        elif projection == 'omerc':
+            if lat_1 is None or lon_1 is None or lat_2 is None or lon_2 is None:
+                raise ValueError, 'must specify lat_1,lon_1 and lat_2,lon_2 for Oblique Mercator basemap'
+            projparams['lat_1'] = lat_1
+            projparams['lon_1'] = lon_1
+            projparams['lat_2'] = lat_2
+            projparams['lon_2'] = lon_2
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
         elif projection == 'aeqd':
             if lat_0 is None or lon_0 is None:
