@@ -184,7 +184,7 @@ title('Transverse Mercator Projection')
 print 'plotting Transverse Mercator example, close plot window to proceed ...'
 show()
 
-# setup polyconi basemap.
+# setup polyconic basemap.
 m = Basemap(-35.,-30.,80.,50.,\
             resolution='c',area_thresh=1000.,projection='poly',\
             lat_0=0.,lon_0=20.)
