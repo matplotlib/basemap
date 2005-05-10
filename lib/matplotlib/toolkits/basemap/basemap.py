@@ -257,6 +257,10 @@ class Basemap:
 
         # make Proj instance a Basemap instance variable.
         self.projtran = proj
+        # copy some Proj attributes.
+        atts = ['rmajor','rminor','esq','projparams']
+        for att in atts:
+            self.__dict__[att] = proj.__dict__[att]
         # set instance variables defining map region.
         self.xmin = proj.xmin
         self.xmax = proj.xmax
@@ -408,7 +412,8 @@ class Basemap:
     def _insidemap_poly(self,poly):
         """returns True if any point in polygon is inside map region"""
         isin = False
-        for x,y in zip(poly[0],poly[1]):
+        xx = poly[0]; yy = poly[1]
+        for x,y in zip(xx,yy):
             if x >= self.xmin and x <= self.xmax and y >= self.ymin and y <= self.ymax:
                 isin = True
                 break
