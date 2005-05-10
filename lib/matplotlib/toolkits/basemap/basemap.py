@@ -116,11 +116,12 @@ class Basemap:
   equal area projection and equidistant conic projections.
  lat_2 - second standard parallel for lambert conformal, albers
   equal area projection and equidistant conic projections.
- lat_0 - central latitude (y-axis origin) - used by stereographic 
-  transverse mercator, miller cylindrical and lambert azimuthal projections).
- lon_0 - central meridian (x-axis origin - used by lambert conformal,
-  lambert azimuthal, equidistant conic, transverse mercator, oblique mercator,
-  miller cylindrical and stereographic projections).
+ lat_0 - central latitude (y-axis origin) - used by stereographic, polyconic, 
+  transverse mercator, miller cylindrical, cassini-soldner,
+  gnomonic, equidistant conic and lambert azimuthal projections).
+ lon_0 - central meridian (x-axis origin) - used by stereographic, polyconic, 
+  transverse mercator, miller cylindrical, cassini-soldner,
+  gnomonic, equidistant conic and lambert azimuthal projections).
         """     
 
         # read in coastline data.
