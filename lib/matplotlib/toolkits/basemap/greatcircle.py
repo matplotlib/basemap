@@ -1,4 +1,5 @@
 import numarray as N
+import math
 
 class GreatCircle:
     """
@@ -149,9 +150,6 @@ class GreatCircle:
 # | forward and reverse azimuths between the points (alpha12, alpha21).	|
 # |									|
 # ---------------------------------------------------------------------- 
-
-import math
-
 
 def vinc_dist(  f,  a,  phi1,  lembda1,  phi2,  lembda2 ) :
         """ 
@@ -375,19 +373,19 @@ def  vinc_pt( f, a, phi1, lembda1, alpha12, s ) :
 # Sample Data
 # 
 # Flinders Peak
-# -37°57'03.72030"
-# 144°25'29.52440"
+# -37o57'03.72030"
+# 144o25'29.52440"
 # Buninyong
-# -37°39'10.15610"
-# 143°55'35.38390"
+# -37o39'10.15610"
+# 143o55'35.38390"
 # Ellipsoidal Distance
 # 54,972.271 m
 #  
 # Forward Azimuth
-# 306°52'05.37"
+# 306o52'05.37"
 #  
 # Reverse Azimuth
-# 127°10'25.07"
+# 127o10'25.07"
 # 
 # 
 ##*******************************************************************
