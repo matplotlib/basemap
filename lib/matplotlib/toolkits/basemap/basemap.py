@@ -1,3 +1,7 @@
+from numarray import __version__ as numarray_version
+# check to make sure numarray is not too old.
+if numarray_version < '1.1':
+    raise ImportError, 'your numarray version is too old - basemap requires at least 1.1'
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
@@ -35,6 +39,7 @@ class Basemap:
  urcrnrlon - longitude of upper right hand corner of the desired map domain.
  urcrnrlon - latitude of upper right hand corner of the desired map domain.
  llcrnrx,llcrnry,urcrnrx,urcrnry - corners of map domain in projection coordinates.
+ rmajor,rminor - equatorial and polar radii of ellipsoid used (in meters).
 
  Example Usage:
  (this example plus others can be found in the examples directory of
@@ -278,7 +283,7 @@ class Basemap:
         # make Proj instance a Basemap instance variable.
         self.projtran = proj
         # copy some Proj attributes.
-        atts = ['rmajor','rminor','esq','projparams']
+        atts = ['rmajor','rminor','esq','flattening','ellipsoid','projparams']
         for att in atts:
             self.__dict__[att] = proj.__dict__[att]
         # set instance variables defining map region.
@@ -887,7 +892,7 @@ class Basemap:
  (lon1,lat1) and (lon2,lat2).  Returns numarrays x,y
  with map projection coordinates.
         """
-        gc = GreatCircle(lon1,lat1,lon2,lat2)
+        gc = GreatCircle(self.rmajor,self.rminor,lon1,lat1,lon2,lat2)
         lons, lats = gc.points(npoints)
         x, y = self(lons, lats)
         return x,y
@@ -911,11 +916,12 @@ class Basemap:
         """
         # get current axes instance.
         ax = pylab.gca()
-        gc = GreatCircle(lon1,lat1,lon2,lat2)
+        # use great circle formula for a perfect sphere.
+        gc = GreatCircle(self.rmajor,self.rminor,lon1,lat1,lon2,lat2)
         if gc.antipodal:
             raise ValueError,'cannot draw great circle whose endpoints are antipodal'
         # points have spacing of dtheta radians.
-        npoints = int(gc.distance/dtheta)+1
+        npoints = int(gc.gcarclen/dtheta)+1
         lons, lats = gc.points(npoints)
         x, y = self(lons, lats)
         self.plot(x,y,**kwargs)
