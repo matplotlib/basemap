@@ -6,7 +6,7 @@ class GreatCircle:
     formula for perfect sphere from Ed Williams' 'Aviation Formulary'
     (http://williams.best.vwh.net/avform.htm)
      
-    code for ellipsoid posted to GMT mailing list by John Neven
+    code for ellipsoid posted to GMT mailing list by Jim Leven in Dec 1999
     """
 
 
