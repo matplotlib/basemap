@@ -1,3 +1,5 @@
+20050511:  version 0.4.3
+           Added Oblique Mercator.
 20050510:  version 0.4.2
            transform_vector now does a simple rotation of the vector
            from geographic to map coordinates, preserving the vector
