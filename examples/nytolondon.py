@@ -3,7 +3,7 @@ from matplotlib.toolkits.basemap import Basemap
 from pylab import *
 
 # setup lambert azimuthal map projection.
-m = Basemap(-100.,20.,20.,60.,
+m = Basemap(-100.,20.,20.,60.,rsphere=(6378137.00,6356752.3142),\
             resolution='c',area_thresh=10000.,projection='merc',\
             lat_0=40.,lon_0=-20.,lat_ts=20.)
 # make figure with aspect ratio that matches map region.
@@ -34,7 +34,7 @@ title('Great Circle from New York to London (Mercator)')
 show()
 
 # setup a gnomonic projection.
-m = Basemap(-80.,30.,15.,55.,
+m = Basemap(-80.,30.,15.,55.,rsphere=(6378137.00,6356752.3142),\
             resolution='c',area_thresh=10000.,projection='gnom',\
             lat_0=40.,lon_0=-45.)
 # make figure with aspect ratio that matches map region.

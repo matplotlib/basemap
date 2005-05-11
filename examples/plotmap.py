@@ -15,7 +15,7 @@ topoin,lons = shiftgrid(180.,topoin,lons,start=False)
 
 # setup of basemap ('lcc' = lambert conformal conic).
 # use major and minor sphere radii from WGS84 ellipsoid.
-m = Basemap(-145.5,1.,-2.566,46.352,rsphere=(6378137.00,6356752.314),\
+m = Basemap(-145.5,1.,-2.566,46.352,rsphere=(6378137.00,6356752.3142),\
             resolution='c',area_thresh=10000.,projection='lcc',\
             lat_1=50.,lon_0=-107.)
 # transform to nx x ny regularly spaced native projection grid
@@ -43,8 +43,8 @@ m.plot([xpt],[ypt],'bo')
 text(xpt+100000,ypt+100000,'Boulder')
 # draw coastlines and political boundaries.
 m.drawcoastlines()
-m.drawcountries()
-m.drawstates()
+#m.drawcountries()
+#m.drawstates()
 # draw parallels and meridians.
 # label on left, right and bottom of map.
 parallels = arange(0.,80,20.)
