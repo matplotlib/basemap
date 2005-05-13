@@ -64,12 +64,26 @@ class Proj:
         except:
             self.rmajor = projparams['R']
             self.rminor = self.rmajor
+        if self.rmajor == self.rminor:
+            self.ellipsoid = False
+        else:
+            self.ellipsoid = True
+        self.flattening = (self.rmajor-self.rminor)/self.rmajor
         self.esq = (self.rmajor**2 - self.rminor**2)/self.rmajor**2
         self.llcrnrlon = llcrnrlon
         self.llcrnrlat = llcrnrlat
-        if self.projection != 'cyl':
+        if self.projection not in ['cyl','ortho']:
             self._proj4 = proj4.Proj(''.join(self.proj4cmd))
-        llcrnrx, llcrnry = self._fwd(llcrnrlon,llcrnrlat)
+            llcrnrx, llcrnry = self._fwd(llcrnrlon,llcrnrlat)
+        elif self.projection == 'cyl':
+            llcrnrx = llcrnrlon
+            llcrnry = llcrnrlat
+        elif self.projection == 'ortho':
+            self._proj4 = proj4.Proj(''.join(self.proj4cmd))
+            llcrnrx = -self.rmajor
+            llcrnry = -self.rmajor
+            urcrnrx = self.rmajor
+            urcrnry = self.rmajor
         # compute x_0, y_0 so ll corner of domain is x=0,y=0.
         # note that for 'cyl' x,y == lon,lat
         self.proj4cmd.append("+x_0="+str(-llcrnrx)+' ')
@@ -87,7 +101,11 @@ class Proj:
         if urcrnrislatlon:
             self.urcrnrlon = urcrnrlon
             self.urcrnrlat = urcrnrlat
-            urcrnrx,urcrnry = self._fwd(urcrnrlon,urcrnrlat)
+            if self.projection != 'ortho':
+                urcrnrx,urcrnry = self._fwd(urcrnrlon,urcrnrlat)
+            else:
+                urcrnrx = 2.*self.rmajor
+                urcrnry = 2.*self.rmajor
         else:
             urcrnrx = urcrnrlon
             urcrnry = urcrnrlat

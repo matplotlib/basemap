@@ -19,11 +19,12 @@ if not _datadir:
 class Basemap:
 
     """
- Set up a basemap with one of 14 supported map projections
+ Set up a basemap with one of 15 supported map projections
  (cylindrical equidistant, mercator, polyconic, oblique mercator,
  transverse mercator, miller cylindrical, lambert conformal conic,
  azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
- albers equal area conic, gnomonic, cassini-soldner or stereographic).
+ albers equal area conic, gnomonic, orthographic,
+ cassini-soldner or stereographic).
  Doesn't actually draw anything, but sets up the map projection class and
  creates the coastline and political boundary polygons in native map 
  projection coordinates.  Requires matplotlib and numarray.
@@ -32,7 +33,7 @@ class Basemap:
  Useful instance variables:
  
  projection - map projection ('cyl','merc','mill','lcc','eqdc','aea','aeqd',
-  'laea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly' or 'stere')
+  'laea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly', 'ortho' or 'stere')
  aspect - map aspect ratio (size of y dimension / size of x dimension).
  llcrnrlon - longitude of lower left hand corner of the desired map domain.
  llcrnrlon - latitude of lower left hand corner of the desired map domain.      
@@ -74,37 +75,46 @@ class Basemap:
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
-    def __init__(self,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,\
-        resolution='c',area_thresh=10000.,projection='cyl',rsphere=6370997,\
+    def __init__(self,projection='cyl',
+        llcrnrlon=-180.,llcrnrlat=-90.,urcrnrlon=180.,urcrnrlat=90.,\
+        resolution='c',area_thresh=10000.,rsphere=6370997,\
         lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
         lon_1=None,lon_2=None):
         """
  create a Basemap instance.
  
- mandatory input arguments:
- 
- llcrnrlon - longitude of lower left hand corner of the desired map domain.
- llcrnrlon - latitude of lower left hand corner of the desired map domain.      
- urcrnrlon - longitude of upper right hand corner of the desired map domain.
- urcrnrlon - latitude of upper right hand corner of the desired map domain.
- 
- optional keyword parameters:
- 
- resolution - resolution of coastline database to use. Can be 'c' (crude), 
-  'l' (low), or 'i' (intermediate). Resolution drops off by roughly 80%
-  between datasets.  Higher res datasets are much slower to draw.
-  Default 'c'. Coastline data is from the GSHHS
-  (http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html).
- area_thresh - coastline with an area smaller than area_thresh in km^2
-  will not be plotted.  Default 10,000.
+ arguments:
+
  projection - map projection.  'cyl' - cylindrical equidistant, 'merc' -
   mercator, 'lcc' - lambert conformal conic, 'stere' - stereographic,
   'aea' - albers equal area conic, 'tmerc' - transverse mercator,  
   'aeqd' - azimuthal equidistant, 'mill' - miller cylindrical,
   'eqdc' - equidistant conic, 'laea' - lambert azimuthal equal area,
   'cass' - cassini-soldner (transverse cylindrical equidistant),
-  'poly' - polyconic, 'omerc' - oblique mercator,
+  'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
   and 'gnom' - gnomonic are currently available.  Default 'cyl'.
+ 
+ llcrnrlon - longitude of lower left hand corner of the desired map domain
+  (Default -180).
+ llcrnrlat - latitude of lower left hand corner of the desired map domain      
+  (Default -90).
+ urcrnrlon - longitude of upper right hand corner of the desired map domain
+  (Default 180).
+ urcrnrlat - latitude of upper right hand corner of the desired map domain
+  (Default 90).
+
+ If the orthographic projection is chosen (projection='ortho'),
+ the values of llcrnrlon,llcrnrlat,urcrnrlon and urcrnrlat are not used.
+
+ resolution - resolution of coastline database to use. Can be 'c' (crude), 
+  'l' (low), or 'i' (intermediate). Resolution drops off by roughly 80%
+  between datasets.  Higher res datasets are much slower to draw.
+  Default 'c'. Coastline data is from the GSHHS
+  (http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html).
+
+ area_thresh - coastline with an area smaller than area_thresh in km^2
+  will not be plotted.  Default 10,000.
+
  rsphere - radius of the sphere used to define map projection (default
   6370997 meters, close to the arithmetic mean radius of the earth). If
   given as a sequence, the first two elements are interpreted as
@@ -130,10 +140,10 @@ class Basemap:
   for oblique mercator.
  lat_0 - central latitude (y-axis origin) - used by stereographic, polyconic, 
   transverse mercator, miller cylindrical, cassini-soldner, oblique mercator,
-  gnomonic, equidistant conic and lambert azimuthal projections).
+  gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
  lon_0 - central meridian (x-axis origin) - used by stereographic, polyconic, 
   transverse mercator, miller cylindrical, cassini-soldner,
-  gnomonic, equidistant conic and lambert azimuthal projections).
+  gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
         """     
 
         # read in coastline data.
@@ -249,9 +259,9 @@ class Basemap:
                 raise ValueError, 'must specify lat_ts for Mercator basemap'
             projparams['lat_ts'] = lat_ts
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
-        elif projection in ['tmerc','gnom','cass','poly'] :
+        elif projection in ['tmerc','gnom','cass','poly','ortho'] :
             if lat_0 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator basemap'
+                raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldner, Orthographic or Polyconic basemap'
             projparams['lat_0'] = lat_0
             projparams['lon_0'] = lon_0
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
@@ -423,6 +433,64 @@ class Basemap:
                 countries.append(seg)
         self.cntrysegs = countries
 
+        # split up segments that go outside projection limb 
+        coastsegs = []
+        coastsegtypes = []
+        for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
+            xx = pylab.array([x for x,y in seg],'f')
+            yy = pylab.array([y for x,y in seg],'f')
+            i1,i2 = self._splitseg(xx,yy)
+            if i1 and i2:
+                for i,j in zip(i1,i2):
+                    segment = zip(xx[i:j],yy[i:j])
+                    coastsegs.append(segment)
+                    coastsegtypes.append(segtype)
+            else:
+                coastsegs.append(seg)
+                coastsegs.append(segtype)
+        self.coastsegs = coastsegs
+        self.coastsegtypes = coastsegtypes
+        states = []
+        for seg in self.statesegs:
+            xx = pylab.array([x for x,y in seg],'f')
+            yy = pylab.array([y for x,y in seg],'f')
+            i1,i2 = self._splitseg(xx,yy)
+            if i1 and i2:
+                for i,j in zip(i1,i2):
+                    segment = zip(xx[i:j],yy[i:j])
+                    states.append(segment)
+            else:
+                states.append(seg)
+        self.statesegs = states
+        countries = []
+        for seg in self.cntrysegs:
+            xx = pylab.array([x for x,y in seg],'f')
+            yy = pylab.array([y for x,y in seg],'f')
+            i1,i2 = self._splitseg(xx,yy)
+            if i1 and i2:
+                for i,j in zip(i1,i2):
+                    segment = zip(xx[i:j],yy[i:j])
+                    countries.append(segment)
+            else:
+                countries.append(seg)
+        self.cntrysegs = countries
+
+    def _splitseg(self,xx,yy):
+        """split segment up around missing values (outside projection limb)"""
+        mask = pylab.logical_or(pylab.greater_equal(xx,1.e20),pylab.greater_equal(yy,1.e20))
+        i1=[]; i2=[]
+        mprev = 1
+        for i,m in enumerate(mask):
+            if not m and mprev:
+                i1.append(i)
+            if m and not mprev:
+                i2.append(i)
+            mprev = m
+        if not mprev: i2.append(len(mask))
+        if len(i1) != len(i2):
+            raise ValueError,'error in splitting coastline segments'
+        return i1,i2
+
     def _insidemap_seg(self,seg):
         """returns True if any point in segment is inside map region"""
         xx = [x for x,y in seg]
@@ -467,12 +535,31 @@ class Basemap:
         """
         return self.projtran.makegrid(nx,ny,returnxy=returnxy)
 
+    def drawmapboundary(self,color='k',linewidth=1.0):
+        """draw boundary around map projection region"""
+        x = []
+        y = []
+        if self.projection == 'ortho': # circular region.
+            dtheta = 0.1
+            r = (2.*self.rmajor+self.rminor)/3.
+            for az in pylab.arange(0.,2.*math.pi,dtheta):
+                x.append(r*math.cos(az)+0.5*self.xmax)
+                y.append(r*math.sin(az)+0.5*self.ymax)
+        else: # all other projections are rectangular.
+            x = [self.llcrnrx,self.llcrnrx,self.urcrnrx,self.urcrnrx,self.llcrnrx+1.]
+            y = [self.llcrnry,self.urcrnry,self.urcrnry,self.llcrnry+1.,self.llcrnry+1.]
+        pylab.plot(x,y,color=color,linewidth=linewidth)
+        self.set_axes_limits()
+
     def fillcontinents(self,color=0.8):
         """
  Fill continents.
 
  color - color to fill continents (default gray).
         """
+        # not implemented for orthographic projection
+        if self.projection == 'ortho': 
+            raise NotImplementedError('fillcontinents does not work with Orthographic yet')
         # get current axes instance.
         ax = pylab.gca()
         # get axis background color.
@@ -652,6 +739,8 @@ class Basemap:
                         l.set_dashes(dashes)
                         ax.add_line(l)
         # draw labels for parallels
+        # parallels not labelled for orthographic projection
+        if self.projection  == 'ortho': labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
         if self.projection == 'cyl':
@@ -803,6 +892,8 @@ class Basemap:
                         l.set_dashes(dashes)
                         ax.add_line(l)
         # draw labels for meridians.
+        # meridians not labelled for orthographic projection
+        if self.projection  == 'ortho': labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
         if self.projection == 'cyl':
