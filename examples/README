@@ -3,10 +3,14 @@ simpletest.py is the simple example given in the Basemap docstrings.
 test.py exercises all the available map projections by plotting the etopo 
 20 minute bathymetry/topography data using imshow.
 
-contour_demo.py demonstrates the use of contour and pcolor with map projections.
+contour_demo.py demonstrates the use of filled contours with map projections.
 
 plotmap.py is the example on the matplotlib 'screenshots' page (included
-in test.py).
+in test.py) which shows the ETOPO topography as an image on a Lambert
+Conformal projection (using imshow).
+
+plotmap_pcolor.py plots the ETOPO topography using pcolor, on a Lambert 
+Conformal and Orthographic projection.
 
 nytolondon.py shows how to draw a great circle on a map (NY to London)
 
