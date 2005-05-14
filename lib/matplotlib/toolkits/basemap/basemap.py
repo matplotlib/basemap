@@ -75,11 +75,10 @@ class Basemap:
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
-    def __init__(self,projection='cyl',
-        llcrnrlon=-180.,llcrnrlat=-90.,urcrnrlon=180.,urcrnrlat=90.,\
-        resolution='c',area_thresh=10000.,rsphere=6370997,\
-        lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
-        lon_1=None,lon_2=None):
+    def __init__(self,llcrnrlon=-180.,llcrnrlat=-90.,urcrnrlon=180.,urcrnrlat=90.,\
+       projection='cyl',resolution='c',area_thresh=10000.,rsphere=6370997,\
+       lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
+       lon_1=None,lon_2=None):
         """
  create a Basemap instance.
  
