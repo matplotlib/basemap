@@ -56,18 +56,16 @@ class Basemap:
 >>> # create Basemap instance for Robinson projection.
 >>> m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]))
 >>> # compute native map projection coordinates for lat/lon grid.
->>> lons, lats = meshgrid(lons,lats)
->>> x,y = m(lons,lats)
+>>> x, y = m(*meshgrid(lons,lats))
 >>> # create figure with same aspect ratio as map.
->>> fig=figure(figsize=(10,m.aspect*10))
->>> fig.add_axes([0.1,0.1,0.8,0.8],frameon=False)
+>>> figure(figsize=(10,m.aspect*10)).add_axes([0.1,0.1,0.8,0.8],frameon=False)
 >>> # make filled contour plot.
 >>> levels, colls = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
 >>> m.drawcoastlines() # draw coastlines
 >>> m.drawmapboundary() # draw a line around the map region
 >>> m.drawparallels(arange(-90.,120.,30.)) # draw parallels
 >>> m.drawmeridians(arange(0.,420.,60.)) # draw meridians
->>> title('Robinson Projection')
+>>> title('Robinson Projection') # add a title
 >>> show()
 
  Version: 0.5 (200505??)
