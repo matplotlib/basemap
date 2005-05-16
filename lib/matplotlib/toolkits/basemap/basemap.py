@@ -19,12 +19,12 @@ if not _datadir:
 class Basemap:
 
     """
- Set up a basemap with one of 15 supported map projections
+ Set up a basemap with one of 17 supported map projections
  (cylindrical equidistant, mercator, polyconic, oblique mercator,
  transverse mercator, miller cylindrical, lambert conformal conic,
  azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
- albers equal area conic, gnomonic, orthographic,
- cassini-soldner or stereographic).
+ albers equal area conic, gnomonic, orthographic, mollweide,
+ robinson, cassini-soldner or stereographic).
  Doesn't actually draw anything, but sets up the map projection class and
  creates the coastline and political boundary polygons in native map 
  projection coordinates.  Requires matplotlib and numarray.
@@ -33,7 +33,8 @@ class Basemap:
  Useful instance variables:
  
  projection - map projection ('cyl','merc','mill','lcc','eqdc','aea','aeqd',
-  'laea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly', 'ortho' or 'stere')
+  'laea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly', 'ortho', 'robin',
+  'moll' or 'stere')
  aspect - map aspect ratio (size of y dimension / size of x dimension).
  llcrnrlon - longitude of lower left hand corner of the desired map domain.
  llcrnrlon - latitude of lower left hand corner of the desired map domain.      
@@ -71,7 +72,7 @@ class Basemap:
 >>> title('Cylindrical Equidistant')
 >>> show()
 
- Version: 0.4.3 (20050511)
+ Version: 0.5 (200505??)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -91,6 +92,7 @@ class Basemap:
   'eqdc' - equidistant conic, 'laea' - lambert azimuthal equal area,
   'cass' - cassini-soldner (transverse cylindrical equidistant),
   'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
+  'moll' - mollweide, 'robin' - robinson,
   and 'gnom' - gnomonic are currently available.  Default 'cyl'.
  
  llcrnrlon - longitude of lower left hand corner of the desired map domain
@@ -102,7 +104,7 @@ class Basemap:
  urcrnrlat - latitude of upper right hand corner of the desired map domain
   (Default 90).
 
- If the orthographic projection is chosen (projection='ortho'),
+ If the orthographic, mollweide or robinson projection is chosen 
  the values of llcrnrlon,llcrnrlat,urcrnrlon and urcrnrlat are not used.
 
  resolution - resolution of coastline database to use. Can be 'c' (crude), 
@@ -141,7 +143,7 @@ class Basemap:
   transverse mercator, miller cylindrical, cassini-soldner, oblique mercator,
   gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
  lon_0 - central meridian (x-axis origin) - used by stereographic, polyconic, 
-  transverse mercator, miller cylindrical, cassini-soldner,
+  transverse mercator, miller cylindrical, cassini-soldner, mollweide, robinson,
   gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
         """     
 
@@ -264,6 +266,11 @@ class Basemap:
             projparams['lat_0'] = lat_0
             projparams['lon_0'] = lon_0
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+        elif projection == 'moll' or projection == 'robin':
+            if lon_0 is None:
+                raise ValueError, 'must specify lon_0 for Robinson or Mollweide basemap'
+            projparams['lon_0'] = lon_0
+            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
         elif projection == 'omerc':
             if lat_1 is None or lon_1 is None or lat_2 is None or lon_2 is None:
                 raise ValueError, 'must specify lat_1,lon_1 and lat_2,lon_2 for Oblique Mercator basemap'
@@ -356,7 +363,7 @@ class Basemap:
         # store coast polygons for filling.
 	self.coastpolygons = []
         self.coastpolygontypes = []
-        if projection == 'merc' or projection ==  'mill': 
+        if projection in ['merc','mill','moll','robin']:
             xsp,ysp = proj(0.,-89.9) # s. pole coordinates.
             xa,ya = proj(0.,-68.0) # edge of antarctica.
 	    x0,y0 = proj(0.,0.)
@@ -385,7 +392,7 @@ class Basemap:
                     y.append(-90)
                     x.insert(0,0.)
                     y.insert(0,-90)
-            elif projection == 'merc' or projection == 'mill':
+            elif projection in ['merc','mill','moll','robin']:
                 if math.fabs(x[-1]-x0) < 1. and y[-1] < ya: # close antarctica
                     x.append(x0)
                     y.append(ysp)
@@ -474,6 +481,30 @@ class Basemap:
                 countries.append(seg)
         self.cntrysegs = countries
 
+        # split coastline segments that jump across entire plot.
+        coastsegs = []
+        coastsegtypes = []
+        for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
+            xx = pylab.array([x for x,y in seg],'f')
+            yy = pylab.array([y for x,y in seg],'f')
+            xd = (xx[1:]-xx[0:-1])**2
+            yd = (yy[1:]-yy[0:-1])**2
+            dist = pylab.sqrt(xd+yd)
+            split = dist > 5000000.
+            if pylab.asum(split) and self.projection not in ['merc','cyl','mill']:
+               ind = (pylab.compress(split,pylab.squeeze(split*pylab.indices(xd.shape)))+1).tolist()
+               iprev = 0
+               ind.append(len(xd))
+               for i in ind:
+                   coastsegs.append(zip(xx[iprev:i],yy[iprev:i]))
+                   coastsegtypes.append(segtype)
+                   iprev = i
+            else:
+                coastsegs.append(seg)
+                coastsegtypes.append(segtype)
+        self.coastsegs = coastsegs
+        self.coastsegtypes = coastsegtypes
+
     def _splitseg(self,xx,yy):
         """split segment up around missing values (outside projection limb)"""
         mask = pylab.logical_or(pylab.greater_equal(xx,1.e20),pylab.greater_equal(yy,1.e20))
@@ -538,27 +569,48 @@ class Basemap:
         """draw boundary around map projection region"""
         x = []
         y = []
+        dtheta = 0.1
         if self.projection == 'ortho': # circular region.
-            dtheta = 0.1
             r = (2.*self.rmajor+self.rminor)/3.
-            for az in pylab.arange(0.,2.*math.pi,dtheta):
+            for az in pylab.arange(0.,2.*math.pi+dtheta,dtheta):
                 x.append(r*math.cos(az)+0.5*self.xmax)
                 y.append(r*math.sin(az)+0.5*self.ymax)
+        elif self.projection in ['moll','robin']:  # elliptical region.
+            # left side
+            lats = pylab.arange(-90,90+dtheta,dtheta).tolist()
+            lons = len(lats)*[self.projparams['lon_0']-180.]
+            x,y = self(lons,lats)
+            # top.
+            lons = pylab.arange(self.projparams['lon_0']-180.,self.projparams['lon_0']+180+dtheta,dtheta).tolist()
+            lats = len(lons)*[90.]
+            xx,yy = self(lons,lats)
+            x = x+xx; y = y+yy
+            # right side
+            lats = pylab.arange(90,-90-dtheta,-dtheta).tolist()
+            lons = len(lats)*[self.projparams['lon_0']+180.]
+            xx,yy = self(lons,lats)
+            x = x+xx; y = y+yy
+            # bottom.
+            lons = pylab.arange(self.projparams['lon_0']+180.,self.projparams['lon_0']-180-dtheta,-dtheta).tolist()
+            lats = len(lons)*[-90.]
+            xx,yy = self(lons,lats)
+            x = x+xx; y = y+yy
         else: # all other projections are rectangular.
-            x = [self.llcrnrx,self.llcrnrx,self.urcrnrx,self.urcrnrx,self.llcrnrx+1.]
-            y = [self.llcrnry,self.urcrnry,self.urcrnry,self.llcrnry+1.,self.llcrnry+1.]
+            x = [self.llcrnrx,self.llcrnrx,self.urcrnrx,self.urcrnrx,self.llcrnrx]
+            y = [self.llcrnry,self.urcrnry,self.urcrnry,self.llcrnry,self.llcrnry]
         pylab.plot(x,y,color=color,linewidth=linewidth)
         self.set_axes_limits()
 
     def fillcontinents(self,color=0.8):
         """
- Fill continents.
+ Fill continents (not yet implemented for Orthographic, Mollweide or Robinson
+ projections).
 
  color - color to fill continents (default gray).
         """
-        # not implemented for orthographic projection
-        if self.projection == 'ortho': 
-            raise NotImplementedError('fillcontinents does not work with Orthographic yet')
+        # not implemented for elliptical map projections.
+        if self.projection in ['ortho','moll','robin']: 
+            raise NotImplementedError('fillcontinents does not work with Orthographic, Mollweide or Robinson yet')
         # get current axes instance.
         ax = pylab.gca()
         # get axis background color.
@@ -683,7 +735,7 @@ class Basemap:
 	yoffset = (self.urcrnry-self.llcrnry)/100./self.aspect
 	xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
-        if self.projection in ['merc','cyl','mill']:
+        if self.projection in ['merc','cyl','mill','moll','robin']:
             lons = pylab.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype('f')
         else:
             lons = pylab.arange(0,360.1,0.1).astype('f')
@@ -692,7 +744,7 @@ class Basemap:
             circlesl = circles.tolist()
         except:
             circlesl = circles
-        if self.projection not in ['merc','cyl','mill']:
+        if self.projection not in ['merc','cyl','mill','moll','robin']:
             if max(circlesl) > 0 and latmax not in circlesl: 
                 circlesl.append(latmax)
             if min(circlesl) < 0 and -latmax not in circlesl: 
@@ -716,7 +768,7 @@ class Basemap:
                 yd = (y[1:]-y[0:-1])**2
                 dist = pylab.sqrt(xd+yd)
                 split = dist > 500000.
-                if pylab.asum(split) and self.projection not in ['merc','cyl','mill']:
+                if pylab.asum(split) and self.projection not in ['merc','cyl','mill','moll','robin']:
                    ind = (pylab.compress(split,pylab.squeeze(split*pylab.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
@@ -738,8 +790,10 @@ class Basemap:
                         l.set_dashes(dashes)
                         ax.add_line(l)
         # draw labels for parallels
-        # parallels not labelled for orthographic projection
-        if self.projection  == 'ortho': labels = [0,0,0,0]
+        # parallels not labelled for orthographic, robinson or mollweide.
+        if self.projection in ['ortho','moll','robin'] and max(labels):
+            print 'Warning: Cannot label parallels on Mollweide or Orthographic basemap'
+            labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
         if self.projection == 'cyl':
@@ -846,7 +900,7 @@ class Basemap:
 	yoffset = (self.urcrnry-self.llcrnry)/100./self.aspect
 	xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
-        if self.projection not in ['merc','cyl','mill']:
+        if self.projection not in ['merc','cyl','mill','moll','robin']:
             lats = pylab.arange(-latmax,latmax+0.1,0.1).astype('f')
         else:
             lats = pylab.arange(-90,90.1,0.1).astype('f')
@@ -869,7 +923,7 @@ class Basemap:
                 yd = (y[1:]-y[0:-1])**2
                 dist = pylab.sqrt(xd+yd)
                 split = dist > 500000.
-                if pylab.asum(split) and self.projection not in ['merc','cyl','mill']:
+                if pylab.asum(split) and self.projection not in ['merc','cyl','mill','moll','robin']:
                    ind = (pylab.compress(split,pylab.squeeze(split*pylab.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
@@ -891,8 +945,10 @@ class Basemap:
                         l.set_dashes(dashes)
                         ax.add_line(l)
         # draw labels for meridians.
-        # meridians not labelled for orthographic projection
-        if self.projection  == 'ortho': labels = [0,0,0,0]
+        # meridians not labelled for orthographic, robinson or mollweide
+        if self.projection in ['ortho','moll'] and max(labels):
+            print 'Warning: Cannot label meridians on Mollweide, Robinson or Orthographic basemap'
+            labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
         if self.projection == 'cyl':
@@ -1031,8 +1087,7 @@ class Basemap:
  See interp documentation for meaning of extra keyword arguments (**kwargs).
  
  data on a lat/lon grid must be transformed to map projection coordinates
- before it can be plotted on the map (with the contour, contourf,
- imshow or pcolor class methods).
+ before it can be plotted on the map with imshow.
         """
         if returnxy:
             lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
@@ -1061,9 +1116,6 @@ class Basemap:
  are also returned (default False).
 
  See interp documentation for meaning of extra keyword arguments (**kwargs).
-
- vectors on a lat/lon grid must be transformed to map projection coordinates
- before they be plotted on the map (with the quiver class method).
         """
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         # interpolate to map projection coordinates.

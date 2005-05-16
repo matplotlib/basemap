@@ -12,7 +12,7 @@ class Proj:
  __call__ method compute transformations.
  See docstrings for __init__ and __call__ for details.
 
- Version: 0.4.3 (20050511)
+ Version: 0.5 (200505??)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -72,7 +72,7 @@ class Proj:
         self.esq = (self.rmajor**2 - self.rminor**2)/self.rmajor**2
         self.llcrnrlon = llcrnrlon
         self.llcrnrlat = llcrnrlat
-        if self.projection not in ['cyl','ortho']:
+        if self.projection not in ['cyl','ortho','moll','robin']:
             self._proj4 = proj4.Proj(''.join(self.proj4cmd))
             llcrnrx, llcrnry = self._fwd(llcrnrlon,llcrnrlat)
         elif self.projection == 'cyl':
@@ -82,8 +82,19 @@ class Proj:
             self._proj4 = proj4.Proj(''.join(self.proj4cmd))
             llcrnrx = -self.rmajor
             llcrnry = -self.rmajor
-            urcrnrx = self.rmajor
-            urcrnry = self.rmajor
+            urcrnrx = -llcrnrx
+            urcrnry = -llcrnry
+        elif self.projection == 'moll':
+            self._proj4 = proj4.Proj(''.join(self.proj4cmd))
+            llcrnrx = -math.sqrt(10.)*self.rmajor
+            llcrnry = -math.sqrt(2.)*self.rmajor
+            urcrnrx = -llcrnrx
+            urcrnry = -llcrnry
+        elif self.projection == 'robin':
+            llcrnrx = -2.6627*self.rmajor
+            llcrnry = -1.3523*self.rmajor
+            urcrnrx = -llcrnrx
+            urcrnry = -llcrnry
         # compute x_0, y_0 so ll corner of domain is x=0,y=0.
         # note that for 'cyl' x,y == lon,lat
         self.proj4cmd.append("+x_0="+str(-llcrnrx)+' ')
@@ -101,11 +112,17 @@ class Proj:
         if urcrnrislatlon:
             self.urcrnrlon = urcrnrlon
             self.urcrnrlat = urcrnrlat
-            if self.projection != 'ortho':
+            if self.projection not in ['ortho','moll','robin']:
                 urcrnrx,urcrnry = self._fwd(urcrnrlon,urcrnrlat)
-            else:
+            elif self.projection == 'ortho':
                 urcrnrx = 2.*self.rmajor
                 urcrnry = 2.*self.rmajor
+            elif self.projection == 'moll':
+                urcrnrx = 2.*math.sqrt(10.)*self.rmajor
+                urcrnry = 2.*math.sqrt(2.)*self.rmajor
+            elif self.projection == 'robin':
+                urcrnrx = 2.*2.6627*self.rmajor
+                urcrnry = 2.*1.3523*self.rmajor
         else:
             urcrnrx = urcrnrlon
             urcrnry = urcrnrlat
@@ -167,10 +184,9 @@ class Proj:
                 # the plane of the meridian.
                 rcurv = self.rmajor*coslat/math.sqrt(1.-self.esq*sinlat**2)
                 try: # x a sequence
-                    outx = [(xi/rcurv)*(180./math.pi) + self.llcrnrlon for xi in x]
+                    outx = [math.degrees(xi/rcurv) + self.llcrnrlon for xi in x]
                 except: # x a scalar
-                    outx = (x/rcurv)*(180./math.pi) + self.llcrnrlon
-
+                    outx = math.degrees(x/rcurv) + self.llcrnrlon
             return outx,outy
 
     def __call__(self,lon,lat,inverse=False):
