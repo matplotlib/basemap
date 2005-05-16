@@ -79,7 +79,7 @@ class Basemap:
     def __init__(self,llcrnrlon=-180.,llcrnrlat=-90.,urcrnrlon=180.,urcrnrlat=90.,\
        projection='cyl',resolution='c',area_thresh=10000.,rsphere=6370997,\
        lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
-       lon_1=None,lon_2=None):
+       lon_1=None,lon_2=None,suppress_ticks=True):
         """
  create a Basemap instance.
  
@@ -123,6 +123,14 @@ class Basemap:
   an ellipsoid is specified by the major axis and an 'inverse flattening
   parameter' (if).  The minor axis (b) can be computed from the major axis (a) 
   and the inverse flattening parameter using the formula if = a/(a-b).
+
+ suppress_ticks - suppress automatic drawing of axis ticks and labels
+ in map projection coordinates.  Default False, so parallels and meridians
+ can be labelled instead. If parallel or meridian labelling is requested
+ (using drawparallels and drawmeridians methods), automatic tick labelling
+ will be supressed even is suppress_ticks=False.  Typically, you will
+ only want to override the default if you want to label the axes in meters
+ using native map projection coordinates.
 
  The following parameters are map projection parameters which all default to 
  None.  Not all parameters are used by all projections, some are ignored.
@@ -295,6 +303,9 @@ class Basemap:
             proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
         else:
             raise ValueError, 'unsupported projection'
+
+        # make sure axis ticks are suppressed.
+        self.noticks = suppress_ticks
 
         # make Proj instance a Basemap instance variable.
         self.projtran = proj
@@ -490,7 +501,7 @@ class Basemap:
             xd = (xx[1:]-xx[0:-1])**2
             yd = (yy[1:]-yy[0:-1])**2
             dist = pylab.sqrt(xd+yd)
-            split = dist > 5000000.
+            split = dist > 1000000.
             if pylab.asum(split) and self.projection not in ['merc','cyl','mill']:
                ind = (pylab.compress(split,pylab.squeeze(split*pylab.indices(xd.shape)))+1).tolist()
                iprev = 0
@@ -662,8 +673,9 @@ class Basemap:
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
         # make sure axis ticks are turned off
-        ax.set_xticks([]) 
-        ax.set_yticks([])
+        if self.noticks == True:
+            ax.set_xticks([]) 
+            ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits()
 
@@ -866,9 +878,10 @@ class Basemap:
                         else:
         	            pylab.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
 
-        # make sure axis ticks are turned off
-        ax.set_xticks([]) 
-        ax.set_yticks([])
+        # make sure axis ticks are turned off is parallels labelled.
+        if self.noticks or max(labels):
+            ax.set_xticks([]) 
+            ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits()
 
@@ -1026,9 +1039,10 @@ class Basemap:
                         else:
         	            pylab.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
 
-        # make sure axis ticks are turned off
-        ax.set_xticks([]) 
-        ax.set_yticks([])
+        # make sure axis ticks are turned off if meridians labelled.
+        if self.noticks or max(labels):
+            ax.set_xticks([]) 
+            ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits()
 
