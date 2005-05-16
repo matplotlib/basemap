@@ -49,27 +49,25 @@ class Basemap:
 
 >>> from matplotlib.toolkits.basemap import Basemap
 >>> import cPickle
->>> from import pylab *
+>>> from pylab import *
 >>> # read in topo data from pickle (on a regular lat/lon grid)
 >>> topodict = cPickle.load(open('etopo20.pickle','rb'))
 >>> etopo = topodict['data']; lons = topodict['lons']; lats = topodict['lats']
->>> # setup map projection (global cylindrical equidistant is default)
->>> m = Basemap(lons[0],lats[0],lons[-1],lats[-1])
->>> # setup figure with same aspect ratio as map.
->>> xsize = rcParams['figure.figsize'][0]
->>> fig=figure(figsize=(xsize,m.aspect*xsize))
->>> fig.add_axes([0.1,0.1,0.8,0.8])
->>> im = m.imshow(etopo) # plot image over map.
->>> # draw coastlines and fill continents.
->>> m.drawcoastlines()
->>> m.fillcontinents()
->>> # draw parallels, label on bottom.
->>> circles = arange(-90.,120.,30.)
->>> m.drawparallels(circles,labels=[1,0,0,0])
->>> # draw meridians, label on left.
->>> meridians = arange(0.,390.,60.)
->>> m.drawmeridians(meridians,labels=[0,0,0,1])
->>> title('Cylindrical Equidistant')
+>>> # create Basemap instance for Robinson projection.
+>>> m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]))
+>>> # compute native map projection coordinates for lat/lon grid.
+>>> lons, lats = meshgrid(lons,lats)
+>>> x,y = m(lons,lats)
+>>> # create figure with same aspect ratio as map.
+>>> fig=figure(figsize=(10,m.aspect*10))
+>>> fig.add_axes([0.1,0.1,0.8,0.8],frameon=False)
+>>> # make filled contour plot.
+>>> levels, colls = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
+>>> m.drawcoastlines() # draw coastlines
+>>> m.drawmapboundary() # draw a line around the map region
+>>> m.drawparallels(arange(-90.,120.,30.)) # draw parallels
+>>> m.drawmeridians(arange(0.,420.,60.)) # draw meridians
+>>> title('Robinson Projection')
 >>> show()
 
  Version: 0.5 (200505??)
@@ -583,32 +581,33 @@ class Basemap:
         dtheta = 0.1
         if self.projection == 'ortho': # circular region.
             r = (2.*self.rmajor+self.rminor)/3.
+            r = r-1. # subtract 1 m to make sure it fits in plot region.
             for az in pylab.arange(0.,2.*math.pi+dtheta,dtheta):
                 x.append(r*math.cos(az)+0.5*self.xmax)
                 y.append(r*math.sin(az)+0.5*self.ymax)
         elif self.projection in ['moll','robin']:  # elliptical region.
             # left side
-            lats = pylab.arange(-90,90+dtheta,dtheta).tolist()
-            lons = len(lats)*[self.projparams['lon_0']-180.]
+            lats = pylab.arange(-89.9,89.9+dtheta,dtheta).tolist()
+            lons = len(lats)*[self.projparams['lon_0']-179.9]
             x,y = self(lons,lats)
             # top.
-            lons = pylab.arange(self.projparams['lon_0']-180.,self.projparams['lon_0']+180+dtheta,dtheta).tolist()
-            lats = len(lons)*[90.]
+            lons = pylab.arange(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179+dtheta,dtheta).tolist()
+            lats = len(lons)*[89.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
             # right side
-            lats = pylab.arange(90,-90-dtheta,-dtheta).tolist()
-            lons = len(lats)*[self.projparams['lon_0']+180.]
+            lats = pylab.arange(89.9,-89.9-dtheta,-dtheta).tolist()
+            lons = len(lats)*[self.projparams['lon_0']+179.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
             # bottom.
-            lons = pylab.arange(self.projparams['lon_0']+180.,self.projparams['lon_0']-180-dtheta,-dtheta).tolist()
-            lats = len(lons)*[-90.]
+            lons = pylab.arange(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180-dtheta,-dtheta).tolist()
+            lats = len(lons)*[-89.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
         else: # all other projections are rectangular.
-            x = [self.llcrnrx,self.llcrnrx,self.urcrnrx,self.urcrnrx,self.llcrnrx]
-            y = [self.llcrnry,self.urcrnry,self.urcrnry,self.llcrnry,self.llcrnry]
+            x = [self.llcrnrx+1.,self.llcrnrx+1.,self.urcrnrx-1.,self.urcrnrx-1.,self.llcrnrx+1.]
+            y = [self.llcrnry+1.,self.urcrnry-1.,self.urcrnry-1.,self.llcrnry+1.,self.llcrnry+1.]
         pylab.plot(x,y,color=color,linewidth=linewidth)
         self.set_axes_limits()
 
@@ -959,7 +958,7 @@ class Basemap:
                         ax.add_line(l)
         # draw labels for meridians.
         # meridians not labelled for orthographic, robinson or mollweide
-        if self.projection in ['ortho','moll'] and max(labels):
+        if self.projection in ['ortho','moll','robin'] and max(labels):
             print 'Warning: Cannot label meridians on Mollweide, Robinson or Orthographic basemap'
             labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
