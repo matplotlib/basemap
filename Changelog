@@ -1,5 +1,6 @@
 200505??:  version 0.5
-           Added Orthographic.  Added 'drawmapboundary' method to draw a
+           Added Orthographic, Mollweide and Robinson projections. 
+           Added 'drawmapboundary' method to draw a
            line around the map projection region.
 20050511:  version 0.4.3
            Added Oblique Mercator.
