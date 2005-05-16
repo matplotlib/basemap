@@ -11,7 +11,7 @@ lons, lats = meshgrid(lons,lats)
 x,y = m(lons,lats)
 # create figure with same aspect ratio as map.
 fig=figure(figsize=(8,m.aspect*8))
-fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
+fig.add_axes([0.1,0.1,0.8,0.8],frameon=False)
 # make filled contour plot.
 levels, colls = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
 # draw coastlines.

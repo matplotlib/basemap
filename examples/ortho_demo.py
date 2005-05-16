@@ -15,7 +15,7 @@ x,y = m(lons,lats)
 mask = logical_or(greater(x,1.e20),greater(y,1.e20))
 # create figure with same aspect ratio as map.
 fig=figure(figsize=(8,m.aspect*8))
-fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
+fig.add_axes([0.05,0.05,0.9,0.9],frameon=False)
 # make filled contour plot.
 levels, colls = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None,badmask=mask)
 # draw coastlines.
@@ -27,4 +27,3 @@ m.drawparallels(arange(-90.,120.,30.))
 m.drawmeridians(arange(0.,420.,60.))
 title('Orthographic Map Centered on Lon=%s, Lat=%s' % (lon_0,lat_0))
 show()
-
