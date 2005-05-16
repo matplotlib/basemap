@@ -21,3 +21,6 @@ quiver_demo.py shows how to plot wind vectors on a map.
 
 randompoints.py demonstrates the use of scatter to plot randomly distributed
 points on the earth.
+
+ortho_demo.py demonstrates the orthographic projection - you can interactively
+enter the reference lat/lon (the viewpoint of the satellite).
