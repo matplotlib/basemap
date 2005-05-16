@@ -25,6 +25,6 @@ m.drawmapboundary()
 # draw parallels and meridians.
 m.drawparallels(arange(-90.,120.,30.))
 m.drawmeridians(arange(0.,420.,60.))
-title('Orthographic Projection')
+title('Orthographic Map Centered on Lon=%s, Lat=%s' % (lon_0,lat_0))
 show()
 
