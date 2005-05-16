@@ -10,7 +10,7 @@ m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]))
 lons, lats = meshgrid(lons,lats)
 x,y = m(lons,lats)
 # create figure with same aspect ratio as map.
-fig=figure(figsize=(8,m.aspect*8))
+fig=figure(figsize=(10,m.aspect*10))
 fig.add_axes([0.1,0.1,0.8,0.8],frameon=False)
 # make filled contour plot.
 levels, colls = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
