@@ -5,6 +5,9 @@
            Added 'suppress_ticks' keyword to Basemap.__init__ 
            It's True by default, but can be set to False if you 
            want to label ticks in native map projection coordinates.
+           Added 'rotate_vector' method to rotate vectors to map
+           projection coordinates (without interpolation, as in
+           'transform_vector' method).
 20050511:  version 0.4.3
            Added Oblique Mercator.
            great circle calculations now use vincenty's equations
