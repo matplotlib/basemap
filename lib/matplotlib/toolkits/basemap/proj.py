@@ -84,17 +84,12 @@ class Proj:
             llcrnry = -self.rmajor
             urcrnrx = -llcrnrx
             urcrnry = -llcrnry
-        elif self.projection == 'moll':
+        elif self.projection == 'moll' or self.projection == 'robin':
             self._proj4 = proj4.Proj(''.join(self.proj4cmd))
-            llcrnrx = -math.sqrt(10.)*self.rmajor
-            llcrnry = -math.sqrt(2.)*self.rmajor
-            urcrnrx = -llcrnrx
-            urcrnry = -llcrnry
-        elif self.projection == 'robin':
-            llcrnrx = -2.6627*self.rmajor
-            llcrnry = -1.3523*self.rmajor
-            urcrnrx = -llcrnrx
-            urcrnry = -llcrnry
+            xtmp,urcrnry = self._fwd(projparams['lon_0'],90.)
+            urcrnrx,xtmp = self._fwd(projparams['lon_0']+180.,0)
+            llcrnrx = -urcrnrx
+            llcrnry = -urcrnry
         # compute x_0, y_0 so ll corner of domain is x=0,y=0.
         # note that for 'cyl' x,y == lon,lat
         self.proj4cmd.append("+x_0="+str(-llcrnrx)+' ')
@@ -117,12 +112,9 @@ class Proj:
             elif self.projection == 'ortho':
                 urcrnrx = 2.*self.rmajor
                 urcrnry = 2.*self.rmajor
-            elif self.projection == 'moll':
-                urcrnrx = 2.*math.sqrt(10.)*self.rmajor
-                urcrnry = 2.*math.sqrt(2.)*self.rmajor
-            elif self.projection == 'robin':
-                urcrnrx = 2.*2.6627*self.rmajor
-                urcrnry = 2.*1.3523*self.rmajor
+            elif self.projection == 'moll' or self.projection == 'robin':
+                xtmp,urcrnry = self._fwd(projparams['lon_0'],90.)
+                urcrnrx,xtmp = self._fwd(projparams['lon_0']+180.,0)
         else:
             urcrnrx = urcrnrlon
             urcrnry = urcrnrlat

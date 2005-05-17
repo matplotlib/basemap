@@ -63,8 +63,8 @@ class Basemap:
 >>> levels, colls = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
 >>> m.drawcoastlines() # draw coastlines
 >>> m.drawmapboundary() # draw a line around the map region
->>> m.drawparallels(arange(-90.,120.,30.)) # draw parallels
->>> m.drawmeridians(arange(0.,420.,60.)) # draw meridians
+>>> m.drawparallels(arange(-90.,120.,30.),labels=[1,0,0,0]) # draw parallels
+>>> m.drawmeridians(arange(0.,420.,60.),labels=[0,0,0,1]) # draw meridians
 >>> title('Robinson Projection') # add a title
 >>> show()
 
@@ -800,8 +800,8 @@ class Basemap:
                         ax.add_line(l)
         # draw labels for parallels
         # parallels not labelled for orthographic, robinson or mollweide.
-        if self.projection in ['ortho','moll','robin'] and max(labels):
-            print 'Warning: Cannot label parallels on Mollweide or Orthographic basemap'
+        if self.projection in ['ortho'] and max(labels):
+            print 'Warning: Cannot label parallels on Orthographic basemap'
             labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
@@ -809,16 +809,18 @@ class Basemap:
             dx = 0.01; dy = 0.01
         else:
             dx = 1000; dy = 1000
+        if self.projection == 'moll' or self.projection == 'robin':
+            lon_0 = self.projparams['lon_0']
         for dolab,side in zip(labels,['l','r','t','b']):
             if not dolab: continue
-            # for cyl, merc or miller, don't draw parallels on top or bottom.
-            if self.projection in ['cyl','merc','mill'] and side in ['t','b']: continue
+            # for cylindrical projections, don't draw parallels on top or bottom.
+            if self.projection in ['cyl','merc','mill','moll','robin'] and side in ['t','b']: continue
             if side in ['l','r']:
 	        nmax = int((self.ymax-self.ymin)/dy+1)
                 if self.urcrnry < self.llcrnry:
-	            yy = self.llcrnry-dy*pylab.arange(nmax)
+	            yy = self.llcrnry-dy*pylab.arange(nmax)-1
                 else:
-	            yy = self.llcrnry+dy*pylab.arange(nmax)
+	            yy = self.llcrnry+dy*pylab.arange(nmax)+1
                 if side == 'l':
 	            lons,lats = self(self.llcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
                 else:
@@ -831,9 +833,9 @@ class Basemap:
             else:
 	        nmax = int((self.xmax-self.xmin)/dx+1)
                 if self.urcrnrx < self.llcrnrx:
-	            xx = self.llcrnrx-dx*pylab.arange(nmax)
+	            xx = self.llcrnrx-dx*pylab.arange(nmax)-1
                 else:
-	            xx = self.llcrnrx+dx*pylab.arange(nmax)
+	            xx = self.llcrnrx+dx*pylab.arange(nmax)+1
                 if side == 'b':
 	            lons,lats = self(xx,self.llcrnry*pylab.ones(xx.shape,'f'),inverse=True)
                 else:
@@ -867,9 +869,19 @@ class Basemap:
                     if i and abs(nr-nl) < 100: continue
                     if n >= 0:
                         if side == 'l':
-        	            pylab.text(self.llcrnrx-xoffset,yy[n],latlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
+                            if self.projection in ['moll','robin']:
+                                xlab,ylab = self(lon_0-179.9,lat)
+                            else:
+                                xlab = self.urcrnrx
+                            xlab = xlab-xoffset
+        	            pylab.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
                         elif side == 'r':
-        	            pylab.text(self.urcrnrx+xoffset,yy[n],latlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
+                            if self.projection in ['moll','robin']:
+                                xlab,ylab = self(lon_0+179.9,lat)
+                            else:
+                                xlab = self.urcrnrx
+                            xlab = xlab+xoffset
+        	            pylab.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
                         elif side == 'b':
         	            pylab.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
                         else:
@@ -956,8 +968,8 @@ class Basemap:
                         ax.add_line(l)
         # draw labels for meridians.
         # meridians not labelled for orthographic, robinson or mollweide
-        if self.projection in ['ortho','moll','robin'] and max(labels):
-            print 'Warning: Cannot label meridians on Mollweide, Robinson or Orthographic basemap'
+        if self.projection in ['ortho','moll'] and max(labels):
+            print 'Warning: Cannot label meridians on Mollweide or Orthographic basemap'
             labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
@@ -965,16 +977,20 @@ class Basemap:
             dx = 0.01; dy = 0.01
         else:
             dx = 1000; dy = 1000
+        if self.projection == 'moll' or self.projection == 'robin':
+            lon_0 = self.projparams['lon_0']
+            xmin,ymin = self(lon_0-179.9,-90)
+            xmax,ymax = self(lon_0+179.9,90)
         for dolab,side in zip(labels,['l','r','t','b']):
             if not dolab: continue
-            # for cyl, merc or miller, don't draw meridians on left or right.
-            if self.projection in ['cyl','merc','mill'] and side in ['l','r']: continue
+            # for cylindrical projections, don't draw meridians on left or right.
+            if self.projection in ['cyl','merc','mill','robin','moll'] and side in ['l','r']: continue
             if side in ['l','r']:
 	        nmax = int((self.ymax-self.ymin)/dy+1)
                 if self.urcrnry < self.llcrnry:
-	            yy = self.llcrnry-dy*pylab.arange(nmax)
+	            yy = self.llcrnry-dy*pylab.arange(nmax)-1
                 else:
-	            yy = self.llcrnry+dy*pylab.arange(nmax)
+	            yy = self.llcrnry+dy*pylab.arange(nmax)+1
                 if side == 'l':
 	            lons,lats = self(self.llcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
                 else:
@@ -988,9 +1004,9 @@ class Basemap:
             else:
 	        nmax = int((self.xmax-self.xmin)/dx+1)
                 if self.urcrnrx < self.llcrnrx:
-	            xx = self.llcrnrx-dx*pylab.arange(nmax)
+	            xx = self.llcrnrx-dx*pylab.arange(nmax)-1
                 else:
-	            xx = self.llcrnrx+dx*pylab.arange(nmax)
+	            xx = self.llcrnrx+dx*pylab.arange(nmax)+1
                 if side == 'b':
 	            lons,lats = self(xx,self.llcrnry*pylab.ones(xx.shape,'f'),inverse=True)
                 else:
@@ -1032,9 +1048,11 @@ class Basemap:
                         elif side == 'r':
         	            pylab.text(self.urcrnrx+xoffset,yy[n],lonlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
                         elif side == 'b':
-        	            pylab.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
+                            if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
+        	                pylab.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
                         else:
-        	            pylab.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
+                            if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
+        	                pylab.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
 
         # make sure axis ticks are turned off if meridians labelled.
         if self.noticks or max(labels):
