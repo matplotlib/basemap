@@ -17,9 +17,9 @@ m.drawcoastlines()
 # draw a line around the map region.
 m.drawmapboundary()
 # draw parallels and meridians.
-m.drawparallels(arange(-90.,120.,30.))
-m.drawmeridians(arange(0.,420.,60.))
+m.drawparallels(arange(-60.,90.,30.),labels=[1,0,0,0])
+m.drawmeridians(arange(0.,420.,60.),labels=[0,0,0,1])
 # add a title.
-title('Robinson Projection')
+title('Robinso Projection')
 show()
 
