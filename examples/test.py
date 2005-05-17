@@ -6,20 +6,22 @@
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import *
 import cPickle
+from matplotlib.numerix import ma
 
 # read in topo data from pickle (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
 topodict = cPickle.load(open('etopo20.pickle','rb'))
-topoin = topodict['data']; lons = topodict['lons']; lats = topodict['lats']
+topodatin = topodict['data']; lonsin = topodict['lons']; latsin = topodict['lats']
 
 # shift data so lons go from -180 to 180 instead of 20 to 380.
-topoin,lons = shiftgrid(180.,topoin,lons,start=False)
+topoin,lons = shiftgrid(180.,topodatin,lonsin,start=False)
+lats = latsin
 
 print 'min/max etopo20 data:'
 print min(ravel(topoin)),max(ravel(topoin))
 
 # setup cylindrical equidistant map projection (global domain).
-m = Basemap(-180.,-90,180.,90.,\
+m = Basemap(llcrnrlon=-180.,llcrnrlat=-90,urcrnrlon=180.,urcrnrlat=90.,\
             resolution='c',area_thresh=10000.,projection='cyl')
 # setup figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
@@ -400,7 +402,7 @@ print 'plotting Lambert Azimuthal example, close plot window to proceed ...'
 show()
 
 # setup azimuthal equidistant map projection (Northern Hemisphere).
-m = Basemap(-150.,-20.826,30.,-20.826,
+m = Basemap(-150.,40.,30.,40.,
             resolution='c',area_thresh=10000.,projection='aeqd',\
             lat_0=90.,lon_0=-105.)
 # transform to nx x ny regularly spaced native projection grid
@@ -426,4 +428,112 @@ m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Azimuthal Equidistant',y=1.075)
 print 'plotting Azimuthal Equidistant example, close plot window to proceed ...'
 show()
+
+# projections with elliptical boundaries (orthographic, mollweide and robinson)
+
+# can't use imshow, since it expects a rectangular image.
+# instead use pcolor, and plot data directly on lat/lon grid without 
+# interpolation.
+# Note:  fillcontinents not supported for these projections.
+
+# shift lons and lats by 1/2 grid increment (so values represent the vertices
+# of the grid box surrounding the data value, as pcolor expects).
+delon = lonsin[1]-lonsin[0]
+delat = latsin[1]-latsin[0]
+lons = zeros(len(lonsin)+1,'f')
+lats = zeros(len(latsin)+1,'f')
+lons[0:len(lonsin)] = lonsin-0.5*delon
+lons[-1] = lonsin[-1]+0.5*delon
+lats[0:len(latsin)] = latsin-0.5*delon
+lats[-1] = latsin[-1]+0.5*delon
+lons, lats = meshgrid(lons, lats)
+
+# setup of basemap ('ortho' = orthographic projection)
+m = Basemap(projection='ortho',
+            resolution='c',area_thresh=10000.,lat_0=30,lon_0=-60)
+xsize = rcParams['figure.figsize'][0]
+fig=figure(figsize=(xsize,m.aspect*xsize))
+ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
+# compute x,y of regular lat/lon grid.
+x,y = m(*meshgrid(lonsin,latsin))
+# make x,y masked arrays (masked where data is outside of projection limb)
+x = ma.masked_values(where(x > 1.e10,1.e10,x), 1.e10)
+y = ma.masked_values(where(y > 1.e10,1.e10,y), 1.e10)
+# make a pcolor plot.
+p = m.pcolor(x,y,topodatin,shading='flat')
+cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
+colorbar(tickfmt='%d', cax=cax) # draw colorbar
+axes(ax)  # make the original axes current again
+# draw coastlines and political boundaries.
+m.drawcoastlines()
+# draw parallels and meridians (labelling is 
+# not implemented for orthographic).
+parallels = arange(-80.,90,20.)
+m.drawparallels(parallels)
+meridians = arange(0.,360.,20.)
+m.drawmeridians(meridians)
+# draw boundary around map region.
+m.drawmapboundary()
+title('Orthographic')
+print 'plotting Orthographic example, close plot window to proceed ...'
+show()
+
+# setup of basemap ('moll' = mollweide projection)
+m = Basemap(projection='moll',
+            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
+xsize = rcParams['figure.figsize'][0]
+fig=figure(figsize=(xsize,m.aspect*xsize))
+ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
+# compute x,y of regular lat/lon grid.
+x,y = m(*meshgrid(lonsin,latsin))
+# make x,y masked arrays (masked where data is outside of projection limb)
+x = ma.masked_values(where(x > 1.e10,1.e10,x), 1.e10)
+y = ma.masked_values(where(y > 1.e10,1.e10,y), 1.e10)
+# make a pcolor plot.
+p = m.pcolor(x,y,topodatin,shading='flat')
+cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
+colorbar(tickfmt='%d', cax=cax) # draw colorbar
+axes(ax)  # make the original axes current again
+# draw coastlines and political boundaries.
+m.drawcoastlines()
+# draw parallels and meridians
+parallels = arange(-60.,90,30.)
+m.drawparallels(parallels,labels=[1,0,0,0])
+meridians = arange(0.,360.,30.)
+m.drawmeridians(meridians)
+# draw boundary around map region.
+m.drawmapboundary()
+title('Mollweide')
+print 'plotting Mollweide example, close plot window to proceed ...'
+show()
+
+# setup of basemap ('robin' = robinson projection)
+m = Basemap(projection='robin',
+            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
+xsize = rcParams['figure.figsize'][0]
+fig=figure(figsize=(xsize,m.aspect*xsize))
+ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
+# compute x,y of regular lat/lon grid.
+x,y = m(*meshgrid(lonsin,latsin))
+# make x,y masked arrays (masked where data is outside of projection limb)
+x = ma.masked_values(where(x > 1.e10,1.e10,x), 1.e10)
+y = ma.masked_values(where(y > 1.e10,1.e10,y), 1.e10)
+# make a pcolor plot.
+p = m.pcolor(x,y,topodatin,shading='flat')
+cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
+colorbar(tickfmt='%d', cax=cax) # draw colorbar
+axes(ax)  # make the original axes current again
+# draw coastlines and political boundaries.
+m.drawcoastlines()
+# draw parallels and meridians
+parallels = arange(-60.,90,30.)
+m.drawparallels(parallels,labels=[1,0,0,0])
+meridians = arange(0.,360.,60.)
+m.drawmeridians(meridians,labels=[0,0,0,1])
+# draw boundary around map region.
+m.drawmapboundary()
+title('Robinson')
+print 'plotting Robinson example, close plot window to proceed ...'
+show()
+
 print 'done'
