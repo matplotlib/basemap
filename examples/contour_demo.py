@@ -119,7 +119,7 @@ axes(ax)  # make the original axes current again
 m.drawcoastlines()
 m.drawmapboundary()
 # draw parallels and meridians.
-parallels = arange(0.,80,20.)
+parallels = arange(-80.,90,20.)
 m.drawparallels(parallels)
 meridians = arange(0.,360.,20.)
 m.drawmeridians(meridians)
