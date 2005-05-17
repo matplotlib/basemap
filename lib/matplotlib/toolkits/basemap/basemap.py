@@ -1103,8 +1103,8 @@ class Basemap:
 
     def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False,**kwargs):
         """
- transform a scalar field (datin) from a lat/lon grid with longitudes
- lons and latitudes lats to a (ny,nx) native map projection grid.
+ interpolate a scalar field (datin) from a lat/lon grid with longitudes =
+ lons and latitudes = lats to a (ny,nx) native map projection grid.
 
  lons, lats must be rank-1 arrays containing longitudes and latitudes
  (in degrees) of datin grid in increasing order
@@ -1129,8 +1129,9 @@ class Basemap:
 
     def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,**kwargs):
         """
- transform a vector field (uin,vin) from a lat/lon grid with longitudes
- lons and latitudes lats to a (ny,nx) native map projection grid.
+ rotate and interpolate a vector field (uin,vin) from a lat/lon grid
+ with longitudes = lons and latitudes = lats to a 
+ (ny,nx) native map projection grid.
 
  lons, lats must be rank-1 arrays containing longitudes and latitudes
  (in degrees) of datin grid in increasing order
@@ -1155,6 +1156,44 @@ class Basemap:
         xn,yn = self(lonsout,pylab.where(latsout+delta<90.,latsout+delta,latsout-delta))
         dxdlat = pylab.where(latsout+delta<90.,(xn-x)/(latsout+delta),(x-xn)/(latsout+delta))
         dydlat = pylab.where(latsout+delta<90.,(yn-y)/(latsout+delta),(y-yn)/(latsout+delta))
+        # northangle is the angle between true north and the y axis.
+        northangle = pylab.arctan2(dxdlat,dydlat)
+        uout = uin*pylab.cos(northangle) + vin*pylab.sin(northangle)
+        vout = vin*pylab.cos(northangle) - uin*pylab.sin(northangle)
+        if returnxy:
+            return uout,vout,x,y
+        else:
+            return uout,vout
+
+    def rotate_vector(self,uin,vin,lons,lats,returnxy=False):
+        """
+ rotate a vector field (uin,vin) on a rectilinear lat/lon grid
+ with longitudes = lons and latitudes = lats from geographical into map
+ projection coordinates.
+
+ Differs from transform_vector in that no interpolation is done,
+ the vector is returned on the same lat/lon grid, but rotated into
+ x,y coordinates.
+
+ lons, lats must be rank-1 arrays containing longitudes and latitudes
+ (in degrees) of lat/lon grid in increasing order
+ (i.e. from Greenwich meridian eastward, and South Pole northward).
+
+ if returnxy=True, the x and y values of the lat/lon grid 
+ are also returned (default False).
+
+ The input vector field is defined in spherical coordinates (it
+ has eastward and northward components) while the output
+ vector field is rotated to map projection coordinates (relative
+ to x and y). The magnitude of the vector is preserved.
+        """
+        lons, lats = pylab.meshgrid(lons, lats)
+        x, y = self(lons, lats)
+        # rotate from geographic to map coordinates.
+        delta = 0.1 # incement in latitude used to estimate derivatives.
+        xn,yn = self(lons,pylab.where(lats+delta<90.,lats+delta,lats-delta))
+        dxdlat = pylab.where(lats+delta<90.,(xn-x)/(lats+delta),(x-xn)/(lats+delta))
+        dydlat = pylab.where(lats+delta<90.,(yn-y)/(lats+delta),(y-yn)/(lats+delta))
         # northangle is the angle between true north and the y axis.
         northangle = pylab.arctan2(dxdlat,dydlat)
         uout = uin*pylab.cos(northangle) + vin*pylab.sin(northangle)
