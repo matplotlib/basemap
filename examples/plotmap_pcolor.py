@@ -66,8 +66,7 @@ title('ETOPO Topography - Lambert Conformal Conic')
 show()
 
 # setup of basemap ('ortho' = orthographic projection)
-# use major and minor sphere radii from WGS84 ellipsoid.
-m = Basemap(projection='ortho',rsphere=(6378137.00,6356752.3142),\
+m = Basemap(projection='ortho',
             resolution='c',area_thresh=10000.,lat_0=30,lon_0=-60)
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
@@ -77,9 +76,8 @@ x,y = m(lons,lats)
 # make x,y masked arrays (masked where data is outside of projection limb)
 x = ma.masked_values(where(x > 1.e10,1.e10,x), 1.e10)
 y = ma.masked_values(where(y > 1.e10,1.e10,y), 1.e10)
-topodat = ma.masked_values(topodatin, 1.e10)
 # make a pcolor plot.
-p = m.pcolor(x,y,topodat,shading='flat')
+p = m.pcolor(x,y,topodatin,shading='flat')
 clim(-4500.,3500.) # adjust range of colors.
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
@@ -88,7 +86,7 @@ axes(ax)  # make the original axes current again
 m.drawcoastlines()
 # draw parallels and meridians (labelling is 
 # not implemented for orthographic).
-parallels = arange(0.,80,20.)
+parallels = arange(-80.,90,20.)
 m.drawparallels(parallels)
 meridians = arange(0.,360.,20.)
 m.drawmeridians(meridians)
