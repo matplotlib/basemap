@@ -872,7 +872,7 @@ class Basemap:
                             if self.projection in ['moll','robin']:
                                 xlab,ylab = self(lon_0-179.9,lat)
                             else:
-                                xlab = self.urcrnrx
+                                xlab = self.llcrnrx
                             xlab = xlab-xoffset
         	            pylab.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
                         elif side == 'r':
