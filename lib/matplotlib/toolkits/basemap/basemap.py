@@ -8,7 +8,7 @@ from matplotlib.lines import Line2D
 from numarray import nd_image
 import sys, os, pylab, math
 from proj import Proj
-from greatcircle import GreatCircle
+from greatcircle import GreatCircle, vinc_dist, vinc_pt
 
 # look in sys.prefix for directory containing basemap files if
 # BASEMAP_DATA_PATH env var not set.
@@ -335,12 +335,16 @@ class Basemap:
         # ignoring 'inf' values that are off the map, and skipping
         # polygons that have an area > area_thresh..
         segments = [zip(xc[i0:i1],yc[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh]
+        segmentsll = [zip(coastlons[i0:i1],coastlats[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh]
         segtypes = [i for a,i in zip(coastsegarea[:-1],coastsegtype[:-1]) if a > area_thresh]
         segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh and max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+        segmentsll2 = [zip(coastlons2[i0:i1],coastlats[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh and max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
         segtypes2 = [i for a,i0,i1,i in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if a > area_thresh and max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
         segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh and max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        segmentsll3 = [zip(coastlons3[i0:i1],coastlats[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh and max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
         segtypes3 = [i for a,i0,i1,i in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if a > area_thresh and max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
         self.coastsegs = segments+segments2+segments3
+        self.coastsegsll = segmentsll+segmentsll2+segmentsll3
         self.coastsegtypes = segtypes+segtypes2+segtypes3
 
         # same as above for country polygons.
@@ -368,18 +372,21 @@ class Basemap:
         self.statesegs = segments+segments2+segments3
 
         # store coast polygons for filling.
-	self.coastpolygons = []
+        self.coastpolygons = []
+        self.coastpolygonsll = []
         self.coastpolygontypes = []
-        if projection in ['merc','mill','moll','robin']:
+        if projection in ['merc','mill']:
             xsp,ysp = proj(0.,-89.9) # s. pole coordinates.
             xa,ya = proj(0.,-68.0) # edge of antarctica.
-	    x0,y0 = proj(0.,0.)
-	    xm360,ym360 = proj(-360.,0.)
-	    x360,y360 = proj(360.,0.)
-	    x720,y720 = proj(720.,0.)
-        for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
+            x0,y0 = proj(0.,0.)
+            xm360,ym360 = proj(-360.,0.)
+            x360,y360 = proj(360.,0.)
+            x720,y720 = proj(720.,0.)
+        for seg,segtype,segll in zip(self.coastsegs,self.coastsegtypes,self.coastsegsll):
             x = [lon for lon,lat in seg]
             y = [lat for lon,lat in seg]
+            lons = [lon for lon,lat in segll]
+            lats = [lat for lon,lat in segll]
             # the antarctic polygon is a nuisance, since it
             # spans all longitudes, it's not closed and will not be filled
             # without some projection dependant tweaking.
@@ -389,33 +396,58 @@ class Basemap:
                     y.append(-90.0000)
                     x.insert(0,360.)
                     y.insert(0,-90)
+                    lons.append(0.)
+                    lats.append(-90.)
+                    lons.insert(0,360.)
+                    lats.insert(0,-90.)
                 if x[-1] == 360.000 and y[-1] < -68.: 
                     x.append(360.)
                     y.append(-90)
                     x.insert(0,720.)
                     y.insert(0,-90)
+                    lons.append(360.)
+                    lats.append(-90.)
+                    lons.insert(0,720.)
+                    lats.insert(0,-90.)
                 if x[-1] == -360.000 and y[-1] < -68.: 
                     x.append(-360.)
                     y.append(-90)
                     x.insert(0,0.)
                     y.insert(0,-90)
-            elif projection in ['merc','mill','moll','robin']:
+                    lons.append(-360.)
+                    lats.append(-90.)
+                    lons.insert(0,0.)
+                    lats.insert(0,-90.)
+            elif projection in ['merc','mill']:
                 if math.fabs(x[-1]-x0) < 1. and y[-1] < ya: # close antarctica
                     x.append(x0)
                     y.append(ysp)
                     x.insert(0,x360)
                     y.insert(0,ysp)
+                    lons.append(0.)
+                    lats.append(-90.)
+                    lons.insert(0,360.)
+                    lats.insert(0,-90.)
                 if math.fabs(x[-1]-x360) < 1. and y[-1] < ya: 
                     x.append(x360)
                     y.append(ysp)
                     x.insert(0,x720)
                     y.insert(0,ysp)
+                    lons.append(360.)
+                    lats.append(-90.)
+                    lons.insert(0,720.)
+                    lats.insert(0,-90.)
                 if math.fabs(x[-1]-xm360) < 1. and y[-1] < ya: 
                     x.append(xm360)
                     y.append(ysp)
                     x.insert(0,x0)
                     y.insert(0,ysp)
+                    lons.append(-360.)
+                    lats.append(-90.)
+                    lons.insert(0,0.)
+                    lats.insert(0,-90.)
             self.coastpolygons.append((x,y))
+            self.coastpolygonsll.append((lons,lats))
             self.coastpolygontypes.append(segtype)
 
         # remove those segments/polygons that don't intersect map region.
@@ -428,12 +460,15 @@ class Basemap:
         self.coastsegs = coastsegs
         self.coastsegtypes = coastsegtypes
         polygons = []
+        polygonsll = []
         polygontypes = []
-        for poly,polytype in zip(self.coastpolygons,self.coastpolygontypes):
-            if self._insidemap_poly(poly):
+        for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,self.coastpolygonsll):
+            if self._insidemap_poly(poly,polyll):
                 polygons.append(poly)
                 polygontypes.append(polytype)
+                polygonsll.append(polyll)
         self.coastpolygons = polygons
+        self.coastpolygonsll = polygonsll
         self.coastpolygontypes = polygontypes
         states = []
         for seg in self.statesegs:
@@ -497,7 +532,7 @@ class Basemap:
             xd = (xx[1:]-xx[0:-1])**2
             yd = (yy[1:]-yy[0:-1])**2
             dist = pylab.sqrt(xd+yd)
-            split = dist > 1000000.
+            split = dist > 5000000.
             if pylab.asum(split) and self.projection not in ['merc','cyl','mill']:
                ind = (pylab.compress(split,pylab.squeeze(split*pylab.indices(xd.shape)))+1).tolist()
                iprev = 0
@@ -511,6 +546,98 @@ class Basemap:
                 coastsegtypes.append(segtype)
         self.coastsegs = coastsegs
         self.coastsegtypes = coastsegtypes
+
+	# special treatment of coastline polygons for 
+	# orthographic, mollweide and robinson.
+	if self.projection == 'ortho':
+            lat_0 = math.radians(self.projparams['lat_0'])
+            lon_0 = math.radians(self.projparams['lon_0'])
+            rad = (2.*self.rmajor + self.rminor)/3.
+            coastpolygons = []
+            for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,self.coastpolygonsll):
+        	x = poly[0]
+        	y = poly[1]
+        	lons = polyll[0]
+        	lats = polyll[1]
+            # replace values in polygons that are over the horizon.
+            # find great circle from point outside limb and pole of projection
+            # using azimuth at end point (pole of projection), go back out
+            # to limb. set x,y to value there.
+        	n = 0
+        	xnew=[]
+        	ynew=[]
+        	for x,y in zip(x,y):
+                    if x > 1.e20 or y > 1.e20:
+                	dist,alpha12,az=vinc_dist(self.flattening,rad,math.radians(lats[n]),math.radians(lons[n]),lat_0,lon_0)
+                	latpt,lonpt,az2=vinc_pt(self.flattening,rad,lat_0,lon_0,az,0.5*math.pi*rad)
+                	xn,yn = self(math.degrees(lonpt),math.degrees(latpt))
+                	xnew.append(xn)
+                	ynew.append(yn)
+                    else:
+                	xnew.append(x)
+                	ynew.append(y)
+                    n = n + 1
+        	coastpolygons.append((xnew,ynew))
+            self.coastpolygons = coastpolygons
+	elif self.projection in ['moll','robin']:
+            lon_0 = self.projparams['lon_0']
+            coastpolygons=[]
+            for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,self.coastpolygonsll):
+        	x = poly[0]
+        	y = poly[1]
+        	lons = polyll[0]
+        	lats = polyll[1]
+        	xn=[]
+        	yn=[]
+                # antarctic segment goes from 360 back to 0
+                # reorder to go from lon_0-180 to lon_0+180.
+        	if lats[-1] < -68.0:
+                    lons.reverse()
+                    lats.reverse()
+                    xx,yy = self(lons,lats)
+                    xx = pylab.array(xx); yy = pylab.array(yy)
+                    xdist = pylab.fabs(xx[1:]-xx[0:-1])
+                    if max(xdist) > 1000000: 
+                	nmin = pylab.argmax(xdist)+1
+                	xnew = pylab.zeros(len(xx),'d')
+                	ynew = pylab.zeros(len(xx),'d')
+                	lonsnew = len(xx)*[0]
+                	latsnew = len(xx)*[0]
+                	xnew[0:len(xx)-nmin] = xx[nmin:]
+                	ynew[0:len(xx)-nmin] = yy[nmin:]
+                	xnew[len(xx)-nmin:] = xx[0:nmin]
+                	ynew[len(xx)-nmin:] = yy[0:nmin]
+                	lonsnew[0:len(xx)-nmin] = lons[nmin:]
+                	latsnew[0:len(xx)-nmin] = lats[nmin:]
+                	lonsnew[len(xx)-nmin:] = lons[0:nmin]
+                	latsnew[len(xx)-nmin:] = lats[0:nmin]
+                	x = xnew.tolist(); y = ynew.tolist()
+                	lons = lonsnew; lats = latsnew
+                    else:
+                	x.reverse()
+                	y.reverse()
+                    # close polygon (add lines along left and right edges down to S pole)
+                    for phi in pylab.arange(-89.999,lats[0],0.1):
+                	xx,yy = self(lon_0-179.99,phi)
+                	xn.append(xx); yn.append(yy)
+                    xn = xn+x
+                    yn = yn+y
+                    for phi in pylab.arange(lats[-1],-89.999,-0.1):
+                	xx,yy = self(lon_0+179.99,phi)
+                	xn.append(xx); yn.append(yy)
+                # move points outside map to edge of map
+                # along constant latitude.
+        	else:
+                    for x,y,lon,lat in zip(x,y,lons,lats):
+                	if lon > lon_0+180 or lon < lon_0-180:
+                            if lon >= lon_0+180: lon=lon_0+180.
+                            if lon <= lon_0-180: lon=lon_0-180.
+                            xx,yy = self(lon,lat)
+                            xn.append(xx); yn.append(yy)
+                	else:
+                            xn.append(x); yn.append(y)
+        	coastpolygons.append((xn,yn))
+            self.coastpolygons = coastpolygons
 
     def _splitseg(self,xx,yy):
         """split segment up around missing values (outside projection limb)"""
@@ -539,14 +666,22 @@ class Basemap:
                 break
         return isin
 
-    def _insidemap_poly(self,poly):
+    def _insidemap_poly(self,poly,polyll):
         """returns True if any point in polygon is inside map region"""
         isin = False
         xx = poly[0]; yy = poly[1]
-        for x,y in zip(xx,yy):
-            if x >= self.xmin and x <= self.xmax and y >= self.ymin and y <= self.ymax:
-                isin = True
-                break
+        if self.projection in ['moll','robin']:
+            lon_0 = self.projparams['lon_0']
+            lons = polyll[0]
+            for lon in lons:
+                if lon < lon_0+180 and lon > lon_0-180:
+                    isin = True
+                    break
+        else:
+            for x,y in zip(xx,yy):
+                if x >= self.xmin and x <= self.xmax and y >= self.ymin and y <= self.ymax:
+                   isin = True
+                   break
         return isin
 
     def __call__(self,x,y,inverse=False):
@@ -616,9 +751,6 @@ class Basemap:
 
  color - color to fill continents (default gray).
         """
-        # not implemented for elliptical map projections.
-        if self.projection in ['ortho','moll','robin']: 
-            raise NotImplementedError('fillcontinents does not work with Orthographic, Mollweide or Robinson yet')
         # get current axes instance.
         ax = pylab.gca()
         # get axis background color.
@@ -741,8 +873,8 @@ class Basemap:
         # don't draw meridians past latmax, always draw parallel at latmax.
         latmax = 80.
         # offset for labels.
-	yoffset = (self.urcrnry-self.llcrnry)/100./self.aspect
-	xoffset = (self.urcrnrx-self.llcrnrx)/100.
+        yoffset = (self.urcrnry-self.llcrnry)/100./self.aspect
+        xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection in ['merc','cyl','mill','moll','robin']:
             lons = pylab.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype('f')
@@ -816,37 +948,37 @@ class Basemap:
             # for cylindrical projections, don't draw parallels on top or bottom.
             if self.projection in ['cyl','merc','mill','moll','robin'] and side in ['t','b']: continue
             if side in ['l','r']:
-	        nmax = int((self.ymax-self.ymin)/dy+1)
+                nmax = int((self.ymax-self.ymin)/dy+1)
                 if self.urcrnry < self.llcrnry:
-	            yy = self.llcrnry-dy*pylab.arange(nmax)-1
+                    yy = self.llcrnry-dy*pylab.arange(nmax)-1
                 else:
-	            yy = self.llcrnry+dy*pylab.arange(nmax)+1
+                    yy = self.llcrnry+dy*pylab.arange(nmax)+1
                 if side == 'l':
-	            lons,lats = self(self.llcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.llcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
                 else:
-	            lons,lats = self(self.urcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.urcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 lons = pylab.where(lons < 0, lons+360, lons)
                 lons = [int(lon*10) for lon in lons.tolist()]
                 lats = [int(lat*10) for lat in lats.tolist()]
             else:
-	        nmax = int((self.xmax-self.xmin)/dx+1)
+                nmax = int((self.xmax-self.xmin)/dx+1)
                 if self.urcrnrx < self.llcrnrx:
-	            xx = self.llcrnrx-dx*pylab.arange(nmax)-1
+                    xx = self.llcrnrx-dx*pylab.arange(nmax)-1
                 else:
-	            xx = self.llcrnrx+dx*pylab.arange(nmax)+1
+                    xx = self.llcrnrx+dx*pylab.arange(nmax)+1
                 if side == 'b':
-	            lons,lats = self(xx,self.llcrnry*pylab.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.llcrnry*pylab.ones(xx.shape,'f'),inverse=True)
                 else:
-	            lons,lats = self(xx,self.urcrnry*pylab.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.urcrnry*pylab.ones(xx.shape,'f'),inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 lons = pylab.where(lons < 0, lons+360, lons)
                 lons = pylab.where(lons < 0, lons+360, lons)
                 lons = [int(lon*10) for lon in lons.tolist()]
                 lats = [int(lat*10) for lat in lats.tolist()]
-	    for lat in circles:
+            for lat in circles:
                 # find index of parallel (there may be two, so
                 # search from left and right).
                 try:
@@ -858,11 +990,11 @@ class Basemap:
                 except:
                     nr = -1
                 if lat<0:
-        	    latlab = r'$\%s{%g\/^{\circ}\/S}$'%(font,pylab.fabs(lat))
-        	elif lat>0:
-        	    latlab = r'$\%s{%g\/^{\circ}\/N}$'%(font,lat)
-        	else:
-        	    latlab = r'$\%s{%g\/^{\circ}}$'%(font,lat)
+                    latlab = r'$\%s{%g\/^{\circ}\/S}$'%(font,pylab.fabs(lat))
+                elif lat>0:
+                    latlab = r'$\%s{%g\/^{\circ}\/N}$'%(font,lat)
+                else:
+                    latlab = r'$\%s{%g\/^{\circ}}$'%(font,lat)
                 # parallels can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     # don't bother if close to the first label.
@@ -874,18 +1006,18 @@ class Basemap:
                             else:
                                 xlab = self.llcrnrx
                             xlab = xlab-xoffset
-        	            pylab.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
+                            pylab.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
                         elif side == 'r':
                             if self.projection in ['moll','robin']:
                                 xlab,ylab = self(lon_0+179.9,lat)
                             else:
                                 xlab = self.urcrnrx
                             xlab = xlab+xoffset
-        	            pylab.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
+                            pylab.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
                         elif side == 'b':
-        	            pylab.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
+                            pylab.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
                         else:
-        	            pylab.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
+                            pylab.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
 
         # make sure axis ticks are turned off is parallels labelled.
         if self.noticks or max(labels):
@@ -919,8 +1051,8 @@ class Basemap:
         # don't draw meridians past latmax, always draw parallel at latmax.
         latmax = 80. # not used for cyl, merc or miller projections.
         # offset for labels.
-	yoffset = (self.urcrnry-self.llcrnry)/100./self.aspect
-	xoffset = (self.urcrnrx-self.llcrnrx)/100.
+        yoffset = (self.urcrnry-self.llcrnry)/100./self.aspect
+        xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection not in ['merc','cyl','mill','moll','robin']:
             lats = pylab.arange(-latmax,latmax+0.1,0.1).astype('f')
@@ -986,15 +1118,15 @@ class Basemap:
             # for cylindrical projections, don't draw meridians on left or right.
             if self.projection in ['cyl','merc','mill','robin','moll'] and side in ['l','r']: continue
             if side in ['l','r']:
-	        nmax = int((self.ymax-self.ymin)/dy+1)
+                nmax = int((self.ymax-self.ymin)/dy+1)
                 if self.urcrnry < self.llcrnry:
-	            yy = self.llcrnry-dy*pylab.arange(nmax)-1
+                    yy = self.llcrnry-dy*pylab.arange(nmax)-1
                 else:
-	            yy = self.llcrnry+dy*pylab.arange(nmax)+1
+                    yy = self.llcrnry+dy*pylab.arange(nmax)+1
                 if side == 'l':
-	            lons,lats = self(self.llcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.llcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
                 else:
-	            lons,lats = self(self.urcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.urcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 lons = pylab.where(lons < 0, lons+360, lons)
@@ -1002,15 +1134,15 @@ class Basemap:
                 lons = [int(lon*10) for lon in lons.tolist()]
                 lats = [int(lat*10) for lat in lats.tolist()]
             else:
-	        nmax = int((self.xmax-self.xmin)/dx+1)
+                nmax = int((self.xmax-self.xmin)/dx+1)
                 if self.urcrnrx < self.llcrnrx:
-	            xx = self.llcrnrx-dx*pylab.arange(nmax)-1
+                    xx = self.llcrnrx-dx*pylab.arange(nmax)-1
                 else:
-	            xx = self.llcrnrx+dx*pylab.arange(nmax)+1
+                    xx = self.llcrnrx+dx*pylab.arange(nmax)+1
                 if side == 'b':
-	            lons,lats = self(xx,self.llcrnry*pylab.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.llcrnry*pylab.ones(xx.shape,'f'),inverse=True)
                 else:
-	            lons,lats = self(xx,self.urcrnry*pylab.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.urcrnry*pylab.ones(xx.shape,'f'),inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 lons = pylab.where(lons < 0, lons+360, lons)
@@ -1029,12 +1161,12 @@ class Basemap:
                     nr = len(lons)-lons[::-1].index(int(lon*10))-1
                 except:
                     nr = -1
-        	if lon>180:
-        	    lonlab = r'$\%s{%g\/^{\circ}\/W}$'%(font,pylab.fabs(lon-360))
-        	elif lon<180 and lon != 0:
-        	    lonlab = r'$\%s{%g\/^{\circ}\/E}$'%(font,lon)
-        	else:
-        	    lonlab = r'$\%s{%g\/^{\circ}}$'%(font,lon)
+                if lon>180:
+                    lonlab = r'$\%s{%g\/^{\circ}\/W}$'%(font,pylab.fabs(lon-360))
+                elif lon<180 and lon != 0:
+                    lonlab = r'$\%s{%g\/^{\circ}\/E}$'%(font,lon)
+                else:
+                    lonlab = r'$\%s{%g\/^{\circ}}$'%(font,lon)
                 # meridians can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     lat = lats[n]/10.
@@ -1044,15 +1176,15 @@ class Basemap:
                     if i and abs(nr-nl) < 100: continue
                     if n >= 0:
                         if side == 'l':
-        	            pylab.text(self.llcrnrx-xoffset,yy[n],lonlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
+                            pylab.text(self.llcrnrx-xoffset,yy[n],lonlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
                         elif side == 'r':
-        	            pylab.text(self.urcrnrx+xoffset,yy[n],lonlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
+                            pylab.text(self.urcrnrx+xoffset,yy[n],lonlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
                         elif side == 'b':
                             if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
-        	                pylab.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
+                                pylab.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
                         else:
                             if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
-        	                pylab.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
+                                pylab.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
 
         # make sure axis ticks are turned off if meridians labelled.
         if self.noticks or max(labels):
