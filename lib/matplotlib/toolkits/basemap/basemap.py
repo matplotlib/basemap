@@ -373,7 +373,7 @@ class Basemap:
 
         # store coast polygons for filling.
         self.coastpolygons = []
-        self.coastpolygonsll = []
+        coastpolygonsll = []
         self.coastpolygontypes = []
         if projection in ['merc','mill']:
             xsp,ysp = proj(0.,-89.9) # s. pole coordinates.
@@ -447,7 +447,7 @@ class Basemap:
                     lons.insert(0,0.)
                     lats.insert(0,-90.)
             self.coastpolygons.append((x,y))
-            self.coastpolygonsll.append((lons,lats))
+            coastpolygonsll.append((lons,lats))
             self.coastpolygontypes.append(segtype)
 
         # remove those segments/polygons that don't intersect map region.
@@ -462,13 +462,13 @@ class Basemap:
         polygons = []
         polygonsll = []
         polygontypes = []
-        for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,self.coastpolygonsll):
+        for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,coastpolygonsll):
             if self._insidemap_poly(poly,polyll):
                 polygons.append(poly)
                 polygontypes.append(polytype)
                 polygonsll.append(polyll)
         self.coastpolygons = polygons
-        self.coastpolygonsll = polygonsll
+        coastpolygonsll = polygonsll
         self.coastpolygontypes = polygontypes
         states = []
         for seg in self.statesegs:
@@ -549,40 +549,82 @@ class Basemap:
 
 	# special treatment of coastline polygons for 
 	# orthographic, mollweide and robinson.
+        # (polygon clipping along projection limb)
 	if self.projection == 'ortho':
             lat_0 = math.radians(self.projparams['lat_0'])
             lon_0 = math.radians(self.projparams['lon_0'])
             rad = (2.*self.rmajor + self.rminor)/3.
+            dtheta = 0.01
             coastpolygons = []
-            for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,self.coastpolygonsll):
+            coastpolygontypes = []
+            for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,coastpolygonsll):
         	x = poly[0]
         	y = poly[1]
         	lons = polyll[0]
         	lats = polyll[1]
-            # replace values in polygons that are over the horizon.
-            # find great circle from point outside limb and pole of projection
-            # using azimuth at end point (pole of projection), go back out
-            # to limb. set x,y to value there.
-        	n = 0
-        	xnew=[]
-        	ynew=[]
-        	for x,y in zip(x,y):
-                    if x > 1.e20 or y > 1.e20:
-                	dist,alpha12,az=vinc_dist(self.flattening,rad,math.radians(lats[n]),math.radians(lons[n]),lat_0,lon_0)
-                	latpt,lonpt,az2=vinc_pt(self.flattening,rad,lat_0,lon_0,az,0.5*math.pi*rad)
-                	xn,yn = self(math.degrees(lonpt),math.degrees(latpt))
-                	xnew.append(xn)
-                	ynew.append(yn)
-                    else:
-                	xnew.append(x)
-                	ynew.append(y)
-                    n = n + 1
-        	coastpolygons.append((xnew,ynew))
+                mask = pylab.logical_or(pylab.greater(x,1.e20),pylab.greater(y,1.e20))
+                # replace values in polygons that are over the horizon.
+                xsave = False
+                ysave = False
+                if pylab.asum(mask):
+		    i1=[]; i2=[]
+		    mprev = 1
+		    for i,m in enumerate(mask):
+			if not m and mprev:
+        		    i1.append(i)
+			if m and not mprev:
+        		    i2.append(i)
+			mprev = m
+		    if not mprev: i2.append(len(mask))
+                    for i,j in zip(i1,i2):
+                        if i and j != len(x):
+                   	    dist,az1,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[i]),math.radians(lons[i]))
+                       	    lat1,lon1,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az1,0.5*math.pi*rad)
+                   	    dist,az2,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[j]),math.radians(lons[j]))
+                       	    lat2,lon2,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az2,0.5*math.pi*rad)
+                            gc = GreatCircle(self.rmajor,self.rminor,math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1))
+                            npoints = int(gc.gcarclen/dtheta)+1
+                            if npoints < 2: npoints=2
+                            lonstmp, latstmp = gc.points(npoints)
+                            xx, yy = self(lonstmp, latstmp)
+                            xnew = x[i:j]
+                            ynew = y[i:j]
+                            xnew = x[i:j] + xx
+                            ynew = y[i:j] + yy
+                            coastpolygons.append((xnew,ynew))
+                            coastpolygontypes.append(polytype)
+                        elif i == 0:
+                            xsave = x[0:j]
+                            ysave = y[0:j]
+                            lats_save = lats[0:j]
+                            lons_save = lons[0:j]
+                        elif j == len(x):
+                            xnew = x[i:j] + xsave
+                            ynew = y[i:j] + ysave
+                            lonsnew = lons[i:j] + lons_save
+                            latsnew = lats[i:j] + lats_save
+                            dist,az1,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(latsnew[0]),math.radians(lonsnew[0]))
+                            lat1,lon1,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az1,0.5*math.pi*rad)
+                            dist,az2,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(latsnew[-1]),math.radians(lonsnew[-1]))
+                            lat2,lon2,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az2,0.5*math.pi*rad)
+                            gc = GreatCircle(self.rmajor,self.rminor,math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1))
+                            npoints = int(gc.gcarclen/dtheta)+1
+                            if npoints < 2: npoints=2
+                            lonstmp, latstmp = gc.points(npoints)
+                            xx, yy = self(lonstmp, latstmp)
+                            xnew = xnew + xx
+                            ynew = ynew + yy
+                            coastpolygons.append((xnew,ynew))
+                            coastpolygontypes.append(polytype)
+                else:
+                    coastpolygons.append(poly)
+                    coastpolygontypes.append(polytype)
             self.coastpolygons = coastpolygons
+            self.coastpolygontypes = coastpolygontypes
 	elif self.projection in ['moll','robin']:
             lon_0 = self.projparams['lon_0']
             coastpolygons=[]
-            for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,self.coastpolygonsll):
+            for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,coastpolygonsll):
         	x = poly[0]
         	y = poly[1]
         	lons = polyll[0]
@@ -680,8 +722,8 @@ class Basemap:
         else:
             for x,y in zip(xx,yy):
                 if x >= self.xmin and x <= self.xmax and y >= self.ymin and y <= self.ymax:
-                   isin = True
-                   break
+                    isin = True
+                    break
         return isin
 
     def __call__(self,x,y,inverse=False):
@@ -711,7 +753,7 @@ class Basemap:
         """draw boundary around map projection region"""
         x = []
         y = []
-        dtheta = 0.1
+        dtheta = 0.01
         if self.projection == 'ortho': # circular region.
             r = (2.*self.rmajor+self.rminor)/3.
             r = r-1. # subtract 1 m to make sure it fits in plot region.
@@ -746,10 +788,11 @@ class Basemap:
 
     def fillcontinents(self,color=0.8):
         """
- Fill continents (not yet implemented for Orthographic, Mollweide or Robinson
- projections).
+ Fill continents.
 
  color - color to fill continents (default gray).
+
+ After filling continents, lakes are re-filled with axis background color.
         """
         # get current axes instance.
         ax = pylab.gca()
