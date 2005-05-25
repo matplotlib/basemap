@@ -1,4 +1,4 @@
-200505??:  version 0.5
+20050525:  version 0.5
            Added Orthographic, Mollweide and Robinson projections. 
            Added 'drawmapboundary' method to draw a
            line around the map projection region.
