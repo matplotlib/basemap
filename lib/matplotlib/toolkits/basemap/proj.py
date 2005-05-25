@@ -12,7 +12,7 @@ class Proj:
  __call__ method compute transformations.
  See docstrings for __init__ and __call__ for details.
 
- Version: 0.5 (200505??)
+ Version: 0.5 (20050525)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 

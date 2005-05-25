@@ -68,7 +68,7 @@ class Basemap:
 >>> title('Robinson Projection') # add a title
 >>> show()
 
- Version: 0.5 (200505??)
+ Version: 0.5 (20050525)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
