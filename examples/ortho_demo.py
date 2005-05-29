@@ -12,13 +12,11 @@ m = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0)
 # compute native map projection coordinates for lat/lon grid.
 lons, lats = meshgrid(lons,lats)
 x,y = m(lons,lats)
-# make for points over projection horizon (necessary for Orthographic map).
-mask = logical_or(greater(x,1.e20),greater(y,1.e20))
 # create figure with same aspect ratio as map.
 fig=figure(figsize=(8,m.aspect*8))
 fig.add_axes([0.05,0.05,0.9,0.9],frameon=False)
 # make filled contour plot.
-levels, colls = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None,badmask=mask)
+levels, colls = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
 # draw coastlines.
 m.drawcoastlines()
 # draw a line around the map region.
