@@ -14,17 +14,13 @@ lons, lats = meshgrid(lons, lats)
 
 # setup of mollweide basemap
 m = Basemap(resolution='c',area_thresh=10000.,projection='moll',lon_0=0)
-
-x,y = m(lons,lats)
-# make for points over projection horizon.
-mask = logical_or(greater(x,1.e20),greater(y,1.e20))
-
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # make a filled contour plot.
-levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k',badmask=mask)
-levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None,badmask=mask)
+x, y = m(lons, lats)
+levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -42,17 +38,12 @@ show()
 
 # set up Robinson map projection.
 m = Basemap(resolution='c',area_thresh=10000.,projection='robin',lon_0=0)
-
-# compute x,y of lat/lon grid.
-x, y = m(lons, lats)
-# make for points over projection horizon.
-mask = logical_or(greater(x,1.e20),greater(y,1.e20))
-
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # make a filled contour plot.
-levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k',badmask=mask)
-levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None,badmask=mask)
+x, y = m(lons, lats)
+levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -72,18 +63,13 @@ show()
 m = Basemap(llcrnrlon=-135.,llcrnrlat=-20.,urcrnrlon=45.,urcrnrlat=-20.,
              resolution='c',area_thresh=10000.,projection='aeqd',
              lat_0=90.,lon_0=-90.)
-
-# compute x,y of lat/lon grid.
-x, y = m(lons, lats)
-# make for points over projection horizon.
-mask = logical_or(greater(x,1.e20),greater(y,1.e20))
-
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # make a filled contour plot.
-levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k',badmask=mask)
-levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None,badmask=mask)
+x, y = m(lons, lats)
+levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -101,17 +87,13 @@ show()
 # setup of orthographic basemap
 m = Basemap(resolution='c',area_thresh=10000.,projection='ortho',\
             lat_0=50.,lon_0=-120.)
-
-x,y = m(lons,lats)
-# make for points over projection horizon.
-mask = logical_or(greater(x,1.e20),greater(y,1.e20))
-
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # make a filled contour plot.
-levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k',badmask=mask)
-levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None,badmask=mask)
+x, y = m(lons, lats)
+levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again

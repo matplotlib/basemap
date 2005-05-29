@@ -34,15 +34,11 @@ m = Basemap(-145.5,1.,-2.566,46.352,rsphere=(6378137.00,6356752.3142),\
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],axisbg='aqua')
-# compute x,y of regular lat/lon grid.
-x,y = m(lons,lats)
-# make x,y masked arrays (masked where data is outside of projection limb)
-x = ma.masked_values(where(x > 1.e10,1.e10,x), 1.e10)
-y = ma.masked_values(where(y > 1.e10,1.e10,y), 1.e10)
 # make topodat a masked array, masking values lower than sea level.
 topodat = where(topodatin < 0.,1.e10,topodatin)
 topodat = ma.masked_values(topodat, 1.e10)
 # make a pcolor plot.
+x, y = m(lons, lats)
 p = m.pcolor(x,y,topodat,shading='flat')
 clim(-4500.,3500.) # adjust range of colors.
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
@@ -71,12 +67,8 @@ m = Basemap(projection='ortho',
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
-# compute x,y of regular lat/lon grid.
-x,y = m(lons,lats)
-# make x,y masked arrays (masked where data is outside of projection limb)
-x = ma.masked_values(where(x > 1.e10,1.e10,x), 1.e10)
-y = ma.masked_values(where(y > 1.e10,1.e10,y), 1.e10)
 # make a pcolor plot.
+x, y = m(lons, lats)
 p = m.pcolor(x,y,topodatin,shading='flat')
 clim(-4500.,3500.) # adjust range of colors.
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
