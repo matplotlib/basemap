@@ -9,6 +9,7 @@ from numarray import nd_image
 import sys, os, pylab, math
 from proj import Proj
 from greatcircle import GreatCircle, vinc_dist, vinc_pt
+from matplotlib.numerix import ma
 
 # look in sys.prefix for directory containing basemap files if
 # BASEMAP_DATA_PATH env var not set.
@@ -1350,9 +1351,8 @@ class Basemap:
  the vector is returned on the same lat/lon grid, but rotated into
  x,y coordinates.
 
- lons, lats must be rank-1 arrays containing longitudes and latitudes
- (in degrees) of lat/lon grid in increasing order
- (i.e. from Greenwich meridian eastward, and South Pole northward).
+ lons, lats must be rank-2 arrays containing longitudes and latitudes
+ (in degrees) of grid.
 
  if returnxy=True, the x and y values of the lat/lon grid 
  are also returned (default False).
@@ -1362,7 +1362,6 @@ class Basemap:
  vector field is rotated to map projection coordinates (relative
  to x and y). The magnitude of the vector is preserved.
         """
-        lons, lats = pylab.meshgrid(lons, lats)
         x, y = self(lons, lats)
         # rotate from geographic to map coordinates.
         delta = 0.1 # incement in latitude used to estimate derivatives.
@@ -1413,26 +1412,60 @@ class Basemap:
         kwargs['origin']='lower'
         return pylab.imshow(*args,  **kwargs)
 
-    def pcolor(self, *args, **kwargs):
+    def pcolor(self,x,y,data,**kwargs):
         """
- Make a pseudo-color plot over the map (see pylab pcolor documentation).
+ Make a pseudo-color plot over the map.
+ see pylab pcolor documentation for definition of **kwargs
         """
-        pylab.pcolor(*args, **kwargs)
+        # make x,y masked arrays 
+        # (masked where data is outside of projection limb)
+        x = ma.masked_values(pylab.where(x > 1.e20,1.e20,x), 1.e20)
+        y = ma.masked_values(pylab.where(y > 1.e20,1.e20,y), 1.e20)
+        pylab.pcolor(x,y,data,**kwargs)
+        # set axes limits to fit map region.
         self.set_axes_limits()
 
-    def contour(self, *args, **kwargs):
+    def contour(self,x,y,data,*args,**kwargs):
         """
  Make a contour plot over the map (see pylab contour documentation).
         """
-        levels, colls = pylab.contour(*args, **kwargs)
+        # mask for points outside projection limb.
+        xymask = pylab.logical_or(pylab.greater(x,1.e20),pylab.greater(y,1.e20))
+        data = ma.asarray(data)
+        mask = pylab.logical_or(ma.getmaskarray(data),xymask)
+        data = ma.masked_array(data,mask=mask)
+        # if data is masked array, use it's mask too.
+        #try:
+        #    datamask = ma.getmaskarray(data)
+        #    mask = xymask + datamask
+        #    data = ma.filled(data,fill_value=1.e30)
+        #except:
+        #    mask = xymask
+        #kwargs['badmask']=mask
+        levels, colls = pylab.contour(x,y,data,*args,**kwargs)
+        # set axes limits to fit map region.
         self.set_axes_limits()
         return levels,colls
 
-    def contourf(self, *args, **kwargs):
+    def contourf(self,x,y,data,*args,**kwargs):
         """
  Make a filled contour plot over the map (see pylab documentation).
         """
-        levels, colls = pylab.contourf(*args, **kwargs)
+        # mask for points outside projection limb.
+        xymask = pylab.logical_or(pylab.greater(x,1.e20),pylab.greater(y,1.e20))
+        data = ma.asarray(data)
+        mask = pylab.logical_or(ma.getmaskarray(data),xymask)
+        data = ma.masked_array(data,mask=mask)
+        # if data is masked array, use it's mask too.
+        #try:
+        #    datamask = ma.getmaskarray(data)
+        #    mask = xymask + datamask
+        #    data = ma.filled(data,fill_value=1.e30)
+        #except:
+        #    mask = xymask
+        #kwargs['badmask']=mask
+        levels, colls = pylab.contourf(x,y,data,*args,**kwargs)
+        # set axes limits to fit map region.
         self.set_axes_limits()
         return levels,colls
 
