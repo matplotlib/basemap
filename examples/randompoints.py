@@ -28,7 +28,7 @@ lats = array(lats,'f')
 rcrit = 500.
 
 # set up lambert azimuthal map centered on N. Pole.
-m = Basemap(-150.,0.,30.,0.,
+m = Basemap(llcrnrlon=-150.,llcrnrlat=0.,urcrnrlon=30.,urcrnrlat=0.,
             resolution='l',area_thresh=10000.,projection='stere',\
             lat_0=90.,lon_0=-105.,lat_ts=90.)
 

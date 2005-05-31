@@ -2,7 +2,7 @@ from matplotlib.toolkits.basemap import Basemap
 from pylab import *
 
 # create Basemap instance. Use 'crude' resolution coastlines.
-m = Basemap(-11.,51.,-5.,56.,
+m = Basemap(llcrnrlon=-11.,llcrnrlat=51.,urcrnrlon=-5.,urcrnrlat=56.,
             resolution='c',area_thresh=1000.,projection='cyl')
 # create figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
@@ -21,7 +21,7 @@ title("Crude Res Coastlines ('c')",y=1.075)
 show()
 
 # create Basemap instance. Use 'low' resolution coastlines.
-m = Basemap(-11.,51.,-5.,56.,
+m = Basemap(llcrnrlon=-11.,llcrnrlat=51.,urcrnrlon=-5.,urcrnrlat=56.,
             resolution='l',area_thresh=1000.,projection='cyl')
 # create figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
@@ -38,7 +38,7 @@ title("Low Res Coastlines ('l')",y=1.075)
 show()
 
 # create Basemap instance. Use 'intermediate' resolution coastlines.
-m = Basemap(-11.,51.,-5.,56.,
+m = Basemap(llcrnrlon=-11.,llcrnrlat=51.,urcrnrlon=-5.,urcrnrlat=56.,
             resolution='i',area_thresh=1000.,projection='cyl')
 # create figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]

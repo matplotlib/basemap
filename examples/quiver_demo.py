@@ -14,13 +14,14 @@ for line in file.readlines():
 u = reshape(array(ul,'f'),(nlats,nlons))
 v = reshape(array(vl,'f'),(nlats,nlons))
 p = reshape(array(pl,'f'),(nlats,nlons))
-lats = -90.+dellat*arange(nlats)
-lons = -180.+dellon*arange(nlons)
+lats1 = -90.+dellat*arange(nlats)
+lons1 = -180.+dellon*arange(nlons)
+lons, lats = meshgrid(lons1, lats1)
 
 # plot vectors in geographical (lat/lon) coordinates.
 
 # north polar projection.
-m = Basemap(-180.,10.,0.,10.,
+m = Basemap(llcrnrlon=-180.,llcrnrlat=10.,urcrnrlon=0.,urcrnrlat=10.,\
             resolution='c',area_thresh=10000.,projection='stere',\
             lat_0=90.,lon_0=-135.,lat_ts=90.)
 # setup figure with same aspect ratio as map.
@@ -30,7 +31,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # rotate wind vectors to map projection coordinates.
 # (also compute native map projections coordinates of lat/lon grid)
 # only do Northern Hemisphere.
-urot,vrot,x,y = m.rotate_vector(u[36:,:],v[36:,:],lons,lats[36:],returnxy=True)
+urot,vrot,x,y = m.rotate_vector(u[36:,:],v[36:,:],lons[36:,:],lats[36:,:],returnxy=True)
 # plot filled contours over map.
 levels, colls = m.contourf(x,y,p[36:,:],15,cmap=cm.jet,colors=None)
 # plot wind vectors over map.
@@ -55,7 +56,7 @@ show()
 # plot vectors in map projection coordinates.
 
 # north polar projection.
-m = Basemap(-180.,10.,0.,10.,
+m = Basemap(llcrnrlon=-180.,llcrnrlat=10.,urcrnrlon=0.,urcrnrlat=10.,\
             resolution='c',area_thresh=10000.,projection='stere',\
             lat_0=90.,lon_0=-135.,lat_ts=90.)
 # transform from spherical to map projection coordinates (rotation
@@ -64,14 +65,14 @@ nxv = 41; nyv = 41
 nxp = 101; nyp = 101
 spd = sqrt(u**2+v**2)
 print max(ravel(spd))
-udat, vdat, xv, yv = m.transform_vector(u,v,lons,lats,nxv,nyv,returnxy=True)
-pdat, xp, yp = m.transform_scalar(p,lons,lats,nxp,nyp,returnxy=True)
+udat, vdat, xv, yv = m.transform_vector(u,v,lons1,lats1,nxv,nyv,returnxy=True)
+pdat, xp, yp = m.transform_scalar(p,lons1,lats1,nxp,nyp,returnxy=True)
 # setup figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# plot filled contours over map
-levels, colls = m.contourf(xp,yp,pdat,15,cmap=cm.jet,colors=None)
+# plot image over map
+im = m.imshow(pdat,cm.jet)
 # plot wind vectors over map.
 m.quiver(xv,yv,udat,vdat)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
