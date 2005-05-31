@@ -442,8 +442,8 @@ lons = zeros(len(lonsin)+1,'f')
 lats = zeros(len(latsin)+1,'f')
 lons[0:len(lonsin)] = lonsin-0.5*delon
 lons[-1] = lonsin[-1]+0.5*delon
-lats[0:len(latsin)] = latsin-0.5*delon
-lats[-1] = latsin[-1]+0.5*delon
+lats[0:len(latsin)] = latsin-0.5*delat
+lats[-1] = latsin[-1]+0.5*delat
 
 # setup of basemap ('ortho' = orthographic projection)
 m = Basemap(projection='ortho',
