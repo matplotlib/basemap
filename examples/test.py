@@ -6,7 +6,6 @@
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import *
 import cPickle
-from matplotlib.numerix import ma
 
 # read in topo data from pickle (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
@@ -50,7 +49,7 @@ print 'plotting Cylindrical Equidistant example, close plot window to proceed ..
 show()
 
 # setup miller cylindrical map projection.
-m = Basemap(-180.,-90.,180.,90.,\
+m = Basemap(llcrnrlon=-180.,llcrnrlat=-90,urcrnrlon=180.,urcrnrlat=90.,\
             resolution='c',area_thresh=10000.,projection='mill')
 # transform to nx x ny regularly spaced native projection grid
 nx = len(lons); ny = len(lats)
@@ -71,7 +70,7 @@ print 'plotting Miller Cylindrical example, close plot window to proceed ...'
 show()
 
 # setup mercator map projection (-80 to +80).
-m = Basemap(-180.,-80.,180.,80.,\
+m = Basemap(llcrnrlon=-180.,llcrnrlat=-80,urcrnrlon=180.,urcrnrlat=80.,\
             resolution='c',area_thresh=10000.,projection='merc',\
             lon_0=0.5*(lons[0]+lons[-1]),lat_ts=20.)
 # transform to nx x ny regularly spaced native projection grid
@@ -96,7 +95,7 @@ print 'plotting Mercator example, close plot window to proceed ...'
 show()
 
 # setup cassini-soldner basemap.
-m = Basemap(-6.,49,4,59.,\
+m = Basemap(llcrnrlon=-6,llcrnrlat=49,urcrnrlon=4,urcrnrlat=59,\
             resolution='l',area_thresh=1000.,projection='cass',\
             lat_0=54.,lon_0=-2.)
 xsize = rcParams['figure.figsize'][0]
@@ -126,7 +125,7 @@ print 'plotting Cassini-Soldner example, close plot window to proceed ...'
 show()
 
 # setup gnomonic basemap.
-m = Basemap(-95.,-52,-35.,15.,\
+m = Basemap(llcrnrlon=-95.,llcrnrlat=-52,urcrnrlon=-35.,urcrnrlat=15.,\
             resolution='c',area_thresh=10000.,projection='gnom',\
             lat_0=-10.,lon_0=-60.)
 xsize = rcParams['figure.figsize'][0]
@@ -157,7 +156,7 @@ print 'plotting Gnomonic example, close plot window to proceed ...'
 show()
 
 # setup transverse mercator basemap.
-m = Basemap(170.,-45,10.,45.,\
+m = Basemap(llcrnrlon=170.,llcrnrlat=-45,urcrnrlon=10.,urcrnrlat=45.,\
             resolution='c',area_thresh=10000.,projection='tmerc',\
             lat_0=0.,lon_0=-90.)
 xsize = rcParams['figure.figsize'][0]
@@ -187,7 +186,7 @@ print 'plotting Transverse Mercator example, close plot window to proceed ...'
 show()
 
 # setup oblique mercator basemap.
-m = Basemap(-130.,39.,-124.,60.,\
+m = Basemap(llcrnrlon=-130.,llcrnrlat=39,urcrnrlon=-124.,urcrnrlat=60.,\
             resolution='l',area_thresh=1000.,projection='omerc',\
             lon_2=-140,lat_2=55,lon_1=-120,lat_1=40)
 xsize = rcParams['figure.figsize'][0]
@@ -219,7 +218,7 @@ print 'plotting Oblique Mercator example, close plot window to proceed ...'
 show()
 
 # setup polyconic basemap.
-m = Basemap(-35.,-30.,80.,50.,\
+m = Basemap(llcrnrlon=-35.,llcrnrlat=-30,urcrnrlon=80.,urcrnrlat=50.,\
             resolution='c',area_thresh=1000.,projection='poly',\
             lat_0=0.,lon_0=20.)
 xsize = rcParams['figure.figsize'][0]
@@ -250,7 +249,7 @@ print 'plotting Polyconic example, close plot window to proceed ...'
 show()
 
 # setup equidistant conic
-m = Basemap(-90,18.,-70,26.,\
+m = Basemap(llcrnrlon=-90.,llcrnrlat=18,urcrnrlon=-70.,urcrnrlat=26.,\
             resolution='l',area_thresh=1000.,projection='eqdc',\
             lat_1=21.,lat_2=23.,lon_0=-80.)
 # transform to nx x ny regularly spaced native projection grid
@@ -282,7 +281,7 @@ print 'plotting Equidistant Conic example, close plot window to proceed ...'
 show()
 
 # setup lambert conformal map projection (North America).
-m = Basemap(-145.5,1.,-2.566,46.352,\
+m = Basemap(llcrnrlon=-145.5,llcrnrlat=1,urcrnrlon=-2.566,urcrnrlat=46.352,\
             resolution='c',area_thresh=10000.,projection='lcc',\
             lat_1=50.,lon_0=-107.)
 # transform to nx x ny regularly spaced native projection grid
@@ -315,7 +314,7 @@ print 'plotting Lambert Conformal example, close plot window to proceed ...'
 show()
 
 # setup albers equal area map projection (Europe).
-m = Basemap(-10.,20.,55.,75.,
+m = Basemap(llcrnrlon=-10.,llcrnrlat=20,urcrnrlon=55.,urcrnrlat=75,\
             resolution='l',projection='aea',\
             lat_1=40.,lat_2=60,lon_0=35.)
 # transform to nx x ny regularly spaced native projection grid
@@ -347,7 +346,7 @@ print 'plotting Albers Equal Area example, close plot window to proceed ...'
 show()
 
 # setup stereographic map projection (Southern Hemisphere).
-m = Basemap(-150.,20.826,30.,20.826,
+m = Basemap(llcrnrlon=-150.,llcrnrlat=20.826,urcrnrlon=30.,urcrnrlat=20.826,\
             resolution='c',area_thresh=10000.,projection='stere',\
             lat_0=-90.,lon_0=-105.,lat_ts=-90.)
 # transform to nx x ny regularly spaced native projection grid
@@ -374,7 +373,7 @@ print 'plotting Stereographic example, close plot window to proceed ...'
 show()
 
 # setup lambert azimuthal map projection (Northern Hemisphere).
-m = Basemap(-150.,-20.826,30.,-20.826,
+m = Basemap(llcrnrlon=-150.,llcrnrlat=-20.826,urcrnrlon=30.,urcrnrlat=-20.826,\
             resolution='c',area_thresh=10000.,projection='laea',\
             lat_0=90.,lon_0=-105.)
 # transform to nx x ny regularly spaced native projection grid
@@ -402,7 +401,7 @@ print 'plotting Lambert Azimuthal example, close plot window to proceed ...'
 show()
 
 # setup azimuthal equidistant map projection (Northern Hemisphere).
-m = Basemap(-150.,40.,30.,40.,
+m = Basemap(llcrnrlon=-150.,llcrnrlat=40.,urcrnrlon=30.,urcrnrlat=40.,\
             resolution='c',area_thresh=10000.,projection='aeqd',\
             lat_0=90.,lon_0=-105.)
 # transform to nx x ny regularly spaced native projection grid
@@ -432,9 +431,8 @@ show()
 # projections with elliptical boundaries (orthographic, mollweide and robinson)
 
 # can't use imshow, since it expects a rectangular image.
-# instead use pcolor, and plot data directly on lat/lon grid without 
-# interpolation.
-# Note:  fillcontinents not supported for these projections.
+# instead use pcolor or contourf, and plot data 
+# directly on lat/lon grid without interpolation.
 
 # shift lons and lats by 1/2 grid increment (so values represent the vertices
 # of the grid box surrounding the data value, as pcolor expects).
@@ -446,7 +444,6 @@ lons[0:len(lonsin)] = lonsin-0.5*delon
 lons[-1] = lonsin[-1]+0.5*delon
 lats[0:len(latsin)] = latsin-0.5*delon
 lats[-1] = latsin[-1]+0.5*delon
-lons, lats = meshgrid(lons, lats)
 
 # setup of basemap ('ortho' = orthographic projection)
 m = Basemap(projection='ortho',
@@ -455,12 +452,12 @@ xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # compute x,y of regular lat/lon grid.
+# pcolor plot (slow)
+#x,y = m(*meshgrid(lons,lats))
+#p = m.pcolor(x,y,topodatin,shading='flat')
 x,y = m(*meshgrid(lonsin,latsin))
-# make x,y masked arrays (masked where data is outside of projection limb)
-x = ma.masked_values(where(x > 1.e10,1.e10,x), 1.e10)
-y = ma.masked_values(where(y > 1.e10,1.e10,y), 1.e10)
-# make a pcolor plot.
-p = m.pcolor(x,y,topodatin,shading='flat')
+# filled contours (faster)
+levels, colls = m.contourf(x,y,topodatin,20,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -484,13 +481,12 @@ m = Basemap(projection='moll',
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
-# compute x,y of regular lat/lon grid.
+# pcolor plot (slow)
+#x,y = m(*meshgrid(lons,lats))
+#p = m.pcolor(x,y,topodatin,shading='flat')
 x,y = m(*meshgrid(lonsin,latsin))
-# make x,y masked arrays (masked where data is outside of projection limb)
-x = ma.masked_values(where(x > 1.e10,1.e10,x), 1.e10)
-y = ma.masked_values(where(y > 1.e10,1.e10,y), 1.e10)
-# make a pcolor plot.
-p = m.pcolor(x,y,topodatin,shading='flat')
+# filled contours (faster)
+levels, colls = m.contourf(x,y,topodatin,20,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -513,13 +509,12 @@ m = Basemap(projection='robin',
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
-# compute x,y of regular lat/lon grid.
+# pcolor plot (slow)
+#x,y = m(*meshgrid(lons,lats))
+#p = m.pcolor(x,y,topodatin,shading='flat')
 x,y = m(*meshgrid(lonsin,latsin))
-# make x,y masked arrays (masked where data is outside of projection limb)
-x = ma.masked_values(where(x > 1.e10,1.e10,x), 1.e10)
-y = ma.masked_values(where(y > 1.e10,1.e10,y), 1.e10)
-# make a pcolor plot.
-p = m.pcolor(x,y,topodatin,shading='flat')
+# filled contours (faster)
+levels, colls = m.contourf(x,y,topodatin,20,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
