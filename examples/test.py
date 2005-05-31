@@ -451,12 +451,11 @@ m = Basemap(projection='ortho',
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
-# compute x,y of regular lat/lon grid.
 # pcolor plot (slow)
 #x,y = m(*meshgrid(lons,lats))
 #p = m.pcolor(x,y,topodatin,shading='flat')
-x,y = m(*meshgrid(lonsin,latsin))
 # filled contours (faster)
+x,y = m(*meshgrid(lonsin,latsin))
 levels, colls = m.contourf(x,y,topodatin,20,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
@@ -484,8 +483,8 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # pcolor plot (slow)
 #x,y = m(*meshgrid(lons,lats))
 #p = m.pcolor(x,y,topodatin,shading='flat')
-x,y = m(*meshgrid(lonsin,latsin))
 # filled contours (faster)
+x,y = m(*meshgrid(lonsin,latsin))
 levels, colls = m.contourf(x,y,topodatin,20,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
@@ -512,8 +511,8 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # pcolor plot (slow)
 #x,y = m(*meshgrid(lons,lats))
 #p = m.pcolor(x,y,topodatin,shading='flat')
-x,y = m(*meshgrid(lonsin,latsin))
 # filled contours (faster)
+x,y = m(*meshgrid(lonsin,latsin))
 levels, colls = m.contourf(x,y,topodatin,20,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
