@@ -28,7 +28,7 @@ lons, lats = meshgrid(lons, lats)
 
 # setup of basemap ('lcc' = lambert conformal conic).
 # use major and minor sphere radii from WGS84 ellipsoid.
-m = Basemap(-145.5,1.,-2.566,46.352,rsphere=(6378137.00,6356752.3142),\
+m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
             resolution='l',area_thresh=1000.,projection='lcc',\
             lat_1=50.,lon_0=-107.)
 xsize = rcParams['figure.figsize'][0]
@@ -39,8 +39,8 @@ topodat = where(topodatin < 0.,1.e10,topodatin)
 topodat = ma.masked_values(topodat, 1.e10)
 # make a pcolor plot.
 x, y = m(lons, lats)
-p = m.pcolor(x,y,topodat,shading='flat')
-clim(-4500.,3500.) # adjust range of colors.
+p = m.pcolor(x,y,topodat,shading='flat',cmap=cm.jet)
+clim(-4000.,3000.) # adjust colormap.
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -70,7 +70,6 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # make a pcolor plot.
 x, y = m(lons, lats)
 p = m.pcolor(x,y,topodatin,shading='flat')
-clim(-4500.,3500.) # adjust range of colors.
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
