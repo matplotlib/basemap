@@ -6,6 +6,7 @@ using matplotlib.
 **Requirements**
 
 numarray 1.1 (or higher)
+matplotlib 0.81 (or higher)
 
 **Copyright**
 
