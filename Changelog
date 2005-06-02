@@ -1,4 +1,4 @@
-20050525:  version 0.5
+20050602:  version 0.5
            Added Orthographic, Mollweide and Robinson projections. 
            Added 'drawmapboundary' method to draw a
            line around the map projection region.
@@ -8,6 +8,8 @@
            Added 'rotate_vector' method to rotate vectors to map
            projection coordinates (without interpolation, as in
            'transform_vector' method).
+           Modified pcolor, contour, contourf methods to use
+           masked arrays.  Now requires matplotlib-0.81
 20050511:  version 0.4.3
            Added Oblique Mercator.
            great circle calculations now use vincenty's equations
