@@ -1,7 +1,10 @@
 from numarray import __version__ as numarray_version
-# check to make sure numarray is not too old.
+from matplotlib import __version__ as matplotlib_version
+# check to make sure numarray, matplotlib are not too old.
 if numarray_version < '1.1':
-    raise ImportError, 'your numarray version is too old - basemap requires at least 1.1'
+    raise ImportError, 'your numarray is too old - basemap requires at least 1.1'
+if matplotlib_version < '0.81':
+    raise ImportError, 'your matplotlib is too old - basemap requires at least 0.81'
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
@@ -69,7 +72,7 @@ class Basemap:
 >>> title('Robinson Projection') # add a title
 >>> show()
 
- Version: 0.5 (20050525)
+ Version: 0.5 (20050602)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -568,15 +571,7 @@ class Basemap:
                 xsave = False
                 ysave = False
                 if pylab.asum(mask):
-		    i1=[]; i2=[]
-		    mprev = 1
-		    for i,m in enumerate(mask):
-			if not m and mprev:
-        		    i1.append(i)
-			if m and not mprev:
-        		    i2.append(i)
-			mprev = m
-		    if not mprev: i2.append(len(mask))
+                    i1,i2 = self._splitseg(x,y,mask=mask)
                     for i,j in zip(i1,i2):
                         if i and j != len(x):
                    	    dist,az1,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[i]),math.radians(lons[i]))
@@ -682,9 +677,10 @@ class Basemap:
         	coastpolygons.append((xn,yn))
             self.coastpolygons = coastpolygons
 
-    def _splitseg(self,xx,yy):
+    def _splitseg(self,xx,yy,mask=None):
         """split segment up around missing values (outside projection limb)"""
-        mask = pylab.logical_or(pylab.greater_equal(xx,1.e20),pylab.greater_equal(yy,1.e20))
+        if mask is None:
+            mask = pylab.logical_or(pylab.greater_equal(xx,1.e20),pylab.greater_equal(yy,1.e20))
         i1=[]; i2=[]
         mprev = 1
         for i,m in enumerate(mask):
@@ -839,10 +835,7 @@ class Basemap:
         # get current axes instance.
         ax = pylab.gca()
         coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
-        try:
-            coastlines.set_color(color)
-        except: # this was a typo that existed in matplotlib-0.71 and earlier
-            coastlines.color(color)
+        coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
         # make sure axis ticks are turned off
@@ -863,10 +856,7 @@ class Basemap:
         # get current axes instance.
         ax = pylab.gca()
         coastlines = LineCollection(self.cntrysegs,antialiaseds=(antialiased,))
-        try:
-            coastlines.set_color(color)
-        except: # this was a typo that existed in matplotlib-0.71 and earlier
-            coastlines.color(color)
+        coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
@@ -883,10 +873,7 @@ class Basemap:
         # get current axes instance.
         ax = pylab.gca()
         coastlines = LineCollection(self.statesegs,antialiaseds=(antialiased,))
-        try:
-            coastlines.set_color(color)
-        except: # this was a typo that existed in matplotlib-0.71 and earlier
-            coastlines.color(color)
+        coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
@@ -894,7 +881,7 @@ class Basemap:
 
     def drawparallels(self,circles,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0], \
-                      font='rm',fontsize=12):
+                      font='rm',fontsize=12,xoffset=None,yoffset=None):
         """
  draw parallels (latitude lines).
 
@@ -911,14 +898,24 @@ class Basemap:
   but not the right and top. Labels are drawn using mathtext.
  font - mathtext font used for labels ('rm','tt','it' or 'cal', default 'rm').
  fontsize - font size in points for labels (default 12).
+ xoffset - label offset from edge of map in x-direction
+  (default is 0.01 times width of map in map projection coordinates).
+ yoffset - label offset from edge of map in y-direction
+  (default is 0.01 times height of map in map projection coordinates).
         """
         # get current axes instance.
         ax = pylab.gca()
         # don't draw meridians past latmax, always draw parallel at latmax.
         latmax = 80.
         # offset for labels.
-        yoffset = (self.urcrnry-self.llcrnry)/100./self.aspect
-        xoffset = (self.urcrnrx-self.llcrnrx)/100.
+        if yoffset is None:
+            yoffset = (self.urcrnry-self.llcrnry)/100.
+            if self.aspect > 1:
+                yoffset = self.aspect*yoffset
+            else:
+                yoffset = yoffset/self.aspect
+        if xoffset is None:
+            xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection in ['merc','cyl','mill','moll','robin']:
             lons = pylab.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype('f')
@@ -1072,7 +1069,7 @@ class Basemap:
 
     def drawmeridians(self,meridians,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0],\
-                      font='rm',fontsize=12):
+                      font='rm',fontsize=12,xoffset=None,yoffset=None):
         """
  draw meridians (longitude lines).
 
@@ -1089,14 +1086,24 @@ class Basemap:
   but not the right and top. Labels are drawn using mathtext.
  font - mathtext font used for labels ('rm','tt','it' or 'cal', default 'rm').
  fontsize - font size in points for labels (default 12).
+ xoffset - label offset from edge of map in x-direction
+  (default is 0.01 times width of map in map projection coordinates).
+ yoffset - label offset from edge of map in y-direction
+  (default is 0.01 times height of map in map projection coordinates).
         """
         # get current axes instance.
         ax = pylab.gca()
         # don't draw meridians past latmax, always draw parallel at latmax.
         latmax = 80. # not used for cyl, merc or miller projections.
         # offset for labels.
-        yoffset = (self.urcrnry-self.llcrnry)/100./self.aspect
-        xoffset = (self.urcrnrx-self.llcrnrx)/100.
+        if yoffset is None:
+            yoffset = (self.urcrnry-self.llcrnry)/100.
+            if self.aspect > 1:
+                yoffset = self.aspect*yoffset
+            else:
+                yoffset = yoffset/self.aspect
+        if xoffset is None:
+            xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection not in ['merc','cyl','mill','moll','robin']:
             lats = pylab.arange(-latmax,latmax+0.1,0.1).astype('f')
@@ -1432,16 +1439,10 @@ class Basemap:
         # mask for points outside projection limb.
         xymask = pylab.logical_or(pylab.greater(x,1.e20),pylab.greater(y,1.e20))
         data = ma.asarray(data)
+        # combine with data mask.
         mask = pylab.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
-        # if data is masked array, use it's mask too.
-        #try:
-        #    datamask = ma.getmaskarray(data)
-        #    mask = xymask + datamask
-        #    data = ma.filled(data,fill_value=1.e30)
-        #except:
-        #    mask = xymask
-        #kwargs['badmask']=mask
+        # draw contours.
         levels, colls = pylab.contour(x,y,data,*args,**kwargs)
         # set axes limits to fit map region.
         self.set_axes_limits()
@@ -1454,16 +1455,10 @@ class Basemap:
         # mask for points outside projection limb.
         xymask = pylab.logical_or(pylab.greater(x,1.e20),pylab.greater(y,1.e20))
         data = ma.asarray(data)
+        # combine with data mask.
         mask = pylab.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
-        # if data is masked array, use it's mask too.
-        #try:
-        #    datamask = ma.getmaskarray(data)
-        #    mask = xymask + datamask
-        #    data = ma.filled(data,fill_value=1.e30)
-        #except:
-        #    mask = xymask
-        #kwargs['badmask']=mask
+        # draw contours.
         levels, colls = pylab.contourf(x,y,data,*args,**kwargs)
         # set axes limits to fit map region.
         self.set_axes_limits()
