@@ -1,5 +1,8 @@
 version 0.5: llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat are now optional
              keyword paramaters in Basemap.__init__,
+             'xoffset', 'yoffset' optional keyword args added to
+             Basemap.drawparallels and Basemap.drawmeridians.
+             added optional 'suppress_ticks' keyword arg to Basemap.__init__.
 version 0.4.2:  removed 'preserve_magnitude' keyword from transform_vector.
 version 0.3:  axes instance no longer an argument to any Basemap method.
               (gca is called to obtain the current axes instance instead).

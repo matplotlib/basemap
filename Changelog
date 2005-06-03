@@ -10,6 +10,9 @@
            'transform_vector' method).
            Modified pcolor, contour, contourf methods to use
            masked arrays.  Now requires matplotlib-0.81
+           drawparallels and drawmeridians methods now take optional
+           keyword arguments 'xoffset' and 'yoffset', which control how
+           far from the edge of the map labels are drawn.
 20050511:  version 0.4.3
            Added Oblique Mercator.
            great circle calculations now use vincenty's equations
