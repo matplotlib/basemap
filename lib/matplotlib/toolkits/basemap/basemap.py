@@ -105,7 +105,8 @@ class Basemap:
   (Default 90).
 
  If the orthographic, mollweide or robinson projection is chosen 
- the values of llcrnrlon,llcrnrlat,urcrnrlon and urcrnrlat are not used.
+ the values of llcrnrlon,llcrnrlat,urcrnrlon and urcrnrlat are ignored,
+ and the entire projection domain will be always be plotted.
 
  resolution - resolution of coastline database to use. Can be 'c' (crude), 
   'l' (low), or 'i' (intermediate). Resolution drops off by roughly 80%
@@ -1268,9 +1269,6 @@ class Basemap:
 
  Note:  cannot handle situations in which the great circle intersects
  the edge of the map projection domain, and then re-enters the domain.
- Assumes a perfect sphere, doesn't take into account eccentricity of the
- ellipsoid (this implies an O(10km) error for a great circle extending
- all the way around the earth).
         """
         # get current axes instance.
         ax = pylab.gca()
