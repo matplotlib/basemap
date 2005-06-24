@@ -1,3 +1,7 @@
+20050626:  version 0.5.1:
+           Added ability to specify an existing axis instance in
+           all Basemap methods (instead of just using current one).
+           Default is still to use current axis instance.
 20050602:  version 0.5
            Added Orthographic, Mollweide and Robinson projections. 
            Added 'drawmapboundary' method to draw a
