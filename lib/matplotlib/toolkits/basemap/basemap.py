@@ -72,7 +72,7 @@ class Basemap:
 >>> title('Robinson Projection') # add a title
 >>> show()
 
- Version: 0.5 (20050602)
+ Version: 0.5.1 (20050626)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -747,8 +747,14 @@ class Basemap:
         """
         return self.projtran.makegrid(nx,ny,returnxy=returnxy)
 
-    def drawmapboundary(self,color='k',linewidth=1.0):
-        """draw boundary around map projection region"""
+    def drawmapboundary(self,color='k',linewidth=1.0,ax=None):
+        """
+ draw boundary around map projection region. If ax=None (default), current
+ axis instance is used, otherwise specified axis instance is used.
+        """
+        # get current axes instance (if none specified).
+        if ax is None:
+            ax = pylab.gca()
         x = []
         y = []
         dtheta = 0.01
@@ -781,19 +787,21 @@ class Basemap:
         else: # all other projections are rectangular.
             x = [self.llcrnrx+1.,self.llcrnrx+1.,self.urcrnrx-1.,self.urcrnrx-1.,self.llcrnrx+1.]
             y = [self.llcrnry+1.,self.urcrnry-1.,self.urcrnry-1.,self.llcrnry+1.,self.llcrnry+1.]
-        pylab.plot(x,y,color=color,linewidth=linewidth)
-        self.set_axes_limits()
+        ax.plot(x,y,color=color,linewidth=linewidth)
+        self.set_axes_limits(ax=ax)
 
-    def fillcontinents(self,color=0.8):
+    def fillcontinents(self,color=0.8,ax=None):
         """
  Fill continents.
 
  color - color to fill continents (default gray).
+ ax - axes instance (default is to use the current axis instance).
 
  After filling continents, lakes are re-filled with axis background color.
         """
-        # get current axes instance.
-        ax = pylab.gca()
+        # get current axes instance (if none specified).
+        if ax is None:
+            ax = pylab.gca()
         # get axis background color.
         axisbgc = ax.get_axis_bgcolor()
         np = 0
@@ -823,18 +831,20 @@ class Basemap:
                 ax.add_patch(poly)
             np = np + 1
         # set axes limits to fit map region.
-        self.set_axes_limits()
+        self.set_axes_limits(ax=ax)
 
-    def drawcoastlines(self,linewidth=1.,color='k',antialiased=1):
+    def drawcoastlines(self,linewidth=1.,color='k',antialiased=1,ax=None):
         """
  Draw coastlines.
 
  linewidth - coastline width (default 1.)
  color - coastline color (default black)
  antialiased - antialiasing switch for coastlines (default True).
+ ax - axes instance (default is to use the current axis instance).
         """
-        # get current axes instance.
-        ax = pylab.gca()
+        # get current axes instance (if none specified).
+        if ax is None:
+            ax = pylab.gca()
         coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
@@ -844,45 +854,49 @@ class Basemap:
             ax.set_xticks([]) 
             ax.set_yticks([])
         # set axes limits to fit map region.
-        self.set_axes_limits()
+        self.set_axes_limits(ax=ax)
 
-    def drawcountries(self,linewidth=0.5,color='k',antialiased=1):
+    def drawcountries(self,linewidth=0.5,color='k',antialiased=1,ax=None):
         """
  Draw country boundaries.
 
  linewidth - country boundary line width (default 0.5)
  color - country boundary line color (default black)
  antialiased - antialiasing switch for country boundaries (default True).
+ ax - axes instance (default is to use the current axis instance).
         """
-        # get current axes instance.
-        ax = pylab.gca()
+        # get current axes instance (if none specified).
+        if ax is None:
+            ax = pylab.gca()
         coastlines = LineCollection(self.cntrysegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
-        self.set_axes_limits()
+        self.set_axes_limits(ax=ax)
 
-    def drawstates(self,linewidth=0.5,color='k',antialiased=1):
+    def drawstates(self,linewidth=0.5,color='k',antialiased=1,ax=None):
         """
  Draw state boundaries in Americas.
 
  linewidth - state boundary line width (default 0.5)
  color - state boundary line color (default black)
  antialiased - antialiasing switch for state boundaries (default True).
+ ax - axes instance (default is to use the current axis instance).
         """
-        # get current axes instance.
-        ax = pylab.gca()
+        # get current axes instance (if none specified).
+        if ax is None:
+            ax = pylab.gca()
         coastlines = LineCollection(self.statesegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
-        self.set_axes_limits()
+        self.set_axes_limits(ax=ax)
 
     def drawparallels(self,circles,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0], \
-                      font='rm',fontsize=12,xoffset=None,yoffset=None):
+                      font='rm',fontsize=12,xoffset=None,yoffset=None,ax=None):
         """
  draw parallels (latitude lines).
 
@@ -903,9 +917,11 @@ class Basemap:
   (default is 0.01 times width of map in map projection coordinates).
  yoffset - label offset from edge of map in y-direction
   (default is 0.01 times height of map in map projection coordinates).
+ ax - axes instance (default is to use the current axis instance).
         """
-        # get current axes instance.
-        ax = pylab.gca()
+        # get current axes instance (if none specified).
+        if ax is None:
+            ax = pylab.gca()
         # don't draw meridians past latmax, always draw parallel at latmax.
         latmax = 80.
         # offset for labels.
@@ -1048,29 +1064,29 @@ class Basemap:
                             else:
                                 xlab = self.llcrnrx
                             xlab = xlab-xoffset
-                            pylab.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
+                            ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
                         elif side == 'r':
                             if self.projection in ['moll','robin']:
                                 xlab,ylab = self(lon_0+179.9,lat)
                             else:
                                 xlab = self.urcrnrx
                             xlab = xlab+xoffset
-                            pylab.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
+                            ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
                         elif side == 'b':
-                            pylab.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
+                            ax.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
                         else:
-                            pylab.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
+                            ax.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
 
         # make sure axis ticks are turned off is parallels labelled.
         if self.noticks or max(labels):
             ax.set_xticks([]) 
             ax.set_yticks([])
         # set axes limits to fit map region.
-        self.set_axes_limits()
+        self.set_axes_limits(ax=ax)
 
     def drawmeridians(self,meridians,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0],\
-                      font='rm',fontsize=12,xoffset=None,yoffset=None):
+                      font='rm',fontsize=12,xoffset=None,yoffset=None,ax=None):
         """
  draw meridians (longitude lines).
 
@@ -1091,9 +1107,11 @@ class Basemap:
   (default is 0.01 times width of map in map projection coordinates).
  yoffset - label offset from edge of map in y-direction
   (default is 0.01 times height of map in map projection coordinates).
+ ax - axes instance (default is to use the current axis instance).
         """
-        # get current axes instance.
-        ax = pylab.gca()
+        # get current axes instance (if none specified).
+        if ax is None:
+            ax = pylab.gca()
         # don't draw meridians past latmax, always draw parallel at latmax.
         latmax = 80. # not used for cyl, merc or miller projections.
         # offset for labels.
@@ -1228,22 +1246,22 @@ class Basemap:
                     if i and abs(nr-nl) < 100: continue
                     if n >= 0:
                         if side == 'l':
-                            pylab.text(self.llcrnrx-xoffset,yy[n],lonlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
+                            ax.text(self.llcrnrx-xoffset,yy[n],lonlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
                         elif side == 'r':
-                            pylab.text(self.urcrnrx+xoffset,yy[n],lonlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
+                            ax.text(self.urcrnrx+xoffset,yy[n],lonlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
                         elif side == 'b':
                             if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
-                                pylab.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
+                                ax.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
                         else:
                             if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
-                                pylab.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
+                                ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
 
         # make sure axis ticks are turned off if meridians labelled.
         if self.noticks or max(labels):
             ax.set_xticks([]) 
             ax.set_yticks([])
         # set axes limits to fit map region.
-        self.set_axes_limits()
+        self.set_axes_limits(ax=ax)
 
     def gcpoints(self,lon1,lat1,lon2,lat2,npoints):
         """
@@ -1270,8 +1288,6 @@ class Basemap:
  Note:  cannot handle situations in which the great circle intersects
  the edge of the map projection domain, and then re-enters the domain.
         """
-        # get current axes instance.
-        ax = pylab.gca()
         # use great circle formula for a perfect sphere.
         gc = GreatCircle(self.rmajor,self.rminor,lon1,lat1,lon2,lat2)
         if gc.antipodal:
@@ -1382,12 +1398,13 @@ class Basemap:
         else:
             return uout,vout
 
-    def set_axes_limits(self):
+    def set_axes_limits(self,ax=None):
         """
- Set axis limits for map domain using current axes instance.
+ Set axis limits for map domain using current or specified axes instance.
         """
-        # get current axes instance.
-        ax = pylab.gca()
+        # get current axes instance (if none specified).
+        if ax is None:
+            ax = pylab.gca()
         corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
         ax.update_datalim( corners )                                          
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
@@ -1396,44 +1413,84 @@ class Basemap:
     def scatter(self, *args, **kwargs):
         """
  Plot points with markers on the map (see pylab scatter documentation).
+ extra keyword 'ax' can be used to specify an existing axis instance
+ (otherwise the current axis instances will be used)
         """
-        pylab.scatter(*args, **kwargs)
-        self.set_axes_limits()
+        if not kwargs.has_key('ax'):
+            ax = pylab.gca()
+        else:
+            ax = kwargs['ax']
+            del kwargs['ax']
+        ax.scatter(*args, **kwargs)
+        self.set_axes_limits(ax=ax)
 
     def plot(self, *args, **kwargs):
         """
  Draw lines and/or markers on the map (see pylab plot documentation).
+ extra keyword 'ax' can be used to specify an existing axis instance
+ (otherwise the current axis instances will be used)
         """
-        pylab.plot(*args, **kwargs)
-        self.set_axes_limits()
+        if not kwargs.has_key('ax'):
+            ax = pylab.gca()
+        else:
+            ax = kwargs['ax']
+            del kwargs['ax']
+        ax.plot(*args, **kwargs)
+        self.set_axes_limits(ax=ax)
 
     def imshow(self, *args, **kwargs):
         """
  Display an image over the map (see pylab imshow documentation).
  extent and origin keywords set automatically so image will be drawn
  over map region.
+ extra keyword 'ax' can be used to specify an existing axis instance
+ (otherwise the current axis instances will be used)
         """
+        if not kwargs.has_key('ax'):
+            ax = pylab.gca()
+        else:
+            ax = kwargs['ax']
+            del kwargs['ax']
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         kwargs['origin']='lower'
-        return pylab.imshow(*args,  **kwargs)
+        ret = ax.imshow(*args,  **kwargs)
+        pylab.gci._current = ret
+        return ret
 
     def pcolor(self,x,y,data,**kwargs):
         """
  Make a pseudo-color plot over the map.
  see pylab pcolor documentation for definition of **kwargs
+ extra keyword 'ax' can be used to specify an existing axis instance
+ (otherwise the current axis instances will be used)
         """
+        if not kwargs.has_key('ax'):
+            ax = pylab.gca()
+        else:
+            ax = kwargs['ax']
+            del kwargs['ax']
+        kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         # make x,y masked arrays 
         # (masked where data is outside of projection limb)
         x = ma.masked_values(pylab.where(x > 1.e20,1.e20,x), 1.e20)
         y = ma.masked_values(pylab.where(y > 1.e20,1.e20,y), 1.e20)
-        pylab.pcolor(x,y,data,**kwargs)
+        ret = ax.pcolor(x,y,data,**kwargs)
+        pylab.gci._current = ret
         # set axes limits to fit map region.
-        self.set_axes_limits()
+        self.set_axes_limits(ax=ax)
+        return ret
 
     def contour(self,x,y,data,*args,**kwargs):
         """
  Make a contour plot over the map (see pylab contour documentation).
+ extra keyword 'ax' can be used to specify an existing axis instance
+ (otherwise the current axis instances will be used)
         """
+        if not kwargs.has_key('ax'):
+            ax = pylab.gca()
+        else:
+            ax = kwargs['ax']
+            del kwargs['ax']
         # mask for points outside projection limb.
         xymask = pylab.logical_or(pylab.greater(x,1.e20),pylab.greater(y,1.e20))
         data = ma.asarray(data)
@@ -1441,15 +1498,23 @@ class Basemap:
         mask = pylab.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
         # draw contours.
-        levels, colls = pylab.contour(x,y,data,*args,**kwargs)
+        levels, colls = ax.contour(x,y,data,*args,**kwargs)
         # set axes limits to fit map region.
-        self.set_axes_limits()
+        self.set_axes_limits(ax=ax)
+        if colls.mappable is not None: pylab.gci._current = colls.mappable
         return levels,colls
 
     def contourf(self,x,y,data,*args,**kwargs):
         """
  Make a filled contour plot over the map (see pylab documentation).
+ extra keyword 'ax' can be used to specify an existing axis instance
+ (otherwise the current axis instances will be used)
         """
+        if not kwargs.has_key('ax'):
+            ax = pylab.gca()
+        else:
+            ax = kwargs['ax']
+            del kwargs['ax']
         # mask for points outside projection limb.
         xymask = pylab.logical_or(pylab.greater(x,1.e20),pylab.greater(y,1.e20))
         data = ma.asarray(data)
@@ -1457,9 +1522,10 @@ class Basemap:
         mask = pylab.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
         # draw contours.
-        levels, colls = pylab.contourf(x,y,data,*args,**kwargs)
+        levels, colls = ax.contourf(x,y,data,*args,**kwargs)
         # set axes limits to fit map region.
-        self.set_axes_limits()
+        self.set_axes_limits(ax=ax)
+        if colls.mappable is not None: pylab.gci._current = colls.mappable
         return levels,colls
 
     def quiver(self, x, y, u, v, scale=None, **kwargs):
@@ -1471,14 +1537,21 @@ class Basemap:
 
  Extra keyword arguments (**kwargs) passed to pylab.quiver (see pylab 
  quiver documentation for details).
+ extra keyword 'ax' can be used to specify an existing axis instance
+ (otherwise the current axis instances will be used)
         """
+        if not kwargs.has_key('ax'):
+            ax = pylab.gca()
+        else:
+            ax = kwargs['ax']
+            del kwargs['ax']
         ny = x.shape[0]; nx = x.shape[1]
         if scale is None:
             scale = max([(self.xmax-self.xmin)/(nx-1),(self.ymax-self.ymin)/(ny-1)])
         else:
             scale = scale
-        pylab.quiver(x,y,u,v,scale, **kwargs)
-        self.set_axes_limits()
+        ax.quiver(x,y,u,v,scale, **kwargs)
+        self.set_axes_limits(ax=ax)
 
 def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest',cval=0.0,order=3):
     """
