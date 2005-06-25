@@ -788,6 +788,7 @@ class Basemap:
             x = [self.llcrnrx+1.,self.llcrnrx+1.,self.urcrnrx-1.,self.urcrnrx-1.,self.llcrnrx+1.]
             y = [self.llcrnry+1.,self.urcrnry-1.,self.urcrnry-1.,self.llcrnry+1.,self.llcrnry+1.]
         ax.plot(x,y,color=color,linewidth=linewidth)
+        # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
     def fillcontinents(self,color=0.8,ax=None):
@@ -1419,10 +1420,22 @@ class Basemap:
         if not kwargs.has_key('ax'):
             ax = pylab.gca()
         else:
-            ax = kwargs['ax']
-            del kwargs['ax']
-        ax.scatter(*args, **kwargs)
+            ax = pylab.popd(kwargs,'ax')
+        # allow callers to override the hold state by passing hold=True|False
+        b = ax.ishold()
+        h = pylab.popd(kwargs, 'hold', None)
+        if h is not None:
+            ax.hold(h)
+        try:
+            ret =  ax.scatter(*args, **kwargs)
+            pylab.draw_if_interactive()
+        except:
+            ax.hold(b)
+            raise
+        ax.hold(b)
+        # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        return ret
 
     def plot(self, *args, **kwargs):
         """
@@ -1433,10 +1446,22 @@ class Basemap:
         if not kwargs.has_key('ax'):
             ax = pylab.gca()
         else:
-            ax = kwargs['ax']
-            del kwargs['ax']
-        ax.plot(*args, **kwargs)
+            ax = pylab.popd(kwargs,'ax')
+        # allow callers to override the hold state by passing hold=True|False
+        b = ax.ishold()
+        h = pylab.popd(kwargs, 'hold', None)
+        if h is not None:
+            ax.hold(h)
+        try:
+            ret =  ax.plot(*args, **kwargs)
+            pylab.draw_if_interactive()
+        except:
+            ax.hold(b)
+            raise
+        ax.hold(b)
+        # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        return ret
 
     def imshow(self, *args, **kwargs):
         """
@@ -1449,12 +1474,25 @@ class Basemap:
         if not kwargs.has_key('ax'):
             ax = pylab.gca()
         else:
-            ax = kwargs['ax']
-            del kwargs['ax']
+            ax = pylab.popd(kwargs,'ax')
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         kwargs['origin']='lower'
-        ret = ax.imshow(*args,  **kwargs)
+        # allow callers to override the hold state by passing hold=True|False
+        b = ax.ishold()
+        h = pylab.popd(kwargs, 'hold', None)
+        if h is not None:
+            ax.hold(h)
+        try:
+            ret =  ax.imshow(*args, **kwargs)
+            pylab.draw_if_interactive()
+        except:
+            ax.hold(b)
+            raise
+        ax.hold(b)
+        # reset current active image.
         pylab.gci._current = ret
+        # set axes limits to fit map region.
+        self.set_axes_limits(ax=ax)
         return ret
 
     def pcolor(self,x,y,data,**kwargs):
@@ -1467,14 +1505,25 @@ class Basemap:
         if not kwargs.has_key('ax'):
             ax = pylab.gca()
         else:
-            ax = kwargs['ax']
-            del kwargs['ax']
+            ax = pylab.popd(kwargs,'ax')
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         # make x,y masked arrays 
         # (masked where data is outside of projection limb)
         x = ma.masked_values(pylab.where(x > 1.e20,1.e20,x), 1.e20)
         y = ma.masked_values(pylab.where(y > 1.e20,1.e20,y), 1.e20)
-        ret = ax.pcolor(x,y,data,**kwargs)
+        # allow callers to override the hold state by passing hold=True|False
+        b = ax.ishold()
+        h = pylab.popd(kwargs, 'hold', None)
+        if h is not None:
+            ax.hold(h)
+        try:
+            ret =  ax.pcolor(x,y,data,**kwargs)
+            pylab.draw_if_interactive()
+        except:
+            ax.hold(b)
+            raise
+        ax.hold(b)
+        # reset current active image.
         pylab.gci._current = ret
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
@@ -1489,18 +1538,28 @@ class Basemap:
         if not kwargs.has_key('ax'):
             ax = pylab.gca()
         else:
-            ax = kwargs['ax']
-            del kwargs['ax']
+            ax = pylab.popd(kwargs,'ax')
         # mask for points outside projection limb.
         xymask = pylab.logical_or(pylab.greater(x,1.e20),pylab.greater(y,1.e20))
         data = ma.asarray(data)
         # combine with data mask.
         mask = pylab.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
-        # draw contours.
-        levels, colls = ax.contour(x,y,data,*args,**kwargs)
+        # allow callers to override the hold state by passing hold=True|False
+        b = ax.ishold()
+        h = pylab.popd(kwargs, 'hold', None)
+        if h is not None:
+            ax.hold(h)
+        try:
+            levels, colls = ax.contour(x,y,data,*args,**kwargs)
+            pylab.draw_if_interactive()
+        except:
+            ax.hold(b)
+            raise
+        ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # reset current active image.
         if colls.mappable is not None: pylab.gci._current = colls.mappable
         return levels,colls
 
@@ -1513,18 +1572,28 @@ class Basemap:
         if not kwargs.has_key('ax'):
             ax = pylab.gca()
         else:
-            ax = kwargs['ax']
-            del kwargs['ax']
+            ax = pylab.popd(kwargs,'ax')
         # mask for points outside projection limb.
         xymask = pylab.logical_or(pylab.greater(x,1.e20),pylab.greater(y,1.e20))
         data = ma.asarray(data)
         # combine with data mask.
         mask = pylab.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
-        # draw contours.
-        levels, colls = ax.contourf(x,y,data,*args,**kwargs)
+        # allow callers to override the hold state by passing hold=True|False
+        b = ax.ishold()
+        h = pylab.popd(kwargs, 'hold', None)
+        if h is not None:
+            ax.hold(h)
+        try:
+            levels, colls = ax.contourf(x,y,data,*args,**kwargs)
+            pylab.draw_if_interactive()
+        except:
+            ax.hold(b)
+            raise
+        ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # reset current active image.
         if colls.mappable is not None: pylab.gci._current = colls.mappable
         return levels,colls
 
@@ -1543,15 +1612,27 @@ class Basemap:
         if not kwargs.has_key('ax'):
             ax = pylab.gca()
         else:
-            ax = kwargs['ax']
-            del kwargs['ax']
+            ax = pylab.popd(kwargs,'ax')
         ny = x.shape[0]; nx = x.shape[1]
         if scale is None:
             scale = max([(self.xmax-self.xmin)/(nx-1),(self.ymax-self.ymin)/(ny-1)])
         else:
             scale = scale
-        ax.quiver(x,y,u,v,scale, **kwargs)
+        # allow callers to override the hold state by passing hold=True|False
+        b = ax.ishold()
+        h = pylab.popd(kwargs, 'hold', None)
+        if h is not None:
+            ax.hold(h)
+        try:
+            ret =  ax.quiver(x,y,u,v,scale,**kwargs)
+            pylab.draw_if_interactive()
+        except:
+            ax.hold(b)
+            raise
+        ax.hold(b)
+        # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        return ret
 
 def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest',cval=0.0,order=3):
     """
