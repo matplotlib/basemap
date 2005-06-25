@@ -1491,8 +1491,6 @@ class Basemap:
         ax.hold(b)
         # reset current active image.
         pylab.gci._current = ret
-        # set axes limits to fit map region.
-        self.set_axes_limits(ax=ax)
         return ret
 
     def pcolor(self,x,y,data,**kwargs):
@@ -1604,7 +1602,7 @@ class Basemap:
  (default) arrows are scaled to longest one is equal to the maximum
  distance between grid points.   
 
- Extra keyword arguments (**kwargs) passed to pylab.quiver (see pylab 
+ Extra keyword arguments (**kwargs) passed to quiver Axes method (see pylab 
  quiver documentation for details).
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
