@@ -1,6 +1,8 @@
 version 0.5.1: 'font' and 'fontsize' keyword args for drawparallels and
                drawmeridians replaced by **kwargs, which is passed directly
-               to Axes text method.
+               to Axes text method. Most Basemap methods now take keyword
+               argument 'ax' to allow use of a pre-existing Axes instance
+               (default is to use current instance).
 version 0.5: llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat are now optional
              keyword paramaters in Basemap.__init__,
              'xoffset', 'yoffset' optional keyword args added to
