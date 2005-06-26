@@ -42,7 +42,7 @@ def hrs_since_day1CE_todate(hrs):
 # read in date (YYYYMMDDHH) from command line.
 
 if len(sys.argv) == 1:
-    YYYYMMDDHH = raw_input('Enter date (YYYYMMDDHH):')
+    YYYYMMDDHH = raw_input('Enter date forecast was started on (YYYYMMDDHH):')
 else:
     YYYYMMDDHH = sys.argv[1]
 YYYYMM = YYYYMMDDHH[0:6]
@@ -101,6 +101,7 @@ llcrnrlon = -125.0
 urcrnrlon = -60.0
 standardpar = 50.0
 centerlon=-105.
+# create Basemap instance for Lambert Conformal Conic projection.
 m = Basemap(llcrnrlon=llcrnrlon,llcrnrlat=llcrnrlat,
             urcrnrlon=urcrnrlon,urcrnrlat=urcrnrlat,
             rsphere=6371200.,
