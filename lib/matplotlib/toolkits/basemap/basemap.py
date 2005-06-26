@@ -9,6 +9,7 @@ from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
 from numarray import nd_image
+from numarray import array as num_array
 import sys, os, pylab, math
 from proj import Proj
 from greatcircle import GreatCircle, vinc_dist, vinc_pt
@@ -1714,7 +1715,7 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
     else:
         # nearest neighbor interpolation if order=0.
         # uses index arrays, so first convert to numarray.
-        datatmp = pylab.array(datain,datain.typecode())
+        datatmp = num_array(datain,datain.typecode())
         xi = pylab.around(xcoords).astype('i')
         yi = pylab.around(ycoords).astype('i')
         return datatmp[yi,xi]
