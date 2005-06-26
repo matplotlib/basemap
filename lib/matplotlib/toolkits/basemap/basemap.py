@@ -1052,7 +1052,7 @@ class Basemap:
                 if lat<0:
                     latlab = u'%g\N{DEGREE SIGN}S'%pylab.fabs(lat)
                 elif lat>0:
-                    latlab = u'%g\N{DEGREE SIGN}N'%(lat)
+                    latlab = u'%g\N{DEGREE SIGN}N'%lat
                 else:
                     latlab = u'%g\N{DEGREE SIGN}'%lat
                 # parallels can intersect each map edge twice.
