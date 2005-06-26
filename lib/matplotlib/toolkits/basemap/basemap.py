@@ -897,7 +897,7 @@ class Basemap:
 
     def drawparallels(self,circles,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0], \
-                      font='rm',fontsize=12,xoffset=None,yoffset=None,ax=None):
+                      xoffset=None,yoffset=None,ax=None,**kwargs):
         """
  draw parallels (latitude lines).
 
@@ -911,14 +911,15 @@ class Basemap:
   parallels are labelled where they intersect the left, right, top or 
   bottom of the plot. For example labels=[1,0,0,1] will cause parallels
   to be labelled where they intersect the left and bottom of the plot,
-  but not the right and top. Labels are drawn using mathtext.
- font - mathtext font used for labels ('rm','tt','it' or 'cal', default 'rm').
- fontsize - font size in points for labels (default 12).
+  but not the right and top.
  xoffset - label offset from edge of map in x-direction
   (default is 0.01 times width of map in map projection coordinates).
  yoffset - label offset from edge of map in y-direction
   (default is 0.01 times height of map in map projection coordinates).
  ax - axes instance (default is to use the current axis instance).
+
+ additional keyword arguments control text properties for labels (see
+  pylab.text documentation)
         """
         # get current axes instance (if none specified).
         if ax is None:
@@ -1049,11 +1050,11 @@ class Basemap:
                 except:
                     nr = -1
                 if lat<0:
-                    latlab = r'$\%s{%g\/^{\circ}\/S}$'%(font,pylab.fabs(lat))
+                    latlab = u'%g\N{DEGREE SIGN}S'%pylab.fabs(lat)
                 elif lat>0:
-                    latlab = r'$\%s{%g\/^{\circ}\/N}$'%(font,lat)
+                    latlab = u'%g\N{DEGREE SIGN}N'%(lat)
                 else:
-                    latlab = r'$\%s{%g\/^{\circ}}$'%(font,lat)
+                    latlab = u'%g\N{DEGREE SIGN}'%lat
                 # parallels can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     # don't bother if close to the first label.
@@ -1065,18 +1066,18 @@ class Basemap:
                             else:
                                 xlab = self.llcrnrx
                             xlab = xlab-xoffset
-                            ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
+                            ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**kwargs)
                         elif side == 'r':
                             if self.projection in ['moll','robin']:
                                 xlab,ylab = self(lon_0+179.9,lat)
                             else:
                                 xlab = self.urcrnrx
                             xlab = xlab+xoffset
-                            ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
+                            ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',**kwargs)
                         elif side == 'b':
-                            ax.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
+                            ax.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',**kwargs)
                         else:
-                            ax.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
+                            ax.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
 
         # make sure axis ticks are turned off is parallels labelled.
         if self.noticks or max(labels):
@@ -1087,7 +1088,7 @@ class Basemap:
 
     def drawmeridians(self,meridians,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0],\
-                      font='rm',fontsize=12,xoffset=None,yoffset=None,ax=None):
+                      xoffset=None,yoffset=None,ax=None,**kwargs):
         """
  draw meridians (longitude lines).
 
@@ -1101,14 +1102,15 @@ class Basemap:
   meridians are labelled where they intersect the left, right, top or 
   bottom of the plot. For example labels=[1,0,0,1] will cause meridians
   to be labelled where they intersect the left and bottom of the plot,
-  but not the right and top. Labels are drawn using mathtext.
- font - mathtext font used for labels ('rm','tt','it' or 'cal', default 'rm').
- fontsize - font size in points for labels (default 12).
+  but not the right and top. 
  xoffset - label offset from edge of map in x-direction
   (default is 0.01 times width of map in map projection coordinates).
  yoffset - label offset from edge of map in y-direction
   (default is 0.01 times height of map in map projection coordinates).
  ax - axes instance (default is to use the current axis instance).
+
+ additional keyword arguments control text properties for labels (see
+  pylab.text documentation)
         """
         # get current axes instance (if none specified).
         if ax is None:
@@ -1233,11 +1235,11 @@ class Basemap:
                 except:
                     nr = -1
                 if lon>180:
-                    lonlab = r'$\%s{%g\/^{\circ}\/W}$'%(font,pylab.fabs(lon-360))
+                    lonlab = u'%g\N{DEGREE SIGN}W'%pylab.fabs(lon-360)
                 elif lon<180 and lon != 0:
-                    lonlab = r'$\%s{%g\/^{\circ}\/E}$'%(font,lon)
+                    lonlab = u'%g\N{DEGREE SIGN}E'%lon
                 else:
-                    lonlab = r'$\%s{%g\/^{\circ}}$'%(font,lon)
+                    lonlab = u'%g\N{DEGREE SIGN}'%lon
                 # meridians can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     lat = lats[n]/10.
@@ -1247,15 +1249,15 @@ class Basemap:
                     if i and abs(nr-nl) < 100: continue
                     if n >= 0:
                         if side == 'l':
-                            ax.text(self.llcrnrx-xoffset,yy[n],lonlab,horizontalalignment='right',verticalalignment='center',fontsize=fontsize)
+                            ax.text(self.llcrnrx-xoffset,yy[n],lonlab,horizontalalignment='right',verticalalignment='center',**kwargs)
                         elif side == 'r':
-                            ax.text(self.urcrnrx+xoffset,yy[n],lonlab,horizontalalignment='left',verticalalignment='center',fontsize=fontsize)
+                            ax.text(self.urcrnrx+xoffset,yy[n],lonlab,horizontalalignment='left',verticalalignment='center',**kwargs)
                         elif side == 'b':
                             if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
-                                ax.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',fontsize=fontsize)
+                                ax.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',**kwargs)
                         else:
                             if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
-                                ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',fontsize=fontsize)
+                                ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
 
         # make sure axis ticks are turned off if meridians labelled.
         if self.noticks or max(labels):
@@ -1284,7 +1286,7 @@ class Basemap:
  dtheta - points on great circle computed every dtheta radians (default 0.02).
 
  Other keyword arguments (**kwargs) control plotting of great circle line,
- see pylab plot documentation for details.
+ see pylab.plot documentation for details.
 
  Note:  cannot handle situations in which the great circle intersects
  the edge of the map projection domain, and then re-enters the domain.
@@ -1413,7 +1415,7 @@ class Basemap:
 
     def scatter(self, *args, **kwargs):
         """
- Plot points with markers on the map (see pylab scatter documentation).
+ Plot points with markers on the map (see pylab.scatter documentation).
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
@@ -1439,7 +1441,7 @@ class Basemap:
 
     def plot(self, *args, **kwargs):
         """
- Draw lines and/or markers on the map (see pylab plot documentation).
+ Draw lines and/or markers on the map (see pylab.plot documentation).
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
@@ -1465,7 +1467,7 @@ class Basemap:
 
     def imshow(self, *args, **kwargs):
         """
- Display an image over the map (see pylab imshow documentation).
+ Display an image over the map (see pylab.imshow documentation).
  extent and origin keywords set automatically so image will be drawn
  over map region.
  extra keyword 'ax' can be used to specify an existing axis instance
@@ -1496,7 +1498,7 @@ class Basemap:
     def pcolor(self,x,y,data,**kwargs):
         """
  Make a pseudo-color plot over the map.
- see pylab pcolor documentation for definition of **kwargs
+ see pylab.pcolor documentation for definition of **kwargs
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
@@ -1529,7 +1531,7 @@ class Basemap:
 
     def contour(self,x,y,data,*args,**kwargs):
         """
- Make a contour plot over the map (see pylab contour documentation).
+ Make a contour plot over the map (see pylab.contour documentation).
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
@@ -1563,7 +1565,7 @@ class Basemap:
 
     def contourf(self,x,y,data,*args,**kwargs):
         """
- Make a filled contour plot over the map (see pylab documentation).
+ Make a filled contour plot over the map (see pylab.contourf documentation).
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
@@ -1602,8 +1604,8 @@ class Basemap:
  (default) arrows are scaled to longest one is equal to the maximum
  distance between grid points.   
 
- Extra keyword arguments (**kwargs) passed to quiver Axes method (see pylab 
- quiver documentation for details).
+ Extra keyword arguments (**kwargs) passed to quiver Axes method (see  
+ pylab.quiver documentation for details).
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
