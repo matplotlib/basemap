@@ -73,7 +73,7 @@ class Basemap:
 >>> title('Robinson Projection') # add a title
 >>> show()
 
- Version: 0.5.1 (20050626)
+ Version: 0.5.2 (20050626)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -1227,8 +1227,6 @@ class Basemap:
             for lon in meridians:
                 # adjust so 0 <= lon < 360
                 lon = (lon+360) % 360
-                # adjust so -180 <= lon < 180
-                #if lon > 180: lon = lon - 360
                 # find index of meridian (there may be two, so
                 # search from left and right).
                 try:
