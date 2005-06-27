@@ -1020,9 +1020,10 @@ class Basemap:
                     lons,lats = self(self.urcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
-                lons = pylab.where(lons < 0, lons+360, lons)
-                lons = [int(lon*10) for lon in lons.tolist()]
-                lats = [int(lat*10) for lat in lats.tolist()]
+                # adjust so 0 <= lons < 360
+                lons = [(lon+360) % 360 for lon in lons]
+                lons = [int(lon*10) for lon in lons]
+                lats = [int(lat*10) for lat in lats]
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 if self.urcrnrx < self.llcrnrx:
@@ -1035,10 +1036,10 @@ class Basemap:
                     lons,lats = self(xx,self.urcrnry*pylab.ones(xx.shape,'f'),inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
-                lons = pylab.where(lons < 0, lons+360, lons)
-                lons = pylab.where(lons < 0, lons+360, lons)
-                lons = [int(lon*10) for lon in lons.tolist()]
-                lats = [int(lat*10) for lat in lats.tolist()]
+                # adjust so 0 <= lons < 360
+                lons = [(lon+360) % 360 for lon in lons]
+                lons = [int(lon*10) for lon in lons]
+                lats = [int(lat*10) for lat in lats]
             for lat in circles:
                 # find index of parallel (there may be two, so
                 # search from left and right).
@@ -1203,10 +1204,10 @@ class Basemap:
                     lons,lats = self(self.urcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
-                lons = pylab.where(lons < 0, lons+360, lons)
-                lons = pylab.where(lons < 0, lons+360, lons)
-                lons = [int(lon*10) for lon in lons.tolist()]
-                lats = [int(lat*10) for lat in lats.tolist()]
+                # adjust so 0 <= lons < 360
+                lons = [(lon+360) % 360 for lon in lons]
+                lons = [int(lon*10) for lon in lons]
+                lats = [int(lat*10) for lat in lats]
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 if self.urcrnrx < self.llcrnrx:
@@ -1219,12 +1220,15 @@ class Basemap:
                     lons,lats = self(xx,self.urcrnry*pylab.ones(xx.shape,'f'),inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
-                lons = pylab.where(lons < 0, lons+360, lons)
-                lons = pylab.where(lons < 0, lons+360, lons)
-                lons = [int(lon*10) for lon in lons.tolist()]
-                lats = [int(lat*10) for lat in lats.tolist()]
+                # adjust so 0 <= lons < 360
+                lons = [(lon+360) % 360 for lon in lons]
+                lons = [int(lon*10) for lon in lons]
+                lats = [int(lat*10) for lat in lats]
             for lon in meridians:
-                if lon<0: lon=lon+360.
+                # adjust so 0 <= lon < 360
+                lon = (lon+360) % 360
+                # adjust so -180 <= lon < 180
+                #if lon > 180: lon = lon - 360
                 # find index of meridian (there may be two, so
                 # search from left and right).
                 try:
