@@ -117,7 +117,9 @@ for npanel,fcsthr in enumerate(arange(0,72,12)):
     nt = fcsthrs.index(fcsthr)
     ax = fig.add_subplot(320+npanel+1)
     # make a pcolor plot.
-    p = m.pcolor(x,y,t2m[nt,:,:],shading='flat',cmap=cm.jet)
+    #p = m.pcolor(x,y,t2m[nt,:,:],shading='flat',cmap=cm.jet)
+    # make a filled contour plot.
+    levels, colls = m.contourf(x,y,t2m[nt,:,:],20,cmap=cm.jet,colors=None)
     clim(t2min,t2max) # fix color range to be the same for all panels
     m.drawcoastlines()
     m.drawstates()
