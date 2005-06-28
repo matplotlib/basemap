@@ -1,9 +1,10 @@
 # pylab-free version of simpletest.py
-import sys
+import matplotlib
+matplotlib.use('Agg')
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.toolkits.basemap import Basemap
 from matplotlib.figure import Figure
 from matplotlib.mlab import meshgrid
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib.numerix as nx
 import matplotlib.cm as cm
 import cPickle
@@ -35,3 +36,4 @@ ax.set_title('Robinson Projection')
 cax = fig.add_axes([0.25, 0.05, 0.5, 0.05],frameon=False)
 fig.colorbar(colls.mappable, cax=cax, tickfmt='%d', orientation='horizontal') 
 canvas.print_figure('simpletest')
+print 'image saved in simpletest.png'
