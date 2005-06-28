@@ -9,11 +9,13 @@ from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
 from numarray import nd_image
-from numarray import array as num_array
-import sys, os, pylab, math
+import numarray as na
+import sys, os, math
 from proj import Proj
 from greatcircle import GreatCircle, vinc_dist, vinc_pt
 from matplotlib.numerix import ma
+from matplotlib.numerix.mlab import squeeze
+from matplotlib.cbook import popd
 
 # look in sys.prefix for directory containing basemap files if
 # BASEMAP_DATA_PATH env var not set.
@@ -49,8 +51,6 @@ class Basemap:
  rmajor,rminor - equatorial and polar radii of ellipsoid used (in meters).
 
  Example Usage:
- (this example plus others can be found in the examples directory of
-  the source distribution)
 
 >>> from matplotlib.toolkits.basemap import Basemap
 >>> import cPickle
@@ -73,14 +73,18 @@ class Basemap:
 >>> title('Robinson Projection') # add a title
 >>> show()
 
- Version: 0.5.2 (20050626)
+ [this example (simpletest.py) plus many others can be found in the 
+  examples directory of source distribution.  The "OO" version of this
+  example (which does not use pylab) is called "simpletest_oo.py".]
+
+ Version: 0.5.2 (20050628)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
     def __init__(self,llcrnrlon=-180.,llcrnrlat=-90.,urcrnrlon=180.,urcrnrlat=90.,\
        projection='cyl',resolution='c',area_thresh=10000.,rsphere=6370997,\
        lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
-       lon_1=None,lon_2=None,suppress_ticks=True):
+       lon_1=None,lon_2=None,suppress_ticks=True,ax=None):
         """
  create a Basemap instance.
  
@@ -134,6 +138,13 @@ class Basemap:
  only want to override the default if you want to label the axes in meters
  using native map projection coordinates.
 
+ ax - axes instance to draw to (default None - pylab.gca() will be used
+ to get the current axes instance).  If you don't want pylab to be imported,
+ you can either set this to a pre-defined axes instance, or use the 'ax'
+ keyword in each Basemap method call that does drawing. In the first case,
+ all Basemap method calls will draw to the same axes instance.  In the 
+ second case, you can draw to different axes with the same Basemap instance.
+
  The following parameters are map projection parameters which all default to 
  None.  Not all parameters are used by all projections, some are ignored.
  
@@ -157,6 +168,8 @@ class Basemap:
   gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
         """     
 
+        # if ax == None, pylab.gca may be used.
+        self.ax = ax
         # read in coastline data.
         coastlons = []; coastlats = []; coastsegind = []; coastsegarea = []; coastsegtype = []
         i = 0  # the current ind
@@ -330,9 +343,9 @@ class Basemap:
         self.urcrnry = proj.urcrnry
 
         # transform coastline polygons to native map coordinates.
-        xc,yc = proj(pylab.array(coastlons,'f'),pylab.array(coastlats,'f'))
-        xc2,yc2 = proj(pylab.array(coastlons2,'f'),pylab.array(coastlats,'f'))
-        xc3,yc3 = proj(pylab.array(coastlons3,'f'),pylab.array(coastlats,'f'))
+        xc,yc = proj(na.array(coastlons,'f'),na.array(coastlats,'f'))
+        xc2,yc2 = proj(na.array(coastlons2,'f'),na.array(coastlats,'f'))
+        xc3,yc3 = proj(na.array(coastlons3,'f'),na.array(coastlats,'f'))
         if projection == 'merc' or projection == 'mill': 
             yc2 = yc
             yc3 = yc
@@ -354,9 +367,9 @@ class Basemap:
         self.coastsegtypes = segtypes+segtypes2+segtypes3
 
         # same as above for country polygons.
-        xc,yc = proj(pylab.array(cntrylons,'f'),pylab.array(cntrylats,'f'))
-        xc2,yc2 = proj(pylab.array(cntrylons2,'f'),pylab.array(cntrylats,'f'))
-        xc3,yc3 = proj(pylab.array(cntrylons3,'f'),pylab.array(cntrylats,'f'))
+        xc,yc = proj(na.array(cntrylons,'f'),na.array(cntrylats,'f'))
+        xc2,yc2 = proj(na.array(cntrylons2,'f'),na.array(cntrylats,'f'))
+        xc3,yc3 = proj(na.array(cntrylons3,'f'),na.array(cntrylats,'f'))
         if projection == 'merc' or projection == 'mill': 
             yc2=yc
             yc3=yc
@@ -366,9 +379,9 @@ class Basemap:
         self.cntrysegs = segments+segments2+segments3
 
         # same as above for state polygons.
-        xc,yc = proj(pylab.array(statelons,'f'),pylab.array(statelats,'f'))
-        xc2,yc2 = proj(pylab.array(statelons2,'f'),pylab.array(statelats,'f'))
-        xc3,yc3 = proj(pylab.array(statelons3,'f'),pylab.array(statelats,'f'))
+        xc,yc = proj(na.array(statelons,'f'),na.array(statelats,'f'))
+        xc2,yc2 = proj(na.array(statelons2,'f'),na.array(statelats,'f'))
+        xc3,yc3 = proj(na.array(statelons3,'f'),na.array(statelats,'f'))
         if projection == 'merc' or projection == 'mill': 
             yc2=yc
             yc3=yc
@@ -491,8 +504,8 @@ class Basemap:
         coastsegs = []
         coastsegtypes = []
         for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
-            xx = pylab.array([x for x,y in seg],'f')
-            yy = pylab.array([y for x,y in seg],'f')
+            xx = na.array([x for x,y in seg],'f')
+            yy = na.array([y for x,y in seg],'f')
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
@@ -506,8 +519,8 @@ class Basemap:
         self.coastsegtypes = coastsegtypes
         states = []
         for seg in self.statesegs:
-            xx = pylab.array([x for x,y in seg],'f')
-            yy = pylab.array([y for x,y in seg],'f')
+            xx = na.array([x for x,y in seg],'f')
+            yy = na.array([y for x,y in seg],'f')
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
@@ -518,8 +531,8 @@ class Basemap:
         self.statesegs = states
         countries = []
         for seg in self.cntrysegs:
-            xx = pylab.array([x for x,y in seg],'f')
-            yy = pylab.array([y for x,y in seg],'f')
+            xx = na.array([x for x,y in seg],'f')
+            yy = na.array([y for x,y in seg],'f')
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
@@ -533,14 +546,14 @@ class Basemap:
         coastsegs = []
         coastsegtypes = []
         for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
-            xx = pylab.array([x for x,y in seg],'f')
-            yy = pylab.array([y for x,y in seg],'f')
+            xx = na.array([x for x,y in seg],'f')
+            yy = na.array([y for x,y in seg],'f')
             xd = (xx[1:]-xx[0:-1])**2
             yd = (yy[1:]-yy[0:-1])**2
-            dist = pylab.sqrt(xd+yd)
+            dist = na.sqrt(xd+yd)
             split = dist > 5000000.
-            if pylab.asum(split) and self.projection not in ['merc','cyl','mill']:
-               ind = (pylab.compress(split,pylab.squeeze(split*pylab.indices(xd.shape)))+1).tolist()
+            if na.sum(split) and self.projection not in ['merc','cyl','mill']:
+               ind = (na.compress(split,squeeze(split*na.indices(xd.shape)))+1).tolist()
                iprev = 0
                ind.append(len(xd))
                for i in ind:
@@ -568,11 +581,11 @@ class Basemap:
         	y = poly[1]
         	lons = polyll[0]
         	lats = polyll[1]
-                mask = pylab.logical_or(pylab.greater(x,1.e20),pylab.greater(y,1.e20))
+                mask = na.logical_or(na.greater(x,1.e20),na.greater(y,1.e20))
                 # replace values in polygons that are over the horizon.
                 xsave = False
                 ysave = False
-                if pylab.asum(mask):
+                if na.sum(mask):
                     i1,i2 = self._splitseg(x,y,mask=mask)
                     for i,j in zip(i1,i2):
                         if i and j != len(x):
@@ -635,12 +648,12 @@ class Basemap:
                     lons.reverse()
                     lats.reverse()
                     xx,yy = self(lons,lats)
-                    xx = pylab.array(xx); yy = pylab.array(yy)
-                    xdist = pylab.fabs(xx[1:]-xx[0:-1])
+                    xx = na.array(xx); yy = na.array(yy)
+                    xdist = na.fabs(xx[1:]-xx[0:-1])
                     if max(xdist) > 1000000: 
-                	nmin = pylab.argmax(xdist)+1
-                	xnew = pylab.zeros(len(xx),'d')
-                	ynew = pylab.zeros(len(xx),'d')
+                	nmin = na.argmax(xdist)+1
+                	xnew = na.zeros(len(xx),'d')
+                	ynew = na.zeros(len(xx),'d')
                 	lonsnew = len(xx)*[0]
                 	latsnew = len(xx)*[0]
                 	xnew[0:len(xx)-nmin] = xx[nmin:]
@@ -657,12 +670,12 @@ class Basemap:
                 	x.reverse()
                 	y.reverse()
                     # close polygon (add lines along left and right edges down to S pole)
-                    for phi in pylab.arange(-89.999,lats[0],0.1):
+                    for phi in na.arange(-89.999,lats[0],0.1):
                 	xx,yy = self(lon_0-179.99,phi)
                 	xn.append(xx); yn.append(yy)
                     xn = xn+x
                     yn = yn+y
-                    for phi in pylab.arange(lats[-1],-89.999,-0.1):
+                    for phi in na.arange(lats[-1],-89.999,-0.1):
                 	xx,yy = self(lon_0+179.99,phi)
                 	xn.append(xx); yn.append(yy)
                 # move points outside map to edge of map
@@ -682,7 +695,7 @@ class Basemap:
     def _splitseg(self,xx,yy,mask=None):
         """split segment up around missing values (outside projection limb)"""
         if mask is None:
-            mask = pylab.logical_or(pylab.greater_equal(xx,1.e20),pylab.greater_equal(yy,1.e20))
+            mask = na.logical_or(na.greater_equal(xx,1.e20),na.greater_equal(yy,1.e20))
         i1=[]; i2=[]
         mprev = 1
         for i,m in enumerate(mask):
@@ -754,34 +767,40 @@ class Basemap:
  axis instance is used, otherwise specified axis instance is used.
         """
         # get current axes instance (if none specified).
-        if ax is None:
-            ax = pylab.gca()
+        if ax is None and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif ax is None and self.ax is not None:
+            ax = self.ax
         x = []
         y = []
         dtheta = 0.01
         if self.projection == 'ortho': # circular region.
             r = (2.*self.rmajor+self.rminor)/3.
             r = r-1. # subtract 1 m to make sure it fits in plot region.
-            for az in pylab.arange(0.,2.*math.pi+dtheta,dtheta):
+            for az in na.arange(0.,2.*math.pi+dtheta,dtheta):
                 x.append(r*math.cos(az)+0.5*self.xmax)
                 y.append(r*math.sin(az)+0.5*self.ymax)
         elif self.projection in ['moll','robin']:  # elliptical region.
             # left side
-            lats = pylab.arange(-89.9,89.9+dtheta,dtheta).tolist()
+            lats = na.arange(-89.9,89.9+dtheta,dtheta).tolist()
             lons = len(lats)*[self.projparams['lon_0']-179.9]
             x,y = self(lons,lats)
             # top.
-            lons = pylab.arange(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179+dtheta,dtheta).tolist()
+            lons = na.arange(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179+dtheta,dtheta).tolist()
             lats = len(lons)*[89.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
             # right side
-            lats = pylab.arange(89.9,-89.9-dtheta,-dtheta).tolist()
+            lats = na.arange(89.9,-89.9-dtheta,-dtheta).tolist()
             lons = len(lats)*[self.projparams['lon_0']+179.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
             # bottom.
-            lons = pylab.arange(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180-dtheta,-dtheta).tolist()
+            lons = na.arange(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180-dtheta,-dtheta).tolist()
             lats = len(lons)*[-89.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
@@ -802,24 +821,30 @@ class Basemap:
  After filling continents, lakes are re-filled with axis background color.
         """
         # get current axes instance (if none specified).
-        if ax is None:
-            ax = pylab.gca()
+        if ax is None and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif ax is None and self.ax is not None:
+            ax = self.ax
         # get axis background color.
         axisbgc = ax.get_axis_bgcolor()
         np = 0
         for x,y in self.coastpolygons:
-            xa = pylab.array(x,'f')
-            ya = pylab.array(y,'f')
+            xa = na.array(x,'f')
+            ya = na.array(y,'f')
         # check to see if all four corners of domain in polygon (if so,
         # don't draw since it will just fill in the whole map).
             delx = 10; dely = 10
             if self.projection in ['cyl']:
                 delx = 0.1
                 dely = 0.1
-            test1 = pylab.fabs(xa-self.urcrnrx) < delx
-            test2 = pylab.fabs(xa-self.llcrnrx) < delx
-            test3 = pylab.fabs(ya-self.urcrnry) < dely
-            test4 = pylab.fabs(ya-self.llcrnry) < dely
+            test1 = na.fabs(xa-self.urcrnrx) < delx
+            test2 = na.fabs(xa-self.llcrnrx) < delx
+            test3 = na.fabs(ya-self.urcrnry) < dely
+            test4 = na.fabs(ya-self.llcrnry) < dely
             hasp1 = sum(test1*test3)
             hasp2 = sum(test2*test3)
             hasp4 = sum(test2*test4)
@@ -845,8 +870,14 @@ class Basemap:
  ax - axes instance (default is to use the current axis instance).
         """
         # get current axes instance (if none specified).
-        if ax is None:
-            ax = pylab.gca()
+        if ax is None and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif ax is None and self.ax is not None:
+            ax = self.ax
         coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
@@ -868,8 +899,14 @@ class Basemap:
  ax - axes instance (default is to use the current axis instance).
         """
         # get current axes instance (if none specified).
-        if ax is None:
-            ax = pylab.gca()
+        if ax is None and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif ax is None and self.ax is not None:
+            ax = self.ax
         coastlines = LineCollection(self.cntrysegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
@@ -887,8 +924,14 @@ class Basemap:
  ax - axes instance (default is to use the current axis instance).
         """
         # get current axes instance (if none specified).
-        if ax is None:
-            ax = pylab.gca()
+        if ax is None and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif ax is None and self.ax is not None:
+            ax = self.ax
         coastlines = LineCollection(self.statesegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
@@ -920,11 +963,17 @@ class Basemap:
  ax - axes instance (default is to use the current axis instance).
 
  additional keyword arguments control text properties for labels (see
-  pylab.text documentation)
+  na.text documentation)
         """
         # get current axes instance (if none specified).
-        if ax is None:
-            ax = pylab.gca()
+        if ax is None and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif ax is None and self.ax is not None:
+            ax = self.ax
         # don't draw meridians past latmax, always draw parallel at latmax.
         latmax = 80.
         # offset for labels.
@@ -938,9 +987,9 @@ class Basemap:
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection in ['merc','cyl','mill','moll','robin']:
-            lons = pylab.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype('f')
+            lons = na.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype('f')
         else:
-            lons = pylab.arange(0,360.1,0.1).astype('f')
+            lons = na.arange(0,360.1,0.1).astype('f')
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = circles.tolist()
@@ -954,24 +1003,24 @@ class Basemap:
         xdelta = 0.1*(self.xmax-self.xmin)
         ydelta = 0.1*(self.ymax-self.ymin)
         for circ in circlesl:
-            lats = circ*pylab.ones(len(lons),'f')
+            lats = circ*na.ones(len(lons),'f')
             x,y = self(lons,lats)
             # remove points outside domain.
-            testx = pylab.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
-            x = pylab.compress(testx, x)
-            y = pylab.compress(testx, y)
-            testy = pylab.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
-            x = pylab.compress(testy, x)
-            y = pylab.compress(testy, y)
+            testx = na.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
+            x = na.compress(testx, x)
+            y = na.compress(testx, y)
+            testy = na.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
+            x = na.compress(testy, x)
+            y = na.compress(testy, y)
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
                 # (not necessary for mercator or cylindrical or miller).
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
-                dist = pylab.sqrt(xd+yd)
+                dist = na.sqrt(xd+yd)
                 split = dist > 500000.
-                if pylab.asum(split) and self.projection not in ['merc','cyl','mill','moll','robin']:
-                   ind = (pylab.compress(split,pylab.squeeze(split*pylab.indices(xd.shape)))+1).tolist()
+                if na.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin']:
+                   ind = (na.compress(split,squeeze(split*na.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
                    iprev = 0
@@ -1011,13 +1060,13 @@ class Basemap:
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
                 if self.urcrnry < self.llcrnry:
-                    yy = self.llcrnry-dy*pylab.arange(nmax)-1
+                    yy = self.llcrnry-dy*na.arange(nmax)-1
                 else:
-                    yy = self.llcrnry+dy*pylab.arange(nmax)+1
+                    yy = self.llcrnry+dy*na.arange(nmax)+1
                 if side == 'l':
-                    lons,lats = self(self.llcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.llcrnrx*na.ones(yy.shape,'f'),yy,inverse=True)
                 else:
-                    lons,lats = self(self.urcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.urcrnrx*na.ones(yy.shape,'f'),yy,inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
@@ -1027,13 +1076,13 @@ class Basemap:
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 if self.urcrnrx < self.llcrnrx:
-                    xx = self.llcrnrx-dx*pylab.arange(nmax)-1
+                    xx = self.llcrnrx-dx*na.arange(nmax)-1
                 else:
-                    xx = self.llcrnrx+dx*pylab.arange(nmax)+1
+                    xx = self.llcrnrx+dx*na.arange(nmax)+1
                 if side == 'b':
-                    lons,lats = self(xx,self.llcrnry*pylab.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.llcrnry*na.ones(xx.shape,'f'),inverse=True)
                 else:
-                    lons,lats = self(xx,self.urcrnry*pylab.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.urcrnry*na.ones(xx.shape,'f'),inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
@@ -1052,7 +1101,7 @@ class Basemap:
                 except:
                     nr = -1
                 if lat<0:
-                    latlab = u'%g\N{DEGREE SIGN}S'%pylab.fabs(lat)
+                    latlab = u'%g\N{DEGREE SIGN}S'%na.fabs(lat)
                 elif lat>0:
                     latlab = u'%g\N{DEGREE SIGN}N'%lat
                 else:
@@ -1112,11 +1161,17 @@ class Basemap:
  ax - axes instance (default is to use the current axis instance).
 
  additional keyword arguments control text properties for labels (see
-  pylab.text documentation)
+  na.text documentation)
         """
         # get current axes instance (if none specified).
-        if ax is None:
-            ax = pylab.gca()
+        if ax is None and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif ax is None and self.ax is not None:
+            ax = self.ax
         # don't draw meridians past latmax, always draw parallel at latmax.
         latmax = 80. # not used for cyl, merc or miller projections.
         # offset for labels.
@@ -1130,30 +1185,30 @@ class Basemap:
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection not in ['merc','cyl','mill','moll','robin']:
-            lats = pylab.arange(-latmax,latmax+0.1,0.1).astype('f')
+            lats = na.arange(-latmax,latmax+0.1,0.1).astype('f')
         else:
-            lats = pylab.arange(-90,90.1,0.1).astype('f')
+            lats = na.arange(-90,90.1,0.1).astype('f')
         xdelta = 0.1*(self.xmax-self.xmin)
         ydelta = 0.1*(self.ymax-self.ymin)
         for merid in meridians:
-            lons = merid*pylab.ones(len(lats),'f')
+            lons = merid*na.ones(len(lats),'f')
             x,y = self(lons,lats)
             # remove points outside domain.
-            testx = pylab.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
-            x = pylab.compress(testx, x)
-            y = pylab.compress(testx, y)
-            testy = pylab.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
-            x = pylab.compress(testy, x)
-            y = pylab.compress(testy, y)
+            testx = na.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
+            x = na.compress(testx, x)
+            y = na.compress(testx, y)
+            testy = na.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
+            x = na.compress(testy, x)
+            y = na.compress(testy, y)
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
                 # (not necessary for mercator or cylindrical or miller).
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
-                dist = pylab.sqrt(xd+yd)
+                dist = na.sqrt(xd+yd)
                 split = dist > 500000.
-                if pylab.asum(split) and self.projection not in ['merc','cyl','mill','moll','robin']:
-                   ind = (pylab.compress(split,pylab.squeeze(split*pylab.indices(xd.shape)))+1).tolist()
+                if na.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin']:
+                   ind = (na.compress(split,squeeze(split*na.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
                    iprev = 0
@@ -1195,13 +1250,13 @@ class Basemap:
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
                 if self.urcrnry < self.llcrnry:
-                    yy = self.llcrnry-dy*pylab.arange(nmax)-1
+                    yy = self.llcrnry-dy*na.arange(nmax)-1
                 else:
-                    yy = self.llcrnry+dy*pylab.arange(nmax)+1
+                    yy = self.llcrnry+dy*na.arange(nmax)+1
                 if side == 'l':
-                    lons,lats = self(self.llcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.llcrnrx*na.ones(yy.shape,'f'),yy,inverse=True)
                 else:
-                    lons,lats = self(self.urcrnrx*pylab.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.urcrnrx*na.ones(yy.shape,'f'),yy,inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
@@ -1211,13 +1266,13 @@ class Basemap:
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 if self.urcrnrx < self.llcrnrx:
-                    xx = self.llcrnrx-dx*pylab.arange(nmax)-1
+                    xx = self.llcrnrx-dx*na.arange(nmax)-1
                 else:
-                    xx = self.llcrnrx+dx*pylab.arange(nmax)+1
+                    xx = self.llcrnrx+dx*na.arange(nmax)+1
                 if side == 'b':
-                    lons,lats = self(xx,self.llcrnry*pylab.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.llcrnry*na.ones(xx.shape,'f'),inverse=True)
                 else:
-                    lons,lats = self(xx,self.urcrnry*pylab.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.urcrnry*na.ones(xx.shape,'f'),inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
@@ -1238,7 +1293,7 @@ class Basemap:
                 except:
                     nr = -1
                 if lon>180:
-                    lonlab = u'%g\N{DEGREE SIGN}W'%pylab.fabs(lon-360)
+                    lonlab = u'%g\N{DEGREE SIGN}W'%na.fabs(lon-360)
                 elif lon<180 and lon != 0:
                     lonlab = u'%g\N{DEGREE SIGN}E'%lon
                 else:
@@ -1289,7 +1344,7 @@ class Basemap:
  dtheta - points on great circle computed every dtheta radians (default 0.02).
 
  Other keyword arguments (**kwargs) control plotting of great circle line,
- see pylab.plot documentation for details.
+ see na.plot documentation for details.
 
  Note:  cannot handle situations in which the great circle intersects
  the edge of the map projection domain, and then re-enters the domain.
@@ -1356,13 +1411,13 @@ class Basemap:
         vin = interp(vin,lons,lats,lonsout,latsout,**kwargs)
         # rotate from geographic to map coordinates.
         delta = 0.1 # incement in latitude used to estimate derivatives.
-        xn,yn = self(lonsout,pylab.where(latsout+delta<90.,latsout+delta,latsout-delta))
-        dxdlat = pylab.where(latsout+delta<90.,(xn-x)/(latsout+delta),(x-xn)/(latsout+delta))
-        dydlat = pylab.where(latsout+delta<90.,(yn-y)/(latsout+delta),(y-yn)/(latsout+delta))
+        xn,yn = self(lonsout,na.where(latsout+delta<90.,latsout+delta,latsout-delta))
+        dxdlat = na.where(latsout+delta<90.,(xn-x)/(latsout+delta),(x-xn)/(latsout+delta))
+        dydlat = na.where(latsout+delta<90.,(yn-y)/(latsout+delta),(y-yn)/(latsout+delta))
         # northangle is the angle between true north and the y axis.
-        northangle = pylab.arctan2(dxdlat,dydlat)
-        uout = uin*pylab.cos(northangle) + vin*pylab.sin(northangle)
-        vout = vin*pylab.cos(northangle) - uin*pylab.sin(northangle)
+        northangle = na.arctan2(dxdlat,dydlat)
+        uout = uin*na.cos(northangle) + vin*na.sin(northangle)
+        vout = vin*na.cos(northangle) - uin*na.sin(northangle)
         if returnxy:
             return uout,vout,x,y
         else:
@@ -1392,13 +1447,13 @@ class Basemap:
         x, y = self(lons, lats)
         # rotate from geographic to map coordinates.
         delta = 0.1 # incement in latitude used to estimate derivatives.
-        xn,yn = self(lons,pylab.where(lats+delta<90.,lats+delta,lats-delta))
-        dxdlat = pylab.where(lats+delta<90.,(xn-x)/(lats+delta),(x-xn)/(lats+delta))
-        dydlat = pylab.where(lats+delta<90.,(yn-y)/(lats+delta),(y-yn)/(lats+delta))
+        xn,yn = self(lons,na.where(lats+delta<90.,lats+delta,lats-delta))
+        dxdlat = na.where(lats+delta<90.,(xn-x)/(lats+delta),(x-xn)/(lats+delta))
+        dydlat = na.where(lats+delta<90.,(yn-y)/(lats+delta),(y-yn)/(lats+delta))
         # northangle is the angle between true north and the y axis.
-        northangle = pylab.arctan2(dxdlat,dydlat)
-        uout = uin*pylab.cos(northangle) + vin*pylab.sin(northangle)
-        vout = vin*pylab.cos(northangle) - uin*pylab.sin(northangle)
+        northangle = na.arctan2(dxdlat,dydlat)
+        uout = uin*na.cos(northangle) + vin*na.sin(northangle)
+        vout = vin*na.cos(northangle) - uin*na.sin(northangle)
         if returnxy:
             return uout,vout,x,y
         else:
@@ -1409,8 +1464,14 @@ class Basemap:
  Set axis limits for map domain using current or specified axes instance.
         """
         # get current axes instance (if none specified).
-        if ax is None:
-            ax = pylab.gca()
+        if ax is None and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif ax is None and self.ax is not None:
+            ax = self.ax
         corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
         ax.update_datalim( corners )                                          
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
@@ -1418,22 +1479,31 @@ class Basemap:
 
     def scatter(self, *args, **kwargs):
         """
- Plot points with markers on the map (see pylab.scatter documentation).
+ Plot points with markers on the map (see na.scatter documentation).
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
-        if not kwargs.has_key('ax'):
-            ax = pylab.gca()
+        if not kwargs.has_key('ax') and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
         else:
-            ax = pylab.popd(kwargs,'ax')
+            ax = popd(kwargs,'ax')
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = pylab.popd(kwargs, 'hold', None)
+        h = popd(kwargs, 'hold', None)
         if h is not None:
             ax.hold(h)
         try:
             ret =  ax.scatter(*args, **kwargs)
-            pylab.draw_if_interactive()
+            try:
+                pylab.draw_if_interactive()
+            except:
+                pass
         except:
             ax.hold(b)
             raise
@@ -1444,22 +1514,31 @@ class Basemap:
 
     def plot(self, *args, **kwargs):
         """
- Draw lines and/or markers on the map (see pylab.plot documentation).
+ Draw lines and/or markers on the map (see na.plot documentation).
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
-        if not kwargs.has_key('ax'):
-            ax = pylab.gca()
+        if not kwargs.has_key('ax') and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
         else:
-            ax = pylab.popd(kwargs,'ax')
+            ax = popd(kwargs,'ax')
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = pylab.popd(kwargs, 'hold', None)
+        h = popd(kwargs, 'hold', None)
         if h is not None:
             ax.hold(h)
         try:
             ret =  ax.plot(*args, **kwargs)
-            pylab.draw_if_interactive()
+            try:
+                pylab.draw_if_interactive()
+            except:
+                pass
         except:
             ax.hold(b)
             raise
@@ -1470,134 +1549,182 @@ class Basemap:
 
     def imshow(self, *args, **kwargs):
         """
- Display an image over the map (see pylab.imshow documentation).
+ Display an image over the map (see na.imshow documentation).
  extent and origin keywords set automatically so image will be drawn
  over map region.
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
-        if not kwargs.has_key('ax'):
-            ax = pylab.gca()
+        if not kwargs.has_key('ax') and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
         else:
-            ax = pylab.popd(kwargs,'ax')
+            ax = popd(kwargs,'ax')
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         kwargs['origin']='lower'
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = pylab.popd(kwargs, 'hold', None)
+        h = popd(kwargs, 'hold', None)
         if h is not None:
             ax.hold(h)
         try:
             ret =  ax.imshow(*args, **kwargs)
-            pylab.draw_if_interactive()
+            try:
+                pylab.draw_if_interactive()
+            except:
+                pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
-        # reset current active image.
-        pylab.gci._current = ret
+        # reset current active image (only if pylab is imported).
+        try:
+            pylab.gci._current = ret
+        except:
+            pass
         return ret
 
     def pcolor(self,x,y,data,**kwargs):
         """
  Make a pseudo-color plot over the map.
- see pylab.pcolor documentation for definition of **kwargs
+ see na.pcolor documentation for definition of **kwargs
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
-        if not kwargs.has_key('ax'):
-            ax = pylab.gca()
+        if not kwargs.has_key('ax') and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
         else:
-            ax = pylab.popd(kwargs,'ax')
+            ax = popd(kwargs,'ax')
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         # make x,y masked arrays 
         # (masked where data is outside of projection limb)
-        x = ma.masked_values(pylab.where(x > 1.e20,1.e20,x), 1.e20)
-        y = ma.masked_values(pylab.where(y > 1.e20,1.e20,y), 1.e20)
+        x = ma.masked_values(na.where(x > 1.e20,1.e20,x), 1.e20)
+        y = ma.masked_values(na.where(y > 1.e20,1.e20,y), 1.e20)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = pylab.popd(kwargs, 'hold', None)
+        h = popd(kwargs, 'hold', None)
         if h is not None:
             ax.hold(h)
         try:
             ret =  ax.pcolor(x,y,data,**kwargs)
-            pylab.draw_if_interactive()
+            try:
+                pylab.draw_if_interactive()
+            except:
+                pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
-        # reset current active image.
-        pylab.gci._current = ret
+        # reset current active image (only if pylab is imported).
+        try:
+            pylab.gci._current = ret
+        except:
+            pass
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
 
     def contour(self,x,y,data,*args,**kwargs):
         """
- Make a contour plot over the map (see pylab.contour documentation).
+ Make a contour plot over the map (see na.contour documentation).
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
-        if not kwargs.has_key('ax'):
-            ax = pylab.gca()
+        if not kwargs.has_key('ax') and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
         else:
-            ax = pylab.popd(kwargs,'ax')
+            ax = popd(kwargs,'ax')
         # mask for points outside projection limb.
-        xymask = pylab.logical_or(pylab.greater(x,1.e20),pylab.greater(y,1.e20))
+        xymask = na.logical_or(na.greater(x,1.e20),na.greater(y,1.e20))
         data = ma.asarray(data)
         # combine with data mask.
-        mask = pylab.logical_or(ma.getmaskarray(data),xymask)
+        mask = na.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = pylab.popd(kwargs, 'hold', None)
+        h = popd(kwargs, 'hold', None)
         if h is not None:
             ax.hold(h)
         try:
             levels, colls = ax.contour(x,y,data,*args,**kwargs)
-            pylab.draw_if_interactive()
+            try:
+                pylab.draw_if_interactive()
+            except:
+                pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # reset current active image.
-        if colls.mappable is not None: pylab.gci._current = colls.mappable
+        # reset current active image (only if pylab is imported).
+        try:
+            if colls.mappable is not None: pylab.gci._current = colls.mappable
+        except:
+            pass
         return levels,colls
 
     def contourf(self,x,y,data,*args,**kwargs):
         """
- Make a filled contour plot over the map (see pylab.contourf documentation).
+ Make a filled contour plot over the map (see na.contourf documentation).
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
-        if not kwargs.has_key('ax'):
-            ax = pylab.gca()
+        if not kwargs.has_key('ax') and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
         else:
-            ax = pylab.popd(kwargs,'ax')
+            ax = popd(kwargs,'ax')
         # mask for points outside projection limb.
-        xymask = pylab.logical_or(pylab.greater(x,1.e20),pylab.greater(y,1.e20))
+        xymask = na.logical_or(na.greater(x,1.e20),na.greater(y,1.e20))
         data = ma.asarray(data)
         # combine with data mask.
-        mask = pylab.logical_or(ma.getmaskarray(data),xymask)
+        mask = na.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = pylab.popd(kwargs, 'hold', None)
+        h = popd(kwargs, 'hold', None)
         if h is not None:
             ax.hold(h)
         try:
             levels, colls = ax.contourf(x,y,data,*args,**kwargs)
-            pylab.draw_if_interactive()
+            try:
+                pylab.draw_if_interactive()
+            except:
+                pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # reset current active image.
-        if colls.mappable is not None: pylab.gci._current = colls.mappable
+        # reset current active image (only if pylab is imported).
+        try:
+            if colls.mappable is not None: pylab.gci._current = colls.mappable
+        except:
+            pass
         return levels,colls
 
     def quiver(self, x, y, u, v, scale=None, **kwargs):
@@ -1608,14 +1735,20 @@ class Basemap:
  distance between grid points.   
 
  Extra keyword arguments (**kwargs) passed to quiver Axes method (see  
- pylab.quiver documentation for details).
+ na.quiver documentation for details).
  extra keyword 'ax' can be used to specify an existing axis instance
  (otherwise the current axis instances will be used)
         """
-        if not kwargs.has_key('ax'):
-            ax = pylab.gca()
+        if not kwargs.has_key('ax') and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
         else:
-            ax = pylab.popd(kwargs,'ax')
+            ax = popd(kwargs,'ax')
         ny = x.shape[0]; nx = x.shape[1]
         if scale is None:
             scale = max([(self.xmax-self.xmin)/(nx-1),(self.ymax-self.ymin)/(ny-1)])
@@ -1623,12 +1756,15 @@ class Basemap:
             scale = scale
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = pylab.popd(kwargs, 'hold', None)
+        h = popd(kwargs, 'hold', None)
         if h is not None:
             ax.hold(h)
         try:
             ret =  ax.quiver(x,y,u,v,scale,**kwargs)
-            pylab.draw_if_interactive()
+            try:
+                pylab.draw_if_interactive()
+            except:
+                pass
         except:
             ax.hold(b)
             raise
@@ -1674,10 +1810,10 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
     # (this check is always done if nearest neighbor 
     # interpolation (order=0) requested).
     if checkbounds or order == 0:
-        if min(pylab.ravel(lonsout)) < min(lonsin) or \
-           max(pylab.ravel(lonsout)) > max(lonsin) or \
-           min(pylab.ravel(latsout)) < min(latsin) or \
-           max(pylab.ravel(latsout)) > max(latsin):
+        if min(na.ravel(lonsout)) < min(lonsin) or \
+           max(na.ravel(lonsout)) > max(lonsin) or \
+           min(na.ravel(latsout)) < min(latsin) or \
+           max(na.ravel(latsout)) > max(latsin):
             raise ValueError, 'latsout or lonsout outside range of latsin or lonsin'
     # compute grid coordinates of output grid.
     delon = lonsin[1:]-lonsin[0:-1]
@@ -1688,12 +1824,12 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
         ycoords = (len(latsin)-1)*(latsout-latsin[0])/(latsin[-1]-latsin[0])
     else:
         # irregular (but still rectilinear) input grid.
-        lonsoutflat = pylab.ravel(lonsout)
-        latsoutflat = pylab.ravel(latsout)
-        ix = pylab.searchsorted(lonsin,lonsoutflat)-1
-        iy = pylab.searchsorted(latsin,latsoutflat)-1
-        xcoords = pylab.zeros(ix.shape,'f')
-        ycoords = pylab.zeros(iy.shape,'f')
+        lonsoutflat = na.ravel(lonsout)
+        latsoutflat = na.ravel(latsout)
+        ix = na.searchsorted(lonsin,lonsoutflat)-1
+        iy = na.searchsorted(latsin,latsoutflat)-1
+        xcoords = na.zeros(ix.shape,'f')
+        ycoords = na.zeros(iy.shape,'f')
         for n,i in enumerate(ix):
             if i < 0:
                 xcoords[n] = -1 # outside of range on lonsin (lower end)
@@ -1701,7 +1837,7 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
                 xcoords[n] = len(lonsin) # outside range on upper end.
             else:
                 xcoords[n] = float(i)+(lonsoutflat[n]-lonsin[i])/(lonsin[i+1]-lonsin[i])
-        xcoords = pylab.reshape(xcoords,lonsout.shape)
+        xcoords = na.reshape(xcoords,lonsout.shape)
         for m,j in enumerate(iy):
             if j < 0:
                 ycoords[m] = -1 # outside of range of latsin (on lower end)
@@ -1709,7 +1845,7 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
                 ycoords[m] = len(latsin) # outside range on upper end
             else:
                 ycoords[m] = float(j)+(latsoutflat[m]-latsin[j])/(latsin[j+1]-latsin[j])
-        ycoords = pylab.reshape(ycoords,latsout.shape)
+        ycoords = na.reshape(ycoords,latsout.shape)
     coords = [ycoords,xcoords]
     # interpolate to output grid using numarray.nd_image spline filter.
     if order:
@@ -1717,9 +1853,9 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
     else:
         # nearest neighbor interpolation if order=0.
         # uses index arrays, so first convert to numarray.
-        datatmp = num_array(datain,datain.typecode())
-        xi = pylab.around(xcoords).astype('i')
-        yi = pylab.around(ycoords).astype('i')
+        datatmp = na.array(datain,datain.typecode())
+        xi = na.around(xcoords).astype('i')
+        yi = na.around(ycoords).astype('i')
         return datatmp[yi,xi]
 
 def shiftgrid(lon0,datain,lonsin,start=True):
@@ -1737,13 +1873,13 @@ def shiftgrid(lon0,datain,lonsin,start=True):
 
  returns dataout,lonsout (data and longitudes on shifted grid).
     """
-    if pylab.fabs(lonsin[-1]-lonsin[0]-360.) > 1.e-4:
+    if na.fabs(lonsin[-1]-lonsin[0]-360.) > 1.e-4:
         raise ValueError, 'cyclic point not included'
     if lon0 < lonsin[0] or lon0 > lonsin[-1]:
         raise ValueError, 'lon0 outside of range of lonsin'
-    i0 = pylab.argsort(pylab.fabs(lonsin-lon0))[0]
-    dataout = pylab.zeros(datain.shape,datain.typecode())
-    lonsout = pylab.zeros(lonsin.shape,lonsin.typecode())
+    i0 = na.argsort(na.fabs(lonsin-lon0))[0]
+    dataout = na.zeros(datain.shape,datain.typecode())
+    lonsout = na.zeros(lonsin.shape,lonsin.typecode())
     if start:
         lonsout[0:len(lonsin)-i0] = lonsin[i0:]
     else:
@@ -1762,10 +1898,10 @@ def addcyclic(arrin,lonsin):
    """
    nlats = arrin.shape[0]
    nlons = arrin.shape[1]
-   arrout  = pylab.zeros((nlats,nlons+1),arrin.typecode())
+   arrout  = na.zeros((nlats,nlons+1),arrin.typecode())
    arrout[:,0:nlons] = arrin[:,:]
    arrout[:,nlons] = arrin[:,0]
-   lonsout = pylab.zeros(nlons+1,lonsin.typecode())
+   lonsout = na.zeros(nlons+1,lonsin.typecode())
    lonsout[0:nlons] = lonsin[:]
    lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
    return arrout,lonsout
