@@ -138,7 +138,7 @@ class Basemap:
  only want to override the default if you want to label the axes in meters
  using native map projection coordinates.
 
- ax - set default axes instance (default None - pylab.gca() will be used
+ ax - set default axes instance (default None - pylab.gca() may be used
  to get the current axes instance).  If you don't want pylab to be imported,
  you can either set this to a pre-defined axes instance, or use the 'ax'
  keyword in each Basemap method call that does drawing. In the first case,
@@ -1482,8 +1482,7 @@ class Basemap:
     def scatter(self, *args, **kwargs):
         """
  Plot points with markers on the map (see na.scatter documentation).
- extra keyword 'ax' can be used to specify an existing axis instance
- (otherwise the current axis instances will be used)
+ extra keyword 'ax' can be used to override the default axes instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try: 
@@ -1517,8 +1516,7 @@ class Basemap:
     def plot(self, *args, **kwargs):
         """
  Draw lines and/or markers on the map (see na.plot documentation).
- extra keyword 'ax' can be used to specify an existing axis instance
- (otherwise the current axis instances will be used)
+ extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try: 
@@ -1554,8 +1552,7 @@ class Basemap:
  Display an image over the map (see na.imshow documentation).
  extent and origin keywords set automatically so image will be drawn
  over map region.
- extra keyword 'ax' can be used to specify an existing axis instance
- (otherwise the current axis instances will be used)
+ extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try: 
@@ -1595,8 +1592,7 @@ class Basemap:
         """
  Make a pseudo-color plot over the map.
  see na.pcolor documentation for definition of **kwargs
- extra keyword 'ax' can be used to specify an existing axis instance
- (otherwise the current axis instances will be used)
+ extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try: 
@@ -1640,8 +1636,7 @@ class Basemap:
     def contour(self,x,y,data,*args,**kwargs):
         """
  Make a contour plot over the map (see na.contour documentation).
- extra keyword 'ax' can be used to specify an existing axis instance
- (otherwise the current axis instances will be used)
+ extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try: 
@@ -1686,8 +1681,7 @@ class Basemap:
     def contourf(self,x,y,data,*args,**kwargs):
         """
  Make a filled contour plot over the map (see na.contourf documentation).
- extra keyword 'ax' can be used to specify an existing axis instance
- (otherwise the current axis instances will be used)
+ extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try: 
@@ -1738,8 +1732,7 @@ class Basemap:
 
  Extra keyword arguments (**kwargs) passed to quiver Axes method (see  
  na.quiver documentation for details).
- extra keyword 'ax' can be used to specify an existing axis instance
- (otherwise the current axis instances will be used)
+ extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try: 
