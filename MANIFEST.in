@@ -5,6 +5,7 @@ include Changelog
 include setup.py
 include src/*
 include examples/simpletest.py
+include examples/simpletest_oo.py
 include examples/randompoints.py
 include examples/test.py
 include examples/etopo20.pickle
