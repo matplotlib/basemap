@@ -1,5 +1,7 @@
-20050626:  version 0.5.2:
+20050628:  version 0.5.2:
            fixed bug in meridian labelling when lon > 360 or lon < -180.
+           Now fully "pylab free" if 'ax' keyword is used in Basemap.__init__
+		   or all of the Basemap methods that do drawing.
 20050626:  version 0.5.1:
            Added ability to specify an existing axis instance in
            all Basemap methods (instead of just using current one).
