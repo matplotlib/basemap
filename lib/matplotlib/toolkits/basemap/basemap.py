@@ -138,12 +138,14 @@ class Basemap:
  only want to override the default if you want to label the axes in meters
  using native map projection coordinates.
 
- ax - axes instance to draw to (default None - pylab.gca() will be used
+ ax - set default axes instance (default None - pylab.gca() will be used
  to get the current axes instance).  If you don't want pylab to be imported,
  you can either set this to a pre-defined axes instance, or use the 'ax'
  keyword in each Basemap method call that does drawing. In the first case,
  all Basemap method calls will draw to the same axes instance.  In the 
  second case, you can draw to different axes with the same Basemap instance.
+ You can also use the 'ax' keyword in individual method calls to 
+ selectively override the default axes instance.
 
  The following parameters are map projection parameters which all default to 
  None.  Not all parameters are used by all projections, some are ignored.
@@ -763,8 +765,8 @@ class Basemap:
 
     def drawmapboundary(self,color='k',linewidth=1.0,ax=None):
         """
- draw boundary around map projection region. If ax=None (default), current
- axis instance is used, otherwise specified axis instance is used.
+ draw boundary around map projection region. If ax=None (default),
+ default axis instance is used, otherwise specified axis instance is used.
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -816,7 +818,7 @@ class Basemap:
  Fill continents.
 
  color - color to fill continents (default gray).
- ax - axes instance (default is to use the current axis instance).
+ ax - axes instance (overrides default axes instance)
 
  After filling continents, lakes are re-filled with axis background color.
         """
@@ -867,7 +869,7 @@ class Basemap:
  linewidth - coastline width (default 1.)
  color - coastline color (default black)
  antialiased - antialiasing switch for coastlines (default True).
- ax - axes instance (default is to use the current axis instance).
+ ax - axes instance (overrides default axes instance)
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -896,7 +898,7 @@ class Basemap:
  linewidth - country boundary line width (default 0.5)
  color - country boundary line color (default black)
  antialiased - antialiasing switch for country boundaries (default True).
- ax - axes instance (default is to use the current axis instance).
+ ax - axes instance (overrides default axes instance)
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -921,7 +923,7 @@ class Basemap:
  linewidth - state boundary line width (default 0.5)
  color - state boundary line color (default black)
  antialiased - antialiasing switch for state boundaries (default True).
- ax - axes instance (default is to use the current axis instance).
+ ax - axes instance (overrides default axes instance)
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -960,7 +962,7 @@ class Basemap:
   (default is 0.01 times width of map in map projection coordinates).
  yoffset - label offset from edge of map in y-direction
   (default is 0.01 times height of map in map projection coordinates).
- ax - axes instance (default is to use the current axis instance).
+ ax - axes instance (overrides default axes instance)
 
  additional keyword arguments control text properties for labels (see
   na.text documentation)
@@ -1158,7 +1160,7 @@ class Basemap:
   (default is 0.01 times width of map in map projection coordinates).
  yoffset - label offset from edge of map in y-direction
   (default is 0.01 times height of map in map projection coordinates).
- ax - axes instance (default is to use the current axis instance).
+ ax - axes instance (overrides default axes instance)
 
  additional keyword arguments control text properties for labels (see
   na.text documentation)
