@@ -22,6 +22,7 @@ ax = fig.add_axes([0.125,0.175,0.75,0.75],frameon=False)
 # set 'ax' keyword so pylab won't be imported.
 m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]),ax=ax)
 # reset figure size to have same aspect ratio as map.
+# fig will be 8 inches wide.
 fig.set_figsize_inches((8,m.aspect*8.))
 # make filled contour plot.
 x, y = m(*meshgrid(lons, lats))
@@ -38,7 +39,7 @@ ax.set_title('Robinson Projection')
 # add a colorbar.
 cax = fig.add_axes([0.25, 0.05, 0.5, 0.05],frameon=False)
 fig.colorbar(colls.mappable, cax=cax, tickfmt='%d', orientation='horizontal') 
-# save image.
-canvas.print_figure('simpletest')
+# save image (width 800 pixels with dpi=100 and fig width 8 inches).
+canvas.print_figure('simpletest',dpi=100)
 # done.
 print 'image saved in simpletest.png'
