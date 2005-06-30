@@ -1,13 +1,17 @@
 import numarray as N
 import math
 
+__version__ = '1.0'
 class GreatCircle:
     """
     formula for perfect sphere from Ed Williams' 'Aviation Formulary'
     (http://williams.best.vwh.net/avform.htm)
      
     code for ellipsoid posted to GMT mailing list by Jim Leven in Dec 1999
-    """
+
+    Version: %s 
+    Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
+    """ % __version__
 
 
     def __init__(self,rmajor,rminor,lon1,lat1,lon2,lat2):

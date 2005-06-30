@@ -1,6 +1,8 @@
 import matplotlib.numerix as N
 import proj4, math
 
+__version__ = '1.0'
+
 class Proj:
     """
  peforms cartographic transformations (converts from longitude,latitude
@@ -12,9 +14,9 @@ class Proj:
  __call__ method compute transformations.
  See docstrings for __init__ and __call__ for details.
 
- Version: 0.5.2 (20050628)
+ Version: %s 
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
-    """
+    """ % __version__
 
     def __init__(self,projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,urcrnrislatlon=True):
         """
