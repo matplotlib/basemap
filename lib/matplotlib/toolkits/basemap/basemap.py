@@ -80,9 +80,8 @@ class Basemap:
   examples directory of source distribution.  The "OO" version of this
   example (which does not use pylab) is called "simpletest_oo.py".]
 
- Version: %s (%s)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
-    """ % (__version__,__revision__)
+    """
 
     def __init__(self,llcrnrlon=-180.,llcrnrlat=-90.,urcrnrlon=180.,urcrnrlat=90.,\
        projection='cyl',resolution='c',area_thresh=10000.,rsphere=6370997,\

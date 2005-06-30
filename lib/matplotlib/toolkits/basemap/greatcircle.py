@@ -9,9 +9,8 @@ class GreatCircle:
      
     code for ellipsoid posted to GMT mailing list by Jim Leven in Dec 1999
 
-    Version: %s 
     Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
-    """ % __version__
+    """
 
 
     def __init__(self,rmajor,rminor,lon1,lat1,lon2,lat2):
