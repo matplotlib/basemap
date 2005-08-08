@@ -31,3 +31,6 @@ enter the reference lat/lon (the viewpoint of the satellite).
 fcstmaps.py is a sample multi-panel plot.  Care is taken to preserve the aspect ratio of the map in each panel, and a common title and colorbar is created.  
 Requires the opendap module (http://opendap.oceanografia.org) and an 
 active internet connection to fetch the data to be plotted.
+
+wiki_example.py is the example from the MatplotlibCookbook scipy wiki page
+(http://www.scipy.org/wikis/topical_software/MatplotlibCookbook/wikipage_view).
