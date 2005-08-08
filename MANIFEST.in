@@ -19,6 +19,7 @@ include examples/nytolondon.py
 include examples/ireland.py
 include examples/ortho_demo.py
 include examples/fcstmaps.py
+include examples/wiki_example.py
 include examples/README
 include lib/matplotlib/toolkits/__init__.py
 include lib/matplotlib/toolkits/basemap/__init__.py
