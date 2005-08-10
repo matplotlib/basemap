@@ -57,8 +57,7 @@ fig.add_axes([0.1,0.1,0.8,0.8])
 m.drawclimdivs(linewidth=1.0)
 # cycle through climate divisions, fill each with a random color.
 for seg in m.climdivsegs:
-    xx = [x for x,y in seg]
-    yy = [y for x,y in seg]
+    xx,yy = zip(*seg)
     color = (random.uniform(0,1),random.uniform(0,1),random.uniform(0,1))
     p.fill(xx,yy,rgb2hex(color))
 # draw meridians and parallels.
