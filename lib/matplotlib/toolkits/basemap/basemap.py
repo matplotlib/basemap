@@ -23,8 +23,8 @@ _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])) 
 
-__version__ = '0.5.2'
-__revision__ = '20050628'
+__version__ = '0.5.3cvs'
+__revision__ = '20050809'
 
 class Basemap:
 
@@ -231,10 +231,11 @@ class Basemap:
 
         # set up projections using Proj class.
         self.projection = projection
-        self.llcrnrlon = llcrnrlon
-        self.llcrnrlat = llcrnrlat
-        self.urcrnrlon = urcrnrlon
-        self.urcrnrlat = urcrnrlat
+        # make sure lat/lon limits are converted to floats.
+        self.llcrnrlon = float(llcrnrlon)
+        self.llcrnrlat = float(llcrnrlat)
+        self.urcrnrlon = float(urcrnrlon)
+        self.urcrnrlat = float(urcrnrlat)
         projparams = {}
         projparams['proj'] = projection
         try:
@@ -254,50 +255,50 @@ class Basemap:
             if lat_2 != None:
                  projparams['lat_2'] = lat_2
             projparams['lon_0'] = lon_0
-            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'eqdc':
             if lat_1 is None or lat_2 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_1, lat_2 and lon_0 for Equidistant Conic basemap'
             projparams['lat_1'] = lat_1
             projparams['lat_2'] = lat_2
             projparams['lon_0'] = lon_0
-            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'aea':
             if lat_1 is None or lat_2 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_1, lat_2 and lon_0 for Albers Equal Area basemap'
             projparams['lat_1'] = lat_1
             projparams['lat_2'] = lat_2
             projparams['lon_0'] = lon_0
-            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'stere':
             if lat_ts is None or lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_ts,lat_0 and lon_0 for Stereographic basemap'
             projparams['lat_ts'] = lat_ts
             projparams['lat_0'] = lat_0
             projparams['lon_0'] = lon_0
-            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'laea':
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Lambert Azimuthal basemap'
             projparams['lat_0'] = lat_0
             projparams['lon_0'] = lon_0
-            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'merc':
             if lat_ts is None:
                 raise ValueError, 'must specify lat_ts for Mercator basemap'
             projparams['lat_ts'] = lat_ts
-            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection in ['tmerc','gnom','cass','poly','ortho'] :
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldner, Orthographic or Polyconic basemap'
             projparams['lat_0'] = lat_0
             projparams['lon_0'] = lon_0
-            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'moll' or projection == 'robin':
             if lon_0 is None:
                 raise ValueError, 'must specify lon_0 for Robinson or Mollweide basemap'
             projparams['lon_0'] = lon_0
-            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'omerc':
             if lat_1 is None or lon_1 is None or lat_2 is None or lon_2 is None:
                 raise ValueError, 'must specify lat_1,lon_1 and lat_2,lon_2 for Oblique Mercator basemap'
@@ -305,21 +306,21 @@ class Basemap:
             projparams['lon_1'] = lon_1
             projparams['lat_2'] = lat_2
             projparams['lon_2'] = lon_2
-            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'aeqd':
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Azimuthal Equidistant basemap'
             projparams['lat_0'] = lat_0
             projparams['lon_0'] = lon_0
-            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'mill':
             if lat_0 is not None:
                 projparams['lat_0'] = lat_0
             if lon_0 is not None:
                 projparams['lon_0'] = lon_0
-            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'cyl':
-            proj = Proj(projparams,llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat)
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         else:
             raise ValueError, 'unsupported projection'
 
@@ -338,7 +339,7 @@ class Basemap:
         self.ymin = proj.ymin
         self.ymax = proj.ymax
         if projection == 'cyl':
-            self.aspect = (urcrnrlat-llcrnrlat)/(urcrnrlon-llcrnrlon)
+            self.aspect = (self.urcrnrlat-self.llcrnrlat)/(self.urcrnrlon-self.llcrnrlon)
         else:
             self.aspect = (proj.ymax-proj.ymin)/(proj.xmax-proj.xmin)
         self.llcrnrx = proj.llcrnrx
@@ -570,10 +571,10 @@ class Basemap:
         self.coastsegs = coastsegs
         self.coastsegtypes = coastsegtypes
 
-	# special treatment of coastline polygons for 
-	# orthographic, mollweide and robinson.
+        # special treatment of coastline polygons for 
+        # orthographic, mollweide and robinson.
         # (polygon clipping along projection limb)
-	if self.projection == 'ortho':
+        if self.projection == 'ortho':
             lat_0 = math.radians(self.projparams['lat_0'])
             lon_0 = math.radians(self.projparams['lon_0'])
             rad = (2.*self.rmajor + self.rminor)/3.
@@ -581,10 +582,10 @@ class Basemap:
             coastpolygons = []
             coastpolygontypes = []
             for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,coastpolygonsll):
-        	x = poly[0]
-        	y = poly[1]
-        	lons = polyll[0]
-        	lats = polyll[1]
+                x = poly[0]
+                y = poly[1]
+                lons = polyll[0]
+                lats = polyll[1]
                 mask = na.logical_or(na.greater(x,1.e20),na.greater(y,1.e20))
                 # replace values in polygons that are over the horizon.
                 xsave = False
@@ -593,10 +594,10 @@ class Basemap:
                     i1,i2 = self._splitseg(x,y,mask=mask)
                     for i,j in zip(i1,i2):
                         if i and j != len(x):
-                   	    dist,az1,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[i]),math.radians(lons[i]))
-                       	    lat1,lon1,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az1,0.5*math.pi*rad)
-                   	    dist,az2,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[j]),math.radians(lons[j]))
-                       	    lat2,lon2,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az2,0.5*math.pi*rad)
+                            dist,az1,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[i]),math.radians(lons[i]))
+                            lat1,lon1,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az1,0.5*math.pi*rad)
+                            dist,az2,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[j]),math.radians(lons[j]))
+                            lat2,lon2,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az2,0.5*math.pi*rad)
                             gc = GreatCircle(self.rmajor,self.rminor,math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1))
                             npoints = int(gc.gcarclen/dtheta)+1
                             if npoints < 2: npoints=2
@@ -636,64 +637,64 @@ class Basemap:
                     coastpolygontypes.append(polytype)
             self.coastpolygons = coastpolygons
             self.coastpolygontypes = coastpolygontypes
-	elif self.projection in ['moll','robin']:
+        elif self.projection in ['moll','robin']:
             lon_0 = self.projparams['lon_0']
             coastpolygons=[]
             for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,coastpolygonsll):
-        	x = poly[0]
-        	y = poly[1]
-        	lons = polyll[0]
-        	lats = polyll[1]
-        	xn=[]
-        	yn=[]
+                x = poly[0]
+                y = poly[1]
+                lons = polyll[0]
+                lats = polyll[1]
+                xn=[]
+                yn=[]
                 # antarctic segment goes from 360 back to 0
                 # reorder to go from lon_0-180 to lon_0+180.
-        	if lats[-1] < -68.0:
+                if lats[-1] < -68.0:
                     lons.reverse()
                     lats.reverse()
                     xx,yy = self(lons,lats)
                     xx = na.array(xx); yy = na.array(yy)
                     xdist = na.fabs(xx[1:]-xx[0:-1])
                     if max(xdist) > 1000000: 
-                	nmin = na.argmax(xdist)+1
-                	xnew = na.zeros(len(xx),'d')
-                	ynew = na.zeros(len(xx),'d')
-                	lonsnew = len(xx)*[0]
-                	latsnew = len(xx)*[0]
-                	xnew[0:len(xx)-nmin] = xx[nmin:]
-                	ynew[0:len(xx)-nmin] = yy[nmin:]
-                	xnew[len(xx)-nmin:] = xx[0:nmin]
-                	ynew[len(xx)-nmin:] = yy[0:nmin]
-                	lonsnew[0:len(xx)-nmin] = lons[nmin:]
-                	latsnew[0:len(xx)-nmin] = lats[nmin:]
-                	lonsnew[len(xx)-nmin:] = lons[0:nmin]
-                	latsnew[len(xx)-nmin:] = lats[0:nmin]
-                	x = xnew.tolist(); y = ynew.tolist()
-                	lons = lonsnew; lats = latsnew
+                        nmin = na.argmax(xdist)+1
+                        xnew = na.zeros(len(xx),'d')
+                        ynew = na.zeros(len(xx),'d')
+                        lonsnew = len(xx)*[0]
+                        latsnew = len(xx)*[0]
+                        xnew[0:len(xx)-nmin] = xx[nmin:]
+                        ynew[0:len(xx)-nmin] = yy[nmin:]
+                        xnew[len(xx)-nmin:] = xx[0:nmin]
+                        ynew[len(xx)-nmin:] = yy[0:nmin]
+                        lonsnew[0:len(xx)-nmin] = lons[nmin:]
+                        latsnew[0:len(xx)-nmin] = lats[nmin:]
+                        lonsnew[len(xx)-nmin:] = lons[0:nmin]
+                        latsnew[len(xx)-nmin:] = lats[0:nmin]
+                        x = xnew.tolist(); y = ynew.tolist()
+                        lons = lonsnew; lats = latsnew
                     else:
-                	x.reverse()
-                	y.reverse()
+                        x.reverse()
+                        y.reverse()
                     # close polygon (add lines along left and right edges down to S pole)
                     for phi in na.arange(-89.999,lats[0],0.1):
-                	xx,yy = self(lon_0-179.99,phi)
-                	xn.append(xx); yn.append(yy)
+                        xx,yy = self(lon_0-179.99,phi)
+                        xn.append(xx); yn.append(yy)
                     xn = xn+x
                     yn = yn+y
                     for phi in na.arange(lats[-1],-89.999,-0.1):
-                	xx,yy = self(lon_0+179.99,phi)
-                	xn.append(xx); yn.append(yy)
+                        xx,yy = self(lon_0+179.99,phi)
+                        xn.append(xx); yn.append(yy)
                 # move points outside map to edge of map
                 # along constant latitude.
-        	else:
+                else:
                     for x,y,lon,lat in zip(x,y,lons,lats):
-                	if lon > lon_0+180 or lon < lon_0-180:
+                        if lon > lon_0+180 or lon < lon_0-180:
                             if lon >= lon_0+180: lon=lon_0+180.
                             if lon <= lon_0-180: lon=lon_0-180.
                             xx,yy = self(lon,lat)
                             xn.append(xx); yn.append(yy)
-                	else:
+                        else:
                             xn.append(x); yn.append(y)
-        	coastpolygons.append((xn,yn))
+                coastpolygons.append((xn,yn))
             self.coastpolygons = coastpolygons
 
     def _splitseg(self,xx,yy,mask=None):
