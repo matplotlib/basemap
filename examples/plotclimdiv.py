@@ -24,8 +24,7 @@ class Basemap(Basemap_base):
         for npoly in range(shp.info()[0]):
             shp_object = shp.read_object(npoly)
             verts = shp_object.vertices()[0]
-            lons = [lon for lon,lat in verts]
-            lats = [lat for lon,lat in verts]
+            lons, lats = zip(*verts)
             x, y = self(lons,lats)
             self.climdivsegs.append(zip(x,y))
         # get current axes instance (if none specified).
