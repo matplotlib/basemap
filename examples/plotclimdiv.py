@@ -4,7 +4,7 @@ from matplotlib.toolkits.basemap import Basemap as Basemap_base
 from matplotlib.collections import LineCollection
 from matplotlib.colors import rgb2hex
 import random
-import shapelib
+from shapelib import ShapeFile
 
 # add a "drawclimdivs" method for Basemap, which draws climate
 # division boundaries.
@@ -19,7 +19,7 @@ class Basemap(Basemap_base):
         """read in NCDC climate division boundaries and plot on map"""
         # open shapefile, read vertices for each object, convert
         # to map projection coordinates.
-        shp = shapelib.ShapeFile('divisions')
+        shp = ShapeFile('divisions')
         self.climdivsegs = []
         for npoly in range(shp.info()[0]):
             shp_object = shp.read_object(npoly)
@@ -49,9 +49,9 @@ class Basemap(Basemap_base):
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
-# Lambert Conformal map of lower 48 region.
+# Lambert Conformal map of lower 48 states.
 m = Basemap(llcrnrlon=-119,llcrnrlat=22,urcrnrlon=-64,urcrnrlat=49,
-            resolution='l',projection='lcc',lat_1=33,lat_2=45,lon_0=-95)
+            projection='lcc',lat_1=33,lat_2=45,lon_0=-95)
 fig=p.figure(figsize=(8,m.aspect*8))
 fig.add_axes([0.1,0.1,0.8,0.8])
 # draw climate division boundaries.
