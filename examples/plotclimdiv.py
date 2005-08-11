@@ -15,7 +15,7 @@ m = Basemap(llcrnrlon=-119,llcrnrlat=22,urcrnrlon=-64,urcrnrlat=49,
 fig=p.figure(figsize=(8,m.aspect*8))
 fig.add_axes([0.1,0.1,0.8,0.8])
 # draw climate division boundaries.
-shp_info = m.readshapefile('divnames','climdivs',drawbounds=True)
+shp_info = m.readshapefile('divisions','climdivs',drawbounds=True)
 print shp_info
 # make sure the shapefile has polygons (and not just lines).
 if shp_info[1] != 5:
