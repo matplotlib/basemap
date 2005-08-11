@@ -949,6 +949,7 @@ class Basemap:
         """
  read in shape file, draw boundaries on map.
  Requires pyshapelib module from Thuban (http://thuban.intevation.org).
+ Assumes shapes are 2D, and vertices are in geographic (lat/lon) coordinates.
 
  shapefile - path to shapefile components.  Example:  
   shapefile='/home/jeff/esri/world_borders' assumes that
