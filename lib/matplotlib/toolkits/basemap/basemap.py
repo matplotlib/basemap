@@ -1002,7 +1002,6 @@ class Basemap:
         shpinfo = []
         for npoly in range(shp.info()[0]):
             shp_object = shp.read_object(npoly)
-            print npoly, len(shp_object.vertices())
             verts = shp_object.vertices()[0]
             lons, lats = zip(*verts)
             x, y = self(lons,lats)
