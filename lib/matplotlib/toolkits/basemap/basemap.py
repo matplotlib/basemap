@@ -944,6 +944,80 @@ class Basemap:
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
+    def readshapefile(self,shapefile,name,drawbounds=True,
+                      linewidth=0.5,color='k',antialiased=1,ax=None):
+        """
+ read in shape file, draw boundaries on map.
+ Requires pyshapelib module from Thuban (http://thuban.intevation.org).
+
+ shapefile - path to shapefile components.  Example:  
+  shapefile='/home/jeff/esri/world_borders' assumes that
+  world_borders.shp, world_borders.shx and world_borders.dbf
+  live in /home/jeff/esri.
+ name - name for Basemap attribute to hold the shapefile
+  vertices in native map projection coordinates.
+ drawbounds - draw boundaries of shapes (default True)
+ linewidth - state boundary line width (default 0.5)
+ color - state boundary line color (default black)
+ antialiased - antialiasing switch for state boundaries (default True).
+ ax - axes instance (overrides default axes instance)
+
+ returns a tuple (num_shapes, type, min, max) containing shape file info.
+ num_shapes is the number of shapes, type is the type code (one of
+ the SHPT* constants defined in the shapelib module, see
+ http://shapelib.maptools.org/shp_api.html) and min and
+ max are 4-element lists with the min. and max. values of the
+ vertices.
+        """
+        try:
+            from shapelib import ShapeFile
+        except:
+            msg = """
+ Requires pyshapelib from Thuban.  To install, download Thuban
+ source distribution from http://thuban.intevation.org/, untar 
+ and cd to libraries/pyshapelib.  From there, run 
+ 'python setup.py install' to install just pyshapelib."""
+            raise ImportError, msg
+        # open shapefile, read vertices for each object, convert
+        # to map projection coordinates (only works for 2D shape types).
+        shp = ShapeFile(shapefile)
+        info = shp.info()
+        if info[1] not in [1,3,5,8]:
+            raise ValueError, 'readshapefile can only handle 2D shape types'
+        shpsegs = []
+        for npoly in range(shp.info()[0]):
+            shp_object = shp.read_object(npoly)
+            verts = shp_object.vertices()[0]
+            lons, lats = zip(*verts)
+            x, y = self(lons,lats)
+            shpsegs.append(zip(x,y))
+        # draw shape boundaries using LineCollection.
+        if drawbounds:
+            # get current axes instance (if none specified).
+            if ax is None and self.ax is None:
+                try: 
+                    ax = pylab.gca()
+                except:
+                    import pylab
+                    ax = pylab.gca()
+            elif ax is None and self.ax is not None:
+                ax = self.ax
+            # make LineCollections for each polygon.
+            lines = LineCollection(shpsegs,antialiaseds=(1,))
+            lines.set_color(color)
+            lines.set_linewidth(linewidth)
+            ax.add_collection(lines)
+            # make sure axis ticks are turned off
+            if self.noticks == True:
+                ax.set_xticks([])
+                ax.set_yticks([])
+            # set axes limits to fit map region.
+            self.set_axes_limits(ax=ax)
+        # save segments/polygons as class attribute.
+        self.__dict__[name]=shpsegs
+        shp.close()
+        return info
+
     def drawparallels(self,circles,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0], \
                       xoffset=None,yoffset=None,ax=None,**kwargs):
