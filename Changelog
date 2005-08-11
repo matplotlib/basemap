@@ -1,8 +1,9 @@
 20050809:  version 0.5.3:
            sf bug #1254163 (make sure lat/lon limits of projection are floats)
            wiki_example.py and plotclimdiv.py examples added.
-		   plotclimdiv.py shows how to plot GIS data from shapefiles
-           (requires pyshapelib from Thuban).
+		   Added 'readshapefile' method for reading and plotting data
+		   from ESRI shapefiles (requires pyshapelib from Thuban).
+		   plotclimdiv.py is an example that illustrates this.
 20050628:  version 0.5.2:
            fixed bug in meridian labelling when lon > 360 or lon < -180.
            Now fully "pylab free" if 'ax' keyword is used in Basemap.__init__
