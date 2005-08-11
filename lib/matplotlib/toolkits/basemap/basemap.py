@@ -949,7 +949,12 @@ class Basemap:
         """
  read in shape file, draw boundaries on map.
  Requires pyshapelib module from Thuban (http://thuban.intevation.org).
- Assumes shapes are 2D, and vertices are in geographic (lat/lon) coordinates.
+
+ Restrictions:  
+  - Assumes shapes are 2D
+  - vertices must be in geographic (lat/lon) coordinates.
+  - polygons must be simple (a single ring, no holes).  If there is 
+    more than one ring, only the outer ring is used.
 
  shapefile - path to shapefile components.  Example:  
   shapefile='/home/jeff/esri/world_borders' assumes that
@@ -997,6 +1002,7 @@ class Basemap:
         shpinfo = []
         for npoly in range(shp.info()[0]):
             shp_object = shp.read_object(npoly)
+            print npoly, len(shp_object.vertices())
             verts = shp_object.vertices()[0]
             lons, lats = zip(*verts)
             x, y = self(lons,lats)
