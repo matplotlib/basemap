@@ -957,6 +957,12 @@ class Basemap:
   live in /home/jeff/esri.
  name - name for Basemap attribute to hold the shapefile
   vertices in native map projection coordinates.
+  Class attribute name+'_info' is a list of dictionaries, one
+  for each shape, containing attributes of each shape from dbf file.
+  For example, if name='counties', self.counties
+  will be a list of vertices for each shape in map projection
+  coordinates and self.counties_info will be a list of dictionaries 
+  with shape attributes.
  drawbounds - draw boundaries of shapes (default True)
  linewidth - state boundary line width (default 0.5)
  color - state boundary line color (default black)
@@ -972,6 +978,7 @@ class Basemap:
         """
         try:
             from shapelib import ShapeFile
+            import dbflib
         except:
             msg = """
  Requires pyshapelib from Thuban.  To install, download Thuban
@@ -982,16 +989,19 @@ class Basemap:
         # open shapefile, read vertices for each object, convert
         # to map projection coordinates (only works for 2D shape types).
         shp = ShapeFile(shapefile)
+        dbf = dbflib.open(shapefile)
         info = shp.info()
         if info[1] not in [1,3,5,8]:
             raise ValueError, 'readshapefile can only handle 2D shape types'
         shpsegs = []
+        shpinfo = []
         for npoly in range(shp.info()[0]):
             shp_object = shp.read_object(npoly)
             verts = shp_object.vertices()[0]
             lons, lats = zip(*verts)
             x, y = self(lons,lats)
             shpsegs.append(zip(x,y))
+            shpinfo.append(dbf.read_record(npoly))
         # draw shape boundaries using LineCollection.
         if drawbounds:
             # get current axes instance (if none specified).
@@ -1014,9 +1024,11 @@ class Basemap:
                 ax.set_yticks([])
             # set axes limits to fit map region.
             self.set_axes_limits(ax=ax)
-        # save segments/polygons as class attribute.
+        # save segments/polygons and shape attribute dicts as class attributes.
         self.__dict__[name]=shpsegs
+        self.__dict__[name+'_info']=shpinfo
         shp.close()
+        dbf.close()
         return info
 
     def drawparallels(self,circles,color='k',linewidth=1., \
