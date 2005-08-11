@@ -35,7 +35,7 @@ active internet connection to fetch the data to be plotted.
 wiki_example.py is the example from the MatplotlibCookbook scipy wiki page
 (http://www.scipy.org/wikis/topical_software/MatplotlibCookbook/wikipage_view).
 
-plotclimdiv.py is an example that shows how to extend Basemap to draw 
-user supplied boundaries (like counties, or in this case 'climate divisions').
-Also illustrates how to read ESRI shape files (requires pyshapelib module
-from Thuban source distribution - http://thuban.intevation.org)
+plotclimdiv.py is an example that shows how to draw 
+boundaries (like counties, or in this case 'climate divisions') from
+and ESRI shapefile. Requires pyshapelib
+from Thuban source distribution (http://thuban.intevation.org).
