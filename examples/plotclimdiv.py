@@ -20,11 +20,16 @@ print shp_info
 # make sure the shapefile has polygons (and not just lines).
 if shp_info[1] != 5:
     print 'warning: shapefile does not contain polygons'
-# cycle through climate divisions, fill each with a random color.
-for seg in m.climdivs:
+# choose a color for each climate division (randomly).
+colors={}
+for nshape in range(shp_info[0]):
+    division = m.climdivs_info[nshape]['ST']+repr(m.climdivs_info[nshape]['DIV'])
+    colors[division] = (random.uniform(0,1),random.uniform(0,1),random.uniform(0,1))
+# cycle through climate divisions, color each one.
+for nshape,seg in enumerate(m.climdivs):
+    division = m.climdivs_info[nshape]['ST']+repr(m.climdivs_info[nshape]['DIV'])
     xx,yy = zip(*seg)
-    color = (random.uniform(0,1),random.uniform(0,1),random.uniform(0,1))
-    p.fill(xx,yy,rgb2hex(color))
+    p.fill(xx,yy,rgb2hex(colors[division]))
 # draw meridians and parallels.
 m.drawparallels(nx.arange(25,65,20),labels=[1,0,0,0])
 m.drawmeridians(nx.arange(-120,-40,20),labels=[0,0,0,1])
