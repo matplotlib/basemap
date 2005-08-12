@@ -953,8 +953,6 @@ class Basemap:
  Restrictions:  
   - Assumes shapes are 2D
   - vertices must be in geographic (lat/lon) coordinates.
-  - polygons must be simple (a single ring, no holes).  If there is 
-    more than one ring, only the outer ring is used.
 
  shapefile - path to shapefile components.  Example:  
   shapefile='/home/jeff/esri/world_borders' assumes that
@@ -967,7 +965,9 @@ class Basemap:
   For example, if name='counties', self.counties
   will be a list of vertices for each shape in map projection
   coordinates and self.counties_info will be a list of dictionaries 
-  with shape attributes.
+  with shape attributes. Rings in individual shapes are 'unravelled',
+  i.e. they are split into separate polygons.  Additional keys
+  'RINGNUM' and 'SHAPENUM' are added to shape attribute dictionary.
  drawbounds - draw boundaries of shapes (default True)
  linewidth - state boundary line width (default 0.5)
  color - state boundary line color (default black)
@@ -1002,11 +1002,18 @@ class Basemap:
         shpinfo = []
         for npoly in range(shp.info()[0]):
             shp_object = shp.read_object(npoly)
-            verts = shp_object.vertices()[0]
-            lons, lats = zip(*verts)
-            x, y = self(lons,lats)
-            shpsegs.append(zip(x,y))
-            shpinfo.append(dbf.read_record(npoly))
+            verts = shp_object.vertices()
+            rings = len(verts)
+            for ring in range(rings):
+                lons, lats = zip(*verts[ring])
+                x, y = self(lons,lats)
+                shpsegs.append(zip(x,y))
+                if ring == 0:
+                    shapedict = dbf.read_record(npoly)
+                # add information about ring number to dictionary.
+                shapedict['RINGNUM'] = ring+1
+                shapedict['SHAPENUM'] = npoly+1
+                shpinfo.append(shapedict)
         # draw shape boundaries using LineCollection.
         if drawbounds:
             # get current axes instance (if none specified).
