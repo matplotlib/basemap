@@ -1,7 +1,5 @@
-import matplotlib.numerix as N
+import pylab as N
 import proj4, math
-
-__version__ = '1.0'
 
 class Proj:
     """
@@ -14,6 +12,7 @@ class Proj:
  __call__ method compute transformations.
  See docstrings for __init__ and __call__ for details.
 
+ Version: 0.4.1 (20050509)
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
@@ -56,41 +55,15 @@ class Proj:
             else:
                 self.proj4cmd.append('+'+key+"="+str(value)+' ')
         self.projection = projparams['proj']
-        # rmajor is the semi-major axis.
-        # rminor is the semi-minor axis.
-        # esq is eccentricity squared.
         try:
-            self.rmajor = projparams['a']
-            self.rminor = projparams['b']
+            self.rsphere = projparams['R']
         except:
-            self.rmajor = projparams['R']
-            self.rminor = self.rmajor
-        if self.rmajor == self.rminor:
-            self.ellipsoid = False
-        else:
-            self.ellipsoid = True
-        self.flattening = (self.rmajor-self.rminor)/self.rmajor
-        self.esq = (self.rmajor**2 - self.rminor**2)/self.rmajor**2
+            self.rsphere = 0.5*(projparams['a']+projparams['b'])
         self.llcrnrlon = llcrnrlon
         self.llcrnrlat = llcrnrlat
-        if self.projection not in ['cyl','ortho','moll','robin']:
+        if self.projection != 'cyl':
             self._proj4 = proj4.Proj(''.join(self.proj4cmd))
-            llcrnrx, llcrnry = self._fwd(llcrnrlon,llcrnrlat)
-        elif self.projection == 'cyl':
-            llcrnrx = llcrnrlon
-            llcrnry = llcrnrlat
-        elif self.projection == 'ortho':
-            self._proj4 = proj4.Proj(''.join(self.proj4cmd))
-            llcrnrx = -self.rmajor
-            llcrnry = -self.rmajor
-            urcrnrx = -llcrnrx
-            urcrnry = -llcrnry
-        elif self.projection == 'moll' or self.projection == 'robin':
-            self._proj4 = proj4.Proj(''.join(self.proj4cmd))
-            xtmp,urcrnry = self._fwd(projparams['lon_0'],90.)
-            urcrnrx,xtmp = self._fwd(projparams['lon_0']+180.,0)
-            llcrnrx = -urcrnrx
-            llcrnry = -urcrnry
+        llcrnrx, llcrnry = self._fwd(llcrnrlon,llcrnrlat)
         # compute x_0, y_0 so ll corner of domain is x=0,y=0.
         # note that for 'cyl' x,y == lon,lat
         self.proj4cmd.append("+x_0="+str(-llcrnrx)+' ')
@@ -108,14 +81,7 @@ class Proj:
         if urcrnrislatlon:
             self.urcrnrlon = urcrnrlon
             self.urcrnrlat = urcrnrlat
-            if self.projection not in ['ortho','moll','robin']:
-                urcrnrx,urcrnry = self._fwd(urcrnrlon,urcrnrlat)
-            elif self.projection == 'ortho':
-                urcrnrx = 2.*self.rmajor
-                urcrnry = 2.*self.rmajor
-            elif self.projection == 'moll' or self.projection == 'robin':
-                xtmp,urcrnry = self._fwd(projparams['lon_0'],90.)
-                urcrnrx,xtmp = self._fwd(projparams['lon_0']+180.,0)
+            urcrnrx,urcrnry = self._fwd(urcrnrlon,urcrnrlat)
         else:
             urcrnrx = urcrnrlon
             urcrnry = urcrnrlat
@@ -145,20 +111,15 @@ class Proj:
             return x,y # for cyl, this does nothing.
         else:
             outx,outy = self._proj4.fwd(x,y)
-            if self.projection in ['merc','mill']:
+            if self.projection in ['merc','mill']: # for merc, x = rsphere*cos(lat_ts)*deltalon
                 if self.projection == 'merc':
                     coslat = math.cos(math.radians(self.projparams['lat_ts']))
-                    sinlat = math.sin(math.radians(self.projparams['lat_ts']))
                 else:
                     coslat = 1.
-                    sinlat = 0.
-                # radius of curvature of the ellipse perpendicular to
-                # the plane of the meridian.
-                rcurv = self.rmajor*coslat/math.sqrt(1.-self.esq*sinlat**2)
                 try: # x a sequence
-                    outx = [rcurv*math.radians(xi-self.llcrnrlon) for xi in x]
+                    outx = [self.rsphere*coslat*math.radians(xi-self.llcrnrlon) for xi in x]
                 except: # x a scalar
-                    outx = rcurv*math.radians(x-self.llcrnrlon)
+                    outx = self.rsphere*coslat*math.radians(x-self.llcrnrlon)
             return outx,outy
 
     def _inv(self,x,y):
@@ -166,20 +127,17 @@ class Proj:
             return x,y
         else:
             outx,outy = self._proj4.inv(x,y)
-            if self.projection in ['merc','mill']: 
+            if self.projection in ['merc','mill']: # for merc, cos(lat_ts)*deltalon = x/rsphere
+
                 if self.projection == 'merc':
                     coslat = math.cos(math.radians(self.projparams['lat_ts']))
-                    sinlat = math.sin(math.radians(self.projparams['lat_ts']))
                 else:
                     coslat = 1.
-                    sinlat = 0.
-                # radius of curvature of the ellipse perpendicular to
-                # the plane of the meridian.
-                rcurv = self.rmajor*coslat/math.sqrt(1.-self.esq*sinlat**2)
                 try: # x a sequence
-                    outx = [math.degrees(xi/rcurv) + self.llcrnrlon for xi in x]
+                    outx = [(xi/(self.rsphere*coslat))*(180./math.pi) + self.llcrnrlon for xi in x]
                 except: # x a scalar
-                    outx = math.degrees(x/rcurv) + self.llcrnrlon
+                    outx = (x/(self.rsphere*coslat))*(180./math.pi) + self.llcrnrlon
+
             return outx,outy
 
     def __call__(self,lon,lat,inverse=False):

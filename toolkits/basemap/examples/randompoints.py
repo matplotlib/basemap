@@ -28,7 +28,7 @@ lats = array(lats,'f')
 rcrit = 500.
 
 # set up lambert azimuthal map centered on N. Pole.
-m = Basemap(llcrnrlon=-150.,llcrnrlat=0.,urcrnrlon=30.,urcrnrlat=0.,
+m = Basemap(-150.,0.,30.,0.,
             resolution='l',area_thresh=10000.,projection='stere',\
             lat_0=90.,lon_0=-105.,lat_ts=90.)
 
@@ -41,7 +41,7 @@ lats_out = []
 lons_out = []
 for lon,lat in zip(lons,lats):
    if nob:
-      r = (m.rmajor/1000.)*get_dist(lon,lons[0:nob],lat,lats[0:nob])
+      r = (m.rsphere/1000.)*get_dist(lon,lons[0:nob],lat,lats[0:nob])
       if min(r) > rcrit: 
           lats_out.append(lat)
           lons_out.append(lon)

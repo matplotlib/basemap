@@ -1,0 +1,2 @@
+version 0.3:  axes instance no longer an argument to any Basemap method.
+              (gca is called to obtain the current axes instance instead).
