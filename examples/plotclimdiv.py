@@ -24,8 +24,8 @@ if shp_info[1] != 5:
 colors={}
 divnames=[]
 print m.climdivs_info[0].keys()
-for nshape in range(shp_info[0]):
-    divname = m.climdivs_info[nshape]['ST']+repr(m.climdivs_info[nshape]['DIV'])
+for shapedict in m.climdivs_info:
+    divname = shapedict['ST']+repr(shapedict['DIV'])
     colors[divname] = (random.uniform(0,1),random.uniform(0,1),random.uniform(0,1))
     divnames.append(divname)
 # cycle through climate divnames, color each one.
