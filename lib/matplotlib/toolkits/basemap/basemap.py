@@ -965,13 +965,13 @@ class Basemap:
   For example, if name='counties', self.counties
   will be a list of vertices for each shape in map projection
   coordinates and self.counties_info will be a list of dictionaries 
-  with shape attributes. Rings in individual shapes are 'unravelled',
-  i.e. they are split into separate polygons.  Additional keys
+  with shape attributes. Rings in individual shapes are split out
+  into separate polygons.  Additional keys
   'RINGNUM' and 'SHAPENUM' are added to shape attribute dictionary.
  drawbounds - draw boundaries of shapes (default True)
- linewidth - state boundary line width (default 0.5)
- color - state boundary line color (default black)
- antialiased - antialiasing switch for state boundaries (default True).
+ linewidth - shape boundary line width (default 0.5)
+ color - shape boundary line color (default black)
+ antialiased - antialiasing switch for shape boundaries (default True).
  ax - axes instance (overrides default axes instance)
 
  returns a tuple (num_shapes, type, min, max) containing shape file info.
