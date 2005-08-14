@@ -1,0 +1,8 @@
+include README COPYING ChangeLog NEWS
+include *.i *.c *.py *.h
+include MANIFEST.in 
+
+# prune the references to the shapelib files which are in either .. or
+# ../shapelib.  These are pulled in by distutils because they're
+# referenced by the Extension objects 
+prune ..

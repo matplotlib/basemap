@@ -1,0 +1,43 @@
+pyshapelib 0.3 (2004-05-28)
+===========================
+
+ * New module shptree.  It's a simple wrapper for shapelib's quadtree.
+
+ * Provide a way to access the shapelib module and shapefile objects
+   from C.  It's not documented, unfortunately, but pyshapelib_api.h may
+   be a starting point.  This feature is used in Thuban which could be
+   used as an example.
+
+ * distutils based build and install script, setup.py
+
+Module dbflib:
+
+ * dbf objects now have a method commit if compiled with shapelib newer
+   than 1.2.10 (that is only the CVS version of shapelib at the time of
+   writing).  This method calls the new function dbflib DBFUpdateHeader.
+
+ * New method read_attribute which reads a single attribute instead of a
+   whole record like read_record
+
+ * NULL values are now returned as None.  DBF files don't really support
+   NULL, but this change matches a new feature in shapelib 1.2.9.  It's
+   not clear whether it should be implemented in the python wrapper in
+   this way.  It might be better to make it optional.
+
+
+pyshapelib 0.2 (2001-06-15)
+===========================
+
+Module shapelib:
+
+ * new module level functions type_name and part_type_name
+   (corresponding to SHPTypeName and SHPPartTypeName)
+
+ * The vertices() method of shape objects works for shape type
+   SHPT_POINT, too.
+
+
+pyshapelib 0.1 (2000-12-20)
+===========================
+
+Initial public release
