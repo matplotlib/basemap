@@ -16,6 +16,8 @@ from greatcircle import GreatCircle, vinc_dist, vinc_pt
 from matplotlib.numerix import ma
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd
+from shapelib import ShapeFile
+import dbflib
 
 # look in sys.prefix for directory containing basemap files if
 # BASEMAP_DATA_PATH env var not set.
@@ -981,16 +983,6 @@ class Basemap:
  max are 4-element lists with the min. and max. values of the
  vertices.
         """
-        try:
-            from shapelib import ShapeFile
-            import dbflib
-        except:
-            msg = """
- Requires pyshapelib from Thuban.  To install, download Thuban
- source distribution from http://thuban.intevation.org/, untar 
- and cd to libraries/pyshapelib.  From there, run 
- 'python setup.py install' to install just pyshapelib."""
-            raise ImportError, msg
         # open shapefile, read vertices for each object, convert
         # to map projection coordinates (only works for 2D shape types).
         shp = ShapeFile(shapefile)
