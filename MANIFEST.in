@@ -13,6 +13,10 @@ include examples/500hgt.pickle
 include examples/divisions.dbf
 include examples/divisions.shp
 include examples/divisions.shx
+include examples/huralll020.dbf
+include examples/huralll020.shp
+include examples/huralll020.shx
+include examples/hurrtracks.py
 include examples/fcover.dat
 include examples/plotmap.py
 include examples/plotmap_pcolor.py

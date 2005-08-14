@@ -1,3 +1,6 @@
+20050814:  version 0.6.1:
+           Added hurrtracks.py example (plot hurricane tracks from
+           shapefile). 
 20050811:  version 0.6:
            sf bug #1254163 (make sure lat/lon limits of projection are floats)
            wiki_example.py and plotclimdiv.py examples added.
