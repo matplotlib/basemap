@@ -1,4 +1,5 @@
 from distutils.core import setup, Extension
+from distutils.util import convert_path
 import sys, glob
 
 deps = glob.glob('src/*.c')
@@ -18,3 +19,48 @@ setup(
   packages          = ['matplotlib/toolkits','matplotlib/toolkits/basemap'],
   package_dir       = {'':'lib'},
   ext_modules       = extensions)
+
+def dbf_macros():
+    """Return the macros to define when compiling the dbflib wrapper.
+
+    The returned list specifies one macro, HAVE_UPDATE_HEADER, which is
+    '1' if the dbflib version we will be compiling with has the
+    DBFUpdateHeader function and '0' otherwise.  To check whether
+    DBFUpdateHeader is available, we scan shapefil.h for the string
+    'DBFUpdateHeader'.
+    """
+    f = open(convert_path("pyshapelib/shapelib/shapefil.h"))
+    contents = f.read()
+    f.close()
+    if contents.find("DBFUpdateHeader") >= 0:
+        return [("HAVE_UPDATE_HEADER", "1")]
+    else:
+        return [("HAVE_UPDATE_HEADER", "0")]
+
+extensions = [Extension("shapelibc",
+                        ["pyshapelib/shapelib_wrap.c",
+                         "pyshapelib/shapelib/shpopen.c",
+                         "pyshapelib/shapelib/shptree.c"],
+                        include_dirs = ["pyshapelib/shapelib"]),
+              Extension("shptree",
+                        ["pyshapelib/shptreemodule.c"],
+                        include_dirs = ["pyshapelib/shapelib"]),
+              Extension("dbflibc",
+                        ["pyshapelib/dbflib_wrap.c",
+                         "pyshapelib/shapelib/dbfopen.c"],
+                        include_dirs = ["pyshapelib/shapelib"],
+                        define_macros = dbf_macros())]
+
+# build pyshapelib if it is not already installed.
+try:
+    import shapelib
+    import dbflib
+except:
+    setup(name = "pyshapelib",
+          version = "0.3",
+          description = "Python bindings for shapelib",
+          author = "Bernhard Herzog",
+          author_email = "bh@intevation.de",
+          url = "ftp:intevation.de/users/bh",
+          py_modules = ["pyshapelib/shapelib", "pyshapelib/dbflib"],
+          ext_modules = extensions)

@@ -43,3 +43,7 @@ include data/states_c.txt
 include data/gshhs_c.txt
 include data/gshhs_l.txt
 include data/gshhs_i.txt
+include pyshapelib/README pyshapelib/COPYING pyshapelib/ChangeLog pyshapelib/NEWS
+include pyshapelib/*.i pyshapelib/*.c pyshapelib/*.py pyshapelib/*.h
+include pyshapelib/shapelib/*.c pyshapelib/shapelib/*.h
+include MANIFEST.in 

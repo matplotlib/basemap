@@ -13,6 +13,9 @@ matplotlib 0.81 (or higher)
 source code from proj.4 (http://proj.maptools.org) is included in the
 'src' directory (under the terms given in LICENSE_proj4).
 
+pyshapelib by Bernhard Herzog is included in the 'pyshapelib' directory
+under the terms given in LICENSE_pyshapelib.
+
 Everything else:
 
 copyright (c) 2004 by Jeffrey Whitaker.
