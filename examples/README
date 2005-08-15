@@ -37,5 +37,7 @@ wiki_example.py is the example from the MatplotlibCookbook scipy wiki page
 
 plotclimdiv.py is an example that shows how to draw 
 boundaries (like counties, or in this case 'climate divisions') from
-and ESRI shapefile. Requires pyshapelib
-from Thuban source distribution (http://thuban.intevation.org).
+and ESRI shapefile. 
+
+hurrtrack.py plots hurricane tracks from shapefile data 
+(from nationalatlas.gov).
