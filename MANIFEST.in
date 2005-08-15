@@ -47,4 +47,6 @@ include data/gshhs_i.txt
 include pyshapelib/README pyshapelib/COPYING pyshapelib/ChangeLog pyshapelib/NEWS
 include pyshapelib/*.i pyshapelib/*.c pyshapelib/*.py pyshapelib/*.h
 include pyshapelib/shapelib/*.c pyshapelib/shapelib/*.h
+include pyshapelib/lib/dbflib/*.py
+include pyshapelib/lib/shapelib/*.py
 include MANIFEST.in 

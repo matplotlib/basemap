@@ -21,8 +21,21 @@ def dbf_macros():
 
 deps = glob.glob('src/*.c')
 
-extensions = [Extension("proj4",deps,include_dirs = ['src'],),
-              Extension("shapelibc",
+extensions = [Extension("proj4",deps,include_dirs = ['src'],)]
+packages          = ['matplotlib/toolkits','matplotlib/toolkits/basemap']
+package_dirs       = {'':'lib'}
+
+# don't build pyshapelib if it is already installed.
+
+try:
+    import shapelib
+    import dbflib
+except:
+    packages = packages + ['shapelib','dbflib']
+    package_dirs['shapelib'] ='pyshapelib/lib/shapelib'
+    package_dirs['dbflib'] ='pyshapelib/lib/dbflib'
+    extensions = extensions + \
+             [Extension("shapelibc",
                         ["pyshapelib/shapelib_wrap.c",
                          "pyshapelib/shapelib/shpopen.c",
                          "pyshapelib/shapelib/shptree.c"],
@@ -34,7 +47,7 @@ extensions = [Extension("proj4",deps,include_dirs = ['src'],),
                         ["pyshapelib/dbflib_wrap.c",
                          "pyshapelib/shapelib/dbfopen.c"],
                         include_dirs = ["pyshapelib/shapelib"],
-                        define_macros = dbf_macros())]
+                        define_macros = dbf_macros()) ]
 
 datadir ='share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])
 
@@ -46,6 +59,6 @@ setup(
   author            = "Jeff Whitaker",
   author_email      = "jeffrey.s.whitaker@noaa.gov",
   data_files        = [(datadir,['data/countries_c.txt','data/states_c.txt','data/countries_l.txt','data/states_l.txt','data/gshhs_c.txt','data/gshhs_l.txt','data/countries_i.txt','data/states_i.txt','data/gshhs_i.txt'])],
-  packages          = ['matplotlib/toolkits','matplotlib/toolkits/basemap','shapelib','dbflib'],
-  package_dir       = {'':'lib','shapelib':'pyshapelib/lib/shapelib','dbflib':'pyshapelib/lib/dbflib'},
+  packages          = packages,
+  package_dir       = package_dirs,
   ext_modules       = extensions)
