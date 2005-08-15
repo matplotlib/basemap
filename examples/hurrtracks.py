@@ -7,10 +7,11 @@ import pylab as p
 from matplotlib.toolkits.basemap import Basemap as Basemap
 # Lambert Conformal Conic map.
 m = Basemap(llcrnrlon=-100.,llcrnrlat=0.,urcrnrlon=-20.,urcrnrlat=57.,
-            projection='lcc',lat_1=20.,lat_2=40.,lon_0=-60.)
+            projection='lcc',lat_1=20.,lat_2=40.,lon_0=-60.,
+            resolution ='l',area_thresh=1000.)
 # make sure map has right aspect ratio.
 fig=p.figure(figsize=(8,m.aspect*8))
-fig.add_axes([0.1,0.1,0.8,0.8])
+fig.add_axes([0.1,0.1,0.8,0.8],axisbg='#99ffff')
 # read shapefile.
 shp_info = m.readshapefile('huralll020','hurrtracks',drawbounds=False)
 print shp_info
@@ -20,6 +21,7 @@ for shapedict in m.hurrtracks_info:
     cat = shapedict['CATEGORY']
     name = shapedict['NAME']
     if cat in ['H4','H5'] and name not in names:
+        # only use named storms.
         if name != 'NOT NAMED':  names.append(name)
 print names
 print len(names)
@@ -37,7 +39,8 @@ for shapedict,shape in zip(m.hurrtracks_info,m.hurrtracks):
 # draw coastlines, meridians and parallels.
 m.drawcoastlines()
 m.drawcountries()
-m.drawparallels(p.arange(10,70,20),labels=[0,1,0,0])
+m.fillcontinents(color='#cc9966')
+m.drawparallels(p.arange(10,70,20),labels=[1,1,0,0])
 m.drawmeridians(p.arange(-100,0,20),labels=[0,0,0,1])
-p.title('Atlantic Hurricane Tracks (Storms Reaching Category 4)')
+p.title('Atlantic Hurricane Tracks (Storms Reaching Category 4, 1851-2003)')
 p.show()
