@@ -2,24 +2,6 @@ from distutils.core import setup, Extension
 from distutils.util import convert_path
 import sys, glob
 
-deps = glob.glob('src/*.c')
-
-extensions = [Extension("proj4",deps,include_dirs = ['src'],)]
-
-datadir ='share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])
-
-setup(
-  name              = "basemap",
-  version           = "0.6.1",
-  description       = "Plot data on map projections with matplotlib",
-  url               = "http://matplotlib.sourceforge.net/toolkits.html",
-  author            = "Jeff Whitaker",
-  author_email      = "jeffrey.s.whitaker@noaa.gov",
-  data_files        = [(datadir,['data/countries_c.txt','data/states_c.txt','data/countries_l.txt','data/states_l.txt','data/gshhs_c.txt','data/gshhs_l.txt','data/countries_i.txt','data/states_i.txt','data/gshhs_i.txt'])],
-  packages          = ['matplotlib/toolkits','matplotlib/toolkits/basemap'],
-  package_dir       = {'':'lib'},
-  ext_modules       = extensions)
-
 def dbf_macros():
     """Return the macros to define when compiling the dbflib wrapper.
 
@@ -37,7 +19,10 @@ def dbf_macros():
     else:
         return [("HAVE_UPDATE_HEADER", "0")]
 
-extensions = [Extension("shapelibc",
+deps = glob.glob('src/*.c')
+
+extensions = [Extension("proj4",deps,include_dirs = ['src'],),
+              Extension("shapelibc",
                         ["pyshapelib/shapelib_wrap.c",
                          "pyshapelib/shapelib/shpopen.c",
                          "pyshapelib/shapelib/shptree.c"],
@@ -51,16 +36,16 @@ extensions = [Extension("shapelibc",
                         include_dirs = ["pyshapelib/shapelib"],
                         define_macros = dbf_macros())]
 
-# build pyshapelib if it is not already installed.
-try:
-    import shapelib
-    import dbflib
-except:
-    setup(name = "pyshapelib",
-          version = "0.3",
-          description = "Python bindings for shapelib",
-          author = "Bernhard Herzog",
-          author_email = "bh@intevation.de",
-          url = "ftp:intevation.de/users/bh",
-          py_modules = ["pyshapelib/shapelib", "pyshapelib/dbflib"],
-          ext_modules = extensions)
+datadir ='share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])
+
+setup(
+  name              = "basemap",
+  version           = "0.6.1",
+  description       = "Plot data on map projections with matplotlib",
+  url               = "http://matplotlib.sourceforge.net/toolkits.html",
+  author            = "Jeff Whitaker",
+  author_email      = "jeffrey.s.whitaker@noaa.gov",
+  data_files        = [(datadir,['data/countries_c.txt','data/states_c.txt','data/countries_l.txt','data/states_l.txt','data/gshhs_c.txt','data/gshhs_l.txt','data/countries_i.txt','data/states_i.txt','data/gshhs_i.txt'])],
+  packages          = ['matplotlib/toolkits','matplotlib/toolkits/basemap','shapelib','dbflib'],
+  package_dir       = {'':'lib','shapelib':'pyshapelib/lib/shapelib','dbflib':'pyshapelib/lib/dbflib'},
+  ext_modules       = extensions)
