@@ -53,12 +53,27 @@ datadir ='share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])
 
 setup(
   name              = "basemap",
-  version           = "0.6.1",
+  version           = "0.6.2",
   description       = "Plot data on map projections with matplotlib",
+  long_description  = """
+  An add-on toolkit for matplotlib that lets you plot data
+  on map projections with coastlines and political boundaries.
+  See http://www.scipy.org/wikis/topical_software/Maps for an
+  example of what it can do."""
   url               = "http://matplotlib.sourceforge.net/toolkits.html",
+  download_url      = "http://sourceforge.net/projects/matplotlib",
   author            = "Jeff Whitaker",
   author_email      = "jeffrey.s.whitaker@noaa.gov",
   data_files        = [(datadir,['data/countries_c.txt','data/states_c.txt','data/countries_l.txt','data/states_l.txt','data/gshhs_c.txt','data/gshhs_l.txt','data/countries_i.txt','data/states_i.txt','data/gshhs_i.txt'])],
+  platforms         = ["any"],
+  license           = ["OSI Approved"],
+  keywords          = ["python","plotting","plots","graphs","charts","GIS","mapping","map projections","maps"],
+  classifiers       = ["Development Status :: 4 - Beta",
+			           "Intended Audience :: Science/Research", 
+			           "License :: OSI Approved", 
+			           "Topic :: Scientific/Engineering :: Visualization",
+			           "Topic :: Software Development :: Libraries :: Python Modules",
+			           "Operating System :: OS Independent"],
   packages          = packages,
   package_dir       = package_dirs,
   ext_modules       = extensions)

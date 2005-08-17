@@ -25,8 +25,8 @@ _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])) 
 
-__version__ = '0.6.1'
-__revision__ = '20050814'
+__version__ = '0.6.2'
+__revision__ = '20050815'
 
 class Basemap:
 
