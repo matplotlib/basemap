@@ -59,7 +59,7 @@ setup(
   An add-on toolkit for matplotlib that lets you plot data
   on map projections with coastlines and political boundaries.
   See http://www.scipy.org/wikis/topical_software/Maps for an
-  example of what it can do."""
+  example of what it can do.""",
   url               = "http://matplotlib.sourceforge.net/toolkits.html",
   download_url      = "http://sourceforge.net/projects/matplotlib",
   author            = "Jeff Whitaker",
