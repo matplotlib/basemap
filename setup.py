@@ -77,3 +77,11 @@ setup(
   packages          = packages,
   package_dir       = package_dirs,
   ext_modules       = extensions)
+
+from matplotlib import rcParams
+if rcParams['numerix'] == 'Numeric':
+    print """WARNING:
+Basemap uses numarray for some functions, so to avoid 
+potential problems with Numeric --> numarray conversions
+it is recommended to set the value of numerix in
+matplotlibrc to 'numarray'."""

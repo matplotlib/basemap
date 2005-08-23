@@ -1,3 +1,10 @@
+from matplotlib import rcParams
+if rcParams['numerix'] == 'Numeric':
+    print """WARNING:
+Basemap uses numarray for some functions, so to avoid 
+potential problems with Numeric --> numarray conversions
+it is recommended to set the value of numerix in
+matplotlibrc to 'numarray'."""
 from numarray import __version__ as numarray_version
 from matplotlib import __version__ as matplotlib_version
 # check to make sure numarray, matplotlib are not too old.
