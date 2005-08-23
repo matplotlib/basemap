@@ -57,7 +57,7 @@ try:
     print URL
     data = client.Dataset(URL)
 except:
-    raise IOError, 'nomad server not providing the requested data.'
+    raise IOError, 'nomad server not providing the requested data, try choosing a date prior to 20050601.'
 
 
 # read levels, lats,lons,times.
