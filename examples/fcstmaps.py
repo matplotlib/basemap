@@ -57,7 +57,7 @@ try:
     print URL
     data = client.Dataset(URL)
 except:
-    raise IOError, 'nomad server not providing the requested data, try choosing a date prior to 20050601.'
+    raise IOError, 'nomad server not providing the requested data, try choosing a date between 20030602 and 20050525.'
 
 
 # read levels, lats,lons,times.
@@ -113,14 +113,17 @@ xsize = rcParams['figure.figsize'][0]
 ysize = (3./2.)*m.aspect*xsize
 fig=figure(figsize=(xsize,ysize))
 yoffset = (m.urcrnry-m.llcrnry)/30.
+clevs = None
 for npanel,fcsthr in enumerate(arange(0,72,12)):
     nt = fcsthrs.index(fcsthr)
     ax = fig.add_subplot(320+npanel+1)
     # make a pcolor plot.
     #p = m.pcolor(x,y,t2m[nt,:,:],shading='flat',cmap=cm.jet)
     # make a filled contour plot.
-    levels, colls = m.contourf(x,y,t2m[nt,:,:],20,cmap=cm.jet,colors=None)
-    clim(t2min,t2max) # fix color range to be the same for all panels
+    if clevs == None:
+        clevs, colls = m.contourf(x,y,t2m[nt,:,:],20,cmap=cm.jet,colors=None)
+    else:
+        levels, colls = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet,colors=None)
     m.drawcoastlines()
     m.drawstates()
     m.drawcountries()
@@ -131,6 +134,7 @@ for npanel,fcsthr in enumerate(arange(0,72,12)):
 # figure title
 figtext(0.5,0.95,u"2-m temp (\N{DEGREE SIGN}K) forecasts from %s"%verifdates[0],horizontalalignment='center',fontsize=14)
 # a single colorbar.
-cax = axes([0.25, 0.03, 0.5, 0.025])
-colorbar(tickfmt='%d', cax=cax, orientation='horizontal') 
+cax = axes([0.1, 0.03, 0.8, 0.025])
+colorbar(tickfmt='%5.1f', cax=cax, orientation='horizontal') 
+cax.set_xticks(clevs[::2])
 show()
