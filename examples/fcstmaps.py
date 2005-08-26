@@ -93,7 +93,8 @@ if missval < 0:
 else:
     t2m = ma.masked_values(where(t2m<1.e20.e-12,t2m,1.e20), 1.e20)
 t2min = amin(t2m.compressed()); t2max= amax(t2m.compressed())
-
+print t2min,t2max
+clevs = frange(around(t2min/10.)*10.,around(t2max/10.)*10.,4)
 llcrnrlat = 22.0
 urcrnrlat = 48.0
 latminout = 22.0
@@ -113,17 +114,11 @@ xsize = rcParams['figure.figsize'][0]
 ysize = (3./2.)*m.aspect*xsize
 fig=figure(figsize=(xsize,ysize))
 yoffset = (m.urcrnry-m.llcrnry)/30.
-clevs = None
 for npanel,fcsthr in enumerate(arange(0,72,12)):
     nt = fcsthrs.index(fcsthr)
     ax = fig.add_subplot(320+npanel+1)
-    # make a pcolor plot.
-    #p = m.pcolor(x,y,t2m[nt,:,:],shading='flat',cmap=cm.jet)
-    # make a filled contour plot.
-    if clevs == None:
-        clevs, colls = m.contourf(x,y,t2m[nt,:,:],20,cmap=cm.jet,colors=None)
-    else:
-        levels, colls = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet,colors=None)
+    levels, colls = m.contour(x,y,t2m[nt,:,:],clevs,colors='k')
+    levels, colls = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet,colors=None)
     m.drawcoastlines()
     m.drawstates()
     m.drawcountries()
@@ -131,10 +126,17 @@ for npanel,fcsthr in enumerate(arange(0,72,12)):
     m.drawmeridians(arange(-140,0,20),labels=[0,0,0,1],fontsize=8,yoffset=yoffset,fontstyle='oblique')
     # panel title
     title(repr(fcsthr)+'-h forecast valid '+verifdates[nt],fontsize=12)
+clim(clevs[1],clevs[-2])
 # figure title
-figtext(0.5,0.95,u"2-m temp (\N{DEGREE SIGN}K) forecasts from %s"%verifdates[0],horizontalalignment='center',fontsize=14)
+figtext(0.5,0.95,u"2-m temp (\N{DEGREE SIGN}K) forecasts from %s"%verifdates[0],
+        horizontalalignment='center',fontsize=14)
 # a single colorbar.
 cax = axes([0.1, 0.03, 0.8, 0.025])
-colorbar(tickfmt='%5.1f', cax=cax, orientation='horizontal') 
-cax.set_xticks(clevs[::2])
+# the first one only works for matplotlib > 0.83.2
+try:
+    colorbar(tickfmt='%d', cax=cax, orientation='horizontal',
+             clabels=clevs[1:-1:2],drawedges=True)
+except:
+    colorbar(tickfmt='%5.1f', cax=cax, orientation='horizontal') 
+    cax.set_xticks(clevs[1:-1:2])
 show()
