@@ -1,5 +1,6 @@
 YYYYMMDD:  version 0.6.2:
-           nothing yet
+           Warning issued if numerix = 'Numeric' (a user reported
+		   crashes due to botched Numeric --> numarray conversions).
 20050814:  version 0.6.1:
            Added hurrtracks.py example (plot hurricane tracks from
            shapefile). 
