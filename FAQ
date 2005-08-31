@@ -1,5 +1,5 @@
-Q: I get all kinds of errors when I try to create a Basemap class instance, 
-what should I do?
+Q: I get error messages that say "array does not make sense as a truth value"
+when I try to create a Basemap class instance. What's wrong?. 
 
 A: Make sure that matplotlib is using numarray instead of Numeric.  This
 can be done by running your script with "--numarray" on the command
