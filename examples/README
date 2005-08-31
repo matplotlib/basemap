@@ -18,7 +18,9 @@ Conformal and Orthographic projection.
 nytolondon.py shows how to draw a great circle on a map (NY to London)
 
 ireland.py draws maps of ireland with the crude, low and intermediate
-resolution boundary datasets.
+resolution boundary datasets. It also shows how to pickle and re-load a
+Basemap class instance (useful for high-res coastlines when you are plotting
+the same small map region many times in different scripts).
 
 quiver_demo.py shows how to plot wind vectors on a map.
 
