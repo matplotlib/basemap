@@ -1,5 +1,6 @@
 from matplotlib.toolkits.basemap import Basemap
 from pylab import *
+import cPickle
 
 # create Basemap instance. Use 'crude' resolution coastlines.
 m = Basemap(llcrnrlon=-11.,llcrnrlat=51.,urcrnrlon=-5.,urcrnrlat=56.,
@@ -37,9 +38,14 @@ m.drawmeridians(meridians,labels=[1,1,1,1])
 title("Low Res Coastlines ('l')",y=1.075)
 show()
 
+import time
+t1 = time.clock()
 # create Basemap instance. Use 'intermediate' resolution coastlines.
 m = Basemap(llcrnrlon=-11.,llcrnrlat=51.,urcrnrlon=-5.,urcrnrlat=56.,
             resolution='i',area_thresh=1000.,projection='cyl')
+print time.clock()-t1,'seconds to create class instance with intermediate res coastlines'
+# pickle the class instance.
+cPickle.dump(m,open('map.pickle','wb'),-1)
 # create figure with same aspect ratio as map.
 xsize = rcParams['figure.figsize'][0]
 fig=figure(figsize=(xsize,m.aspect*xsize))
@@ -51,5 +57,23 @@ m.fillcontinents()
 m.drawparallels(circles,labels=[1,1,1,1])
 # draw meridians
 m.drawmeridians(meridians,labels=[1,1,1,1])
+title("Intermediate Res Coastlines ('i')",y=1.075)
+show()
+
+# read pickle back in and plot it again (should be much faster).
+t1 = time.clock()
+m2 = cPickle.load(open('map.pickle'))
+print time.clock()-t1,' to read the intermediate res coastline class instance back in from a pickle'
+# create figure with same aspect ratio as map.
+xsize = rcParams['figure.figsize'][0]
+fig=figure(figsize=(xsize,m2.aspect*xsize))
+fig.add_axes([0.1,0.1,0.8,0.8])
+# draw coastlines and fill continents.
+m2.drawcoastlines()
+m2.fillcontinents()
+# draw parallels
+m2.drawparallels(circles,labels=[1,1,1,1])
+# draw meridians
+m2.drawmeridians(meridians,labels=[1,1,1,1])
 title("Intermediate Res Coastlines ('i')",y=1.075)
 show()
