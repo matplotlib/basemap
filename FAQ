@@ -1,0 +1,28 @@
+Q: I get all kinds of errors when I try to create a Basemap class instance, 
+what should I do?
+
+A: Make sure that matplotlib is using numarray instead of Numeric.  This
+can be done by running your script with "--numarray" on the command
+line, or by setting numerix='numarray' in your matplotlibrc file.
+
+Q: It takes forever to make a plot with the 'intermediate' resolution
+coastlines, how can I speed it up?
+
+A: Basemap is not very intelligent right now in the way that it processes
+coastline data - it processes the data for the whole world regardless of
+the region that your are trying to display.  If you are making many maps
+for the same region, you only need to create you Basemap class instance
+once, then re-use it for each plot.  If the plots are being created by
+different scripts, you can save the Basemap class instance to a Pickle on
+disk, then read it in whatever script needs it (it's much faster to read
+a pickle from disk than it is to create the Basemap instance originally).
+The ireland.py example illustrates how to do this.
+
+Q: I have my own boundary dataset that I would like to use, how do I 
+use it in place of (or in addition to) the built-in basemap boundary datasets?
+
+A: If your dataset is in ESRI shapefile format, this is relatively easy.
+Just create your Basemap class instance, then call the 'readshapefile' 
+method on that instance to import your data.  Setting 'drawbounds=True' will 
+draw the boundaries in the shapefile.  The plotclimdivs.py example
+shows how to do this.
