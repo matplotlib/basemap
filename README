@@ -39,6 +39,9 @@ see basemap.py docstrings.
 
 see scripts in 'examples' directory for example usage.
 
+read the FAQ and/or email the matplotlib-users mailing list if 
+you have problems or questions.
+
 **Install**
 
 just run 'python setup.py install' 
