@@ -24,6 +24,8 @@ cdef class Proj:
         self.pjinitstring = pjinitstring
         projpj = pj_init_plus(pjinitstring)
         self.projpj = projpj
+    def __reduce__(self):
+        return (self.__class__,(self.pjinitstring,))
     def fwd(self, lons, lats):
         cdef projUV projxyout, projlonlatin
         cdef long ndim, i
