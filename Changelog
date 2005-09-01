@@ -1,6 +1,7 @@
-YYYYMMDD:  version 0.6.2:
+20050901:  version 0.6.2:
            Warning issued if numerix = 'Numeric' (a user reported
 		   crashes due to botched Numeric --> numarray conversions).
+           Changes to proj4 wrapper to make Basemap instances pickle-able.  
 20050814:  version 0.6.1:
            Added hurrtracks.py example (plot hurricane tracks from
            shapefile). 
