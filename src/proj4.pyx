@@ -108,7 +108,7 @@ cdef class Proj:
  x, y, lons, lats are numarrays.
         """
         cdef projUV projxyout, projlonlatin
-        cdef long ndim, i
+        cdef int ndim, i
         cdef double u, v
         cdef double *lonsdata, *latsdata
         ndim = 1
@@ -133,6 +133,7 @@ cdef class Proj:
         """
         cdef projUV projxyout, projlonlatin
         cdef double u, v
+        cdef int i, ndim
         try:
             shape = lons.shape
             isnumarray = True
@@ -166,7 +167,7 @@ cdef class Proj:
  x, y, lons, lats are numarrays.
         """
         cdef projUV projxyin, projlonlatout
-        cdef long ndim, i
+        cdef int ndim, i
         cdef double u, v
         cdef double *xdata, *ydata
         ndim = 1
@@ -191,6 +192,7 @@ cdef class Proj:
         """
         cdef projUV projxyin, projlonlatout
         cdef double u, v
+        cdef int i, ndim
         try:
             shape = x.shape
             isnumarray = True
