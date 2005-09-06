@@ -196,9 +196,6 @@ class Proj:
         # make sure inputs have same shape, if they are numarrays.
         if shapein and shapein != lat.shape:
             raise ValueError, 'lon, lat must be numarrays with the same shape'
-        if shapein: # typecast to double if numarray.
-            lon = lon.astype('d')
-            lat = lat.astype('d')
         if inverse:
             outx, outy = self._inv(lon, lat)
         else:
