@@ -1,10 +1,7 @@
 from matplotlib import rcParams
-if rcParams['numerix'] == 'Numeric':
-    print """WARNING:
-Basemap uses numarray for some functions, so to avoid 
-potential problems with Numeric --> numarray conversions
-it is recommended to set the value of numerix in
-matplotlibrc to 'numarray'."""
+# make sure numerix == 'numarray'.
+if rcParams['numerix'] != 'numarray':
+    raise KeyError, "Basemap requires numarray - please set 'numerix' to 'numarray', either in matplotlibrc or by using rcParams function."
 from numarray import __version__ as numarray_version
 from matplotlib import __version__ as matplotlib_version
 # check to make sure numarray, matplotlib are not too old.
@@ -32,8 +29,8 @@ _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])) 
 
-__version__ = '0.6.2'
-__revision__ = '20050901'
+__version__ = '0.6.3'
+__revision__ = '20050906'
 
 class Basemap:
 
@@ -183,6 +180,8 @@ class Basemap:
 
         # if ax == None, pylab.gca may be used.
         self.ax = ax
+        #import time
+        #t1 = time.clock()
         # read in coastline data.
         coastlons = []; coastlats = []; coastsegind = []; coastsegarea = []; coastsegtype = []
         i = 0  # the current ind
@@ -226,6 +225,8 @@ class Basemap:
             statelons.append(lon)
             statelats.append(lat)
             i += 1
+        #print time.clock()-t1,' i/o'
+        #t1 = time.clock()
 
         # extend longitudes around the earth a second time
         # (in case projection region straddles Greenwich meridian).
@@ -355,11 +356,13 @@ class Basemap:
         self.llcrnry = proj.llcrnry
         self.urcrnrx = proj.urcrnrx
         self.urcrnry = proj.urcrnry
+        #print time.clock()-t1,' proj setup'
+        #t1 = time.clock()
 
         # transform coastline polygons to native map coordinates.
-        xc,yc = proj(na.array(coastlons,'f'),na.array(coastlats,'f'))
-        xc2,yc2 = proj(na.array(coastlons2,'f'),na.array(coastlats,'f'))
-        xc3,yc3 = proj(na.array(coastlons3,'f'),na.array(coastlats,'f'))
+        xc,yc = proj(na.array(coastlons),na.array(coastlats))
+        xc2,yc2 = proj(na.array(coastlons2),na.array(coastlats))
+        xc3,yc3 = proj(na.array(coastlons3),na.array(coastlats))
         if projection == 'merc' or projection == 'mill': 
             yc2 = yc
             yc3 = yc
@@ -381,9 +384,9 @@ class Basemap:
         self.coastsegtypes = segtypes+segtypes2+segtypes3
 
         # same as above for country polygons.
-        xc,yc = proj(na.array(cntrylons,'f'),na.array(cntrylats,'f'))
-        xc2,yc2 = proj(na.array(cntrylons2,'f'),na.array(cntrylats,'f'))
-        xc3,yc3 = proj(na.array(cntrylons3,'f'),na.array(cntrylats,'f'))
+        xc,yc = proj(na.array(cntrylons,'f'),na.array(cntrylats))
+        xc2,yc2 = proj(na.array(cntrylons2,'f'),na.array(cntrylats))
+        xc3,yc3 = proj(na.array(cntrylons3),na.array(cntrylats))
         if projection == 'merc' or projection == 'mill': 
             yc2=yc
             yc3=yc
@@ -393,9 +396,9 @@ class Basemap:
         self.cntrysegs = segments+segments2+segments3
 
         # same as above for state polygons.
-        xc,yc = proj(na.array(statelons,'f'),na.array(statelats,'f'))
-        xc2,yc2 = proj(na.array(statelons2,'f'),na.array(statelats,'f'))
-        xc3,yc3 = proj(na.array(statelons3,'f'),na.array(statelats,'f'))
+        xc,yc = proj(na.array(statelons,'f'),na.array(statelats))
+        xc2,yc2 = proj(na.array(statelons2,'f'),na.array(statelats))
+        xc3,yc3 = proj(na.array(statelons3),na.array(statelats))
         if projection == 'merc' or projection == 'mill': 
             yc2=yc
             yc3=yc
@@ -403,6 +406,8 @@ class Basemap:
         segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
         segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
         self.statesegs = segments+segments2+segments3
+        #print time.clock()-t1,' segment processing 1'
+        #t1 = time.clock()
 
         # store coast polygons for filling.
         self.coastpolygons = []
@@ -705,6 +710,7 @@ class Basemap:
                             xn.append(x); yn.append(y)
                 coastpolygons.append((xn,yn))
             self.coastpolygons = coastpolygons
+        #print time.clock()-t1,' segment processing 2'
 
     def _splitseg(self,xx,yy,mask=None):
         """split segment up around missing values (outside projection limb)"""
@@ -1005,7 +1011,7 @@ class Basemap:
             rings = len(verts)
             for ring in range(rings):
                 lons, lats = zip(*verts[ring])
-                x, y = self(lons,lats)
+                x, y = self(lons, lats)
                 shpsegs.append(zip(x,y))
                 if ring == 0:
                     shapedict = dbf.read_record(npoly)

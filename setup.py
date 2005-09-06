@@ -53,7 +53,7 @@ datadir ='share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])
 
 setup(
   name              = "basemap",
-  version           = "0.6.2",
+  version           = "0.6.3",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data
@@ -81,7 +81,5 @@ setup(
 from matplotlib import rcParams
 if rcParams['numerix'] == 'Numeric':
     print """WARNING:
-Basemap uses numarray for some functions, so to avoid 
-potential problems with Numeric --> numarray conversions
-it is recommended to set the value of numerix in
-matplotlibrc to 'numarray'."""
+Basemap requires that 'numerix' by set to 'numarray', either
+by editing the matplotlibrc file, or by using the rcParams function."""
