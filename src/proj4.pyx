@@ -139,6 +139,8 @@ cdef class Proj:
         except:
             isnumarray = False
         if isnumarray:
+            if lons.typecode() != 'd' or lats.typecode != 'd':
+                lons = lons.astype('d'); lats = lats.astype('d')
             x,y = self.fwd_array(lons,lats)
         else:
             try: # inputs are lists
@@ -195,6 +197,8 @@ cdef class Proj:
         except:
             isnumarray = False
         if isnumarray:
+            if x.typecode() != 'd' or y.typecode != 'd':
+                x = x.astype('d'); y = y.astype('d')
             lons, lats = self.inv_array(x,y)
         else:
             try: # inputs are lists
