@@ -1,8 +1,8 @@
-import matplotlib.numerix as N
+import matplotlib.numerix as NX
 from matplotlib.mlab import linspace, meshgrid
 import proj4, math
 
-__version__ = '1.1'
+__version__ = '1.2'
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 
@@ -70,7 +70,7 @@ class Proj:
         self.llcrnrlat = llcrnrlat
         if self.projection not in ['cyl','ortho','moll','robin']:
             self._proj4 = proj4.Proj(projparams)
-            llcrnrx, llcrnry = self._fwd(llcrnrlon,llcrnrlat)
+            llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
         elif self.projection == 'cyl':
             llcrnrx = llcrnrlon
             llcrnry = llcrnrlat
@@ -82,8 +82,8 @@ class Proj:
             urcrnry = -llcrnry
         elif self.projection == 'moll' or self.projection == 'robin':
             self._proj4 = proj4.Proj(projparams)
-            xtmp,urcrnry = self._fwd(projparams['lon_0'],90.)
-            urcrnrx,xtmp = self._fwd(projparams['lon_0']+180.,0)
+            xtmp,urcrnry = self(projparams['lon_0'],90.)
+            urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
             llcrnrx = -urcrnrx
             llcrnry = -urcrnry
         # compute x_0, y_0 so ll corner of domain is x=0,y=0.
@@ -102,17 +102,17 @@ class Proj:
             self.urcrnrlon = urcrnrlon
             self.urcrnrlat = urcrnrlat
             if self.projection not in ['ortho','moll','robin']:
-                urcrnrx,urcrnry = self._fwd(urcrnrlon,urcrnrlat)
+                urcrnrx,urcrnry = self(urcrnrlon,urcrnrlat)
             elif self.projection == 'ortho':
                 urcrnrx = 2.*self.rmajor
                 urcrnry = 2.*self.rmajor
             elif self.projection == 'moll' or self.projection == 'robin':
-                xtmp,urcrnry = self._fwd(projparams['lon_0'],90.)
-                urcrnrx,xtmp = self._fwd(projparams['lon_0']+180.,0)
+                xtmp,urcrnry = self(projparams['lon_0'],90.)
+                urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
         else:
             urcrnrx = urcrnrlon
             urcrnry = urcrnrlat
-            urcrnrlon, urcrnrlat = self._inv(urcrnrx, urcrnry)
+            urcrnrlon, urcrnrlat = self(urcrnrx, urcrnry, inverse=True)
             self.urcrnrlon = urcrnrlon
             self.urcrnrlat = urcrnrlat
         # corners of domain.
@@ -133,48 +133,7 @@ class Proj:
             self.ymax = llcrnry
             self.ymin = urcrnry
 
-    def _fwd(self,x,y):
-        if self.projection == 'cyl':
-            return x,y # for cyl, this does nothing.
-        else:
-            outx,outy = self._proj4.fwd(x,y)
-            if self.projection in ['merc','mill']:
-                if self.projection == 'merc':
-                    coslat = math.cos(math.radians(self.projparams['lat_ts']))
-                    sinlat = math.sin(math.radians(self.projparams['lat_ts']))
-                else:
-                    coslat = 1.
-                    sinlat = 0.
-                # radius of curvature of the ellipse perpendicular to
-                # the plane of the meridian.
-                rcurv = self.rmajor*coslat/math.sqrt(1.-self.esq*sinlat**2)
-                outx = rcurv*_dg2rad*(x-self.llcrnrlon)
-            return outx,outy
-
-    def _inv(self,x,y):
-        if self.projection == 'cyl': # for cyl, does nothing
-            return x,y
-        else:
-            outx,outy = self._proj4.inv(x,y)
-            if self.projection in ['merc','mill']: 
-                if self.projection == 'merc':
-                    coslat = math.cos(math.radians(self.projparams['lat_ts']))
-                    sinlat = math.sin(math.radians(self.projparams['lat_ts']))
-                else:
-                    coslat = 1.
-                    sinlat = 0.
-                # radius of curvature of the ellipse perpendicular to
-                # the plane of the meridian.
-                rcurv = self.rmajor*coslat/math.sqrt(1.-self.esq*sinlat**2)
-                try: # x a sequence
-                    outx = [math.degrees(xi/rcurv) + self.llcrnrlon for xi in x]
-                except: # x a scalar
-                    outx = math.degrees(x/rcurv) + self.llcrnrlon
-                rcurv = self.rmajor*coslat/math.sqrt(1.-self.esq*sinlat**2)
-                outx = _rad2dg*(xi/rcurv) + self.llcrnrlon
-            return outx,outy
-
-    def __call__(self,lon,lat,inverse=False):
+    def __call__(self,x,y,inverse=False):
         """
  Calling a Proj class instance with the arguments lon, lat will
  convert lon/lat (in degrees) to x/y native map projection 
@@ -188,18 +147,39 @@ class Proj:
  lon,lat can be either scalar floats or N arrays.
         """
         if self.projection == 'cyl': # for cyl x,y == lon,lat
-            return lon,lat
-        try:
-            shapein = lon.shape
-        except:
-            shapein = False
-        # make sure inputs have same shape, if they are numarrays.
-        if shapein and shapein != lat.shape:
-            raise ValueError, 'lon, lat must be numarrays with the same shape'
+            return x,y
         if inverse:
-            outx, outy = self._inv(lon, lat)
+            outx,outy = self._proj4(x,y,inverse=True)
+            if self.projection in ['merc','mill']: 
+                if self.projection == 'merc':
+                    coslat = math.cos(math.radians(self.projparams['lat_ts']))
+                    sinlat = math.sin(math.radians(self.projparams['lat_ts']))
+                else:
+                    coslat = 1.
+                    sinlat = 0.
+                # radius of curvature of the ellipse perpendicular to
+                # the plane of the meridian.
+                rcurv = self.rmajor*coslat/math.sqrt(1.-self.esq*sinlat**2)
+                try: # x a scalar or an array
+                    outx = _rad2dg*(x/rcurv) + self.llcrnrlon
+                except: # x a sequence
+                    outx = [_rad2dg*(xi/rcurv) + self.llcrnrlon for xi in x]
         else:
-            outx, outy = self._fwd(lon, lat)
+            outx,outy = self._proj4(x,y)
+            if self.projection in ['merc','mill']:
+                if self.projection == 'merc':
+                    coslat = math.cos(math.radians(self.projparams['lat_ts']))
+                    sinlat = math.sin(math.radians(self.projparams['lat_ts']))
+                else:
+                    coslat = 1.
+                    sinlat = 0.
+                # radius of curvature of the ellipse perpendicular to
+                # the plane of the meridian.
+                rcurv = self.rmajor*coslat/math.sqrt(1.-self.esq*sinlat**2)
+                try: # x is a scalar or an array
+                    outx = rcurv*_dg2rad*(x-self.llcrnrlon)
+                except: # x is a sequence.
+                    outx = [rcurv*_dg2rad*(xi-self.llcrnrlon) for xi in x]
         return outx,outy
 
     def makegrid(self,nx,ny,returnxy=False):
@@ -256,7 +236,7 @@ if __name__ == "__main__":
     t2 = time.clock()
     print 'compute lats/lons for all points on AWIPS 221 grid (%sx%s)' %(nx,ny)
     print 'max/min lons'
-    print min(N.ravel(lons)),max(N.ravel(lons))
+    print min(NX.ravel(lons)),max(NX.ravel(lons))
     print 'max/min lats'
-    print min(N.ravel(lats)),max(N.ravel(lats))
+    print min(NX.ravel(lats)),max(NX.ravel(lats))
     print 'took',t2-t1,'secs'

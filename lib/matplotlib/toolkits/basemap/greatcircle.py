@@ -1,4 +1,4 @@
-import numarray as N
+import matplotlib.numerix as NX
 import math
 
 __version__ = '1.0'
@@ -78,7 +78,7 @@ class GreatCircle:
             raise ValueError,'cannot compute intermediate points on a great circle whose endpoints are antipodal'
         d = self.gcarclen
         delta = 1.0/(npoints-1)
-        f = delta*N.arange(npoints) # f=0 is point 1, f=1 is point 2.
+        f = delta*NX.arange(npoints) # f=0 is point 1, f=1 is point 2.
         incdist = self.distance/(npoints-1)
         lat1 = self.lat1
         lat2 = self.lat2
@@ -86,13 +86,13 @@ class GreatCircle:
         lon2 = self.lon2
         # perfect sphere, use great circle formula
         if self.f == 0.:
-            A = N.sin((1-f)*d)/math.sin(d)
-            B = N.sin(f*d)/math.sin(d)
+            A = NX.sin((1-f)*d)/math.sin(d)
+            B = NX.sin(f*d)/math.sin(d)
             x = A*math.cos(lat1)*math.cos(lon1)+B*math.cos(lat2)*math.cos(lon2)
             y = A*math.cos(lat1)*math.sin(lon1)+B*math.cos(lat2)*math.sin(lon2)
             z = A*math.sin(lat1)               +B*math.sin(lat2)
-            lats=N.arctan2(z,N.sqrt(x**2+y**2))
-            lons=N.arctan2(y,x)
+            lats=NX.arctan2(z,NX.sqrt(x**2+y**2))
+            lons=NX.arctan2(y,x)
             lons = map(math.degrees,lons.tolist())
             lats = map(math.degrees,lats.tolist())
         # use ellipsoid formulas

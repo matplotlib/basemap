@@ -1,7 +1,4 @@
 from matplotlib import rcParams
-# make sure numerix == 'numarray'.
-if rcParams['numerix'] != 'numarray':
-    raise KeyError, "Basemap requires numarray - please set 'numerix' to 'numarray', either in matplotlibrc or by using rcParams function."
 from numarray import __version__ as numarray_version
 from matplotlib import __version__ as matplotlib_version
 # check to make sure numarray, matplotlib are not too old.
@@ -17,6 +14,7 @@ import numarray as na
 import sys, os, math
 from proj import Proj
 from greatcircle import GreatCircle, vinc_dist, vinc_pt
+import matplotlib.numerix as NX
 from matplotlib.numerix import ma
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd
@@ -30,7 +28,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])) 
 
 __version__ = '0.6.3'
-__revision__ = '20050906'
+__revision__ = '20050907'
 
 class Basemap:
 
@@ -360,9 +358,9 @@ class Basemap:
         #t1 = time.clock()
 
         # transform coastline polygons to native map coordinates.
-        xc,yc = proj(na.array(coastlons),na.array(coastlats))
-        xc2,yc2 = proj(na.array(coastlons2),na.array(coastlats))
-        xc3,yc3 = proj(na.array(coastlons3),na.array(coastlats))
+        xc,yc = proj(NX.array(coastlons),NX.array(coastlats))
+        xc2,yc2 = proj(NX.array(coastlons2),NX.array(coastlats))
+        xc3,yc3 = proj(NX.array(coastlons3),NX.array(coastlats))
         if projection == 'merc' or projection == 'mill': 
             yc2 = yc
             yc3 = yc
@@ -384,9 +382,9 @@ class Basemap:
         self.coastsegtypes = segtypes+segtypes2+segtypes3
 
         # same as above for country polygons.
-        xc,yc = proj(na.array(cntrylons,'f'),na.array(cntrylats))
-        xc2,yc2 = proj(na.array(cntrylons2,'f'),na.array(cntrylats))
-        xc3,yc3 = proj(na.array(cntrylons3),na.array(cntrylats))
+        xc,yc = proj(NX.array(cntrylons,'f'),NX.array(cntrylats))
+        xc2,yc2 = proj(NX.array(cntrylons2,'f'),NX.array(cntrylats))
+        xc3,yc3 = proj(NX.array(cntrylons3),NX.array(cntrylats))
         if projection == 'merc' or projection == 'mill': 
             yc2=yc
             yc3=yc
@@ -396,9 +394,9 @@ class Basemap:
         self.cntrysegs = segments+segments2+segments3
 
         # same as above for state polygons.
-        xc,yc = proj(na.array(statelons,'f'),na.array(statelats))
-        xc2,yc2 = proj(na.array(statelons2,'f'),na.array(statelats))
-        xc3,yc3 = proj(na.array(statelons3),na.array(statelats))
+        xc,yc = proj(NX.array(statelons,'f'),NX.array(statelats))
+        xc2,yc2 = proj(NX.array(statelons2,'f'),NX.array(statelats))
+        xc3,yc3 = proj(NX.array(statelons3),NX.array(statelats))
         if projection == 'merc' or projection == 'mill': 
             yc2=yc
             yc3=yc
@@ -523,8 +521,8 @@ class Basemap:
         coastsegs = []
         coastsegtypes = []
         for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
-            xx = na.array([x for x,y in seg],'f')
-            yy = na.array([y for x,y in seg],'f')
+            xx = NX.array([x for x,y in seg],'f')
+            yy = NX.array([y for x,y in seg],'f')
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
@@ -538,8 +536,8 @@ class Basemap:
         self.coastsegtypes = coastsegtypes
         states = []
         for seg in self.statesegs:
-            xx = na.array([x for x,y in seg],'f')
-            yy = na.array([y for x,y in seg],'f')
+            xx = NX.array([x for x,y in seg],'f')
+            yy = NX.array([y for x,y in seg],'f')
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
@@ -550,8 +548,8 @@ class Basemap:
         self.statesegs = states
         countries = []
         for seg in self.cntrysegs:
-            xx = na.array([x for x,y in seg],'f')
-            yy = na.array([y for x,y in seg],'f')
+            xx = NX.array([x for x,y in seg],'f')
+            yy = NX.array([y for x,y in seg],'f')
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
@@ -565,14 +563,14 @@ class Basemap:
         coastsegs = []
         coastsegtypes = []
         for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
-            xx = na.array([x for x,y in seg],'f')
-            yy = na.array([y for x,y in seg],'f')
+            xx = NX.array([x for x,y in seg],'f')
+            yy = NX.array([y for x,y in seg],'f')
             xd = (xx[1:]-xx[0:-1])**2
             yd = (yy[1:]-yy[0:-1])**2
-            dist = na.sqrt(xd+yd)
+            dist = NX.sqrt(xd+yd)
             split = dist > 5000000.
-            if na.sum(split) and self.projection not in ['merc','cyl','mill']:
-               ind = (na.compress(split,squeeze(split*na.indices(xd.shape)))+1).tolist()
+            if NX.sum(split) and self.projection not in ['merc','cyl','mill']:
+               ind = (NX.compress(split,squeeze(split*NX.indices(xd.shape)))+1).tolist()
                iprev = 0
                ind.append(len(xd))
                for i in ind:
@@ -600,11 +598,11 @@ class Basemap:
                 y = poly[1]
                 lons = polyll[0]
                 lats = polyll[1]
-                mask = na.logical_or(na.greater(x,1.e20),na.greater(y,1.e20))
+                mask = NX.logical_or(NX.greater(x,1.e20),NX.greater(y,1.e20))
                 # replace values in polygons that are over the horizon.
                 xsave = False
                 ysave = False
-                if na.sum(mask):
+                if NX.sum(mask):
                     i1,i2 = self._splitseg(x,y,mask=mask)
                     for i,j in zip(i1,i2):
                         if i and j != len(x):
@@ -667,12 +665,12 @@ class Basemap:
                     lons.reverse()
                     lats.reverse()
                     xx,yy = self(lons,lats)
-                    xx = na.array(xx); yy = na.array(yy)
-                    xdist = na.fabs(xx[1:]-xx[0:-1])
+                    xx = NX.array(xx); yy = NX.array(yy)
+                    xdist = NX.fabs(xx[1:]-xx[0:-1])
                     if max(xdist) > 1000000: 
-                        nmin = na.argmax(xdist)+1
-                        xnew = na.zeros(len(xx),'d')
-                        ynew = na.zeros(len(xx),'d')
+                        nmin = NX.argmax(xdist)+1
+                        xnew = NX.zeros(len(xx),'d')
+                        ynew = NX.zeros(len(xx),'d')
                         lonsnew = len(xx)*[0]
                         latsnew = len(xx)*[0]
                         xnew[0:len(xx)-nmin] = xx[nmin:]
@@ -689,12 +687,12 @@ class Basemap:
                         x.reverse()
                         y.reverse()
                     # close polygon (add lines along left and right edges down to S pole)
-                    for phi in na.arange(-89.999,lats[0],0.1):
+                    for phi in NX.arange(-89.999,lats[0],0.1):
                         xx,yy = self(lon_0-179.99,phi)
                         xn.append(xx); yn.append(yy)
                     xn = xn+x
                     yn = yn+y
-                    for phi in na.arange(lats[-1],-89.999,-0.1):
+                    for phi in NX.arange(lats[-1],-89.999,-0.1):
                         xx,yy = self(lon_0+179.99,phi)
                         xn.append(xx); yn.append(yy)
                 # move points outside map to edge of map
@@ -715,7 +713,7 @@ class Basemap:
     def _splitseg(self,xx,yy,mask=None):
         """split segment up around missing values (outside projection limb)"""
         if mask is None:
-            mask = na.logical_or(na.greater_equal(xx,1.e20),na.greater_equal(yy,1.e20))
+            mask = NX.logical_or(NX.greater_equal(xx,1.e20),NX.greater_equal(yy,1.e20))
         i1=[]; i2=[]
         mprev = 1
         for i,m in enumerate(mask):
@@ -801,26 +799,26 @@ class Basemap:
         if self.projection == 'ortho': # circular region.
             r = (2.*self.rmajor+self.rminor)/3.
             r = r-1. # subtract 1 m to make sure it fits in plot region.
-            for az in na.arange(0.,2.*math.pi+dtheta,dtheta):
+            for az in NX.arange(0.,2.*math.pi+dtheta,dtheta):
                 x.append(r*math.cos(az)+0.5*self.xmax)
                 y.append(r*math.sin(az)+0.5*self.ymax)
         elif self.projection in ['moll','robin']:  # elliptical region.
             # left side
-            lats = na.arange(-89.9,89.9+dtheta,dtheta).tolist()
+            lats = NX.arange(-89.9,89.9+dtheta,dtheta).tolist()
             lons = len(lats)*[self.projparams['lon_0']-179.9]
             x,y = self(lons,lats)
             # top.
-            lons = na.arange(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179+dtheta,dtheta).tolist()
+            lons = NX.arange(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179+dtheta,dtheta).tolist()
             lats = len(lons)*[89.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
             # right side
-            lats = na.arange(89.9,-89.9-dtheta,-dtheta).tolist()
+            lats = NX.arange(89.9,-89.9-dtheta,-dtheta).tolist()
             lons = len(lats)*[self.projparams['lon_0']+179.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
             # bottom.
-            lons = na.arange(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180-dtheta,-dtheta).tolist()
+            lons = NX.arange(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180-dtheta,-dtheta).tolist()
             lats = len(lons)*[-89.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
@@ -853,18 +851,18 @@ class Basemap:
         axisbgc = ax.get_axis_bgcolor()
         np = 0
         for x,y in self.coastpolygons:
-            xa = na.array(x,'f')
-            ya = na.array(y,'f')
+            xa = NX.array(x,'f')
+            ya = NX.array(y,'f')
         # check to see if all four corners of domain in polygon (if so,
         # don't draw since it will just fill in the whole map).
             delx = 10; dely = 10
             if self.projection in ['cyl']:
                 delx = 0.1
                 dely = 0.1
-            test1 = na.fabs(xa-self.urcrnrx) < delx
-            test2 = na.fabs(xa-self.llcrnrx) < delx
-            test3 = na.fabs(ya-self.urcrnry) < dely
-            test4 = na.fabs(ya-self.llcrnry) < dely
+            test1 = NX.fabs(xa-self.urcrnrx) < delx
+            test2 = NX.fabs(xa-self.llcrnrx) < delx
+            test3 = NX.fabs(ya-self.urcrnry) < dely
+            test4 = NX.fabs(ya-self.llcrnry) < dely
             hasp1 = sum(test1*test3)
             hasp2 = sum(test2*test3)
             hasp4 = sum(test2*test4)
@@ -1072,7 +1070,7 @@ class Basemap:
  ax - axes instance (overrides default axes instance)
 
  additional keyword arguments control text properties for labels (see
-  na.text documentation)
+  NX.text documentation)
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -1096,9 +1094,9 @@ class Basemap:
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection in ['merc','cyl','mill','moll','robin']:
-            lons = na.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype('f')
+            lons = NX.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype('f')
         else:
-            lons = na.arange(0,360.1,0.1).astype('f')
+            lons = NX.arange(0,360.1,0.1).astype('f')
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = circles.tolist()
@@ -1112,24 +1110,24 @@ class Basemap:
         xdelta = 0.1*(self.xmax-self.xmin)
         ydelta = 0.1*(self.ymax-self.ymin)
         for circ in circlesl:
-            lats = circ*na.ones(len(lons),'f')
+            lats = circ*NX.ones(len(lons),'f')
             x,y = self(lons,lats)
             # remove points outside domain.
-            testx = na.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
-            x = na.compress(testx, x)
-            y = na.compress(testx, y)
-            testy = na.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
-            x = na.compress(testy, x)
-            y = na.compress(testy, y)
+            testx = NX.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
+            x = NX.compress(testx, x)
+            y = NX.compress(testx, y)
+            testy = NX.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
+            x = NX.compress(testy, x)
+            y = NX.compress(testy, y)
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
                 # (not necessary for mercator or cylindrical or miller).
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
-                dist = na.sqrt(xd+yd)
+                dist = NX.sqrt(xd+yd)
                 split = dist > 500000.
-                if na.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin']:
-                   ind = (na.compress(split,squeeze(split*na.indices(xd.shape)))+1).tolist()
+                if NX.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin']:
+                   ind = (NX.compress(split,squeeze(split*NX.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
                    iprev = 0
@@ -1169,13 +1167,13 @@ class Basemap:
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
                 if self.urcrnry < self.llcrnry:
-                    yy = self.llcrnry-dy*na.arange(nmax)-1
+                    yy = self.llcrnry-dy*NX.arange(nmax)-1
                 else:
-                    yy = self.llcrnry+dy*na.arange(nmax)+1
+                    yy = self.llcrnry+dy*NX.arange(nmax)+1
                 if side == 'l':
-                    lons,lats = self(self.llcrnrx*na.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.llcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
                 else:
-                    lons,lats = self(self.urcrnrx*na.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.urcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
@@ -1185,13 +1183,13 @@ class Basemap:
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 if self.urcrnrx < self.llcrnrx:
-                    xx = self.llcrnrx-dx*na.arange(nmax)-1
+                    xx = self.llcrnrx-dx*NX.arange(nmax)-1
                 else:
-                    xx = self.llcrnrx+dx*na.arange(nmax)+1
+                    xx = self.llcrnrx+dx*NX.arange(nmax)+1
                 if side == 'b':
-                    lons,lats = self(xx,self.llcrnry*na.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.llcrnry*NX.ones(xx.shape,'f'),inverse=True)
                 else:
-                    lons,lats = self(xx,self.urcrnry*na.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.urcrnry*NX.ones(xx.shape,'f'),inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
@@ -1210,7 +1208,7 @@ class Basemap:
                 except:
                     nr = -1
                 if lat<0:
-                    latlab = u'%g\N{DEGREE SIGN}S'%na.fabs(lat)
+                    latlab = u'%g\N{DEGREE SIGN}S'%NX.fabs(lat)
                 elif lat>0:
                     latlab = u'%g\N{DEGREE SIGN}N'%lat
                 else:
@@ -1270,7 +1268,7 @@ class Basemap:
  ax - axes instance (overrides default axes instance)
 
  additional keyword arguments control text properties for labels (see
-  na.text documentation)
+  NX.text documentation)
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -1294,30 +1292,30 @@ class Basemap:
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection not in ['merc','cyl','mill','moll','robin']:
-            lats = na.arange(-latmax,latmax+0.1,0.1).astype('f')
+            lats = NX.arange(-latmax,latmax+0.1,0.1).astype('f')
         else:
-            lats = na.arange(-90,90.1,0.1).astype('f')
+            lats = NX.arange(-90,90.1,0.1).astype('f')
         xdelta = 0.1*(self.xmax-self.xmin)
         ydelta = 0.1*(self.ymax-self.ymin)
         for merid in meridians:
-            lons = merid*na.ones(len(lats),'f')
+            lons = merid*NX.ones(len(lats),'f')
             x,y = self(lons,lats)
             # remove points outside domain.
-            testx = na.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
-            x = na.compress(testx, x)
-            y = na.compress(testx, y)
-            testy = na.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
-            x = na.compress(testy, x)
-            y = na.compress(testy, y)
+            testx = NX.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
+            x = NX.compress(testx, x)
+            y = NX.compress(testx, y)
+            testy = NX.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
+            x = NX.compress(testy, x)
+            y = NX.compress(testy, y)
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
                 # (not necessary for mercator or cylindrical or miller).
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
-                dist = na.sqrt(xd+yd)
+                dist = NX.sqrt(xd+yd)
                 split = dist > 500000.
-                if na.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin']:
-                   ind = (na.compress(split,squeeze(split*na.indices(xd.shape)))+1).tolist()
+                if NX.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin']:
+                   ind = (NX.compress(split,squeeze(split*NX.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
                    iprev = 0
@@ -1359,13 +1357,13 @@ class Basemap:
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
                 if self.urcrnry < self.llcrnry:
-                    yy = self.llcrnry-dy*na.arange(nmax)-1
+                    yy = self.llcrnry-dy*NX.arange(nmax)-1
                 else:
-                    yy = self.llcrnry+dy*na.arange(nmax)+1
+                    yy = self.llcrnry+dy*NX.arange(nmax)+1
                 if side == 'l':
-                    lons,lats = self(self.llcrnrx*na.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.llcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
                 else:
-                    lons,lats = self(self.urcrnrx*na.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.urcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
@@ -1375,13 +1373,13 @@ class Basemap:
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 if self.urcrnrx < self.llcrnrx:
-                    xx = self.llcrnrx-dx*na.arange(nmax)-1
+                    xx = self.llcrnrx-dx*NX.arange(nmax)-1
                 else:
-                    xx = self.llcrnrx+dx*na.arange(nmax)+1
+                    xx = self.llcrnrx+dx*NX.arange(nmax)+1
                 if side == 'b':
-                    lons,lats = self(xx,self.llcrnry*na.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.llcrnry*NX.ones(xx.shape,'f'),inverse=True)
                 else:
-                    lons,lats = self(xx,self.urcrnry*na.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.urcrnry*NX.ones(xx.shape,'f'),inverse=True)
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
@@ -1402,7 +1400,7 @@ class Basemap:
                 except:
                     nr = -1
                 if lon>180:
-                    lonlab = u'%g\N{DEGREE SIGN}W'%na.fabs(lon-360)
+                    lonlab = u'%g\N{DEGREE SIGN}W'%NX.fabs(lon-360)
                 elif lon<180 and lon != 0:
                     lonlab = u'%g\N{DEGREE SIGN}E'%lon
                 else:
@@ -1453,7 +1451,7 @@ class Basemap:
  dtheta - points on great circle computed every dtheta radians (default 0.02).
 
  Other keyword arguments (**kwargs) control plotting of great circle line,
- see na.plot documentation for details.
+ see NX.plot documentation for details.
 
  Note:  cannot handle situations in which the great circle intersects
  the edge of the map projection domain, and then re-enters the domain.
@@ -1520,13 +1518,13 @@ class Basemap:
         vin = interp(vin,lons,lats,lonsout,latsout,**kwargs)
         # rotate from geographic to map coordinates.
         delta = 0.1 # incement in latitude used to estimate derivatives.
-        xn,yn = self(lonsout,na.where(latsout+delta<90.,latsout+delta,latsout-delta))
-        dxdlat = na.where(latsout+delta<90.,(xn-x)/(latsout+delta),(x-xn)/(latsout+delta))
-        dydlat = na.where(latsout+delta<90.,(yn-y)/(latsout+delta),(y-yn)/(latsout+delta))
+        xn,yn = self(lonsout,NX.where(latsout+delta<90.,latsout+delta,latsout-delta))
+        dxdlat = NX.where(latsout+delta<90.,(xn-x)/(latsout+delta),(x-xn)/(latsout+delta))
+        dydlat = NX.where(latsout+delta<90.,(yn-y)/(latsout+delta),(y-yn)/(latsout+delta))
         # northangle is the angle between true north and the y axis.
-        northangle = na.arctan2(dxdlat,dydlat)
-        uout = uin*na.cos(northangle) + vin*na.sin(northangle)
-        vout = vin*na.cos(northangle) - uin*na.sin(northangle)
+        northangle = NX.arctan2(dxdlat,dydlat)
+        uout = uin*NX.cos(northangle) + vin*NX.sin(northangle)
+        vout = vin*NX.cos(northangle) - uin*NX.sin(northangle)
         if returnxy:
             return uout,vout,x,y
         else:
@@ -1556,13 +1554,13 @@ class Basemap:
         x, y = self(lons, lats)
         # rotate from geographic to map coordinates.
         delta = 0.1 # incement in latitude used to estimate derivatives.
-        xn,yn = self(lons,na.where(lats+delta<90.,lats+delta,lats-delta))
-        dxdlat = na.where(lats+delta<90.,(xn-x)/(lats+delta),(x-xn)/(lats+delta))
-        dydlat = na.where(lats+delta<90.,(yn-y)/(lats+delta),(y-yn)/(lats+delta))
+        xn,yn = self(lons,NX.where(lats+delta<90.,lats+delta,lats-delta))
+        dxdlat = NX.where(lats+delta<90.,(xn-x)/(lats+delta),(x-xn)/(lats+delta))
+        dydlat = NX.where(lats+delta<90.,(yn-y)/(lats+delta),(y-yn)/(lats+delta))
         # northangle is the angle between true north and the y axis.
-        northangle = na.arctan2(dxdlat,dydlat)
-        uout = uin*na.cos(northangle) + vin*na.sin(northangle)
-        vout = vin*na.cos(northangle) - uin*na.sin(northangle)
+        northangle = NX.arctan2(dxdlat,dydlat)
+        uout = uin*NX.cos(northangle) + vin*NX.sin(northangle)
+        vout = vin*NX.cos(northangle) - uin*NX.sin(northangle)
         if returnxy:
             return uout,vout,x,y
         else:
@@ -1588,7 +1586,7 @@ class Basemap:
 
     def scatter(self, *args, **kwargs):
         """
- Plot points with markers on the map (see na.scatter documentation).
+ Plot points with markers on the map (see NX.scatter documentation).
  extra keyword 'ax' can be used to override the default axes instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
@@ -1622,7 +1620,7 @@ class Basemap:
 
     def plot(self, *args, **kwargs):
         """
- Draw lines and/or markers on the map (see na.plot documentation).
+ Draw lines and/or markers on the map (see NX.plot documentation).
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
@@ -1656,7 +1654,7 @@ class Basemap:
 
     def imshow(self, *args, **kwargs):
         """
- Display an image over the map (see na.imshow documentation).
+ Display an image over the map (see NX.imshow documentation).
  extent and origin keywords set automatically so image will be drawn
  over map region.
  extra keyword 'ax' can be used to override the default axis instance.
@@ -1698,7 +1696,7 @@ class Basemap:
     def pcolor(self,x,y,data,**kwargs):
         """
  Make a pseudo-color plot over the map.
- see na.pcolor documentation for definition of **kwargs
+ see NX.pcolor documentation for definition of **kwargs
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
@@ -1714,8 +1712,8 @@ class Basemap:
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         # make x,y masked arrays 
         # (masked where data is outside of projection limb)
-        x = ma.masked_values(na.where(x > 1.e20,1.e20,x), 1.e20)
-        y = ma.masked_values(na.where(y > 1.e20,1.e20,y), 1.e20)
+        x = ma.masked_values(NX.where(x > 1.e20,1.e20,x), 1.e20)
+        y = ma.masked_values(NX.where(y > 1.e20,1.e20,y), 1.e20)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = popd(kwargs, 'hold', None)
@@ -1742,7 +1740,7 @@ class Basemap:
 
     def contour(self,x,y,data,*args,**kwargs):
         """
- Make a contour plot over the map (see na.contour documentation).
+ Make a contour plot over the map (see NX.contour documentation).
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
@@ -1756,10 +1754,10 @@ class Basemap:
         else:
             ax = popd(kwargs,'ax')
         # mask for points outside projection limb.
-        xymask = na.logical_or(na.greater(x,1.e20),na.greater(y,1.e20))
+        xymask = NX.logical_or(NX.greater(x,1.e20),NX.greater(y,1.e20))
         data = ma.asarray(data)
         # combine with data mask.
-        mask = na.logical_or(ma.getmaskarray(data),xymask)
+        mask = NX.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -1787,7 +1785,7 @@ class Basemap:
 
     def contourf(self,x,y,data,*args,**kwargs):
         """
- Make a filled contour plot over the map (see na.contourf documentation).
+ Make a filled contour plot over the map (see NX.contourf documentation).
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
@@ -1801,10 +1799,10 @@ class Basemap:
         else:
             ax = popd(kwargs,'ax')
         # mask for points outside projection limb.
-        xymask = na.logical_or(na.greater(x,1.e20),na.greater(y,1.e20))
+        xymask = NX.logical_or(NX.greater(x,1.e20),NX.greater(y,1.e20))
         data = ma.asarray(data)
         # combine with data mask.
-        mask = na.logical_or(ma.getmaskarray(data),xymask)
+        mask = NX.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -1838,7 +1836,7 @@ class Basemap:
  distance between grid points.   
 
  Extra keyword arguments (**kwargs) passed to quiver Axes method (see  
- na.quiver documentation for details).
+ NX.quiver documentation for details).
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
@@ -1875,6 +1873,17 @@ class Basemap:
         self.set_axes_limits(ax=ax)
         return ret
 
+def _tonumarray(arr):
+    """convert to a numarray"""
+    return na.reshape(na.array(arr.tolist(),arr.typecode()),arr.shape)
+
+def _tonumerix(arr):
+    """convert numarray to a numerix array"""
+    if rcParams['numerix'] != 'numarray':
+        return NX.reshape(NX.array(arr.tolist(),arr.typecode()),arr.shape)
+    else:
+        return arr
+
 def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest',cval=0.0,order=3):
     """
  dataout = interp(datain,lonsin,latsin,lonsout,latsout,mode='constant',cval=0.0,order=3)
@@ -1904,6 +1913,12 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
  for nearest neighbor interpolation (nd_image only allows 1-6) - if
  order=0 bounds checking is done even if checkbounds=False.
     """
+    # convert inputs to numarray.
+    datain = _tonumarray(datain)
+    lonsin = _tonumarray(lonsin)
+    latsin = _tonumarray(latsin)
+    lonsout = _tonumarray(lonsout)
+    latsout = _tonumarray(latsout)
     # lonsin and latsin must be monotonically increasing.
     if lonsin[-1]-lonsin[0] < 0 or latsin[-1]-latsin[0] < 0:
         raise ValueError, 'lonsin and latsin must be increasing!'
@@ -1951,14 +1966,13 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
     coords = [ycoords,xcoords]
     # interpolate to output grid using numarray.nd_image spline filter.
     if order:
-        return nd_image.map_coordinates(datain,coords,mode=mode,cval=cval,order=order)
+        dataout = nd_image.map_coordinates(datain,coords,mode=mode,cval=cval,order=order)
     else:
-        # nearest neighbor interpolation if order=0.
-        # uses index arrays, so first convert to numarray.
-        datatmp = na.array(datain,datain.typecode())
         xi = na.around(xcoords).astype('i')
         yi = na.around(ycoords).astype('i')
-        return datatmp[yi,xi]
+        dataout = datatmp[yi,xi]
+    # result is returned as a numerix array
+    return _tonumerix(dataout)
 
 def shiftgrid(lon0,datain,lonsin,start=True):
     """ 
@@ -1975,13 +1989,13 @@ def shiftgrid(lon0,datain,lonsin,start=True):
 
  returns dataout,lonsout (data and longitudes on shifted grid).
     """
-    if na.fabs(lonsin[-1]-lonsin[0]-360.) > 1.e-4:
+    if NX.fabs(lonsin[-1]-lonsin[0]-360.) > 1.e-4:
         raise ValueError, 'cyclic point not included'
     if lon0 < lonsin[0] or lon0 > lonsin[-1]:
         raise ValueError, 'lon0 outside of range of lonsin'
-    i0 = na.argsort(na.fabs(lonsin-lon0))[0]
-    dataout = na.zeros(datain.shape,datain.typecode())
-    lonsout = na.zeros(lonsin.shape,lonsin.typecode())
+    i0 = NX.argsort(NX.fabs(lonsin-lon0))[0]
+    dataout = NX.zeros(datain.shape,datain.typecode())
+    lonsout = NX.zeros(lonsin.shape,lonsin.typecode())
     if start:
         lonsout[0:len(lonsin)-i0] = lonsin[i0:]
     else:
@@ -2000,10 +2014,10 @@ def addcyclic(arrin,lonsin):
    """
    nlats = arrin.shape[0]
    nlons = arrin.shape[1]
-   arrout  = na.zeros((nlats,nlons+1),arrin.typecode())
+   arrout  = NX.zeros((nlats,nlons+1),arrin.typecode())
    arrout[:,0:nlons] = arrin[:,:]
    arrout[:,nlons] = arrin[:,0]
-   lonsout = na.zeros(nlons+1,lonsin.typecode())
+   lonsout = NX.zeros(nlons+1,lonsin.typecode())
    lonsout[0:nlons] = lonsin[:]
    lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
    return arrout,lonsout
