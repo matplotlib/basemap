@@ -1,10 +1,11 @@
 20050907:  version 0.6.3:
-           ~2-3x speedup for proj4 wrapper (now uses buffer protocol
+           ~4x speedup for proj4 wrapper (now uses buffer protocol
            to access data in Numeric or numarray arrays).
            This means that class instantiation using resolution='i'
-           is nearly twice as fast.
+           is nearly twice as fast (there is still a lot of additonal
+           overhead in I/O and processing of coastline polygons).
            Should now handle Numeric to numarray conversions internally,
-		   so removed warning when rcParams['numerix'] != 'numarray'.
+           so removed warning when rcParams['numerix'] != 'numarray'.
 20050901:  version 0.6.2:
            Warning issued if numerix = 'Numeric' (a user reported
            crashes due to botched Numeric --> numarray conversions).
