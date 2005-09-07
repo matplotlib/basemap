@@ -53,11 +53,6 @@ data files (gshhs*.txt, countries*.txt and states*.txt) are installed.
 Note: for this to work, matplotlib must also be installed in the same place
 (via python setup.py install --home=<dir>).
 
-Basemap requires that the value of numerix be set to 'numarray'.
-This can either be done by editing your matplotlibrc file, or
-by using the rcParams function at the top of your scripts 
-(from matplotlib import rcParams; rcParams['numerix']=='numarray').
-
 **Contact**
 
 Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>

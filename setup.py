@@ -77,9 +77,3 @@ setup(
   packages          = packages,
   package_dir       = package_dirs,
   ext_modules       = extensions)
-
-from matplotlib import rcParams
-if rcParams['numerix'] == 'Numeric':
-    print """WARNING:
-Basemap requires that 'numerix' by set to 'numarray', either
-by editing the matplotlibrc file, or by using the rcParams function."""
