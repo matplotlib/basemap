@@ -33,10 +33,10 @@ Contact:  Jeffrey Whitaker <jeffrey.s.whitaker@noaa.gov
 import math, copy, array
 
 cdef double _rad2dg, _dg2rad
-cdef int doublesize
+cdef int _doublesize
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
-doublesize = sizeof(double)
+_doublesize = sizeof(double)
 
 cdef extern from "proj_api.h":
     ctypedef double *projPJ
@@ -129,7 +129,7 @@ cdef class Proj:
         # process data in buffer (for Numeric, numarray and python arrays).
             if buflenx != bufleny:
                 raise RuntimeError("Buffer lengths not the same")
-            ndim = buflenx/doublesize
+            ndim = buflenx/_doublesize
 
             lonsdata = <double *>londata
             latsdata = <double *>latdata
@@ -186,7 +186,7 @@ cdef class Proj:
 
             if buflenx != bufleny:
                 raise RuntimeError("Buffer lengths not the same")
-            ndim = buflenx/doublesize
+            ndim = buflenx/_doublesize
 
             xdatab = <double *>xdata
             ydatab = <double *>ydata
@@ -252,9 +252,25 @@ cdef class Proj:
         # make copies of inputs.
         # (If buffer api is supported, the data buffer of
         # the inputs will be modified in place.)
-        inx = copy.copy(lon); iny = copy.copy(lat)
+        # The buffer api will be used for arrays 
+        # (regular python, Numeric and numarray).
+        try:
+            inx = copy.copy(lon); iny = copy.copy(lat)
+            convertedtolist = False
+        # if copy fails (as it will with python arrays in Python 2.3),
+        # put data in lists.
+        except:
+            inx = lon.tolist(); iny = lat.tolist()
+            convertedtolist = True
+        # call proj4 functions.
         if inverse:
             outx, outy = self._inv(inx, iny)
         else:
             outx, outy = self._fwd(inx, iny)
+        # if input arrays were converted to lists, convert output
+        # lists back to arrays.
+        if convertedtolist:
+            outx = array.array(lon.typecode,outx)
+            outy = array.array(lat.typecode,outy)
+        # all done.
         return outx,outy
