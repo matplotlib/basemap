@@ -33,8 +33,10 @@ Contact:  Jeffrey Whitaker <jeffrey.s.whitaker@noaa.gov
 import math, copy, array
 
 cdef double _rad2dg, _dg2rad
+cdef int doublesize
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
+doublesize = sizeof(double)
 
 cdef extern from "proj_api.h":
     ctypedef double *projPJ
@@ -127,7 +129,7 @@ cdef class Proj:
         # process data in buffer (for Numeric, numarray and python arrays).
             if buflenx != bufleny:
                 raise RuntimeError("Buffer lengths not the same")
-            ndim = buflenx/8
+            ndim = buflenx/doublesize
 
             lonsdata = <double *>londata
             latsdata = <double *>latdata
@@ -184,7 +186,7 @@ cdef class Proj:
 
             if buflenx != bufleny:
                 raise RuntimeError("Buffer lengths not the same")
-            ndim = buflenx/8
+            ndim = buflenx/doublesize
 
             xdatab = <double *>xdata
             ydatab = <double *>ydata
