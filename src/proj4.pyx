@@ -1,7 +1,36 @@
-"""Pyrex code to provide python interfaces to PROJ.4 functions.
-Make changes to this file, not the c-wrappers that Pyrex generates."""
+"""
+Pyrex wrapper to provide python interfaces to 
+PROJ.4 (http://proj.maptools.org) functions.
 
-import math
+Performs cartographic transformations (converts from longitude,latitude
+to native map projection x,y coordinates and vice versa).
+
+Example usage:
+
+>>> from pyproj import Proj
+>>> params = {}
+>>> params['proj'] = 'utm'
+>>> params['zone'] = 10
+>>> p = Proj(params)
+>>> x,y = p(-120.108, 34.36116666)
+>>> print x,y
+>>> print p(x,y,inverse=True)
+765975.641091 3805993.13406
+(-120.10799999995851, 34.361166659972767)
+
+Input coordinates can be given as python arrays, sequences, scalars
+or Numeric/numarray arrays. Optimized for Numeric/numarray arrays.
+
+Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.2.tar.gz
+
+See pyproj.Proj.__doc__ for more documentation.
+
+Contact:  Jeffrey Whitaker <jeffrey.s.whitaker@noaa.gov
+"""
+
+# Make changes to this file, not the c-wrappers that Pyrex generates.
+
+import math, copy, array
 
 cdef double _rad2dg, _dg2rad
 _dg2rad = math.radians(1.)
@@ -16,56 +45,28 @@ cdef extern from "proj_api.h":
     projUV pj_fwd(projUV, projPJ)
     projUV pj_inv(projUV, projPJ)
 
-# get 32 bit integer type
-cdef extern from "inttypes.h":
-  ctypedef long int32_t
-
-# Functions from numarray API
-cdef extern from "numarray/libnumarray.h":
-  ctypedef int32_t maybelong
-  # numarray types.
-  ctypedef enum NumarrayType:
-    tAny
-    tBool       
-    tInt8
-    tUInt8
-    tInt16
-    tUInt16
-    tInt32
-    tUInt32
-    tInt64
-    tUInt64
-    tFloat32
-    tFloat64
-    tComplex32
-    tComplex64
-    tObject
-    tDefault
-    tLong
-  cdef struct PyArray_Descr:
-    int type_num # PyArray_TYPES
-    int elsize   # bytes for 1 element
-    char type    # One of "cb1silfdFD "  Object array not supported
-    # function pointers omitted
-  ctypedef class numarray._numarray._numarray [object PyArrayObject]:
-     cdef char *data
-     cdef int nd
-     cdef maybelong *dimensions
-     cdef maybelong *strides
-     cdef object base
-     cdef PyArray_Descr *descr
-     cdef int flags
-     cdef maybelong *_dimensions
-     cdef maybelong *_strides
-  # creates a new numeric object from a data pointer.
-  _numarray NA_vNewArray(void *, NumarrayType, int, maybelong *)
-  # The numarray initialization funtion
-  double import_libnumarray()
-    
-# this function must be called to initialize the numarray C API.
-import_libnumarray()
+cdef extern from "Python.h":
+  int PyObject_AsReadBuffer(object, void **rbuf, int *len)
 
 cdef class Proj:
+    """
+ performs cartographic transformations (converts from longitude,latitude
+ to native map projection x,y coordinates and vice versa) using proj 
+ (http://proj.maptools.org/)
+
+ A Proj class instance is initialized with a dictionary containing 
+ proj map projection control parameter key/value pairs.
+ See the proj documentation (http://www.remotesensing.org/proj/)
+ for details.
+
+ Calling a Proj class instance with the arguments lon, lat will
+ convert lon/lat (in degrees) to x/y native map projection 
+ coordinates (in meters).  If optional keyword 'inverse' is
+ True (default is False), the inverse transformation from x/y
+ to lon/lat is performed. Works with numarray or Numeric arrays,
+ python arrays, sequences or scalars (fastest for arrays containing
+ doubles).
+    """
 
     cdef char *pjinitstring
     cdef double *projpj
@@ -102,120 +103,156 @@ cdef class Proj:
         """special method that allows projlib.Proj instance to be pickled"""
         return (self.__class__,(self.projparams,))
 
-    def fwd_array(self, _numarray lons, _numarray lats):
+    def _fwd(self, lons, lats):
         """
  forward transformation - lons,lats to x,y.
- x, y, lons, lats are numarrays.
         """
         cdef projUV projxyout, projlonlatin
-        cdef int ndim, i
+        cdef int ndim, i, buflenx, bufleny
         cdef double u, v
         cdef double *lonsdata, *latsdata
-        ndim = 1
-        for i from 0 <= i < lons.nd:
-            ndim = ndim*lons.dimensions[i]
-        lonsdata = <double *>lons.data
-        latsdata = <double *>lats.data
-        for i from 0 <= i < ndim:
-            projlonlatin.u = _dg2rad*lonsdata[i]
-            projlonlatin.v = _dg2rad*latsdata[i]
-            projxyout = pj_fwd(projlonlatin,self.projpj)
-            lonsdata[i] = projxyout.u
-            latsdata[i] = projxyout.v
-        x = NA_vNewArray(<void *>lonsdata, tFloat64, lons.nd, lons.dimensions)
-        y = NA_vNewArray(<void *>latsdata, tFloat64, lats.nd, lats.dimensions)
-        return x,y
-
-    def fwd(self, lons, lats):
-        """
- forward transformation - lons,lats to x,y.
- x, y, lons, lats can be scalars, sequences or numarrays.
-        """
-        cdef projUV projxyout, projlonlatin
-        cdef double u, v
-        cdef int i, ndim
+        cdef void *londata, *latdata
+        
         try:
-            shape = lons.shape
-            isnumarray = True
+            # if buffer api is supported, get pointer to data buffers.
+            if PyObject_AsReadBuffer(lons, &londata, &buflenx) <> 0:
+                raise RuntimeError
+            if PyObject_AsReadBuffer(lats, &latdata, &bufleny) <> 0:
+                raise RuntimeError
+            hasbufapi= True
         except:
-            isnumarray = False
-        if isnumarray:
-            if lons.typecode() != 'd' or lats.typecode != 'd':
-                lons = lons.astype('d'); lats = lats.astype('d')
-            x,y = self.fwd_array(lons,lats)
-        else:
-            try: # inputs are lists
-                ndim = len(lons)
-                x = []; y = []
-                for i from 0 <= i < ndim:
-                    projlonlatin.u = _dg2rad*lons[i]
-                    projlonlatin.v = _dg2rad*lats[i]
-                    projxyout = pj_fwd(projlonlatin,self.projpj)
-                    x.append(projxyout.u)
-                    y.append(projxyout.v)
-            except: # inputs are scalars
-                projlonlatin.u = lons*_dg2rad
-                projlonlatin.v = lats*_dg2rad
+            hasbufapi = False
+        
+        if hasbufapi:
+        # process data in buffer (for Numeric, numarray and python arrays).
+            if buflenx != bufleny:
+                raise RuntimeError("Buffer lengths not the same")
+            ndim = buflenx/8
+
+            lonsdata = <double *>londata
+            latsdata = <double *>latdata
+
+            for i from 0 <= i < ndim:
+                projlonlatin.u = _dg2rad*lonsdata[i]
+                projlonlatin.v = _dg2rad*latsdata[i]
                 projxyout = pj_fwd(projlonlatin,self.projpj)
-                x = projxyout.u
-                y = projxyout.v
-        return x,y
-
-    def inv_array(self, _numarray x, _numarray y):
-        """
- inverse transformation - x,y to lons,lats
- x, y, lons, lats are numarrays.
-        """
-        cdef projUV projxyin, projlonlatout
-        cdef int ndim, i
-        cdef double u, v
-        cdef double *xdata, *ydata
-        ndim = 1
-        for i from 0 <= i < x.nd:
-            ndim = ndim*x.dimensions[i]
-        xdata = <double *>x.data
-        ydata = <double *>y.data
-        for i from 0 <= i < ndim:
-            projxyin.u = xdata[i]
-            projxyin.v = ydata[i]
-            projlonlatout = pj_inv(projxyin,self.projpj)
-            xdata[i] = _rad2dg*projlonlatout.u
-            ydata[i] = _rad2dg*projlonlatout.v
-        lons = NA_vNewArray(<void *>xdata, tFloat64, x.nd, x.dimensions)
-        lats = NA_vNewArray(<void *>ydata, tFloat64, y.nd, y.dimensions)
-        return lons, lats
-
-    def inv(self, x, y):
-        """
- inverse transformation - x,y to lons,lats
- x, y, lons, lats can be scalars, sequences or numarrays.
-        """
-        cdef projUV projxyin, projlonlatout
-        cdef double u, v
-        cdef int i, ndim
-        try:
-            shape = x.shape
-            isnumarray = True
-        except:
-            isnumarray = False
-        if isnumarray:
-            if x.typecode() != 'd' or y.typecode != 'd':
-                x = x.astype('d'); y = y.astype('d')
-            lons, lats = self.inv_array(x,y)
+                lonsdata[i] = projxyout.u
+                latsdata[i] = projxyout.v
+            return lons, lats
         else:
-            try: # inputs are lists
-                ndim = len(x)
-                lons = []; lats = []
-                for i from 0 <= i < ndim:
-                    projxyin.u = x[i]
-                    projxyin.v = y[i]
+                try: # inputs are sequences.
+                    ndim = len(lons)
+                    if len(lats) != ndim:
+                        raise RuntimeError("sequences must have the same number of elements")
+                    x = []; y = []
+                    for i from 0 <= i < ndim:
+                        projlonlatin.u = _dg2rad*lons[i]
+                        projlonlatin.v = _dg2rad*lats[i]
+                        projxyout = pj_fwd(projlonlatin,self.projpj)
+                        x.append(projxyout.u)
+                        y.append(projxyout.v)
+                except: # inputs are scalars.
+                    projlonlatin.u = lons*_dg2rad
+                    projlonlatin.v = lats*_dg2rad
+                    projxyout = pj_fwd(projlonlatin,self.projpj)
+                    x = projxyout.u
+                    y = projxyout.v
+                return x,y
+
+    def _inv(self, object x, object y):
+        """
+ inverse transformation - x,y to lons,lats
+        """
+        cdef projUV projxyin, projlonlatout
+        cdef int ndim, i, buflenx, bufleny
+        cdef double u, v
+        cdef void *xdata, *ydata
+        cdef double *xdatab, *ydatab
+
+        try:
+            # if buffer api is supported, get pointer to data buffers.
+            if PyObject_AsReadBuffer(x, &xdata, &buflenx) <> 0:
+                raise RuntimeError
+            if PyObject_AsReadBuffer(y, &ydata, &bufleny) <> 0:
+                raise RuntimeError
+            hasbufapi= True
+        except:
+            hasbufapi = False
+        
+        if hasbufapi:
+        # process data in buffer (for Numeric, numarray and python arrays).
+
+            if buflenx != bufleny:
+                raise RuntimeError("Buffer lengths not the same")
+            ndim = buflenx/8
+
+            xdatab = <double *>xdata
+            ydatab = <double *>ydata
+
+            for i from 0 <= i < ndim:
+                projxyin.u = xdatab[i]
+                projxyin.v = ydatab[i]
+                projlonlatout = pj_inv(projxyin,self.projpj)
+                xdatab[i] = _rad2dg*projlonlatout.u
+                ydatab[i] = _rad2dg*projlonlatout.v
+            return x,y
+                
+        else:
+                try: # inputs are sequences.
+                    ndim = len(x)
+                    if len(y) != ndim:
+                        raise RuntimeError("sequences must have the same number of elements")
+                    lons = []; lats = []
+                    for i from 0 <= i < ndim:
+                        projxyin.u = x[i]
+                        projxyin.v = y[i]
+                        projlonlatout = pj_inv(projxyin, self.projpj)
+                        lons.append(projlonlatout.u*_rad2dg)
+                        lats.append(projlonlatout.v*_rad2dg)
+                except: # inputs are scalars.
+                    projxyin.u = x
+                    projxyin.v = y
                     projlonlatout = pj_inv(projxyin, self.projpj)
-                    lons.append(projlonlatout.u*_rad2dg)
-                    lats.append(projlonlatout.v*_rad2dg)
-            except: # inputs are scalars.
-                projxyin.u = x
-                projxyin.v = y
-                projlonlatout = pj_inv(projxyin, self.projpj)
-                lons = projlonlatout.u*_rad2dg
-                lats = projlonlatout.v*_rad2dg
-        return lons,lats
+                    lons = projlonlatout.u*_rad2dg
+                    lats = projlonlatout.v*_rad2dg
+                return lons, lats
+
+
+    def __call__(self,lon,lat,inverse=False):
+        """
+ Calling a Proj class instance with the arguments lon, lat will
+ convert lon/lat (in degrees) to x/y native map projection 
+ coordinates (in meters).  If optional keyword 'inverse' is
+ True (default is False), the inverse transformation from x/y
+ to lon/lat is performed.
+
+ Inputs should be doubles (they will be cast to doubles
+ if they are not).
+
+ Works with Numeric or numarray arrays, python sequences or scalars
+ (fastest for arrays containing doubles).
+        """
+        try:
+            # typecast Numeric/numarray arrays to double.
+            if lon.typecode() != 'd':
+                lon = lon.astype('d')
+            if lat.typecode() != 'd':
+                lat = lat.astype('d')
+        except:
+            # typecast regular python arrays to double
+            try:
+                if lon.typecode != 'd':
+                    lon = array.array('d',lon)
+                if lat.typecode != 'd':
+                    lat = array.array('d',lat)
+            except:
+                pass
+        # make copies of inputs.
+        # (If buffer api is supported, the data buffer of
+        # the inputs will be modified in place.)
+        inx = copy.copy(lon); iny = copy.copy(lat)
+        if inverse:
+            outx, outy = self._inv(inx, iny)
+        else:
+            outx, outy = self._fwd(inx, iny)
+        return outx,outy
