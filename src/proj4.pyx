@@ -21,7 +21,7 @@ Example usage:
 Input coordinates can be given as python arrays, sequences, scalars
 or Numeric/numarray arrays. Optimized for Numeric/numarray arrays.
 
-Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.2.tar.gz
+Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.3.tar.gz
 
 See pyproj.Proj.__doc__ for more documentation.
 
@@ -70,9 +70,9 @@ cdef class Proj:
  doubles).
     """
 
-    cdef char *pjinitstring
     cdef double *projpj
     cdef object projparams
+    cdef char *pjinitstring
 
     def __new__(self, projparams):
         """
@@ -114,7 +114,6 @@ cdef class Proj:
         cdef double u, v
         cdef double *lonsdata, *latsdata
         cdef void *londata, *latdata
-        
         try:
             # if buffer api is supported, get pointer to data buffers.
             if PyObject_AsReadBuffer(lons, &londata, &buflenx) <> 0:
@@ -124,16 +123,13 @@ cdef class Proj:
             hasbufapi= True
         except:
             hasbufapi = False
-        
         if hasbufapi:
         # process data in buffer (for Numeric, numarray and python arrays).
             if buflenx != bufleny:
                 raise RuntimeError("Buffer lengths not the same")
             ndim = buflenx/_doublesize
-
             lonsdata = <double *>londata
             latsdata = <double *>latdata
-
             for i from 0 <= i < ndim:
                 projlonlatin.u = _dg2rad*lonsdata[i]
                 projlonlatin.v = _dg2rad*latsdata[i]
@@ -142,24 +138,24 @@ cdef class Proj:
                 latsdata[i] = projxyout.v
             return lons, lats
         else:
-                try: # inputs are sequences.
-                    ndim = len(lons)
-                    if len(lats) != ndim:
-                        raise RuntimeError("sequences must have the same number of elements")
-                    x = []; y = []
-                    for i from 0 <= i < ndim:
-                        projlonlatin.u = _dg2rad*lons[i]
-                        projlonlatin.v = _dg2rad*lats[i]
-                        projxyout = pj_fwd(projlonlatin,self.projpj)
-                        x.append(projxyout.u)
-                        y.append(projxyout.v)
-                except: # inputs are scalars.
-                    projlonlatin.u = lons*_dg2rad
-                    projlonlatin.v = lats*_dg2rad
+            try: # inputs are sequences.
+                ndim = len(lons)
+                if len(lats) != ndim:
+                    raise RuntimeError("sequences must have the same number of elements")
+                x = []; y = []
+                for i from 0 <= i < ndim:
+                    projlonlatin.u = _dg2rad*lons[i]
+                    projlonlatin.v = _dg2rad*lats[i]
                     projxyout = pj_fwd(projlonlatin,self.projpj)
-                    x = projxyout.u
-                    y = projxyout.v
-                return x,y
+                    x.append(projxyout.u)
+                    y.append(projxyout.v)
+            except: # inputs are scalars.
+                projlonlatin.u = lons*_dg2rad
+                projlonlatin.v = lats*_dg2rad
+                projxyout = pj_fwd(projlonlatin,self.projpj)
+                x = projxyout.u
+                y = projxyout.v
+            return x,y
 
     def _inv(self, object x, object y):
         """
@@ -170,7 +166,6 @@ cdef class Proj:
         cdef double u, v
         cdef void *xdata, *ydata
         cdef double *xdatab, *ydatab
-
         try:
             # if buffer api is supported, get pointer to data buffers.
             if PyObject_AsReadBuffer(x, &xdata, &buflenx) <> 0:
@@ -180,10 +175,8 @@ cdef class Proj:
             hasbufapi= True
         except:
             hasbufapi = False
-        
         if hasbufapi:
         # process data in buffer (for Numeric, numarray and python arrays).
-
             if buflenx != bufleny:
                 raise RuntimeError("Buffer lengths not the same")
             ndim = buflenx/_doublesize
@@ -198,26 +191,25 @@ cdef class Proj:
                 xdatab[i] = _rad2dg*projlonlatout.u
                 ydatab[i] = _rad2dg*projlonlatout.v
             return x,y
-                
         else:
-                try: # inputs are sequences.
-                    ndim = len(x)
-                    if len(y) != ndim:
-                        raise RuntimeError("sequences must have the same number of elements")
-                    lons = []; lats = []
-                    for i from 0 <= i < ndim:
-                        projxyin.u = x[i]
-                        projxyin.v = y[i]
-                        projlonlatout = pj_inv(projxyin, self.projpj)
-                        lons.append(projlonlatout.u*_rad2dg)
-                        lats.append(projlonlatout.v*_rad2dg)
-                except: # inputs are scalars.
-                    projxyin.u = x
-                    projxyin.v = y
+            try: # inputs are sequences.
+                ndim = len(x)
+                if len(y) != ndim:
+                    raise RuntimeError("sequences must have the same number of elements")
+                lons = []; lats = []
+                for i from 0 <= i < ndim:
+                    projxyin.u = x[i]
+                    projxyin.v = y[i]
                     projlonlatout = pj_inv(projxyin, self.projpj)
-                    lons = projlonlatout.u*_rad2dg
-                    lats = projlonlatout.v*_rad2dg
-                return lons, lats
+                    lons.append(projlonlatout.u*_rad2dg)
+                    lats.append(projlonlatout.v*_rad2dg)
+            except: # inputs are scalars.
+                projxyin.u = x
+                projxyin.v = y
+                projlonlatout = pj_inv(projxyin, self.projpj)
+                lons = projlonlatout.u*_rad2dg
+                lats = projlonlatout.v*_rad2dg
+            return lons, lats
 
 
     def __call__(self,lon,lat,inverse=False):
