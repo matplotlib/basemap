@@ -1,5 +1,5 @@
-Q: It takes forever to make a plot with the 'intermediate' resolution
-coastlines, how can I speed it up?
+Q: It takes forever to make a plot with the 'intermediate' or
+'high' resolution coastlines, how can I speed it up?
 
 A: Basemap is not very intelligent right now in the way that it processes
 coastline data - it processes the data for the whole world regardless of
