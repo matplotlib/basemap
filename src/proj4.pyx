@@ -19,7 +19,8 @@ Example usage:
 (-120.10799999995851, 34.361166659972767)
 
 Input coordinates can be given as python arrays, sequences, scalars
-or Numeric/numarray arrays. Optimized for Numeric/numarray arrays.
+or Numeric/numarray arrays. Optimized for objects that support
+the Python buffer protocol (regular python, Numeric and numarray arrays).
 
 Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.3.tar.gz
 
@@ -48,7 +49,7 @@ cdef extern from "proj_api.h":
     projUV pj_inv(projUV, projPJ)
 
 cdef extern from "Python.h":
-  int PyObject_AsReadBuffer(object, void **rbuf, int *len)
+  int PyObject_AsWriteBuffer(object, void **rbuf, int *len)
 
 cdef class Proj:
     """
@@ -58,8 +59,8 @@ cdef class Proj:
 
  A Proj class instance is initialized with a dictionary containing 
  proj map projection control parameter key/value pairs.
- See the proj documentation (http://www.remotesensing.org/proj/)
- for details.
+ See http://www.remotesensing.org/geotiff/proj_list and the
+ proj man page for details.
 
  Calling a Proj class instance with the arguments lon, lat will
  convert lon/lat (in degrees) to x/y native map projection 
@@ -116,9 +117,9 @@ cdef class Proj:
         cdef void *londata, *latdata
         try:
             # if buffer api is supported, get pointer to data buffers.
-            if PyObject_AsReadBuffer(lons, &londata, &buflenx) <> 0:
+            if PyObject_AsWriteBuffer(lons, &londata, &buflenx) <> 0:
                 raise RuntimeError
-            if PyObject_AsReadBuffer(lats, &latdata, &bufleny) <> 0:
+            if PyObject_AsWriteBuffer(lats, &latdata, &bufleny) <> 0:
                 raise RuntimeError
             hasbufapi= True
         except:
@@ -141,7 +142,7 @@ cdef class Proj:
             try: # inputs are sequences.
                 ndim = len(lons)
                 if len(lats) != ndim:
-                    raise RuntimeError("sequences must have the same number of elements")
+                    raise RuntimeError("Sequences must have the same number of elements")
                 x = []; y = []
                 for i from 0 <= i < ndim:
                     projlonlatin.u = _dg2rad*lons[i]
@@ -168,9 +169,9 @@ cdef class Proj:
         cdef double *xdatab, *ydatab
         try:
             # if buffer api is supported, get pointer to data buffers.
-            if PyObject_AsReadBuffer(x, &xdata, &buflenx) <> 0:
+            if PyObject_AsWriteBuffer(x, &xdata, &buflenx) <> 0:
                 raise RuntimeError
-            if PyObject_AsReadBuffer(y, &ydata, &bufleny) <> 0:
+            if PyObject_AsWriteBuffer(y, &ydata, &bufleny) <> 0:
                 raise RuntimeError
             hasbufapi= True
         except:
@@ -195,7 +196,7 @@ cdef class Proj:
             try: # inputs are sequences.
                 ndim = len(x)
                 if len(y) != ndim:
-                    raise RuntimeError("sequences must have the same number of elements")
+                    raise RuntimeError("Sequences must have the same number of elements")
                 lons = []; lats = []
                 for i from 0 <= i < ndim:
                     projxyin.u = x[i]
@@ -221,7 +222,7 @@ cdef class Proj:
  to lon/lat is performed.
 
  Inputs should be doubles (they will be cast to doubles
- if they are not).
+ if they are not, causing a slight performance hit).
 
  Works with Numeric or numarray arrays, python sequences or scalars
  (fastest for arrays containing doubles).
@@ -242,15 +243,16 @@ cdef class Proj:
             except:
                 pass
         # make copies of inputs.
-        # (If buffer api is supported, the data buffer of
-        # the inputs will be modified in place.)
-        # The buffer api will be used for arrays 
+        # (If the buffer API is supported, the data buffer of
+        # will be modified in place.)
+        # The buffer API will be used for arrays 
         # (regular python, Numeric and numarray).
         try:
             inx = copy.copy(lon); iny = copy.copy(lat)
             convertedtolist = False
         # if copy fails (as it will with python arrays in Python 2.3),
-        # put data in lists.
+        # put data in lists (this will be slower since buffer API
+        # will not be used to access the data).
         except:
             inx = lon.tolist(); iny = lat.tolist()
             convertedtolist = True
