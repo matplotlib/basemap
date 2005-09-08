@@ -12,6 +12,8 @@ fig.add_axes([0.1,0.1,0.8,0.8])
 # draw coastlines and fill continents.
 m.drawcoastlines()
 m.fillcontinents()
+# draw political boundaries.
+m.drawcountries()
 # draw parallels
 circles = arange(50,60,1).tolist()
 m.drawparallels(circles,labels=[1,1,0,0])
@@ -31,6 +33,8 @@ fig.add_axes([0.1,0.1,0.8,0.8])
 # draw coastlines and fill continents.
 m.drawcoastlines()
 m.fillcontinents()
+# draw political boundaries.
+m.drawcountries()
 # draw parallels
 m.drawparallels(circles,labels=[1,1,0,0])
 # draw meridians
@@ -53,6 +57,8 @@ fig.add_axes([0.1,0.1,0.8,0.8])
 # draw coastlines and fill continents.
 m.drawcoastlines()
 m.fillcontinents()
+# draw political boundaries.
+m.drawcountries()
 # draw parallels
 m.drawparallels(circles,labels=[1,1,0,0])
 # draw meridians
@@ -71,6 +77,8 @@ fig.add_axes([0.1,0.1,0.8,0.8])
 # draw coastlines and fill continents.
 m2.drawcoastlines()
 m2.fillcontinents()
+# draw political boundaries.
+m2.drawcountries()
 # draw parallels
 m2.drawparallels(circles,labels=[1,1,0,0])
 # draw meridians
