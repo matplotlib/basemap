@@ -1,11 +1,17 @@
 20050907:  version 0.6.3:
            ~4x speedup for proj4 wrapper (now uses buffer protocol
            to access data in Numeric or numarray arrays).
-           This means that class instantiation using resolution='i'
-           is nearly twice as fast (there is still a lot of additonal
-           overhead in I/O and processing of coastline polygons).
            Should now handle Numeric to numarray conversions internally,
            so removed warning when rcParams['numerix'] != 'numarray'.
+           Added 'h' (high) resolution boundary data.  
+           Fixed errors in 'i' dataset when filling antarctica.
+           Removed shoreline boundaries from country and state
+           boundary datasets (they are already in the coastline dataset).
+           Changed default area_thresh so it depends on coastline
+           resolution (10000 for 'c' declining to 10 for 'h').
+           Boundary datasets now installed in a separate package.
+           The net result of these changes is that class instantiation
+           using resolution='i' is about 3 times faster.
 20050901:  version 0.6.2:
            Warning issued if numerix = 'Numeric' (a user reported
            crashes due to botched Numeric --> numarray conversions).

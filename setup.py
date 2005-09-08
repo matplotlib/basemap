@@ -49,8 +49,6 @@ except:
                         include_dirs = ["pyshapelib/shapelib"],
                         define_macros = dbf_macros()) ]
 
-datadir ='share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])
-
 setup(
   name              = "basemap",
   version           = "0.6.3",
@@ -64,7 +62,6 @@ setup(
   download_url      = "http://sourceforge.net/projects/matplotlib",
   author            = "Jeff Whitaker",
   author_email      = "jeffrey.s.whitaker@noaa.gov",
-  data_files        = [(datadir,['data/countries_c.txt','data/states_c.txt','data/countries_l.txt','data/states_l.txt','data/gshhs_c.txt','data/gshhs_l.txt','data/countries_i.txt','data/states_i.txt','data/gshhs_i.txt'])],
   platforms         = ["any"],
   license           = ["OSI Approved"],
   keywords          = ["python","plotting","plots","graphs","charts","GIS","mapping","map projections","maps"],
