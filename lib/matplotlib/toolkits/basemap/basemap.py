@@ -25,7 +25,7 @@ import dbflib
 # BASEMAP_DATA_PATH env var not set.
 _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
-   _datadir = os.path.join(sys.prefix,'share/basemap-py'+repr(sys.version_info[0])+repr(sys.version_info[1])) 
+   _datadir = os.path.join(sys.prefix,'share/basemap') 
 
 __version__ = '0.6.3'
 __revision__ = '20050907'
@@ -88,7 +88,7 @@ class Basemap:
     """
 
     def __init__(self,llcrnrlon=-180.,llcrnrlat=-90.,urcrnrlon=180.,urcrnrlat=90.,\
-       projection='cyl',resolution='c',area_thresh=10000.,rsphere=6370997,\
+       projection='cyl',resolution='c',area_thresh=None,rsphere=6370997,\
        lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
        lon_1=None,lon_2=None,suppress_ticks=True,ax=None):
         """
@@ -120,13 +120,15 @@ class Basemap:
  and the entire projection domain will be always be plotted.
 
  resolution - resolution of coastline database to use. Can be 'c' (crude), 
-  'l' (low), or 'i' (intermediate). Resolution drops off by roughly 80%
+  'l' (low), 'i' (intermediate) or 'h' (high). 
+  Resolution drops off by roughly 80%
   between datasets.  Higher res datasets are much slower to draw.
   Default 'c'. Coastline data is from the GSHHS
   (http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html).
 
  area_thresh - coastline with an area smaller than area_thresh in km^2
-  will not be plotted.  Default 10,000.
+  will not be plotted.  Default 10000,1000,100,10 for resolution 
+  'c','l','i','h'.
 
  rsphere - radius of the sphere used to define map projection (default
   6370997 meters, close to the arithmetic mean radius of the earth). If
@@ -176,6 +178,17 @@ class Basemap:
   gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
         """     
 
+        if area_thresh is None:
+            if resolution == 'c':
+                area_thresh = 10000.
+            elif resolution == 'l':
+                area_thresh = 1000.
+            elif resolution == 'i':
+                area_thresh = 100.
+            elif resolution == 'h':
+                area_thresh = 10.
+            else:
+                raise ValueError, "bounday resolution must be one of 'c','l','i' or 'h'"
         # if ax == None, pylab.gca may be used.
         self.ax = ax
         #import time
@@ -361,6 +374,7 @@ class Basemap:
         xc,yc = proj(NX.array(coastlons),NX.array(coastlats))
         xc2,yc2 = proj(NX.array(coastlons2),NX.array(coastlats))
         xc3,yc3 = proj(NX.array(coastlons3),NX.array(coastlats))
+        #print time.clock()-t1
         if projection == 'merc' or projection == 'mill': 
             yc2 = yc
             yc3 = yc
@@ -380,6 +394,7 @@ class Basemap:
         self.coastsegs = segments+segments2+segments3
         self.coastsegsll = segmentsll+segmentsll2+segmentsll3
         self.coastsegtypes = segtypes+segtypes2+segtypes3
+        #print time.clock()-t1
 
         # same as above for country polygons.
         xc,yc = proj(NX.array(cntrylons,'f'),NX.array(cntrylats))
@@ -413,7 +428,7 @@ class Basemap:
         self.coastpolygontypes = []
         if projection in ['merc','mill']:
             xsp,ysp = proj(0.,-89.9) # s. pole coordinates.
-            xa,ya = proj(0.,-68.0) # edge of antarctica.
+            xa,ya = proj(0.,-68.) # edge of antarctica.
             x0,y0 = proj(0.,0.)
             xm360,ym360 = proj(-360.,0.)
             x360,y360 = proj(360.,0.)
@@ -996,8 +1011,14 @@ class Basemap:
         """
         # open shapefile, read vertices for each object, convert
         # to map projection coordinates (only works for 2D shape types).
-        shp = ShapeFile(shapefile)
-        dbf = dbflib.open(shapefile)
+        try:
+            shp = ShapeFile(shapefile)
+        except:
+            raise IOError, 'error reading shapefile %s.shp' % shapefile
+        try:
+            dbf = dbflib.open(shapefile)
+        except:
+            raise IOError, 'error reading dbffile %s.dbf' % shapefile
         info = shp.info()
         if info[1] not in [1,3,5,8]:
             raise ValueError, 'readshapefile can only handle 2D shape types'
@@ -1913,7 +1934,7 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
  for nearest neighbor interpolation (nd_image only allows 1-6) - if
  order=0 bounds checking is done even if checkbounds=False.
     """
-    # convert inputs to numarray.
+    # convert inputs to numarrays.
     datain = _tonumarray(datain)
     lonsin = _tonumarray(lonsin)
     latsin = _tonumarray(latsin)
