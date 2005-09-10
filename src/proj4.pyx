@@ -15,14 +15,14 @@ Example usage:
 >>> x,y = p(-120.108, 34.36116666)
 >>> print x,y
 >>> print p(x,y,inverse=True)
-765975.641091 3805993.13406
+765975.641091.4805993.13406
 (-120.10799999995851, 34.361166659972767)
 
 Input coordinates can be given as python arrays, sequences, scalars
 or Numeric/numarray arrays. Optimized for objects that support
 the Python buffer protocol (regular python, Numeric and numarray arrays).
 
-Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.3.tar.gz
+Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.4.tar.gz
 
 See pyproj.Proj.__doc__ for more documentation.
 
@@ -47,6 +47,7 @@ cdef extern from "proj_api.h":
     projPJ pj_init_plus(char *)
     projUV pj_fwd(projUV, projPJ)
     projUV pj_inv(projUV, projPJ)
+    void pj_free(projPJ)
 
 cdef extern from "Python.h":
   int PyObject_AsWriteBuffer(object, void **rbuf, int *len)
@@ -83,7 +84,6 @@ cdef class Proj:
  projection control parameter key/value pairs.
  See the proj documentation (http://proj.maptools.org) for details.
         """
-        cdef double *projpj
         # set units to meters.
         if not projparams.has_key('units'):
             projparams['units']='m'
@@ -97,10 +97,13 @@ cdef class Proj:
         pjargs = []
         for key,value in projparams.iteritems():
             pjargs.append('+'+key+"="+str(value)+' ')
-        pjinitstring = ''.join(pjargs)
         self.projparams = projparams
-        projpj = pj_init_plus(pjinitstring)
-        self.projpj = projpj
+        pjinitstring = ''.join(pjargs)
+        self.projpj = pj_init_plus(pjinitstring)
+
+    def __dealloc__(self):
+        """destroy projection definition"""
+        pj_free(self.projpj)
 
     def __reduce__(self):
         """special method that allows projlib.Proj instance to be pickled"""
