@@ -22,22 +22,23 @@ Input coordinates can be given as python arrays, sequences, scalars
 or Numeric/numarray arrays. Optimized for objects that support
 the Python buffer protocol (regular python, Numeric and numarray arrays).
 
-Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.4.tar.gz
+Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.5.tar.gz
 
 See pyproj.Proj.__doc__ for more documentation.
 
 Contact:  Jeffrey Whitaker <jeffrey.s.whitaker@noaa.gov
-"""
+""" 
 
 # Make changes to this file, not the c-wrappers that Pyrex generates.
 
-import math, copy, array
+import math, array
 
 cdef double _rad2dg, _dg2rad
 cdef int _doublesize
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 _doublesize = sizeof(double)
+__version__ = 1.5
 
 cdef extern from "proj_api.h":
     ctypedef double *projPJ
@@ -51,6 +52,7 @@ cdef extern from "proj_api.h":
 
 cdef extern from "Python.h":
   int PyObject_AsWriteBuffer(object, void **rbuf, int *len)
+  int PyObject_CheckReadBuffer(object)
 
 cdef class Proj:
     """
@@ -67,9 +69,10 @@ cdef class Proj:
  convert lon/lat (in degrees) to x/y native map projection 
  coordinates (in meters).  If optional keyword 'inverse' is
  True (default is False), the inverse transformation from x/y
- to lon/lat is performed. Works with numarray or Numeric arrays,
- python arrays, sequences or scalars (fastest for arrays containing
- doubles).
+ to lon/lat is performed. If optional keyword 'radians' is True
+ (default is False) lon/lat are interpreted as radians instead
+ of degrees. Works with numarray or Numeric arrays, python arrays,
+ sequences or scalars (fastest for arrays containing doubles).
     """
 
     cdef double *projpj
@@ -109,9 +112,10 @@ cdef class Proj:
         """special method that allows projlib.Proj instance to be pickled"""
         return (self.__class__,(self.projparams,))
 
-    def _fwd(self, lons, lats):
+    def _fwd(self, object lons, object lats, radians=False):
         """
  forward transformation - lons,lats to x,y.
+ if radians=True, lons/lats are degrees instead of radians.
         """
         cdef projUV projxyout, projlonlatin
         cdef int ndim, i, buflenx, bufleny
@@ -134,12 +138,20 @@ cdef class Proj:
             ndim = buflenx/_doublesize
             lonsdata = <double *>londata
             latsdata = <double *>latdata
-            for i from 0 <= i < ndim:
-                projlonlatin.u = _dg2rad*lonsdata[i]
-                projlonlatin.v = _dg2rad*latsdata[i]
-                projxyout = pj_fwd(projlonlatin,self.projpj)
-                lonsdata[i] = projxyout.u
-                latsdata[i] = projxyout.v
+            if radians:
+                for i from 0 <= i < ndim:
+                    projlonlatin.u = lonsdata[i]
+                    projlonlatin.v = latsdata[i]
+                    projxyout = pj_fwd(projlonlatin,self.projpj)
+                    lonsdata[i] = projxyout.u
+                    latsdata[i] = projxyout.v
+            else:
+                for i from 0 <= i < ndim:
+                    projlonlatin.u = _dg2rad*lonsdata[i]
+                    projlonlatin.v = _dg2rad*latsdata[i]
+                    projxyout = pj_fwd(projlonlatin,self.projpj)
+                    lonsdata[i] = projxyout.u
+                    latsdata[i] = projxyout.v
             return lons, lats
         else:
             try: # inputs are sequences.
@@ -147,23 +159,36 @@ cdef class Proj:
                 if len(lats) != ndim:
                     raise RuntimeError("Sequences must have the same number of elements")
                 x = []; y = []
-                for i from 0 <= i < ndim:
-                    projlonlatin.u = _dg2rad*lons[i]
-                    projlonlatin.v = _dg2rad*lats[i]
-                    projxyout = pj_fwd(projlonlatin,self.projpj)
-                    x.append(projxyout.u)
-                    y.append(projxyout.v)
+                if radians:
+                    for i from 0 <= i < ndim:
+                        projlonlatin.u = lons[i]
+                        projlonlatin.v = lats[i]
+                        projxyout = pj_fwd(projlonlatin,self.projpj)
+                        x.append(projxyout.u)
+                        y.append(projxyout.v)
+                else:
+                    for i from 0 <= i < ndim:
+                        projlonlatin.u = _dg2rad*lons[i]
+                        projlonlatin.v = _dg2rad*lats[i]
+                        projxyout = pj_fwd(projlonlatin,self.projpj)
+                        x.append(projxyout.u)
+                        y.append(projxyout.v)
             except: # inputs are scalars.
-                projlonlatin.u = lons*_dg2rad
-                projlonlatin.v = lats*_dg2rad
+                if radians:
+                    projlonlatin.u = lons
+                    projlonlatin.v = lats
+                else:
+                    projlonlatin.u = lons*_dg2rad
+                    projlonlatin.v = lats*_dg2rad
                 projxyout = pj_fwd(projlonlatin,self.projpj)
                 x = projxyout.u
                 y = projxyout.v
             return x,y
 
-    def _inv(self, object x, object y):
+    def _inv(self, object x, object y, radians=False):
         """
- inverse transformation - x,y to lons,lats
+ inverse transformation - x,y to lons,lats.
+ if radians=True, lons/lats are degrees instead of radians.
         """
         cdef projUV projxyin, projlonlatout
         cdef int ndim, i, buflenx, bufleny
@@ -188,12 +213,20 @@ cdef class Proj:
             xdatab = <double *>xdata
             ydatab = <double *>ydata
 
-            for i from 0 <= i < ndim:
-                projxyin.u = xdatab[i]
-                projxyin.v = ydatab[i]
-                projlonlatout = pj_inv(projxyin,self.projpj)
-                xdatab[i] = _rad2dg*projlonlatout.u
-                ydatab[i] = _rad2dg*projlonlatout.v
+            if radians:
+                for i from 0 <= i < ndim:
+                    projxyin.u = xdatab[i]
+                    projxyin.v = ydatab[i]
+                    projlonlatout = pj_inv(projxyin,self.projpj)
+                    xdatab[i] = projlonlatout.u
+                    ydatab[i] = projlonlatout.v
+            else:
+                for i from 0 <= i < ndim:
+                    projxyin.u = xdatab[i]
+                    projxyin.v = ydatab[i]
+                    projlonlatout = pj_inv(projxyin,self.projpj)
+                    xdatab[i] = _rad2dg*projlonlatout.u
+                    ydatab[i] = _rad2dg*projlonlatout.v
             return x,y
         else:
             try: # inputs are sequences.
@@ -201,28 +234,42 @@ cdef class Proj:
                 if len(y) != ndim:
                     raise RuntimeError("Sequences must have the same number of elements")
                 lons = []; lats = []
-                for i from 0 <= i < ndim:
-                    projxyin.u = x[i]
-                    projxyin.v = y[i]
-                    projlonlatout = pj_inv(projxyin, self.projpj)
-                    lons.append(projlonlatout.u*_rad2dg)
-                    lats.append(projlonlatout.v*_rad2dg)
+                if radians:
+                    for i from 0 <= i < ndim:
+                        projxyin.u = x[i]
+                        projxyin.v = y[i]
+                        projlonlatout = pj_inv(projxyin, self.projpj)
+                        lons.append(projlonlatout.u)
+                        lats.append(projlonlatout.v)
+                else:
+                    for i from 0 <= i < ndim:
+                        projxyin.u = x[i]
+                        projxyin.v = y[i]
+                        projlonlatout = pj_inv(projxyin, self.projpj)
+                        lons.append(projlonlatout.u*_rad2dg)
+                        lats.append(projlonlatout.v*_rad2dg)
             except: # inputs are scalars.
                 projxyin.u = x
                 projxyin.v = y
                 projlonlatout = pj_inv(projxyin, self.projpj)
-                lons = projlonlatout.u*_rad2dg
-                lats = projlonlatout.v*_rad2dg
+                if radians:
+                    lons = projlonlatout.u
+                    lats = projlonlatout.v
+                else:
+                    lons = projlonlatout.u*_rad2dg
+                    lats = projlonlatout.v*_rad2dg
             return lons, lats
 
 
-    def __call__(self,lon,lat,inverse=False):
+    def __call__(self,lon,lat,inverse=False,radians=False):
         """
  Calling a Proj class instance with the arguments lon, lat will
  convert lon/lat (in degrees) to x/y native map projection 
  coordinates (in meters).  If optional keyword 'inverse' is
  True (default is False), the inverse transformation from x/y
- to lon/lat is performed.
+ to lon/lat is performed.  If optional keyword 'radians' is
+ True (default is False) the units of lon/lat are radians instead
+ of degrees.
 
  Inputs should be doubles (they will be cast to doubles
  if they are not, causing a slight performance hit).
@@ -231,13 +278,13 @@ cdef class Proj:
  (fastest for arrays containing doubles).
         """
         try:
-            # typecast Numeric/numarray arrays to double.
+            # typecast Numeric/numarray arrays to double, if necessary.
             if lon.typecode() != 'd':
                 lon = lon.astype('d')
             if lat.typecode() != 'd':
                 lat = lat.astype('d')
         except:
-            # typecast regular python arrays to double
+            # typecast regular python arrays to double, if necessary.
             try:
                 if lon.typecode != 'd':
                     lon = array.array('d',lon)
@@ -245,29 +292,32 @@ cdef class Proj:
                     lat = array.array('d',lat)
             except:
                 pass
-        # make copies of inputs.
-        # (If the buffer API is supported, the data buffer of
-        # will be modified in place.)
-        # The buffer API will be used for arrays 
-        # (regular python, Numeric and numarray).
-        try:
-            inx = copy.copy(lon); iny = copy.copy(lat)
-            convertedtolist = False
-        # if copy fails (as it will with python arrays in Python 2.3),
-        # put data in lists (this will be slower since buffer API
-        # will not be used to access the data).
-        except:
-            inx = lon.tolist(); iny = lat.tolist()
-            convertedtolist = True
-        # call proj4 functions.
-        if inverse:
-            outx, outy = self._inv(inx, iny)
+        # If the buffer API is supported, make copies of inputs.
+        # This is necessary since the data buffer of the inputs
+        # will be modified in place.  Raise an exception if
+        # copies cannot be made.
+        # Buffer API will be used if inputs are arrays (regular python, 
+        # Numeric or numarray).
+        if PyObject_CheckReadBuffer(lon) and PyObject_CheckReadBuffer(lon):
+            try:
+                # try to make copy using __copy__ method.
+                inx = lon.__copy__(); iny = lat.__copy__()
+            except:
+                msg = """could not create copy of inputs.  
+This could be because your are using regular python arrays with Python 2.3
+(python arrays are not copy-able before python 2.4).  Try using lists
+or Numeric/numarray arrays instead (the latter will be faster)."""
+                raise RuntimeError, msg
+            # call proj4 functions.
+            if inverse:
+                outx, outy = self._inv(inx, iny, radians=radians)
+            else:
+                outx, outy = self._fwd(inx, iny, radians=radians)
+        # copy not needed if buffer API not supported.
         else:
-            outx, outy = self._fwd(inx, iny)
-        # if input arrays were converted to lists, convert output
-        # lists back to arrays.
-        if convertedtolist:
-            outx = array.array(lon.typecode,outx)
-            outy = array.array(lat.typecode,outy)
+            if inverse:
+                outx, outy = self._inv(lon, lat, radians=radians)
+            else:
+                outx, outy = self._fwd(lon, lat, radians=radians)
         # all done.
         return outx,outy
