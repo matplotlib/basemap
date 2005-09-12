@@ -191,23 +191,24 @@ class Basemap:
                 raise ValueError, "bounday resolution must be one of 'c','l','i' or 'h'"
         # if ax == None, pylab.gca may be used.
         self.ax = ax
-        #import time
-        #t1 = time.clock()
-        # read in coastline data.
+        # read in coastline data (only those polygons whose area > area_thresh).
         coastlons = []; coastlats = []; coastsegind = []; coastsegarea = []; coastsegtype = []
         i = 0  # the current ind
         for line in open(os.path.join(_datadir,'gshhs_'+resolution+'.txt')):
             linesplit = line.split()
             if line.startswith('P'):
-                coastsegind.append(i)
-                coastsegtype.append(int(linesplit[3]))
-                coastsegarea.append(float(linesplit[5]))
+                area = float(linesplit[5])
+                if area > area_thresh:
+                    coastsegind.append(i)
+                    coastsegtype.append(int(linesplit[3]))
+                    coastsegarea.append(float(linesplit[5]))
                 continue
             # lon/lat
-            lon, lat = [float(val) for val in linesplit]
-            coastlons.append(lon)
-            coastlats.append(lat)
-            i += 1
+            if area > area_thresh:
+                lon, lat = [float(val) for val in linesplit]
+                coastlons.append(lon)
+                coastlats.append(lat)
+                i += 1
 
         # read in country boundary data.
         cntrylons = []; cntrylats = []; cntrysegind = []
@@ -236,8 +237,6 @@ class Basemap:
             statelons.append(lon)
             statelats.append(lat)
             i += 1
-        #print time.clock()-t1,' i/o'
-        #t1 = time.clock()
 
         # extend longitudes around the earth a second time
         # (in case projection region straddles Greenwich meridian).
@@ -367,34 +366,29 @@ class Basemap:
         self.llcrnry = proj.llcrnry
         self.urcrnrx = proj.urcrnrx
         self.urcrnry = proj.urcrnry
-        #print time.clock()-t1,' proj setup'
-        #t1 = time.clock()
 
         # transform coastline polygons to native map coordinates.
         xc,yc = proj(NX.array(coastlons),NX.array(coastlats))
         xc2,yc2 = proj(NX.array(coastlons2),NX.array(coastlats))
         xc3,yc3 = proj(NX.array(coastlons3),NX.array(coastlats))
-        #print time.clock()-t1
         if projection == 'merc' or projection == 'mill': 
             yc2 = yc
             yc3 = yc
 
         # set up segments in form needed for LineCollection,
-        # ignoring 'inf' values that are off the map, and skipping
-        # polygons that have an area > area_thresh..
-        segments = [zip(xc[i0:i1],yc[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh]
-        segmentsll = [zip(coastlons[i0:i1],coastlats[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh]
-        segtypes = [i for a,i in zip(coastsegarea[:-1],coastsegtype[:-1]) if a > area_thresh]
-        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh and max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segmentsll2 = [zip(coastlons2[i0:i1],coastlats[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh and max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segtypes2 = [i for a,i0,i1,i in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if a > area_thresh and max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh and max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        segmentsll3 = [zip(coastlons3[i0:i1],coastlats[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if a > area_thresh and max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        segtypes3 = [i for a,i0,i1,i in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if a > area_thresh and max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        # ignoring 'inf' values that are off the map.
+        segments = [zip(xc[i0:i1],yc[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:])]
+        segmentsll = [zip(coastlons[i0:i1],coastlats[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:])]
+        segtypes = [i for a,i in zip(coastsegarea[:-1],coastsegtype[:-1])]
+        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+        segmentsll2 = [zip(coastlons2[i0:i1],coastlats[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+        segtypes2 = [i for a,i0,i1,i in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        segmentsll3 = [zip(coastlons3[i0:i1],coastlats[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        segtypes3 = [i for a,i0,i1,i in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
         self.coastsegs = segments+segments2+segments3
         self.coastsegsll = segmentsll+segmentsll2+segmentsll3
         self.coastsegtypes = segtypes+segtypes2+segtypes3
-        #print time.clock()-t1
 
         # same as above for country polygons.
         xc,yc = proj(NX.array(cntrylons,'f'),NX.array(cntrylats))
@@ -419,8 +413,6 @@ class Basemap:
         segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
         segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
         self.statesegs = segments+segments2+segments3
-        #print time.clock()-t1,' segment processing 1'
-        #t1 = time.clock()
 
         # store coast polygons for filling.
         self.coastpolygons = []
@@ -723,7 +715,6 @@ class Basemap:
                             xn.append(x); yn.append(y)
                 coastpolygons.append((xn,yn))
             self.coastpolygons = coastpolygons
-        #print time.clock()-t1,' segment processing 2'
 
     def _splitseg(self,xx,yy,mask=None):
         """split segment up around missing values (outside projection limb)"""
