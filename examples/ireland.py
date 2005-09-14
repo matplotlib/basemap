@@ -20,7 +20,7 @@ m.drawparallels(circles,labels=[1,1,0,0])
 # draw meridians
 meridians = arange(-12,0,1)
 m.drawmeridians(meridians,labels=[0,0,1,1])
-title("Crude Res Coastlines ('c')",y=1.075)
+title("Crude Res Boundaries ('c')",y=1.075)
 show()
 
 # create Basemap instance. Use 'low' resolution coastlines.
@@ -39,7 +39,7 @@ m.drawcountries()
 m.drawparallels(circles,labels=[1,1,0,0])
 # draw meridians
 m.drawmeridians(meridians,labels=[0,0,1,1])
-title("Low Res Coastlines ('l')",y=1.075)
+title("Low Res Boundaries ('l')",y=1.075)
 show()
 
 import time
@@ -63,7 +63,7 @@ m.drawcountries()
 m.drawparallels(circles,labels=[1,1,0,0])
 # draw meridians
 m.drawmeridians(meridians,labels=[0,0,1,1])
-title("Intermediate Res Coastlines ('i')",y=1.075)
+title("Intermediate Res Boundaries ('i')",y=1.075)
 show()
 
 # read cPickle back in and plot it again (should be much faster).
@@ -78,10 +78,12 @@ fig.add_axes([0.1,0.1,0.8,0.8])
 m2.drawcoastlines()
 m2.fillcontinents()
 # draw political boundaries.
-m2.drawcountries()
+m2.drawcountries(linewidth=1.0)
+# draw major rivers.
+m2.drawrivers()
 # draw parallels
 m2.drawparallels(circles,labels=[1,1,0,0])
 # draw meridians
 m2.drawmeridians(meridians,labels=[0,0,1,1])
-title("Intermediate Res Coastlines ('i')",y=1.075)
+title("Intermediate Res Boundaries ('i') with major rivers",y=1.075)
 show()
