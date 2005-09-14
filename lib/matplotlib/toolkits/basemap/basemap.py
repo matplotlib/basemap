@@ -11,7 +11,7 @@ from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
 from numarray import nd_image
 import numarray as na
-import sys, os, math
+import sys, os, math, popen2
 from proj import Proj
 from greatcircle import GreatCircle, vinc_dist, vinc_pt
 import matplotlib.numerix as NX
@@ -27,8 +27,8 @@ _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap') 
 
-__version__ = '0.6.3'
-__revision__ = '20050907'
+__version__ = '0.7'
+__revision__ = '20050914'
 
 class Basemap:
 
@@ -40,8 +40,9 @@ class Basemap:
  albers equal area conic, gnomonic, orthographic, mollweide,
  robinson, cassini-soldner or stereographic).
  Doesn't actually draw anything, but sets up the map projection class and
- creates the coastline and political boundary polygons in native map 
- projection coordinates.  Requires matplotlib and numarray.
+ creates the coastline, lake river and political boundary data
+ structures in native map projection coordinates.
+ Requires matplotlib and numarray.
  Uses a pyrex interface to C-code from proj.4 (http://proj.maptools.org).
  
  Useful instance variables:
@@ -119,15 +120,17 @@ class Basemap:
  the values of llcrnrlon,llcrnrlat,urcrnrlon and urcrnrlat are ignored,
  and the entire projection domain will be always be plotted.
 
- resolution - resolution of coastline database to use. Can be 'c' (crude), 
+ resolution - resolution of boundary database to use. Can be 'c' (crude), 
   'l' (low), 'i' (intermediate) or 'h' (high). 
   Resolution drops off by roughly 80%
   between datasets.  Higher res datasets are much slower to draw.
   Default 'c'. Coastline data is from the GSHHS
   (http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html).
+  State, country and river datasets from the Generic Mapping 
+  Tools ((http://gmt.soest.hawaii.edu).
 
- area_thresh - coastline with an area smaller than area_thresh in km^2
-  will not be plotted.  Default 10000,1000,100,10 for resolution 
+ area_thresh - coastline or lake with an area smaller than area_thresh
+  in km^2 will not be plotted.  Default 10000,1000,100,10 for resolution 
   'c','l','i','h'.
 
  rsphere - radius of the sphere used to define map projection (default
@@ -178,84 +181,36 @@ class Basemap:
   gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
         """     
 
-        if area_thresh is None:
-            if resolution == 'c':
-                area_thresh = 10000.
-            elif resolution == 'l':
-                area_thresh = 1000.
-            elif resolution == 'i':
-                area_thresh = 100.
-            elif resolution == 'h':
-                area_thresh = 10.
-            else:
-                raise ValueError, "bounday resolution must be one of 'c','l','i' or 'h'"
-        # if ax == None, pylab.gca may be used.
-        self.ax = ax
-        # read in coastline data (only those polygons whose area > area_thresh).
-        coastlons = []; coastlats = []; coastsegind = []; coastsegarea = []; coastsegtype = []
-        i = 0  # the current ind
-        for line in open(os.path.join(_datadir,'gshhs_'+resolution+'.txt')):
-            linesplit = line.split()
-            if line.startswith('P'):
-                area = float(linesplit[5])
-                if area > area_thresh:
-                    coastsegind.append(i)
-                    coastsegtype.append(int(linesplit[3]))
-                    coastsegarea.append(float(linesplit[5]))
-                continue
-            # lon/lat
-            if area > area_thresh:
-                lon, lat = [float(val) for val in linesplit]
-                coastlons.append(lon)
-                coastlats.append(lat)
-                i += 1
-
-        # read in country boundary data.
-        cntrylons = []; cntrylats = []; cntrysegind = []
-        i = 0  # the current ind
-        for line in open(os.path.join(_datadir,'countries_'+resolution+'.txt')):
-            linesplit = line.split()
-            if line.startswith('>'):
-                cntrysegind.append(i)
-                continue
-            # lon/lat
-            lon, lat = [float(val) for val in linesplit]
-            cntrylons.append(lon)
-            cntrylats.append(lat)
-            i += 1
-
-        # read in state boundaries (Americas only).
-        statelons = []; statelats = []; statesegind = []
-        i = 0  # the current ind
-        for line in open(os.path.join(_datadir,'states_'+resolution+'.txt')):
-            linesplit = line.split()
-            if line.startswith('>'):
-                statesegind.append(i)
-                continue
-            # lon/lat
-            lon, lat = [float(val) for val in linesplit]
-            statelons.append(lon)
-            statelats.append(lat)
-            i += 1
-
-        # extend longitudes around the earth a second time
-        # (in case projection region straddles Greenwich meridian).
-        # also include negative longitudes, so valid longitudes
-        # can range from -360 to 720.
-        coastlons2 = [lon+360. for lon in coastlons]
-        cntrylons2 = [lon+360. for lon in cntrylons]
-        statelons2 = [lon+360. for lon in statelons]
-        coastlons3 = [lon-360. for lon in coastlons]
-        cntrylons3 = [lon-360. for lon in cntrylons]
-        statelons3 = [lon-360. for lon in statelons]
-
-        # set up projections using Proj class.
         self.projection = projection
         # make sure lat/lon limits are converted to floats.
         self.llcrnrlon = float(llcrnrlon)
         self.llcrnrlat = float(llcrnrlat)
         self.urcrnrlon = float(urcrnrlon)
         self.urcrnrlat = float(urcrnrlat)
+        # set min/max lats for projection domain.
+        # only boundary segments within that range will be processed.
+        self.latmax = None
+        if projection in ['mill','cyl','merc']:
+            # if self.crossgreenwich is False (projection
+            # doesn't cross greenwich meridian) some time can
+            # be saved in processing boundaries.
+            if (self.llcrnrlat+360.)%360 > (self.urcrnrlon+360.)%360:
+                self.crossgreenwich = True
+            else:
+                self.crossgreenwich = False
+                # if not crossgreenwich, adjust lon bounds
+                # to be in range 0 to 360.
+                self.urcrnrlon = (self.urcrnrlon+360.)%360
+                self.llcrnrlon = (self.llcrnrlon+360.)%360
+            self.latmin = self.llcrnrlat
+            self.latmax = self.urcrnrlat
+        elif projection in ['ortho','moll','robin']:
+            self.latmin = -90.
+            self.latmax = 90.
+            self.crossgreenwich = True
+
+        # set up projection parameter dict.
+        # Create Proj class instance.
         projparams = {}
         projparams['proj'] = projection
         try:
@@ -367,52 +322,187 @@ class Basemap:
         self.urcrnrx = proj.urcrnrx
         self.urcrnry = proj.urcrnry
 
+        # find lat/lon bounds if it hasn't been done already.
+        if self.latmax is None:
+            lons, lats = self.makegrid(101,101)
+            self.latmin = min(NX.ravel(lats))
+            self.latmax = max(NX.ravel(lats))
+            # too hard to figure out, so just assume it does.
+            self.crossgreenwich = True
+
+        # set defaults for area_thresh.
+        if area_thresh is None:
+            if resolution == 'c':
+                area_thresh = 10000.
+            elif resolution == 'l':
+                area_thresh = 1000.
+            elif resolution == 'i':
+                area_thresh = 100.
+            elif resolution == 'h':
+                area_thresh = 10.
+            else:
+                raise ValueError, "bounday resolution must be one of 'c','l','i' or 'h'"
+        # if ax == None, pylab.gca may be used.
+        self.ax = ax
+        # read in coastline data (only those polygons whose area > area_thresh).
+        coastlons = []; coastlats = []; coastsegind = []; coastsegtype = []
+        a = not self.crossgreenwich
+        for line in open(os.path.join(_datadir,'gshhs_'+resolution+'.txt')):
+            linesplit = line.split()
+            if line.startswith('P'):
+                area = float(linesplit[5])
+                west,east,south,north = float(linesplit[6]),float(linesplit[7]),float(linesplit[8]),float(linesplit[9])
+                type = int(linesplit[3])
+                useit = self.latmax>=south and self.latmin<=north and area>area_thresh
+                if useit:
+                    coastsegind.append(len(coastlons))
+                    coastsegtype.append(type)
+                continue
+            # lon/lat
+            if useit:
+                lon, lat = [float(val) for val in linesplit]
+                coastlons.append(lon)
+                coastlats.append(lat)
+        coastsegtype.append(type)
+        coastsegind.append(len(coastlons))
+
+        # read in country boundary data.
+        cntrylons = []; cntrylats = []; cntrysegind = []
+        for line in open(os.path.join(_datadir,'countries_'+resolution+'.txt')):
+            linesplit = line.split()
+            if line.startswith('>'):
+                west,east,south,north = float(linesplit[7]),float(linesplit[8]),float(linesplit[9]),float(linesplit[10])
+                useit = self.latmax>=south and self.latmin<=north
+                if useit: cntrysegind.append(len(cntrylons))
+                continue
+            # lon/lat
+            if useit:
+                lon, lat = [float(val) for val in linesplit]
+                cntrylons.append(lon)
+                cntrylats.append(lat)
+        cntrysegind.append(len(cntrylons))
+
+        # read in state boundaries (Americas only).
+        statelons = []; statelats = []; statesegind = []
+        for line in open(os.path.join(_datadir,'states_'+resolution+'.txt')):
+            linesplit = line.split()
+            if line.startswith('>'):
+                west,east,south,north = float(linesplit[7]),float(linesplit[8]),float(linesplit[9]),float(linesplit[10])
+                useit = self.latmax>=south and self.latmin<=north
+                if useit: statesegind.append(len(statelons))
+                continue
+            # lon/lat
+            if useit:
+                lon, lat = [float(val) for val in linesplit]
+                statelons.append(lon)
+                statelats.append(lat)
+        statesegind.append(len(statelons))
+
+        # read in major rivers.
+        riverlons = []; riverlats = []; riversegind = []
+        for line in open(os.path.join(_datadir,'rivers_'+resolution+'.txt')):
+            linesplit = line.split()
+            if line.startswith('>'):
+                west,east,south,north = float(linesplit[7]),float(linesplit[8]),float(linesplit[9]),float(linesplit[10])
+                useit = self.latmax>=south and self.latmin<=north
+                if useit: riversegind.append(len(riverlons))
+                continue
+            # lon/lat
+            if useit:
+                lon, lat = [float(val) for val in linesplit]
+                riverlons.append(lon)
+                riverlats.append(lat)
+        riversegind.append(len(riverlons))
+
+        # if projection straddles Greenwich,
+        # extend longitudes around the earth a second time
+        # so valid longitudes can range from -360 to 720.
+        if self.crossgreenwich:
+            coastlons2 = [lon+360. for lon in coastlons]
+            cntrylons2 = [lon+360. for lon in cntrylons]
+            statelons2 = [lon+360. for lon in statelons]
+            riverlons2 = [lon+360. for lon in riverlons]
+            coastlons3 = [lon-360. for lon in coastlons]
+            cntrylons3 = [lon-360. for lon in cntrylons]
+            statelons3 = [lon-360. for lon in statelons]
+            riverlons3 = [lon-360. for lon in riverlons]
+
         # transform coastline polygons to native map coordinates.
         xc,yc = proj(NX.array(coastlons),NX.array(coastlats))
-        xc2,yc2 = proj(NX.array(coastlons2),NX.array(coastlats))
-        xc3,yc3 = proj(NX.array(coastlons3),NX.array(coastlats))
-        if projection == 'merc' or projection == 'mill': 
+        if self.crossgreenwich:
+           xc2,yc2 = proj(NX.array(coastlons2),NX.array(coastlats))
+           xc3,yc3 = proj(NX.array(coastlons3),NX.array(coastlats))
+        if self.crossgreenwich and projection == 'merc' or projection == 'mill': 
             yc2 = yc
             yc3 = yc
 
         # set up segments in form needed for LineCollection,
         # ignoring 'inf' values that are off the map.
-        segments = [zip(xc[i0:i1],yc[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:])]
-        segmentsll = [zip(coastlons[i0:i1],coastlats[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:])]
-        segtypes = [i for a,i in zip(coastsegarea[:-1],coastsegtype[:-1])]
-        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segmentsll2 = [zip(coastlons2[i0:i1],coastlats[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segtypes2 = [i for a,i0,i1,i in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        segmentsll3 = [zip(coastlons3[i0:i1],coastlats[i0:i1]) for a,i0,i1 in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        segtypes3 = [i for a,i0,i1,i in zip(coastsegarea[:-1],coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        self.coastsegs = segments+segments2+segments3
-        self.coastsegsll = segmentsll+segmentsll2+segmentsll3
-        self.coastsegtypes = segtypes+segtypes2+segtypes3
+        segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:])]
+        segmentsll = [zip(coastlons[i0:i1],coastlats[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:])]
+        segtypes = [i for i in coastsegtype[:-1]]
+        if self.crossgreenwich:
+            segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+            segmentsll2 = [zip(coastlons2[i0:i1],coastlats[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+            segtypes2 = [i for i0,i1,i in zip(coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+            segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+            segmentsll3 = [zip(coastlons3[i0:i1],coastlats[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+            segtypes3 = [i for i0,i1,i in zip(coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+            self.coastsegs = segments+segments2+segments3
+            self.coastsegsll = segmentsll+segmentsll2+segmentsll3
+            self.coastsegtypes = segtypes+segtypes2+segtypes3
+        else:
+            self.coastsegs = segments
+            self.coastsegsll = segmentsll
+            self.coastsegtypes = segtypes
 
-        # same as above for country polygons.
+        # same as above for country segments.
         xc,yc = proj(NX.array(cntrylons,'f'),NX.array(cntrylats))
-        xc2,yc2 = proj(NX.array(cntrylons2,'f'),NX.array(cntrylats))
-        xc3,yc3 = proj(NX.array(cntrylons3),NX.array(cntrylats))
-        if projection == 'merc' or projection == 'mill': 
+        if self.crossgreenwich:
+            xc2,yc2 = proj(NX.array(cntrylons2,'f'),NX.array(cntrylats))
+            xc3,yc3 = proj(NX.array(cntrylons3),NX.array(cntrylats))
+        if self.crossgreenwich and projection == 'merc' or projection == 'mill': 
             yc2=yc
             yc3=yc
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:])]
-        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        self.cntrysegs = segments+segments2+segments3
+        if self.crossgreenwich:
+            segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+            segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+            self.cntrysegs = segments+segments2+segments3
+        else:
+            self.cntrysegs = segments
 
-        # same as above for state polygons.
+        # same as above for state segments.
         xc,yc = proj(NX.array(statelons,'f'),NX.array(statelats))
-        xc2,yc2 = proj(NX.array(statelons2,'f'),NX.array(statelats))
-        xc3,yc3 = proj(NX.array(statelons3),NX.array(statelats))
-        if projection == 'merc' or projection == 'mill': 
+        if self.crossgreenwich:
+            xc2,yc2 = proj(NX.array(statelons2,'f'),NX.array(statelats))
+            xc3,yc3 = proj(NX.array(statelons3),NX.array(statelats))
+        if self.crossgreenwich and projection == 'merc' or projection == 'mill': 
             yc2=yc
             yc3=yc
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:])]
-        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        self.statesegs = segments+segments2+segments3
+        if self.crossgreenwich:
+            segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+            segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+            self.statesegs = segments+segments2+segments3
+        else:
+            self.statesegs = segments
+
+        # same as above for river segments.
+        xc,yc = proj(NX.array(riverlons,'f'),NX.array(riverlats))
+        if self.crossgreenwich:
+            xc2,yc2 = proj(NX.array(riverlons2,'f'),NX.array(riverlats))
+            xc3,yc3 = proj(NX.array(riverlons3),NX.array(riverlats))
+        if self.crossgreenwich and projection == 'merc' or projection == 'mill': 
+            yc2=yc
+            yc3=yc
+        segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(riversegind[:-1],riversegind[1:])]
+        if self.crossgreenwich:
+            segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(riversegind[:-1],riversegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+            segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(riversegind[:-1],riversegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+            self.riversegs = segments+segments2+segments3
+        else:
+            self.riversegs = segments
 
         # store coast polygons for filling.
         self.coastpolygons = []
@@ -513,16 +603,19 @@ class Basemap:
         self.coastpolygons = polygons
         coastpolygonsll = polygonsll
         self.coastpolygontypes = polygontypes
-        states = []
-        for seg in self.statesegs:
-            if self._insidemap_seg(seg):
-                states.append(seg)
-        self.statesegs = states
-        countries = []
+        states = []; rivers = []; countries = []
         for seg in self.cntrysegs:
             if self._insidemap_seg(seg):
                 countries.append(seg)
-        self.cntrysegs = countries
+        for seg in self.statesegs:
+            if self._insidemap_seg(seg):
+                states.append(seg)
+        for seg in self.riversegs:
+            if self._insidemap_seg(seg):
+                rivers.append(seg)
+        self.statesegs = states
+        self.riversegs = rivers
+        self.cntryegs = countries
 
         # split up segments that go outside projection limb 
         coastsegs = []
@@ -565,6 +658,18 @@ class Basemap:
             else:
                 countries.append(seg)
         self.cntrysegs = countries
+        rivers = []
+        for seg in self.riversegs:
+            xx = NX.array([x for x,y in seg],'f')
+            yy = NX.array([y for x,y in seg],'f')
+            i1,i2 = self._splitseg(xx,yy)
+            if i1 and i2:
+                for i,j in zip(i1,i2):
+                    segment = zip(xx[i:j],yy[i:j])
+                    rivers.append(segment)
+            else:
+                rivers.append(seg)
+        self.riversegs = rivers
 
         # split coastline segments that jump across entire plot.
         coastsegs = []
@@ -730,7 +835,7 @@ class Basemap:
             mprev = m
         if not mprev: i2.append(len(mask))
         if len(i1) != len(i2):
-            raise ValueError,'error in splitting coastline segments'
+            raise ValueError,'error in splitting boundary segments'
         return i1,i2
 
     def _insidemap_seg(self,seg):
@@ -957,6 +1062,31 @@ class Basemap:
         elif ax is None and self.ax is not None:
             ax = self.ax
         coastlines = LineCollection(self.statesegs,antialiaseds=(antialiased,))
+        coastlines.set_color(color)
+        coastlines.set_linewidth(linewidth)
+        ax.add_collection(coastlines)
+        # set axes limits to fit map region.
+        self.set_axes_limits(ax=ax)
+
+    def drawrivers(self,linewidth=0.5,color='k',antialiased=1,ax=None):
+        """
+ Draw major rivers.
+
+ linewidth - river boundary line width (default 0.5)
+ color - river boundary line color (default black)
+ antialiased - antialiasing switch for river boundaries (default True).
+ ax - axes instance (overrides default axes instance)
+        """
+        # get current axes instance (if none specified).
+        if ax is None and self.ax is None:
+            try: 
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif ax is None and self.ax is not None:
+            ax = self.ax
+        coastlines = LineCollection(self.riversegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
