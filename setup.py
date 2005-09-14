@@ -51,11 +51,11 @@ except:
 
 setup(
   name              = "basemap",
-  version           = "0.6.3",
+  version           = "0.7",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data
-  on map projections with coastlines and political boundaries.
+  on map projections with coastlines, lakes, rivers and political boundaries.
   See http://www.scipy.org/wikis/topical_software/Maps for an
   example of what it can do.""",
   url               = "http://matplotlib.sourceforge.net/toolkits.html",

@@ -1,17 +1,15 @@
-20050907:  version 0.6.3:
-           ~4x speedup for proj4 wrapper (now uses buffer protocol
-           to access data in Numeric or numarray arrays).
+20050914:  version 0.7:
+           Optimizations to reduce the time it takes to create
+           a Basemap class instance - now nearly 4 times faster
+           when using resolution='i'.
+           Added 'h' (high) resolution boundary data.  
+           Added datasets for major rivers, "drawrivers" class method.
+           Fixed some errors in boundaries datasets.
+           Boundary datasets now installed in a separate package.
            Should now handle Numeric to numarray conversions internally,
            so removed warning when rcParams['numerix'] != 'numarray'.
-           Added 'h' (high) resolution boundary data.  
-           Fixed errors in 'i' dataset when filling antarctica.
-           Removed shoreline boundaries from country and state
-           boundary datasets (they are already in the coastline dataset).
            Changed default area_thresh so it depends on coastline
            resolution (10000 for 'c' declining to 10 for 'h').
-           Boundary datasets now installed in a separate package.
-           The net result of these changes is that class instantiation
-           using resolution='i' is about 3 times faster.
 20050901:  version 0.6.2:
            Warning issued if numerix = 'Numeric' (a user reported
            crashes due to botched Numeric --> numarray conversions).

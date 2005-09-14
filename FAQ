@@ -1,9 +1,9 @@
-Q: It takes forever to make a plot with the 'intermediate' or
+Q: It takes a long time to make a plot with the 'intermediate' or
 'high' resolution coastlines, how can I speed it up?
 
-A: Basemap is not very intelligent right now in the way that it processes
-coastline data - it processes the data for the whole world regardless of
-the region that your are trying to display.  If you are making many maps
+A: There is a overhead in processing boundary datasets when
+a Basemap class in created, and this overhead can be significant
+for the higher resolution boundaries.  If you are makeing many maps
 for the same region, you only need to create you Basemap class instance
 once, then re-use it for each plot.  If the plots are being created by
 different scripts, you can save the Basemap class instance to a Pickle on

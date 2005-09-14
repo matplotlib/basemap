@@ -16,8 +16,9 @@ source code from proj.4 (http://proj.maptools.org) is included in the
 pyshapelib by Bernhard Herzog is included in the 'pyshapelib' directory
 under the terms given in LICENSE_pyshapelib.
 
-the coastline and political boundary data are extracted from datasets
-provided with the Generic Mapping Tools (http://gmt.soest.hawaii.edu)
+the coastline, lake, river and political boundary data are extracted
+from datasets provided with the Generic Mapping Tools
+(http://gmt.soest.hawaii.edu)
 and are included under the terms given in LICENSE_data.
 
 Everything else:
