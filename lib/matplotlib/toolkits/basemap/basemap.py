@@ -1440,6 +1440,10 @@ class Basemap:
         xdelta = 0.1*(self.xmax-self.xmin)
         ydelta = 0.1*(self.ymax-self.ymin)
         for merid in meridians:
+            if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
+            # for cylindrical projections that don't cross greenwich, 
+            # adjust meridians to be in range 0 to 360.
+                merid = (merid + 360.)%360
             lons = merid*NX.ones(len(lats),'f')
             x,y = self(lons,lats)
             # remove points outside domain.
