@@ -881,6 +881,13 @@ class Basemap:
 
  lon,lat can be either scalar floats or N arrays.
         """
+        if not self.crossgreenwich and self.projection in ['merc','cyl','mill'] and not inverse:
+            # for cylindrical projections that don't cross greenwich, 
+            # adjust lons to be in range 0 to 360.
+            try:
+                x = (360.+x)%360.
+            except:
+                x = [(360.+xx)%360. for xx in x]
         return self.projtran(x,y,inverse=inverse)
  
     def makegrid(self,nx,ny,returnxy=False):
@@ -1456,8 +1463,8 @@ class Basemap:
         ydelta = 0.1*(self.ymax-self.ymin)
         for merid in meridians:
             if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
-            # for cylindrical projections that don't cross greenwich, 
-            # adjust meridians to be in range 0 to 360.
+                # for cylindrical projections that don't cross greenwich, 
+                # adjust meridians to be in range 0 to 360.
                 merid = (merid + 360.)%360
             lons = merid*NX.ones(len(lats),'f')
             x,y = self(lons,lats)
@@ -1747,6 +1754,12 @@ class Basemap:
  Plot points with markers on the map (see NX.scatter documentation).
  extra keyword 'ax' can be used to override the default axes instance.
         """
+        if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
+            # for cylindrical projections that don't cross greenwich, 
+            # adjust lons to be in range 0 to 360.
+            args = list(args) 
+            args[0] = [(lon + 360.)%360 for lon in args[0]]
+            args = tuple(args)
         if not kwargs.has_key('ax') and self.ax is None:
             try: 
                 ax = pylab.gca()
@@ -1785,6 +1798,12 @@ class Basemap:
  Draw lines and/or markers on the map (see NX.plot documentation).
  extra keyword 'ax' can be used to override the default axis instance.
         """
+        if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
+            # for cylindrical projections that don't cross greenwich, 
+            # adjust lons to be in range 0 to 360.
+            args = list(args) 
+            args[0] = [(lon + 360.)%360 for lon in args[0]]
+            args = tuple(args)
         if not kwargs.has_key('ax') and self.ax is None:
             try: 
                 ax = pylab.gca()
