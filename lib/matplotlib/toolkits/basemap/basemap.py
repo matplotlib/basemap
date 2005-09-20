@@ -1323,6 +1323,9 @@ class Basemap:
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
                 yy = linspace(self.llcrnry,self.urcrnry,nmax)
+                # mollweide inverse transform undefined at South Pole
+                if self.projection == 'moll' and yy[0] < 1.e-4:
+                    yy[0] = 1.e-4
                 if side == 'l':
                     lons,lats = self(self.llcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
                 else:
@@ -1331,8 +1334,8 @@ class Basemap:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
-                lons = [int(lon*100) for lon in lons]
-                lats = [int(lat*100) for lat in lats]
+                lons = [int(NX.around(lon*100)) for lon in lons]
+                lats = [int(NX.around(lat*100)) for lat in lats]
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
@@ -1344,8 +1347,8 @@ class Basemap:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
-                lons = [int(lon*100) for lon in lons]
-                lats = [int(lat*100) for lat in lats]
+                lons = [int(NX.around(lon*100)) for lon in lons]
+                lats = [int(NX.around(lat*100)) for lat in lats]
             for lat in circles:
                 # find index of parallel (there may be two, so
                 # search from left and right).
@@ -1523,8 +1526,8 @@ class Basemap:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
-                lons = [int(lon*100) for lon in lons]
-                lats = [int(lat*100) for lat in lats]
+                lons = [int(NX.around(lon*100)) for lon in lons]
+                lats = [int(NX.around(lat*100)) for lat in lats]
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
@@ -1536,8 +1539,8 @@ class Basemap:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
-                lons = [int(lon*100) for lon in lons]
-                lats = [int(lat*100) for lat in lats]
+                lons = [int(NX.around(lon*100)) for lon in lons]
+                lats = [int(NX.around(lat*100)) for lat in lats]
             for lon in meridians:
                 # adjust so 0 <= lon < 360
                 lon = (lon+360) % 360
