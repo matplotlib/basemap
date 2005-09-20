@@ -16,6 +16,7 @@ from proj import Proj
 from greatcircle import GreatCircle, vinc_dist, vinc_pt
 import matplotlib.numerix as NX
 from matplotlib.numerix import ma
+from matplotlib.mlab import linspace
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd
 from shapelib import ShapeFile
@@ -27,7 +28,7 @@ _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap') 
 
-__version__ = '0.7'
+__version__ = '0.7.1'
 __revision__ = '20050914'
 
 class Basemap:
@@ -937,6 +938,10 @@ class Basemap:
             x = [self.llcrnrx+1.,self.llcrnrx+1.,self.urcrnrx-1.,self.urcrnrx-1.,self.llcrnrx+1.]
             y = [self.llcrnry+1.,self.urcrnry-1.,self.urcrnry-1.,self.llcrnry+1.,self.llcrnry+1.]
         ax.plot(x,y,color=color,linewidth=linewidth)
+        # make sure axis ticks are turned off.
+        if self.noticks:
+            ax.set_xticks([]) 
+            ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
@@ -1092,6 +1097,10 @@ class Basemap:
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # make sure axis ticks are turned off.
+        if self.noticks:
+            ax.set_xticks([]) 
+            ax.set_yticks([])
 
     def readshapefile(self,shapefile,name,drawbounds=True,
                       linewidth=0.5,color='k',antialiased=1,ax=None):
@@ -1190,7 +1199,7 @@ class Basemap:
 
     def drawparallels(self,circles,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0], \
-                      xoffset=None,yoffset=None,ax=None,**kwargs):
+                      fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
  draw parallels (latitude lines).
 
@@ -1249,8 +1258,8 @@ class Basemap:
                 circlesl.append(latmax)
             if min(circlesl) < 0 and -latmax not in circlesl: 
                 circlesl.append(-latmax)
-        xdelta = 0.1*(self.xmax-self.xmin)
-        ydelta = 0.1*(self.ymax-self.ymin)
+        xdelta = 0.01*(self.xmax-self.xmin)
+        ydelta = 0.01*(self.ymax-self.ymin)
         for circ in circlesl:
             lats = circ*NX.ones(len(lons),'f')
             x,y = self(lons,lats)
@@ -1308,10 +1317,7 @@ class Basemap:
             if self.projection in ['cyl','merc','mill','moll','robin'] and side in ['t','b']: continue
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
-                if self.urcrnry < self.llcrnry:
-                    yy = self.llcrnry-dy*NX.arange(nmax)-1
-                else:
-                    yy = self.llcrnry+dy*NX.arange(nmax)+1
+                yy = linspace(self.llcrnry,self.urcrnry,nmax)
                 if side == 'l':
                     lons,lats = self(self.llcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
                 else:
@@ -1320,14 +1326,11 @@ class Basemap:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
-                lons = [int(lon*10) for lon in lons]
-                lats = [int(lat*10) for lat in lats]
+                lons = [int(lon*100) for lon in lons]
+                lats = [int(lat*100) for lat in lats]
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
-                if self.urcrnrx < self.llcrnrx:
-                    xx = self.llcrnrx-dx*NX.arange(nmax)-1
-                else:
-                    xx = self.llcrnrx+dx*NX.arange(nmax)+1
+                xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
                 if side == 'b':
                     lons,lats = self(xx,self.llcrnry*NX.ones(xx.shape,'f'),inverse=True)
                 else:
@@ -1336,25 +1339,28 @@ class Basemap:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
-                lons = [int(lon*10) for lon in lons]
-                lats = [int(lat*10) for lat in lats]
+                lons = [int(lon*100) for lon in lons]
+                lats = [int(lat*100) for lat in lats]
             for lat in circles:
                 # find index of parallel (there may be two, so
                 # search from left and right).
                 try:
-                    nl = lats.index(int(lat*10))
+                    nl = lats.index(int(lat*100))
                 except:
                     nl = -1
                 try:
-                    nr = len(lats)-lats[::-1].index(int(lat*10))-1
+                    nr = len(lats)-lats[::-1].index(int(lat*100))-1
                 except:
                     nr = -1
                 if lat<0:
-                    latlab = u'%g\N{DEGREE SIGN}S'%NX.fabs(lat)
+                    latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
+                    latlab = latlabstr%NX.fabs(lat)
                 elif lat>0:
-                    latlab = u'%g\N{DEGREE SIGN}N'%lat
+                    latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
+                    latlab = latlabstr%lat
                 else:
-                    latlab = u'%g\N{DEGREE SIGN}'%lat
+                    latlabstr = u'%s\N{DEGREE SIGN}'%fmt
+                    latlab = latlabstr%lat
                 # parallels can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     # don't bother if close to the first label.
@@ -1388,7 +1394,7 @@ class Basemap:
 
     def drawmeridians(self,meridians,color='k',linewidth=1., \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0],\
-                      xoffset=None,yoffset=None,ax=None,**kwargs):
+                      fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
  draw meridians (longitude lines).
 
@@ -1502,10 +1508,7 @@ class Basemap:
             if self.projection in ['cyl','merc','mill','robin','moll'] and side in ['l','r']: continue
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
-                if self.urcrnry < self.llcrnry:
-                    yy = self.llcrnry-dy*NX.arange(nmax)-1
-                else:
-                    yy = self.llcrnry+dy*NX.arange(nmax)+1
+                yy = linspace(self.llcrnry,self.urcrnry,nmax)
                 if side == 'l':
                     lons,lats = self(self.llcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
                 else:
@@ -1514,14 +1517,11 @@ class Basemap:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
-                lons = [int(lon*10) for lon in lons]
-                lats = [int(lat*10) for lat in lats]
+                lons = [int(lon*100) for lon in lons]
+                lats = [int(lat*100) for lat in lats]
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
-                if self.urcrnrx < self.llcrnrx:
-                    xx = self.llcrnrx-dx*NX.arange(nmax)-1
-                else:
-                    xx = self.llcrnrx+dx*NX.arange(nmax)+1
+                xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
                 if side == 'b':
                     lons,lats = self(xx,self.llcrnry*NX.ones(xx.shape,'f'),inverse=True)
                 else:
@@ -1530,30 +1530,33 @@ class Basemap:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
-                lons = [int(lon*10) for lon in lons]
-                lats = [int(lat*10) for lat in lats]
+                lons = [int(lon*100) for lon in lons]
+                lats = [int(lat*100) for lat in lats]
             for lon in meridians:
                 # adjust so 0 <= lon < 360
                 lon = (lon+360) % 360
                 # find index of meridian (there may be two, so
                 # search from left and right).
                 try:
-                    nl = lons.index(int(lon*10))
+                    nl = lons.index(int(lon*100))
                 except:
                     nl = -1
                 try:
-                    nr = len(lons)-lons[::-1].index(int(lon*10))-1
+                    nr = len(lons)-lons[::-1].index(int(lon*100))-1
                 except:
                     nr = -1
                 if lon>180:
-                    lonlab = u'%g\N{DEGREE SIGN}W'%NX.fabs(lon-360)
+                    lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
+                    lonlab = lonlabstr%NX.fabs(lon-360)
                 elif lon<180 and lon != 0:
-                    lonlab = u'%g\N{DEGREE SIGN}E'%lon
+                    lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
+                    lonlab = lonlabstr%lon
                 else:
-                    lonlab = u'%g\N{DEGREE SIGN}'%lon
+                    lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
+                    lonlab = lonlabstr%lon
                 # meridians can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
-                    lat = lats[n]/10.
+                    lat = lats[n]/100.
                     # no meridians > latmax for projections other than merc,cyl,miller.
                     if self.projection not in ['merc','cyl','mill'] and lat > latmax: continue
                     # don't bother if close to the first label.
@@ -1762,6 +1765,10 @@ class Basemap:
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # make sure axis ticks are turned off.
+        if self.noticks:
+            ax.set_xticks([]) 
+            ax.set_yticks([])
         return ret
 
     def plot(self, *args, **kwargs):
@@ -1796,6 +1803,10 @@ class Basemap:
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # make sure axis ticks are turned off.
+        if self.noticks:
+            ax.set_xticks([]) 
+            ax.set_yticks([])
         return ret
 
     def imshow(self, *args, **kwargs):
@@ -1816,7 +1827,9 @@ class Basemap:
         else:
             ax = popd(kwargs,'ax')
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
-        kwargs['origin']='lower'
+        # use origin='lower', unless overridden.
+        if not kwargs.has_key('origin'):
+            kwargs['origin']='lower'
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = popd(kwargs, 'hold', None)
@@ -1882,6 +1895,10 @@ class Basemap:
             pass
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # make sure axis ticks are turned off.
+        if self.noticks:
+            ax.set_xticks([]) 
+            ax.set_yticks([])
         return ret
 
     def contour(self,x,y,data,*args,**kwargs):
@@ -1922,6 +1939,10 @@ class Basemap:
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # make sure axis ticks are turned off.
+        if self.noticks:
+            ax.set_xticks([]) 
+            ax.set_yticks([])
         # reset current active image (only if pylab is imported).
         try:
             if colls.mappable is not None: pylab.gci._current = colls.mappable
@@ -1967,6 +1988,10 @@ class Basemap:
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # make sure axis ticks are turned off.
+        if self.noticks:
+            ax.set_xticks([]) 
+            ax.set_yticks([])
         # reset current active image (only if pylab is imported).
         try:
             if colls.mappable is not None: pylab.gci._current = colls.mappable
@@ -2017,6 +2042,10 @@ class Basemap:
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # make sure axis ticks are turned off.
+        if self.noticks:
+            ax.set_xticks([]) 
+            ax.set_yticks([])
         return ret
 
 def _tonumarray(arr):
