@@ -43,3 +43,7 @@ and ESRI shapefile.
 
 hurrtrack.py plots hurricane tracks from shapefile data 
 (from nationalatlas.gov).
+
+testgdal.py is an example that shows how to plot raster geospatial data
+using the gdal module (http://gdal.maptools.org).  Requires two data
+files that must be downloaded manually, see docstrings for URLs.
