@@ -40,5 +40,12 @@ m.drawparallels(p.linspace(llcrnrlat+0.1,urcrnrlat-0.1,5),labels=[1,0,0,0],fmt='
 # plot county boundaries from
 # http://edcftp.cr.usgs.gov/pub/data/nationalatlas/countyp020.tar.gz
 shp_info = m.readshapefile('countyp020','counties',drawbounds=True,linewidth=1.0)
+# plot some cities.
+lons = [-105.22,-105.513,-105.316,-105.47]; lats = [39.76,39.801,39.633,39.41]
+names =  ['Golden','Central City','Evergreen','Bailey']
+x,y = m(lons,lats)
+m.plot(x,y,'ko')
+for name,xx,yy in zip(names,x,y):
+    p.text(xx+0.01,yy+0.01,name)
 p.title(gd.GetDescription()+' USGS DEM with county boundaries')
 p.show()
