@@ -2,6 +2,8 @@
            Fixed bugs in meridian/parallel labelling that only
            affected very small map regions (on the order of 1 degree
            by 1 degree).
+           Added 'fmt' keyword arg to drawmeridians and drawparallels
+           (default is '%g').
            Fixed bug in 'readshapefile' that prevented boundaries from
            being drawn for 'cyl','merc' or 'miller' projections when the
            map region doesn't cross the greenwich meridian.
