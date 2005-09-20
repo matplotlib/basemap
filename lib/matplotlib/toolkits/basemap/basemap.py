@@ -1218,6 +1218,7 @@ class Basemap:
   bottom of the plot. For example labels=[1,0,0,1] will cause parallels
   to be labelled where they intersect the left and bottom of the plot,
   but not the right and top.
+ fmt is a format string to format the parallel labels (default '%g').
  xoffset - label offset from edge of map in x-direction
   (default is 0.01 times width of map in map projection coordinates).
  yoffset - label offset from edge of map in y-direction
@@ -1413,6 +1414,7 @@ class Basemap:
   bottom of the plot. For example labels=[1,0,0,1] will cause meridians
   to be labelled where they intersect the left and bottom of the plot,
   but not the right and top. 
+ fmt is a format string to format the meridian labels (default '%g').
  xoffset - label offset from edge of map in x-direction
   (default is 0.01 times width of map in map projection coordinates).
  yoffset - label offset from edge of map in y-direction
