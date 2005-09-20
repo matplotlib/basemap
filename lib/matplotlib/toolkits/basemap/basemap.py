@@ -29,7 +29,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap') 
 
 __version__ = '0.7.1'
-__revision__ = '20050914'
+__revision__ = '20050920'
 
 class Basemap:
 
@@ -1160,6 +1160,10 @@ class Basemap:
             rings = len(verts)
             for ring in range(rings):
                 lons, lats = zip(*verts[ring])
+                if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
+                    # for cylindrical projections that don't cross greenwich, 
+                    # adjust lons to be in range 0 to 360.
+                    lons = [(lon + 360.)%360 for lon in lons]
                 x, y = self(lons, lats)
                 shpsegs.append(zip(x,y))
                 if ring == 0:
