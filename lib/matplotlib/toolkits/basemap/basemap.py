@@ -195,7 +195,7 @@ class Basemap:
             # if self.crossgreenwich is False (projection
             # doesn't cross greenwich meridian) some time can
             # be saved in processing boundaries.
-            if (self.llcrnrlat+360.)%360 > (self.urcrnrlon+360.)%360:
+            if (self.llcrnrlon+360.)%360 > (self.urcrnrlon+360.)%360:
                 self.crossgreenwich = True
             else:
                 self.crossgreenwich = False
