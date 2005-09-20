@@ -1,3 +1,12 @@
+20050920:  version 0.7.1 (not yet released)
+           Fixed bugs in meridian/parallel labelling that only
+           affected very small map regions (on the order of 1 degree
+           by 1 degree).
+           Fixed bug in 'readshapefile' that prevented boundaries from
+           being drawn for 'cyl','merc' or 'miller' projections when the
+           map region doesn't cross the greenwich meridian.
+           Modified imshow method so 'origin' keyword is accepted (it
+           was always set to 'lower' previously).
 20050914:  version 0.7:
            Optimizations to reduce the time it takes to create
            a Basemap class instance - now nearly 4 times faster
