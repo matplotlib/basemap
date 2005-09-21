@@ -1,14 +1,18 @@
-20050920:  version 0.7.1 (not yet released)
-           Fixed bugs in meridian/parallel labelling that only
-           affected very small map regions (on the order of 1 degree
-           by 1 degree).
-           Added 'fmt' keyword arg to drawmeridians and drawparallels
+20050921:  version 0.7.1:
+           Fixed several bugs in meridian/parallel labelling and
+           Cylindrical projections that crossed greenwich were not
+           being handled properly.
+           Added 'fmt' keyword arg to drawmeridians and drawparallels 
            (default is '%g').
            Fixed bug in 'readshapefile' that prevented boundaries from
            being drawn for 'cyl','merc' or 'miller' projections when the
-           map region doesn't cross the greenwich meridian.
+           map region did not cross the greenwich meridian.
            Modified imshow method so 'origin' keyword is accepted (it
            was always set to 'lower' previously).
+           Added testgdal.py example showing how to plot raster
+           geospatial data with gdal module (gdal.maptools.org).
+           Meridians and parallels labelled correctly when 
+           rcParams['text.usetext']=True.
 20050914:  version 0.7:
            Optimizations to reduce the time it takes to create
            a Basemap class instance - now nearly 4 times faster
