@@ -51,7 +51,7 @@ except:
 
 setup(
   name              = "basemap",
-  version           = "0.7",
+  version           = "0.7.1",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data
@@ -63,7 +63,7 @@ setup(
   author            = "Jeff Whitaker",
   author_email      = "jeffrey.s.whitaker@noaa.gov",
   platforms         = ["any"],
-  license           = ["OSI Approved"],
+  license           = "OSI Approved",
   keywords          = ["python","plotting","plots","graphs","charts","GIS","mapping","map projections","maps"],
   classifiers       = ["Development Status :: 4 - Beta",
 			           "Intended Audience :: Science/Research", 
