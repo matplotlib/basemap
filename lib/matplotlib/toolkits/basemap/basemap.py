@@ -29,7 +29,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap') 
 
 __version__ = '0.7.1'
-__revision__ = '20050920'
+__revision__ = '20050921'
 
 class Basemap:
 
@@ -195,7 +195,7 @@ class Basemap:
             # if self.crossgreenwich is False (projection
             # doesn't cross greenwich meridian) some time can
             # be saved in processing boundaries.
-            if (self.llcrnrlon+360.)%360 > (self.urcrnrlon+360.)%360:
+            if (self.llcrnrlon+360.)%360 >= (self.urcrnrlon+360.)%360:
                 self.crossgreenwich = True
             else:
                 self.crossgreenwich = False
@@ -1341,8 +1341,6 @@ class Basemap:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
-                lons = [int(NX.around(lon*100)) for lon in lons]
-                lats = [int(NX.around(lat*100)) for lat in lats]
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
@@ -1354,27 +1352,29 @@ class Basemap:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
-                lons = [int(NX.around(lon*100)) for lon in lons]
-                lats = [int(NX.around(lat*100)) for lat in lats]
             for lat in circles:
                 # find index of parallel (there may be two, so
                 # search from left and right).
-                try:
-                    nl = lats.index(int(lat*100))
-                except:
-                    nl = -1
-                try:
-                    nr = len(lats)-lats[::-1].index(int(lat*100))-1
-                except:
-                    nr = -1
+                nl = _searchlist(lats,lat)
+                nr = _searchlist(lats[::-1],lat)
+                if nr != -1: nr = len(lons)-nr-1
                 if lat<0:
-                    latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
+                    if rcParams['text.usetex']:
+        	        latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
+                    else:
+                        latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
                     latlab = latlabstr%NX.fabs(lat)
                 elif lat>0:
-                    latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
+                    if rcParams['text.usetex']:
+        	        latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
+                    else:
+                        latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
                     latlab = latlabstr%lat
                 else:
-                    latlabstr = u'%s\N{DEGREE SIGN}'%fmt
+                    if rcParams['text.usetex']:
+        	        latlabstr = r'${%s\/^{\circ}}$'%fmt
+                    else:
+                        latlabstr = u'%s\N{DEGREE SIGN}'%fmt
                     latlab = latlabstr%lat
                 # parallels can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
@@ -1533,8 +1533,6 @@ class Basemap:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
-                lons = [int(NX.around(lon*100)) for lon in lons]
-                lats = [int(NX.around(lat*100)) for lat in lats]
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
@@ -1546,29 +1544,31 @@ class Basemap:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
-                lons = [int(NX.around(lon*100)) for lon in lons]
-                lats = [int(NX.around(lat*100)) for lat in lats]
             for lon in meridians:
                 # adjust so 0 <= lon < 360
                 lon = (lon+360) % 360
                 # find index of meridian (there may be two, so
                 # search from left and right).
-                try:
-                    nl = lons.index(int(lon*100))
-                except:
-                    nl = -1
-                try:
-                    nr = len(lons)-lons[::-1].index(int(lon*100))-1
-                except:
-                    nr = -1
+                nl = _searchlist(lons,lon)
+                nr = _searchlist(lons[::-1],lon)
+                if nr != -1: nr = len(lons)-nr-1
                 if lon>180:
-                    lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
+                    if rcParams['text.usetex']:
+        	        lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
+                    else:
+                        lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
                     lonlab = lonlabstr%NX.fabs(lon-360)
                 elif lon<180 and lon != 0:
-                    lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
+                    if rcParams['text.usetex']:
+        	        lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
+                    else:
+                        lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
                     lonlab = lonlabstr%lon
                 else:
-                    lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
+                    if rcParams['text.usetex']:
+        	        lonlabstr = r'${%s\/^{\circ}}$'%fmt
+                    else:
+                        lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
                     lonlab = lonlabstr%lon
                 # meridians can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
@@ -2086,6 +2086,34 @@ def _tonumerix(arr):
         return NX.reshape(NX.array(arr.tolist(),arr.typecode()),arr.shape)
     else:
         return arr
+
+def _searchlist(a,x):
+    """
+ like bisect, but works for lists that are not sorted,
+ and are not in increasing order.
+ returns -1 if x does not fall between any two elements"""
+    itemprev = a[0]
+    nslot = -1
+    eps = 180.
+    for n,item in enumerate(a[1:]):
+        if item < itemprev: 
+            if itemprev-item>eps:
+                if ((x>itemprev and x<=360.) or (x<item and x>=0.)):
+                    nslot = n+1
+                    break
+            elif x <= itemprev and x > item and itemprev:
+                nslot = n+1
+                break
+        else:
+            if item-itemprev>eps:
+                if ((x<itemprev and x>=0.) or (x>item and x<=360.)):
+                    nslot = n+1
+                    break
+            elif x >= itemprev and x < item:
+                nslot = n+1
+                break
+        itemprev = item
+    return nslot
 
 def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest',cval=0.0,order=3):
     """
