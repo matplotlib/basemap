@@ -1,3 +1,5 @@
+20050923:  version 0.7.2 (unreleased)
+           Fixed bug in interp function when order=0.
 20050921:  version 0.7.1:
            Fixed several bugs in meridian/parallel labelling and
            Cylindrical projections that crossed greenwich were not

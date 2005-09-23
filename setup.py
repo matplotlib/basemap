@@ -51,7 +51,7 @@ except:
 
 setup(
   name              = "basemap",
-  version           = "0.7.1",
+  version           = "0.7.2",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data
