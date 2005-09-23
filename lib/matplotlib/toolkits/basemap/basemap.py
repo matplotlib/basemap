@@ -2135,14 +2135,13 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
  If checkbounds=True, values of lonsout and latsout are checked to see that
  they lie within the range specified by lonsin and latsin.  Default is
  False, and values outside the borders are handled in the manner described
- by the 'mode' parameter (default mode='nearest', which means the nearest
- boundary value is used). See section 20.2 of the numarray docs for 
+ by the 'mode' parameter. See section 20.2 of the numarray docs for
  information on the 'mode' keyword.
 
  See numarray.nd_image.map_coordinates documentation for information on
  the other optional keyword parameters.  The order keyword can be 0 
  for nearest neighbor interpolation (nd_image only allows 1-6) - if
- order=0 bounds checking is done even if checkbounds=False.
+ order=0 'mode' is always 'nearest'.
     """
     # convert inputs to numarrays.
     datain = _tonumarray(datain)
@@ -2155,9 +2154,7 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
         raise ValueError, 'lonsin and latsin must be increasing!'
     # optionally, check that lonsout,latsout are 
     # within region defined by lonsin,latsin.
-    # (this check is always done if nearest neighbor 
-    # interpolation (order=0) requested).
-    if checkbounds or order == 0:
+    if checkbounds:
         if min(na.ravel(lonsout)) < min(lonsin) or \
            max(na.ravel(lonsout)) > max(lonsin) or \
            min(na.ravel(latsout)) < min(latsin) or \
@@ -2199,9 +2196,13 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
     if order:
         dataout = nd_image.map_coordinates(datain,coords,mode=mode,cval=cval,order=order)
     else:
+        # data outside range lonsin,latsin will be clipped to 
+        # values on boundary.
+        xcoords = na.clip(xcoords,0,len(lonsin)-1)
+        ycoords = na.clip(ycoords,0,len(latsin)-1)
         xi = na.around(xcoords).astype('i')
         yi = na.around(ycoords).astype('i')
-        dataout = datatmp[yi,xi]
+        dataout = datain[yi,xi]
     # result is returned as a numerix array
     return _tonumerix(dataout)
 
