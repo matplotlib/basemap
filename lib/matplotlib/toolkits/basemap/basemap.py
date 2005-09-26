@@ -26,7 +26,7 @@ import dbflib
 # BASEMAP_DATA_PATH env var not set.
 _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
-   _datadir = os.path.join(sys.prefix,'share/basemap') 
+   _datadir = os.path.join(sys.prefix,'share/basemap')
 
 __version__ = '0.7.1'
 __revision__ = '20050921'
@@ -45,15 +45,15 @@ class Basemap:
  structures in native map projection coordinates.
  Requires matplotlib and numarray.
  Uses a pyrex interface to C-code from proj.4 (http://proj.maptools.org).
- 
+
  Useful instance variables:
- 
+
  projection - map projection ('cyl','merc','mill','lcc','eqdc','aea','aeqd',
   'laea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly', 'ortho', 'robin',
   'moll' or 'stere')
  aspect - map aspect ratio (size of y dimension / size of x dimension).
  llcrnrlon - longitude of lower left hand corner of the desired map domain.
- llcrnrlon - latitude of lower left hand corner of the desired map domain.      
+ llcrnrlon - latitude of lower left hand corner of the desired map domain.
  urcrnrlon - longitude of upper right hand corner of the desired map domain.
  urcrnrlon - latitude of upper right hand corner of the desired map domain.
  llcrnrx,llcrnry,urcrnrx,urcrnry - corners of map domain in projection coordinates.
@@ -74,7 +74,7 @@ class Basemap:
 >>> # create figure with same aspect ratio as map.
 >>> figure(figsize=(10,m.aspect*10)).add_axes([0.1,0.1,0.8,0.8],frameon=False)
 >>> # make filled contour plot.
->>> levels, colls = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
+>>> CS = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
 >>> m.drawcoastlines() # draw coastlines
 >>> m.drawmapboundary() # draw a line around the map region
 >>> m.drawparallels(arange(-90.,120.,30.),labels=[1,0,0,0]) # draw parallels
@@ -82,7 +82,7 @@ class Basemap:
 >>> title('Robinson Projection') # add a title
 >>> show()
 
- [this example (simpletest.py) plus many others can be found in the 
+ [this example (simpletest.py) plus many others can be found in the
   examples directory of source distribution.  The "OO" version of this
   example (which does not use pylab) is called "simpletest_oo.py".]
 
@@ -95,43 +95,43 @@ class Basemap:
        lon_1=None,lon_2=None,suppress_ticks=True,ax=None):
         """
  create a Basemap instance.
- 
+
  arguments:
 
  projection - map projection.  'cyl' - cylindrical equidistant, 'merc' -
   mercator, 'lcc' - lambert conformal conic, 'stere' - stereographic,
-  'aea' - albers equal area conic, 'tmerc' - transverse mercator,  
+  'aea' - albers equal area conic, 'tmerc' - transverse mercator,
   'aeqd' - azimuthal equidistant, 'mill' - miller cylindrical,
   'eqdc' - equidistant conic, 'laea' - lambert azimuthal equal area,
   'cass' - cassini-soldner (transverse cylindrical equidistant),
   'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
   'moll' - mollweide, 'robin' - robinson,
   and 'gnom' - gnomonic are currently available.  Default 'cyl'.
- 
+
  llcrnrlon - longitude of lower left hand corner of the desired map domain
   (Default -180).
- llcrnrlat - latitude of lower left hand corner of the desired map domain      
+ llcrnrlat - latitude of lower left hand corner of the desired map domain
   (Default -90).
  urcrnrlon - longitude of upper right hand corner of the desired map domain
   (Default 180).
  urcrnrlat - latitude of upper right hand corner of the desired map domain
   (Default 90).
 
- If the orthographic, mollweide or robinson projection is chosen 
+ If the orthographic, mollweide or robinson projection is chosen
  the values of llcrnrlon,llcrnrlat,urcrnrlon and urcrnrlat are ignored,
  and the entire projection domain will be always be plotted.
 
- resolution - resolution of boundary database to use. Can be 'c' (crude), 
-  'l' (low), 'i' (intermediate) or 'h' (high). 
+ resolution - resolution of boundary database to use. Can be 'c' (crude),
+  'l' (low), 'i' (intermediate) or 'h' (high).
   Resolution drops off by roughly 80%
   between datasets.  Higher res datasets are much slower to draw.
   Default 'c'. Coastline data is from the GSHHS
   (http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html).
-  State, country and river datasets from the Generic Mapping 
+  State, country and river datasets from the Generic Mapping
   Tools ((http://gmt.soest.hawaii.edu).
 
  area_thresh - coastline or lake with an area smaller than area_thresh
-  in km^2 will not be plotted.  Default 10000,1000,100,10 for resolution 
+  in km^2 will not be plotted.  Default 10000,1000,100,10 for resolution
   'c','l','i','h'.
 
  rsphere - radius of the sphere used to define map projection (default
@@ -139,7 +139,7 @@ class Basemap:
   given as a sequence, the first two elements are interpreted as
   the the radii of the major and minor axes of an ellipsoid. Note: sometimes
   an ellipsoid is specified by the major axis and an 'inverse flattening
-  parameter' (if).  The minor axis (b) can be computed from the major axis (a) 
+  parameter' (if).  The minor axis (b) can be computed from the major axis (a)
   and the inverse flattening parameter using the formula if = a/(a-b).
 
  suppress_ticks - suppress automatic drawing of axis ticks and labels
@@ -154,14 +154,14 @@ class Basemap:
  to get the current axes instance).  If you don't want pylab to be imported,
  you can either set this to a pre-defined axes instance, or use the 'ax'
  keyword in each Basemap method call that does drawing. In the first case,
- all Basemap method calls will draw to the same axes instance.  In the 
+ all Basemap method calls will draw to the same axes instance.  In the
  second case, you can draw to different axes with the same Basemap instance.
- You can also use the 'ax' keyword in individual method calls to 
+ You can also use the 'ax' keyword in individual method calls to
  selectively override the default axes instance.
 
- The following parameters are map projection parameters which all default to 
+ The following parameters are map projection parameters which all default to
  None.  Not all parameters are used by all projections, some are ignored.
- 
+
  lat_ts - latitude of natural origin (used for mercator and stereographic
   projections).
  lat_1 - first standard parallel for lambert conformal, albers
@@ -174,13 +174,13 @@ class Basemap:
   for oblique mercator.
  lon_2 - Longitude of one of the two points on the projection centerline
   for oblique mercator.
- lat_0 - central latitude (y-axis origin) - used by stereographic, polyconic, 
+ lat_0 - central latitude (y-axis origin) - used by stereographic, polyconic,
   transverse mercator, miller cylindrical, cassini-soldner, oblique mercator,
   gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
- lon_0 - central meridian (x-axis origin) - used by stereographic, polyconic, 
+ lon_0 - central meridian (x-axis origin) - used by stereographic, polyconic,
   transverse mercator, miller cylindrical, cassini-soldner, mollweide, robinson,
   gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
-        """     
+        """
 
         self.projection = projection
         # make sure lat/lon limits are converted to floats.
@@ -433,7 +433,7 @@ class Basemap:
         if self.crossgreenwich:
            xc2,yc2 = proj(NX.array(coastlons2),NX.array(coastlats))
            xc3,yc3 = proj(NX.array(coastlons3),NX.array(coastlats))
-        if self.crossgreenwich and projection == 'merc' or projection == 'mill': 
+        if self.crossgreenwich and projection == 'merc' or projection == 'mill':
             yc2 = yc
             yc3 = yc
 
@@ -462,7 +462,7 @@ class Basemap:
         if self.crossgreenwich:
             xc2,yc2 = proj(NX.array(cntrylons2,'f'),NX.array(cntrylats))
             xc3,yc3 = proj(NX.array(cntrylons3),NX.array(cntrylats))
-        if self.crossgreenwich and projection == 'merc' or projection == 'mill': 
+        if self.crossgreenwich and projection == 'merc' or projection == 'mill':
             yc2=yc
             yc3=yc
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:])]
@@ -478,7 +478,7 @@ class Basemap:
         if self.crossgreenwich:
             xc2,yc2 = proj(NX.array(statelons2,'f'),NX.array(statelats))
             xc3,yc3 = proj(NX.array(statelons3),NX.array(statelats))
-        if self.crossgreenwich and projection == 'merc' or projection == 'mill': 
+        if self.crossgreenwich and projection == 'merc' or projection == 'mill':
             yc2=yc
             yc3=yc
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:])]
@@ -494,7 +494,7 @@ class Basemap:
         if self.crossgreenwich:
             xc2,yc2 = proj(NX.array(riverlons2,'f'),NX.array(riverlats))
             xc3,yc3 = proj(NX.array(riverlons3),NX.array(riverlats))
-        if self.crossgreenwich and projection == 'merc' or projection == 'mill': 
+        if self.crossgreenwich and projection == 'merc' or projection == 'mill':
             yc2=yc
             yc3=yc
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(riversegind[:-1],riversegind[1:])]
@@ -534,7 +534,7 @@ class Basemap:
                     lats.append(-90.)
                     lons.insert(0,360.)
                     lats.insert(0,-90.)
-                if x[-1] == 360.000 and y[-1] < -68.: 
+                if x[-1] == 360.000 and y[-1] < -68.:
                     x.append(360.)
                     y.append(-90)
                     x.insert(0,720.)
@@ -543,7 +543,7 @@ class Basemap:
                     lats.append(-90.)
                     lons.insert(0,720.)
                     lats.insert(0,-90.)
-                if x[-1] == -360.000 and y[-1] < -68.: 
+                if x[-1] == -360.000 and y[-1] < -68.:
                     x.append(-360.)
                     y.append(-90)
                     x.insert(0,0.)
@@ -562,7 +562,7 @@ class Basemap:
                     lats.append(-90.)
                     lons.insert(0,360.)
                     lats.insert(0,-90.)
-                if math.fabs(x[-1]-x360) < 1. and y[-1] < ya: 
+                if math.fabs(x[-1]-x360) < 1. and y[-1] < ya:
                     x.append(x360)
                     y.append(ysp)
                     x.insert(0,x720)
@@ -571,7 +571,7 @@ class Basemap:
                     lats.append(-90.)
                     lons.insert(0,720.)
                     lats.insert(0,-90.)
-                if math.fabs(x[-1]-xm360) < 1. and y[-1] < ya: 
+                if math.fabs(x[-1]-xm360) < 1. and y[-1] < ya:
                     x.append(xm360)
                     y.append(ysp)
                     x.insert(0,x0)
@@ -618,7 +618,7 @@ class Basemap:
         self.riversegs = rivers
         self.cntryegs = countries
 
-        # split up segments that go outside projection limb 
+        # split up segments that go outside projection limb
         coastsegs = []
         coastsegtypes = []
         for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
@@ -696,7 +696,7 @@ class Basemap:
         self.coastsegs = coastsegs
         self.coastsegtypes = coastsegtypes
 
-        # special treatment of coastline polygons for 
+        # special treatment of coastline polygons for
         # orthographic, mollweide and robinson.
         # (polygon clipping along projection limb)
         if self.projection == 'ortho':
@@ -780,7 +780,7 @@ class Basemap:
                     xx,yy = self(lons,lats)
                     xx = NX.array(xx); yy = NX.array(yy)
                     xdist = NX.fabs(xx[1:]-xx[0:-1])
-                    if max(xdist) > 1000000: 
+                    if max(xdist) > 1000000:
                         nmin = NX.argmax(xdist)+1
                         xnew = NX.zeros(len(xx),'d')
                         ynew = NX.zeros(len(xx),'d')
@@ -871,7 +871,7 @@ class Basemap:
     def __call__(self,x,y,inverse=False):
         """
  Calling a Basemap class instance with the arguments lon, lat will
- convert lon/lat (in degrees) to x/y native map projection 
+ convert lon/lat (in degrees) to x/y native map projection
  coordinates (in meters).  If optional keyword 'inverse' is
  True (default is False), the inverse transformation from x/y
  to lon/lat is performed.
@@ -882,14 +882,14 @@ class Basemap:
  lon,lat can be either scalar floats or N arrays.
         """
         if not self.crossgreenwich and self.projection in ['merc','cyl','mill'] and not inverse:
-            # for cylindrical projections that don't cross greenwich, 
+            # for cylindrical projections that don't cross greenwich,
             # adjust lons to be in range 0 to 360.
             try:
                 x = (360.+x)%360.
             except:
                 x = [(360.+xx)%360. for xx in x]
         return self.projtran(x,y,inverse=inverse)
- 
+
     def makegrid(self,nx,ny,returnxy=False):
         """
  return arrays of shape (ny,nx) containing lon,lat coordinates of
@@ -905,7 +905,7 @@ class Basemap:
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -947,7 +947,7 @@ class Basemap:
         ax.plot(x,y,color=color,linewidth=linewidth)
         # make sure axis ticks are turned off.
         if self.noticks:
-            ax.set_xticks([]) 
+            ax.set_xticks([])
             ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
@@ -963,7 +963,7 @@ class Basemap:
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1012,7 +1012,7 @@ class Basemap:
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1025,7 +1025,7 @@ class Basemap:
         ax.add_collection(coastlines)
         # make sure axis ticks are turned off
         if self.noticks == True:
-            ax.set_xticks([]) 
+            ax.set_xticks([])
             ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
@@ -1041,7 +1041,7 @@ class Basemap:
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1066,7 +1066,7 @@ class Basemap:
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1091,7 +1091,7 @@ class Basemap:
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1106,7 +1106,7 @@ class Basemap:
         self.set_axes_limits(ax=ax)
         # make sure axis ticks are turned off.
         if self.noticks:
-            ax.set_xticks([]) 
+            ax.set_xticks([])
             ax.set_yticks([])
 
     def readshapefile(self,shapefile,name,drawbounds=True,
@@ -1115,11 +1115,11 @@ class Basemap:
  read in shape file, draw boundaries on map.
  Requires pyshapelib module from Thuban (http://thuban.intevation.org).
 
- Restrictions:  
+ Restrictions:
   - Assumes shapes are 2D
   - vertices must be in geographic (lat/lon) coordinates.
 
- shapefile - path to shapefile components.  Example:  
+ shapefile - path to shapefile components.  Example:
   shapefile='/home/jeff/esri/world_borders' assumes that
   world_borders.shp, world_borders.shx and world_borders.dbf
   live in /home/jeff/esri.
@@ -1129,7 +1129,7 @@ class Basemap:
   for each shape, containing attributes of each shape from dbf file.
   For example, if name='counties', self.counties
   will be a list of vertices for each shape in map projection
-  coordinates and self.counties_info will be a list of dictionaries 
+  coordinates and self.counties_info will be a list of dictionaries
   with shape attributes. Rings in individual shapes are split out
   into separate polygons.  Additional keys
   'RINGNUM' and 'SHAPENUM' are added to shape attribute dictionary.
@@ -1168,7 +1168,7 @@ class Basemap:
             for ring in range(rings):
                 lons, lats = zip(*verts[ring])
                 if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
-                    # for cylindrical projections that don't cross greenwich, 
+                    # for cylindrical projections that don't cross greenwich,
                     # adjust lons to be in range 0 to 360.
                     lons = [(lon + 360.)%360 for lon in lons]
                 x, y = self(lons, lats)
@@ -1183,7 +1183,7 @@ class Basemap:
         if drawbounds:
             # get current axes instance (if none specified).
             if ax is None and self.ax is None:
-                try: 
+                try:
                     ax = pylab.gca()
                 except:
                     import pylab
@@ -1221,7 +1221,7 @@ class Basemap:
  dashes - dash pattern for parallels (default [1,1], i.e. 1 pixel on,
   1 pixel off).
  labels - list of 4 values (default [0,0,0,0]) that control whether
-  parallels are labelled where they intersect the left, right, top or 
+  parallels are labelled where they intersect the left, right, top or
   bottom of the plot. For example labels=[1,0,0,1] will cause parallels
   to be labelled where they intersect the left and bottom of the plot,
   but not the right and top.
@@ -1237,7 +1237,7 @@ class Basemap:
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1266,9 +1266,9 @@ class Basemap:
         except:
             circlesl = circles
         if self.projection not in ['merc','cyl','mill','moll','robin']:
-            if max(circlesl) > 0 and latmax not in circlesl: 
+            if max(circlesl) > 0 and latmax not in circlesl:
                 circlesl.append(latmax)
-            if min(circlesl) < 0 and -latmax not in circlesl: 
+            if min(circlesl) < 0 and -latmax not in circlesl:
                 circlesl.append(-latmax)
         xdelta = 0.01*(self.xmax-self.xmin)
         ydelta = 0.01*(self.ymax-self.ymin)
@@ -1402,7 +1402,7 @@ class Basemap:
 
         # make sure axis ticks are turned off is parallels labelled.
         if self.noticks or max(labels):
-            ax.set_xticks([]) 
+            ax.set_xticks([])
             ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
@@ -1420,10 +1420,10 @@ class Basemap:
  dashes - dash pattern for meridians (default [1,1], i.e. 1 pixel on,
   1 pixel off).
  labels - list of 4 values (default [0,0,0,0]) that control whether
-  meridians are labelled where they intersect the left, right, top or 
+  meridians are labelled where they intersect the left, right, top or
   bottom of the plot. For example labels=[1,0,0,1] will cause meridians
   to be labelled where they intersect the left and bottom of the plot,
-  but not the right and top. 
+  but not the right and top.
  fmt is a format string to format the meridian labels (default '%g').
  xoffset - label offset from edge of map in x-direction
   (default is 0.01 times width of map in map projection coordinates).
@@ -1436,7 +1436,7 @@ class Basemap:
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1463,7 +1463,7 @@ class Basemap:
         ydelta = 0.1*(self.ymax-self.ymin)
         for merid in meridians:
             if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
-                # for cylindrical projections that don't cross greenwich, 
+                # for cylindrical projections that don't cross greenwich,
                 # adjust meridians to be in range 0 to 360.
                 merid = (merid + 360.)%360
             lons = merid*NX.ones(len(lats),'f')
@@ -1591,7 +1591,7 @@ class Basemap:
 
         # make sure axis ticks are turned off if meridians labelled.
         if self.noticks or max(labels):
-            ax.set_xticks([]) 
+            ax.set_xticks([])
             ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
@@ -1644,7 +1644,7 @@ class Basemap:
  are also returned.
 
  See interp documentation for meaning of extra keyword arguments (**kwargs).
- 
+
  data on a lat/lon grid must be transformed to map projection coordinates
  before it can be plotted on the map with imshow.
         """
@@ -1660,7 +1660,7 @@ class Basemap:
     def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,**kwargs):
         """
  rotate and interpolate a vector field (uin,vin) from a lat/lon grid
- with longitudes = lons and latitudes = lats to a 
+ with longitudes = lons and latitudes = lats to a
  (ny,nx) native map projection grid.
 
  lons, lats must be rank-1 arrays containing longitudes and latitudes
@@ -1708,7 +1708,7 @@ class Basemap:
  lons, lats must be rank-2 arrays containing longitudes and latitudes
  (in degrees) of grid.
 
- if returnxy=True, the x and y values of the lat/lon grid 
+ if returnxy=True, the x and y values of the lat/lon grid
  are also returned (default False).
 
  The input vector field is defined in spherical coordinates (it
@@ -1737,7 +1737,7 @@ class Basemap:
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1745,7 +1745,7 @@ class Basemap:
         elif ax is None and self.ax is not None:
             ax = self.ax
         corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
-        ax.update_datalim( corners )                                          
+        ax.update_datalim( corners )
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
         ax.set_ylim((self.llcrnry, self.urcrnry))
 
@@ -1755,13 +1755,13 @@ class Basemap:
  extra keyword 'ax' can be used to override the default axes instance.
         """
         if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
-            # for cylindrical projections that don't cross greenwich, 
+            # for cylindrical projections that don't cross greenwich,
             # adjust lons to be in range 0 to 360.
-            args = list(args) 
+            args = list(args)
             args[0] = [(lon + 360.)%360 for lon in args[0]]
             args = tuple(args)
         if not kwargs.has_key('ax') and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1789,7 +1789,7 @@ class Basemap:
         self.set_axes_limits(ax=ax)
         # make sure axis ticks are turned off.
         if self.noticks:
-            ax.set_xticks([]) 
+            ax.set_xticks([])
             ax.set_yticks([])
         return ret
 
@@ -1799,13 +1799,13 @@ class Basemap:
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
-            # for cylindrical projections that don't cross greenwich, 
+            # for cylindrical projections that don't cross greenwich,
             # adjust lons to be in range 0 to 360.
-            args = list(args) 
+            args = list(args)
             args[0] = [(lon + 360.)%360 for lon in args[0]]
             args = tuple(args)
         if not kwargs.has_key('ax') and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1833,7 +1833,7 @@ class Basemap:
         self.set_axes_limits(ax=ax)
         # make sure axis ticks are turned off.
         if self.noticks:
-            ax.set_xticks([]) 
+            ax.set_xticks([])
             ax.set_yticks([])
         return ret
 
@@ -1845,7 +1845,7 @@ class Basemap:
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1887,7 +1887,7 @@ class Basemap:
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1897,7 +1897,7 @@ class Basemap:
         else:
             ax = popd(kwargs,'ax')
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
-        # make x,y masked arrays 
+        # make x,y masked arrays
         # (masked where data is outside of projection limb)
         x = ma.masked_values(NX.where(x > 1.e20,1.e20,x), 1.e20)
         y = ma.masked_values(NX.where(y > 1.e20,1.e20,y), 1.e20)
@@ -1925,7 +1925,7 @@ class Basemap:
         self.set_axes_limits(ax=ax)
         # make sure axis ticks are turned off.
         if self.noticks:
-            ax.set_xticks([]) 
+            ax.set_xticks([])
             ax.set_yticks([])
         return ret
 
@@ -1935,7 +1935,7 @@ class Basemap:
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -1956,7 +1956,7 @@ class Basemap:
         if h is not None:
             ax.hold(h)
         try:
-            levels, colls = ax.contour(x,y,data,*args,**kwargs)
+            CS = ax.contour(x,y,data,*args,**kwargs)
             try:
                 pylab.draw_if_interactive()
             except:
@@ -1969,14 +1969,14 @@ class Basemap:
         self.set_axes_limits(ax=ax)
         # make sure axis ticks are turned off.
         if self.noticks:
-            ax.set_xticks([]) 
+            ax.set_xticks([])
             ax.set_yticks([])
         # reset current active image (only if pylab is imported).
         try:
-            if colls.mappable is not None: pylab.gci._current = colls.mappable
+            if CS._A is not None: pylab.gci._current = CS
         except:
             pass
-        return levels,colls
+        return CS
 
     def contourf(self,x,y,data,*args,**kwargs):
         """
@@ -1984,7 +1984,7 @@ class Basemap:
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -2005,7 +2005,7 @@ class Basemap:
         if h is not None:
             ax.hold(h)
         try:
-            levels, colls = ax.contourf(x,y,data,*args,**kwargs)
+            CS = ax.contourf(x,y,data,*args,**kwargs)
             try:
                 pylab.draw_if_interactive()
             except:
@@ -2018,28 +2018,28 @@ class Basemap:
         self.set_axes_limits(ax=ax)
         # make sure axis ticks are turned off.
         if self.noticks:
-            ax.set_xticks([]) 
+            ax.set_xticks([])
             ax.set_yticks([])
         # reset current active image (only if pylab is imported).
         try:
-            if colls.mappable is not None: pylab.gci._current = colls.mappable
+            if CS._A is not None: pylab.gci._current = CS
         except:
             pass
-        return levels,colls
+        return CS
 
     def quiver(self, x, y, u, v, scale=None, **kwargs):
         """
  Make a vector plot (u, v) with arrows on the map projection grid (x,y)
- If scale is specified, it is used to scale the vectors. If scale=None 
+ If scale is specified, it is used to scale the vectors. If scale=None
  (default) arrows are scaled to longest one is equal to the maximum
- distance between grid points.   
+ distance between grid points.
 
- Extra keyword arguments (**kwargs) passed to quiver Axes method (see  
+ Extra keyword arguments (**kwargs) passed to quiver Axes method (see
  NX.quiver documentation for details).
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
-            try: 
+            try:
                 ax = pylab.gca()
             except:
                 import pylab
@@ -2072,7 +2072,7 @@ class Basemap:
         self.set_axes_limits(ax=ax)
         # make sure axis ticks are turned off.
         if self.noticks:
-            ax.set_xticks([]) 
+            ax.set_xticks([])
             ax.set_yticks([])
         return ret
 
@@ -2096,7 +2096,7 @@ def _searchlist(a,x):
     nslot = -1
     eps = 180.
     for n,item in enumerate(a[1:]):
-        if item < itemprev: 
+        if item < itemprev:
             if itemprev-item>eps:
                 if ((x>itemprev and x<=360.) or (x<item and x>=0.)):
                     nslot = n+1
@@ -2139,7 +2139,7 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
  information on the 'mode' keyword.
 
  See numarray.nd_image.map_coordinates documentation for information on
- the other optional keyword parameters.  The order keyword can be 0 
+ the other optional keyword parameters.  The order keyword can be 0
  for nearest neighbor interpolation (nd_image only allows 1-6) - if
  order=0 'mode' is always 'nearest'.
     """
@@ -2152,7 +2152,7 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
     # lonsin and latsin must be monotonically increasing.
     if lonsin[-1]-lonsin[0] < 0 or latsin[-1]-latsin[0] < 0:
         raise ValueError, 'lonsin and latsin must be increasing!'
-    # optionally, check that lonsout,latsout are 
+    # optionally, check that lonsout,latsout are
     # within region defined by lonsin,latsin.
     if checkbounds:
         if min(na.ravel(lonsout)) < min(lonsin) or \
@@ -2196,7 +2196,7 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
     if order:
         dataout = nd_image.map_coordinates(datain,coords,mode=mode,cval=cval,order=order)
     else:
-        # data outside range lonsin,latsin will be clipped to 
+        # data outside range lonsin,latsin will be clipped to
         # values on boundary.
         xcoords = na.clip(xcoords,0,len(lonsin)-1)
         ycoords = na.clip(ycoords,0,len(latsin)-1)
@@ -2207,16 +2207,16 @@ def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest'
     return _tonumerix(dataout)
 
 def shiftgrid(lon0,datain,lonsin,start=True):
-    """ 
+    """
  shift global lat/lon grid east or west.
  assumes wraparound (or cyclic point) is included.
 
- lon0:  starting longitude for shifted grid 
+ lon0:  starting longitude for shifted grid
         (ending longitude if start=False). lon0 must be on
         input grid (with the range of lonsin).
  datain:  original data.
  lonsin:  original longitudes.
- start[True]: if True, lon0 represents he starting longitude 
+ start[True]: if True, lon0 represents he starting longitude
  of the new grid. if False, lon0 is the ending longitude.
 
  returns dataout,lonsout (data and longitudes on shifted grid).

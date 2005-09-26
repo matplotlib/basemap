@@ -19,8 +19,8 @@ fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # make a filled contour plot.
 x, y = m(lons, lats)
-levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
+CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+CS = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -42,8 +42,8 @@ fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # make a filled contour plot.
 x, y = m(lons, lats)
-levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
+CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+CS = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -68,8 +68,8 @@ fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # make a filled contour plot.
 x, y = m(lons, lats)
-levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
+CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+CS = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -92,8 +92,8 @@ fig=figure(figsize=(xsize,m.aspect*xsize))
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # make a filled contour plot.
 x, y = m(lons, lats)
-levels, colls = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-levels, colls = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
+CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+CS = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
