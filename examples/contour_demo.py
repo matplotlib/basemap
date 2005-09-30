@@ -13,14 +13,13 @@ hgt,lons = shiftgrid(180.,hgt,lons,start=False)
 lons, lats = meshgrid(lons, lats)
 
 # setup of mollweide basemap
-m = Basemap(resolution='c',area_thresh=10000.,projection='moll',lon_0=0)
-xsize = rcParams['figure.figsize'][0]
-fig=figure(figsize=(xsize,m.aspect*xsize))
-ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
+m = Basemap(resolution='c',projection='moll',lon_0=0)
+fig = m.createfigure()
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
+CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -37,13 +36,13 @@ title('Mollweide Filled Contour Demo')
 show()
 
 # set up Robinson map projection.
-m = Basemap(resolution='c',area_thresh=10000.,projection='robin',lon_0=0)
-fig=figure(figsize=(xsize,m.aspect*xsize))
-ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
+m = Basemap(resolution='c',projection='robin',lon_0=0)
+fig=m.createfigure()
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
+CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -61,15 +60,14 @@ show()
 
 # set up map projection (azimuthal equidistant).
 m = Basemap(llcrnrlon=-135.,llcrnrlat=-20.,urcrnrlon=45.,urcrnrlat=-20.,
-             resolution='c',area_thresh=10000.,projection='aeqd',
+             resolution='c',projection='aeqd',
              lat_0=90.,lon_0=-90.)
-xsize = rcParams['figure.figsize'][0]
-fig=figure(figsize=(xsize,m.aspect*xsize))
-ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
+fig=m.createfigure()
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
+CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -85,15 +83,14 @@ title('Azimuthal Equidistant Filled Contour Demo',y=1.075)
 show()
 
 # setup of orthographic basemap
-m = Basemap(resolution='c',area_thresh=10000.,projection='ortho',\
+m = Basemap(resolution='c',projection='ortho',\
             lat_0=50.,lon_0=-120.)
-xsize = rcParams['figure.figsize'][0]
-fig=figure(figsize=(xsize,m.aspect*xsize))
-ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
+fig=m.createfigure()
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS = m.contourf(x,y,hgt,15,cmap=cm.jet,colors=None)
+CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
