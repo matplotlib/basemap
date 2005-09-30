@@ -37,8 +37,8 @@ m.drawmeridians(nx.arange(0.,420.,60.),labels=[0,0,0,1],fontsize=10)
 # add a title.
 ax.set_title('Robinson Projection')
 # add a colorbar.
-cax = fig.add_axes([0.25, 0.05, 0.5, 0.05],frameon=False)
-fig.colorbar(colls.mappable, cax=cax, tickfmt='%d', orientation='horizontal') 
+cax = fig.add_axes([0.125, 0.05, 0.75, 0.05],frameon=False)
+fig.colorbar(cs, cax=cax, tickfmt='%d', orientation='horizontal',clabels=cs.levels[::3]) 
 # save image (width 800 pixels with dpi=100 and fig width 8 inches).
 canvas.print_figure('simpletest',dpi=100)
 # done.

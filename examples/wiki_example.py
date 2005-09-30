@@ -39,6 +39,6 @@ mean = 0.5*p.cos(2.*lats)*((p.sin(2.*lats))**2 + 2.)
 # compute native map projection coordinates of lat/lon grid.
 x, y = map(lons*180./p.pi, lats*180./p.pi)
 # contour data over the map.
-levs, colls = map.contour(x,y,wave+mean,15,linewidths=1.5)
+cs = map.contour(x,y,wave+mean,15,linewidths=1.5)
 p.show()
 
