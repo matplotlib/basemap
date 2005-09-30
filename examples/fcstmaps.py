@@ -126,12 +126,10 @@ for npanel,fcsthr in enumerate(arange(0,72,12)):
     m.drawmeridians(arange(-140,0,20),labels=[0,0,0,1],fontsize=8,yoffset=yoffset,fontstyle='oblique')
     # panel title
     title(repr(fcsthr)+'-h forecast valid '+verifdates[nt],fontsize=12)
-clim(clevs[1],clevs[-2])
 # figure title
 figtext(0.5,0.95,u"2-m temp (\N{DEGREE SIGN}K) forecasts from %s"%verifdates[0],
         horizontalalignment='center',fontsize=14)
 # a single colorbar.
 cax = axes([0.1, 0.03, 0.8, 0.025])
-# the first one only works for matplotlib > 0.83.2
-colorbar(tickfmt='%d', cax=cax, orientation='horizontal')
+colorbar(tickfmt='%d', cax=cax, orientation='horizontal',clabels=clevs[1:-1:2])
 show()
