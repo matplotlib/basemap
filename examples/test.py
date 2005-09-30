@@ -456,7 +456,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 #p = m.pcolor(x,y,topodatin,shading='flat')
 # filled contours (faster)
 x,y = m(*meshgrid(lonsin,latsin))
-levels, colls = m.contourf(x,y,topodatin,20,cmap=cm.jet,colors=None)
+cs = m.contourf(x,y,topodatin,20,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -485,7 +485,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 #p = m.pcolor(x,y,topodatin,shading='flat')
 # filled contours (faster)
 x,y = m(*meshgrid(lonsin,latsin))
-levels, colls = m.contourf(x,y,topodatin,20,cmap=cm.jet,colors=None)
+cs = m.contourf(x,y,topodatin,20,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -513,7 +513,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 #p = m.pcolor(x,y,topodatin,shading='flat')
 # filled contours (faster)
 x,y = m(*meshgrid(lonsin,latsin))
-levels, colls = m.contourf(x,y,topodatin,20,cmap=cm.jet,colors=None)
+cs = m.contourf(x,y,topodatin,20,cmap=cm.jet,colors=None)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again

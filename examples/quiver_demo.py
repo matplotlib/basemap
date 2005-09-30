@@ -33,7 +33,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # only do Northern Hemisphere.
 urot,vrot,x,y = m.rotate_vector(u[36:,:],v[36:,:],lons[36:,:],lats[36:,:],returnxy=True)
 # plot filled contours over map.
-levels, colls = m.contourf(x,y,p[36:,:],15,cmap=cm.jet,colors=None)
+cs = m.contourf(x,y,p[36:,:],15,cmap=cm.jet,colors=None)
 # plot wind vectors over map.
 m.quiver(x,y,urot,vrot)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
