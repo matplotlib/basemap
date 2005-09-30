@@ -4,8 +4,8 @@ from matplotlib import __version__ as matplotlib_version
 # check to make sure numarray, matplotlib are not too old.
 if numarray_version < '1.1':
     raise ImportError, 'your numarray is too old - basemap requires at least 1.1'
-if matplotlib_version < '0.81':
-    raise ImportError, 'your matplotlib is too old - basemap requires at least 0.81'
+if matplotlib_version < '0.84':
+    raise ImportError, 'your matplotlib is too old - basemap requires at least 0.84'
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
@@ -28,8 +28,8 @@ _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap')
 
-__version__ = '0.7.1'
-__revision__ = '20050921'
+__version__ = '0.7.2'
+__revision__ = '20050930'
 
 class Basemap:
 
