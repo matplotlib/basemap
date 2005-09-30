@@ -10,7 +10,7 @@ m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]))
 figure(figsize=(10,m.aspect*10)).add_axes([0.1,0.1,0.8,0.8],frameon=False)
 # make filled contour plot.
 x, y = m(*meshgrid(lons, lats))
-levels, colls = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
+cs = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
 # draw coastlines.
 m.drawcoastlines()
 # draw a line around the map region.
