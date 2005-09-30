@@ -109,16 +109,16 @@ m = Basemap(llcrnrlon=llcrnrlon,llcrnrlat=llcrnrlat,
             resolution='l',area_thresh=5000.,projection='lcc',
             lat_1=standardpar,lon_0=centerlon)
 x, y = m(lons, lats)
-# setup figure size so each panel will have same aspect ratio as map.
-xsize = rcParams['figure.figsize'][0]
-ysize = (3./2.)*m.aspect*xsize
-fig=figure(figsize=(xsize,ysize))
+# create figure.
+# mult ysize by 3/2 to take into account there will
+# be three rows and two columns.
+fig=m.createfigure(figsize=(8,(3./2.)*8))
 yoffset = (m.urcrnry-m.llcrnry)/30.
 for npanel,fcsthr in enumerate(arange(0,72,12)):
     nt = fcsthrs.index(fcsthr)
     ax = fig.add_subplot(320+npanel+1)
     cs = m.contour(x,y,t2m[nt,:,:],clevs,colors='k')
-    cs = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet,colors=None)
+    cs = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet)
     m.drawcoastlines()
     m.drawstates()
     m.drawcountries()

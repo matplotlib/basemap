@@ -25,15 +25,14 @@ m = Basemap(llcrnrlon=-180.,llcrnrlat=10.,urcrnrlon=0.,urcrnrlat=10.,\
             resolution='c',area_thresh=10000.,projection='stere',\
             lat_0=90.,lon_0=-135.,lat_ts=90.)
 # setup figure with same aspect ratio as map.
-xsize = rcParams['figure.figsize'][0]
-fig=figure(figsize=(xsize,m.aspect*xsize))
+fig=m.createfigure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # rotate wind vectors to map projection coordinates.
 # (also compute native map projections coordinates of lat/lon grid)
 # only do Northern Hemisphere.
 urot,vrot,x,y = m.rotate_vector(u[36:,:],v[36:,:],lons[36:,:],lats[36:,:],returnxy=True)
 # plot filled contours over map.
-cs = m.contourf(x,y,p[36:,:],15,cmap=cm.jet,colors=None)
+cs = m.contourf(x,y,p[36:,:],15,cmap=cm.jet)
 # plot wind vectors over map.
 m.quiver(x,y,urot,vrot)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
@@ -64,12 +63,10 @@ m = Basemap(llcrnrlon=-180.,llcrnrlat=10.,urcrnrlon=0.,urcrnrlat=10.,\
 nxv = 41; nyv = 41
 nxp = 101; nyp = 101
 spd = sqrt(u**2+v**2)
-print max(ravel(spd))
 udat, vdat, xv, yv = m.transform_vector(u,v,lons1,lats1,nxv,nyv,returnxy=True)
 pdat, xp, yp = m.transform_scalar(p,lons1,lats1,nxp,nyp,returnxy=True)
 # setup figure with same aspect ratio as map.
-xsize = rcParams['figure.figsize'][0]
-fig=figure(figsize=(xsize,m.aspect*xsize))
+fig=m.createfigure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map
 im = m.imshow(pdat,cm.jet)

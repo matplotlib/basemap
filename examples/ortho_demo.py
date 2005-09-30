@@ -13,10 +13,9 @@ m = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0)
 lons, lats = meshgrid(lons,lats)
 x,y = m(lons,lats)
 # create figure with same aspect ratio as map.
-fig=figure(figsize=(8,m.aspect*8))
-fig.add_axes([0.05,0.05,0.9,0.9],frameon=False)
+fig=m.createfigure().add_axes([0.05,0.05,0.9,0.9])
 # make filled contour plot.
-cs = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
+cs = m.contourf(x,y,etopo,30,cmap=cm.jet)
 # draw coastlines.
 m.drawcoastlines()
 # draw a line around the map region.
