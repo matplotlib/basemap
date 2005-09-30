@@ -17,12 +17,14 @@ etopo = topodict['data']; lons = topodict['lons']; lats = topodict['lats']
 # create figure.
 fig = Figure()
 canvas = FigureCanvas(fig)
-ax = fig.add_axes([0.125,0.175,0.75,0.75],frameon=False)
+# create axes instance, leaving room for colorbar at bottom.
+ax = fig.add_axes([0.125,0.175,0.75,0.75])
 # create Basemap instance for Robinson projection.
 # set 'ax' keyword so pylab won't be imported.
 m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]),ax=ax)
 # reset figure size to have same aspect ratio as map.
 # fig will be 8 inches wide.
+# (don't use createfigure, since that imports pylab).
 fig.set_figsize_inches((8,m.aspect*8.))
 # make filled contour plot.
 x, y = m(*meshgrid(lons, lats))
