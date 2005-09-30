@@ -835,10 +835,11 @@ class Basemap:
         import pylab as P
         if not kwargs.has_key('figsize'):
             figsize = rcParams['figure.figsize']
+            xsize = figsize[0]; ysize = xsize
         else:
             figsize = kwargs['figsize']
-        xsize = figsize[0]; ysize = figsize[1]
-        if self.aspect < 1:
+            xsize = figsize[0]; ysize = figsize[1]
+        if self.aspect <= 1:
             ysize = ysize*self.aspect
         else:
             xsize = xsize/self.aspect
