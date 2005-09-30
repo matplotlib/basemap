@@ -74,7 +74,7 @@ class Basemap:
 >>> # create figure with same aspect ratio as map.
 >>> fig = m.createfigure()
 >>> # make filled contour plot.
->>> cs = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
+>>> cs = m.contourf(x,y,etopo,30,cmap=cm.jet)
 >>> m.drawcoastlines() # draw coastlines
 >>> m.drawmapboundary() # draw a line around the map region
 >>> m.drawparallels(arange(-90.,120.,30.),labels=[1,0,0,0]) # draw parallels
