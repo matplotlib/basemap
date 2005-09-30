@@ -1748,6 +1748,9 @@ class Basemap:
         ax.update_datalim( corners )
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
         ax.set_ylim((self.llcrnry, self.urcrnry))
+        # turn off axes frame for non-rectangular projections.
+        if self.projection in ['ortho','moll','robin']:
+            ax.set_frame_on(False)
 
     def scatter(self, *args, **kwargs):
         """
