@@ -1,8 +1,11 @@
-
-20050925:  Modified to work with the new ContourSet returned
-           by contour and contourf.  (EF)
-20050923:  version 0.7.2 (unreleased)
+20050930:  version 0.7.2 (unreleased):
            Fixed bug in interp function when order=0.
+           Modified to work with the new ContourSet returned
+           by contour and contourf.
+           Axes frame turned off by default for non-rectangular
+           projections ('ortho','robin' and 'moll').
+           Added createfigure method to create a figure with the 
+           same aspect ratio as the map using pylab.figure.
 20050921:  version 0.7.1:
            Fixed several bugs in meridian/parallel labelling and
            Cylindrical projections that crossed greenwich were not
