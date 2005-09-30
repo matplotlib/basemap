@@ -72,9 +72,9 @@ class Basemap:
 >>> # compute native map projection coordinates for lat/lon grid.
 >>> x, y = m(*meshgrid(lons,lats))
 >>> # create figure with same aspect ratio as map.
->>> figure(figsize=(10,m.aspect*10)).add_axes([0.1,0.1,0.8,0.8],frameon=False)
+>>> fig = m.createfigure()
 >>> # make filled contour plot.
->>> CS = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
+>>> cs = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
 >>> m.drawcoastlines() # draw coastlines
 >>> m.drawmapboundary() # draw a line around the map region
 >>> m.drawparallels(arange(-90.,120.,30.),labels=[1,0,0,0]) # draw parallels
@@ -821,6 +821,29 @@ class Basemap:
                             xn.append(x); yn.append(y)
                 coastpolygons.append((xn,yn))
             self.coastpolygons = coastpolygons
+
+    def createfigure(self,*args,**kwargs):
+        """
+ create a figure with same aspect ratio as map using pylab interface.
+ returns a handle to the figure.
+ see pylab.figure docs for details.
+ Note:  Don't use this if you don't want pylab to be imported.
+        See simpletest_oo.py example for how to create a figure
+        with the right aspect ration using the non-pylab matplotlib
+        OO interface.
+        """
+        import pylab as P
+        if not kwargs.has_key('figsize'):
+            figsize = rcParams['figure.figsize']
+        else:
+            figsize = kwargs['figsize']
+        xsize = figsize[0]; ysize = figsize[1]
+        if self.aspect < 1:
+            ysize = ysize*self.aspect
+        else:
+            xsize = xsize/self.aspect
+        kwargs['figsize'] = (xsize,ysize)
+        return P.figure(*args,**kwargs)
 
     def _splitseg(self,xx,yy,mask=None):
         """split segment up around missing values (outside projection limb)"""
