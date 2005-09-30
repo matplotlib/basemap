@@ -16,7 +16,7 @@ x,y = m(lons,lats)
 fig=figure(figsize=(8,m.aspect*8))
 fig.add_axes([0.05,0.05,0.9,0.9],frameon=False)
 # make filled contour plot.
-levels, colls = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
+cs = m.contourf(x,y,etopo,30,cmap=cm.jet,colors=None)
 # draw coastlines.
 m.drawcoastlines()
 # draw a line around the map region.

@@ -117,8 +117,8 @@ yoffset = (m.urcrnry-m.llcrnry)/30.
 for npanel,fcsthr in enumerate(arange(0,72,12)):
     nt = fcsthrs.index(fcsthr)
     ax = fig.add_subplot(320+npanel+1)
-    levels, colls = m.contour(x,y,t2m[nt,:,:],clevs,colors='k')
-    levels, colls = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet,colors=None)
+    cs = m.contour(x,y,t2m[nt,:,:],clevs,colors='k')
+    cs = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet,colors=None)
     m.drawcoastlines()
     m.drawstates()
     m.drawcountries()
@@ -133,10 +133,5 @@ figtext(0.5,0.95,u"2-m temp (\N{DEGREE SIGN}K) forecasts from %s"%verifdates[0],
 # a single colorbar.
 cax = axes([0.1, 0.03, 0.8, 0.025])
 # the first one only works for matplotlib > 0.83.2
-try:
-    colorbar(tickfmt='%d', cax=cax, orientation='horizontal',
-             clabels=clevs[1:-1:2],drawedges=True)
-except:
-    colorbar(tickfmt='%5.1f', cax=cax, orientation='horizontal') 
-    cax.set_xticks(clevs[1:-1:2])
+colorbar(tickfmt='%d', cax=cax, orientation='horizontal')
 show()
