@@ -6,9 +6,9 @@ import pylab as p
 # don't plot features that are smaller than 1000 square km.
 map = Basemap(projection='ortho',lat_0=50,lon_0=-100,
               resolution='l',area_thresh=1000.)
-# set up figure and axes (turn axis frame off).
-fig=p.figure(figsize=(8,8))
-fig.add_axes([0.05,0.05,0.9,0.9],frameon=False)
+# set up figure.
+fig=map.createfigure()
+fig.add_axes([0.05,0.05,0.9,0.9])
 # draw coastlines, country boundaries, fill continents.
 map.drawcoastlines()
 map.drawcountries()

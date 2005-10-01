@@ -60,8 +60,7 @@ for xi,yi in zip(x,y):
         yy.append(yi)
 # plot them as filled circles on the map.
 # first, create figure with same aspect ratio as map.
-xsize = rcParams['figure.figsize'][0]
-fig=figure(figsize=(xsize,m.aspect*xsize))
+fig=m.createfigure()
 # background color will be used for 'wet' areas.
 fig.add_axes([0.1,0.1,0.8,0.8],axisbg='aqua')
 # use zorder=10 to make sure markers are drawn last.

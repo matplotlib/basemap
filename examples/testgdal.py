@@ -26,7 +26,7 @@ llcrnrlat = urcrnrlat+(array.shape[0]-1)*coords[5]
 m = Basemap(llcrnrlon=llcrnrlon,llcrnrlat=llcrnrlat,urcrnrlon=urcrnrlon,urcrnrlat=urcrnrlat,projection='cyl')
 # create a figure with the right aspect ratio, add an axes
 # (leaving room for a colorbar).
-fig=p.figure(figsize=(8,m.aspect*8))
+fig=m.createfigure()
 ax = fig.add_axes([0.1,0.1,0.75,0.75])
 # plot image from DEM over map.
 im = m.imshow(array,origin='upper')
