@@ -25,8 +25,7 @@ m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat,x,y = m.transform_scalar(topoin,lons,lats,nx,ny,returnxy=True)
 # set up figure with same aspect ratio as map.
-xsize = rcParams['figure.figsize'][0]
-fig=figure(figsize=(xsize,m.aspect*xsize))
+fig=m.createfigure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with imshow.
 im = m.imshow(topodat,cm.jet)

@@ -31,8 +31,7 @@ lons, lats = meshgrid(lons, lats)
 m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
             resolution='l',area_thresh=1000.,projection='lcc',\
             lat_1=50.,lon_0=-107.)
-xsize = rcParams['figure.figsize'][0]
-fig=figure(figsize=(xsize,m.aspect*xsize))
+fig=m.createfigure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7],axisbg='aqua')
 # make topodat a masked array, masking values lower than sea level.
 topodat = where(topodatin < 0.,1.e10,topodatin)
@@ -64,8 +63,7 @@ show()
 # setup of basemap ('ortho' = orthographic projection)
 m = Basemap(projection='ortho',
             resolution='c',area_thresh=10000.,lat_0=30,lon_0=-60)
-xsize = rcParams['figure.figsize'][0]
-fig=figure(figsize=(xsize,m.aspect*xsize))
+fig=m.createfigure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7],frameon=False)
 # make a pcolor plot.
 x, y = m(lons, lats)
