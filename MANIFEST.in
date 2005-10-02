@@ -23,6 +23,7 @@ include examples/huralll020.shx
 include examples/hurrtracks.py
 include examples/fcover.dat
 include examples/plotmap.py
+include examples/plotmap_oo.py
 include examples/plotmap_pcolor.py
 include examples/contour_demo.py
 include examples/quiver_demo.py

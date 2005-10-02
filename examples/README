@@ -12,6 +12,9 @@ plotmap.py is the example on the matplotlib 'screenshots' page (included
 in test.py) which shows the ETOPO topography as an image on a Lambert
 Conformal projection (using imshow).
 
+plotmap_oo.py is a version of plotmap.py that does not import pylab - it uses
+the matplotlib OO interface instead.
+
 plotmap_pcolor.py plots the ETOPO topography using pcolor, on a Lambert 
 Conformal and Orthographic projection.
 
