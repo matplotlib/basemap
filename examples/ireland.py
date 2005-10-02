@@ -72,7 +72,7 @@ m2.fillcontinents()
 # draw political boundaries.
 m2.drawcountries(linewidth=1.0)
 # draw major rivers.
-m2.drawrivers()
+m2.drawrivers(color='b')
 # draw parallels
 m2.drawparallels(circles,labels=[1,1,0,0])
 # draw meridians
