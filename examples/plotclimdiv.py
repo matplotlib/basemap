@@ -8,7 +8,7 @@ import random
 # Lambert Conformal map of lower 48 states.
 m = Basemap(llcrnrlon=-119,llcrnrlat=22,urcrnrlon=-64,urcrnrlat=49,
             projection='lcc',lat_1=33,lat_2=45,lon_0=-95)
-fig=p.figure(figsize=(8,m.aspect*8))
+fig=m.createfigure()
 fig.add_axes([0.1,0.1,0.8,0.8])
 # draw climate division boundaries.
 shp_info = m.readshapefile('divisions','climdivs',drawbounds=True)
