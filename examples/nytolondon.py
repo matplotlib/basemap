@@ -8,9 +8,7 @@ m = Basemap(llcrnrlon=-100.,llcrnrlat=20.,urcrnrlon=20.,urcrnrlat=60.,\
             resolution='c',area_thresh=10000.,projection='merc',\
             lat_0=40.,lon_0=-20.,lat_ts=20.)
 # make figure with aspect ratio that matches map region.
-xsize = rcParams['figure.figsize'][0]
-fig=figure(figsize=(xsize,m.aspect*xsize))
-fig.add_axes([0.1,0.1,0.8,0.8])
+fig=m.createfigure()
 # nylat, nylon are lat/lon of New York
 nylat = 40.78
 nylon = -73.98
@@ -39,9 +37,7 @@ m = Basemap(llcrnrlon=-100.,llcrnrlat=20.,urcrnrlon=20.,urcrnrlat=60.,\
             resolution='c',area_thresh=10000.,projection='gnom',\
             lat_0=40.,lon_0=-45.)
 # make figure with aspect ratio that matches map region.
-xsize = rcParams['figure.figsize'][0]
-fig=figure(figsize=(xsize,m.aspect*xsize))
-fig.add_axes([0.1,0.1,0.8,0.8])
+fig=m.createfigure()
 # nylat, nylon are lat/lon of New York
 nylat = 40.78
 nylon = -73.98
