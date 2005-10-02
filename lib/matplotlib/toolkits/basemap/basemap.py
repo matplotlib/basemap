@@ -29,7 +29,29 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap')
 
 __version__ = '0.7.2'
-__revision__ = '20050930'
+__revision__ = '20051002'
+
+# make sure subplots have same width and height
+# so that figure size sets plot aspect ratio.
+# (these are the same as matplotlib 0.84 defaults
+#  except for subplot.left, which was changed from 0.125).
+# print a warning when default is changed.
+if rcParams['figure.subplot.left']!=0.1:
+    print 'warning: figure.subplot.left rc value being reset to 0.1 in basemap'
+    print 'use rcdefaults() to get the original value back'
+    rcParams['figure.subplot.left']=0.1
+if rcParams['figure.subplot.right']!=0.9 :
+    print 'warning: figure.subplot.right rc value being reset to 0.9 in basemap'
+    print 'use rcdefaults() to get the original value back'
+    rcParams['figure.subplot.right']=0.9
+if rcParams['figure.subplot.bottom']!=0.1:
+    print 'warning: figure.subplot.bottom rc value being reset to 0.1 in basemap'
+    print 'use rcdefaults() to get the original value back'
+    rcParams['figure.subplot.bottom']=0.1
+if rcParams['figure.subplot.top']!=0.9:
+    print 'warning: figure.subplot.top rc value being reset to 0.9 in basemap'
+    print 'use rcdefaults() to get the original value back'
+    rcParams['figure.subplot.top']=0.9
 
 class Basemap:
 
