@@ -1213,6 +1213,8 @@ class Basemap:
             rings = len(verts)
             for ring in range(rings):
                 lons, lats = zip(*verts[ring])
+                if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
+                    raise ValueError,'shapefile must have lat/lon vertices  - it looks like this one has vertices in map projection coordinates'
                 if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
                     # for cylindrical projections that don't cross greenwich,
                     # adjust lons to be in range 0 to 360.
