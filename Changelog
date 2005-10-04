@@ -10,6 +10,8 @@
            axes rectangle will have both a width and height of 0.9
            (this ensures that the figure size determines that aspect
            ratio of the plot).
+           readshapefile method raises an exception if the vertices
+           look like they are not in geographic (lat/lon) coordinates.
 20050921:  version 0.7.1:
            Fixed several bugs in meridian/parallel labelling and
            Cylindrical projections that crossed greenwich were not
