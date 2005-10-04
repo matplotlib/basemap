@@ -14,9 +14,9 @@ include examples/test.py
 include examples/testgdal.py
 include examples/etopo20.pickle
 include examples/500hgt.pickle
-include examples/divisions.dbf
-include examples/divisions.shp
-include examples/divisions.shx
+include examples/st99_d90.dbf
+include examples/st99_d90.shp
+include examples/st99_d90.shx
 include examples/huralll020.dbf
 include examples/huralll020.shp
 include examples/huralll020.shx
@@ -32,7 +32,7 @@ include examples/ireland.py
 include examples/ortho_demo.py
 include examples/fcstmaps.py
 include examples/wiki_example.py
-include examples/plotclimdiv.py
+include examples/fillstates.py
 include examples/README
 include lib/matplotlib/toolkits/__init__.py
 include lib/matplotlib/toolkits/basemap/__init__.py
