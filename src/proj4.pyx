@@ -115,7 +115,7 @@ cdef class Proj:
     def _fwd(self, object lons, object lats, radians=False):
         """
  forward transformation - lons,lats to x,y.
- if radians=True, lons/lats are degrees instead of radians.
+ if radians=True, lons/lats are radians instead of degrees.
         """
         cdef projUV projxyout, projlonlatin
         cdef int ndim, i, buflenx, bufleny
@@ -188,7 +188,7 @@ cdef class Proj:
     def _inv(self, object x, object y, radians=False):
         """
  inverse transformation - x,y to lons,lats.
- if radians=True, lons/lats are degrees instead of radians.
+ if radians=True, lons/lats are radians instead of degrees.
         """
         cdef projUV projxyin, projlonlatout
         cdef int ndim, i, buflenx, bufleny
