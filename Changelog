@@ -1,16 +1,18 @@
 20051002:  version 0.7.2 (unreleased):
-           Fixed bug in interp function when order=0.
-           Modified to work with the new ContourSet returned
+           * interp function is now pure python (numarray.nd_image
+           no longer needed).  However it only supports nearest
+           neighbor (order=0) and bilinear (order=1) interpolation.
+           * Modified to work with the new ContourSet returned
            by contour and contourf.
-           Axes frame turned off by default for non-rectangular
+           * Axes frame turned off by default for non-rectangular
            projections ('ortho','robin' and 'moll').
-           Added createfigure method to create a figure with the 
+           * Added createfigure method to create a figure with the 
            same aspect ratio as the map using pylab.figure.
-           Resets subplot.params defaults so that default
+           * Resets subplot.params defaults so that default
            axes rectangle will have both a width and height of 0.9
            (this ensures that the figure size determines that aspect
            ratio of the plot).
-           readshapefile method raises an exception if the vertices
+           * readshapefile method raises an exception if the vertices
            look like they are not in geographic (lat/lon) coordinates.
 20050921:  version 0.7.1:
            Fixed several bugs in meridian/parallel labelling and

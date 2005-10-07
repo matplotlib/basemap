@@ -5,8 +5,7 @@ using matplotlib.
 
 **Requirements**
 
-numarray 1.1 (or higher)
-matplotlib 0.81 (or higher)
+matplotlib 0.84 (or higher)
 
 **Copyright**
 
@@ -59,10 +58,9 @@ will be installed (see step 2 below).
 Note: for this to work, matplotlib must also be installed in the same place
 (via python setup.py install --home=<dir>).
 
-2) download the basemap-data tarball, unpack in this directory and 
-run 'python setup_data.py install'. This does not need to be done
-every time you update basemap (via step 1), only when the basemap-data
-package is updated.
+2) download the basemap-data tarball, unpack and run "setup.py install"
+This does not need to be done every time you update basemap (via step 1),
+only when the basemap-data package is updated.
 
 If you want the data files to be installed somewhere other than the 
 default (sys.prefix/share/basemap), set the environment variable 
