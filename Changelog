@@ -1,7 +1,6 @@
-20051002:  version 0.7.2 (unreleased):
-           * interp function is now pure python (numarray.nd_image
-           no longer needed).  However it only supports nearest
-           neighbor (order=0) and bilinear (order=1) interpolation.
+20051007:  version 0.7.2 (unreleased):
+           * No longer requires numarray (interp function no
+           longer uses numarray.nd_image).
            * Modified to work with the new ContourSet returned
            by contour and contourf.
            * Axes frame turned off by default for non-rectangular
