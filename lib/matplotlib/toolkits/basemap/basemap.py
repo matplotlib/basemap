@@ -1,16 +1,11 @@
 from matplotlib import rcParams
-from numarray import __version__ as numarray_version
 from matplotlib import __version__ as matplotlib_version
-# check to make sure numarray, matplotlib are not too old.
-if numarray_version < '1.1':
-    raise ImportError, 'your numarray is too old - basemap requires at least 1.1'
+# check to make sure matplotlib is not too old.
 if matplotlib_version < '0.84':
     raise ImportError, 'your matplotlib is too old - basemap requires at least 0.84'
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
-from numarray import nd_image
-import numarray as na
 import sys, os, math, popen2
 from proj import Proj
 from greatcircle import GreatCircle, vinc_dist, vinc_pt
@@ -65,7 +60,6 @@ class Basemap:
  Doesn't actually draw anything, but sets up the map projection class and
  creates the coastline, lake river and political boundary data
  structures in native map projection coordinates.
- Requires matplotlib and numarray.
  Uses a pyrex interface to C-code from proj.4 (http://proj.maptools.org).
 
  Useful instance variables:
@@ -1647,7 +1641,7 @@ class Basemap:
     def gcpoints(self,lon1,lat1,lon2,lat2,npoints):
         """
  compute npoints points along a great circle with endpoints
- (lon1,lat1) and (lon2,lat2).  Returns numarrays x,y
+ (lon1,lat1) and (lon2,lat2).  Returns arrays x,y
  with map projection coordinates.
         """
         gc = GreatCircle(self.rmajor,self.rminor,lon1,lat1,lon2,lat2)
@@ -1679,7 +1673,7 @@ class Basemap:
         x, y = self(lons, lats)
         self.plot(x,y,**kwargs)
 
-    def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False,**kwargs):
+    def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1):
         """
  interpolate a scalar field (datin) from a lat/lon grid with longitudes =
  lons and latitudes = lats to a (ny,nx) native map projection grid.
@@ -1691,21 +1685,27 @@ class Basemap:
  if returnxy=True, the x and y values of the native map projection grid
  are also returned.
 
- See interp documentation for meaning of extra keyword arguments (**kwargs).
+ If checkbounds=True, values of xout and yout are checked to see that
+ they lie within the range specified by xin and xin.  Default is False.
+ If checkbounds=False, and xout,yout are outside xin,yin, interpolated
+ values will be clipped to values on boundary of input grid (xin,yin).
+
+ The order keyword can be 0 for nearest-neighbor interpolation,
+ or 1 for bilinear interpolation (default 1).
 
  data on a lat/lon grid must be transformed to map projection coordinates
  before it can be plotted on the map with imshow.
         """
         if returnxy:
             lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
-            datout = interp(datin,lons,lats,lonsout,latsout,**kwargs)
+            datout = interp(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
             return datout, x, y
         else:
             lonsout, latsout = self.makegrid(nx,ny)
-            datout = interp(datin,lons,lats,lonsout,latsout,**kwargs)
+            datout = interp(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
             return datout
 
-    def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,**kwargs):
+    def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1):
         """
  rotate and interpolate a vector field (uin,vin) from a lat/lon grid
  with longitudes = lons and latitudes = lats to a
@@ -1723,12 +1723,18 @@ class Basemap:
  if returnxy=True, the x and y values of the native map projection grid
  are also returned (default False).
 
- See interp documentation for meaning of extra keyword arguments (**kwargs).
+ If checkbounds=True, values of xout and yout are checked to see that
+ they lie within the range specified by xin and xin.  Default is False.
+ If checkbounds=False, and xout,yout are outside xin,yin, interpolated
+ values will be clipped to values on boundary of input grid (xin,yin).
+
+ The order keyword can be 0 for nearest-neighbor interpolation,
+ or 1 for bilinear interpolation (default 1).
         """
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         # interpolate to map projection coordinates.
-        uin = interp(uin,lons,lats,lonsout,latsout,**kwargs)
-        vin = interp(vin,lons,lats,lonsout,latsout,**kwargs)
+        uin = interp(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
+        vin = interp(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
         # rotate from geographic to map coordinates.
         delta = 0.1 # incement in latitude used to estimate derivatives.
         xn,yn = self(lonsout,NX.where(latsout+delta<90.,latsout+delta,latsout-delta))
@@ -2127,17 +2133,6 @@ class Basemap:
             ax.set_yticks([])
         return ret
 
-def _tonumarray(arr):
-    """convert to a numarray"""
-    return na.reshape(na.array(arr.tolist(),arr.typecode()),arr.shape)
-
-def _tonumerix(arr):
-    """convert numarray to a numerix array"""
-    if rcParams['numerix'] != 'numarray':
-        return NX.reshape(NX.array(arr.tolist(),arr.typecode()),arr.shape)
-    else:
-        return arr
-
 def _searchlist(a,x):
     """
  like bisect, but works for lists that are not sorted,
@@ -2166,96 +2161,106 @@ def _searchlist(a,x):
         itemprev = item
     return nslot
 
-def interp(datain,lonsin,latsin,lonsout,latsout,checkbounds=False,mode='nearest',cval=0.0,order=3):
+def interp(datain,xin,yin,xout,yout,checkbounds=False,order=1):
     """
- dataout = interp(datain,lonsin,latsin,lonsout,latsout,mode='constant',cval=0.0,order=3)
+ dataout = interp(datain,xin,yin,xout,yout,order=1)
 
- interpolate data (datain) on a rectilinear lat/lon grid (with lons=lonsin
- lats=latsin) to a grid with lons=lonsout, lats=latsout.
+ interpolate data (datain) on a rectilinear grid (with x=xin
+ y=yin) to a grid with x=xout, y=yout.
 
- datain is a rank-2 array with 1st dimension corresponding to longitude,
- 2nd dimension latitude.
+ datain is a rank-2 array with 1st dimension corresponding to y,
+ 2nd dimension x.
 
- lonsin, latsin are rank-1 arrays containing longitudes and latitudes
- of datain grid in increasing order (i.e. from Greenwich meridian eastward, and
- South Pole northward)
+ xin, yin are rank-1 arrays containing x and y of
+ datain grid in increasing order.
 
- lonsout, latsout are rank-2 arrays containing lons and lats of desired
- output grid (typically a native map projection grid).
+ xout, yout are rank-2 arrays containing x and y of desired output grid.
 
- If checkbounds=True, values of lonsout and latsout are checked to see that
- they lie within the range specified by lonsin and latsin.  Default is
- False, and values outside the borders are handled in the manner described
- by the 'mode' parameter. See section 20.2 of the numarray docs for
- information on the 'mode' keyword.
+ If checkbounds=True, values of xout and yout are checked to see that
+ they lie within the range specified by xin and xin.  Default is False.
+ If checkbounds=False, and xout,yout are outside xin,yin, interpolated
+ values will be clipped to values on boundary of input grid (xin,yin).
 
- See numarray.nd_image.map_coordinates documentation for information on
- the other optional keyword parameters.  The order keyword can be 0
- for nearest neighbor interpolation (nd_image only allows 1-6) - if
- order=0 'mode' is always 'nearest'.
+ The order keyword can be 0 for nearest-neighbor interpolation,
+ or 1 for bilinear interpolation (default 1).
     """
-    # convert inputs to numarrays.
-    datain = _tonumarray(datain)
-    lonsin = _tonumarray(lonsin)
-    latsin = _tonumarray(latsin)
-    lonsout = _tonumarray(lonsout)
-    latsout = _tonumarray(latsout)
-    # lonsin and latsin must be monotonically increasing.
-    if lonsin[-1]-lonsin[0] < 0 or latsin[-1]-latsin[0] < 0:
-        raise ValueError, 'lonsin and latsin must be increasing!'
-    # optionally, check that lonsout,latsout are
-    # within region defined by lonsin,latsin.
+    # xin and yin must be monotonically increasing.
+    if xin[-1]-xin[0] < 0 or yin[-1]-yin[0] < 0:
+        raise ValueError, 'xin and yin must be increasing!'
+    if xout.shape != yout.shape:
+        raise ValueError, 'xout and yout must have same shape!'
+    # check that xout,yout are
+    # within region defined by xin,yin.
     if checkbounds:
-        if min(na.ravel(lonsout)) < min(lonsin) or \
-           max(na.ravel(lonsout)) > max(lonsin) or \
-           min(na.ravel(latsout)) < min(latsin) or \
-           max(na.ravel(latsout)) > max(latsin):
-            raise ValueError, 'latsout or lonsout outside range of latsin or lonsin'
+        if min(NX.ravel(xout)) < min(xin) or \
+           max(NX.ravel(xout)) > max(xin) or \
+           min(NX.ravel(yout)) < min(yin) or \
+           max(NX.ravel(yout)) > max(yin):
+            raise ValueError, 'yout or xout outside range of yin or xin'
     # compute grid coordinates of output grid.
-    delon = lonsin[1:]-lonsin[0:-1]
-    delat = latsin[1:]-latsin[0:-1]
-    if max(delat)-min(delat) < 1.e-4 and max(delon)-min(delon) < 1.e-4:
+    xoutflat = NX.ravel(xout)
+    youtflat = NX.ravel(yout)
+    datainflat = NX.ravel(datain)
+    if max(xin)-min(xin) < 1.e-4 and max(yin)-min(yin) < 1.e-4:
         # regular input grid.
-        xcoords = (len(lonsin)-1)*(lonsout-lonsin[0])/(lonsin[-1]-lonsin[0])
-        ycoords = (len(latsin)-1)*(latsout-latsin[0])/(latsin[-1]-latsin[0])
+        xcoords = (len(xin)-1)*(xoutflat-xin[0])/(xin[-1]-xin[0])
+        ycoords = (len(yin)-1)*(youtflat-yin[0])/(yin[-1]-yin[0])
     else:
         # irregular (but still rectilinear) input grid.
-        lonsoutflat = na.ravel(lonsout)
-        latsoutflat = na.ravel(latsout)
-        ix = na.searchsorted(lonsin,lonsoutflat)-1
-        iy = na.searchsorted(latsin,latsoutflat)-1
-        xcoords = na.zeros(ix.shape,'f')
-        ycoords = na.zeros(iy.shape,'f')
+        ix = NX.searchsorted(xin,xoutflat)-1
+        iy = NX.searchsorted(yin,youtflat)-1
+        xcoords = NX.zeros(ix.shape,'f')
+        ycoords = NX.zeros(iy.shape,'f')
         for n,i in enumerate(ix):
             if i < 0:
-                xcoords[n] = -1 # outside of range on lonsin (lower end)
-            elif i >= len(lonsin)-1:
-                xcoords[n] = len(lonsin) # outside range on upper end.
+                xcoords[n] = -1 # outside of range on xin (lower end)
+            elif i >= len(xin)-1:
+                xcoords[n] = len(xin) # outside range on upper end.
             else:
-                xcoords[n] = float(i)+(lonsoutflat[n]-lonsin[i])/(lonsin[i+1]-lonsin[i])
-        xcoords = na.reshape(xcoords,lonsout.shape)
+                xcoords[n] = float(i)+(xoutflat[n]-xin[i])/(xin[i+1]-xin[i])
         for m,j in enumerate(iy):
             if j < 0:
-                ycoords[m] = -1 # outside of range of latsin (on lower end)
-            elif j >= len(latsin)-1:
-                ycoords[m] = len(latsin) # outside range on upper end
+                ycoords[m] = -1 # outside of range of yin (on lower end)
+            elif j >= len(yin)-1:
+                ycoords[m] = len(yin) # outside range on upper end
             else:
-                ycoords[m] = float(j)+(latsoutflat[m]-latsin[j])/(latsin[j+1]-latsin[j])
-        ycoords = na.reshape(ycoords,latsout.shape)
-    coords = [ycoords,xcoords]
-    # interpolate to output grid using numarray.nd_image spline filter.
-    if order:
-        dataout = nd_image.map_coordinates(datain,coords,mode=mode,cval=cval,order=order)
+                ycoords[m] = float(j)+(youtflat[m]-yin[j])/(yin[j+1]-yin[j])
+    # data outside range xin,yin will be clipped to
+    # values on boundary.
+    xcoords = NX.clip(xcoords,0,len(xin)-1)
+    ycoords = NX.clip(ycoords,0,len(yin)-1)
+    # interpolate to output grid using bilinear interpolation.
+    if order == 1:
+        xi = xcoords.astype('i')
+        yi = ycoords.astype('i')
+        xip1 = xi+1
+        yip1 = yi+1
+        xip1 = NX.clip(xip1,0,len(xin)-1)
+        yip1 = NX.clip(yip1,0,len(yin)-1)
+        delx = xcoords-xi.astype('f')
+        dely = ycoords-yi.astype('f')
+        coords = yi*datain.shape[1]+xi
+        data11 = NX.take(datainflat,coords)
+        coords = yip1*datain.shape[1]+xip1
+        data22 = NX.take(datainflat,coords)
+        coords = yi*datain.shape[1]+xip1
+        data12 = NX.take(datainflat,coords)
+        coords = yip1*datain.shape[1]+xi
+        data21 = NX.take(datainflat,coords)
+        dataout = (1.-delx)*(1.-dely)*data11 + \
+                  delx*dely*data22 + \
+                  (1.-delx)*dely*data21 + \
+                  delx*(1.-dely)*data12
+        dataout = NX.reshape(dataout,xout.shape).astype(datain.typecode())
+    elif order == 0:
+        xcoordsi = NX.around(xcoords).astype('i')
+        ycoordsi = NX.around(ycoords).astype('i')
+        coords = ycoordsi*datain.shape[1]+xcoordsi
+        dataout = NX.take(datainflat,coords)
+        dataout = NX.reshape(dataout,xout.shape).astype(datain.typecode())
     else:
-        # data outside range lonsin,latsin will be clipped to
-        # values on boundary.
-        xcoords = na.clip(xcoords,0,len(lonsin)-1)
-        ycoords = na.clip(ycoords,0,len(latsin)-1)
-        xi = na.around(xcoords).astype('i')
-        yi = na.around(ycoords).astype('i')
-        dataout = datain[yi,xi]
-    # result is returned as a numerix array
-    return _tonumerix(dataout)
+        raise ValueError,'order keyword must be 0 or 1'
+    return dataout
 
 def shiftgrid(lon0,datain,lonsin,start=True):
     """
