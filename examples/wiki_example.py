@@ -3,12 +3,9 @@ import pylab as p
 # set up orthographic map projection with
 # perspective of satellite looking down at 50N, 100W.
 # use low resolution coastlines.
-# don't plot features that are smaller than 1000 square km.
-map = Basemap(projection='ortho',lat_0=50,lon_0=-100,
-              resolution='l',area_thresh=1000.)
+map = Basemap(projection='ortho',lat_0=50,lon_0=-100,resolution='l')
 # set up figure.
 fig=map.createfigure()
-fig.add_axes([0.05,0.05,0.9,0.9])
 # draw coastlines, country boundaries, fill continents.
 map.drawcoastlines()
 map.drawcountries()
