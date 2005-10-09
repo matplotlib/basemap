@@ -1677,6 +1677,8 @@ class Basemap:
         """
  interpolate a scalar field (datin) from a lat/lon grid with longitudes =
  lons and latitudes = lats to a (ny,nx) native map projection grid.
+ Typically used to transform data to map projection coordinates
+ so it can be plotted on the map with imshow.
 
  lons, lats must be rank-1 arrays containing longitudes and latitudes
  (in degrees) of datin grid in increasing order
@@ -1685,16 +1687,13 @@ class Basemap:
  if returnxy=True, the x and y values of the native map projection grid
  are also returned.
 
- If checkbounds=True, values of xout and yout are checked to see that
- they lie within the range specified by xin and xin.  Default is False.
- If checkbounds=False, and xout,yout are outside xin,yin, interpolated
- values will be clipped to values on boundary of input grid (xin,yin).
+ If checkbounds=True, values of lons and lats are checked to see that
+ they lie within the map projection region.  Default is False.
+ If checkbounds=False, points outside map projection region will
+ be clipped to values on the boundary.
 
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
-
- data on a lat/lon grid must be transformed to map projection coordinates
- before it can be plotted on the map with imshow.
         """
         if returnxy:
             lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
@@ -1723,10 +1722,10 @@ class Basemap:
  if returnxy=True, the x and y values of the native map projection grid
  are also returned (default False).
 
- If checkbounds=True, values of xout and yout are checked to see that
- they lie within the range specified by xin and xin.  Default is False.
- If checkbounds=False, and xout,yout are outside xin,yin, interpolated
- values will be clipped to values on boundary of input grid (xin,yin).
+ If checkbounds=True, values of lons and lats are checked to see that
+ they lie within the map projection region.  Default is False.
+ If checkbounds=False, points outside map projection region will
+ be clipped to values on the boundary.
 
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
