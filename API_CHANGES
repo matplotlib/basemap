@@ -1,3 +1,8 @@
+version 0.7.2:  'createfigure' method added to Basemap.
+                interp function no longer uses nd_image, so keywords
+                'mode' and 'cval' no longer accepted.  'order' keyword
+                must be 0 or 1.
+version 0.7.1:  'readshapefile' method added to Basemap.
 version 0.5.2:  'ax' keyword added to Basemap.__init__. This well set
                 default axis instance, which can be overridden by using
                 'ax' keyword in method calls.
