@@ -1,5 +1,5 @@
 import matplotlib.numerix as NX
-from matplotlib.mlab import linspace, meshgrid
+#from matplotlib.mlab import linspace, meshgrid
 import proj4, math
 
 __version__ = '1.2'
@@ -188,9 +188,13 @@ class Proj:
  an equally spaced native projection grid.
  if returnxy=True, the x,y values of the grid are returned also.
         """
-        x = linspace(self.llcrnrx,self.urcrnrx,nx)
-        y = linspace(self.llcrnry,self.urcrnry,ny)
-        x, y = meshgrid(x, y)
+        dx = (self.urcrnrx-self.llcrnrx)/(nx-1)
+        dy = (self.urcrnry-self.llcrnry)/(ny-1)
+        x = self.llcrnrx+dx*NX.indices((ny,nx),'f')[1,:,:]
+        y = self.llcrnry+dy*NX.indices((ny,nx),'f')[0,:,:]
+        #x = linspace(self.llcrnrx,self.urcrnrx,nx)
+        #y = linspace(self.llcrnry,self.urcrnry,ny)
+        #x, y = meshgrid(x, y)
         lons, lats = self(x, y, inverse=True)
         if returnxy:
             return lons, lats, x, y
