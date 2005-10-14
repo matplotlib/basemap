@@ -22,7 +22,7 @@ Input coordinates can be given as python arrays, sequences, scalars
 or Numeric/numarray arrays. Optimized for objects that support
 the Python buffer protocol (regular python, Numeric and numarray arrays).
 
-Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.5.tar.gz
+Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.6.tar.gz
 
 See pyproj.Proj.__doc__ for more documentation.
 
@@ -38,7 +38,7 @@ cdef int _doublesize
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 _doublesize = sizeof(double)
-__version__ = 1.5
+__version__ = 1.6
 
 cdef extern from "proj_api.h":
     ctypedef double *projPJ
@@ -298,7 +298,7 @@ cdef class Proj:
         # copies cannot be made.
         # Buffer API will be used if inputs are arrays (regular python, 
         # Numeric or numarray).
-        if PyObject_CheckReadBuffer(lon) and PyObject_CheckReadBuffer(lon):
+        if PyObject_CheckReadBuffer(lon) and PyObject_CheckReadBuffer(lat):
             try:
                 # try to make copy using __copy__ method.
                 inx = lon.__copy__(); iny = lat.__copy__()
