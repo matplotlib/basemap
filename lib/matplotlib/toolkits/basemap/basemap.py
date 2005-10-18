@@ -1,8 +1,8 @@
 from matplotlib import rcParams
 from matplotlib import __version__ as matplotlib_version
 # check to make sure matplotlib is not too old.
-if matplotlib_version < '0.84':
-    raise ImportError, 'your matplotlib is too old - basemap requires at least 0.84'
+if matplotlib_version < '0.81':
+    raise ImportError, 'your matplotlib is too old - basemap requires at least 0.81'
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
@@ -2029,7 +2029,10 @@ class Basemap:
             ax.set_yticks([])
         # reset current active image (only if pylab is imported).
         try:
-            if CS._A is not None: pylab.gci._current = CS
+            try: # new contour.
+                if CS._A is not None: pylab.gci._current = CS  
+            except: # old contour.
+                if CS[1].mappable is not None: pylab.gci._current = CS[1].mappable
         except:
             pass
         return CS
@@ -2078,7 +2081,10 @@ class Basemap:
             ax.set_yticks([])
         # reset current active image (only if pylab is imported).
         try:
-            if CS._A is not None: pylab.gci._current = CS
+            try: # new contour.
+                if CS._A is not None: pylab.gci._current = CS
+            except: # old contour.
+                if CS[1].mappable is not None: pylab.gci._current = CS[1].mappable
         except:
             pass
         return CS
