@@ -24,7 +24,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap')
 
 __version__ = '0.7.2'
-__revision__ = '20051007'
+__revision__ = '20051018'
 
 # make sure subplots have same width and height
 # so that figure size sets plot aspect ratio.

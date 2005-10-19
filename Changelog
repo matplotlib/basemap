@@ -1,4 +1,4 @@
-20051007:  version 0.7.2 (unreleased):
+20051018:  version 0.7.2:
            * No longer requires numarray (interp function no
            longer uses numarray.nd_image).
            * Modified to work with the new ContourSet returned
