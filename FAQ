@@ -17,5 +17,5 @@ use it in place of (or in addition to) the built-in basemap boundary datasets?
 A: If your dataset is in ESRI shapefile format, this is relatively easy.
 Just create your Basemap class instance, then call the 'readshapefile' 
 method on that instance to import your data.  Setting 'drawbounds=True' will 
-draw the boundaries in the shapefile.  The plotclimdiv.py example
+draw the boundaries in the shapefile.  The fillstates.py example
 shows how to do this.
