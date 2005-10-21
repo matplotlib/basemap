@@ -1,9 +1,7 @@
 import pylab as p
 import matplotlib.numerix as nx
 from matplotlib.toolkits.basemap import Basemap as Basemap
-from matplotlib.collections import LineCollection
 from matplotlib.colors import rgb2hex
-import random, math
 
 # Lambert Conformal map of lower 48 states.
 m = Basemap(llcrnrlon=-119,llcrnrlat=22,urcrnrlon=-64,urcrnrlat=49,
@@ -80,7 +78,7 @@ for shapedict in m.states_info:
         # calling colormap with value between 0 and 1 returns
         # rgba value.  Invert color range (hot colors are high
         # population), take sqrt root to spread out colors more.
-        colors[statename] = cmap(1.-math.sqrt((pop-vmin)/(vmax-vmin)))[:3]
+        colors[statename] = cmap(1.-p.sqrt((pop-vmin)/(vmax-vmin)))[:3]
     statenames.append(statename)
 # cycle through state names, color each one.
 for nshape,seg in enumerate(m.states):
