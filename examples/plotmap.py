@@ -4,6 +4,8 @@
 
 # the data is interpolated to the native projection grid.
 
+from matplotlib import rcParams, use
+rcParams['numerix'] = 'Numeric'  # make sure Numeric is used (to read pickle)
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import *
 import cPickle
@@ -46,6 +48,6 @@ parallels = arange(0.,80,20.)
 m.drawparallels(parallels,labels=[1,1,0,1])
 meridians = arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,1,0,1])
-
+# set title.
 title('ETOPO Topography - Lambert Conformal Conic')
 show()
