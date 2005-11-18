@@ -22,7 +22,7 @@ Input coordinates can be given as python arrays, sequences, scalars
 or Numeric/numarray arrays. Optimized for objects that support
 the Python buffer protocol (regular python, Numeric and numarray arrays).
 
-Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.6.tar.gz
+Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.6.2.tar.gz
 
 See pyproj.Proj.__doc__ for more documentation.
 
@@ -32,8 +32,8 @@ copyright (c) 2004 by Jeffrey Whitaker.
 
 Permission to use, copy, modify, and distribute this software and its
 documentation for any purpose and without fee is hereby granted,
-provided that the above copyright notices appear in all copies and that
-both the copyright notices and this permission notice appear in
+provided that the above copyright notice appear in all copies and that
+both the copyright notice and this permission notice appear in
 supporting documentation.
 THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
 INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
@@ -53,7 +53,7 @@ cdef int _doublesize
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 _doublesize = sizeof(double)
-__version__ = 1.6
+__version__ = "1.6.2"
 
 cdef extern from "proj_api.h":
     ctypedef double *projPJ
@@ -118,13 +118,18 @@ cdef class Proj:
         self.projparams = projparams
         pjinitstring = ''.join(pjargs)
         self.projpj = pj_init_plus(pjinitstring)
+        if self.projpj == NULL:
+            msg = """projection initialization failed.
+ try running proj %s
+ in a terminal to get a more informative error message""" % pjinitstring
+            raise RuntimeError(msg)
 
     def __dealloc__(self):
         """destroy projection definition"""
         pj_free(self.projpj)
 
     def __reduce__(self):
-        """special method that allows projlib.Proj instance to be pickled"""
+        """special method that allows pyproj.Proj instance to be pickled"""
         return (self.__class__,(self.projparams,))
 
     def _fwd(self, object lons, object lats, radians=False):
