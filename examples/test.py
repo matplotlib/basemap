@@ -3,6 +3,9 @@
 # country boundaries, filling continents and drawing
 # parallels/meridians
 
+from matplotlib import rcParams, use
+rcParams['numerix'] = 'Numeric'  # make sure Numeric is used (to read pickle)
+
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import *
 import cPickle

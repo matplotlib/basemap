@@ -1,6 +1,8 @@
 #####################################
 # pylab-free version of simpletest.py
 #####################################
+from matplotlib import rcParams, use
+rcParams['numerix'] = 'Numeric'  # make sure Numeric is used (to read pickle)
 # set backend to Agg.
 import matplotlib
 matplotlib.use('Agg')
