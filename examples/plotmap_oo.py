@@ -3,13 +3,16 @@
 # country boundaries, and parallels/meridians.
 
 # the data is interpolated to the native projection grid.
+from matplotlib import rcParams, use
+rcParams['numerix'] = 'Numeric'  # make sure Numeric is used (to read pickle)
 
-####################
+##################################
 # pylab-free version of plotmap.py
-####################
+##################################
 # set backend to Agg.
 import matplotlib
 matplotlib.use('Agg')
+
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from matplotlib.figure import Figure
@@ -38,7 +41,10 @@ m.ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # reset figure size to have same aspect ratio as map.
 # fig will be 8 inches wide.
 # (don't use createfigure, since that imports pylab).
-fig.set_figsize_inches((8,m.aspect*8.))
+if m.aspect <= 1.:
+    fig.set_figsize_inches((8,m.aspect*8.))
+else:
+    fig.set_figsize_inches((8/m.aspect,8.))
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat,x,y = m.transform_scalar(topoin,lons,lats,nx,ny,returnxy=True)
@@ -60,7 +66,7 @@ parallels = NX.arange(0.,80,20.)
 m.drawparallels(parallels,labels=[1,1,0,1])
 meridians = NX.arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,1,0,1])
-
+# set title.
 m.ax.set_title('ETOPO Topography - Lambert Conformal Conic')
 # save image (width 800 pixels with dpi=100 and fig width 8 inches).
 canvas.print_figure('plotmap',dpi=100)

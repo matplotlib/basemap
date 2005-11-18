@@ -4,6 +4,8 @@
 
 # this version does not interpolate the data to the projection grid.
 # instead, the x,y coordinates of the lat/lon grid are passed to pcolor.
+from matplotlib import rcParams, use
+rcParams['numerix'] = 'Numeric'  # make sure Numeric is used (to read pickle)
 
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import *
