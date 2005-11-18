@@ -15,20 +15,20 @@ Example usage:
 >>> x,y = p(-120.108, 34.36116666)
 >>> print x,y
 >>> print p(x,y,inverse=True)
-765975.641091.4805993.13406
+765975.641091 3805993.13406
 (-120.10799999995851, 34.361166659972767)
 
 Input coordinates can be given as python arrays, sequences, scalars
 or Numeric/numarray arrays. Optimized for objects that support
 the Python buffer protocol (regular python, Numeric and numarray arrays).
 
-Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.6.2.tar.gz
+Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.6.3.tar.gz
 
 See pyproj.Proj.__doc__ for more documentation.
 
 Contact:  Jeffrey Whitaker <jeffrey.s.whitaker@noaa.gov
 
-copyright (c) 2004 by Jeffrey Whitaker.
+copyright (c) 2005 by Jeffrey Whitaker.
 
 Permission to use, copy, modify, and distribute this software and its
 documentation for any purpose and without fee is hereby granted,
@@ -53,7 +53,7 @@ cdef int _doublesize
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 _doublesize = sizeof(double)
-__version__ = "1.6.2"
+__version__ = "1.6.3"
 
 cdef extern from "proj_api.h":
     ctypedef double *projPJ
@@ -66,8 +66,8 @@ cdef extern from "proj_api.h":
     void pj_free(projPJ)
 
 cdef extern from "Python.h":
-  int PyObject_AsWriteBuffer(object, void **rbuf, int *len)
-  int PyObject_CheckReadBuffer(object)
+    int PyObject_AsWriteBuffer(object, void **rbuf, int *len)
+    int PyObject_CheckReadBuffer(object)
 
 cdef class Proj:
     """
@@ -297,6 +297,7 @@ cdef class Proj:
  Works with Numeric or numarray arrays, python sequences or scalars
  (fastest for arrays containing doubles).
         """
+        # if lon,lat support BufferAPI, must make sure they contain doubles.
         try:
             # typecast Numeric/numarray arrays to double, if necessary.
             if lon.typecode() != 'd':
@@ -304,14 +305,22 @@ cdef class Proj:
             if lat.typecode() != 'd':
                 lat = lat.astype('d')
         except:
-            # typecast regular python arrays to double, if necessary.
-            try:
-                if lon.typecode != 'd':
-                    lon = array.array('d',lon)
-                if lat.typecode != 'd':
-                    lat = array.array('d',lat)
+            try: # perhaps they are Numeric3 (scipy.base) arrays?
+                if lon.dtypechar != 'd':
+                    lon = lon.astype('d')
+                if lat.dtypechar != 'd':
+                    lat = lat.astype('d')
             except:
-                pass
+                # perhaps they are regular python arrays?
+                try:
+                    if lon.typecode != 'd':
+                        lon = array.array('d',lon)
+                    if lat.typecode != 'd':
+                        lat = array.array('d',lat)
+                except: 
+                    # nope, they must be regular python sequence objects
+                    # or floats (BufferAPI will not be used).
+                    pass
         # If the buffer API is supported, make copies of inputs.
         # This is necessary since the data buffer of the inputs
         # will be modified in place.  Raise an exception if
