@@ -26,7 +26,7 @@ axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 m.drawmapboundary()
-#m.fillcontinents()
+m.fillcontinents()
 # draw parallels and meridians.
 parallels = arange(-60.,90,30.)
 m.drawparallels(parallels,labels=[1,0,0,0])
@@ -49,7 +49,7 @@ axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 m.drawmapboundary()
-#m.fillcontinents()
+m.fillcontinents()
 # draw parallels and meridians.
 parallels = arange(-60.,90,30.)
 m.drawparallels(parallels,labels=[1,0,0,0])
@@ -74,6 +74,7 @@ axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 m.drawmapboundary()
+m.fillcontinents()
 # draw parallels and meridians.
 parallels = arange(0.,80,20.)
 m.drawparallels(parallels,labels=[0,0,1,1])
@@ -96,6 +97,7 @@ colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
+m.fillcontinents()
 m.drawmapboundary()
 # draw parallels and meridians.
 parallels = arange(-80.,90,20.)
