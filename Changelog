@@ -1,3 +1,9 @@
+20051118:  version 0.7.2.1: 
+           There was a problem running examples that read pickle files.
+           The pickle files were created with numarray, and the
+           data would not be read correctly using Numeric.  Fixed so
+           that pickles are created with Numeric and Numeric is used
+           to read them.
 20051018:  version 0.7.2:
            * No longer requires numarray (interp function no
            longer uses numarray.nd_image).
