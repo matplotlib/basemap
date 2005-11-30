@@ -427,8 +427,8 @@ show()
 # of the grid box surrounding the data value, as pcolor expects).
 delon = lonsin[1]-lonsin[0]
 delat = latsin[1]-latsin[0]
-lons = zeros(len(lonsin)+1,'f')
-lats = zeros(len(latsin)+1,'f')
+lons = zeros(len(lonsin)+1,'d')
+lats = zeros(len(latsin)+1,'d')
 lons[0:len(lonsin)] = lonsin-0.5*delon
 lons[-1] = lonsin[-1]+0.5*delon
 lats[0:len(latsin)] = latsin-0.5*delat
