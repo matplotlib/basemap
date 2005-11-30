@@ -15,8 +15,8 @@ Conformal projection (using imshow).
 plotmap_oo.py is a version of plotmap.py that does not import pylab - it uses
 the matplotlib OO interface instead.
 
-plotmap_pcolor.py plots the ETOPO topography using pcolor, on a Lambert 
-Conformal and Orthographic projection.
+plotmap_masked.py is a version of plotmap.py that shows how to mask out
+portions of the plot (in this case the oceans) using pcolor and imshow.
 
 nytolondon.py shows how to draw a great circle on a map (NY to London)
 
