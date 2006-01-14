@@ -1,3 +1,4 @@
+20060114:  version 0.8: added numpy compatibility
 20051118:  version 0.7.2.1: 
            There was a problem running examples that read pickle files.
            The pickle files were created with numarray, and the
