@@ -23,8 +23,8 @@ _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap')
 
-__version__ = '0.7.2'
-__revision__ = '20051018'
+__version__ = '0.8'
+__revision__ = '20060114'
 
 # make sure subplots have same width and height
 # so that figure size sets plot aspect ratio.
@@ -474,9 +474,9 @@ class Basemap:
             self.coastsegtypes = segtypes
 
         # same as above for country segments.
-        xc,yc = proj(NX.array(cntrylons,'f'),NX.array(cntrylats))
+        xc,yc = proj(NX.array(cntrylons),NX.array(cntrylats))
         if self.crossgreenwich:
-            xc2,yc2 = proj(NX.array(cntrylons2,'f'),NX.array(cntrylats))
+            xc2,yc2 = proj(NX.array(cntrylons2),NX.array(cntrylats))
             xc3,yc3 = proj(NX.array(cntrylons3),NX.array(cntrylats))
         if self.crossgreenwich and projection == 'merc' or projection == 'mill':
             yc2=yc
@@ -490,9 +490,9 @@ class Basemap:
             self.cntrysegs = segments
 
         # same as above for state segments.
-        xc,yc = proj(NX.array(statelons,'f'),NX.array(statelats))
+        xc,yc = proj(NX.array(statelons),NX.array(statelats))
         if self.crossgreenwich:
-            xc2,yc2 = proj(NX.array(statelons2,'f'),NX.array(statelats))
+            xc2,yc2 = proj(NX.array(statelons2),NX.array(statelats))
             xc3,yc3 = proj(NX.array(statelons3),NX.array(statelats))
         if self.crossgreenwich and projection == 'merc' or projection == 'mill':
             yc2=yc
@@ -506,9 +506,9 @@ class Basemap:
             self.statesegs = segments
 
         # same as above for river segments.
-        xc,yc = proj(NX.array(riverlons,'f'),NX.array(riverlats))
+        xc,yc = proj(NX.array(riverlons),NX.array(riverlats))
         if self.crossgreenwich:
-            xc2,yc2 = proj(NX.array(riverlons2,'f'),NX.array(riverlats))
+            xc2,yc2 = proj(NX.array(riverlons2),NX.array(riverlats))
             xc3,yc3 = proj(NX.array(riverlons3),NX.array(riverlats))
         if self.crossgreenwich and projection == 'merc' or projection == 'mill':
             yc2=yc
@@ -2256,13 +2256,13 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,order=1):
                   delx*dely*data22 + \
                   (1.-delx)*dely*data21 + \
                   delx*(1.-dely)*data12
-        dataout = NX.reshape(dataout,xout.shape).astype(datain.typecode())
+        dataout = NX.reshape(dataout,xout.shape)
     elif order == 0:
         xcoordsi = NX.around(xcoords).astype('i')
         ycoordsi = NX.around(ycoords).astype('i')
         coords = ycoordsi*datain.shape[1]+xcoordsi
         dataout = NX.take(datainflat,coords)
-        dataout = NX.reshape(dataout,xout.shape).astype(datain.typecode())
+        dataout = NX.reshape(dataout,xout.shape)
     else:
         raise ValueError,'order keyword must be 0 or 1'
     return dataout
@@ -2287,8 +2287,12 @@ def shiftgrid(lon0,datain,lonsin,start=True):
     if lon0 < lonsin[0] or lon0 > lonsin[-1]:
         raise ValueError, 'lon0 outside of range of lonsin'
     i0 = NX.argsort(NX.fabs(lonsin-lon0))[0]
-    dataout = NX.zeros(datain.shape,datain.typecode())
-    lonsout = NX.zeros(lonsin.shape,lonsin.typecode())
+    try:
+        dataout = NX.zeros(datain.shape,datain.typecode())
+        lonsout = NX.zeros(lonsin.shape,lonsin.typecode())
+    except:
+        dataout = NX.zeros(datain.shape,datain.dtype)
+        lonsout = NX.zeros(lonsin.shape,lonsin.dtype)
     if start:
         lonsout[0:len(lonsin)-i0] = lonsin[i0:]
     else:
@@ -2307,10 +2311,16 @@ def addcyclic(arrin,lonsin):
    """
    nlats = arrin.shape[0]
    nlons = arrin.shape[1]
-   arrout  = NX.zeros((nlats,nlons+1),arrin.typecode())
+   try:
+       arrout  = NX.zeros((nlats,nlons+1),arrin.typecode())
+   except:
+       arrout  = NX.zeros((nlats,nlons+1),arrin.dtype)
    arrout[:,0:nlons] = arrin[:,:]
    arrout[:,nlons] = arrin[:,0]
-   lonsout = NX.zeros(nlons+1,lonsin.typecode())
+   try:
+       lonsout = NX.zeros(nlons+1,lonsin.typecode())
+   except:
+       lonsout = NX.zeros(nlons+1,lonsin.dtype)
    lonsout[0:nlons] = lonsin[:]
    lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
    return arrout,lonsout
