@@ -1,5 +1,4 @@
 from matplotlib.toolkits.basemap import Basemap
-import cPickle
 from pylab import *
 # read in topo data from pickle (on a regular lat/lon grid)
 etopo = load('etopo20data.gz')

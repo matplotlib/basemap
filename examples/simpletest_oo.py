@@ -10,7 +10,6 @@ from matplotlib.figure import Figure
 from matplotlib.mlab import meshgrid
 import matplotlib.numerix as nx
 import matplotlib.cm as cm
-import cPickle
 from pylab import load
 # read in topo data from pickle (on a regular lat/lon grid)
 etopo = load('etopo20data.gz')

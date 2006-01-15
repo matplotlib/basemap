@@ -5,7 +5,6 @@
 
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import *
-import cPickle
 
 # read in topo data from pickle (on a regular lat/lon grid)
 # longitudes go from 20 to 380.

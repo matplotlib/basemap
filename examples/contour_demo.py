@@ -1,6 +1,5 @@
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import *
-import cPickle, sys
 
 # examples of filled contour plots on map projections.
 
