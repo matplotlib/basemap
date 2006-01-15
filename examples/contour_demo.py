@@ -1,15 +1,13 @@
-from matplotlib import rcParams, use
-rcParams['numerix'] = 'Numeric'  # make sure Numeric is used (to read pickle)
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import *
 import cPickle, sys
-from matplotlib.numerix import ma
 
 # examples of filled contour plots on map projections.
 
 # read in data on lat/lon grid.
-datadict = cPickle.load(open('500hgt.pickle','rb'))
-hgt = datadict['data']; lons = datadict['lons']; lats = datadict['lats']
+hgt = load('500hgtdata.gz')
+lons = load('500hgtlons.gz')
+lats = load('500hgtlats.gz')
 # shift data so lons go from -180 to 180 instead of 0 to 360.
 hgt,lons = shiftgrid(180.,hgt,lons,start=False)
 lons, lats = meshgrid(lons, lats)

@@ -1,8 +1,6 @@
 #####################################
 # pylab-free version of simpletest.py
 #####################################
-from matplotlib import rcParams, use
-rcParams['numerix'] = 'Numeric'  # make sure Numeric is used (to read pickle)
 # set backend to Agg.
 import matplotlib
 matplotlib.use('Agg')
@@ -13,9 +11,10 @@ from matplotlib.mlab import meshgrid
 import matplotlib.numerix as nx
 import matplotlib.cm as cm
 import cPickle
+from pylab import load
 # read in topo data from pickle (on a regular lat/lon grid)
-topodict = cPickle.load(open('etopo20.pickle','rb'))
-etopo = topodict['data']; lons = topodict['lons']; lats = topodict['lats']
+etopo = load('etopo20data.gz')
+lons = load('etopo20lons.gz'); lats = load('etopo20lats.gz')
 # create figure.
 fig = Figure()
 canvas = FigureCanvas(fig)
