@@ -3,8 +3,6 @@
 # country boundaries, and parallels/meridians.
 
 # the data is interpolated to the native projection grid.
-from matplotlib import rcParams, use
-rcParams['numerix'] = 'Numeric'  # make sure Numeric is used (to read pickle)
 
 ##################################
 # pylab-free version of plotmap.py
@@ -18,12 +16,13 @@ from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from matplotlib.figure import Figure
 import matplotlib.numerix as NX
 import matplotlib.cm as cm
-import cPickle
+from pylab import load
 
 # read in topo data from pickle (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-topodict = cPickle.load(open('etopo20.pickle','rb'))
-topoin = topodict['data']; lons = topodict['lons']; lats = topodict['lats']
+topoin = load('etopo20data.gz')
+lons = load('etopo20lons.gz')
+lats = load('etopo20lats.gz')
 # shift data so lons go from -180 to 180 instead of 20 to 380.
 topoin,lons = shiftgrid(180.,topoin,lons,start=False)
 
