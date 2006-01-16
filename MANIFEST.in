@@ -12,8 +12,12 @@ include examples/simpletest_oo.py
 include examples/randompoints.py
 include examples/test.py
 include examples/testgdal.py
-include examples/etopo20.pickle
-include examples/500hgt.pickle
+include examples/etopo20data.gz
+include examples/etopo20lons.gz
+include examples/etopo20lats.gz
+include examples/500hgtdata.gz
+include examples/500hgtlons.gz
+include examples/500hgtlats.gz
 include examples/st99_d90.dbf
 include examples/st99_d90.shp
 include examples/st99_d90.shx
