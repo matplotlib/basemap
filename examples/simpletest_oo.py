@@ -10,10 +10,38 @@ from matplotlib.figure import Figure
 from matplotlib.mlab import meshgrid
 import matplotlib.numerix as nx
 import matplotlib.cm as cm
-from pylab import load
-# read in topo data from pickle (on a regular lat/lon grid)
-etopo = load('etopo20data.gz')
-lons = load('etopo20lons.gz'); lats = load('etopo20lats.gz')
+
+def load(fname,comments='%',delimiter=None):
+    """
+    Load ASCII data from fname into an array and return the array (from pylab).
+    """
+    if fname.endswith('.gz'):
+        import gzip
+        fh = gzip.open(fname)
+    else:
+        fh = file(fname)
+    X = []
+    numCols = None
+    for line in fh:
+        line = line[:line.find(comments)].strip()
+        if not len(line): continue
+        row = [float(val) for val in line.split(delimiter)]
+        thisLen = len(row)
+        if numCols is not None and thisLen != numCols:
+            raise ValueError('All rows must have the same number of columns')
+        X.append(row)
+
+    X = nx.array(X)
+    r,c = X.shape
+    if r==1 or c==1:
+        X.shape = max([r,c]),
+    return X
+
+# read in topo data (on a regular lat/lon grid)
+# longitudes go from 20 to 380.
+etopo = nx.array(load('etopo20data.gz'),'d')
+lons = nx.array(load('etopo20lons.gz'),'d')
+lats = nx.array(load('etopo20lats.gz'),'d')
 # create figure.
 fig = Figure()
 canvas = FigureCanvas(fig)

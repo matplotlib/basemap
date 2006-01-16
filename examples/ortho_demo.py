@@ -1,9 +1,9 @@
 from matplotlib.toolkits.basemap import Basemap
 from pylab import *
-# read in topo data from pickle (on a regular lat/lon grid)
-etopo = array(load('etopo20data.gz'),'f')
-lons = array(load('etopo20lons.gz'),'f')
-lats = array(load('etopo20lats.gz'),'f')
+# read in topo data (on a regular lat/lon grid)
+etopo = array(load('etopo20data.gz'),'d')
+lons = array(load('etopo20lons.gz'),'d')
+lats = array(load('etopo20lats.gz'),'d')
 # create Basemap instance for Orthographic (satellite view) projection.
 lon_0 = float(raw_input('enter reference longitude (lon_0):'))
 lat_0 = float(raw_input('enter reference latitude (lat_0):'))
