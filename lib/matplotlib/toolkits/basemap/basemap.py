@@ -78,11 +78,11 @@ class Basemap:
  Example Usage:
 
 >>> from matplotlib.toolkits.basemap import Basemap
->>> import cPickle
 >>> from pylab import *
->>> # read in topo data from pickle (on a regular lat/lon grid)
->>> topodict = cPickle.load(open('etopo20.pickle','rb'))
->>> etopo = topodict['data']; lons = topodict['lons']; lats = topodict['lats']
+>>> # read in topo data (on a regular lat/lon grid)
+>>> etopo = load('etopo20data.gz')
+>>> lons  = load('etopo20lons.gz')
+>>> lats  = load('etopo20lats.gz')
 >>> # create Basemap instance for Robinson projection.
 >>> m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]))
 >>> # compute native map projection coordinates for lat/lon grid.
