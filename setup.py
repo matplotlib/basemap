@@ -30,7 +30,7 @@ def dbf_macros():
 deps = glob.glob('src/*.c')
 
 extensions = [Extension("proj4",deps,include_dirs = ['src'],)]
-packages          = ['matplotlib.toolkits','matplotlib.toolkits.basemap']
+packages          = ['matplotlib', 'matplotlib.toolkits','matplotlib.toolkits.basemap']
 package_dirs       = {'':'lib'}
 
 # don't build pyshapelib if it is already installed.
