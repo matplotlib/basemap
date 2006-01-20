@@ -1,4 +1,12 @@
-from distutils.core import setup, Extension
+try:
+    # check if we have a reasonably recent copy of setuptools
+    from setuptools.command import bdist_egg 
+    from setuptools import setup, Extension
+    has_setuptools = True
+except ImportError:
+    from distutils.core import setup, Extension
+    has_setuptools = False
+
 from distutils.util import convert_path
 import sys, glob
 
@@ -22,7 +30,7 @@ def dbf_macros():
 deps = glob.glob('src/*.c')
 
 extensions = [Extension("proj4",deps,include_dirs = ['src'],)]
-packages          = ['matplotlib/toolkits','matplotlib/toolkits/basemap']
+packages          = ['matplotlib.toolkits','matplotlib.toolkits.basemap']
 package_dirs       = {'':'lib'}
 
 # don't build pyshapelib if it is already installed.
@@ -48,6 +56,10 @@ except:
                          "pyshapelib/shapelib/dbfopen.c"],
                         include_dirs = ["pyshapelib/shapelib"],
                         define_macros = dbf_macros()) ]
+                        
+additional_params = {}
+if has_setuptools:
+    additional_params['namespace_packages'] = ['matplotlib.toolkits']
 
 setup(
   name              = "basemap",
@@ -73,4 +85,6 @@ setup(
 			           "Operating System :: OS Independent"],
   packages          = packages,
   package_dir       = package_dirs,
-  ext_modules       = extensions)
+  ext_modules       = extensions,
+  **additional_params
+  )
