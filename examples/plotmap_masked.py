@@ -5,9 +5,6 @@
 # demonstrates use of masked arrays to mask out certain regions
 # (in this case the oceans)
 
-
-from matplotlib import rcParams, use
-rcParams['numerix'] = 'Numeric'  # make sure Numeric is used (to read pickle)
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import *
 from matplotlib.numerix import ma
