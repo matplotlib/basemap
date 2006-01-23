@@ -306,9 +306,9 @@ cdef class Proj:
                 lat = lat.astype('d')
         except:
             try: # perhaps they are Numeric3 (scipy.base) arrays?
-                if lon.dtypechar != 'd':
+                if lon.dtype.char != 'd':
                     lon = lon.astype('d')
-                if lat.dtypechar != 'd':
+                if lat.dtype.char != 'd':
                     lat = lat.astype('d')
             except:
                 # perhaps they are regular python arrays?
