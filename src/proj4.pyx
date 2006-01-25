@@ -8,10 +8,7 @@ to native map projection x,y coordinates and vice versa).
 Example usage:
 
 >>> from pyproj import Proj
->>> params = {}
->>> params['proj'] = 'utm'
->>> params['zone'] = 10
->>> p = Proj(params)
+>>> p = Proj(proj='utm',zone=10)
 >>> x,y = p(-120.108, 34.36116666)
 >>> print x,y
 >>> print p(x,y,inverse=True)
@@ -19,10 +16,11 @@ Example usage:
 (-120.10799999995851, 34.361166659972767)
 
 Input coordinates can be given as python arrays, sequences, scalars
-or Numeric/numarray arrays. Optimized for objects that support
-the Python buffer protocol (regular python, Numeric and numarray arrays).
+or Numeric/numarray/scipy_core arrays. Optimized for objects that support
+the Python buffer protocol (regular python, Numeric, numarray and
+scipy_core arrays).
 
-Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.6.3.tar.gz
+Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.6.5.tar.gz
 
 See pyproj.Proj.__doc__ for more documentation.
 
@@ -53,7 +51,7 @@ cdef int _doublesize
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 _doublesize = sizeof(double)
-__version__ = "1.6.3"
+__version__ = "1.6.5"
 
 cdef extern from "proj_api.h":
     ctypedef double *projPJ
@@ -67,7 +65,6 @@ cdef extern from "proj_api.h":
 
 cdef extern from "Python.h":
     int PyObject_AsWriteBuffer(object, void **rbuf, int *len)
-    int PyObject_CheckReadBuffer(object)
 
 cdef class Proj:
     """
@@ -75,10 +72,12 @@ cdef class Proj:
  to native map projection x,y coordinates and vice versa) using proj 
  (http://proj.maptools.org/)
 
- A Proj class instance is initialized with a dictionary containing 
+ A Proj class instance is initialized with 
  proj map projection control parameter key/value pairs.
- See http://www.remotesensing.org/geotiff/proj_list and the
- proj man page for details.
+ The key/value pairs can either be passed in a dictionary,
+ or as keyword arguments.
+ See http://www.remotesensing.org/geotiff/proj_list for
+ examples of key/value pairs defining different map projections.
 
  Calling a Proj class instance with the arguments lon, lat will
  convert lon/lat (in degrees) to x/y native map projection 
@@ -86,37 +85,43 @@ cdef class Proj:
  True (default is False), the inverse transformation from x/y
  to lon/lat is performed. If optional keyword 'radians' is True
  (default is False) lon/lat are interpreted as radians instead
- of degrees. Works with numarray or Numeric arrays, python arrays,
- sequences or scalars (fastest for arrays containing doubles).
+ of degrees. Works with numarray/Numeric/scipy_core/regular python
+ array objects, sequences or scalars (fastest for array objects
+ containing doubles).
     """
 
     cdef double *projpj
     cdef object projparams
     cdef char *pjinitstring
 
-    def __new__(self, projparams):
+    def __new__(self, projparams=None, **kwargs):
         """
  initialize a Proj class instance.
 
- Input 'projparams' is a dictionary containing proj map
- projection control parameter key/value pairs.
- See the proj documentation (http://proj.maptools.org) for details.
+ Proj4 projection control parameters must either be
+ given in a dictionary 'projparams' or as keyword arguments.
+ See the proj documentation (http://proj.maptools.org) for more
+ information about specifying projection parameters.
         """
+        # if projparams is None, use kwargs.
+        if projparams is None:
+            if len(kwargs) == 0:
+                raise RuntimeError, 'no projection control parameters specified'
+            else:
+                projparams = kwargs
         # set units to meters.
         if not projparams.has_key('units'):
             projparams['units']='m'
         elif projparams['units'] != 'm':
             print 'resetting units to meters ...'
             projparams['units']='m'
-        # make sure proj parameter specified.
-        # (no other checking done in proj parameters)
-        if 'proj' not in projparams.keys():
-            raise KeyError, "need to specify proj parameter"
+        # setup proj initialization string.
         pjargs = []
         for key,value in projparams.iteritems():
             pjargs.append('+'+key+"="+str(value)+' ')
         self.projparams = projparams
         pjinitstring = ''.join(pjargs)
+        # initialize projection
         self.projpj = pj_init_plus(pjinitstring)
         if self.projpj == NULL:
             msg = """projection initialization failed.
@@ -152,7 +157,8 @@ cdef class Proj:
         except:
             hasbufapi = False
         if hasbufapi:
-        # process data in buffer (for Numeric, numarray and python arrays).
+        # process data in buffer
+        # (for Numeric/numarray/scipy_core/regular python arrays).
             if buflenx != bufleny:
                 raise RuntimeError("Buffer lengths not the same")
             ndim = buflenx/_doublesize
@@ -225,7 +231,8 @@ cdef class Proj:
         except:
             hasbufapi = False
         if hasbufapi:
-        # process data in buffer (for Numeric, numarray and python arrays).
+        # process data in buffer 
+        # (for Numeric/numarray/scipy_core/regular python arrays).
             if buflenx != bufleny:
                 raise RuntimeError("Buffer lengths not the same")
             ndim = buflenx/_doublesize
@@ -294,22 +301,25 @@ cdef class Proj:
  Inputs should be doubles (they will be cast to doubles
  if they are not, causing a slight performance hit).
 
- Works with Numeric or numarray arrays, python sequences or scalars
- (fastest for arrays containing doubles).
+ Works with Numeric/numarray/scipy_core/regular python arrays,
+ python sequences or scalars (fastest for arrays containing doubles).
         """
         # if lon,lat support BufferAPI, must make sure they contain doubles.
+        bufferapi = False
         try:
             # typecast Numeric/numarray arrays to double, if necessary.
             if lon.typecode() != 'd':
                 lon = lon.astype('d')
             if lat.typecode() != 'd':
                 lat = lat.astype('d')
+            bufferapi = True
         except:
-            try: # perhaps they are Numeric3 (scipy.base) arrays?
+            try: # perhaps they are scipy_core arrays?
                 if lon.dtype.char != 'd':
                     lon = lon.astype('d')
                 if lat.dtype.char != 'd':
                     lat = lat.astype('d')
+                bufferapi = True
             except:
                 # perhaps they are regular python arrays?
                 try:
@@ -317,8 +327,10 @@ cdef class Proj:
                         lon = array.array('d',lon)
                     if lat.typecode != 'd':
                         lat = array.array('d',lat)
+                    bufferapi = True
                 except: 
-                    # nope, they must be regular python sequence objects
+                    # None of the above.
+                    # They must be regular python sequence objects
                     # or floats (BufferAPI will not be used).
                     pass
         # If the buffer API is supported, make copies of inputs.
@@ -326,8 +338,8 @@ cdef class Proj:
         # will be modified in place.  Raise an exception if
         # copies cannot be made.
         # Buffer API will be used if inputs are arrays (regular python, 
-        # Numeric or numarray).
-        if PyObject_CheckReadBuffer(lon) and PyObject_CheckReadBuffer(lat):
+        # Numeric, numarray or scipy_core).
+        if bufferapi:
             try:
                 # try to make copy using __copy__ method.
                 inx = lon.__copy__(); iny = lat.__copy__()
@@ -335,7 +347,7 @@ cdef class Proj:
                 msg = """could not create copy of inputs.  
 This could be because your are using regular python arrays with Python 2.3
 (python arrays are not copy-able before python 2.4).  Try using lists
-or Numeric/numarray arrays instead (the latter will be faster)."""
+or Numeric/numarray/scipy_core arrays instead (the latter will be faster)."""
                 raise RuntimeError, msg
             # call proj4 functions.
             if inverse:
