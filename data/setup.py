@@ -6,7 +6,7 @@ if not datadir:
     datadir ='share/basemap'
 
 setup(
-  version           = "0.7",
+  version           = "0.8",
   description       = "boundary data for basemap matplotlib toolkit",
   url               = "http://matplotlib.sourceforge.net/toolkits.html",
   download_url      = "http://sourceforge.net/projects/matplotlib",
