@@ -1658,7 +1658,7 @@ class Basemap:
  dtheta - points on great circle computed every dtheta radians (default 0.02).
 
  Other keyword arguments (**kwargs) control plotting of great circle line,
- see NX.plot documentation for details.
+ see pylab.plot documentation for details.
 
  Note:  cannot handle situations in which the great circle intersects
  the edge of the map projection domain, and then re-enters the domain.
@@ -1807,7 +1807,7 @@ class Basemap:
 
     def scatter(self, *args, **kwargs):
         """
- Plot points with markers on the map (see NX.scatter documentation).
+ Plot points with markers on the map (see pylab.scatter documentation).
  extra keyword 'ax' can be used to override the default axes instance.
         """
         if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
@@ -1851,7 +1851,7 @@ class Basemap:
 
     def plot(self, *args, **kwargs):
         """
- Draw lines and/or markers on the map (see NX.plot documentation).
+ Draw lines and/or markers on the map (see pylab.plot documentation).
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
@@ -1895,7 +1895,7 @@ class Basemap:
 
     def imshow(self, *args, **kwargs):
         """
- Display an image over the map (see NX.imshow documentation).
+ Display an image over the map (see pylab.imshow documentation).
  extent and origin keywords set automatically so image will be drawn
  over map region.
  extra keyword 'ax' can be used to override the default axis instance.
@@ -1939,7 +1939,7 @@ class Basemap:
     def pcolor(self,x,y,data,**kwargs):
         """
  Make a pseudo-color plot over the map.
- see NX.pcolor documentation for definition of **kwargs
+ see pylab.pcolor documentation for definition of **kwargs
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
@@ -1987,7 +1987,7 @@ class Basemap:
 
     def contour(self,x,y,data,*args,**kwargs):
         """
- Make a contour plot over the map (see NX.contour documentation).
+ Make a contour plot over the map (see pylab.contour documentation).
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
@@ -2039,7 +2039,7 @@ class Basemap:
 
     def contourf(self,x,y,data,*args,**kwargs):
         """
- Make a filled contour plot over the map (see NX.contourf documentation).
+ Make a filled contour plot over the map (see pylab.contourf documentation).
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
