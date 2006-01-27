@@ -1,11 +1,4 @@
-try:
-    # check if we have a reasonably recent copy of setuptools
-    from setuptools.command import bdist_egg 
-    from setuptools import setup, Extension
-    has_setuptools = True
-except ImportError:
-    from distutils.core import setup, Extension
-    has_setuptools = False
+from distutils.core import setup, Extension
 
 from distutils.util import convert_path
 import sys, glob
@@ -56,10 +49,9 @@ except:
                          "pyshapelib/shapelib/dbfopen.c"],
                         include_dirs = ["pyshapelib/shapelib"],
                         define_macros = dbf_macros()) ]
-                        
-additional_params = {}
-if has_setuptools:
-    additional_params['namespace_packages'] = ['matplotlib.toolkits']
+
+try: additional_params
+except NameError: additional_params = {}
 
 setup(
   name              = "basemap",
