@@ -845,7 +845,7 @@ class Basemap:
  see pylab.figure docs for details.
  Note:  Don't use this if you don't want pylab to be imported.
         See simpletest_oo.py example for how to create a figure
-        with the right aspect ration using the non-pylab matplotlib
+        with the right aspect ratio using the non-pylab matplotlib
         OO interface.
         """
         import pylab as P
