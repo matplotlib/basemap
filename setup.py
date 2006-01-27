@@ -23,7 +23,7 @@ def dbf_macros():
 deps = glob.glob('src/*.c')
 
 extensions = [Extension("proj4",deps,include_dirs = ['src'],)]
-packages          = ['matplotlib', 'matplotlib.toolkits','matplotlib.toolkits.basemap']
+packages          = ['matplotlib.toolkits.basemap']
 package_dirs       = {'':'lib'}
 
 # don't build pyshapelib if it is already installed.
@@ -50,8 +50,12 @@ except:
                         include_dirs = ["pyshapelib/shapelib"],
                         define_macros = dbf_macros()) ]
 
-try: additional_params
-except NameError: additional_params = {}
+try:
+    additional_params # has setupegg.py provided
+    # if so, need to specify all the packages in heirarchy
+    packages.extend(['matplotlib', 'matplotlib.toolkits'])
+except NameError:
+    additional_params = {}
 
 setup(
   name              = "basemap",
