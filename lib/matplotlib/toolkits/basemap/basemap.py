@@ -1153,7 +1153,6 @@ class Basemap:
                       linewidth=0.5,color='k',antialiased=1,ax=None):
         """
  read in shape file, draw boundaries on map.
- Requires pyshapelib module from Thuban (http://thuban.intevation.org).
 
  Restrictions:
   - Assumes shapes are 2D
