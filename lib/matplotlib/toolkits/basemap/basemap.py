@@ -23,8 +23,8 @@ _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
    _datadir = os.path.join(sys.prefix,'share/basemap')
 
-__version__ = '0.8'
-__revision__ = '20060114'
+__version__ = '0.8.1'
+__revision__ = '20060203'
 
 # make sure subplots have same width and height
 # so that figure size sets plot aspect ratio.
@@ -1716,11 +1716,22 @@ class Basemap:
         """
         if returnxy:
             lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
-            datout = interp(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
-            return datout, x, y
         else:
             lonsout, latsout = self.makegrid(nx,ny)
+        # test to see if array indexing is supported
+        # (it is not for Numeric, but is for numarray and numpy)
+        try:
+            NX.ones(10)[1,2]
+            has_arrindexing = True
+        except:
+            has_arrindexing = False
+        if has_arrindexing:
             datout = interp(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
+        else:
+            datout = interp_numeric(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
+        if returnxy:
+            return datout, x, y
+        else:
             return datout
 
     def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1):
@@ -2187,9 +2198,12 @@ def _searchlist(a,x):
         itemprev = item
     return nslot
 
-def interp(datain,xin,yin,xout,yout,checkbounds=False,order=1):
+def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,order=1):
     """
  dataout = interp(datain,xin,yin,xout,yout,order=1)
+
+ This version uses 'take' instead of array indexing, and
+ thus is compatible with Numeric.
 
  interpolate data (datain) on a rectilinear grid (with x=xin
  y=yin) to a grid with x=xout, y=yout.
@@ -2227,36 +2241,43 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,order=1):
     xoutflat = NX.ravel(xout)
     youtflat = NX.ravel(yout)
     datainflat = NX.ravel(datain)
-    if max(xin)-min(xin) < 1.e-4 and max(yin)-min(yin) < 1.e-4:
+    delx = xin[1:]-xin[0:-1]
+    dely = yin[1:]-yin[0:-1]
+    if max(delx)-min(delx) < 1.e-4 and max(dely)-min(dely) < 1.e-4:
         # regular input grid.
         xcoords = (len(xin)-1)*(xoutflat-xin[0])/(xin[-1]-xin[0])
         ycoords = (len(yin)-1)*(youtflat-yin[0])/(yin[-1]-yin[0])
     else:
         # irregular (but still rectilinear) input grid.
-        ix = NX.searchsorted(xin,xoutflat)-1
-        iy = NX.searchsorted(yin,youtflat)-1
-        xcoords = NX.zeros(ix.shape,'f')
-        ycoords = NX.zeros(iy.shape,'f')
+        ix = (NX.searchsorted(xin,xoutflat)-1).tolist()
+        iy = (NX.searchsorted(yin,youtflat)-1).tolist()
+        xoutflat = xoutflat.tolist(); xin = xin.tolist()
+        youtflat = youtflat.tolist(); yin = yin.tolist()
+        xcoords = []; ycoords = []
         for n,i in enumerate(ix):
             if i < 0:
-                xcoords[n] = -1 # outside of range on xin (lower end)
+                xcoords.append(-1) # outside of range on xin (lower end)
             elif i >= len(xin)-1:
-                xcoords[n] = len(xin) # outside range on upper end.
+                xcoords.append(len(xin)) # outside range on upper end.
             else:
-                xcoords[n] = float(i)+(xoutflat[n]-xin[i])/(xin[i+1]-xin[i])
+                xcoords.append(float(i)+(xoutflat[n]-xin[i])/(xin[i+1]-xin[i]))
+        xcoords = NX.array(xcoords,'f')
         for m,j in enumerate(iy):
             if j < 0:
-                ycoords[m] = -1 # outside of range of yin (on lower end)
+                ycoords.append(-1) # outside of range of yin (on lower end)
             elif j >= len(yin)-1:
-                ycoords[m] = len(yin) # outside range on upper end
+                ycoords.append(len(yin)) # outside range on upper end
             else:
-                ycoords[m] = float(j)+(youtflat[m]-yin[j])/(yin[j+1]-yin[j])
+                ycoords.append(float(j)+(youtflat[m]-yin[j])/(yin[j+1]-yin[j]))
+        ycoords = NX.array(ycoords,'f')
     # data outside range xin,yin will be clipped to
     # values on boundary.
     xcoords = NX.clip(xcoords,0,len(xin)-1)
     ycoords = NX.clip(ycoords,0,len(yin)-1)
     # interpolate to output grid using bilinear interpolation.
     if order == 1:
+        import time
+        t1 = time.clock()
         xi = xcoords.astype('i')
         yi = ycoords.astype('i')
         xip1 = xi+1
@@ -2278,12 +2299,108 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,order=1):
                   (1.-delx)*dely*data21 + \
                   delx*(1.-dely)*data12
         dataout = NX.reshape(dataout,xout.shape)
+        print time.clock()-t1
     elif order == 0:
         xcoordsi = NX.around(xcoords).astype('i')
         ycoordsi = NX.around(ycoords).astype('i')
         coords = ycoordsi*datain.shape[1]+xcoordsi
         dataout = NX.take(datainflat,coords)
         dataout = NX.reshape(dataout,xout.shape)
+    else:
+        raise ValueError,'order keyword must be 0 or 1'
+    return dataout
+
+def interp(datain,xin,yin,xout,yout,checkbounds=False,order=1):
+    """
+ dataout = interp(datain,xin,yin,xout,yout,order=1)
+
+ This version uses array indexing and is not compatible with Numeric.
+
+ interpolate data (datain) on a rectilinear grid (with x=xin
+ y=yin) to a grid with x=xout, y=yout.
+
+ datain is a rank-2 array with 1st dimension corresponding to y,
+ 2nd dimension x.
+
+ xin, yin are rank-1 arrays containing x and y of
+ datain grid in increasing order.
+
+ xout, yout are rank-2 arrays containing x and y of desired output grid.
+
+ If checkbounds=True, values of xout and yout are checked to see that
+ they lie within the range specified by xin and xin.  Default is False.
+ If checkbounds=False, and xout,yout are outside xin,yin, interpolated
+ values will be clipped to values on boundary of input grid (xin,yin).
+
+ The order keyword can be 0 for nearest-neighbor interpolation,
+ or 1 for bilinear interpolation (default 1).
+    """
+    # xin and yin must be monotonically increasing.
+    if xin[-1]-xin[0] < 0 or yin[-1]-yin[0] < 0:
+        raise ValueError, 'xin and yin must be increasing!'
+    if xout.shape != yout.shape:
+        raise ValueError, 'xout and yout must have same shape!'
+    # check that xout,yout are
+    # within region defined by xin,yin.
+    if checkbounds:
+        if min(NX.ravel(xout)) < min(xin) or \
+           max(NX.ravel(xout)) > max(xin) or \
+           min(NX.ravel(yout)) < min(yin) or \
+           max(NX.ravel(yout)) > max(yin):
+            raise ValueError, 'yout or xout outside range of yin or xin'
+    # compute grid coordinates of output grid.
+    delx = xin[1:]-xin[0:-1]
+    dely = yin[1:]-yin[0:-1]
+    if max(delx)-min(delx) < 1.e-4 and max(dely)-min(dely) < 1.e-4:
+        # regular input grid.
+        xcoords = (len(xin)-1)*(xout-xin[0])/(xin[-1]-xin[0])
+        ycoords = (len(yin)-1)*(yout-yin[0])/(yin[-1]-yin[0])
+    else:
+        # irregular (but still rectilinear) input grid.
+        xoutflat = NX.ravel(xout); youtflat = NX.ravel(yout)
+        ix = (NX.searchsorted(xin,xoutflat)-1).tolist()
+        iy = (NX.searchsorted(yin,youtflat)-1).tolist()
+        xoutflat = xoutflat.tolist(); xin = xin.tolist()
+        youtflat = youtflat.tolist(); yin = yin.tolist()
+        xcoords = []; ycoords = []
+        for n,i in enumerate(ix):
+            if i < 0:
+                xcoords.append(-1) # outside of range on xin (lower end)
+            elif i >= len(xin)-1:
+                xcoords.append(len(xin)) # outside range on upper end.
+            else:
+                xcoords.append(float(i)+(xoutflat[n]-xin[i])/(xin[i+1]-xin[i]))
+        for m,j in enumerate(iy):
+            if j < 0:
+                ycoords.append(-1) # outside of range of yin (on lower end)
+            elif j >= len(yin)-1:
+                ycoords.append(len(yin)) # outside range on upper end
+            else:
+                ycoords.append(float(j)+(youtflat[m]-yin[j])/(yin[j+1]-yin[j]))
+        xcoords = NX.reshape(xcoords,xout.shape)
+        ycoords = NX.reshape(ycoords,yout.shape)
+    # data outside range xin,yin will be clipped to
+    # values on boundary.
+    xcoords = NX.clip(xcoords,0,len(xin)-1)
+    ycoords = NX.clip(ycoords,0,len(yin)-1)
+    # interpolate to output grid using bilinear interpolation.
+    if order == 1:
+        xi = xcoords.astype('i')
+        yi = ycoords.astype('i')
+        xip1 = xi+1
+        yip1 = yi+1
+        xip1 = NX.clip(xip1,0,len(xin)-1)
+        yip1 = NX.clip(yip1,0,len(yin)-1)
+        delx = xcoords-xi.astype('f')
+        dely = ycoords-yi.astype('f')
+        dataout = (1.-delx)*(1.-dely)*datain[yi,xi] + \
+                  delx*dely*datain[yip1,xip1] + \
+                  (1.-delx)*dely*datain[yip1,xi] + \
+                  delx*(1.-dely)*datain[yi,xip1]
+    elif order == 0:
+        xcoordsi = NX.around(xcoords).astype('i')
+        ycoordsi = NX.around(ycoords).astype('i')
+        dataout = datain[ycoords,xcoords]
     else:
         raise ValueError,'order keyword must be 0 or 1'
     return dataout
