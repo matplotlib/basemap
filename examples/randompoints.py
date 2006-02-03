@@ -16,8 +16,8 @@ nlats = 37
 lons = delat*arange(nlons)
 lats = 90.-delat*arange(nlats)
 lons, lats = meshgrid(lons, lats)
-lons = (d2r*lons.flat).tolist()
-lats = (d2r*lats.flat).tolist()
+lons = (d2r*ravel(lons)).tolist()
+lats = (d2r*ravel(lats)).tolist()
 # randomly shuffle locations.
 random.shuffle(lons)
 random.shuffle(lats)
