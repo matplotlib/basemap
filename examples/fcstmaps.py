@@ -5,9 +5,9 @@
 # internet connection.
 
 try:
-    from opendap import client
+    from dap import client
 except:
-    raise ImportError,"requires opendap module (version 1.3.0 or higher) from http://opendap.oceanografia.org"
+    raise ImportError,"requires dap module (version 2.1 or higher) from http://pydap.org"
 from pylab import *
 from matplotlib.numerix import ma
 import datetime, sys
@@ -42,30 +42,33 @@ def hrs_since_day1CE_todate(hrs):
 # read in date (YYYYMMDDHH) from command line.
 
 if len(sys.argv) == 1:
-    YYYYMMDDHH = raw_input('Enter date forecast was started on (YYYYMMDDHH):')
+    YYYYMMDD = raw_input('Enter date forecast was started on (YYYYMMDD):')
 else:
-    YYYYMMDDHH = sys.argv[1]
-YYYYMM = YYYYMMDDHH[0:6]
-YYYYMMDD = YYYYMMDDHH[0:8]
-HH = YYYYMMDDHH[8:10]
+    YYYYMMDD = sys.argv[1]
+YYYYMM = YYYYMMDD[0:6]
 
 # set OpenDAP server URL.
 
+#HH='12'
+#URLbase="http://nomads.ncdc.noaa.gov:9091/dods/NCEP_NAM/"
+#URL=URLbase+YYYYMM+'/'+YYYYMMDD+'/nam_218_'+YYYYMMDD+'_'+HH+'00_fff'
+HH='09'
+URLbase="http://nomad3.ncep.noaa.gov:9090/dods/sref/sref"
+URL=URLbase+YYYYMMDD+"/sref_em_"+HH+"z.ctl"
+print URL+'\n'
 try:
-    URLbase="http://nomads.ncdc.noaa.gov:9090/dods/NCDC_NOAAPort_ETA/"
-    URL=URLbase+YYYYMM+'/'+YYYYMMDD+'/meso-eta_211_'+YYYYMMDD+'_'+HH+'00_fff'
-    print URL
-    data = client.Dataset(URL)
+    data = client.open(URL)
 except:
-    raise IOError, 'nomad server not providing the requested data, try choosing a date between 20030602 and 20050525.'
+    raise IOError, 'opendap server not providing the requested data'
 
 
 # read levels, lats,lons,times.
 
-levels = data.variables['lev']
-latitudes = data.variables['lat']
-longitudes = data.variables['lon']
-fcsttimes = data.variables['time']
+print data.keys()
+levels = data['lev']
+latitudes = data['lat']
+longitudes = data['lon']
+fcsttimes = data['time']
 times = fcsttimes[:]
 # put forecast times in YYYYMMDDHH format.
 verifdates = []
@@ -84,14 +87,13 @@ lons, lats = meshgrid(lons,lats)
 
 # unpack 2-meter temp forecast data.
 
-print data.variables.keys()
-t2mvar = data.variables['t2m']
+t2mvar = data['tmp2m']
 missval = t2mvar.missing_value
 t2m = t2mvar[:,:,:]
 if missval < 0:
     t2m = ma.masked_values(where(t2m>-1.e20,t2m,1.e20), 1.e20)
 else:
-    t2m = ma.masked_values(where(t2m<1.e20.e-12,t2m,1.e20), 1.e20)
+    t2m = ma.masked_values(where(t2m<1.e20,t2m,1.e20), 1.e20)
 t2min = amin(t2m.compressed()); t2max= amax(t2m.compressed())
 print t2min,t2max
 clevs = frange(around(t2min/10.)*10.,around(t2max/10.)*10.,4)
@@ -117,7 +119,7 @@ yoffset = (m.urcrnry-m.llcrnry)/30.
 for npanel,fcsthr in enumerate(arange(0,72,12)):
     nt = fcsthrs.index(fcsthr)
     ax = fig.add_subplot(320+npanel+1)
-    cs = m.contour(x,y,t2m[nt,:,:],clevs,colors='k')
+    #cs = m.contour(x,y,t2m[nt,:,:],clevs,colors='k')
     cs = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet)
     m.drawcoastlines()
     m.drawstates()
