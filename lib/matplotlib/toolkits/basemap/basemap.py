@@ -446,9 +446,12 @@ class Basemap:
 
         # transform coastline polygons to native map coordinates.
         xc,yc = proj(NX.array(coastlons),NX.array(coastlats))
+        xc = xc.tolist(); yc = yc.tolist()
         if self.crossgreenwich:
            xc2,yc2 = proj(NX.array(coastlons2),NX.array(coastlats))
            xc3,yc3 = proj(NX.array(coastlons3),NX.array(coastlats))
+           xc2 = xc2.tolist(); yc2 = yc2.tolist()
+           xc3 = xc3.tolist(); yc3 = yc3.tolist()
         if self.crossgreenwich and projection == 'merc' or projection == 'mill':
             yc2 = yc
             yc3 = yc
@@ -475,9 +478,12 @@ class Basemap:
 
         # same as above for country segments.
         xc,yc = proj(NX.array(cntrylons),NX.array(cntrylats))
+        xc = xc.tolist(); yc = yc.tolist()
         if self.crossgreenwich:
             xc2,yc2 = proj(NX.array(cntrylons2),NX.array(cntrylats))
             xc3,yc3 = proj(NX.array(cntrylons3),NX.array(cntrylats))
+            xc2 = xc2.tolist(); yc2 = yc2.tolist()
+            xc3 = xc3.tolist(); yc3 = yc3.tolist()
         if self.crossgreenwich and projection == 'merc' or projection == 'mill':
             yc2=yc
             yc3=yc
@@ -491,9 +497,12 @@ class Basemap:
 
         # same as above for state segments.
         xc,yc = proj(NX.array(statelons),NX.array(statelats))
+        xc = xc.tolist(); yc = yc.tolist()
         if self.crossgreenwich:
             xc2,yc2 = proj(NX.array(statelons2),NX.array(statelats))
             xc3,yc3 = proj(NX.array(statelons3),NX.array(statelats))
+            xc2 = xc2.tolist(); yc2 = yc2.tolist()
+            xc3 = xc3.tolist(); yc3 = yc3.tolist()
         if self.crossgreenwich and projection == 'merc' or projection == 'mill':
             yc2=yc
             yc3=yc
@@ -507,9 +516,12 @@ class Basemap:
 
         # same as above for river segments.
         xc,yc = proj(NX.array(riverlons),NX.array(riverlats))
+        xc = xc.tolist(); yc = yc.tolist()
         if self.crossgreenwich:
             xc2,yc2 = proj(NX.array(riverlons2),NX.array(riverlats))
             xc3,yc3 = proj(NX.array(riverlons3),NX.array(riverlats))
+            xc2 = xc2.tolist(); yc2 = yc2.tolist()
+            xc3 = xc3.tolist(); yc3 = yc3.tolist()
         if self.crossgreenwich and projection == 'merc' or projection == 'mill':
             yc2=yc
             yc3=yc
@@ -643,7 +655,7 @@ class Basemap:
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
-                    segment = zip(xx[i:j],yy[i:j])
+                    segment = zip(xx[i:j].tolist(),yy[i:j].tolist())
                     coastsegs.append(segment)
                     coastsegtypes.append(segtype)
             else:
@@ -658,7 +670,7 @@ class Basemap:
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
-                    segment = zip(xx[i:j],yy[i:j])
+                    segment = zip(xx[i:j].tolist(),yy[i:j].tolist())
                     states.append(segment)
             else:
                 states.append(seg)
@@ -670,7 +682,7 @@ class Basemap:
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
-                    segment = zip(xx[i:j],yy[i:j])
+                    segment = zip(xx[i:j].tolist(),yy[i:j].tolist())
                     countries.append(segment)
             else:
                 countries.append(seg)
@@ -682,7 +694,7 @@ class Basemap:
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
-                    segment = zip(xx[i:j],yy[i:j])
+                    segment = zip(xx[i:j].tolist(),yy[i:j].tolist())
                     rivers.append(segment)
             else:
                 rivers.append(seg)
@@ -865,7 +877,7 @@ class Basemap:
     def _splitseg(self,xx,yy,mask=None):
         """split segment up around missing values (outside projection limb)"""
         if mask is None:
-            mask = NX.logical_or(NX.greater_equal(xx,1.e20),NX.greater_equal(yy,1.e20))
+            mask = (NX.logical_or(NX.greater_equal(xx,1.e20),NX.greater_equal(yy,1.e20))).tolist()
         i1=[]; i2=[]
         mprev = 1
         for i,m in enumerate(mask):
@@ -1376,8 +1388,10 @@ class Basemap:
                     yy[0] = 1.e-4
                 if side == 'l':
                     lons,lats = self(self.llcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
+                    lons = lons.tolist(); lats = lats.tolist()
                 else:
                     lons,lats = self(self.urcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
+                    lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
@@ -1387,8 +1401,10 @@ class Basemap:
                 xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
                 if side == 'b':
                     lons,lats = self(xx,self.llcrnry*NX.ones(xx.shape,'f'),inverse=True)
+                    lons = lons.tolist(); lats = lats.tolist()
                 else:
                     lons,lats = self(xx,self.urcrnry*NX.ones(xx.shape,'f'),inverse=True)
+                    lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
@@ -1568,8 +1584,10 @@ class Basemap:
                 yy = linspace(self.llcrnry,self.urcrnry,nmax)
                 if side == 'l':
                     lons,lats = self(self.llcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
+                    lons = lons.tolist(); lats = lats.tolist()
                 else:
                     lons,lats = self(self.urcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
+                    lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
@@ -1579,8 +1597,10 @@ class Basemap:
                 xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
                 if side == 'b':
                     lons,lats = self(xx,self.llcrnry*NX.ones(xx.shape,'f'),inverse=True)
+                    lons = lons.tolist(); lats = lats.tolist()
                 else:
                     lons,lats = self(xx,self.urcrnry*NX.ones(xx.shape,'f'),inverse=True)
+                    lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
@@ -2142,6 +2162,8 @@ def _searchlist(a,x):
  like bisect, but works for lists that are not sorted,
  and are not in increasing order.
  returns -1 if x does not fall between any two elements"""
+    # make sure x is a float (and not an array scalar)
+    x = float(x)
     itemprev = a[0]
     nslot = -1
     eps = 180.
