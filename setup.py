@@ -59,7 +59,7 @@ except NameError:
 
 setup(
   name              = "basemap",
-  version           = "0.8",
+  version           = "0.8.1",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data
