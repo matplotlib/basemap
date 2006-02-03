@@ -2276,8 +2276,6 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,order=1):
     ycoords = NX.clip(ycoords,0,len(yin)-1)
     # interpolate to output grid using bilinear interpolation.
     if order == 1:
-        import time
-        t1 = time.clock()
         xi = xcoords.astype('i')
         yi = ycoords.astype('i')
         xip1 = xi+1
@@ -2299,7 +2297,6 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,order=1):
                   (1.-delx)*dely*data21 + \
                   delx*(1.-dely)*data12
         dataout = NX.reshape(dataout,xout.shape)
-        print time.clock()-t1
     elif order == 0:
         xcoordsi = NX.around(xcoords).astype('i')
         ycoordsi = NX.around(ycoords).astype('i')
