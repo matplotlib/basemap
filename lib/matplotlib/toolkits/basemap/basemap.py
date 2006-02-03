@@ -48,6 +48,14 @@ if rcParams['figure.subplot.top']!=0.9:
     print 'use rcdefaults() to get the original value back'
     rcParams['figure.subplot.top']=0.9
 
+# test to see if array indexing is supported
+# (it is not for Numeric, but is for numarray and numpy)
+try:
+    NX.ones(10)[1,2]
+    _has_arrindexing = True
+except:
+    _has_arrindexing = False
+
 class Basemap:
 
     """
@@ -1718,14 +1726,7 @@ class Basemap:
             lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         else:
             lonsout, latsout = self.makegrid(nx,ny)
-        # test to see if array indexing is supported
-        # (it is not for Numeric, but is for numarray and numpy)
-        try:
-            NX.ones(10)[1,2]
-            has_arrindexing = True
-        except:
-            has_arrindexing = False
-        if has_arrindexing:
+        if _has_arrindexing:
             datout = interp(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
         else:
             datout = interp_numeric(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
@@ -1762,8 +1763,12 @@ class Basemap:
         """
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         # interpolate to map projection coordinates.
-        uin = interp(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
-        vin = interp(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
+        if _has_arrindexing:
+            uin = interp(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
+            vin = interp(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
+        else:
+            uin = interp_numeric(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
+            vin = interp_numeric(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
         # rotate from geographic to map coordinates.
         delta = 0.1 # incement in latitude used to estimate derivatives.
         xn,yn = self(lonsout,NX.where(latsout+delta<90.,latsout+delta,latsout-delta))
