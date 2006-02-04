@@ -1,13 +1,12 @@
 # this example reads weather forecasts initialized on a day
 # specified on the command line, and makes a multi-panel plot.
-# Requires the OpenDAP module (a pure-python module with no dependencies
-# other than Numeric) from http://opendap.oceanografia.org, and an active
-# internet connection.
+# Requires the pyDAP module (a pure-python module)
+# from http://pydap.org, and an active intenet connection.
 
 try:
     from dap import client
 except:
-    raise ImportError,"requires dap module (version 2.1 or higher) from http://pydap.org"
+    raise ImportError,"requires pyDAP module (version 2.1 or higher) from http://pydap.org"
 from pylab import *
 from matplotlib.numerix import ma
 import datetime, sys
