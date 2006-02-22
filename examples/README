@@ -50,3 +50,5 @@ hurrtrack.py plots hurricane tracks from shapefile data
 testgdal.py is an example that shows how to plot raster geospatial data
 using the gdal module (http://gdal.maptools.org).  Requires two data
 files that must be downloaded manually, see docstrings for URLs.
+
+run_all.py is a driver script that runs all the examples except fcstmaps.py and testgdal.py (which rely on external dependencies).
