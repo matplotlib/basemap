@@ -51,7 +51,7 @@ if rcParams['figure.subplot.top']!=0.9:
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
 try:
-    NX.ones(10)[1,2]
+    NX.ones(10)[[1,2]]
     _has_arrindexing = True
 except:
     _has_arrindexing = False
