@@ -1,3 +1,4 @@
+20060222:  version 0.8.2:  Minor bug fixes, mostly in examples.
 20060203:  version 0.8.1:  Huge speedups for numpy
            (no significant differences for Numeric and numarray).
 20060114:  version 0.8: added numpy compatibility
