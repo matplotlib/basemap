@@ -6,6 +6,7 @@ include LICENSE_pyshapelib
 include LICENSE_data
 include Changelog
 include setup.py
+include setupegg.py
 include src/*
 include examples/simpletest.py
 include examples/simpletest_oo.py
