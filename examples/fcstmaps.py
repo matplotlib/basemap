@@ -95,7 +95,8 @@ else:
     t2m = ma.masked_values(where(t2m<1.e20,t2m,1.e20), 1.e20)
 t2min = amin(t2m.compressed()); t2max= amax(t2m.compressed())
 print t2min,t2max
-clevs = frange(around(t2min/10.)*10.,around(t2max/10.)*10.,4)
+clevs = frange(around(t2min/10.)*10.-5.,around(t2max/10.)*10.+5.,4)
+print clevs[0],clevs[-1]
 llcrnrlat = 22.0
 urcrnrlat = 48.0
 latminout = 22.0
