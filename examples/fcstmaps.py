@@ -111,15 +111,15 @@ m = Basemap(llcrnrlon=llcrnrlon,llcrnrlat=llcrnrlat,
             lat_1=standardpar,lon_0=centerlon)
 x, y = m(lons, lats)
 # create figure.
-# mult ysize by 3/2 to take into account there will
-# be three rows and two columns.
-fig=m.createfigure(figsize=(8,(3./2.)*8))
+fig=figure(figsize=(8,8))
 yoffset = (m.urcrnry-m.llcrnry)/30.
 for npanel,fcsthr in enumerate(arange(0,72,12)):
     nt = fcsthrs.index(fcsthr)
     ax = fig.add_subplot(320+npanel+1)
     #cs = m.contour(x,y,t2m[nt,:,:],clevs,colors='k')
     cs = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet)
+    # make sure axis are scaled so map is not stretched or squished.
+    axis('scaled') 
     m.drawcoastlines()
     m.drawstates()
     m.drawcountries()
