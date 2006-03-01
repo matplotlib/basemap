@@ -37,13 +37,15 @@ mnh = Basemap(llcrnrlon=-150,llcrnrlat=-20.826,urcrnrlon=30,urcrnrlat=-20.826,\
 xnh,ynh = mnh(lons,lats)
 fig = P.figure(figsize=(8,8))
 ax = fig.add_subplot(211)
+CS = mnh.contour(xnh,ynh,hgt,15,linewidths=0.5,colors='k')
+CS = mnh.contourf(xnh,ynh,hgt,15,cmap=P.cm.Spectral)
+# this must come after first method call to plot something,
+# otherwise axis limits are not set yet.
 P.axis('scaled')
 # recenter plot
 l,b,w,h = ax.get_position()
 l = 0.5*(1.-w)
 ax.set_position([l,b,w,h])
-CS = mnh.contour(xnh,ynh,hgt,15,linewidths=0.5,colors='k')
-CS = mnh.contourf(xnh,ynh,hgt,15,cmap=P.cm.Spectral)
 # colorbar on bottom.
 cax = P.axes([l, b-0.05, w, 0.025]) # setup colorbar axes
 P.colorbar(tickfmt='%d', cax=cax,orientation='horizontal',clabels=CS.levels[0::3]) # draw colorbar
@@ -64,15 +66,15 @@ msh = Basemap(llcrnrlon=-150,llcrnrlat=20.826,urcrnrlon=30,urcrnrlat=20.826,\
               lat_0=-90.,lon_0=-105.)
 xsh,ysh = msh(lons,lats)
 ax = fig.add_subplot(212)
+ax.set_position([l,b,w,h])
+CS = msh.contour(xsh,ysh,hgt,15,linewidths=0.5,colors='k')
+CS = msh.contourf(xsh,ysh,hgt,15,cmap=P.cm.Spectral)
 P.axis('scaled') # watch what happens if you comment this out!
 # recenter plot
 l,b,w,h = ax.get_position()
 l = 0.5*(1.-w)
 ax.set_position([l,b,w,h])
-CS = msh.contour(xsh,ysh,hgt,15,linewidths=0.5,colors='k')
-CS = msh.contourf(xsh,ysh,hgt,15,cmap=P.cm.Spectral)
 # colorbar on bottom.
-l,b,w,h = ax.get_position()
 cax = P.axes([l, b-0.05, w, 0.025]) # setup colorbar axes
 P.colorbar(tickfmt='%d', cax=cax,orientation='horizontal',clabels=CS.levels[0::3]) # draw colorbar
 P.axes(ax)  # make the original axes current again
@@ -87,13 +89,13 @@ P.show()
 # panel 1
 fig = P.figure(figsize=(8,8))
 ax = fig.add_subplot(121)
+CS = mnh.contour(xnh,ynh,hgt,15,linewidths=0.5,colors='k')
+CS = mnh.contourf(xnh,ynh,hgt,15,cmap=P.cm.RdBu)
 P.axis('scaled')
 # center the plot
 l,b,w,h = ax.get_position()
 l = l-0.025; b = 0.5*(1.-h)
 ax.set_position([l,b,w,h])
-CS = mnh.contour(xnh,ynh,hgt,15,linewidths=0.5,colors='k')
-CS = mnh.contourf(xnh,ynh,hgt,15,cmap=P.cm.RdBu)
 # colorbar on right.
 cax = P.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
 P.colorbar(tickfmt='%d', cax=cax, clabels=CS.levels[0::2]) # draw colorbar
@@ -105,13 +107,13 @@ P.title('NH 500 hPa Height (cm.RdBu)')
 
 # panel 2
 ax = fig.add_subplot(122)
+CS = msh.contour(xsh,ysh,hgt,15,linewidths=0.5,colors='k')
+CS = msh.contourf(xsh,ysh,hgt,15,cmap=P.cm.RdBu)
 P.axis('scaled')
 # center the plot
 l,b,w,h = ax.get_position()
 l = l-0.025; b = 0.5*(1.-h)
 ax.set_position([l,b,w,h])
-CS = msh.contour(xsh,ysh,hgt,15,linewidths=0.5,colors='k')
-CS = msh.contourf(xsh,ysh,hgt,15,cmap=P.cm.RdBu)
 # colorbar on right.
 cax = P.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
 P.colorbar(tickfmt='%d', cax=cax, clabels=CS.levels[0::2]) # draw colorbar
