@@ -53,4 +53,8 @@ testgdal.py is an example that shows how to plot raster geospatial data
 using the gdal module (http://gdal.maptools.org).  Requires two data
 files that must be downloaded manually, see docstrings for URLs.
 
+panelplot.py shows how to make multi-panel plots, taking special care to 
+make sure that map aspect ratios are preserved (so you don't get squished
+and/or stretched maps).
+
 run_all.py is a driver script that runs all the examples except fcstmaps.py and testgdal.py (which rely on external dependencies).
