@@ -244,6 +244,10 @@ cdef class Proj:
         """
         # if lon,lat support BufferAPI, must make sure they contain doubles.
         isfloat = False; islist = False
+        # first, if it's a numpy array scalar convert to float
+        # (array scalars don't support buffer API)
+        if hasattr(lon,'shape') and lon.shape == (): lon = float(lon)
+        if hasattr(lat,'shape') and lat.shape == (): lat = float(lat)
         try:
             # typecast Numeric/numarray arrays to double.
             # (this makes a copy)
@@ -350,6 +354,11 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
     """
     # make sure x,y,z support Buffer API and contain doubles.
     isfloat = False; islist = False
+    # first, if it's a numpy array scalar convert to float
+    # (array scalars don't support buffer API)
+    if hasattr(x,'shape') and x.shape == (): x = float(x)
+    if hasattr(y,'shape') and y.shape == (): y = float(y)
+    if hasattr(z,'shape') and z.shape == (): z = float(z)
     try:
         # typecast Numeric/numarray arrays to double.
         # (this makes a copy)
