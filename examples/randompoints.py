@@ -5,10 +5,9 @@ from matplotlib.numerix.random_array import uniform
 
 # Plot a bunch of randomly distributed points on the earth.
 
-# set up lambert azimuthal map centered on N. Pole.
-m = Basemap(llcrnrlon=-150.,llcrnrlat=0.,urcrnrlon=30.,urcrnrlat=0.,
-            resolution='l',area_thresh=10000.,projection='stere',\
-            lat_0=90.,lon_0=-105.,lat_ts=90.)
+# set up stereographic map centered on N. Pole.
+m = Basemap(lon_0=-105,boundinglat=30.,
+            resolution='l',area_thresh=10000.,projection='npstere')
 # number of points to plot.
 npts = 750
 # generate random points on a sphere,
