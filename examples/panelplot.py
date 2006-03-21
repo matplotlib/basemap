@@ -19,9 +19,8 @@ rcParams['figure.subplot.wspace'] = 0.5 # more width between subplots
 #rcParams['figure.subplot.left'] = 0.1   # move left edge of subplot over a bit
 
 # panel 1
-mnh = Basemap(llcrnrlon=-150,llcrnrlat=-20.826,urcrnrlon=30,urcrnrlat=-20.826,\
-             resolution='c',area_thresh=10000.,projection='laea',\
-             lat_0=90.,lon_0=-105.)
+mnh = Basemap(lon_0=-105,boundinglat=20.,
+             resolution='c',area_thresh=10000.,projection='nplaea')
 xnh,ynh = mnh(lons,lats)
 fig = P.figure()
 ax = fig.add_subplot(211)
@@ -43,9 +42,8 @@ mnh.drawmeridians(meridians,labels=[1,0,0,1])
 P.title('NH 500 hPa Height (cm.Spectral)')
 
 # panel 2
-msh = Basemap(llcrnrlon=-150,llcrnrlat=20.826,urcrnrlon=30,urcrnrlat=20.826,\
-              resolution='c',area_thresh=10000.,projection='laea',\
-              lat_0=-90.,lon_0=-105.)
+msh = Basemap(lon_0=-105,boundinglat=-20.,
+             resolution='c',area_thresh=10000.,projection='splaea')
 xsh,ysh = msh(lons,lats)
 ax = fig.add_subplot(212)
 CS = msh.contour(xsh,ysh,hgt,15,linewidths=0.5,colors='k')
