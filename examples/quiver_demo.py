@@ -21,9 +21,8 @@ lons, lats = meshgrid(lons1, lats1)
 # plot vectors in geographical (lat/lon) coordinates.
 
 # north polar projection.
-m = Basemap(llcrnrlon=-180.,llcrnrlat=10.,urcrnrlon=0.,urcrnrlat=10.,\
-            resolution='c',area_thresh=10000.,projection='stere',\
-            lat_0=90.,lon_0=-135.,lat_ts=90.)
+m = Basemap(lon_0=-135,boundinglat=25,
+            resolution='c',area_thresh=10000.,projection='npstere')
 # setup figure with same aspect ratio as map.
 fig=m.createfigure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
@@ -55,9 +54,8 @@ show()
 # plot vectors in map projection coordinates.
 
 # north polar projection.
-m = Basemap(llcrnrlon=-180.,llcrnrlat=10.,urcrnrlon=0.,urcrnrlat=10.,\
-            resolution='c',area_thresh=10000.,projection='stere',\
-            lat_0=90.,lon_0=-135.,lat_ts=90.)
+m = Basemap(lon_0=-135,boundinglat=25,
+            resolution='c',area_thresh=10000.,projection='npstere')
 # transform from spherical to map projection coordinates (rotation
 # and interpolation).
 nxv = 41; nyv = 41
