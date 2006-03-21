@@ -7,7 +7,7 @@ from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
 import sys, os, math, popen2
-from proj import Proj
+from proj import Proj, proj4
 from greatcircle import GreatCircle, vinc_dist, vinc_pt
 import matplotlib.numerix as NX
 from matplotlib.numerix import ma
@@ -50,9 +50,12 @@ class Basemap:
 
  Useful instance variables:
 
- projection - map projection ('cyl','merc','mill','lcc','eqdc','aea','aeqd',
-  'laea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly', 'ortho', 'robin',
-  'moll' or 'stere')
+ projection - map projection ('cyl','merc','mill','lcc','eqdc','aea',
+  'laea', 'nplaea', 'splaea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly', 
+  'moll', 'ortho', 'robin', 'aeqd', 'npaeqd', 'spaeqd', 'stere',
+  'npstere' or 'spstere')
+ (projections prefixed with 'np' or 'sp' are special case polar-centric
+  versions of the parent projection)
  aspect - map aspect ratio (size of y dimension / size of x dimension).
  llcrnrlon - longitude of lower left hand corner of the desired map domain.
  llcrnrlon - latitude of lower left hand corner of the desired map domain.
@@ -94,7 +97,7 @@ class Basemap:
     def __init__(self,llcrnrlon=-180.,llcrnrlat=-90.,urcrnrlon=180.,urcrnrlat=90.,\
        projection='cyl',resolution='c',area_thresh=None,rsphere=6370997,\
        lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
-       lon_1=None,lon_2=None,suppress_ticks=True,ax=None):
+       lon_1=None,lon_2=None,suppress_ticks=True,boundinglat=None,ax=None):
         """
  create a Basemap instance.
 
@@ -102,9 +105,15 @@ class Basemap:
 
  projection - map projection.  'cyl' - cylindrical equidistant, 'merc' -
   mercator, 'lcc' - lambert conformal conic, 'stere' - stereographic,
+  'npstere' - stereographic, special case centered on north pole.
+  'spstere' - stereographic, special case centered on south pole,
   'aea' - albers equal area conic, 'tmerc' - transverse mercator,
   'aeqd' - azimuthal equidistant, 'mill' - miller cylindrical,
+  'npaeqd' - azimuthal equidistant, special case centered on north pole,
+  'spaeqd' - azimuthal equidistant, special case centered on south pole,
   'eqdc' - equidistant conic, 'laea' - lambert azimuthal equal area,
+  'nplaea' - lambert azimuthal, special case centered on north pole,
+  'splaea' - lambert azimuthal, special case centered on south pole,
   'cass' - cassini-soldner (transverse cylindrical equidistant),
   'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
   'moll' - mollweide, 'robin' - robinson,
@@ -119,9 +128,11 @@ class Basemap:
  urcrnrlat - latitude of upper right hand corner of the desired map domain
   (Default 90).
 
- If the orthographic, mollweide or robinson projection is chosen
- the values of llcrnrlon,llcrnrlat,urcrnrlon and urcrnrlat are ignored,
- and the entire projection domain will be always be plotted.
+ If the orthographic, mollweide, npstere, spstere, nplaea, splaea,
+ nplaea, splaea, npaeqd, spaeqd or robinson projection is chosen
+ the values of llcrnrlon,llcrnrlat,urcrnrlon and urcrnrlat are ignored
+ (because either they are computed internally, or entire globe is 
+ always plotted).
 
  resolution - resolution of boundary database to use. Can be 'c' (crude),
   'l' (low), 'i' (intermediate) or 'h' (high).
@@ -182,6 +193,11 @@ class Basemap:
  lon_0 - central meridian (x-axis origin) - used by stereographic, polyconic,
   transverse mercator, miller cylindrical, cassini-soldner, mollweide, robinson,
   gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
+ boundinglat - bounding latitude for pole-centered projections (npstere,spstere,
+  nplaea,splaea,npaeqd,spaeqd).  These projections are square regions centered
+  on the north or south pole.  The longitude lon_0 is at 6-o'clock, and the
+  latitude circle boundinglat is tangent to the edge of the map at lon_0.
+
         """
 
         self.projection = projection
@@ -254,6 +270,86 @@ class Basemap:
             projparams['lat_ts'] = lat_ts
             projparams['lat_0'] = lat_0
             projparams['lon_0'] = lon_0
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+        elif projection == 'spstere':
+            if boundinglat is None or lon_0 is None:
+                raise ValueError, 'must specify boundinglat and lon_0 for South-Polar Stereographic basemap'
+            projparams['lat_ts'] = -90.
+            projparams['lat_0'] = -90.
+            projparams['lon_0'] = lon_0
+            projparams['proj'] = 'stere'
+            self.llcrnrlon = lon_0+45.
+            self.urcrnrlon = lon_0-135.
+            proj = proj4.Proj(projparams)
+            x,y = proj(lon_0,boundinglat)
+            lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
+            self.urcrnrlat = self.llcrnrlat
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+        elif projection == 'npstere':
+            if boundinglat is None or lon_0 is None:
+                raise ValueError, 'must specify boundinglat and lon_0 for North-Polar Stereographic basemap'
+            projparams['lat_ts'] = 90.
+            projparams['lat_0'] = 90.
+            projparams['lon_0'] = lon_0
+            projparams['proj'] = 'stere'
+            self.llcrnrlon = lon_0-45.
+            self.urcrnrlon = lon_0+135.
+            proj = proj4.Proj(projparams)
+            x,y = proj(lon_0,boundinglat)
+            lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
+            self.urcrnrlat = self.llcrnrlat
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+        elif projection == 'splaea':
+            if boundinglat is None or lon_0 is None:
+                raise ValueError, 'must specify boundinglat and lon_0 for South-Polar Lambert Azimuthal basemap'
+            projparams['lat_0'] = -90.
+            projparams['lon_0'] = lon_0
+            projparams['proj'] = 'laea'
+            self.llcrnrlon = lon_0+45.
+            self.urcrnrlon = lon_0-135.
+            proj = proj4.Proj(projparams)
+            x,y = proj(lon_0,boundinglat)
+            lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
+            self.urcrnrlat = self.llcrnrlat
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+        elif projection == 'nplaea':
+            if boundinglat is None or lon_0 is None:
+                raise ValueError, 'must specify boundinglat and lon_0 for North-Polar Lambert Azimuthal basemap'
+            projparams['lat_0'] = 90.
+            projparams['lon_0'] = lon_0
+            projparams['proj'] = 'laea'
+            self.llcrnrlon = lon_0-45.
+            self.urcrnrlon = lon_0+135.
+            proj = proj4.Proj(projparams)
+            x,y = proj(lon_0,boundinglat)
+            lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
+            self.urcrnrlat = self.llcrnrlat
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+        elif projection == 'spaeqd':
+            if boundinglat is None or lon_0 is None:
+                raise ValueError, 'must specify boundinglat and lon_0 for South-Polar Azimuthal Equidistant basemap'
+            projparams['lat_0'] = -90.
+            projparams['lon_0'] = lon_0
+            projparams['proj'] = 'aeqd'
+            self.llcrnrlon = lon_0+45.
+            self.urcrnrlon = lon_0-135.
+            proj = proj4.Proj(projparams)
+            x,y = proj(lon_0,boundinglat)
+            lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
+            self.urcrnrlat = self.llcrnrlat
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+        elif projection == 'npaeqd':
+            if boundinglat is None or lon_0 is None:
+                raise ValueError, 'must specify boundinglat and lon_0 for North-Polar Azimuthal Equidistant basemap'
+            projparams['lat_0'] = 90.
+            projparams['lon_0'] = lon_0
+            projparams['proj'] = 'aeqd'
+            self.llcrnrlon = lon_0-45.
+            self.urcrnrlon = lon_0+135.
+            proj = proj4.Proj(projparams)
+            x,y = proj(lon_0,boundinglat)
+            lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
+            self.urcrnrlat = self.llcrnrlat
             proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'laea':
             if lat_0 is None or lon_0 is None:
