@@ -1,7 +1,7 @@
 from matplotlib import rcParams
 from matplotlib import __version__ as matplotlib_version
 # check to make sure matplotlib is not too old.
-if matplotlib_version < '0.81':
+if matplotlib_version < '0.87.2':
     raise ImportError, 'your matplotlib is too old - basemap requires at least 0.81'
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
@@ -21,32 +21,10 @@ import dbflib
 # BASEMAP_DATA_PATH env var not set.
 _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
-   _datadir = os.path.join(sys.prefix,'share/basemap')
+   _datadir = os.path.join(sys.prefix,'share','basemap')
 
-__version__ = '0.8.2'
+__version__ = '0.8.3'
 __revision__ = '20060222'
-
-# make sure subplots have same width and height
-# so that figure size sets plot aspect ratio.
-# (these are the same as matplotlib 0.84 defaults
-#  except for subplot.left, which was changed from 0.125).
-# print a warning when default is changed.
-if rcParams['figure.subplot.left']!=0.1:
-    print 'warning: figure.subplot.left rc value being reset to 0.1 in basemap'
-    print 'use rcdefaults() to get the original value back'
-    rcParams['figure.subplot.left']=0.1
-if rcParams['figure.subplot.right']!=0.9 :
-    print 'warning: figure.subplot.right rc value being reset to 0.9 in basemap'
-    print 'use rcdefaults() to get the original value back'
-    rcParams['figure.subplot.right']=0.9
-if rcParams['figure.subplot.bottom']!=0.1:
-    print 'warning: figure.subplot.bottom rc value being reset to 0.1 in basemap'
-    print 'use rcdefaults() to get the original value back'
-    rcParams['figure.subplot.bottom']=0.1
-if rcParams['figure.subplot.top']!=0.9:
-    print 'warning: figure.subplot.top rc value being reset to 0.9 in basemap'
-    print 'use rcdefaults() to get the original value back'
-    rcParams['figure.subplot.top']=0.9
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -864,9 +842,6 @@ class Basemap:
  returns a handle to the figure.
  see pylab.figure docs for details.
  Note:  Don't use this if you don't want pylab to be imported.
-        See simpletest_oo.py example for how to create a figure
-        with the right aspect ratio using the non-pylab matplotlib
-        OO interface.
         """
         import pylab as P
         if not kwargs.has_key('figsize'):
@@ -1821,7 +1796,8 @@ class Basemap:
 
     def set_axes_limits(self,ax=None):
         """
- Set axis limits for map domain using current or specified axes instance.
+ Set axis limits, fix aspect ratio for map domain using current
+ or specified axes instance.
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -1832,6 +1808,7 @@ class Basemap:
                 ax = pylab.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
+        # update data limits for map domain.
         corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
         ax.update_datalim( corners )
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
@@ -1839,6 +1816,10 @@ class Basemap:
         # turn off axes frame for non-rectangular projections.
         if self.projection in ['ortho','moll','robin']:
             ax.set_frame_on(False)
+        # make sure aspect ratio of map preserved.
+        # plot is re-centered in bounding rectangle.
+        ax.set_aspect('equal',aspect_adjusts='position')
+        ax.apply_aspect()
 
     def scatter(self, *args, **kwargs):
         """
