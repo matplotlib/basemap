@@ -24,7 +24,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
 __version__ = '0.8.3'
-__revision__ = '20060222'
+__revision__ = '20060321'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -1818,7 +1818,7 @@ class Basemap:
             ax.set_frame_on(False)
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
-        ax.set_aspect('equal',aspect_adjusts='position')
+        ax.set_aspect('equal',adjusts='position')
         ax.apply_aspect()
 
     def scatter(self, *args, **kwargs):
