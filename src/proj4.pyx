@@ -16,12 +16,12 @@ Example usage:
 765975.641091 3805993.13406
 (-120.10799999995851, 34.3611.79972767)
 
-Input coordinates can be given as python arrays, lists, scalars
+Input coordinates can be given as python arrays, lists/tuples, scalars
 or Numeric/numarray/numpy arrays. Optimized for objects that support
 the Python buffer protocol (regular python, Numeric, numarray and
 numpy arrays).
 
-Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.7.tar.gz
+Download http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.7.2.tar.gz
 
 See the docstrings for pyproj.Proj and pyproj.transform for more documentation.
 
@@ -54,7 +54,7 @@ cdef int _doublesize
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 _doublesize = sizeof(double)
-__version__ = "1.7"
+__version__ = "1.7.2"
 
 cdef extern from "proj_api.h":
     ctypedef double *projPJ
@@ -97,9 +97,9 @@ cdef class Proj:
  to lon/lat is performed. If optional keyword 'radians' is True
  (default is False) lon/lat are interpreted as radians instead
  of degrees. Works with numarray/Numeric/numpy/regular python
- array objects, lists or scalars (fastest for arrays). lon and
- lat must be of same type (array, list or scalar) and have the
- same length (if array or list).
+ array objects, lists, tuples or scalars (fastest for arrays). lon and
+ lat must be of same type (array, list/tuple or scalar) and have the
+ same length (if array, list or tuple).
     """
 
     cdef projPJ projpj
@@ -240,7 +240,7 @@ cdef class Proj:
  if they are not, causing a slight performance hit).
 
  Works with Numeric/numarray/numpy/regular python arrays,
- python lists or scalars (fastest for arrays).
+ python lists/tuples or scalars (fastest for arrays).
         """
         # if lon,lat support BufferAPI, must make sure they contain doubles.
         isfloat = False; islist = False
@@ -271,8 +271,8 @@ cdef class Proj:
                 except: 
                     # none of the above
                     # try to convert to python array
-                    # a list.
-                    if type(lon) == types.ListType and type(lat) == types.ListType:
+                    # a list or tuple.
+                    if type(lon) in [types.ListType,types.TupleType] and type(lat) in [types.ListType,types.TupleType]:
                         inx = array.array('d',lon)
                         iny = array.array('d',lat)
                         islist = True
@@ -285,7 +285,7 @@ cdef class Proj:
                             iny = array.array('d',(lat,))
                             isfloat = True
                         except:
-                            raise TypeError, 'lon and latmust be arrays, lists or scalars (and they must all be of the same type)'
+                            raise TypeError, 'lon and latmust be arrays, lists/tuples or scalars (and they must all be of the same type)'
         # call proj4 functions.
         if inverse:
             outx, outy = self._inv(inx, iny, radians=radians)
@@ -346,9 +346,9 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
  radians keyword has no effect.
 
  x,y and z can be Numeric/numarray/numpy or regular python arrays,
- python lists or scalars. Arrays are fastest. x,y and z must be
- all of the same type (array, list or scalar), and have the 
- same length (if arrays or lists).
+ python lists/tuples or scalars. Arrays are fastest. x,y and z must be
+ all of the same type (array, list/tuple or scalar), and have the 
+ same length (if arrays, lists or tuples).
  For projections in geocentric coordinates, values of
  x and y are given in meters.  z is always meters.
     """
@@ -390,8 +390,8 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
                     inz = array.array('d',z)
             except: 
                 # try to convert to python array
-                # a list?
-                if type(x) == types.ListType and type(y) == types.ListType and (z is not None and type(z) == types.ListType):
+                # a list or tuple?
+                if type(x) in [types.ListType,types.TupleType] and type(y) in [types.ListType,types.TupleType] and type(z) in [types.ListType,types.TupleType]:
                     inx = array.array('d',x)
                     iny = array.array('d',y)
                     if z is not None:
@@ -408,7 +408,7 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
                         if z is not None: inz = array.array('d',(z,))
                         isfloat = True
                     except:
-                        raise TypeError, 'x, y and z must be arrays, lists or scalars (and they must all be of the same type)'
+                        raise TypeError, 'x, y and z must be arrays, lists/tuples or scalars (and they must all be of the same type)'
     ierr = _transform(p1,p2,inx,iny,inz,radians)
     if ierr != 0:
         raise RuntimeError, pj_strerrno(ierr)
@@ -417,7 +417,7 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
         if isfloat:
             return inx[0],iny[0],inz[0]
         elif islist:
-            return inx.tolist(),iny.tolist(),inz.tolise()
+            return inx.tolist(),iny.tolist(),inz.tolist()
         else:
             return inx,iny,inz
     else:
