@@ -58,9 +58,7 @@ title('Robinson Filled Contour Demo')
 show()
 
 # set up map projection (azimuthal equidistant).
-m = Basemap(llcrnrlon=-135.,llcrnrlat=-20.,urcrnrlon=45.,urcrnrlat=-20.,
-             resolution='c',projection='aeqd',
-             lat_0=90.,lon_0=-90.)
+m = Basemap(projection='npaeqd',lon_0=-90,boundinglat=15.,resolution='c')
 fig=m.createfigure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
