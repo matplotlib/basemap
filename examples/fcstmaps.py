@@ -119,8 +119,6 @@ for npanel,fcsthr in enumerate(arange(0,72,12)):
     ax = fig.add_subplot(320+npanel+1)
     #cs = m.contour(x,y,t2m[nt,:,:],clevs,colors='k')
     cs = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet)
-    # make sure axis are scaled so map is not stretched or squished.
-    axis('scaled') 
     m.drawcoastlines()
     m.drawstates()
     m.drawcountries()

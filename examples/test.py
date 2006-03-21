@@ -54,7 +54,7 @@ m = Basemap(llcrnrlon=-180.,llcrnrlat=-90,urcrnrlon=180.,urcrnrlat=90.,\
 nx = len(lons); ny = len(lats)
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # setup figure with same aspect ratio as map.
-fig=m.createfigure()
+#fig=m.createfigure()
 fig.add_axes([0.1,0.1,0.75,0.75])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
@@ -335,9 +335,9 @@ print 'plotting Albers Equal Area example, close plot window to proceed ...'
 show()
 
 # setup stereographic map projection (Southern Hemisphere).
-m = Basemap(llcrnrlon=-150.,llcrnrlat=20.826,urcrnrlon=30.,urcrnrlat=20.826,\
+m = Basemap(llcrnrlon=-60.,llcrnrlat=20.826,urcrnrlon=120.,urcrnrlat=20.826,\
             resolution='c',area_thresh=10000.,projection='stere',\
-            lat_0=-90.,lon_0=-105.,lat_ts=-90.)
+            lat_0=-90.,lon_0=75.,lat_ts=-90.)
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)

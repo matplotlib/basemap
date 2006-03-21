@@ -57,4 +57,8 @@ panelplot.py shows how to make multi-panel plots, taking special care to
 make sure that map aspect ratios are preserved (so you don't get squished
 and/or stretched maps).
 
+polarmaps.py illustrates the use of the special-case versions of the 
+stereographic, lambert azimuthal equal area, azimuthal equidistant 
+projections (prefixed by 'np' and 'sp').
+
 run_all.py is a driver script that runs all the examples except fcstmaps.py and testgdal.py (which rely on external dependencies).
