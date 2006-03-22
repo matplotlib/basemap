@@ -55,6 +55,7 @@ _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 _doublesize = sizeof(double)
 __version__ = "1.7.2"
+_seqtype = [types.ListType,types.TupleType]
 
 cdef extern from "proj_api.h":
     ctypedef double *projPJ
@@ -272,7 +273,7 @@ cdef class Proj:
                     # none of the above
                     # try to convert to python array
                     # a list or tuple.
-                    if type(lon) in [types.ListType,types.TupleType] and type(lat) in [types.ListType,types.TupleType]:
+                    if type(lon) in _seqtype and type(lat) in _seqtype:
                         inx = array.array('d',lon)
                         iny = array.array('d',lat)
                         islist = True
@@ -292,10 +293,11 @@ cdef class Proj:
         else:
             outx, outy = self._fwd(inx, iny, radians=radians)
         # all done.
-        # if inputs were lists or floats, convert back.
+        # if inputs were lists, tuples or floats, convert back.
         if isfloat:
             return outx[0],outy[0]
         elif islist:
+            # note: if input was a tuple, output will be a list.
             return outx.tolist(),outy.tolist()
         else:
             return outx,outy
@@ -391,7 +393,7 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
             except: 
                 # try to convert to python array
                 # a list or tuple?
-                if type(x) in [types.ListType,types.TupleType] and type(y) in [types.ListType,types.TupleType] and type(z) in [types.ListType,types.TupleType]:
+                if type(x) in _seqtype and type(y) in _seqtype and (type(z) is None or type(z) in _seqtype):
                     inx = array.array('d',x)
                     iny = array.array('d',y)
                     if z is not None:
@@ -412,11 +414,12 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
     ierr = _transform(p1,p2,inx,iny,inz,radians)
     if ierr != 0:
         raise RuntimeError, pj_strerrno(ierr)
-    # if inputs were lists or floats, convert back.
+    # if inputs were lists, tuples or floats, convert back.
     if inz is not None:
         if isfloat:
             return inx[0],iny[0],inz[0]
         elif islist:
+            # note: if input was a tuple, output will be a list.
             return inx.tolist(),iny.tolist(),inz.tolist()
         else:
             return inx,iny,inz
@@ -424,6 +427,7 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
         if isfloat:
             return inx[0],iny[0]
         elif islist:
+            # note: if input was a tuple, output will be a list.
             return inx.tolist(),iny.tolist()
         else:
             return inx,iny
