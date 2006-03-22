@@ -5,106 +5,64 @@
 
 # illustrates special-case polar-centric projections.
 
-from matplotlib.toolkits.basemap import Basemap, shiftgrid
+from matplotlib.toolkits.basemap import Basemap
 from pylab import *
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-topodatin = array(load('etopo20data.gz'),'d')
-lonsin = array(load('etopo20lons.gz'),'d')
-latsin = array(load('etopo20lats.gz'),'d')
-
-# shift data so lons go from -180 to 180 instead of 20 to 380.
-topoin,lons = shiftgrid(180.,topodatin,lonsin,start=False)
-lats = latsin
+etopo = array(load('etopo20data.gz'),'d')
+lons = array(load('etopo20lons.gz'),'d')
+lats = array(load('etopo20lats.gz'),'d')
 
 print 'min/max etopo20 data:'
-print min(ravel(topoin)),max(ravel(topoin))
+print min(ravel(etopo)),max(ravel(etopo))
 
-boundinglat = 20. 
-projs = ['laea','stere','aeqd']
-projnames = ['Lambert Azimuthal Equal Area','Stereographic','Azimuthal Equidistant']
-for proj,projname in zip(projs,projnames):
-    # setup stereographic map projection (Southern Hemisphere).
-    # centered on Australia
-    lon_0 = 130.
-    m = Basemap(boundinglat=-boundinglat,lon_0=lon_0,\
-        	resolution='c',area_thresh=10000.,projection='sp'+proj)
-    # transform to nx x ny regularly spaced native projection grid
-    nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-    topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-    # setup figure with same aspect ratio as map.
-    fig = figure(figsize=(10,6))
-    ax = fig.add_subplot(121)
-    # plot image over map.
-    im = m.imshow(topodat,cm.jet)
-    # draw coastlines and political boundaries.
-    m.drawcoastlines()
-    # draw parallels and meridians (labelling is 
-    # not implemented for orthographic).
-    parallels = arange(-80.,90,20.)
-    m.drawparallels(parallels)
-    meridians = arange(0.,360.,60.)
-    m.drawmeridians(meridians)
-    title('South Polar '+projname,y=1.075)
-
-    # setup of basemap ('ortho' = orthographic projection)
-    m = Basemap(projection='ortho',
-        	resolution='c',area_thresh=10000.,lat_0=-90,lon_0=lon_0-180.)
-    ax = fig.add_subplot(122)
-    x,y = m(*meshgrid(lonsin,latsin))
-    cs = m.contourf(x,y,topodatin,20,cmap=cm.jet)
-    # draw coastlines and political boundaries.
-    m.drawcoastlines()
-    # draw parallels and meridians (labelling is 
-    # not implemented for orthographic).
-    parallels = arange(-80.,90,20.)
-    m.drawparallels(parallels)
-    meridians = arange(0.,360.,60.)
-    m.drawmeridians(meridians)
-    # draw boundary around map region.
-    m.drawmapboundary()
-    title('South Polar Orthographic',y=1.075)
-    show()
-
-    # setup stereographic map projection (Northern Hemisphere).
-    # centered on US
-    lon_0 = -90.
-    m = Basemap(boundinglat=boundinglat,lon_0=lon_0,\
-        	resolution='c',area_thresh=10000.,projection='np'+proj)
-    # transform to nx x ny regularly spaced native projection grid
-    nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-    topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-    # setup figure with same aspect ratio as map.
-    fig = figure(figsize=(10,6))
-    ax = fig.add_subplot(121)
-    # plot image over map.
-    im = m.imshow(topodat,cm.jet)
-    # draw coastlines and political boundaries.
-    m.drawcoastlines()
-    # draw parallels and meridians (labelling is 
-    # not implemented for orthographic).
-    parallels = arange(-80.,90,20.)
-    m.drawparallels(parallels)
-    meridians = arange(0.,360.,60.)
-    m.drawmeridians(meridians)
-    title('North Polar '+projname,y=1.075)
-
-    # setup of basemap ('ortho' = orthographic projection)
-    m = Basemap(projection='ortho',
-        	resolution='c',area_thresh=10000.,lat_0=90,lon_0=lon_0)
-    ax = fig.add_subplot(122)
-    x,y = m(*meshgrid(lonsin,latsin))
-    cs = m.contourf(x,y,topodatin,20,cmap=cm.jet)
-    # draw coastlines and political boundaries.
-    m.drawcoastlines()
-    # draw parallels and meridians (labelling is 
-    # not implemented for orthographic).
-    parallels = arange(-80.,90,20.)
-    m.drawparallels(parallels)
-    meridians = arange(0.,360.,60.)
-    m.drawmeridians(meridians)
-    # draw boundary around map region.
-    m.drawmapboundary()
-    title('North Polar Orthographic',y=1.075)
+# these are the 4 polar projections
+projs = ['laea','stere','aeqd','ortho'] # short names
+# long names
+projnames = ['Lambert Azimuthal Equal Area','Stereographic','Azimuthal Equidistant','Orthographic']
+# loop over hemispheres, make a 4-panel plot for each hemisphere
+# showing all four polar projections.
+for hem in ['North','South']:
+    if hem == 'South':
+        lon_0 = 130.
+        lon_0_ortho = lon_0 - 180.
+        lat_0 = -90.
+        bounding_lat = -20.
+    elif hem == 'North':
+        lon_0 = -90.
+        lon_0_ortho = lon_0
+        lat_0 = 90.
+        bounding_lat = 20.
+    # loop over projections, one for each panel of the figure.
+    fig = figure(figsize=(8,8))
+    npanel = 0
+    for proj,projname in zip(projs,projnames):
+        npanel = npanel + 1
+        if hem == 'South':
+            projection = 'sp'+proj
+        elif hem == 'North':
+            projection = 'np'+proj
+        # setup map projection
+        # centered on Australia (for SH) or US (for NH).
+        if proj == 'ortho':
+           m = Basemap(projection='ortho',
+                       resolution='c',area_thresh=10000.,lat_0=lat_0,lon_0=lon_0_ortho)
+        else:
+           m = Basemap(boundinglat=bounding_lat,lon_0=lon_0,\
+                       resolution='c',area_thresh=10000.,projection=projection)
+        # compute native map projection coordinates for lat/lon grid.
+        x,y = m(*meshgrid(lons,lats))
+        ax = fig.add_subplot(2,2,npanel)
+        # make filled contour plot.
+        cs = m.contourf(x,y,etopo,20,cmap=cm.jet)
+        # draw coastlines.
+        m.drawcoastlines()
+        # draw parallels and meridians.
+        m.drawparallels(arange(-80.,90,20.))
+        m.drawmeridians(arange(0.,360.,60.))
+        # draw boundary around map region.
+        m.drawmapboundary()
+        # draw title.
+        title(hem+' Polar '+projname,y=1.05,fontsize=12)
     show()
