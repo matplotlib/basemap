@@ -23,11 +23,12 @@ print min(ravel(topoin)),max(ravel(topoin))
 m = Basemap(llcrnrlon=-180.,llcrnrlat=-90,urcrnrlon=180.,urcrnrlat=90.,\
             resolution='c',area_thresh=10000.,projection='cyl')
 # setup figure with same aspect ratio as map.
-fig=m.createfigure()
-ax = fig.add_axes([0.1,0.1,0.75,0.75])
+fig=figure()
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topoin,cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.75]) # setup colorbar axes.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -54,7 +55,7 @@ m = Basemap(llcrnrlon=-180.,llcrnrlat=-90,urcrnrlon=180.,urcrnrlat=90.,\
 nx = len(lons); ny = len(lats)
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # setup figure with same aspect ratio as map.
-#fig=m.createfigure()
+#fig=figure()
 fig.add_axes([0.1,0.1,0.75,0.75])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
@@ -75,7 +76,7 @@ m = Basemap(llcrnrlon=-180.,llcrnrlat=-80,urcrnrlon=180.,urcrnrlat=80.,\
 nx = len(lons); ny = int(80.*len(lats)/90.)
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # setup figure with same aspect ratio as map.
-fig=m.createfigure()
+fig=figure()
 fig.add_axes([0.1,0.1,0.75,0.75])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
@@ -95,7 +96,7 @@ show()
 m = Basemap(llcrnrlon=-6,llcrnrlat=49,urcrnrlon=4,urcrnrlat=59,\
             resolution='l',area_thresh=1000.,projection='cass',\
             lat_0=54.,lon_0=-2.)
-fig=m.createfigure()
+fig=figure()
 fig.add_axes([0.125,0.2,0.6,0.6])
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/20000.)+1; ny = int((m.ymax-m.ymin)/20000.)+1
@@ -104,7 +105,8 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 im = m.imshow(topodat,cm.jet)
 # get current axis instance.
 ax = gca()
-cax = axes([0.8, 0.2, 0.075, 0.6]) # setup colorbar axes.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -124,7 +126,7 @@ show()
 m = Basemap(llcrnrlon=-95.,llcrnrlat=-52,urcrnrlon=-35.,urcrnrlat=15.,\
             resolution='c',area_thresh=10000.,projection='gnom',\
             lat_0=-10.,lon_0=-60.)
-fig=m.createfigure()
+fig=figure()
 fig.add_axes([0.125,0.2,0.6,0.6])
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
@@ -133,7 +135,8 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 im = m.imshow(topodat,cm.jet)
 # get current axis instance.
 ax = gca()
-cax = axes([0.8, 0.2, 0.075, 0.6]) # setup colorbar axes.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -154,7 +157,7 @@ show()
 m = Basemap(llcrnrlon=170.,llcrnrlat=-45,urcrnrlon=10.,urcrnrlat=45.,\
             resolution='c',area_thresh=10000.,projection='tmerc',\
             lat_0=0.,lon_0=-90.)
-fig=m.createfigure()
+fig=figure()
 fig.add_axes([0.125,0.2,0.6,0.6])
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
@@ -163,7 +166,8 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 im = m.imshow(topodat,cm.jet)
 # get current axis instance.
 ax = gca()
-cax = axes([0.8, 0.2, 0.075, 0.6]) # setup colorbar axes.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -183,7 +187,7 @@ show()
 m = Basemap(llcrnrlon=-130.,llcrnrlat=39,urcrnrlon=-124.,urcrnrlat=60.,\
             resolution='l',area_thresh=1000.,projection='omerc',\
             lon_2=-140,lat_2=55,lon_1=-120,lat_1=40)
-fig=m.createfigure()
+fig=figure()
 fig.add_axes([0.125,0.2,0.6,0.6])
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/20000.)+1; ny = int((m.ymax-m.ymin)/20000.)+1
@@ -192,7 +196,8 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 im = m.imshow(topodat,cm.jet)
 # get current axis instance.
 ax = gca()
-cax = axes([0.8, 0.2, 0.075, 0.6]) # setup colorbar axes.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -214,7 +219,7 @@ show()
 m = Basemap(llcrnrlon=-35.,llcrnrlat=-30,urcrnrlon=80.,urcrnrlat=50.,\
             resolution='c',area_thresh=1000.,projection='poly',\
             lat_0=0.,lon_0=20.)
-fig=m.createfigure()
+fig=figure()
 fig.add_axes([0.125,0.2,0.6,0.6])
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
@@ -223,7 +228,8 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 im = m.imshow(topodat,cm.jet)
 # get current axis instance.
 ax = gca()
-cax = axes([0.8, 0.2, 0.075, 0.6]) # setup colorbar axes.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -248,11 +254,12 @@ m = Basemap(llcrnrlon=-90.,llcrnrlat=18,urcrnrlon=-70.,urcrnrlat=26.,\
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # setup figure with same aspect ratio as map.
-fig=m.createfigure()
+fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -279,11 +286,12 @@ m = Basemap(llcrnrlon=-145.5,llcrnrlat=1,urcrnrlon=-2.566,urcrnrlat=46.352,\
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # setup figure with same aspect ratio as map.
-fig=m.createfigure()
+fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -311,12 +319,13 @@ m = Basemap(llcrnrlon=-10.,llcrnrlat=20,urcrnrlon=55.,urcrnrlat=75,\
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # setup figure with same aspect ratio as map.
-fig=m.createfigure()
+fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
 im.set_clim(-4000.,3000.) # adjust range of colors.
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -342,11 +351,12 @@ m = Basemap(llcrnrlon=-60.,llcrnrlat=20.826,urcrnrlon=120.,urcrnrlat=20.826,\
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # setup figure with same aspect ratio as map.
-fig=m.createfigure()
+fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -368,11 +378,12 @@ m = Basemap(llcrnrlon=-150.,llcrnrlat=-20.826,urcrnrlon=30.,urcrnrlat=-20.826,\
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # setup figure with same aspect ratio as map.
-fig=m.createfigure()
+fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -395,11 +406,12 @@ m = Basemap(llcrnrlon=-150.,llcrnrlat=40.,urcrnrlon=30.,urcrnrlat=40.,\
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # setup figure with same aspect ratio as map.
-fig=m.createfigure()
+fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -434,7 +446,7 @@ lats[-1] = latsin[-1]+0.5*delat
 # setup of basemap ('ortho' = orthographic projection)
 m = Basemap(projection='ortho',
             resolution='c',area_thresh=10000.,lat_0=30,lon_0=-60)
-fig=m.createfigure()
+fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # pcolor plot (slow)
 #x,y = m(*meshgrid(lons,lats))
@@ -442,7 +454,8 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # filled contours (faster)
 x,y = m(*meshgrid(lonsin,latsin))
 cs = m.contourf(x,y,topodatin,20,cmap=cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
@@ -462,7 +475,7 @@ show()
 # setup of basemap ('moll' = mollweide projection)
 m = Basemap(projection='moll',
             resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
-fig=m.createfigure()
+fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # pcolor plot (slow)
 #x,y = m(*meshgrid(lons,lats))
@@ -470,7 +483,8 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # filled contours (faster)
 x,y = m(*meshgrid(lonsin,latsin))
 cs = m.contourf(x,y,topodatin,20,cmap=cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
@@ -489,7 +503,7 @@ show()
 # setup of basemap ('robin' = robinson projection)
 m = Basemap(projection='robin',
             resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
-fig=m.createfigure()
+fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # pcolor plot (slow)
 #x,y = m(*meshgrid(lons,lats))
@@ -497,7 +511,8 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # filled contours (faster)
 x,y = m(*meshgrid(lonsin,latsin))
 cs = m.contourf(x,y,topodatin,20,cmap=cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
