@@ -344,7 +344,7 @@ print 'plotting Albers Equal Area example, close plot window to proceed ...'
 show()
 
 # setup stereographic map projection (Southern Hemisphere).
-#m = Basemap(llcrnrlon=-60.,llcrnrlat=20.826,urcrnrlon=120.,urcrnrlat=20.826,\
+#m = Basemap(llcrnrlon=120.,llcrnrlat=0.,urcrnrlon=-60.,urcrnrlat=0.,\
 #            resolution='c',area_thresh=10000.,projection='stere',\
 #            lat_0=-90.,lon_0=75.,lat_ts=-90.)
 # this is equivalent, but simpler.
@@ -374,7 +374,7 @@ print 'plotting Stereographic example, close plot window to proceed ...'
 show()
 
 # setup lambert azimuthal map projection (Northern Hemisphere).
-#m = Basemap(llcrnrlon=-150.,llcrnrlat=-20.826,urcrnrlon=30.,urcrnrlat=-20.826,\
+#m = Basemap(llcrnrlon=-150.,llcrnrlat=-18.,urcrnrlon=30.,urcrnrlat=--18.,\
 #            resolution='c',area_thresh=10000.,projection='laea',\
 #            lat_0=90.,lon_0=-105.)
 # this is equivalent, but simpler.
