@@ -936,6 +936,9 @@ class Basemap:
  returns a handle to the figure.
  see pylab.figure docs for details.
  Note:  Don't use this if you don't want pylab to be imported.
+
+ Deprecated:  no longer needed since aspect ratio of maps is now
+ automatically preserved independent of figure size.
         """
         import pylab as P
         warnings.warn(DeprecationWarning('createfigure() no longer needed maps now will automatically preserve aspect ration regardless of figure size'))
@@ -2045,6 +2048,8 @@ class Basemap:
             pylab.gci._current = ret
         except:
             pass
+        # set axes limits to fit map region.
+        self.set_axes_limits(ax=ax)
         return ret
 
     def pcolor(self,x,y,data,**kwargs):
