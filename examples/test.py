@@ -291,7 +291,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
 l,b,w,h = ax.get_position()
-cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
+cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -325,7 +325,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = m.imshow(topodat,cm.jet)
 im.set_clim(-4000.,3000.) # adjust range of colors.
 l,b,w,h = ax.get_position()
-cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
+cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -344,9 +344,12 @@ print 'plotting Albers Equal Area example, close plot window to proceed ...'
 show()
 
 # setup stereographic map projection (Southern Hemisphere).
-m = Basemap(llcrnrlon=-60.,llcrnrlat=20.826,urcrnrlon=120.,urcrnrlat=20.826,\
-            resolution='c',area_thresh=10000.,projection='stere',\
-            lat_0=-90.,lon_0=75.,lat_ts=-90.)
+#m = Basemap(llcrnrlon=-60.,llcrnrlat=20.826,urcrnrlon=120.,urcrnrlat=20.826,\
+#            resolution='c',area_thresh=10000.,projection='stere',\
+#            lat_0=-90.,lon_0=75.,lat_ts=-90.)
+# this is equivalent, but simpler.
+m = Basemap(lon_0=75.,boundinglat=-20,
+            resolution='c',area_thresh=10000.,projection='spstere')
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
@@ -356,7 +359,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
 l,b,w,h = ax.get_position()
-cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
+cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -371,9 +374,12 @@ print 'plotting Stereographic example, close plot window to proceed ...'
 show()
 
 # setup lambert azimuthal map projection (Northern Hemisphere).
-m = Basemap(llcrnrlon=-150.,llcrnrlat=-20.826,urcrnrlon=30.,urcrnrlat=-20.826,\
-            resolution='c',area_thresh=10000.,projection='laea',\
-            lat_0=90.,lon_0=-105.)
+#m = Basemap(llcrnrlon=-150.,llcrnrlat=-20.826,urcrnrlon=30.,urcrnrlat=-20.826,\
+#            resolution='c',area_thresh=10000.,projection='laea',\
+#            lat_0=90.,lon_0=-105.)
+# this is equivalent, but simpler.
+m = Basemap(lon_0=-105,boundinglat=20.,
+            resolution='c',area_thresh=10000.,projection='nplaea')
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
@@ -383,7 +389,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
 l,b,w,h = ax.get_position()
-cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
+cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -399,9 +405,12 @@ print 'plotting Lambert Azimuthal example, close plot window to proceed ...'
 show()
 
 # setup azimuthal equidistant map projection (Northern Hemisphere).
-m = Basemap(llcrnrlon=-150.,llcrnrlat=40.,urcrnrlon=30.,urcrnrlat=40.,\
-            resolution='c',area_thresh=10000.,projection='aeqd',\
-            lat_0=90.,lon_0=-105.)
+#m = Basemap(llcrnrlon=-150.,llcrnrlat=40.,urcrnrlon=30.,urcrnrlat=40.,\
+#            resolution='c',area_thresh=10000.,projection='aeqd',\
+#            lat_0=90.,lon_0=-105.)
+# this is equivalent, but simpler.
+m = Basemap(lon_0=-105,boundinglat=55.,
+            resolution='c',area_thresh=10000.,projection='npaeqd')
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
@@ -411,7 +420,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
 l,b,w,h = ax.get_position()
-cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
+cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
@@ -455,7 +464,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x,y = m(*meshgrid(lonsin,latsin))
 cs = m.contourf(x,y,topodatin,20,cmap=cm.jet)
 l,b,w,h = ax.get_position()
-cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
+cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
