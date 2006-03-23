@@ -13,13 +13,14 @@ lons, lats = meshgrid(lons, lats)
 
 # setup of mollweide basemap
 m = Basemap(resolution='c',projection='moll',lon_0=0)
-fig = m.createfigure()
+fig = figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
+l,b,w,h=ax.get_position()
+cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
@@ -36,13 +37,14 @@ show()
 
 # set up Robinson map projection.
 m = Basemap(resolution='c',projection='robin',lon_0=0)
-fig=m.createfigure()
+fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
+l,b,w,h=ax.get_position()
+cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
@@ -59,13 +61,14 @@ show()
 
 # set up map projection (azimuthal equidistant).
 m = Basemap(projection='npaeqd',lon_0=-90,boundinglat=15.,resolution='c')
-fig=m.createfigure()
+fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
+l,b,w,h=ax.get_position()
+cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
@@ -83,13 +86,14 @@ show()
 # setup of orthographic basemap
 m = Basemap(resolution='c',projection='ortho',\
             lat_0=50.,lon_0=-120.)
-fig=m.createfigure()
+fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
+l,b,w,h=ax.get_position()
+cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.

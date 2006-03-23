@@ -24,12 +24,15 @@ m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat,x,y = m.transform_scalar(topoin,lons,lats,nx,ny,returnxy=True)
-# set up figure with same aspect ratio as map.
-fig=m.createfigure()
+# create the figure.
+fig=figure(figsize=(8,8))
+# add an axes, leaving room for colorbar on the right.
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with imshow.
 im = m.imshow(topodat,cm.jet)
-cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes
+# setup colorbar axes instance.
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.075, b, 0.05, h])
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # plot blue dot on boulder, colorado and label it as such.

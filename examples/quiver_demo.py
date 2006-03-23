@@ -23,8 +23,8 @@ lons, lats = meshgrid(lons1, lats1)
 # north polar projection.
 m = Basemap(lon_0=-135,boundinglat=25,
             resolution='c',area_thresh=10000.,projection='npstere')
-# setup figure with same aspect ratio as map.
-fig=m.createfigure()
+# create a figure, add an axes.
+fig=figure(figsize=(8,8))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # rotate wind vectors to map projection coordinates.
 # (also compute native map projections coordinates of lat/lon grid)
@@ -63,8 +63,8 @@ nxp = 101; nyp = 101
 spd = sqrt(u**2+v**2)
 udat, vdat, xv, yv = m.transform_vector(u,v,lons1,lats1,nxv,nyv,returnxy=True)
 pdat, xp, yp = m.transform_scalar(p,lons1,lats1,nxp,nyp,returnxy=True)
-# setup figure with same aspect ratio as map.
-fig=m.createfigure()
+# create a figure, add an axes.
+fig=figure(figsize=(8,8))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map
 im = m.imshow(pdat,cm.jet)

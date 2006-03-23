@@ -12,8 +12,8 @@ m = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0)
 # compute native map projection coordinates for lat/lon grid.
 lons, lats = meshgrid(lons, lats)
 x,y = m(lons,lats)
-# create figure with same aspect ratio as map.
-fig=m.createfigure().add_axes([0.05,0.05,0.9,0.9])
+# create figure, add axes.
+fig=figure(figsize=(8,8)).add_axes([0.05,0.05,0.9,0.9])
 # make filled contour plot.
 cs = m.contourf(x,y,etopo,30,cmap=cm.jet)
 # draw coastlines.

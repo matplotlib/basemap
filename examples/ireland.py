@@ -5,8 +5,6 @@ import cPickle
 # create Basemap instance. Use 'crude' resolution coastlines.
 m = Basemap(llcrnrlon=-11.,llcrnrlat=50.5,urcrnrlon=-5.,urcrnrlat=56.,
             resolution='c',area_thresh=1000.,projection='tmerc',lon_0=-8.,lat_0=0.)
-# create figure with same aspect ratio as map.
-fig=m.createfigure()
 # draw coastlines and fill continents.
 m.drawcoastlines()
 m.fillcontinents()
@@ -24,8 +22,6 @@ show()
 # create Basemap instance. Use 'low' resolution coastlines.
 m = Basemap(llcrnrlon=-11.,llcrnrlat=50.5,urcrnrlon=-5.,urcrnrlat=56.,
             resolution='l',area_thresh=1000.,projection='tmerc',lon_0=-8.,lat_0=0.)
-# create figure with same aspect ratio as map.
-fig=m.createfigure()
 # draw coastlines and fill continents.
 m.drawcoastlines()
 m.fillcontinents()
@@ -46,8 +42,6 @@ m = Basemap(llcrnrlon=-11.,llcrnrlat=50.5,urcrnrlon=-5.,urcrnrlat=56.,
 print time.clock()-t1,'seconds to create class instance with intermediate res coastlines'
 # cPickle the class instance.
 cPickle.dump(m,open('map.pickle','wb'),-1)
-# create figure with same aspect ratio as map.
-fig=m.createfigure()
 # draw coastlines and fill continents.
 m.drawcoastlines()
 m.fillcontinents()
@@ -64,8 +58,6 @@ show()
 t1 = time.clock()
 m2 = cPickle.load(open('map.pickle','rb'))
 print time.clock()-t1,' to read the intermediate res coastline class instance back in from a cPickle'
-# create figure with same aspect ratio as map.
-fig=m2.createfigure()
 # draw coastlines and fill continents.
 m2.drawcoastlines()
 m2.fillcontinents()

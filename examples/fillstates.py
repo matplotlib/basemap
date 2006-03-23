@@ -6,7 +6,6 @@ from matplotlib.colors import rgb2hex
 # Lambert Conformal map of lower 48 states.
 m = Basemap(llcrnrlon=-119,llcrnrlat=22,urcrnrlon=-64,urcrnrlat=49,
             projection='lcc',lat_1=33,lat_2=45,lon_0=-95)
-fig=m.createfigure()
 # draw state boundaries.
 # data from U.S Census Bureau
 # http://www.census.gov/geo/www/cob/st1990.html

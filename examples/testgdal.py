@@ -24,9 +24,9 @@ urcrnrlat = coords[3]
 llcrnrlat = urcrnrlat+(array.shape[0]-1)*coords[5]
 # create Basemap instance.
 m = Basemap(llcrnrlon=llcrnrlon,llcrnrlat=llcrnrlat,urcrnrlon=urcrnrlon,urcrnrlat=urcrnrlat,projection='cyl')
-# create a figure with the right aspect ratio, add an axes
+# create a figure, add an axes
 # (leaving room for a colorbar).
-fig=m.createfigure()
+fig = p.figure()
 ax = fig.add_axes([0.1,0.1,0.75,0.75])
 # plot image from DEM over map.
 im = m.imshow(array,origin='upper')

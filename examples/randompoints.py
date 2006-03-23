@@ -25,8 +25,8 @@ lats = (180./math.pi)*arccos(2*v-1) - 90.
 # transform lons and lats to map coordinates.
 x,y = m(lons,lats)
 # plot them as filled circles on the map.
-# first, create figure with same aspect ratio as map.
-fig=m.createfigure()
+# first, create a figure.
+fig=figure()
 # background color will be used for 'wet' areas.
 fig.add_axes([0.1,0.1,0.8,0.8],axisbg='aqua')
 # use zorder=10 to make sure markers are drawn last.

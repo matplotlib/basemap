@@ -9,8 +9,8 @@ from matplotlib.toolkits.basemap import Basemap as Basemap
 m = Basemap(llcrnrlon=-100.,llcrnrlat=0.,urcrnrlon=-20.,urcrnrlat=57.,
             projection='lcc',lat_1=20.,lat_2=40.,lon_0=-60.,
             resolution ='l',area_thresh=1000.)
-# make sure map has right aspect ratio.
-fig=m.createfigure()
+# create figure, add axes.
+fig=p.figure()
 fig.add_axes([0.1,0.1,0.8,0.8],axisbg='#99ffff')
 # read shapefile.
 shp_info = m.readshapefile('huralll020','hurrtracks',drawbounds=False)

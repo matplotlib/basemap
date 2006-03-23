@@ -4,8 +4,6 @@ import pylab as p
 # perspective of satellite looking down at 50N, 100W.
 # use low resolution coastlines.
 map = Basemap(projection='ortho',lat_0=50,lon_0=-100,resolution='l')
-# set up figure.
-fig=map.createfigure()
 # draw coastlines, country boundaries, fill continents.
 map.drawcoastlines()
 map.drawcountries()
