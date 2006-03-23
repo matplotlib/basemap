@@ -15,7 +15,7 @@ from matplotlib.mlab import linspace
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd
 from shapelib import ShapeFile
-import dbflib
+import dbflib, warnings
 
 # look in sys.prefix for directory containing basemap files if
 # BASEMAP_DATA_PATH env var not set.
@@ -24,7 +24,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
 __version__ = '0.8.3'
-__revision__ = '20060321'
+__revision__ = '20060322'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -76,8 +76,6 @@ class Basemap:
 >>> m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]))
 >>> # compute native map projection coordinates for lat/lon grid.
 >>> x, y = m(*meshgrid(lons,lats))
->>> # create figure with same aspect ratio as map.
->>> fig = m.createfigure()
 >>> # make filled contour plot.
 >>> cs = m.contourf(x,y,etopo,30,cmap=cm.jet)
 >>> m.drawcoastlines() # draw coastlines
@@ -940,6 +938,7 @@ class Basemap:
  Note:  Don't use this if you don't want pylab to be imported.
         """
         import pylab as P
+        warnings.warn(DeprecationWarning('createfigure() no longer needed maps now will automatically preserve aspect ration regardless of figure size'))
         if not kwargs.has_key('figsize'):
             figsize = rcParams['figure.figsize']
             xsize = figsize[0]; ysize = xsize
