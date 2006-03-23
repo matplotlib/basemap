@@ -1,3 +1,7 @@
+20060322:  version 0.8.3:
+           * updated for new matplotlib aspect ratio handling.
+           Now maps will always have the correct aspect ratio.
+           * update to proj4 module.
 20060222:  version 0.8.2:  Minor bug fixes, mostly in examples.
 20060203:  version 0.8.1:  Huge speedups for numpy
            (no significant differences for Numeric and numarray).
