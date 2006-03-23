@@ -2,6 +2,8 @@
            * updated for new matplotlib aspect ratio handling.
            Now maps will always have the correct aspect ratio.
            * update to proj4 module.
+           * createfigure method deprecated, since maps
+           will now automatically have the correct aspect ratio.
 20060222:  version 0.8.2:  Minor bug fixes, mostly in examples.
 20060203:  version 0.8.1:  Huge speedups for numpy
            (no significant differences for Numeric and numarray).
