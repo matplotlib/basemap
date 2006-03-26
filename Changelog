@@ -4,6 +4,12 @@
            * update to proj4 module.
            * createfigure method deprecated, since maps
            will now automatically have the correct aspect ratio.
+           * Added new projections Xpstere, Xplaea, Xpaeqd (where X
+           can be n or s).  These are special-case, polar-centric
+           versions of the stereographic, lambert azimuthal equal area
+           and azimuthal equidistant projections that don't require
+           you specify the lat/lon values of the lower-left and upper-right
+           corners.  
 20060222:  version 0.8.2:  Minor bug fixes, mostly in examples.
 20060203:  version 0.8.1:  Huge speedups for numpy
            (no significant differences for Numeric and numarray).
