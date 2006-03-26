@@ -23,7 +23,7 @@ _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
-__version__ = '0.8.3'
+__version__ = '0.9'
 __revision__ = '20060322'
 
 # test to see if array indexing is supported

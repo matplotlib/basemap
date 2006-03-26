@@ -1,4 +1,4 @@
-20060322:  version 0.8.3:
+20060322:  version 0.9:
            * updated for new matplotlib aspect ratio handling.
            Now maps will always have the correct aspect ratio.
            * update to proj4 module.
