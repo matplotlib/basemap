@@ -181,9 +181,9 @@ class Basemap:
  lat_2 - second standard parallel for lambert conformal, albers
   equal area projection and equidistant conic projections. Latitude of one
   of the two points on the projection centerline for oblique mercator.
- lon_1 - Longitude of one of the two points on the projection centerline
+ lon_1 - longitude of one of the two points on the projection centerline
   for oblique mercator.
- lon_2 - Longitude of one of the two points on the projection centerline
+ lon_2 - longitude of one of the two points on the projection centerline
   for oblique mercator.
  lat_0 - central latitude (y-axis origin) - used by stereographic, polyconic,
   transverse mercator, miller cylindrical, cassini-soldner, oblique mercator,
@@ -443,7 +443,6 @@ class Basemap:
         self.ax = ax
         # read in coastline data (only those polygons whose area > area_thresh).
         coastlons = []; coastlats = []; coastsegind = []; coastsegtype = []
-        a = not self.crossgreenwich
         for line in open(os.path.join(_datadir,'gshhs_'+resolution+'.txt')):
             linesplit = line.split()
             if line.startswith('P'):
@@ -1075,8 +1074,12 @@ class Basemap:
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
         else: # all other projections are rectangular.
-            x = [self.llcrnrx+1.,self.llcrnrx+1.,self.urcrnrx-1.,self.urcrnrx-1.,self.llcrnrx+1.]
-            y = [self.llcrnry+1.,self.urcrnry-1.,self.urcrnry-1.,self.llcrnry+1.,self.llcrnry+1.]
+            delx = 1.; dely = 1.
+            if self.projection == 'cyl':
+                delx = delx/10000.
+                dely = dely/10000.
+            x = [self.llcrnrx+delx,self.llcrnrx+delx,self.urcrnrx-delx,self.urcrnrx-delx,self.llcrnrx+delx]
+            y = [self.llcrnry+dely,self.urcrnry-dely,self.urcrnry-dely,self.llcrnry+dely,self.llcrnry+dely]
         ax.plot(x,y,color=color,linewidth=linewidth)
         # make sure axis ticks are turned off.
         if self.noticks:
@@ -1924,11 +1927,14 @@ class Basemap:
  Plot points with markers on the map (see pylab.scatter documentation).
  extra keyword 'ax' can be used to override the default axes instance.
         """
-        if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
+        if not self.crossgreenwich and self.projection in ['cyl','mill','merc']:
             # for cylindrical projections that don't cross greenwich,
             # adjust lons to be in range 0 to 360.
             args = list(args)
-            args[0] = [(lon + 360.)%360 for lon in args[0]]
+            x = args[0]; y = args[1]
+            lons, lats = self(x,y,inverse=True)
+            lons = [(lon + 360.)%360 for lon in lons]
+            args[0], args[1] = self(lons,lats)
             args = tuple(args)
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -1968,11 +1974,14 @@ class Basemap:
  Draw lines and/or markers on the map (see pylab.plot documentation).
  extra keyword 'ax' can be used to override the default axis instance.
         """
-        if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
+        if not self.crossgreenwich and self.projection in ['cyl','mill','merc']:
             # for cylindrical projections that don't cross greenwich,
             # adjust lons to be in range 0 to 360.
             args = list(args)
-            args[0] = [(lon + 360.)%360 for lon in args[0]]
+            x = args[0]; y = args[1]
+            lons, lats = self(x,y,inverse=True)
+            lons = [(lon + 360.)%360 for lon in lons]
+            args[0], args[1] = self(lons,lats)
             args = tuple(args)
         if not kwargs.has_key('ax') and self.ax is None:
             try:
