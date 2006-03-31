@@ -10,6 +10,8 @@
            and azimuthal equidistant projections that don't require
            you specify the lat/lon values of the lower-left and upper-right
            corners.  
+           * fixed bugs in plot, scatter and mapboundary methods for
+           miller, cylindrical and mercator projections.
 20060222:  version 0.8.2:  Minor bug fixes, mostly in examples.
 20060203:  version 0.8.1:  Huge speedups for numpy
            (no significant differences for Numeric and numarray).
