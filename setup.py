@@ -50,11 +50,12 @@ except:
                         include_dirs = ["pyshapelib/shapelib"],
                         define_macros = dbf_macros()) ]
 
-try:
-    additional_params # has setupegg.py provided
+if 'setuptools' in sys.modules:
+    # Are we running with setuptools?
     # if so, need to specify all the packages in heirarchy
+    additional_params = {'namespace_packages' : ['matplotlib.toolkits']}    
     packages.extend(['matplotlib', 'matplotlib.toolkits'])
-except NameError:
+else:
     additional_params = {}
 
 setup(
