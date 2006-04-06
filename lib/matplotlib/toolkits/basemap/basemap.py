@@ -133,7 +133,9 @@ class Basemap:
  always plotted).
 
  resolution - resolution of boundary database to use. Can be 'c' (crude),
-  'l' (low), 'i' (intermediate) or 'h' (high).
+  'l' (low), 'i' (intermediate), 'h' (high), or None. Default is 'c'.
+  If None, no boundary data will be read in (and class methods
+  such as drawcoastlines will raise an exception if invoked).
   Resolution drops off by roughly 80%
   between datasets.  Higher res datasets are much slower to draw.
   Default 'c'. Coastline data is from the GSHHS
@@ -434,7 +436,14 @@ class Basemap:
             # too hard to figure out, so just assume it does.
             self.crossgreenwich = True
 
+        # if ax == None, pylab.gca may be used.
+        self.ax = ax
+
         # set defaults for area_thresh.
+        self.resolution = resolution
+        # if no boundary data needed, we are done.
+        if self.resolution is None:
+            return
         if area_thresh is None:
             if resolution == 'c':
                 area_thresh = 10000.
@@ -445,9 +454,7 @@ class Basemap:
             elif resolution == 'h':
                 area_thresh = 10.
             else:
-                raise ValueError, "bounday resolution must be one of 'c','l','i' or 'h'"
-        # if ax == None, pylab.gca may be used.
-        self.ax = ax
+                raise ValueError, "boundary resolution must be one of 'c','l','i' or 'h'"
         # read in coastline data (only those polygons whose area > area_thresh).
         coastlons = []; coastlats = []; coastsegind = []; coastsegtype = []
         for line in open(os.path.join(_datadir,'gshhs_'+resolution+'.txt')):
@@ -1104,6 +1111,8 @@ class Basemap:
 
  After filling continents, lakes are re-filled with axis background color.
         """
+        if self.resolution is None:
+            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
@@ -1153,6 +1162,8 @@ class Basemap:
  antialiased - antialiasing switch for coastlines (default True).
  ax - axes instance (overrides default axes instance)
         """
+        if self.resolution is None:
+            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
@@ -1182,6 +1193,8 @@ class Basemap:
  antialiased - antialiasing switch for country boundaries (default True).
  ax - axes instance (overrides default axes instance)
         """
+        if self.resolution is None:
+            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
@@ -1207,6 +1220,8 @@ class Basemap:
  antialiased - antialiasing switch for state boundaries (default True).
  ax - axes instance (overrides default axes instance)
         """
+        if self.resolution is None:
+            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
@@ -1232,6 +1247,8 @@ class Basemap:
  antialiased - antialiasing switch for river boundaries (default True).
  ax - axes instance (overrides default axes instance)
         """
+        if self.resolution is None:
+            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
