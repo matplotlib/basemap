@@ -24,7 +24,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
 __version__ = '0.9'
-__revision__ = '20060322'
+__revision__ = '20060406'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -95,7 +95,7 @@ class Basemap:
     def __init__(self,llcrnrlon=-180.,llcrnrlat=-90.,urcrnrlon=180.,urcrnrlat=90.,\
        projection='cyl',resolution='c',area_thresh=None,rsphere=6370997,\
        lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
-       lon_1=None,lon_2=None,suppress_ticks=True,boundinglat=None,ax=None):
+       lon_1=None,lon_2=None,suppress_ticks=True,boundinglat=None,anchor='C',ax=None):
         """
  create a Basemap instance.
 
@@ -161,6 +161,10 @@ class Basemap:
  only want to override the default if you want to label the axes in meters
  using native map projection coordinates.
 
+ anchor - determines how map is placed in axes rectangle (passed to
+ axes.set_aspect). Default is 'C', which means map is centered.
+ Allowed values are ['C', 'SW', 'S', 'SE', 'E', 'NE', 'N', 'NW', 'W'].
+
  ax - set default axes instance (default None - pylab.gca() may be used
  to get the current axes instance).  If you don't want pylab to be imported,
  you can either set this to a pre-defined axes instance, or use the 'ax'
@@ -198,6 +202,9 @@ class Basemap:
 
         """
 
+        # where to put plot in figure (default is 'C' or center)
+        self.anchor = anchor
+        # map projection.
         self.projection = projection
         # make sure lat/lon limits are converted to floats.
         self.llcrnrlon = float(llcrnrlon)
@@ -1919,7 +1926,8 @@ class Basemap:
             ax.set_frame_on(False)
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
-        ax.set_aspect('equal',adjusts='position')
+        # (anchor instance var determines where plot is placed)
+        ax.set_aspect('equal',adjustable='box',anchor=self.anchor)
         ax.apply_aspect()
 
     def scatter(self, *args, **kwargs):
