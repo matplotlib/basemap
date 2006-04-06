@@ -462,7 +462,18 @@ class Basemap:
                 raise ValueError, "boundary resolution must be one of 'c','l','i' or 'h'"
         # read in coastline data (only those polygons whose area > area_thresh).
         coastlons = []; coastlats = []; coastsegind = []; coastsegtype = []
-        for line in open(os.path.join(_datadir,'gshhs_'+resolution+'.txt')):
+        msg = """
+Unable to open boundary dataset file. Only the 'crude' and 'low'
+resolution datasets are installed by default. If you
+are requesting 'intermediate' or 'high' resolution datasets, you
+need to install the basemap_data package.  If the boundary
+datasets are not installed in sys.prefix/share, the BASEMAP_DATA_PATH
+environment variable must be set."""
+        try:
+            bdatfile = open(os.path.join(_datadir,'gshhs_'+resolution+'.txt'))
+        except:
+            raise IOError, msg
+        for line in bdatfile:
             linesplit = line.split()
             if line.startswith('P'):
                 area = float(linesplit[5])
@@ -483,7 +494,11 @@ class Basemap:
 
         # read in country boundary data.
         cntrylons = []; cntrylats = []; cntrysegind = []
-        for line in open(os.path.join(_datadir,'countries_'+resolution+'.txt')):
+        try:
+            bdatfile = open(os.path.join(_datadir,'countries_'+resolution+'.txt'))
+        except:
+            raise IOError, msg
+        for line in bdatfile:
             linesplit = line.split()
             if line.startswith('>'):
                 west,east,south,north = float(linesplit[7]),float(linesplit[8]),float(linesplit[9]),float(linesplit[10])
@@ -499,7 +514,11 @@ class Basemap:
 
         # read in state boundaries (Americas only).
         statelons = []; statelats = []; statesegind = []
-        for line in open(os.path.join(_datadir,'states_'+resolution+'.txt')):
+        try:
+            bdatfile = open(os.path.join(_datadir,'states_'+resolution+'.txt'))
+        except:
+            raise IOError, msg
+        for line in bdatfile:
             linesplit = line.split()
             if line.startswith('>'):
                 west,east,south,north = float(linesplit[7]),float(linesplit[8]),float(linesplit[9]),float(linesplit[10])
@@ -515,7 +534,11 @@ class Basemap:
 
         # read in major rivers.
         riverlons = []; riverlats = []; riversegind = []
-        for line in open(os.path.join(_datadir,'rivers_'+resolution+'.txt')):
+        try:
+            bdatfile = open(os.path.join(_datadir,'rivers_'+resolution+'.txt'))
+        except:
+            raise IOError, msg
+        for line in bdatfile:
             linesplit = line.split()
             if line.startswith('>'):
                 west,east,south,north = float(linesplit[7]),float(linesplit[8]),float(linesplit[9]),float(linesplit[10])
