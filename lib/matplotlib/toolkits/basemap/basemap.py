@@ -1,8 +1,10 @@
 from matplotlib import rcParams
 from matplotlib import __version__ as matplotlib_version
 # check to make sure matplotlib is not too old.
-if matplotlib_version < '0.87.2':
-    raise ImportError, 'your matplotlib is too old - basemap requires at least 0.81'
+mpl_required_version = '0.87.2'
+if matplotlib_version < mpl_required_version:
+    raise ImportError('your matplotlib is too old - basemap '
+                      'requires at least %s'%mpl_required_version)
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
