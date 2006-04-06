@@ -50,23 +50,20 @@ you have problems or questions.
 
 1) run 'python setup.py install' 
 
-for a non-standard install (python setup.py install --home=<dir>,
-or python setup.py install --prefix=<dir>), the environment
-variable BASEMAP_DATA_PATH must be set to the directory where the
-data files (gshhs*.txt, countries*.txt, states*.txt and rivers*txt)
-will be installed (see step 2 below).
-Note: for this to work, matplotlib must also be installed in the same place
-(via python setup.py install --home=<dir>).
+This installs the basemap package including the 
+crude ('c') and low ('l') resolution boundary data files.
+If you also want the intermediate and high resolution boundary
+datasets, you'll also need step (2).
 
-2) download the basemap-data tarball, unpack and run "setup.py install"
+If you don't want the boundary data files to be installed in the 
+default location (sys.prefix/share), set the BASEMAP_DATA_PATH
+environment variable to where you would like them to go.  This
+environment variable is also used at run-time to find the files.
+
+2) if you need the intermediate ('i') or high ('h') resolution boundary 
+datasets, download the basemap-data tarball, unpack and run "setup.py install"
 This does not need to be done every time you update basemap (via step 1),
 only when the basemap-data package is updated.
-
-If you want the data files to be installed somewhere other than the 
-default (sys.prefix/share/basemap), set the environment variable 
-BASEMAP_DATA_PATH to the desired location. BASEMAP_DATA_PATH must then be 
-set whenever basemap is imported in order for the package to locate the 
-data files.
 
 **Contact**
 
