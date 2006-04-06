@@ -16,6 +16,9 @@
            corners.  
            * fixed bugs in plot, scatter and mapboundary methods for
            miller, cylindrical and mercator projections.
+           * 'crude' and 'low' resolution boundary datasets now installed
+           by default.  basemap_data package now only needed for to get
+           'intermediate' and 'high' resolution datasets.
 20060222:  version 0.8.2:  Minor bug fixes, mostly in examples.
 20060203:  version 0.8.1:  Huge speedups for numpy
            (no significant differences for Numeric and numarray).

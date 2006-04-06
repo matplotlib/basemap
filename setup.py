@@ -1,7 +1,6 @@
 from distutils.core import setup, Extension
-
 from distutils.util import convert_path
-import sys, glob
+import sys, glob, os
 
 def dbf_macros():
     """Return the macros to define when compiling the dbflib wrapper.
@@ -58,6 +57,10 @@ if 'setuptools' in sys.modules:
 else:
     additional_params = {}
 
+datadir = os.environ.get('BASEMAP_DATA_PATH')
+if not datadir:
+    datadir ='share/basemap'
+
 setup(
   name              = "basemap",
   version           = "0.9",
@@ -83,5 +86,6 @@ setup(
   packages          = packages,
   package_dir       = package_dirs,
   ext_modules       = extensions,
+  data_files        = [(datadir,['data/countries_c.txt','data/states_c.txt','data/rivers_c.txt','data/gshhs_c.txt','data/countries_l.txt','data/states_l.txt','data/rivers_l.txt','data/gshhs_l.txt'])],
   **additional_params
   )
