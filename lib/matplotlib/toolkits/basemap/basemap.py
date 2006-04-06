@@ -65,6 +65,9 @@ class Basemap:
  urcrnrlon - latitude of upper right hand corner of the desired map domain.
  llcrnrx,llcrnry,urcrnrx,urcrnry - corners of map domain in projection coordinates.
  rmajor,rminor - equatorial and polar radii of ellipsoid used (in meters).
+ resolution - resolution of boundary dataset being used ('c' for crude,
+   'l' for low, etc.). If None, no boundary dataset is associated with the
+   Basemap instance.  
 
  Example Usage:
 
@@ -1069,6 +1072,7 @@ class Basemap:
             for az in NX.arange(0.,2.*math.pi+dtheta,dtheta):
                 x.append(r*math.cos(az)+0.5*self.xmax)
                 y.append(r*math.sin(az)+0.5*self.ymax)
+            ax.plot(x,y,color=color,linewidth=linewidth)
         elif self.projection in ['moll','robin']:  # elliptical region.
             # left side
             lats = NX.arange(-89.9,89.9+dtheta,dtheta).tolist()
@@ -1089,14 +1093,12 @@ class Basemap:
             lats = len(lons)*[-89.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
+            ax.plot(x,y,color=color,linewidth=linewidth)
         else: # all other projections are rectangular.
-            delx = 1.; dely = 1.
-            if self.projection == 'cyl':
-                delx = delx/10000.
-                dely = dely/10000.
-            x = [self.llcrnrx+delx,self.llcrnrx+delx,self.urcrnrx-delx,self.urcrnrx-delx,self.llcrnrx+delx]
-            y = [self.llcrnry+dely,self.urcrnry-dely,self.urcrnry-dely,self.llcrnry+dely,self.llcrnry+dely]
-        ax.plot(x,y,color=color,linewidth=linewidth)
+            ax.axesPatch.set_linewidth(linewidth)
+            ax.axesPatch.set_facecolor(ax.get_axis_bgcolor())
+            ax.axesPatch.set_edgecolor(color)
+            ax.set_frame_on(True)
         # make sure axis ticks are turned off.
         if self.noticks:
             ax.set_xticks([])
