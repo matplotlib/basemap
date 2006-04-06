@@ -1,6 +1,10 @@
-20060322:  version 0.9:
+20060406:  version 0.9:
            * updated for new matplotlib aspect ratio handling.
            Now maps will always have the correct aspect ratio.
+           * if resolution keyword is set to None when Basemap
+           instance is created, no boundary data sets are needed
+           (methods to draw boundaries, like drawcoastlines, will 
+           raise an exception).
            * update to proj4 module.
            * createfigure method deprecated, since maps
            will now automatically have the correct aspect ratio.
