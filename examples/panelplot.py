@@ -16,7 +16,6 @@ lons, lats = P.meshgrid(lons, lats)
 
 rcParams['figure.subplot.hspace'] = 0.4 # more height between subplots
 rcParams['figure.subplot.wspace'] = 0.5 # more width between subplots
-#rcParams['figure.subplot.left'] = 0.1   # move left edge of subplot over a bit
 
 # panel 1
 mnh = Basemap(lon_0=-105,boundinglat=20.,
@@ -36,7 +35,7 @@ delat = 30.
 circles = P.arange(0.,90.,delat).tolist()+\
           P.arange(-delat,-90,-delat).tolist()
 mnh.drawparallels(circles,labels=[1,0,0,0])
-delon = 60.
+delon = 45.
 meridians = P.arange(0,360,delon)
 mnh.drawmeridians(meridians,labels=[1,0,0,1])
 P.title('NH 500 hPa Height (cm.Spectral)')
@@ -61,6 +60,11 @@ P.title('SH 500 hPa Height (cm.Spectral)')
 P.show()
 
 # 2-panel plot, oriented horizontally, colorbar on right.
+
+# adjust default subplot parameters a bit
+rcParams['figure.subplot.left'] = 0.1   # move left edge of subplot over a bit
+rcParams['figure.subplot.right'] = 0.85
+rcParams['figure.subplot.top'] = 0.85
 
 # panel 1
 fig = P.figure()
