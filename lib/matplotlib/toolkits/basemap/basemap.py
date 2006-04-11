@@ -1091,11 +1091,14 @@ environment variable must be set."""
         dtheta = 0.01
         if self.projection == 'ortho': # circular region.
             r = (2.*self.rmajor+self.rminor)/3.
-            r = r-1. # subtract 1 m to make sure it fits in plot region.
             for az in NX.arange(0.,2.*math.pi+dtheta,dtheta):
                 x.append(r*math.cos(az)+0.5*self.xmax)
                 y.append(r*math.sin(az)+0.5*self.ymax)
-            ax.plot(x,y,color=color,linewidth=linewidth)
+            xy = zip(x,y)
+            bound = Polygon(xy,edgecolor=color,linewidth=linewidth)
+            ax.add_collection(bound)
+            bound.set_fill(False)
+            bound.set_clip_on(False)
         elif self.projection in ['moll','robin']:  # elliptical region.
             # left side
             lats = NX.arange(-89.9,89.9+dtheta,dtheta).tolist()
@@ -1116,7 +1119,11 @@ environment variable must be set."""
             lats = len(lons)*[-89.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
-            ax.plot(x,y,color=color,linewidth=linewidth)
+            xy = zip(x,y)
+            poly = Polygon(xy,edgecolor=color,linewidth=linewidth)
+            ax.add_patch(poly)
+            poly.set_fill(False)
+            poly.set_clip_on(False)
         else: # all other projections are rectangular.
             ax.axesPatch.set_linewidth(linewidth)
             ax.axesPatch.set_facecolor(ax.get_axis_bgcolor())
