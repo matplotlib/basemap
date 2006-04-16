@@ -32,8 +32,8 @@ try:
     import dbflib
 except:
     packages = packages + ['shapelib','dbflib']
-    package_dirs['shapelib'] ='pyshapelib/lib/shapelib'
-    package_dirs['dbflib'] ='pyshapelib/lib/dbflib'
+    package_dirs['shapelib'] ='lib/shapelib'
+    package_dirs['dbflib'] ='lib/dbflib'
     extensions = extensions + \
              [Extension("shapelibc",
                         ["pyshapelib/shapelib_wrap.c",

@@ -1,3 +1,5 @@
+20060415:  * moved all packages under single lib/ directory so
+	   setuptools' "develop" command works properly.
 20060406:  version 0.9:
            * updated for new matplotlib aspect ratio handling.
            Now maps will always have the correct aspect ratio.
