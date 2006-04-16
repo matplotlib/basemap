@@ -27,10 +27,12 @@ package_dirs       = {'':'lib'}
 
 # don't build pyshapelib if it is already installed.
 
-try:
-    import shapelib
-    import dbflib
-except:
+##try: # Jeff is going to fix this ASAP
+##    import shapelib
+##    import dbflib
+##except:
+
+if 1:
     packages = packages + ['shapelib','dbflib']
     package_dirs['shapelib'] ='lib/shapelib'
     package_dirs['dbflib'] ='lib/dbflib'
