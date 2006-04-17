@@ -25,13 +25,15 @@ extensions = [Extension("proj4",deps,include_dirs = ['src'],)]
 packages          = ['matplotlib.toolkits.basemap']
 package_dirs       = {'':'lib'}
 
-# don't build pyshapelib if it is already installed.
-
-##try: # Jeff is going to fix this ASAP
-##    import shapelib
-##    import dbflib
-##except:
-
+# only install shapelib and dbflib if user hasn't got them.
+#try: import shapelib
+#except ImportError: haveshapelib = False
+#else: haveshapelib = True
+#try: import dbflib
+#except ImportError: havedbflib = False
+#else: havedbflib = True
+#if not haveshapelib or not havedbflib:
+# always intall shapelib and dbflib.
 if 1:
     packages = packages + ['shapelib','dbflib']
     package_dirs['shapelib'] ='lib/shapelib'
