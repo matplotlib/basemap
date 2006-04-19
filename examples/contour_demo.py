@@ -11,7 +11,7 @@ lats = array(load('500hgtlats.gz'),'d')
 hgt,lons = shiftgrid(180.,hgt,lons,start=False)
 lons, lats = meshgrid(lons, lats)
 
-# setup of mollweide basemap
+# setup of sinusoidal basemap
 m = Basemap(resolution='c',projection='sinu',lon_0=0)
 fig = figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
