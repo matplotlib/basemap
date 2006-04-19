@@ -1,6 +1,4 @@
-20060415:  * moved all packages under single lib/ directory so
-	   setuptools' "develop" command works properly.
-20060406:  version 0.9:
+20060419:  version 0.9:
            * updated for new matplotlib aspect ratio handling.
            Now maps will always have the correct aspect ratio.
            * if resolution keyword is set to None when Basemap
@@ -21,6 +19,9 @@
            * 'crude' and 'low' resolution boundary datasets now installed
            by default.  basemap_data package now only needed for to get
            'intermediate' and 'high' resolution datasets.
+           * moved all packages under single lib/ directory so
+	   setuptools' "develop" command works properly.
+           * Added sinusoidal projection.
 20060222:  version 0.8.2:  Minor bug fixes, mostly in examples.
 20060203:  version 0.8.1:  Huge speedups for numpy
            (no significant differences for Numeric and numarray).
