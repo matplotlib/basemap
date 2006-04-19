@@ -481,6 +481,34 @@ title('Orthographic')
 print 'plotting Orthographic example, close plot window to proceed ...'
 show()
 
+# setup of sinusoidal ('sinu' = sinusioidal projection)
+m = Basemap(projection='sinu',
+            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
+fig=figure()
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# pcolor plot (slow)
+#x,y = m(*meshgrid(lons,lats))
+#p = m.pcolor(x,y,topodatin,shading='flat')
+# filled contours (faster)
+x,y = m(*meshgrid(lonsin,latsin))
+cs = m.contourf(x,y,topodatin,20,cmap=cm.jet)
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
+colorbar(tickfmt='%d', cax=cax) # draw colorbar
+axes(ax)  # make the original axes current again
+# draw coastlines and political boundaries.
+m.drawcoastlines()
+# draw parallels and meridians
+parallels = arange(-60.,90,30.)
+m.drawparallels(parallels,labels=[1,0,0,0])
+meridians = arange(0.,360.,30.)
+m.drawmeridians(meridians)
+# draw boundary around map region.
+m.drawmapboundary()
+title('Sinusoidal')
+print 'plotting Sinusoidal example, close plot window to proceed ...'
+show()
+
 # setup of basemap ('moll' = mollweide projection)
 m = Basemap(projection='moll',
             resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))

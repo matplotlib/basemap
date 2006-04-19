@@ -12,6 +12,30 @@ hgt,lons = shiftgrid(180.,hgt,lons,start=False)
 lons, lats = meshgrid(lons, lats)
 
 # setup of mollweide basemap
+m = Basemap(resolution='c',projection='sinu',lon_0=0)
+fig = figure()
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# make a filled contour plot.
+x, y = m(lons, lats)
+CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
+l,b,w,h=ax.get_position()
+cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
+colorbar(tickfmt='%d', cax=cax) # draw colorbar
+axes(ax)  # make the original axes current again
+# draw coastlines and political boundaries.
+m.drawcoastlines()
+m.drawmapboundary()
+m.fillcontinents()
+# draw parallels and meridians.
+parallels = arange(-60.,90,30.)
+m.drawparallels(parallels,labels=[1,0,0,0])
+meridians = arange(-360.,360.,30.)
+m.drawmeridians(meridians)
+title('Sinusoidal Filled Contour Demo')
+show()
+
+# setup of mollweide basemap
 m = Basemap(resolution='c',projection='moll',lon_0=0)
 fig = figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
