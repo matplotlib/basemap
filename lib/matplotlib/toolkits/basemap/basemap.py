@@ -39,11 +39,11 @@ except:
 class Basemap:
 
     """
- Set up a basemap with one of 17 supported map projections
+ Set up a basemap with one of 18 supported map projections
  (cylindrical equidistant, mercator, polyconic, oblique mercator,
  transverse mercator, miller cylindrical, lambert conformal conic,
  azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
- albers equal area conic, gnomonic, orthographic, mollweide,
+ albers equal area conic, gnomonic, orthographic, sinusoidal, mollweide, 
  robinson, cassini-soldner or stereographic).
  Doesn't actually draw anything, but sets up the map projection class and
  creates the coastline, lake river and political boundary data
@@ -54,7 +54,7 @@ class Basemap:
 
  projection - map projection ('cyl','merc','mill','lcc','eqdc','aea',
   'laea', 'nplaea', 'splaea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly', 
-  'moll', 'ortho', 'robin', 'aeqd', 'npaeqd', 'spaeqd', 'stere',
+  'sinu', 'moll', 'ortho', 'robin', 'aeqd', 'npaeqd', 'spaeqd', 'stere',
   'npstere' or 'spstere')
  (projections prefixed with 'np' or 'sp' are special case polar-centric
   versions of the parent projection)
@@ -119,7 +119,7 @@ class Basemap:
   'splaea' - lambert azimuthal, special case centered on south pole,
   'cass' - cassini-soldner (transverse cylindrical equidistant),
   'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
-  'moll' - mollweide, 'robin' - robinson,
+  'sinu' - sinusoidal, 'moll' - mollweide, 'robin' - robinson,
   and 'gnom' - gnomonic are currently available.  Default 'cyl'.
 
  llcrnrlon - longitude of lower left hand corner of the desired map domain
@@ -131,7 +131,7 @@ class Basemap:
  urcrnrlat - latitude of upper right hand corner of the desired map domain
   (Default 90).
 
- If the orthographic, mollweide, npstere, spstere, nplaea, splaea,
+ If the orthographic, sinusoidal, mollweide, npstere, spstere, nplaea, splaea,
  nplaea, splaea, npaeqd, spaeqd or robinson projection is chosen
  the values of llcrnrlon,llcrnrlat,urcrnrlon and urcrnrlat are ignored
  (because either they are computed internally, or entire globe is 
@@ -201,7 +201,8 @@ class Basemap:
   gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
  lon_0 - central meridian (x-axis origin) - used by stereographic, polyconic,
   transverse mercator, miller cylindrical, cassini-soldner, mollweide, robinson,
-  gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
+  gnomonic, equidistant conic, orthographic, sinusoidal and lambert
+  azimuthal projections).
  boundinglat - bounding latitude for pole-centered projections (npstere,spstere,
   nplaea,splaea,npaeqd,spaeqd).  These projections are square regions centered
   on the north or south pole.  The longitude lon_0 is at 6-o'clock, and the
@@ -235,7 +236,7 @@ class Basemap:
                 self.llcrnrlon = (self.llcrnrlon+360.)%360
             self.latmin = self.llcrnrlat
             self.latmax = self.urcrnrlat
-        elif projection in ['ortho','moll','robin']:
+        elif projection in ['ortho','moll','robin','sinu']:
             self.latmin = -90.
             self.latmax = 90.
             self.crossgreenwich = True
@@ -380,9 +381,9 @@ class Basemap:
             projparams['lat_0'] = lat_0
             projparams['lon_0'] = lon_0
             proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
-        elif projection == 'moll' or projection == 'robin':
+        elif projection in ['moll','robin','sinu']:
             if lon_0 is None:
-                raise ValueError, 'must specify lon_0 for Robinson or Mollweide basemap'
+                raise ValueError, 'must specify lon_0 for Robinson, Mollweide, or Sinusoidal basemap'
             projparams['lon_0'] = lon_0
             proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'omerc':
@@ -406,6 +407,8 @@ class Basemap:
                 projparams['lon_0'] = lon_0
             proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'cyl':
+            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+        elif projection == 'sinu':
             proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         else:
             raise ValueError, 'unsupported projection'
@@ -846,7 +849,7 @@ environment variable must be set."""
         self.coastsegtypes = coastsegtypes
 
         # special treatment of coastline polygons for
-        # orthographic, mollweide and robinson.
+        # orthographic, sinusoidal, mollweide and robinson.
         # (polygon clipping along projection limb)
         if self.projection == 'ortho':
             lat_0 = math.radians(self.projparams['lat_0'])
@@ -911,7 +914,7 @@ environment variable must be set."""
                     coastpolygontypes.append(polytype)
             self.coastpolygons = coastpolygons
             self.coastpolygontypes = coastpolygontypes
-        elif self.projection in ['moll','robin']:
+        elif self.projection in ['moll','robin','sinu']:
             lon_0 = self.projparams['lon_0']
             coastpolygons=[]
             for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,coastpolygonsll):
@@ -1028,7 +1031,7 @@ environment variable must be set."""
         """returns True if any point in polygon is inside map region"""
         isin = False
         xx = poly[0]; yy = poly[1]
-        if self.projection in ['moll','robin']:
+        if self.projection in ['moll','robin','sinu']:
             lon_0 = self.projparams['lon_0']
             lons = polyll[0]
             for lon in lons:
@@ -1099,7 +1102,7 @@ environment variable must be set."""
             ax.add_collection(bound)
             bound.set_fill(False)
             bound.set_clip_on(False)
-        elif self.projection in ['moll','robin']:  # elliptical region.
+        elif self.projection in ['moll','robin','sinu']:  # elliptical region.
             # left side
             lats = NX.arange(-89.9,89.9+dtheta,dtheta).tolist()
             lons = len(lats)*[self.projparams['lon_0']-179.9]
@@ -1451,7 +1454,7 @@ environment variable must be set."""
         if xoffset is None:
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
-        if self.projection in ['merc','cyl','mill','moll','robin']:
+        if self.projection in ['merc','cyl','mill','moll','robin','sinu']:
             lons = NX.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype('f')
         else:
             lons = NX.arange(0,360.1,0.1).astype('f')
@@ -1460,7 +1463,7 @@ environment variable must be set."""
             circlesl = circles.tolist()
         except:
             circlesl = circles
-        if self.projection not in ['merc','cyl','mill','moll','robin']:
+        if self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
             if max(circlesl) > 0 and latmax not in circlesl:
                 circlesl.append(latmax)
             if min(circlesl) < 0 and -latmax not in circlesl:
@@ -1484,7 +1487,7 @@ environment variable must be set."""
                 yd = (y[1:]-y[0:-1])**2
                 dist = NX.sqrt(xd+yd)
                 split = dist > 500000.
-                if NX.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin']:
+                if NX.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
                    ind = (NX.compress(split,squeeze(split*NX.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
@@ -1506,7 +1509,8 @@ environment variable must be set."""
                         l.set_dashes(dashes)
                         ax.add_line(l)
         # draw labels for parallels
-        # parallels not labelled for orthographic, robinson or mollweide.
+        # parallels not labelled for orthographic, robinson, 
+        # sinusoidal or mollweide.
         if self.projection in ['ortho'] and max(labels):
             print 'Warning: Cannot label parallels on Orthographic basemap'
             labels = [0,0,0,0]
@@ -1516,12 +1520,12 @@ environment variable must be set."""
             dx = 0.01; dy = 0.01
         else:
             dx = 1000; dy = 1000
-        if self.projection == 'moll' or self.projection == 'robin':
+        if self.projection in ['moll','robin','sinu']:
             lon_0 = self.projparams['lon_0']
         for dolab,side in zip(labels,['l','r','t','b']):
             if not dolab: continue
             # for cylindrical projections, don't draw parallels on top or bottom.
-            if self.projection in ['cyl','merc','mill','moll','robin'] and side in ['t','b']: continue
+            if self.projection in ['cyl','merc','mill','moll','robin','sinu'] and side in ['t','b']: continue
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
                 yy = linspace(self.llcrnry,self.urcrnry,nmax)
@@ -1581,14 +1585,14 @@ environment variable must be set."""
                     if i and abs(nr-nl) < 100: continue
                     if n >= 0:
                         if side == 'l':
-                            if self.projection in ['moll','robin']:
+                            if self.projection in ['moll','robin','sinu']:
                                 xlab,ylab = self(lon_0-179.9,lat)
                             else:
                                 xlab = self.llcrnrx
                             xlab = xlab-xoffset
                             ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**kwargs)
                         elif side == 'r':
-                            if self.projection in ['moll','robin']:
+                            if self.projection in ['moll','robin','sinu']:
                                 xlab,ylab = self(lon_0+179.9,lat)
                             else:
                                 xlab = self.urcrnrx
@@ -1654,7 +1658,7 @@ environment variable must be set."""
         if xoffset is None:
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
-        if self.projection not in ['merc','cyl','mill','moll','robin']:
+        if self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
             lats = NX.arange(-latmax,latmax+0.1,0.1).astype('f')
         else:
             lats = NX.arange(-90,90.1,0.1).astype('f')
@@ -1681,7 +1685,7 @@ environment variable must be set."""
                 yd = (y[1:]-y[0:-1])**2
                 dist = NX.sqrt(xd+yd)
                 split = dist > 500000.
-                if NX.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin']:
+                if NX.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
                    ind = (NX.compress(split,squeeze(split*NX.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
@@ -1703,9 +1707,10 @@ environment variable must be set."""
                         l.set_dashes(dashes)
                         ax.add_line(l)
         # draw labels for meridians.
-        # meridians not labelled for orthographic, robinson or mollweide
+        # meridians not labelled for orthographic, sinusoidal,
+        # robinson or mollweide
         if self.projection in ['ortho','moll'] and max(labels):
-            print 'Warning: Cannot label meridians on Mollweide or Orthographic basemap'
+            print 'Warning: Cannot label meridians on Sinusoidal, Mollweide or Orthographic basemap'
             labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
@@ -1713,14 +1718,14 @@ environment variable must be set."""
             dx = 0.01; dy = 0.01
         else:
             dx = 1000; dy = 1000
-        if self.projection == 'moll' or self.projection == 'robin':
+        if self.projection in ['moll','sinu','robin']:
             lon_0 = self.projparams['lon_0']
             xmin,ymin = self(lon_0-179.9,-90)
             xmax,ymax = self(lon_0+179.9,90)
         for dolab,side in zip(labels,['l','r','t','b']):
             if not dolab: continue
             # for cylindrical projections, don't draw meridians on left or right.
-            if self.projection in ['cyl','merc','mill','robin','moll'] and side in ['l','r']: continue
+            if self.projection in ['cyl','merc','mill','sinu','robin','moll'] and side in ['l','r']: continue
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
                 yy = linspace(self.llcrnry,self.urcrnry,nmax)
@@ -1973,7 +1978,7 @@ environment variable must be set."""
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
         ax.set_ylim((self.llcrnry, self.urcrnry))
         # turn off axes frame for non-rectangular projections.
-        if self.projection in ['ortho','moll','robin']:
+        if self.projection in ['ortho','moll','robin','sinu']:
             ax.set_frame_on(False)
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.

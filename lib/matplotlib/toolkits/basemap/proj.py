@@ -67,7 +67,7 @@ class Proj:
         self.esq = (self.rmajor**2 - self.rminor**2)/self.rmajor**2
         self.llcrnrlon = llcrnrlon
         self.llcrnrlat = llcrnrlat
-        if self.projection not in ['cyl','ortho','moll','robin']:
+        if self.projection not in ['cyl','ortho','moll','robin','sinu']:
             self._proj4 = proj4.Proj(projparams)
             llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
         elif self.projection == 'cyl':
@@ -79,7 +79,7 @@ class Proj:
             llcrnry = -self.rmajor
             urcrnrx = -llcrnrx
             urcrnry = -llcrnry
-        elif self.projection == 'moll' or self.projection == 'robin':
+        elif self.projection in ['moll','robin','sinu']:
             self._proj4 = proj4.Proj(projparams)
             xtmp,urcrnry = self(projparams['lon_0'],90.)
             urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
@@ -100,12 +100,12 @@ class Proj:
         if urcrnrislatlon:
             self.urcrnrlon = urcrnrlon
             self.urcrnrlat = urcrnrlat
-            if self.projection not in ['ortho','moll','robin']:
+            if self.projection not in ['ortho','moll','robin','sinu']:
                 urcrnrx,urcrnry = self(urcrnrlon,urcrnrlat)
             elif self.projection == 'ortho':
                 urcrnrx = 2.*self.rmajor
                 urcrnry = 2.*self.rmajor
-            elif self.projection == 'moll' or self.projection == 'robin':
+            elif self.projection in ['moll','robin','sinu']:
                 xtmp,urcrnry = self(projparams['lon_0'],90.)
                 urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
         else:
