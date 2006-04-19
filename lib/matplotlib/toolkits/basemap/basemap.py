@@ -1709,7 +1709,7 @@ environment variable must be set."""
         # draw labels for meridians.
         # meridians not labelled for orthographic, sinusoidal,
         # robinson or mollweide
-        if self.projection in ['ortho','moll'] and max(labels):
+        if self.projection in ['sinu','ortho','moll'] and max(labels):
             print 'Warning: Cannot label meridians on Sinusoidal, Mollweide or Orthographic basemap'
             labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
