@@ -26,7 +26,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
 __version__ = '0.9'
-__revision__ = '20060406'
+__revision__ = '20060419'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -1364,7 +1364,12 @@ environment variable must be set."""
             for ring in range(rings):
                 lons, lats = zip(*verts[ring])
                 if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
-                    raise ValueError,'shapefile must have lat/lon vertices  - it looks like this one has vertices in map projection coordinates'
+                    msg="""
+shapefile must have lat/lon vertices  - it looks like this one has vertices
+in map projection coordinates. You can convert the shapefile to geographic
+coordinates using the shpproj utility from the shapelib tools
+(http://shapelib.maptools.org/shapelib-tools.html)"""
+                    raise ValueError,msg
                 if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
                     # for cylindrical projections that don't cross greenwich,
                     # adjust lons to be in range 0 to 360.
