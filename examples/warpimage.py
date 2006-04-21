@@ -31,11 +31,11 @@ m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
 dx = 2.*P.pi*m.rmajor/float(nlons)
 nx = int((m.xmax-m.xmin)/dx)+1; ny = int((m.ymax-m.ymin)/dx)+1
 rgba_warped = P.zeros((ny,nx,4),'d')
-# interpolate from proj='cyl' (geographic coords) to 'lcc'
+# interpolate rgba values from proj='cyl' (geographic coords) to 'lcc'
 for k in range(4):
     rgba_warped[:,:,k],x,y = m.transform_scalar(rgba[:,:,k],lons,lats,nx,ny,returnxy=True)
 # convert normalized floats to integer RGBA values between 0 and 255
-rgba_warped = (255.*rgba_warped).astype('uint8')
+rgba_warped = (255.*rgba_warped).astype(P.UInt8)
 # convert rgba values to pil image.
 pilimage = I.fromstring('RGBA',(nx,ny),rgba_warped[::-1,:,:].tostring())
 # plot pil image.
