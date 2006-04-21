@@ -33,7 +33,7 @@ nx = int((m.xmax-m.xmin)/dx)+1; ny = int((m.ymax-m.ymin)/dx)+1
 rgba_warped = P.zeros((ny,nx,4),'d')
 # interpolate rgba values from proj='cyl' (geographic coords) to 'lcc'
 for k in range(4):
-    rgba_warped[:,:,k],x,y = m.transform_scalar(rgba[:,:,k],lons,lats,nx,ny,returnxy=True)
+    rgba_warped[:,:,k] = m.transform_scalar(rgba[:,:,k],lons,lats,nx,ny)
 # convert normalized floats to integer RGBA values between 0 and 255
 rgba_warped = (255.*rgba_warped).astype(P.UInt8)
 # convert rgba values to pil image.
