@@ -22,9 +22,10 @@ delta = 360./float(nlons)
 lons = P.arange(-180.+0.5*delta,180.,delta)
 lats = P.arange(-90.+0.5*delta,90.,delta)
 # define Lambert Conformal basemap for North America.
+# resolution=None means don't bother with boundary data.
 m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
             rsphere=(6378137.00,6356752.3142),lat_1=50.,lon_0=-107.,\
-            resolution='l',area_thresh=1000.,projection='lcc')
+            resolution=None,projection='lcc')
 # transform to nx x ny regularly spaced native projection grid
 # nx and ny chosen to have roughly the same horizontal res as original image.
 dx = 2.*P.pi*m.rmajor/float(nlons)
