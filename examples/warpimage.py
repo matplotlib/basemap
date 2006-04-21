@@ -1,6 +1,6 @@
 import pylab as P
 import Image as I
-from matplotlib.toolkits.basemap import Basemap, shiftgrid
+from matplotlib.toolkits.basemap import Basemap
 # shows how to warp an image from one map projection to another.
 # Uses PIL.
 # Download image from
