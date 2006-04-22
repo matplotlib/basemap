@@ -26,7 +26,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
 __version__ = '0.9'
-__revision__ = '20060419'
+__revision__ = '20060422'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -1844,7 +1844,7 @@ coordinates using the shpproj utility from the shapelib tools
         x, y = self(lons, lats)
         self.plot(x,y,**kwargs)
 
-    def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1):
+    def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1,masked=False):
         """
  interpolate a scalar field (datin) from a lat/lon grid with longitudes =
  lons and latitudes = lats to a (ny,nx) native map projection grid.
@@ -1861,7 +1861,8 @@ coordinates using the shpproj utility from the shapelib tools
  If checkbounds=True, values of lons and lats are checked to see that
  they lie within the map projection region.  Default is False.
  If checkbounds=False, points outside map projection region will
- be clipped to values on the boundary.
+ be clipped to values on the boundary if masked=False. If masked=True,
+ the return value will be a masked array with those points masked.
 
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
@@ -1871,15 +1872,15 @@ coordinates using the shpproj utility from the shapelib tools
         else:
             lonsout, latsout = self.makegrid(nx,ny)
         if _has_arrindexing:
-            datout = interp(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
+            datout = interp(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
         else:
-            datout = interp_numeric(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
+            datout = interp_numeric(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
         if returnxy:
             return datout, x, y
         else:
             return datout
 
-    def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1):
+    def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1,masked=False):
         """
  rotate and interpolate a vector field (uin,vin) from a lat/lon grid
  with longitudes = lons and latitudes = lats to a
@@ -1900,7 +1901,8 @@ coordinates using the shpproj utility from the shapelib tools
  If checkbounds=True, values of lons and lats are checked to see that
  they lie within the map projection region.  Default is False.
  If checkbounds=False, points outside map projection region will
- be clipped to values on the boundary.
+ be clipped to values on the boundary if masked=False. If masked=True,
+ the return value will be a masked array with those points masked.
 
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
@@ -1908,11 +1910,11 @@ coordinates using the shpproj utility from the shapelib tools
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         # interpolate to map projection coordinates.
         if _has_arrindexing:
-            uin = interp(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
-            vin = interp(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
+            uin = interp(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
+            vin = interp(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
         else:
-            uin = interp_numeric(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
-            vin = interp_numeric(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order)
+            uin = interp_numeric(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
+            vin = interp_numeric(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
         # rotate from geographic to map coordinates.
         delta = 0.1 # incement in latitude used to estimate derivatives.
         xn,yn = self(lonsout,NX.where(latsout+delta<90.,latsout+delta,latsout-delta))
@@ -2362,7 +2364,7 @@ def _searchlist(a,x):
         itemprev = item
     return nslot
 
-def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,order=1):
+def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     """
  dataout = interp(datain,xin,yin,xout,yout,order=1)
 
@@ -2383,7 +2385,9 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,order=1):
  If checkbounds=True, values of xout and yout are checked to see that
  they lie within the range specified by xin and xin.  Default is False.
  If checkbounds=False, and xout,yout are outside xin,yin, interpolated
- values will be clipped to values on boundary of input grid (xin,yin).
+ values will be clipped to values on boundary of input grid (xin,yin)
+ if masked=False. If masked=True, the return value will be a masked
+ array with those points masked.
 
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
@@ -2436,6 +2440,11 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,order=1):
         ycoords = NX.array(ycoords,'f')
     # data outside range xin,yin will be clipped to
     # values on boundary.
+    if masked:
+        xmask = NX.logical_or(NX.less(xcoords,0),NX.greater(xcoords,len(xin)-1))
+        ymask = NX.logical_or(NX.less(ycoords,0),NX.greater(ycoords,len(yin)-1))
+        xymask = NX.logical_or(xmask,ymask)   
+        xymask = NX.reshape(xymask,xout.shape)
     xcoords = NX.clip(xcoords,0,len(xin)-1)
     ycoords = NX.clip(ycoords,0,len(yin)-1)
     # interpolate to output grid using bilinear interpolation.
@@ -2469,9 +2478,11 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,order=1):
         dataout = NX.reshape(dataout,xout.shape)
     else:
         raise ValueError,'order keyword must be 0 or 1'
+    if masked:
+        dataout = ma.masked_array(dataout,mask=xymask)
     return dataout
 
-def interp(datain,xin,yin,xout,yout,checkbounds=False,order=1):
+def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     """
  dataout = interp(datain,xin,yin,xout,yout,order=1)
 
@@ -2491,7 +2502,9 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,order=1):
  If checkbounds=True, values of xout and yout are checked to see that
  they lie within the range specified by xin and xin.  Default is False.
  If checkbounds=False, and xout,yout are outside xin,yin, interpolated
- values will be clipped to values on boundary of input grid (xin,yin).
+ values will be clipped to values on boundary of input grid (xin,yin)
+ if masked=False. If masked=True, the return value will be a masked
+ array with those points masked.
 
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
@@ -2542,6 +2555,10 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,order=1):
         ycoords = NX.reshape(ycoords,yout.shape)
     # data outside range xin,yin will be clipped to
     # values on boundary.
+    if masked:
+        xmask = NX.logical_or(NX.less(xcoords,0),NX.greater(xcoords,len(xin)-1))
+        ymask = NX.logical_or(NX.less(ycoords,0),NX.greater(ycoords,len(yin)-1))
+        xymask = NX.logical_or(xmask,ymask)   
     xcoords = NX.clip(xcoords,0,len(xin)-1)
     ycoords = NX.clip(ycoords,0,len(yin)-1)
     # interpolate to output grid using bilinear interpolation.
@@ -2564,6 +2581,8 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,order=1):
         dataout = datain[ycoordsi,xcoordsi]
     else:
         raise ValueError,'order keyword must be 0 or 1'
+    if masked:
+        dataout = ma.masked_array(dataout,mask=xymask)
     return dataout
 
 def shiftgrid(lon0,datain,lonsin,start=True):
