@@ -61,8 +61,8 @@ polarmaps.py illustrates the use of the special-case versions of the
 stereographic, lambert azimuthal equal area, azimuthal equidistant 
 projections (prefixed by 'np' and 'sp').
 
-warpimage.py shows how to interpolate (warp) and image from one
+warpimage.py shows how to interpolate (warp) a png image from one
 map projection to another.
 
 run_all.py is a driver script that runs all the examples except fcstmaps.py,
-testgdal.py and warpimage.py (which rely on external dependencies).
+and testgdal.py (which rely on external dependencies).

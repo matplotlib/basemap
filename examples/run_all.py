@@ -3,7 +3,6 @@ test_files = glob.glob('*.py')
 test_files.remove('run_all.py')
 test_files.remove('fcstmaps.py')
 test_files.remove('testgdal.py')
-test_files.remove('warpimage.py')
 print test_files
 py_path = os.environ.get('PYTHONPATH')
 if py_path is None:
