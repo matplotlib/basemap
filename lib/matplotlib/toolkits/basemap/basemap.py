@@ -2561,7 +2561,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,order=1):
     elif order == 0:
         xcoordsi = NX.around(xcoords).astype('i')
         ycoordsi = NX.around(ycoords).astype('i')
-        dataout = datain[ycoords,xcoords]
+        dataout = datain[ycoordsi,xcoordsi]
     else:
         raise ValueError,'order keyword must be 0 or 1'
     return dataout
