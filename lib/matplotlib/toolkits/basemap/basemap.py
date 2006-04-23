@@ -26,7 +26,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
 __version__ = '0.9'
-__revision__ = '20060422'
+__revision__ = '20060423'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -2136,6 +2136,9 @@ coordinates using the shpproj utility from the shapelib tools
         """
  Make a pseudo-color plot over the map.
  see pylab.pcolor documentation for definition of **kwargs
+ If x or y are outside projection limb (i.e. they have values > 1.e20)
+ they will be convert to masked arrays with those values masked.
+ As a result, those values will not be plotted.
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
@@ -2160,6 +2163,54 @@ coordinates using the shpproj utility from the shapelib tools
             ax.hold(h)
         try:
             ret =  ax.pcolor(x,y,data,**kwargs)
+            try:
+                pylab.draw_if_interactive()
+            except:
+                pass
+        except:
+            ax.hold(b)
+            raise
+        ax.hold(b)
+        # reset current active image (only if pylab is imported).
+        try:
+            pylab.gci._current = ret
+        except:
+            pass
+        # set axes limits to fit map region.
+        self.set_axes_limits(ax=ax)
+        # make sure axis ticks are turned off.
+        if self.noticks:
+            ax.set_xticks([])
+            ax.set_yticks([])
+        return ret
+
+    def pcolormesh(self,x,y,data,**kwargs):
+        """
+ Make a pseudo-color plot over the map.
+ see pylab.pcolormesh documentation for definition of **kwargs
+ Unlike pcolor, pcolormesh cannot handle masked arrays, and so
+ cannot be used to plot data when the grid lies partially outside
+ the projection limb (use pcolor or contourf instead).
+ extra keyword 'ax' can be used to override the default axis instance.
+        """
+        if not kwargs.has_key('ax') and self.ax is None:
+            try:
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
+        else:
+            ax = popd(kwargs,'ax')
+        kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
+        # allow callers to override the hold state by passing hold=True|False
+        b = ax.ishold()
+        h = popd(kwargs, 'hold', None)
+        if h is not None:
+            ax.hold(h)
+        try:
+            ret =  ax.pcolormesh(x,y,data,**kwargs)
             try:
                 pylab.draw_if_interactive()
             except:
@@ -2236,7 +2287,9 @@ coordinates using the shpproj utility from the shapelib tools
     def contourf(self,x,y,data,*args,**kwargs):
         """
  Make a filled contour plot over the map (see pylab.contourf documentation).
- extra keyword 'ax' can be used to override the default axis instance.
+ If x or y are outside projection limb (i.e. they have values > 1.e20),
+ the corresponing data elements will be masked.
+ Extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
