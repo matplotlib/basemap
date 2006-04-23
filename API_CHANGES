@@ -1,5 +1,6 @@
 version 0.9: creatfigure method deprecated, new set_aspect axes method
              used to ensure maps have right aspect ratio. 
+             pcolormesh method added.
 version 0.7.2:  'createfigure' method added to Basemap.
                 interp function no longer uses nd_image, so keywords
                 'mode' and 'cval' no longer accepted.  'order' keyword
