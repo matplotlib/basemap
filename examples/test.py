@@ -5,6 +5,7 @@
 
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import *
+import matplotlib.colors as colors
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
@@ -435,34 +436,29 @@ title('Azimuthal Equidistant',y=1.075)
 print 'plotting Azimuthal Equidistant example, close plot window to proceed ...'
 show()
 
-# projections with elliptical boundaries (orthographic, mollweide and robinson)
-
-# can't use imshow, since it expects a rectangular image.
-# instead use pcolor or contourf, and plot data 
-# directly on lat/lon grid without interpolation.
-
-# shift lons and lats by 1/2 grid increment (so values represent the vertices
-# of the grid box surrounding the data value, as pcolor expects).
-delon = lonsin[1]-lonsin[0]
-delat = latsin[1]-latsin[0]
-lons = zeros(len(lonsin)+1,'d')
-lats = zeros(len(latsin)+1,'d')
-lons[0:len(lonsin)] = lonsin-0.5*delon
-lons[-1] = lonsin[-1]+0.5*delon
-lats[0:len(latsin)] = latsin-0.5*delat
-lats[-1] = latsin[-1]+0.5*delat
+# projections with elliptical boundaries (orthographic, sinusoidal,
+# mollweide and robinson)
 
 # setup of basemap ('ortho' = orthographic projection)
 m = Basemap(projection='ortho',
             resolution='c',area_thresh=10000.,lat_0=30,lon_0=-60)
+# transform to nx x ny regularly spaced native projection grid
+# nx and ny chosen to have roughly the same horizontal res as original image.
+dx = 2.*pi*m.rmajor/len(lons)
+nx = int((m.xmax-m.xmin)/dx)+1; ny = int((m.ymax-m.ymin)/dx)+1
+# interpolate to native projection grid.
+# values outside of projection limb will be masked.
+topo = m.transform_scalar(topoin,lons,lats,nx,ny,masked=True)
 fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# pcolor plot (slow)
-#x,y = m(*meshgrid(lons,lats))
-#p = m.pcolor(x,y,topodatin,shading='flat')
-# filled contours (faster)
-x,y = m(*meshgrid(lonsin,latsin))
-cs = m.contourf(x,y,topodatin,20,cmap=cm.jet)
+# set missing value in color pallette.
+palette = cm.jet
+palette.set_bad(ax.get_axis_bgcolor(), 0.0)
+# plot image over map with imshow.
+# (if contourf were used, no interpolation would be necessary
+#  and values outside projection limb would be handled transparently
+#  - see contour_demo.py)
+im = m.imshow(topo,palette,norm=colors.normalize(clip=False))
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
@@ -486,12 +482,9 @@ m = Basemap(projection='sinu',
             resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
 fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# pcolor plot (slow)
-#x,y = m(*meshgrid(lons,lats))
-#p = m.pcolor(x,y,topodatin,shading='flat')
-# filled contours (faster)
+# plot image over map with pcolormesh.
 x,y = m(*meshgrid(lonsin,latsin))
-cs = m.contourf(x,y,topodatin,20,cmap=cm.jet)
+p = m.pcolormesh(x,y,topodatin,shading='flat')
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
@@ -514,12 +507,9 @@ m = Basemap(projection='moll',
             resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
 fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# pcolor plot (slow)
-#x,y = m(*meshgrid(lons,lats))
-#p = m.pcolor(x,y,topodatin,shading='flat')
-# filled contours (faster)
+# plot image over map with pcolormesh.
 x,y = m(*meshgrid(lonsin,latsin))
-cs = m.contourf(x,y,topodatin,20,cmap=cm.jet)
+p = m.pcolormesh(x,y,topodatin,shading='flat')
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
@@ -542,12 +532,9 @@ m = Basemap(projection='robin',
             resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
 fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# pcolor plot (slow)
-#x,y = m(*meshgrid(lons,lats))
-#p = m.pcolor(x,y,topodatin,shading='flat')
-# filled contours (faster)
+# plot image over map with pcolormesh.
 x,y = m(*meshgrid(lonsin,latsin))
-cs = m.contourf(x,y,topodatin,20,cmap=cm.jet)
+p = m.pcolormesh(x,y,topodatin,shading='flat')
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(tickfmt='%d', cax=cax) # draw colorbar
