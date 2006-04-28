@@ -64,5 +64,13 @@ projections (prefixed by 'np' and 'sp').
 warpimage.py shows how to interpolate (warp) a png image from one
 map projection to another.
 
+garp.py makes a 'World According to Garp' map - an azimuthal equidistant
+projection centered on a specified location.  Straight lines from that
+location to any point on the map have true scale and show the shortest
+route. Shows how to use the included proj4 C extension to determine how
+to specify the upper right and lower left corners of the map, needed to
+initialize a Basemap instance.
+
 run_all.py is a driver script that runs all the examples except fcstmaps.py,
 and testgdal.py (which rely on external dependencies).
+
