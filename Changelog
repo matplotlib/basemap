@@ -26,7 +26,7 @@
            values outside range of data coordinates masked.
            * New examples (warpimage.py - warping an image to
            different map projections, polarmaps.py - simplified polar
-           projections).
+           projections, garp.py - 'World According to Garp' maps).
            * pcolormesh method added.
 20060222:  version 0.8.2:  Minor bug fixes, mostly in examples.
 20060203:  version 0.8.1:  Huge speedups for numpy
