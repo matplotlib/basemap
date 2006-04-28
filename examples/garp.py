@@ -1,5 +1,5 @@
 from matplotlib.toolkits.basemap import Basemap, proj4
-from pylab import title, show, arange
+from pylab import title, show, arange, pi
 
 # the shortest route from the center of the map
 # to any other point is a straight line in the azimuthal
@@ -21,15 +21,15 @@ location = raw_input('name of location:')
 # use the proj4 module to find 4 corners of the map.
 rsphere = 6370997
 p = proj4.Proj(proj='aeqd',lon_0=lon_0,lat_0=lat_0,R=rsphere)
-# upper right corner is 10000 km from center point.
-xurcrnr,yurcrnr = 10000000,10000000
+# upper right corner is 14000 km from center point.
+xurcrnr,yurcrnr = 14000000,14000000
 # find the lon/lat for the lower left and upper right corners.
 llcrnrlon,llcrnrlat = p(-xurcrnr,-yurcrnr,inverse=True)
 urcrnrlon,urcrnrlat = p(xurcrnr,yurcrnr,inverse=True)
 # use these values to setup Basemap instance.
 m = Basemap(llcrnrlon=llcrnrlon,llcrnrlat=llcrnrlat,\
             urcrnrlon=urcrnrlon,urcrnrlat=urcrnrlat,\
-            resolution='l',projection='aeqd',\
+            resolution='c',projection='aeqd',\
             lat_0=lat_0,lon_0=lon_0,rsphere=rsphere)
 # draw coasts and fill continents.
 m.drawcoastlines(linewidth=0.5)
