@@ -1,29 +1,16 @@
 from matplotlib.toolkits.basemap import Basemap
 from pylab import *
-# read in topo data (on a regular lat/lon grid)
-etopo = array(load('etopo20data.gz'),'d')
-lons = array(load('etopo20lons.gz'),'d')
-lats = array(load('etopo20lats.gz'),'d')
 # create Basemap instance for Orthographic (satellite view) projection.
 lon_0 = float(raw_input('enter reference longitude (lon_0):'))
 lat_0 = float(raw_input('enter reference latitude (lat_0):'))
-fillcont = int(raw_input('fill continents? (1 for yes, 0 for no):'))
 m = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0)
-# compute native map projection coordinates for lat/lon grid.
-lons, lats = meshgrid(lons, lats)
-x,y = m(lons,lats)
-# create figure, add axes.
-fig=figure(figsize=(8,8)).add_axes([0.05,0.05,0.9,0.9])
-# make filled contour plot.
-cs = m.contourf(x,y,etopo,30,cmap=cm.jet)
-# draw coastlines.
-m.drawcoastlines()
-# draw a line around the map region.
-m.drawmapboundary()
-if fillcont:
-    m.fillcontinents()
+# plot land-sea mask.
+rgba_land = (0,1,0,1)
+rgba_ocean = (0,0,1,1)
+m.plotlsmask(rgba_land, rgba_ocean)
 # draw parallels and meridians.
 m.drawparallels(arange(-90.,120.,30.))
 m.drawmeridians(arange(0.,420.,60.))
+m.drawmapboundary()
 title('Orthographic Map Centered on Lon=%s, Lat=%s' % (lon_0,lat_0))
 show()
