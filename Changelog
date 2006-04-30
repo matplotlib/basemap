@@ -1,4 +1,4 @@
-20060422:  version 0.9:
+20060430:  version 0.9:
            * updated for new matplotlib aspect ratio handling.
            Now maps will always have the correct aspect ratio.
            * if resolution keyword is set to None when Basemap
@@ -28,6 +28,8 @@
            different map projections, polarmaps.py - simplified polar
            projections, garp.py - 'World According to Garp' maps).
            * pcolormesh method added.
+           * plotlsmask method added for masking oceans and/or land areas.
+           5 minute land-sea mask dataset added.
 20060222:  version 0.8.2:  Minor bug fixes, mostly in examples.
 20060203:  version 0.8.1:  Huge speedups for numpy
            (no significant differences for Numeric and numarray).
