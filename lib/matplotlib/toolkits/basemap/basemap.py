@@ -16,6 +16,7 @@ from matplotlib.numerix import ma
 from matplotlib.mlab import linspace
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd
+import matplotlib.colors as colors
 from shapelib import ShapeFile
 import dbflib, warnings
 
@@ -26,7 +27,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
 __version__ = '0.9'
-__revision__ = '20060423'
+__revision__ = '20060430'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -446,6 +447,7 @@ class Basemap:
 
         # if ax == None, pylab.gca may be used.
         self.ax = ax
+        self.lsmask = None
 
         # set defaults for area_thresh.
         self.resolution = resolution
@@ -2386,6 +2388,76 @@ coordinates using the shpproj utility from the shapelib tools
             ax.set_xticks([])
             ax.set_yticks([])
         return ret
+
+    def plotlsmask(self,rgba_land,rgba_ocean,**kwargs):
+        """
+ plot land-sea mask image.
+ land is colored with rgba tuple rgba_land.
+ ocean is colored with rgba tuple rgba_ocean.
+ Default land sea mask has 5 minute resolution.
+ To specify your own land-sea mask, set the 
+ lsmask instance variable to a (nlats, nlons) array
+ with 0's for ocean pixels and 1's for land pixels.
+ The lsmask_lons instance variable should be a 1-d array
+ with the longitudes of the mask, lsmask_lats should be
+ a 1-d array with the latitudes.  Longitudes should be ordered
+ from -180 W eastward, latitudes from -90 S northward.
+
+ extra keyword 'ax' can be used to override the default axis instance.
+        """
+        # look for axes instance (as keyword, an instance variable
+        # or from pylab.gca().
+        if not kwargs.has_key('ax') and self.ax is None:
+            try:
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
+        else:
+            ax = popd(kwargs,'ax')
+        # if lsmask instance variable not yet set, read in from file.
+        if self.lsmask is None:
+            # read in land/sea mask.
+            lsmaskf = open(os.path.join(_datadir,'seaice_gland5min'),'rb')
+            nlons = 4320; nlats = nlons/2
+            delta = 360./float(nlons)
+            lons = NX.arange(-180+0.5*delta,180.,delta)
+            lats = NX.arange(-90.+0.5*delta,90.,delta)
+            maskin = NX.reshape(NX.fromstring(lsmaskf.read(),NX.UInt8),(nlats,nlons))
+            lsmaskf.close()
+            mask = NX.zeros(maskin.shape, NX.UInt8)
+            mask[:,0:nlons/2] = maskin[::-1,nlons/2:]
+            mask[:,nlons/2:] = maskin[::-1,0:nlons/2]
+            #mask = NX.where(mask.astype('f')>0,1,0)
+            self.lsmask = mask
+            self.lsmask_lons = lons
+            self.lsmask_lats = lats
+        # transform mask to nx x ny regularly spaced native projection grid
+        # nx and ny chosen to have roughly the same horizontal
+        # resolution as mask.
+        nlons = len(self.lsmask_lons)
+        nlats = len(self.lsmask_lats)
+        dx = 2.*math.pi*self.rmajor/float(nlons)
+        nx = int((self.xmax-self.xmin)/dx)+1; ny = int((self.ymax-self.ymin)/dx)+1
+        rgba = ma.ones((ny,nx,4),'d')
+        # interpolate rgba values from proj='cyl' (geographic coords)
+        # to a rectangular map projection grid.
+        mask = self.transform_scalar(self.lsmask,self.lsmask_lons,\
+                                     self.lsmask_lats,nx,ny,order=0,masked=True)
+        # get axes background color (rgb) 
+        # points outside projection limb will have this color.
+        c = colors.ColorConverter()
+        bgc = ax.get_axis_bgcolor()
+        bgc = list(c.to_rgba(bgc))
+        bgc[3]=0. # points outside projection limb transparent.
+        for k in range(4):
+            rgba[:,:,k] = ma.where(mask,rgba_land[k],rgba_ocean[k])
+            # fill masked values with axes background color.
+            rgba[:,:,k] = rgba[:,:,k].filled(fill_value=bgc[k])
+        # plot mask as rgba image.
+        im = self.imshow(rgba,interpolation='nearest',ax=ax)
 
 def _searchlist(a,x):
     """
