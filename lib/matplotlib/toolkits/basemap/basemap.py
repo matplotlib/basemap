@@ -2427,10 +2427,11 @@ coordinates using the shpproj utility from the shapelib tools
             lats = NX.arange(-90.+0.5*delta,90.,delta)
             maskin = NX.reshape(NX.fromstring(lsmaskf.read(),NX.UInt8),(nlats,nlons))
             lsmaskf.close()
+            # re-order data so it goes from -180 to 180 and -90 to 90
             mask = NX.zeros(maskin.shape, NX.UInt8)
             mask[:,0:nlons/2] = maskin[::-1,nlons/2:]
             mask[:,nlons/2:] = maskin[::-1,0:nlons/2]
-            #mask = NX.where(mask.astype('f')>0,1,0)
+            # set instance variables.
             self.lsmask = mask
             self.lsmask_lons = lons
             self.lsmask_lats = lats
