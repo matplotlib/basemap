@@ -1,0 +1,7 @@
+* The fillcontinents method doesn't always do the right thing.  Matplotlib
+always tries to fill the inside of a polygon.  Under certain situations,
+what is the inside of a coastline polygon can be ambiguous, and the 
+outside may be filled instead of the inside.  To trigger this,
+run the garp.py example with lon=-71,lat=-33 (Santiago, Chile).
+Workaround - mask the land areas with the plotlsmask method instead of
+filling the coastline polygons.
