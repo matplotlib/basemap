@@ -90,6 +90,6 @@ setup(
   packages          = packages,
   package_dir       = package_dirs,
   ext_modules       = extensions,
-  data_files        = [(datadir,['data/countries_c.txt','data/states_c.txt','data/rivers_c.txt','data/gshhs_c.txt','data/countries_l.txt','data/states_l.txt','data/rivers_l.txt','data/gshhs_l.txt'])],
+  data_files        = [(datadir,['data/countries_c.txt','data/states_c.txt','data/rivers_c.txt','data/gshhs_c.txt','data/countries_l.txt','data/states_l.txt','data/rivers_l.txt','data/gshhs_l.txt','data/seaice_gland5min'])],
   **additional_params
   )
