@@ -2400,7 +2400,9 @@ coordinates using the shpproj utility from the shapelib tools
  If lakes=True, inland lakes are also colored with 
  rgba_ocean (default is lakes=False).
 
- Default land-sea mask has 5 minute resolution.
+ Default land-sea mask is from
+ http://www.ngdc.noaa.gov/seg/cdroms/graham/graham/graham.htm
+ and has 5-minute resolution.
 
  To specify your own land-sea mask, set the 
  lsmask keyword to a (nlats, nlons) array
@@ -2427,16 +2429,20 @@ coordinates using the shpproj utility from the shapelib tools
             ax = self.ax
         else:
             ax = popd(kwargs,'ax')
-        # if lsmask keyword not given, read in from file.
+        # if lsmask,lsmask_lons,lsmask_lats keywords not given,
+        # read default land-sea mask in from file.
         if lsmask is None or lsmask_lons is None or lsmask_lats is None:
-            # read in land/sea mask.
-            lsmaskf = open(os.path.join(_datadir,'5minmask.bin'),'rb')
-            nlons = 4320; nlats = nlons/2
-            delta = 360./float(nlons)
-            lsmask_lons = NX.arange(-180+0.5*delta,180.,delta)
-            lsmask_lats = NX.arange(-90.+0.5*delta,90.,delta)
-            lsmask = NX.reshape(NX.fromstring(lsmaskf.read(),NX.UInt8),(nlats,nlons))
-            lsmaskf.close()
+            # if lsmask instance variable already set, data already
+            # read in.
+            if self.lsmask is None:
+                # read in land/sea mask.
+                lsmaskf = open(os.path.join(_datadir,'5minmask.bin'),'rb')
+                nlons = 4320; nlats = nlons/2
+                delta = 360./float(nlons)
+                lsmask_lons = NX.arange(-180+0.5*delta,180.,delta)
+                lsmask_lats = NX.arange(-90.+0.5*delta,90.,delta)
+                lsmask = NX.reshape(NX.fromstring(lsmaskf.read(),NX.UInt8),(nlats,nlons))
+                lsmaskf.close()
             userlsmask = False
         else:
             userlsmask = True
