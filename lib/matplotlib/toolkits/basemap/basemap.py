@@ -2433,15 +2433,19 @@ coordinates using the shpproj utility from the shapelib tools
             lsmaskf = open(os.path.join(_datadir,'5minmask.bin'),'rb')
             nlons = 4320; nlats = nlons/2
             delta = 360./float(nlons)
-            lons = NX.arange(-180+0.5*delta,180.,delta)
-            lats = NX.arange(-90.+0.5*delta,90.,delta)
-            mask = NX.reshape(NX.fromstring(lsmaskf.read(),NX.UInt8),(nlats,nlons))
+            lsmask_lons = NX.arange(-180+0.5*delta,180.,delta)
+            lsmask_lats = NX.arange(-90.+0.5*delta,90.,delta)
+            lsmask = NX.reshape(NX.fromstring(lsmaskf.read(),NX.UInt8),(nlats,nlons))
             lsmaskf.close()
-            # set instance variables.
-            lsmask = mask
-            lsmask_lons = lons
-            lsmask_lats = lats
-        if self.lsmask is None:
+            userlsmask = False
+        else:
+            userlsmask = True
+        # instance variable lsmask is set on first invocation,
+        # it contains the land-sea mask interpolated to the native
+        # projection grid.  Further calls to drawlsmask will not
+        # redo the interpolation (unless a new land-sea mask is passed
+        # in via the lsmask, lsmask_lons, lsmask_lats keywords).
+        if self.lsmask is None and not userlsmask:
             # transform mask to nx x ny regularly spaced native projection grid
             # nx and ny chosen to have roughly the same horizontal
             # resolution as mask.
