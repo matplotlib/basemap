@@ -2453,10 +2453,14 @@ coordinates using the shpproj utility from the shapelib tools
             # to a rectangular map projection grid.
             mask = self.transform_scalar(lsmask,lsmask_lons,\
                                          lsmask_lats,nx,ny,order=0,masked=True)
-            # optionally, set lakes to ocean color.
-            if lakes:
-                mask = ma.where(mask==2,0,mask)
             self.lsmask = mask
+        else:
+            ny, nx = self.lsmask.shape
+        # optionally, set lakes to ocean color.
+        if lakes:
+            mask = ma.where(self.lsmask==2,0,self.lsmask)
+        else:
+            mask = self.lsmask
         # get axes background color (rgb) 
         # points outside projection limb will have this color.
         c = colors.ColorConverter()
