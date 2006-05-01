@@ -20,6 +20,10 @@ from datasets provided with the Generic Mapping Tools
 (http://gmt.soest.hawaii.edu)
 and are included under the terms given in LICENSE_data.
 
+a public domain 5-minute land/sea/lake mask dataset from
+http://www.ngdc.noaa.gov/seg/cdroms/graham/graham/graham.htm
+is included.
+
 Everything else (include src/proj4.pyx and src/proj4.c):
 
 copyright (c) 2004 by Jeffrey Whitaker.
