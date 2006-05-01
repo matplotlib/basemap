@@ -2389,7 +2389,7 @@ coordinates using the shpproj utility from the shapelib tools
             ax.set_yticks([])
         return ret
 
-    def plotlsmask(self,rgba_land,rgba_ocean,**kwargs):
+    def drawlsmask(self,rgba_land,rgba_ocean,**kwargs):
         """
  plot land-sea mask image.
  land is colored with rgba tuple rgba_land.
@@ -2420,17 +2420,13 @@ coordinates using the shpproj utility from the shapelib tools
         # if lsmask instance variable not yet set, read in from file.
         if self.lsmask is None:
             # read in land/sea mask.
-            lsmaskf = open(os.path.join(_datadir,'seaice_gland5min'),'rb')
+            lsmaskf = open(os.path.join(_datadir,'5minmask.bin'),'rb')
             nlons = 4320; nlats = nlons/2
             delta = 360./float(nlons)
             lons = NX.arange(-180+0.5*delta,180.,delta)
             lats = NX.arange(-90.+0.5*delta,90.,delta)
-            maskin = NX.reshape(NX.fromstring(lsmaskf.read(),NX.UInt8),(nlats,nlons))
+            mask = NX.reshape(NX.fromstring(lsmaskf.read(),NX.UInt8),(nlats,nlons))
             lsmaskf.close()
-            # re-order data so it goes from -180 to 180 and -90 to 90
-            mask = NX.zeros(maskin.shape, NX.UInt8)
-            mask[:,0:nlons/2] = maskin[::-1,nlons/2:]
-            mask[:,nlons/2:] = maskin[::-1,0:nlons/2]
             # set instance variables.
             self.lsmask = mask
             self.lsmask_lons = lons
