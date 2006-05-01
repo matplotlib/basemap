@@ -28,7 +28,7 @@
            different map projections, polarmaps.py - simplified polar
            projections, garp.py - 'World According to Garp' maps).
            * pcolormesh method added.
-           * plotlsmask method added for masking oceans and/or land areas.
+           * drawlsmask method added for masking oceans and/or land areas.
            5 minute land-sea mask dataset added.
 20060222:  version 0.8.2:  Minor bug fixes, mostly in examples.
 20060203:  version 0.8.1:  Huge speedups for numpy
