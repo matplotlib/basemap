@@ -2392,7 +2392,7 @@ coordinates using the shpproj utility from the shapelib tools
     def drawlsmask(self,rgba_land,rgba_ocean,lsmask=None,
                    lsmask_lons=None,lsmask_lats=None,lakes=False,**kwargs):
         """
- plot land-sea mask image.
+ draw land-sea mask image.
 
  land is colored with rgba tuple rgba_land.
  ocean is colored with rgba tuple rgba_ocean.
@@ -2412,7 +2412,7 @@ coordinates using the shpproj utility from the shapelib tools
  with the longitudes of the mask, lsmask_lats should be
  a 1-d array with the latitudes.  Longitudes should be ordered
  from -180 W eastward, latitudes from -90 S northward.
- If any of the lsmask, lsmask_lons or lsmask_lats keywords is not
+ If any of the lsmask, lsmask_lons or lsmask_lats keywords are not
  set, the default land-sea mask is used.
 
  extra keyword 'ax' can be used to override the default axis instance.
