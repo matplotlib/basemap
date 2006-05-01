@@ -2389,19 +2389,29 @@ coordinates using the shpproj utility from the shapelib tools
             ax.set_yticks([])
         return ret
 
-    def drawlsmask(self,rgba_land,rgba_ocean,**kwargs):
+    def drawlsmask(self,rgba_land,rgba_ocean,lsmask=None,
+                   lsmask_lons=None,lsmask_lats=None,lakes=False,**kwargs):
         """
  plot land-sea mask image.
+
  land is colored with rgba tuple rgba_land.
  ocean is colored with rgba tuple rgba_ocean.
- Default land sea mask has 5 minute resolution.
+
+ If lakes=True, inland lakes are also colored with 
+ rgba_ocean (default is lakes=False).
+
+ Default land-sea mask has 5 minute resolution.
+
  To specify your own land-sea mask, set the 
- lsmask instance variable to a (nlats, nlons) array
- with 0's for ocean pixels and 1's for land pixels.
- The lsmask_lons instance variable should be a 1-d array
+ lsmask keyword to a (nlats, nlons) array
+ with 0's for ocean pixels, 1's for land pixels and
+ optionally 2's for inland lake pixels.
+ The lsmask_lons keyword should be a 1-d array
  with the longitudes of the mask, lsmask_lats should be
  a 1-d array with the latitudes.  Longitudes should be ordered
  from -180 W eastward, latitudes from -90 S northward.
+ If any of the lsmask, lsmask_lons or lsmask_lats keywords is not
+ set, the default land-sea mask is used.
 
  extra keyword 'ax' can be used to override the default axis instance.
         """
@@ -2417,8 +2427,8 @@ coordinates using the shpproj utility from the shapelib tools
             ax = self.ax
         else:
             ax = popd(kwargs,'ax')
-        # if lsmask instance variable not yet set, read in from file.
-        if self.lsmask is None:
+        # if lsmask keyword not given, read in from file.
+        if lsmask is None or lsmask_lons is None or lsmask_lats is None:
             # read in land/sea mask.
             lsmaskf = open(os.path.join(_datadir,'5minmask.bin'),'rb')
             nlons = 4320; nlats = nlons/2
@@ -2428,27 +2438,32 @@ coordinates using the shpproj utility from the shapelib tools
             mask = NX.reshape(NX.fromstring(lsmaskf.read(),NX.UInt8),(nlats,nlons))
             lsmaskf.close()
             # set instance variables.
+            lsmask = mask
+            lsmask_lons = lons
+            lsmask_lats = lats
+        if self.lsmask is None:
+            # transform mask to nx x ny regularly spaced native projection grid
+            # nx and ny chosen to have roughly the same horizontal
+            # resolution as mask.
+            nlons = len(lsmask_lons)
+            nlats = len(lsmask_lats)
+            dx = 2.*math.pi*self.rmajor/float(nlons)
+            nx = int((self.xmax-self.xmin)/dx)+1; ny = int((self.ymax-self.ymin)/dx)+1
+            # interpolate rgba values from proj='cyl' (geographic coords)
+            # to a rectangular map projection grid.
+            mask = self.transform_scalar(lsmask,lsmask_lons,\
+                                         lsmask_lats,nx,ny,order=0,masked=True)
+            # optionally, set lakes to ocean color.
+            if lakes:
+                mask = ma.where(mask==2,0,mask)
             self.lsmask = mask
-            self.lsmask_lons = lons
-            self.lsmask_lats = lats
-        # transform mask to nx x ny regularly spaced native projection grid
-        # nx and ny chosen to have roughly the same horizontal
-        # resolution as mask.
-        nlons = len(self.lsmask_lons)
-        nlats = len(self.lsmask_lats)
-        dx = 2.*math.pi*self.rmajor/float(nlons)
-        nx = int((self.xmax-self.xmin)/dx)+1; ny = int((self.ymax-self.ymin)/dx)+1
-        rgba = ma.ones((ny,nx,4),'d')
-        # interpolate rgba values from proj='cyl' (geographic coords)
-        # to a rectangular map projection grid.
-        mask = self.transform_scalar(self.lsmask,self.lsmask_lons,\
-                                     self.lsmask_lats,nx,ny,order=0,masked=True)
         # get axes background color (rgb) 
         # points outside projection limb will have this color.
         c = colors.ColorConverter()
         bgc = ax.get_axis_bgcolor()
         bgc = list(c.to_rgba(bgc))
         bgc[3]=0. # points outside projection limb transparent.
+        rgba = ma.ones((ny,nx,4),'d')
         for k in range(4):
             rgba[:,:,k] = ma.where(mask,rgba_land[k],rgba_ocean[k])
             # fill masked values with axes background color.
