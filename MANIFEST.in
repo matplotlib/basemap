@@ -54,6 +54,6 @@ include pyshapelib/shapelib/*.c pyshapelib/shapelib/*.h
 include pyshapelib/lib/dbflib/*.py
 include pyshapelib/lib/shapelib/*.py
 include MANIFEST.in 
-include data/seaice_gland5min
+include data/5minmask.bin
 include data/*_c.txt
 include data/*_l.txt
