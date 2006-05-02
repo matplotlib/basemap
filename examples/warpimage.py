@@ -1,6 +1,5 @@
 import pylab as P
 from matplotlib.toolkits.basemap import Basemap
-import matplotlib.colors as colors
 from matplotlib.numerix import ma
 
 # shows how to warp a png image from one map projection to another.
@@ -35,12 +34,6 @@ P.show()
 
 # define orthographic projection centered on North America.
 m = Basemap(projection='ortho',lat_0=50,lon_0=-100,resolution='l')
-# get rgba of axis background color
-# this will be used as a mask for values outside projection limb.
-bgc = P.gca().get_axis_bgcolor()
-c = colors.ColorConverter()
-bgc = list(c.to_rgba(bgc))
-bgc[3]=0. # make mask transparent.
 # transform to nx x ny regularly spaced native projection grid
 # nx and ny chosen to have roughly the same horizontal res as original image.
 dx = 2.*P.pi*m.rmajor/float(nlons)
@@ -50,8 +43,8 @@ rgba_warped = ma.zeros((ny,nx,4),'d')
 # values outside of projection limb will be masked.
 for k in range(4):
     rgba_warped[:,:,k] = m.transform_scalar(rgba[:,:,k],lons,lats,nx,ny,masked=True)
-    # fill masked values with axes background color.
-    rgba_warped[:,:,k] = rgba_warped[:,:,k].filled(fill_value=bgc[k])
+# make points outside projection limb transparent.
+rgba_warped = rgba_warped.filled(0.)
 # plot warped rgba image.
 im = m.imshow(rgba_warped)
 # draw coastlines.
