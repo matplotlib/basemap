@@ -1,4 +1,4 @@
-20060430:  version 0.9:
+20060502:  version 0.9:
            * updated for new matplotlib aspect ratio handling.
            Now maps will always have the correct aspect ratio.
            * if resolution keyword is set to None when Basemap
