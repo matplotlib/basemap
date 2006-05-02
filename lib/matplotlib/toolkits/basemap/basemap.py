@@ -2477,7 +2477,7 @@ coordinates using the shpproj utility from the shapelib tools
         bgc = ax.get_axis_bgcolor()
         bgc = list(c.to_rgba(bgc))
         bgc[3]=0. # points outside projection limb transparent.
-        rgba = ma.ones((ny,nx,4),'d')
+        rgba = ma.ones((ny,nx,4),'f')
         for k in range(4):
             rgba[:,:,k] = ma.where(mask,rgba_land[k],rgba_ocean[k])
             # fill masked values with axes background color.
