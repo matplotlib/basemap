@@ -15,8 +15,7 @@ import matplotlib.numerix as NX
 from matplotlib.numerix import ma
 from matplotlib.mlab import linspace
 from matplotlib.numerix.mlab import squeeze
-from matplotlib.cbook import popd
-import matplotlib.colors as colors
+from matplotlib.cbook import popd, is_scalar
 from shapelib import ShapeFile
 import dbflib, warnings
 
@@ -2462,26 +2461,20 @@ coordinates using the shpproj utility from the shapelib tools
             # interpolate rgba values from proj='cyl' (geographic coords)
             # to a rectangular map projection grid.
             mask = self.transform_scalar(lsmask,lsmask_lons,\
-                                         lsmask_lats,nx,ny,order=0,masked=True)
+                                         lsmask_lats,nx,ny,order=0,masked=255)
             self.lsmask = mask
         else:
             ny, nx = self.lsmask.shape
         # optionally, set lakes to ocean color.
         if lakes:
-            mask = ma.where(self.lsmask==2,0,self.lsmask)
+            mask = NX.where(self.lsmask==2,0,self.lsmask)
         else:
             mask = self.lsmask
-        # get axes background color (rgb) 
-        # points outside projection limb will have this color.
-        c = colors.ColorConverter()
-        bgc = ax.get_axis_bgcolor()
-        bgc = list(c.to_rgba(bgc))
-        bgc[3]=0. # points outside projection limb transparent.
-        rgba = ma.ones((ny,nx,4),'f')
+        rgba = NX.ones((ny,nx,4),'d')
         for k in range(4):
-            rgba[:,:,k] = ma.where(mask,rgba_land[k],rgba_ocean[k])
-            # fill masked values with axes background color.
-            rgba[:,:,k] = rgba[:,:,k].filled(fill_value=bgc[k])
+            rgba[:,:,k] = NX.where(mask,rgba_land[k],rgba_ocean[k])
+        # make points outside projection limb transparent.
+        rgba[:,:,3] = NX.where(mask==255,0,rgba[:,:,3])
         # plot mask as rgba image.
         im = self.imshow(rgba,interpolation='nearest',ax=ax)
 
@@ -2538,7 +2531,8 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order
  If checkbounds=False, and xout,yout are outside xin,yin, interpolated
  values will be clipped to values on boundary of input grid (xin,yin)
  if masked=False. If masked=True, the return value will be a masked
- array with those points masked.
+ array with those points masked. If masked is set to a number, then
+ points outside the range of xin and yin will be set to that number.
 
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
@@ -2629,8 +2623,10 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order
         dataout = NX.reshape(dataout,xout.shape)
     else:
         raise ValueError,'order keyword must be 0 or 1'
-    if masked:
+    if masked and isinstance(masked,bool):
         dataout = ma.masked_array(dataout,mask=xymask)
+    elif masked and is_scalar(masked):
+        dataout = NX.where(xymask,masked,dataout)
     return dataout
 
 def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
@@ -2655,7 +2651,8 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
  If checkbounds=False, and xout,yout are outside xin,yin, interpolated
  values will be clipped to values on boundary of input grid (xin,yin)
  if masked=False. If masked=True, the return value will be a masked
- array with those points masked.
+ array with those points masked. If masked is set to a number, then
+ points outside the range of xin and yin will be set to that number.
 
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
@@ -2732,8 +2729,10 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         dataout = datain[ycoordsi,xcoordsi]
     else:
         raise ValueError,'order keyword must be 0 or 1'
-    if masked:
+    if masked and isinstance(masked,bool):
         dataout = ma.masked_array(dataout,mask=xymask)
+    elif masked and is_scalar(masked):
+        dataout = NX.where(xymask,masked,dataout)
     return dataout
 
 def shiftgrid(lon0,datain,lonsin,start=True):
