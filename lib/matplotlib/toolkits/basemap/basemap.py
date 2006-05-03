@@ -2393,8 +2393,13 @@ coordinates using the shpproj utility from the shapelib tools
         """
  draw land-sea mask image.
 
- land is colored with rgba tuple rgba_land.
- ocean is colored with rgba tuple rgba_ocean.
+ land is colored with rgba integer tuple rgba_land.
+ ocean is colored with rgba integer tuple rgba_ocean.
+
+ For example, to color oceans blue and land green, use
+ rgba_ocean = (0,0,255,255) and rgba_land  = (0,255,0,255).
+ To make oceans transparent (useful if you just want to mask land
+ regions over another image), use rgba_ocean = (0,0,255,0).
 
  If lakes=True, inland lakes are also colored with 
  rgba_ocean (default is lakes=False).
@@ -2470,7 +2475,9 @@ coordinates using the shpproj utility from the shapelib tools
             mask = NX.where(self.lsmask==2,0,self.lsmask)
         else:
             mask = self.lsmask
-        rgba = NX.ones((ny,nx,4),'d')
+        rgba = NX.ones((ny,nx,4),'B')
+        rgba_land = NX.array(rgba_land,'B')
+        rgba_ocean = NX.array(rgba_ocean,'B')
         for k in range(4):
             rgba[:,:,k] = NX.where(mask,rgba_land[k],rgba_ocean[k])
         # make points outside projection limb transparent.
