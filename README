@@ -55,7 +55,8 @@ you have problems or questions.
 1) run 'python setup.py install' 
 
 This installs the basemap package including the 
-crude ('c') and low ('l') resolution boundary data files.
+crude ('c') and low ('l') resolution boundary data files,
+plus the 5-minute land/sea mask.
 If you also want the intermediate and high resolution boundary
 datasets, you'll also need step (2).
 
