@@ -46,7 +46,7 @@ topodat,x,y = m.transform_scalar(topoin,lons,lats,nx,ny,returnxy=True)
 im = m.imshow(topodat,cm.jet)
 l,b,w,h = ax.get_position()
 cax = fig.add_axes([l+w+0.075, b, 0.05, h],frameon=False) # setup colorbar axes
-fig.colorbar(im,tickfmt='%d', cax=cax) # draw colorbar
+fig.colorbar(im, cax=cax) # draw colorbar
 # plot blue dot on boulder, colorado and label it as such.
 xpt,ypt = m(-104.237,40.125) 
 m.plot([xpt],[ypt],'bo') 

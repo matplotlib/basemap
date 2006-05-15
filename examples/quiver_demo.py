@@ -35,7 +35,7 @@ cs = m.contourf(x,y,p[36:,:],15,cmap=cm.jet)
 # plot wind vectors over map.
 m.quiver(x,y,urot,vrot)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 m.drawcountries()
@@ -71,7 +71,7 @@ im = m.imshow(pdat,cm.jet)
 # plot wind vectors over map.
 m.quiver(xv,yv,udat,vdat)
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 m.drawcountries()

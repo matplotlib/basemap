@@ -41,7 +41,7 @@ im = m.imshow(topodatm,palette,norm=colors.normalize(vmin=0.0,vmax=3000.0,clip=F
 # setup colorbar axes instance.
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h])
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # plot blue dot on boulder, colorado and label it as such.
 xpt,ypt = m(-104.237,40.125) 

@@ -32,7 +32,7 @@ ax = fig.add_axes([0.1,0.1,0.75,0.75])
 im = m.imshow(array,origin='upper')
 # make a colorbar.
 cax = p.axes([0.875, 0.1, 0.05, 0.75]) # setup colorbar axes.
-p.colorbar(tickfmt='%d', cax=cax) # draw colorbar
+p.colorbar(cax=cax) # draw colorbar
 p.axes(ax)  # make the original axes current again
 # draw meridians and parallels.
 m.drawmeridians(p.linspace(llcrnrlon+0.1,urcrnrlon-0.1,5),labels=[0,0,0,1],fmt='%4.2f')
