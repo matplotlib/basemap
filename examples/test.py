@@ -30,7 +30,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = m.imshow(topoin,cm.jet)
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 #m.drawcountries()
@@ -108,7 +108,7 @@ im = m.imshow(topodat,cm.jet)
 ax = gca()
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 # draw parallels
@@ -138,7 +138,7 @@ im = m.imshow(topodat,cm.jet)
 ax = gca()
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 m.drawcountries()
@@ -169,7 +169,7 @@ im = m.imshow(topodat,cm.jet)
 ax = gca()
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 # draw parallels
@@ -199,7 +199,7 @@ im = m.imshow(topodat,cm.jet)
 ax = gca()
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 m.drawcountries()
@@ -231,7 +231,7 @@ im = m.imshow(topodat,cm.jet)
 ax = gca()
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 m.drawcountries()
@@ -261,7 +261,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = m.imshow(topodat,cm.jet)
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 m.drawcountries()
@@ -293,7 +293,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = m.imshow(topodat,cm.jet)
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 m.drawcountries()
@@ -327,7 +327,7 @@ im = m.imshow(topodat,cm.jet)
 im.set_clim(-4000.,3000.) # adjust range of colors.
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 m.drawcountries()
@@ -361,7 +361,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = m.imshow(topodat,cm.jet)
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 m.drawcountries()
@@ -391,7 +391,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = m.imshow(topodat,cm.jet)
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 m.drawcountries()
@@ -422,7 +422,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = m.imshow(topodat,cm.jet)
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 m.drawcoastlines()
 m.drawcountries()
@@ -461,7 +461,7 @@ palette.set_bad(ax.get_axis_bgcolor(), 0.0)
 im = m.imshow(topo,palette,norm=colors.normalize(clip=False))
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -487,7 +487,7 @@ x,y = m(*meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -512,7 +512,7 @@ x,y = m(*meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -537,7 +537,7 @@ x,y = m(*meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
 l,b,w,h = ax.get_position()
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
