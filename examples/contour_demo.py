@@ -21,7 +21,7 @@ CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 l,b,w,h=ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -45,7 +45,7 @@ CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 l,b,w,h=ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -69,7 +69,7 @@ CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 l,b,w,h=ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -93,7 +93,7 @@ CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 l,b,w,h=ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -118,7 +118,7 @@ CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 l,b,w,h=ax.get_position()
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-colorbar(tickfmt='%d', cax=cax) # draw colorbar
+colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
