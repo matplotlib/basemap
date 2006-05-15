@@ -1,6 +1,6 @@
 from matplotlib.toolkits.basemap import Basemap
 from matplotlib import rcParams
-import sys
+from matplotlib.ticker import MultipleLocator
 import pylab as P
 
 
@@ -28,7 +28,7 @@ CS = mnh.contourf(xnh,ynh,hgt,15,cmap=P.cm.Spectral)
 # colorbar on bottom.
 l,b,w,h = ax.get_position()
 cax = P.axes([l, b-0.05, w, 0.025]) # setup colorbar axes
-P.colorbar(tickfmt='%d', cax=cax, orientation='horizontal',clabels=CS.levels[0::4]) # draw colorbar
+P.colorbar(cax=cax, orientation='horizontal',ticks=CS.levels[0::4]) # draw colorbar
 P.axes(ax)  # make the original axes current again
 mnh.drawcoastlines(linewidth=0.5)
 delat = 30.
@@ -51,7 +51,7 @@ CS = msh.contourf(xsh,ysh,hgt,15,cmap=P.cm.Spectral)
 ax.apply_aspect()
 l,b,w,h = ax.get_position()
 cax = P.axes([l, b-0.05, w, 0.025]) # setup colorbar axes
-P.colorbar(tickfmt='%d', cax=cax,orientation='horizontal',clabels=CS.levels[0::4]) # draw colorbar
+P.colorbar(cax=cax,orientation='horizontal',ticks=MultipleLocator(320)) # draw colorbar
 P.axes(ax)  # make the original axes current again
 msh.drawcoastlines(linewidth=0.5)
 msh.drawparallels(circles,labels=[1,0,0,0])
@@ -74,7 +74,7 @@ CS = mnh.contourf(xnh,ynh,hgt,15,cmap=P.cm.RdBu)
 # colorbar on right
 l,b,w,h = ax.get_position()
 cax = P.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
-P.colorbar(tickfmt='%d', cax=cax, clabels=CS.levels[0::2]) # draw colorbar
+P.colorbar(cax=cax, ticks=MultipleLocator(160), format='%4i') # draw colorbar
 P.axes(ax)  # make the original axes current again
 mnh.drawcoastlines(linewidth=0.5)
 mnh.drawparallels(circles,labels=[1,0,0,0])
@@ -88,7 +88,7 @@ CS = msh.contourf(xsh,ysh,hgt,15,cmap=P.cm.RdBu)
 # colorbar on right.
 l,b,w,h = ax.get_position()
 cax = P.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
-P.colorbar(tickfmt='%d', cax=cax, clabels=CS.levels[0::2]) # draw colorbar
+P.colorbar(cax=cax, ticks=MultipleLocator(160), format='%4i') # draw colorbar
 P.axes(ax)  # make the original axes current again
 msh.drawcoastlines(linewidth=0.5)
 msh.drawparallels(circles,labels=[1,0,0,0])
