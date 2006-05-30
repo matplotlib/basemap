@@ -1140,7 +1140,7 @@ environment variable must be set."""
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
-    def fillcontinents(self,color=0.8,ax=None):
+    def fillcontinents(self,color='0.8',ax=None):
         """
  Fill continents.
 
