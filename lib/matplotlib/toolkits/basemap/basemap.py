@@ -2347,7 +2347,7 @@ coordinates using the shpproj utility from the shapelib tools
  distance between grid points.
 
  Extra keyword arguments (**kwargs) passed to quiver Axes method (see
- NX.quiver documentation for details).
+ pylab.quiver documentation for details).
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
