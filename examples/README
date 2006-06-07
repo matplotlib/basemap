@@ -69,7 +69,7 @@ map projection to another.
 garp.py makes a 'World According to Garp' map - an azimuthal equidistant
 projection centered on a specified location.  Straight lines from that
 location to any point on the map have true scale and show the shortest
-route. Shows how to use the included proj4 C extension to determine how
+route. Shows how to use the included pyproj module to determine how
 to specify the upper right and lower left corners of the map, needed to
 initialize a Basemap instance.
 

@@ -1,4 +1,5 @@
-from matplotlib.toolkits.basemap import Basemap, proj4
+from matplotlib.toolkits.basemap import Basemap
+import pyproj
 from pylab import title, show, arange, pi
 
 # the shortest route from the center of the map
@@ -10,7 +11,7 @@ from pylab import title, show, arange, pi
 # it will be to reach that destination.
 # The specified point shows up as a red dot in the center of the map.
 
-# This example shows how to use the proj4 module included in basemap
+# This example shows how to use the pyproj module included in basemap
 # to choose the lon/lat values for the corners of the map.
 
 # user enters the lon/lat of the point, and it's name
@@ -18,9 +19,9 @@ lon_0 = float(raw_input('input reference lon (degrees):'))
 lat_0 = float(raw_input('input reference lat (degrees):'))
 location = raw_input('name of location:')
 
-# use the proj4 module to find 4 corners of the map.
+# use the pyproj module to find 4 corners of the map.
 rsphere = 6370997
-p = proj4.Proj(proj='aeqd',lon_0=lon_0,lat_0=lat_0,R=rsphere)
+p = pyproj.Proj(proj='aeqd',lon_0=lon_0,lat_0=lat_0,R=rsphere)
 # upper right corner is 14000 km from center point.
 xurcrnr,yurcrnr = 14000000,14000000
 # find the lon/lat for the lower left and upper right corners.
