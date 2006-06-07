@@ -5,7 +5,8 @@
            instance is created, no boundary data sets are needed
            (methods to draw boundaries, like drawcoastlines, will 
            raise an exception).
-           * update to proj4 module.
+           * update to proj4 module - renamed pyproj to avoid 
+           conflicts with proj4 module from CDAT.
            * createfigure method deprecated, since maps
            will now automatically have the correct aspect ratio.
            * Added new projections Xpstere, Xplaea, Xpaeqd (where X
