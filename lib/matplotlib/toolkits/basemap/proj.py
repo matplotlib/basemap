@@ -1,5 +1,6 @@
 import matplotlib.numerix as NX
-import proj4, math
+import pyproj
+import math
 
 __version__ = '1.2'
 _dg2rad = math.radians(1.)
@@ -68,19 +69,19 @@ class Proj:
         self.llcrnrlon = llcrnrlon
         self.llcrnrlat = llcrnrlat
         if self.projection not in ['cyl','ortho','moll','robin','sinu']:
-            self._proj4 = proj4.Proj(projparams)
+            self._proj4 = pyproj.Proj(projparams)
             llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
         elif self.projection == 'cyl':
             llcrnrx = llcrnrlon
             llcrnry = llcrnrlat
         elif self.projection == 'ortho':
-            self._proj4 = proj4.Proj(projparams)
+            self._proj4 = pyproj.Proj(projparams)
             llcrnrx = -self.rmajor
             llcrnry = -self.rmajor
             urcrnrx = -llcrnrx
             urcrnry = -llcrnry
         elif self.projection in ['moll','robin','sinu']:
-            self._proj4 = proj4.Proj(projparams)
+            self._proj4 = pyproj.Proj(projparams)
             xtmp,urcrnry = self(projparams['lon_0'],90.)
             urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
             llcrnrx = -urcrnrx
@@ -91,7 +92,7 @@ class Proj:
         self.projparams['y_0']=-llcrnry
         # reset with x_0, y_0. 
         if self.projection != 'cyl':
-            self._proj4 = proj4.Proj(projparams)
+            self._proj4 = pyproj.Proj(projparams)
             llcrnry = 0.
             llcrnrx = 0.
         else:

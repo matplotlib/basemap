@@ -9,7 +9,8 @@ from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
 import sys, os, math, popen2
-from proj import Proj, proj4
+from proj import Proj
+import pyproj
 from greatcircle import GreatCircle, vinc_dist, vinc_pt
 import matplotlib.numerix as NX
 from matplotlib.numerix import ma
@@ -293,7 +294,7 @@ class Basemap:
             projparams['proj'] = 'stere'
             self.llcrnrlon = lon_0+45.
             self.urcrnrlon = lon_0-135.
-            proj = proj4.Proj(projparams)
+            proj = pyproj.Proj(projparams)
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
@@ -307,7 +308,7 @@ class Basemap:
             projparams['proj'] = 'stere'
             self.llcrnrlon = lon_0-45.
             self.urcrnrlon = lon_0+135.
-            proj = proj4.Proj(projparams)
+            proj = pyproj.Proj(projparams)
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
@@ -320,7 +321,7 @@ class Basemap:
             projparams['proj'] = 'laea'
             self.llcrnrlon = lon_0+45.
             self.urcrnrlon = lon_0-135.
-            proj = proj4.Proj(projparams)
+            proj = pyproj.Proj(projparams)
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
@@ -333,7 +334,7 @@ class Basemap:
             projparams['proj'] = 'laea'
             self.llcrnrlon = lon_0-45.
             self.urcrnrlon = lon_0+135.
-            proj = proj4.Proj(projparams)
+            proj = pyproj.Proj(projparams)
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
@@ -346,7 +347,7 @@ class Basemap:
             projparams['proj'] = 'aeqd'
             self.llcrnrlon = lon_0+45.
             self.urcrnrlon = lon_0-135.
-            proj = proj4.Proj(projparams)
+            proj = pyproj.Proj(projparams)
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
@@ -359,7 +360,7 @@ class Basemap:
             projparams['proj'] = 'aeqd'
             self.llcrnrlon = lon_0-45.
             self.urcrnrlon = lon_0+135.
-            proj = proj4.Proj(projparams)
+            proj = pyproj.Proj(projparams)
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
