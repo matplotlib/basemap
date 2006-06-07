@@ -1,7 +1,7 @@
 from matplotlib import rcParams
 from matplotlib import __version__ as matplotlib_version
 # check to make sure matplotlib is not too old.
-mpl_required_version = '0.88'
+mpl_required_version = '0.87.3'
 if matplotlib_version < mpl_required_version:
     raise ImportError('your matplotlib is too old - basemap '
                       'requires at least %s'%mpl_required_version)
