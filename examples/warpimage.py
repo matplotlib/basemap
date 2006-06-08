@@ -1,6 +1,8 @@
 import pylab as P
 from matplotlib.toolkits.basemap import Basemap
 from matplotlib.numerix import ma
+from matplotlib.image import pil_to_array
+from PIL import Image
 
 # shows how to warp a png image from one map projection to another.
 # image from http://www.space-graphics.com/earth_topo-bathy.htm, 
@@ -10,9 +12,9 @@ from matplotlib.numerix import ma
 # This image is distributed as FREEWARE for Personal use only
 # NO Commercial use or Commercial redistribution allowed in any form
 
-# read in png image to rgba array of normalized floats.
-rgba = P.imread('e_topo_bathy_4k.png')
-# reverse lats
+# read in jpeg image to rgba array of normalized floats.
+pilImage = Image.open('e_topo_bathy_4k.jpg')
+rgba = pil_to_array(pilImage)
 rgba = rgba[::-1,:,:]
 # define lat/lon grid that image spans (projection='cyl').
 nlons = rgba.shape[1]; nlats = rgba.shape[0]
