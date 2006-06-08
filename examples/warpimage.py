@@ -4,7 +4,7 @@ from matplotlib.numerix import ma
 from matplotlib.image import pil_to_array
 from PIL import Image
 
-# shows how to warp a png image from one map projection to another.
+# shows how to warp an image from one map projection to another.
 # image from http://www.space-graphics.com/earth_topo-bathy.htm, 
 # from the readme.txt that comes with the image:
 # e_topo-bathy - Global Earth planet imagery (c)2004
