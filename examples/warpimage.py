@@ -16,7 +16,7 @@ from PIL import Image
 try:
     pilImage = Image.open('e_topo_bathy_4k.jpg')
 except:
-    raise IOError, 'please grab image from http://www.space-graphics.com/earth_topo-bathy.htm'
+    raise IOError, 'please grab image from http://www.space-graphics.com/downloads/maps/e_topobathy/e_topo_bathy_4k.zip'
 rgba = pil_to_array(pilImage)
 rgba = rgba.astype(P.Float32)/255. # convert to normalized floats.
 
