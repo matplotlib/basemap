@@ -13,9 +13,13 @@ from PIL import Image
 # NO Commercial use or Commercial redistribution allowed in any form
 
 # read in jpeg image to rgba array of normalized floats.
-pilImage = Image.open('e_topo_bathy_4k.jpg')
+try:
+    pilImage = Image.open('e_topo_bathy_4k.jpg')
+except:
+    raise IOError, 'please grab image from http://www.space-graphics.com/earth_topo-bathy.htm'
 rgba = pil_to_array(pilImage)
-rgba = rgba[::-1,:,:]
+rgba = rgba.astype(P.Float32)/255. # convert to normalized floats.
+
 # define lat/lon grid that image spans (projection='cyl').
 nlons = rgba.shape[1]; nlats = rgba.shape[0]
 delta = 360./float(nlons)
