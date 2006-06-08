@@ -26,8 +26,8 @@ _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
-__version__ = '0.9'
-__revision__ = '20060502'
+__version__ = '0.9.1'
+__revision__ = '20060608'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)

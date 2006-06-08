@@ -1,4 +1,6 @@
-20060502:  version 0.9:
+20060608:  version 0.9.1 (not yet released):
+           * make sure llcrnrlat and llcrnrlon are not at poles for mercator.
+20060609:  version 0.9:
            * updated for new matplotlib aspect ratio handling.
            Now maps will always have the correct aspect ratio.
            * if resolution keyword is set to None when Basemap
