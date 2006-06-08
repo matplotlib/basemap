@@ -372,10 +372,12 @@ class Basemap:
             projparams['lon_0'] = lon_0
             proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection == 'merc':
-            if math.fabs(llcrnrlat) > 89.99 or math.fabs(urcrnrlat) > 89.99:
-                raise ValueError, 'llcrnrlat and urcrnlat must not be at poles for mercator projection (llcrnrlat and urcrnrlat currently set to %s and %s)' % (llcrnrlat,urcrnrlat)
             if lat_ts is None:
                 raise ValueError, 'must specify lat_ts for Mercator basemap'
+            if llcrnrlat == -90. or urcrnrlon == 90.:
+                raise ValueError, 'must specify llcrnrlat and urcrnrlat for Mercator basemap, default values of -90 and 90 will not work'
+            if math.fabs(llcrnrlat) > 89.99 or math.fabs(urcrnrlat) > 89.99:
+                raise ValueError, 'llcrnrlat and urcrnlat must not be at poles for mercator projection (llcrnrlat and urcrnrlat currently set to %s and %s)' % (llcrnrlat,urcrnrlat)
             projparams['lat_ts'] = lat_ts
             proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection in ['tmerc','gnom','cass','poly','ortho'] :
