@@ -63,8 +63,9 @@ polarmaps.py illustrates the use of the special-case versions of the
 stereographic, lambert azimuthal equal area, azimuthal equidistant 
 projections (prefixed by 'np' and 'sp').
 
-warpimage.py shows how to interpolate (warp) a png image from one
-map projection to another.
+warpimage.py shows how to interpolate (warp) an image from one
+map projection to another. Requires PIL, and an image from
+http://www.space-graphics.com/earth_topo-bathy.htm, 
 
 garp.py makes a 'World According to Garp' map - an azimuthal equidistant
 projection centered on a specified location.  Straight lines from that
@@ -74,5 +75,5 @@ to specify the upper right and lower left corners of the map, needed to
 initialize a Basemap instance.
 
 run_all.py is a driver script that runs all the examples except fcstmaps.py,
-and testgdal.py (which rely on external dependencies).
+testgdal.py and warpimage.py (which rely on external dependencies).
 
