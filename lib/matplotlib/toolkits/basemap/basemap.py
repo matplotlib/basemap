@@ -380,6 +380,10 @@ class Basemap:
             if llcrnrlat > 89.99: llcrnrlat = 89.99
             if urcrnrlat < -89.99: urcrnrlat = -89.99
             if urcrnrlat > 89.99: urcrnrlat = 89.99
+            self.llcrnrlat = float(llcrnrlat)
+            self.urcrnrlat = float(urcrnrlat)
+            self.latmin = self.llcrnrlat
+            self.latmax = self.urcrnrlat
             projparams['lat_ts'] = lat_ts
             proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection in ['tmerc','gnom','cass','poly','ortho'] :
