@@ -374,10 +374,12 @@ class Basemap:
         elif projection == 'merc':
             if lat_ts is None:
                 raise ValueError, 'must specify lat_ts for Mercator basemap'
-            if llcrnrlat == -90. or urcrnrlon == 90.:
-                raise ValueError, 'must specify llcrnrlat and urcrnrlat for Mercator basemap, default values of -90 and 90 will not work'
-            if math.fabs(llcrnrlat) > 89.99 or math.fabs(urcrnrlat) > 89.99:
-                raise ValueError, 'llcrnrlat and urcrnlat must not be at poles for mercator projection (llcrnrlat and urcrnrlat currently set to %s and %s)' % (llcrnrlat,urcrnrlat)
+            # clip plot region to be within -89.99S to 89.99N
+            # (mercator is singular at poles)
+            if llcrnrlat < -89.99: llcrnrlat = -89.99
+            if llcrnrlat > 89.99: llcrnrlat = 89.99
+            if urcrnrlat < -89.99: urcrnrlat = -89.99
+            if urcrnrlat > 89.99: urcrnrlat = 89.99
             projparams['lat_ts'] = lat_ts
             proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         elif projection in ['tmerc','gnom','cass','poly','ortho'] :
@@ -2377,6 +2379,50 @@ coordinates using the shpproj utility from the shapelib tools
             ax.hold(h)
         try:
             ret =  ax.quiver(x,y,u,v,scale,**kwargs)
+            try:
+                pylab.draw_if_interactive()
+            except:
+                pass
+        except:
+            ax.hold(b)
+            raise
+        ax.hold(b)
+        # set axes limits to fit map region.
+        self.set_axes_limits(ax=ax)
+        # make sure axis ticks are turned off.
+        if self.noticks:
+            ax.set_xticks([])
+            ax.set_yticks([])
+        return ret
+
+    def quiver2(self, x, y, u, v, **kwargs):
+        """
+ Make a vector plot (u, v) with arrows on the map projection grid (x,y)
+ If scale is specified, it is used to scale the vectors. If scale=None
+ (default) arrows are scaled to longest one is equal to the maximum
+ distance between grid points.
+
+ Extra keyword arguments (**kwargs) passed to quiver2 Axes method (see
+ pylab.quiver2 documentation for details).
+ extra keyword 'ax' can be used to override the default axis instance.
+        """
+        if not kwargs.has_key('ax') and self.ax is None:
+            try:
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
+        else:
+            ax = popd(kwargs,'ax')
+        # allow callers to override the hold state by passing hold=True|False
+        b = ax.ishold()
+        h = popd(kwargs, 'hold', None)
+        if h is not None:
+            ax.hold(h)
+        try:
+            ret =  ax.quiver2(x,y,u,v,**kwargs)
             try:
                 pylab.draw_if_interactive()
             except:
