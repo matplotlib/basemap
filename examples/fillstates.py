@@ -8,8 +8,8 @@ m = Basemap(llcrnrlon=-119,llcrnrlat=22,urcrnrlon=-64,urcrnrlat=49,
             projection='lcc',lat_1=33,lat_2=45,lon_0=-95)
 # draw state boundaries.
 # data from U.S Census Bureau
-# http://www.census.gov/geo/www/cob/st1990.html
-shp_info = m.readshapefile('st99_d90','states',drawbounds=True)
+# http://www.census.gov/geo/www/cob/st2000.html
+shp_info = m.readshapefile('st99_d00','states',drawbounds=True)
 # population density by state from
 # http://en.wikipedia.org/wiki/List_of_U.S._states_by_population_density
 popdensity = {
@@ -72,7 +72,8 @@ vmin = 0; vmax = 450 # set range.
 print m.states_info[0].keys()
 for shapedict in m.states_info:
     statename = shapedict['NAME']
-    if statename != 'District of Columbia': # skip DC, it's not a state!
+    # skip DC and Puerto Rico.
+    if statename not in ['District of Columbia','Puerto Rico']:
         pop = popdensity[statename]
         # calling colormap with value between 0 and 1 returns
         # rgba value.  Invert color range (hot colors are high
@@ -82,7 +83,8 @@ for shapedict in m.states_info:
 # cycle through state names, color each one.
 for nshape,seg in enumerate(m.states):
     xx,yy = zip(*seg)
-    if statenames[nshape] != 'District of Columbia': # skip DC
+    # skip DC and Puerto Rico.
+    if statenames[nshape] not in ['District of Columbia','Puerto Rico']:
         color = rgb2hex(colors[statenames[nshape]]) 
         p.fill(xx,yy,color,edgecolor=color)
 # draw meridians and parallels.
