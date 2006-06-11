@@ -422,7 +422,22 @@ class Basemap:
         elif projection == 'sinu':
             proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         else:
-            raise ValueError, 'unsupported projection'
+            raise ValueError, """
+  unsupported projection, use 'cyl' - cylindrical equidistant, 'merc' -
+  mercator, 'lcc' - lambert conformal conic, 'stere' - stereographic,
+  'npstere' - stereographic, special case centered on north pole.
+  'spstere' - stereographic, special case centered on south pole,
+  'aea' - albers equal area conic, 'tmerc' - transverse mercator,
+  'aeqd' - azimuthal equidistant, 'mill' - miller cylindrical,
+  'npaeqd' - azimuthal equidistant, special case centered on north pole,
+  'spaeqd' - azimuthal equidistant, special case centered on south pole,
+  'eqdc' - equidistant conic, 'laea' - lambert azimuthal equal area,
+  'nplaea' - lambert azimuthal, special case centered on north pole,
+  'splaea' - lambert azimuthal, special case centered on south pole,
+  'cass' - cassini-soldner (transverse cylindrical equidistant),
+  'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
+  'sinu' - sinusoidal, 'moll' - mollweide, 'robin' - robinson,
+  or 'gnom' - gnomonic.  You tried '%s'""" % projection
 
         # make sure axis ticks are suppressed.
         self.noticks = suppress_ticks
