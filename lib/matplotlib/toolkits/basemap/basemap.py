@@ -2367,7 +2367,7 @@ coordinates using the shpproj utility from the shapelib tools
 
     def quiver(self, x, y, u, v, scale=None, **kwargs):
         """
- Make a vector plot (u, v) with arrows on the map projection grid (x,y)
+ Make a vector plot (u, v) with arrows on the map.
  If scale is specified, it is used to scale the vectors. If scale=None
  (default) arrows are scaled to longest one is equal to the maximum
  distance between grid points.
@@ -2416,10 +2416,7 @@ coordinates using the shpproj utility from the shapelib tools
 
     def quiver2(self, x, y, u, v, **kwargs):
         """
- Make a vector plot (u, v) with arrows on the map projection grid (x,y)
- If scale is specified, it is used to scale the vectors. If scale=None
- (default) arrows are scaled to longest one is equal to the maximum
- distance between grid points.
+ Make a vector plot (u, v) with arrows on the map.
 
  Extra keyword arguments (**kwargs) passed to quiver2 Axes method (see
  pylab.quiver2 documentation for details).
