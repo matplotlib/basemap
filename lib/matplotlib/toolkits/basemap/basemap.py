@@ -2365,56 +2365,7 @@ coordinates using the shpproj utility from the shapelib tools
             pass
         return CS
 
-    def quiver(self, x, y, u, v, scale=None, **kwargs):
-        """
- Make a vector plot (u, v) with arrows on the map.
- If scale is specified, it is used to scale the vectors. If scale=None
- (default) arrows are scaled to longest one is equal to the maximum
- distance between grid points.
-
- Extra keyword arguments (**kwargs) passed to quiver Axes method (see
- pylab.quiver documentation for details).
- extra keyword 'ax' can be used to override the default axis instance.
-        """
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = pylab.gca()
-            except:
-                import pylab
-                ax = pylab.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = popd(kwargs,'ax')
-        ny = x.shape[0]; nx = x.shape[1]
-        if scale is None:
-            scale = max([(self.xmax-self.xmin)/(nx-1),(self.ymax-self.ymin)/(ny-1)])
-        else:
-            scale = scale
-        # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
-        h = popd(kwargs, 'hold', None)
-        if h is not None:
-            ax.hold(h)
-        try:
-            ret =  ax.quiver(x,y,u,v,scale,**kwargs)
-            try:
-                pylab.draw_if_interactive()
-            except:
-                pass
-        except:
-            ax.hold(b)
-            raise
-        ax.hold(b)
-        # set axes limits to fit map region.
-        self.set_axes_limits(ax=ax)
-        # make sure axis ticks are turned off.
-        if self.noticks:
-            ax.set_xticks([])
-            ax.set_yticks([])
-        return ret
-
-    def quiver2(self, x, y, u, v, **kwargs):
+    def quiver(self, x, y, u, v, **kwargs):
         """
  Make a vector plot (u, v) with arrows on the map.
 
@@ -2438,7 +2389,7 @@ coordinates using the shpproj utility from the shapelib tools
         if h is not None:
             ax.hold(h)
         try:
-            ret =  ax.quiver2(x,y,u,v,**kwargs)
+            ret =  ax.quiver(x,y,u,v,**kwargs)
             try:
                 pylab.draw_if_interactive()
             except:
