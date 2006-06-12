@@ -2369,8 +2369,8 @@ coordinates using the shpproj utility from the shapelib tools
         """
  Make a vector plot (u, v) with arrows on the map.
 
- Extra keyword arguments (**kwargs) passed to quiver2 Axes method (see
- pylab.quiver2 documentation for details).
+ Extra keyword arguments (**kwargs) passed to quiver Axes method (see
+ pylab.quiver documentation for details).
  extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
