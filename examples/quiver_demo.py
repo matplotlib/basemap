@@ -33,7 +33,8 @@ urot,vrot,x,y = m.rotate_vector(u[36:,:],v[36:,:],lons[36:,:],lats[36:,:],return
 # plot filled contours over map.
 cs = m.contourf(x,y,p[36:,:],15,cmap=cm.jet)
 # plot wind vectors over map.
-m.quiver(x,y,urot,vrot)
+Q = m.quiver2(x,y,urot,vrot)
+qk = quiverkey(Q, 0.95, 1.05, 25, '25 m/s', labelpos='W')
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -50,7 +51,7 @@ meridians = arange(-180,180,delon)
 m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Surface Winds Winds and Pressure',y=1.075)
 show()
-
+ 
 # plot vectors in map projection coordinates.
 
 # north polar projection.
@@ -69,7 +70,8 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map
 im = m.imshow(pdat,cm.jet)
 # plot wind vectors over map.
-m.quiver(xv,yv,udat,vdat)
+Q = m.quiver2(xv,yv,udat,vdat)
+qk = quiverkey(Q, 0.95, 1.05, 25, '25 m/s', labelpos='W')
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
