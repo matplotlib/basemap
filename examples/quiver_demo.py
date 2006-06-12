@@ -33,7 +33,7 @@ urot,vrot,x,y = m.rotate_vector(u[36:,:],v[36:,:],lons[36:,:],lats[36:,:],return
 # plot filled contours over map.
 cs = m.contourf(x,y,p[36:,:],15,cmap=cm.jet)
 # plot wind vectors over map.
-Q = m.quiver2(x,y,urot,vrot)
+Q = m.quiver(x,y,urot,vrot)
 qk = quiverkey(Q, 0.95, 1.05, 25, '25 m/s', labelpos='W')
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
@@ -70,7 +70,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map
 im = m.imshow(pdat,cm.jet)
 # plot wind vectors over map.
-Q = m.quiver2(xv,yv,udat,vdat)
+Q = m.quiver(xv,yv,udat,vdat)
 qk = quiverkey(Q, 0.95, 1.05, 25, '25 m/s', labelpos='W')
 cax = axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
