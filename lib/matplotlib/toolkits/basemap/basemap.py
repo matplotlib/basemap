@@ -2365,11 +2365,11 @@ coordinates using the shpproj utility from the shapelib tools
             pass
         return CS
 
-    def quiver(self, x, y, u, v, **kwargs):
+    def quiver(self, x, y, u, v, *args, **kwargs):
         """
  Make a vector plot (u, v) with arrows on the map.
 
- Extra keyword arguments (**kwargs) passed to quiver Axes method (see
+ Extra arguments (*args and **kwargs) passed to quiver Axes method (see
  pylab.quiver documentation for details).
  extra keyword 'ax' can be used to override the default axis instance.
         """
@@ -2389,7 +2389,7 @@ coordinates using the shpproj utility from the shapelib tools
         if h is not None:
             ax.hold(h)
         try:
-            ret =  ax.quiver(x,y,u,v,**kwargs)
+            ret =  ax.quiver(x,y,u,v,*args,**kwargs)
             try:
                 pylab.draw_if_interactive()
             except:
