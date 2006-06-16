@@ -43,6 +43,7 @@ include examples/fillstates.py
 include examples/run_all.py
 include examples/polarmaps.py
 include examples/warpimage.py
+include examples/pnganim.py
 include examples/garp.py
 include examples/README
 include lib/matplotlib/toolkits/__init__.py
