@@ -56,7 +56,9 @@ URLbase="http://www.cdc.noaa.gov/cgi-bin/nph-nc/Datasets/ncep.reanalysis/surface
 URL=URLbase+'slp.'+YYYY+'.nc'
 URLu=URLbase+'uwnd.sig995.'+YYYY+'.nc'
 URLv=URLbase+'vwnd.sig995.'+YYYY+'.nc'
-print URL+'\n'
+print URL
+print URLu
+print URLv
 try:
     data = client.open(URL)
     datau = client.open(URLu)
@@ -68,7 +70,7 @@ except:
 print data.keys()
 print datau.keys()
 print datav.keys()
-latitudes = data['lat'][:].tolist()
+latitudes = data['lat'][:]
 longitudes = data['lon'][:].tolist()
 times = data['time'][:]
 # put times in YYYYMMDDHH format.
@@ -81,7 +83,7 @@ if YYYYMMDDHH1 not in dates or YYYYMMDDHH2 not in dates:
 # find indices bounding desired times.
 ntime1 = dates.index(YYYYMMDDHH1)
 ntime2 = dates.index(YYYYMMDDHH2)
-print ntime1,ntime2
+print 'ntime1,ntime2:',ntime1,ntime2
 if ntime1 >= ntime2:
     raise ValueError,'date2 must be greater than date1'
 # get sea level pressure and 10-m wind data.
@@ -100,14 +102,14 @@ u = p.zeros((uin.shape[0],uin.shape[1],uin.shape[2]+1),'d')
 u[:,:,0:-1] = uin; u[:,:,-1] = uin[:,:,0]
 v = p.zeros((vin.shape[0],vin.shape[1],vin.shape[2]+1),'d')
 v[:,:,0:-1] = vin; v[:,:,-1] = vin[:,:,0]
-longitudes.append(360.)
-longitudes = p.array(longitudes)
-latitudes = p.array(latitudes)
+longitudes.append(360.); longitudes = p.array(longitudes)
 # make 2-d grid of lons, lats
 lons, lats = p.meshgrid(longitudes,latitudes)
+print 'min/max slp,u,v'
 print slp.min(), slp.max()
 print uin.min(), uin.max()
 print vin.min(), vin.max()
+print 'dates'
 print datelabels
 # make orthographic basemap.
 m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
@@ -134,10 +136,10 @@ for nt,date in enumerate(datelabels):
     # in longitude).  Otherwise, interpolation is messed up.
     # also reverse latitudes (since interpolation expects monotonically
     # increasing x and y).
-    utmp,lons2 = shiftgrid(180.,u[nt,::-1,:],longitudes,start=False)
-    vtmp,lons2 = shiftgrid(180.,v[nt,::-1,:],longitudes,start=False)
+    ugrid,newlons = shiftgrid(180.,u[nt,::-1,:],longitudes,start=False)
+    vgrid,newlons = shiftgrid(180.,v[nt,::-1,:],longitudes,start=False)
     # transform vectors to projection grid.
-    urot,vrot,xx,yy = m.transform_vector(utmp,vtmp,lons2,latitudes[::-1],51,51,returnxy=True)
+    urot,vrot,xx,yy = m.transform_vector(ugrid,vgrid,newlons,latitudes[::-1],51,51,returnxy=True)
     # plot wind vectors over map.
     Q = m.quiver(xx,yy,urot,vrot,scale=500)
     # draw coastlines, parallels, meridians, title.
