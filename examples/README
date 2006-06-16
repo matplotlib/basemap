@@ -74,6 +74,8 @@ route. Shows how to use the included pyproj module to determine how
 to specify the upper right and lower left corners of the map, needed to
 initialize a Basemap instance.
 
+pnganim.py shows how to make an animation.
+
 run_all.py is a driver script that runs all the examples except fcstmaps.py,
-testgdal.py and warpimage.py (which rely on external dependencies).
+testgdal.py, warpimage.py and pnganim.py (which rely on external dependencies).
 
