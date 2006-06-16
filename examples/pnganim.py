@@ -113,13 +113,15 @@ print 'dates'
 print datelabels
 # make orthographic basemap.
 m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
-p.ion()
-fig=p.figure()
+p.ion() # interactive mode on.
 # set desired contour levels.
 clevs = p.arange(960,1061,5)
+# compute native x,y coordinates of grid.
 x, y = m(lons, lats)
+# define parallels and meridians to draw.
 parallels = p.arange(-80.,90,20.)
 meridians = p.arange(0.,360.,20.)
+# number of repeated frames at beginning and end is n1.
 nframe = 0; n1 = 10
 # loop over times, make contour plots, draw coastlines, 
 # parallels, meridians and title.
