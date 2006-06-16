@@ -2770,7 +2770,7 @@ def shiftgrid(lon0,datain,lonsin,start=True):
         input grid (with the range of lonsin).
  datain:  original data.
  lonsin:  original longitudes.
- start[True]: if True, lon0 represents he starting longitude
+ start[True]: if True, lon0 represents the starting longitude
  of the new grid. if False, lon0 is the ending longitude.
 
  returns dataout,lonsout (data and longitudes on shifted grid).
