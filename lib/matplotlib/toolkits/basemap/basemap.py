@@ -1880,7 +1880,8 @@ coordinates using the shpproj utility from the shapelib tools
 
  lons, lats must be rank-1 arrays containing longitudes and latitudes
  (in degrees) of datin grid in increasing order
- (i.e. from Greenwich meridian eastward, and South Pole northward).
+ (i.e. from dateline eastward, and South Pole northward).
+ lons must fit within range -180 to 180.
 
  if returnxy=True, the x and y values of the native map projection grid
  are also returned.
@@ -1894,6 +1895,8 @@ coordinates using the shpproj utility from the shapelib tools
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
         """
+        if max(lons) > 180.0:
+            raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
         if returnxy:
             lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         else:
@@ -1915,7 +1918,8 @@ coordinates using the shpproj utility from the shapelib tools
 
  lons, lats must be rank-1 arrays containing longitudes and latitudes
  (in degrees) of datin grid in increasing order
- (i.e. from Greenwich meridian eastward, and South Pole northward).
+ (i.e. from dateline eastward, and South Pole northward).
+ lons must fit within range -180 to 180.
 
  The input vector field is defined in spherical coordinates (it
  has eastward and northward components) while the output
@@ -1934,6 +1938,8 @@ coordinates using the shpproj utility from the shapelib tools
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
         """
+        if max(lons) > 180.0:
+            raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         # interpolate to map projection coordinates.
         if _has_arrindexing:
