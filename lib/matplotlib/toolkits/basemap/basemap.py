@@ -1895,7 +1895,14 @@ coordinates using the shpproj utility from the shapelib tools
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
         """
-        if max(lons) > 180.0:
+        # check that lons, lats increasing
+        delon = lons[1:]-lons[0:-1]
+        delat = lats[1:]-lats[0:-1]
+        if min(delon) < 0. or min(delat) < 0.:
+            raise ValueError, 'lons and lats must be increasing!'
+        # check that lons in -180,180
+        # allow for wraparound point to be outside.
+        if math.fabs(lons[-1]-lons[0]-360.) > 1.e-4 and (lons[-1] > 180.0 or lons[0] < -180.0):
             raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
         if returnxy:
             lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
@@ -1938,7 +1945,14 @@ coordinates using the shpproj utility from the shapelib tools
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
         """
-        if max(lons) > 180.0:
+        # check that lons, lats increasing
+        delon = lons[1:]-lons[0:-1]
+        delat = lats[1:]-lats[0:-1]
+        if min(delon) < 0. or min(delat) < 0.:
+            raise ValueError, 'lons and lats must be increasing!'
+        # check that lons in -180,180
+        # allow for wraparound point to be outside.
+        if math.fabs(lons[-1]-lons[0]-360.) > 1.e-4 and (lons[-1] > 180.0 or lons[0] < -180.0):
             raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         # interpolate to map projection coordinates.
