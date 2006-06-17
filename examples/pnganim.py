@@ -114,6 +114,9 @@ print datelabels
 # make orthographic basemap.
 m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
 p.ion() # interactive mode on.
+# create figure, add axes (leaving room for colorbar on right)
+fig = p.figure()
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # set desired contour levels.
 clevs = p.arange(960,1061,5)
 # compute native x,y coordinates of grid.
@@ -123,9 +126,10 @@ parallels = p.arange(-80.,90,20.)
 meridians = p.arange(0.,360.,20.)
 # number of repeated frames at beginning and end is n1.
 nframe = 0; n1 = 10
+l,b,w,h=ax.get_position()
 # loop over times, make contour plots, draw coastlines, 
 # parallels, meridians and title.
-for nt,date in enumerate(datelabels):
+for nt,date in enumerate(datelabels[1:]):
     CS = m.contour(x,y,slp[nt,:,:],clevs,linewidths=0.5,colors='k',animated=True)
     CS = m.contourf(x,y,slp[nt,:,:],clevs,cmap=p.cm.RdBu_r,animated=True)
     # plot wind vectors on lat/lon grid.
@@ -144,11 +148,17 @@ for nt,date in enumerate(datelabels):
     urot,vrot,xx,yy = m.transform_vector(ugrid,vgrid,newlons,latitudes[::-1],51,51,returnxy=True)
     # plot wind vectors over map.
     Q = m.quiver(xx,yy,urot,vrot,scale=500)
+    # make quiver key.
+    qk = p.quiverkey(Q, 1.1, 1.03, 20, '20 m/s', labelpos='W')
     # draw coastlines, parallels, meridians, title.
     m.drawcoastlines(linewidth=1.5)
     m.drawparallels(parallels)
     m.drawmeridians(meridians)
     p.title('SLP and Wind Vectors '+date)
+    if nt == 0: # plot colorbar on a separate axes (only for first frame)
+        cax = p.axes([l+w-0.05, b, 0.03, h]) # setup colorbar axes
+        fig.colorbar(CS,drawedges=True, cax=cax) # draw colorbar
+        p.axes(ax) # reset current axes
     p.draw() # draw the plot
     # save first and last frame n1 times 
     # (so gif animation pauses at beginning and end)
@@ -159,7 +169,7 @@ for nt,date in enumerate(datelabels):
     else:
        p.savefig('anim%03i'%nframe+'.png')
        nframe = nframe + 1
-    p.gca().clear() # clear the axes for the next plot.
+    ax.clear() # clear the axes for the next plot.
 
 print """
 Now display animation using imagemagick 'animate -delay 10 anim*png'
