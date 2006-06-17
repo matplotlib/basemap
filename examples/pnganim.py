@@ -149,7 +149,7 @@ for nt,date in enumerate(datelabels[1:]):
     # plot wind vectors over map.
     Q = m.quiver(xx,yy,urot,vrot,scale=500)
     # make quiver key.
-    qk = p.quiverkey(Q, 1.1, 1.03, 20, '20 m/s', labelpos='W')
+    qk = p.quiverkey(Q, 0.1, 0.1, 20, '20 m/s', labelpos='W')
     # draw coastlines, parallels, meridians, title.
     m.drawcoastlines(linewidth=1.5)
     m.drawparallels(parallels)
@@ -158,6 +158,7 @@ for nt,date in enumerate(datelabels[1:]):
     if nt == 0: # plot colorbar on a separate axes (only for first frame)
         cax = p.axes([l+w-0.05, b, 0.03, h]) # setup colorbar axes
         fig.colorbar(CS,drawedges=True, cax=cax) # draw colorbar
+        cax.text(0.0,-0.05,'mb')
         p.axes(ax) # reset current axes
     p.draw() # draw the plot
     # save first and last frame n1 times 
