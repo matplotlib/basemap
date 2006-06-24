@@ -2589,6 +2589,16 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order
 
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
+
+ If datain is a masked array and order=1 (bilinear interpolation) is 
+ used, elements of dataout will be masked if any of the four surrounding
+ points in datain are masked.  To avoid this, do the interpolation in two
+ passes, first with order=1 (producing dataout1), then with order=0
+ (producing dataout2).  Then replace all the masked values in dataout1
+ with the corresponding elements in dataout2 (using numerix.where).
+ This effectively uses nearest neighbor interpolation if any of the
+ four surrounding points in datain are masked, and bilinear interpolation
+ otherwise.
     """
     # xin and yin must be monotonically increasing.
     if xin[-1]-xin[0] < 0 or yin[-1]-yin[0] < 0:
@@ -2711,6 +2721,16 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
 
  The order keyword can be 0 for nearest-neighbor interpolation,
  or 1 for bilinear interpolation (default 1).
+
+ If datain is a masked array and order=1 (bilinear interpolation) is 
+ used, elements of dataout will be masked if any of the four surrounding
+ points in datain are masked.  To avoid this, do the interpolation in two
+ passes, first with order=1 (producing dataout1), then with order=0
+ (producing dataout2).  Then replace all the masked values in dataout1
+ with the corresponding elements in dataout2 (using numerix.where).
+ This effectively uses nearest neighbor interpolation if any of the
+ four surrounding points in datain are masked, and bilinear interpolation
+ otherwise.
     """
     # xin and yin must be monotonically increasing.
     if xin[-1]-xin[0] < 0 or yin[-1]-yin[0] < 0:
