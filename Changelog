@@ -1,7 +1,8 @@
-20060612:  version 0.9.1 (not yet released):
+20060629:  version 0.9.1 (not yet released):
            * make sure llcrnrlat and llcrnrlon are not at poles for mercator.
            * use Eric Firing's new quiver in Basemap quiver method.
            * interp functions now work with masked arrays.
+           * added some sanity checks for projection parameters.
 20060609:  version 0.9:
            * updated for new matplotlib aspect ratio handling.
            Now maps will always have the correct aspect ratio.
