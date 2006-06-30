@@ -27,7 +27,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
 __version__ = '0.9.1'
-__revision__ = '20060622'
+__revision__ = '20060629'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -220,6 +220,15 @@ class Basemap:
         self.llcrnrlat = float(llcrnrlat)
         self.urcrnrlon = float(urcrnrlon)
         self.urcrnrlat = float(urcrnrlat)
+        # check values of urcrnrlon,urcrnrlat and llcrnrlon,llcrnrlat
+        if self.urcrnrlat > 90.0 or self.llcrnrlat > 90.0:
+            raise ValueError, 'urcrnrlat and llcrnrlat must be less than 90'
+        if self.urcrnrlat < -90.0 or self.llcrnrlat < -90.0:
+            raise ValueError, 'urcrnrlat and llcrnrlat must be greater than -90'
+        if self.urcrnrlon > 720. or self.llcrnrlon > 720.:
+            raise ValueError, 'urcrnrlon and llcrnrlon must be less than 720'
+        if self.urcrnrlon < -360. or self.llcrnrlon < -360.:
+            raise ValueError, 'urcrnrlon and llcrnrlon must be greater than -360'
         # set min/max lats for projection domain.
         # only boundary segments within that range will be processed.
         self.latmax = None
@@ -2852,6 +2861,8 @@ def shiftgrid(lon0,datain,lonsin,start=True):
 
 def addcyclic(arrin,lonsin):
    """
+ arrout, lonsout = addcyclic(arrin, lonsin)
+
  Add cyclic (wraparound) point in longitude.
    """
    nlats = arrin.shape[0]
