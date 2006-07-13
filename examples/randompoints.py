@@ -17,9 +17,11 @@ npts = 750
 try: # this works for numpy
     u = uniform(0.,1.,size=npts)
     v = uniform(0.,1.,size=npts)
+    z = uniform(0.,1.,size=npts)
 except: # this works for Numeric/numarray
     u = uniform(0.,1.,shape=npts)
     v = uniform(0.,1.,shape=npts)
+    z = uniform(0.,1.,shape=npts)
 lons = 360.*u
 lats = (180./math.pi)*arccos(2*v-1) - 90.
 # transform lons and lats to map coordinates.
@@ -31,7 +33,7 @@ fig=figure()
 fig.add_axes([0.1,0.1,0.8,0.8],axisbg='aqua')
 # use zorder=10 to make sure markers are drawn last.
 # (otherwise they are covered up when continents are filled)
-m.scatter(x,y,marker='o',c='k',s=25,zorder=10)
+m.scatter(x,y,25,z,cmap=cm.jet,marker='o',faceted=False,zorder=10) 
 # draw coasts and fill continents.
 m.drawcoastlines(linewidth=0.5)
 m.fillcontinents(color='coral')
