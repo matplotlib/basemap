@@ -38,14 +38,9 @@ def hrs_since_day1CE_todate(hrs):
     curdate = gregstart + hrs_sincegreg*delta
     return curdate
 
-# read in desired date range (date1,date2) for animation.
-if len(sys.argv) == 1:
-    # default is March 1993 'storm of the century'
-    YYYYMMDDHH1 = '1993031000'
-    YYYYMMDDHH2 = '1993031700'
-else:
-    YYYYMMDDHH1 = sys.argv[1]
-    YYYYMMDDHH2 = sys.argv[1]
+# times for March 1993 'storm of the century'
+YYYYMMDDHH1 = '1993031000'
+YYYYMMDDHH2 = '1993031700'
 
 YYYY = YYYYMMDDHH1[0:4]
 if YYYY != YYYYMMDDHH2[0:4]:
@@ -106,9 +101,9 @@ longitudes.append(360.); longitudes = p.array(longitudes)
 # make 2-d grid of lons, lats
 lons, lats = p.meshgrid(longitudes,latitudes)
 print 'min/max slp,u,v'
-print slp.min(), slp.max()
-print uin.min(), uin.max()
-print vin.min(), vin.max()
+print min(p.ravel(slp)),max(p.ravel(slp))
+print min(p.ravel(uin)),max(p.ravel(uin))
+print min(p.ravel(vin)),max(p.ravel(vin))
 print 'dates'
 print datelabels
 # make orthographic basemap.
