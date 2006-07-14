@@ -53,7 +53,7 @@ YYYYMM = YYYYMMDD[0:6]
 #URL=URLbase+YYYYMM+'/'+YYYYMMDD+'/nam_218_'+YYYYMMDD+'_'+HH+'00_fff'
 HH='09'
 URLbase="http://nomad3.ncep.noaa.gov:9090/dods/sref/sref"
-URL=URLbase+YYYYMMDD+"/sref_em_"+HH+"z.ctl"
+URL=URLbase+YYYYMMDD+"/sref_eta1_"+HH+"z.ctl"
 print URL+'\n'
 try:
     data = client.open(URL)
