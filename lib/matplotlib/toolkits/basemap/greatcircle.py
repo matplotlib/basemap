@@ -2,7 +2,7 @@ import matplotlib.numerix as NX
 import math
 
 __version__ = '1.0'
-class GreatCircle:
+class GreatCircle(object):
     """
     formula for perfect sphere from Ed Williams' 'Aviation Formulary'
     (http://williams.best.vwh.net/avform.htm)

@@ -37,7 +37,7 @@ try:
 except:
     _has_arrindexing = False
 
-class Basemap:
+class Basemap(object):
 
     """
  Set up a basemap with one of 18 supported map projections

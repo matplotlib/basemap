@@ -6,7 +6,7 @@ __version__ = '1.2'
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 
-class Proj:
+class Proj(object):
     """
  peforms cartographic transformations (converts from longitude,latitude
  to native map projection x,y coordinates and vice versa) using proj 
