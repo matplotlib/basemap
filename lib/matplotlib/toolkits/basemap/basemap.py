@@ -8,9 +8,8 @@ if matplotlib_version < mpl_required_version:
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
-import sys, os, math, popen2
+import pyproj, sys, os, math, dbflib
 from proj import Proj
-import pyproj
 from greatcircle import GreatCircle, vinc_dist, vinc_pt
 import matplotlib.numerix as NX
 from matplotlib.numerix import ma
@@ -18,7 +17,6 @@ from matplotlib.mlab import linspace
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd, is_scalar
 from shapelib import ShapeFile
-import dbflib, warnings
 
 # look in sys.prefix for directory containing basemap files if
 # BASEMAP_DATA_PATH env var not set.
