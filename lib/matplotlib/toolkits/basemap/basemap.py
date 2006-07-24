@@ -27,7 +27,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
 __version__ = '0.9.1'
-__revision__ = '20060629'
+__revision__ = '20060724'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -1009,31 +1009,6 @@ environment variable must be set."""
                             xn.append(x); yn.append(y)
                 coastpolygons.append((xn,yn))
             self.coastpolygons = coastpolygons
-
-    def createfigure(self,*args,**kwargs):
-        """
- create a figure with same aspect ratio as map using pylab interface.
- returns a handle to the figure.
- see pylab.figure docs for details.
- Note:  Don't use this if you don't want pylab to be imported.
-
- Deprecated:  no longer needed since aspect ratio of maps is now
- automatically preserved independent of figure size.
-        """
-        import pylab as P
-        warnings.warn(DeprecationWarning('createfigure() no longer needed maps now will automatically preserve aspect ration regardless of figure size'))
-        if not kwargs.has_key('figsize'):
-            figsize = rcParams['figure.figsize']
-            xsize = figsize[0]; ysize = xsize
-        else:
-            figsize = kwargs['figsize']
-            xsize = figsize[0]; ysize = figsize[1]
-        if self.aspect <= 1:
-            ysize = ysize*self.aspect
-        else:
-            xsize = xsize/self.aspect
-        kwargs['figsize'] = (xsize,ysize)
-        return P.figure(*args,**kwargs)
 
     def _splitseg(self,xx,yy,mask=None):
         """split segment up around missing values (outside projection limb)"""
