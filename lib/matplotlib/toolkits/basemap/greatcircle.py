@@ -169,7 +169,6 @@ def vinc_dist(  f,  a,  phi1,  lembda1,  phi2,  lembda2 ) :
           return 0.0, 0.0, 0.0
   
         two_pi = 2.0*math.pi
-        piD4   = two_pi/8.0
 
         b = a * (1.0 - f)
 
@@ -270,7 +269,6 @@ def  vinc_pt( f, a, phi1, lembda1, alpha12, s ) :
 
 
         two_pi = 2.0*math.pi
-        piD4 = math.pi/4.0
 
         if ( alpha12 < 0.0 ) : 
                 alpha12 = alpha12 + two_pi
@@ -412,26 +410,26 @@ if __name__ == "__main__" :
    lembda1 = ( 29.5244 / 60. + 25) / 60. + 144
    print "\n Flinders Peak = %12.6f, %13.6f \n" % ( phi1, lembda1 )
    deg = int(phi1)
-   min = int(abs( ( phi1 - deg) * 60.0 ))
-   sec = abs(phi1 * 3600 - deg * 3600) - min * 60
-   print " Flinders Peak =   %3i\xF8%3i\' %6.3f\",  " % ( deg, min, sec ),
+   minn = int(abs( ( phi1 - deg) * 60.0 ))
+   sec = abs(phi1 * 3600 - deg * 3600) - minn * 60
+   print " Flinders Peak =   %3i\xF8%3i\' %6.3f\",  " % ( deg, minn, sec ),
    deg = int(lembda1)
-   min = int(abs( ( lembda1 - deg) * 60.0 ))
-   sec = abs(lembda1 * 3600 - deg * 3600) - min * 60
-   print " %3i\xF8%3i\' %6.3f\" \n" % ( deg, min, sec )
+   minn = int(abs( ( lembda1 - deg) * 60.0 ))
+   sec = abs(lembda1 * 3600 - deg * 3600) - minn * 60
+   print " %3i\xF8%3i\' %6.3f\" \n" % ( deg, minn, sec )
 
    phi2 = -(( 10.1561 / 60. + 39) / 60. + 37 )
    lembda2 = ( 35.3839 / 60. + 55) / 60. + 143
    print "\n Buninyon      = %12.6f, %13.6f \n" % ( phi2, lembda2 )
 
    deg = int(phi2)
-   min = int(abs( ( phi2 - deg) * 60.0 ))
-   sec = abs(phi2 * 3600 - deg * 3600) - min * 60
-   print " Buninyon      =   %3i\xF8%3i\' %6.3f\",  " % ( deg, min, sec ),
+   minn = int(abs( ( phi2 - deg) * 60.0 ))
+   sec = abs(phi2 * 3600 - deg * 3600) - minn * 60
+   print " Buninyon      =   %3i\xF8%3i\' %6.3f\",  " % ( deg, minn, sec ),
    deg = int(lembda2)
-   min = int(abs( ( lembda2 - deg) * 60.0 ))
-   sec = abs(lembda2 * 3600 - deg * 3600) - min * 60
-   print " %3i\xF8%3i\' %6.3f\" \n" % ( deg, min, sec )
+   minn = int(abs( ( lembda2 - deg) * 60.0 ))
+   sec = abs(lembda2 * 3600 - deg * 3600) - minn * 60
+   print " %3i\xF8%3i\' %6.3f\" \n" % ( deg, minn, sec )
 
    dist, alpha12, alpha21   = vinc_dist  ( f, a, math.radians(phi1), math.radians(lembda1), math.radians(phi2),  math.radians(lembda2) )
 
@@ -441,13 +439,13 @@ if __name__ == "__main__" :
    print "\n Ellipsoidal Distance = %15.3f metres\n            should be         54972.271 m\n" % ( dist )
    print "\n Forward and back azimuths = %15.6f, %15.6f \n" % ( alpha12, alpha21 )
    deg = int(alpha12)
-   min = int( abs(( alpha12 - deg) * 60.0 ) )
-   sec = abs(alpha12 * 3600 - deg * 3600) - min * 60
-   print " Forward azimuth = %3i\xF8%3i\' %6.3f\"\n" % ( deg, min, sec )
+   minn =int( abs(( alpha12 - deg) * 60.0 ) )
+   sec = abs(alpha12 * 3600 - deg * 3600) - minn * 60
+   print " Forward azimuth = %3i\xF8%3i\' %6.3f\"\n" % ( deg, minn, sec )
    deg = int(alpha21)
-   min = int(abs( ( alpha21 - deg) * 60.0 ))
-   sec = abs(alpha21 * 3600 - deg * 3600) - min * 60
-   print " Reverse azimuth = %3i\xF8%3i\' %6.3f\"\n" % ( deg, min, sec )
+   minn =int(abs( ( alpha21 - deg) * 60.0 ))
+   sec = abs(alpha21 * 3600 - deg * 3600) - minn * 60
+   print " Reverse azimuth = %3i\xF8%3i\' %6.3f\"\n" % ( deg, minn, sec )
 
 
    # Test the direct function */
@@ -466,19 +464,19 @@ if __name__ == "__main__" :
 
    print "\n Projected point =%11.6f, %13.6f \n" % ( phi2, lembda2 )
    deg = int(phi2)
-   min = int(abs( ( phi2 - deg) * 60.0 ))
-   sec = abs( phi2 * 3600 - deg * 3600) - min * 60
-   print " Projected Point = %3i\xF8%3i\' %6.3f\", " % ( deg, min, sec ),
+   minn =int(abs( ( phi2 - deg) * 60.0 ))
+   sec = abs( phi2 * 3600 - deg * 3600) - minn * 60
+   print " Projected Point = %3i\xF8%3i\' %6.3f\", " % ( deg, minn, sec ),
    deg = int(lembda2)
-   min = int(abs( ( lembda2 - deg) * 60.0 ))
-   sec = abs(lembda2 * 3600 - deg * 3600) - min * 60
-   print "  %3i\xF8%3i\' %6.3f\"\n" % ( deg, min, sec )
+   minn =int(abs( ( lembda2 - deg) * 60.0 ))
+   sec = abs(lembda2 * 3600 - deg * 3600) - minn * 60
+   print "  %3i\xF8%3i\' %6.3f\"\n" % ( deg, minn, sec )
    print " Should be Buninyon \n" 
    print "\n Reverse azimuth = %10.6f \n" % ( alpha21 )
    deg = int(alpha21)
-   min = int(abs( ( alpha21 - deg) * 60.0 ))
-   sec = abs(alpha21 * 3600 - deg * 3600) - min * 60
-   print " Reverse azimuth = %3i\xF8%3i\' %6.3f\"\n\n" % ( deg, min, sec )
+   minn =int(abs( ( alpha21 - deg) * 60.0 ))
+   sec = abs(alpha21 * 3600 - deg * 3600) - minn * 60
+   print " Reverse azimuth = %3i\xF8%3i\' %6.3f\"\n\n" % ( deg, minn, sec )
 
    # lat/lon of New York
    lat1 = 40.78

@@ -515,18 +515,18 @@ environment variable must be set."""
             if line.startswith('P'):
                 area = float(linesplit[5])
                 west,east,south,north = float(linesplit[6]),float(linesplit[7]),float(linesplit[8]),float(linesplit[9])
-                type = int(linesplit[3])
+                typ = int(linesplit[3])
                 useit = self.latmax>=south and self.latmin<=north and area>area_thresh
                 if useit:
                     coastsegind.append(len(coastlons))
-                    coastsegtype.append(type)
+                    coastsegtype.append(typ)
                 continue
             # lon/lat
             if useit:
                 lon, lat = [float(val) for val in linesplit]
                 coastlons.append(lon)
                 coastlats.append(lat)
-        coastsegtype.append(type)
+        coastsegtype.append(typ)
         coastsegind.append(len(coastlons))
 
         # read in country boundary data.
@@ -1224,7 +1224,7 @@ environment variable must be set."""
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
         # make sure axis ticks are turned off
-        if self.noticks == True:
+        if self.noticks:
             ax.set_xticks([])
             ax.set_yticks([])
         # set axes limits to fit map region.
