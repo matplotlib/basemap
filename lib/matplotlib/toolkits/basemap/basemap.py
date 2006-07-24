@@ -2833,11 +2833,11 @@ def shiftgrid(lon0,datain,lonsin,start=True):
     return dataout,lonsout
 
 def addcyclic(arrin,lonsin):
-   """
+    """
  arrout, lonsout = addcyclic(arrin, lonsin)
 
  Add cyclic (wraparound) point in longitude.
-   """
+    """
     nlats = arrin.shape[0]
     nlons = arrin.shape[1]
     try:
