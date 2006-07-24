@@ -2,7 +2,7 @@ import matplotlib.numerix as NX
 import pyproj
 import math
 
-__version__ = '1.2'
+__version__ = '1.2.1'
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 
