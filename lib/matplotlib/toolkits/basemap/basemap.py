@@ -1577,19 +1577,19 @@ coordinates using the shpproj utility from the shapelib tools
                 if nr != -1: nr = len(lons)-nr-1
                 if lat<0:
                     if rcParams['text.usetex']:
-        	        latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
+                        latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
                     else:
                         latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
                     latlab = latlabstr%NX.fabs(lat)
                 elif lat>0:
                     if rcParams['text.usetex']:
-        	        latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
+                        latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
                     else:
                         latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
                     latlab = latlabstr%lat
                 else:
                     if rcParams['text.usetex']:
-        	        latlabstr = r'${%s\/^{\circ}}$'%fmt
+                        latlabstr = r'${%s\/^{\circ}}$'%fmt
                     else:
                         latlabstr = u'%s\N{DEGREE SIGN}'%fmt
                     latlab = latlabstr%lat
@@ -1776,19 +1776,19 @@ coordinates using the shpproj utility from the shapelib tools
                 if nr != -1: nr = len(lons)-nr-1
                 if lon>180:
                     if rcParams['text.usetex']:
-        	        lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
+                        lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
                     else:
                         lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
                     lonlab = lonlabstr%NX.fabs(lon-360)
                 elif lon<180 and lon != 0:
                     if rcParams['text.usetex']:
-        	        lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
+                        lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
                     else:
                         lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
                     lonlab = lonlabstr%lon
                 else:
                     if rcParams['text.usetex']:
-        	        lonlabstr = r'${%s\/^{\circ}}$'%fmt
+                        lonlabstr = r'${%s\/^{\circ}}$'%fmt
                     else:
                         lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
                     lonlab = lonlabstr%lon
@@ -2838,18 +2838,18 @@ def addcyclic(arrin,lonsin):
 
  Add cyclic (wraparound) point in longitude.
    """
-   nlats = arrin.shape[0]
-   nlons = arrin.shape[1]
-   try:
-       arrout  = NX.zeros((nlats,nlons+1),arrin.typecode())
-   except:
-       arrout  = NX.zeros((nlats,nlons+1),arrin.dtype)
-   arrout[:,0:nlons] = arrin[:,:]
-   arrout[:,nlons] = arrin[:,0]
-   try:
-       lonsout = NX.zeros(nlons+1,lonsin.typecode())
-   except:
-       lonsout = NX.zeros(nlons+1,lonsin.dtype)
-   lonsout[0:nlons] = lonsin[:]
-   lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
-   return arrout,lonsout
+    nlats = arrin.shape[0]
+    nlons = arrin.shape[1]
+    try:
+        arrout  = NX.zeros((nlats,nlons+1),arrin.typecode())
+    except:
+        arrout  = NX.zeros((nlats,nlons+1),arrin.dtype)
+    arrout[:,0:nlons] = arrin[:,:]
+    arrout[:,nlons] = arrin[:,0]
+    try:
+        lonsout = NX.zeros(nlons+1,lonsin.typecode())
+    except:
+        lonsout = NX.zeros(nlons+1,lonsin.dtype)
+    lonsout[0:nlons] = lonsin[:]
+    lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
+    return arrout,lonsout
