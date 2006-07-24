@@ -45,11 +45,27 @@ class Proj(object):
             projparams['units']='m'
         self.projparams = projparams
         # make sure proj parameter specified.
-        # (no other checking done in proj parameters)
         if 'proj' not in projparams.keys():
             raise KeyError, "need to specify proj parameter"
         if 'R' not in projparams.keys() and 'a' and 'b' not in projparams.keys():
             raise KeyError, "need to specify R (perfect sphere radius), or a and b (major and minor sphere radii)"
+        # check for sane values of lon_0, lat_0, lat_ts, lat_1, lat_2
+        if projparams.has_key('lat_0'):
+            lat_0 = projparams['lat_0']
+            if lat_0 > 90. or lat_0 < -90.:
+                raise ValueError, 'lat_0 must be between -90 and +90 degrees'
+        if projparams.has_key('lat_1'):
+            lat_1 = projparams['lat_1']
+            if lat_1 > 90. or lat_1 < -90.:
+                raise ValueError, 'lat_1 must be between -90 and +90 degrees'
+        if projparams.has_key('lat_2'):
+            lat_2 = projparams['lat_2']
+            if lat_2 > 90. or lat_2 < -90.:
+                raise ValueError, 'lat_2 must be between -90 and +90 degrees'
+        if projparams.has_key('lat_ts'):
+            lat_ts = projparams['lat_ts']
+            if lat_ts > 90. or lat_ts < -90.:
+                raise ValueError, 'lat_ts must be between -90 and +90 degrees'
         self.projection = projparams['proj']
         # rmajor is the semi-major axis.
         # rminor is the semi-minor axis.
