@@ -2670,7 +2670,7 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order
         raise ValueError,'order keyword must be 0 or 1'
     if masked and isinstance(masked,bool):
         dataout = ma.masked_array(dataout)
-        newmask = ma.mask_or(dataout.mask, xymask)
+        newmask = ma.mask_or(ma.getmask(dataout), xymask)
         dataout = ma.masked_array(dataout,mask=newmask)
     elif masked and is_scalar(masked):
         dataout = NX.where(xymask,masked,dataout)
@@ -2788,7 +2788,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         raise ValueError,'order keyword must be 0 or 1'
     if masked and isinstance(masked,bool):
         dataout = ma.masked_array(dataout)
-        newmask = ma.mask_or(dataout.mask, xymask)
+        newmask = ma.mask_or(ma.getmask(dataout), xymask)
         dataout = ma.masked_array(dataout,mask=newmask)
     elif masked and is_scalar(masked):
         dataout = NX.where(xymask,masked,dataout)
