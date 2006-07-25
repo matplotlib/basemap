@@ -808,8 +808,8 @@ environment variable must be set."""
         coastsegs = []
         coastsegtypes = []
         for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
-            xx = NX.array([x for x,y in seg],'f')
-            yy = NX.array([y for x,y in seg],'f')
+            xx = NX.array([x for x,y in seg],NX.Float32)
+            yy = NX.array([y for x,y in seg],NX.Float32)
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
@@ -823,8 +823,8 @@ environment variable must be set."""
         self.coastsegtypes = coastsegtypes
         states = []
         for seg in self.statesegs:
-            xx = NX.array([x for x,y in seg],'f')
-            yy = NX.array([y for x,y in seg],'f')
+            xx = NX.array([x for x,y in seg],NX.Float32)
+            yy = NX.array([y for x,y in seg],NX.Float32)
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
@@ -835,8 +835,8 @@ environment variable must be set."""
         self.statesegs = states
         countries = []
         for seg in self.cntrysegs:
-            xx = NX.array([x for x,y in seg],'f')
-            yy = NX.array([y for x,y in seg],'f')
+            xx = NX.array([x for x,y in seg],NX.Float32)
+            yy = NX.array([y for x,y in seg],NX.Float32)
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
@@ -847,8 +847,8 @@ environment variable must be set."""
         self.cntrysegs = countries
         rivers = []
         for seg in self.riversegs:
-            xx = NX.array([x for x,y in seg],'f')
-            yy = NX.array([y for x,y in seg],'f')
+            xx = NX.array([x for x,y in seg],NX.Float32)
+            yy = NX.array([y for x,y in seg],NX.Float32)
             i1,i2 = self._splitseg(xx,yy)
             if i1 and i2:
                 for i,j in zip(i1,i2):
@@ -862,8 +862,8 @@ environment variable must be set."""
         coastsegs = []
         coastsegtypes = []
         for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
-            xx = NX.array([x for x,y in seg],'f')
-            yy = NX.array([y for x,y in seg],'f')
+            xx = NX.array([x for x,y in seg],NX.Float32)
+            yy = NX.array([y for x,y in seg],NX.Float32)
             xd = (xx[1:]-xx[0:-1])**2
             yd = (yy[1:]-yy[0:-1])**2
             dist = NX.sqrt(xd+yd)
@@ -1172,8 +1172,8 @@ environment variable must be set."""
         axisbgc = ax.get_axis_bgcolor()
         np = 0
         for x,y in self.coastpolygons:
-            xa = NX.array(x,'f')
-            ya = NX.array(y,'f')
+            xa = NX.array(x,NX.Float32)
+            ya = NX.array(y,NX.Float32)
         # check to see if all four corners of domain in polygon (if so,
         # don't draw since it will just fill in the whole map).
             delx = 10; dely = 10
@@ -1469,9 +1469,9 @@ coordinates using the shpproj utility from the shapelib tools
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection in ['merc','cyl','mill','moll','robin','sinu']:
-            lons = NX.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype('f')
+            lons = NX.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype(NX.Float32)
         else:
-            lons = NX.arange(0,360.1,0.1).astype('f')
+            lons = NX.arange(0,360.1,0.1).astype(NX.Float32)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = circles.tolist()
@@ -1485,7 +1485,7 @@ coordinates using the shpproj utility from the shapelib tools
         xdelta = 0.01*(self.xmax-self.xmin)
         ydelta = 0.01*(self.ymax-self.ymin)
         for circ in circlesl:
-            lats = circ*NX.ones(len(lons),'f')
+            lats = circ*NX.ones(len(lons),NX.Float32)
             x,y = self(lons,lats)
             # remove points outside domain.
             testx = NX.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
@@ -1547,10 +1547,10 @@ coordinates using the shpproj utility from the shapelib tools
                 if self.projection == 'moll' and yy[0] < 1.e-4:
                     yy[0] = 1.e-4
                 if side == 'l':
-                    lons,lats = self(self.llcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.llcrnrx*NX.ones(yy.shape,NX.Float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(self.urcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.urcrnrx*NX.ones(yy.shape,NX.Float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
@@ -1560,10 +1560,10 @@ coordinates using the shpproj utility from the shapelib tools
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
                 if side == 'b':
-                    lons,lats = self(xx,self.llcrnry*NX.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.llcrnry*NX.ones(xx.shape,NX.Float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(xx,self.urcrnry*NX.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.urcrnry*NX.ones(xx.shape,NX.Float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
@@ -1673,9 +1673,9 @@ coordinates using the shpproj utility from the shapelib tools
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
-            lats = NX.arange(-latmax,latmax+0.1,0.1).astype('f')
+            lats = NX.arange(-latmax,latmax+0.1,0.1).astype(NX.Float32)
         else:
-            lats = NX.arange(-90,90.1,0.1).astype('f')
+            lats = NX.arange(-90,90.1,0.1).astype(NX.Float32)
         xdelta = 0.1*(self.xmax-self.xmin)
         ydelta = 0.1*(self.ymax-self.ymin)
         for merid in meridians:
@@ -1683,7 +1683,7 @@ coordinates using the shpproj utility from the shapelib tools
                 # for cylindrical projections that don't cross greenwich,
                 # adjust meridians to be in range 0 to 360.
                 merid = (merid + 360.)%360
-            lons = merid*NX.ones(len(lats),'f')
+            lons = merid*NX.ones(len(lats),NX.Float32)
             x,y = self(lons,lats)
             # remove points outside domain.
             testx = NX.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
@@ -1744,10 +1744,10 @@ coordinates using the shpproj utility from the shapelib tools
                 nmax = int((self.ymax-self.ymin)/dy+1)
                 yy = linspace(self.llcrnry,self.urcrnry,nmax)
                 if side == 'l':
-                    lons,lats = self(self.llcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.llcrnrx*NX.ones(yy.shape,NX.Float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(self.urcrnrx*NX.ones(yy.shape,'f'),yy,inverse=True)
+                    lons,lats = self(self.urcrnrx*NX.ones(yy.shape,NX.Float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
@@ -1757,10 +1757,10 @@ coordinates using the shpproj utility from the shapelib tools
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
                 if side == 'b':
-                    lons,lats = self(xx,self.llcrnry*NX.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.llcrnry*NX.ones(xx.shape,NX.Float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(xx,self.urcrnry*NX.ones(xx.shape,'f'),inverse=True)
+                    lons,lats = self(xx,self.urcrnry*NX.ones(xx.shape,NX.Float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
@@ -2622,7 +2622,7 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order
                 xcoords.append(len(xin)) # outside range on upper end.
             else:
                 xcoords.append(float(i)+(xoutflat[n]-xin[i])/(xin[i+1]-xin[i]))
-        xcoords = NX.array(xcoords,'f')
+        xcoords = NX.array(xcoords,NX.Float32)
         for m,j in enumerate(iy):
             if j < 0:
                 ycoords.append(-1) # outside of range of yin (on lower end)
@@ -2630,7 +2630,7 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order
                 ycoords.append(len(yin)) # outside range on upper end
             else:
                 ycoords.append(float(j)+(youtflat[m]-yin[j])/(yin[j+1]-yin[j]))
-        ycoords = NX.array(ycoords,'f')
+        ycoords = NX.array(ycoords,NX.Float32)
     # data outside range xin,yin will be clipped to
     # values on boundary.
     if masked:
@@ -2642,14 +2642,14 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order
     ycoords = NX.clip(ycoords,0,len(yin)-1)
     # interpolate to output grid using bilinear interpolation.
     if order == 1:
-        xi = xcoords.astype('i')
-        yi = ycoords.astype('i')
+        xi = xcoords.astype(NX.Int32)
+        yi = ycoords.astype(NX.Int32)
         xip1 = xi+1
         yip1 = yi+1
         xip1 = NX.clip(xip1,0,len(xin)-1)
         yip1 = NX.clip(yip1,0,len(yin)-1)
-        delx = xcoords-xi.astype('f')
-        dely = ycoords-yi.astype('f')
+        delx = xcoords-xi.astype(NX.Float32)
+        dely = ycoords-yi.astype(NX.Float32)
         coords = yi*datain.shape[1]+xi
         data11 = NX.take(datainflat,coords)
         coords = yip1*datain.shape[1]+xip1
@@ -2664,8 +2664,8 @@ def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order
                   delx*(1.-dely)*data12
         dataout = NX.reshape(dataout,xout.shape)
     elif order == 0:
-        xcoordsi = NX.around(xcoords).astype('i')
-        ycoordsi = NX.around(ycoords).astype('i')
+        xcoordsi = NX.around(xcoords).astype(NX.Int32)
+        ycoordsi = NX.around(ycoords).astype(NX.Int32)
         coords = ycoordsi*datain.shape[1]+xcoordsi
         dataout = NX.take(datainflat,coords)
         dataout = NX.reshape(dataout,xout.shape)
@@ -2771,21 +2771,21 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     ycoords = NX.clip(ycoords,0,len(yin)-1)
     # interpolate to output grid using bilinear interpolation.
     if order == 1:
-        xi = xcoords.astype('i')
-        yi = ycoords.astype('i')
+        xi = xcoords.astype(NX.Int32)
+        yi = ycoords.astype(NX.Int32)
         xip1 = xi+1
         yip1 = yi+1
         xip1 = NX.clip(xip1,0,len(xin)-1)
         yip1 = NX.clip(yip1,0,len(yin)-1)
-        delx = xcoords-xi.astype('f')
-        dely = ycoords-yi.astype('f')
+        delx = xcoords-xi.astype(NX.Float32)
+        dely = ycoords-yi.astype(NX.Float32)
         dataout = (1.-delx)*(1.-dely)*datain[yi,xi] + \
                   delx*dely*datain[yip1,xip1] + \
                   (1.-delx)*dely*datain[yip1,xi] + \
                   delx*(1.-dely)*datain[yi,xip1]
     elif order == 0:
-        xcoordsi = NX.around(xcoords).astype('i')
-        ycoordsi = NX.around(ycoords).astype('i')
+        xcoordsi = NX.around(xcoords).astype(NX.Int32)
+        ycoordsi = NX.around(ycoords).astype(NX.Int32)
         dataout = datain[ycoordsi,xcoordsi]
     else:
         raise ValueError,'order keyword must be 0 or 1'
