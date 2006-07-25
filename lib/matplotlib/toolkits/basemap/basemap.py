@@ -2503,13 +2503,13 @@ coordinates using the shpproj utility from the shapelib tools
             mask = NX.where(self.lsmask==2,0,self.lsmask)
         else:
             mask = self.lsmask
-        rgba = NX.ones((ny,nx,4),'B')
-        rgba_land = NX.array(rgba_land,'B')
-        rgba_ocean = NX.array(rgba_ocean,'B')
+        rgba = NX.ones((ny,nx,4),NX.UInt8)
+        rgba_land = NX.array(rgba_land,NX.UInt8)
+        rgba_ocean = NX.array(rgba_ocean,NX.UInt8)
         for k in range(4):
             rgba[:,:,k] = NX.where(mask,rgba_land[k],rgba_ocean[k])
         # make points outside projection limb transparent.
-        rgba[:,:,3] = NX.where(mask==255,0,rgba[:,:,3])
+        rgba[:,:,3] = NX.where(mask==255,0,rgba[:,:,3]).astype(NX.UInt8)
         # plot mask as rgba image.
         im = self.imshow(rgba,interpolation='nearest',ax=ax)
 
