@@ -10,9 +10,9 @@ from pylab import *
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-etopo = array(load('etopo20data.gz'),'d')
-lons = array(load('etopo20lons.gz'),'d')
-lats = array(load('etopo20lats.gz'),'d')
+etopo = load('etopo20data.gz')
+lons = load('etopo20lons.gz')
+lats = load('etopo20lats.gz')
 
 print 'min/max etopo20 data:'
 print min(ravel(etopo)),max(ravel(etopo))

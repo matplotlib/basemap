@@ -5,9 +5,9 @@ import pylab as P
 
 
 # read in data on lat/lon grid.
-hgt  = P.array(P.load('500hgtdata.gz'),'d')
-lons = P.array(P.load('500hgtlons.gz'),'d')
-lats = P.array(P.load('500hgtlats.gz'),'d')
+hgt  = P.load('500hgtdata.gz')
+lons = P.load('500hgtlons.gz')
+lats = P.load('500hgtlats.gz')
 lons, lats = P.meshgrid(lons, lats)
 
 # Example to show how to make multi-panel plots.

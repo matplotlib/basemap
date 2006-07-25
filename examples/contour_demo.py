@@ -4,9 +4,9 @@ from pylab import *
 # examples of filled contour plots on map projections.
 
 # read in data on lat/lon grid.
-hgt = array(load('500hgtdata.gz'),'d')
-lons = array(load('500hgtlons.gz'),'d')
-lats = array(load('500hgtlats.gz'),'d')
+hgt = load('500hgtdata.gz')
+lons = load('500hgtlons.gz')
+lats = load('500hgtlats.gz')
 # shift data so lons go from -180 to 180 instead of 0 to 360.
 hgt,lons = shiftgrid(180.,hgt,lons,start=False)
 lons, lats = meshgrid(lons, lats)

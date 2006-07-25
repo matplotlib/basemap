@@ -1,9 +1,9 @@
 from matplotlib.toolkits.basemap import Basemap
 from pylab import *
 # read in topo data (on a regular lat/lon grid)
-etopo=array(load('etopo20data.gz'),'d')
-lons=array(load('etopo20lons.gz'),'d')
-lats=array(load('etopo20lats.gz'),'d')
+etopo=load('etopo20data.gz')
+lons=load('etopo20lons.gz')
+lats=load('etopo20lats.gz')
 # create Basemap instance for Robinson projection.
 m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]))
 # make filled contour plot.

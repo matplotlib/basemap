@@ -14,9 +14,9 @@ from matplotlib.mlab import load
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-etopo = nx.array(load('etopo20data.gz'),'d')
-lons = nx.array(load('etopo20lons.gz'),'d')
-lats = nx.array(load('etopo20lats.gz'),'d')
+etopo = load('etopo20data.gz')
+lons = load('etopo20lons.gz')
+lats = load('etopo20lats.gz')
 # create figure.
 fig = Figure()
 canvas = FigureCanvas(fig)

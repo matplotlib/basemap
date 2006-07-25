@@ -12,9 +12,9 @@ import matplotlib.colors as colors
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-topoin = array(load('etopo20data.gz'),'d')
-lonsin = array(load('etopo20lons.gz'),'d')
-latsin = array(load('etopo20lats.gz'),'d')
+topoin = load('etopo20data.gz')
+lonsin = load('etopo20lons.gz')
+latsin = load('etopo20lats.gz')
 # shift data so lons go from -180 to 180 instead of 20 to 380.
 topoin,lonsin = shiftgrid(180.,topoin,lonsin,start=False)
 

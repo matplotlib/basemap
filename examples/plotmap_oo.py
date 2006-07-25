@@ -20,9 +20,9 @@ from matplotlib.mlab import load
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-topoin = NX.array(load('etopo20data.gz'),'d')
-lons = NX.array(load('etopo20lons.gz'),'d')
-lats = NX.array(load('etopo20lats.gz'),'d')
+topoin = load('etopo20data.gz')
+lons = load('etopo20lons.gz')
+lats = load('etopo20lats.gz')
 # shift data so lons go from -180 to 180 instead of 20 to 380.
 topoin,lons = shiftgrid(180.,topoin,lons,start=False)
 
