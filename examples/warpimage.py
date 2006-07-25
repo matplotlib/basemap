@@ -44,7 +44,7 @@ m = Basemap(projection='ortho',lat_0=50,lon_0=-100,resolution='l')
 # nx and ny chosen to have roughly the same horizontal res as original image.
 dx = 2.*P.pi*m.rmajor/float(nlons)
 nx = int((m.xmax-m.xmin)/dx)+1; ny = int((m.ymax-m.ymin)/dx)+1
-rgba_warped = ma.zeros((ny,nx,4),'d')
+rgba_warped = ma.zeros((ny,nx,4),P.Float64)
 # interpolate rgba values from proj='cyl' (geographic coords) to 'lcc'
 # values outside of projection limb will be masked.
 for k in range(4):
@@ -69,7 +69,7 @@ m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
 # nx and ny chosen to have roughly the same horizontal res as original image.
 dx = 2.*P.pi*m.rmajor/float(nlons)
 nx = int((m.xmax-m.xmin)/dx)+1; ny = int((m.ymax-m.ymin)/dx)+1
-rgba_warped = P.zeros((ny,nx,4),'d')
+rgba_warped = P.zeros((ny,nx,4),P.Float64)
 # interpolate rgba values from proj='cyl' (geographic coords) to 'lcc'
 for k in range(4):
     rgba_warped[:,:,k] = m.transform_scalar(rgba[:,:,k],lons,lats,nx,ny)
