@@ -206,8 +206,8 @@ class Proj(object):
         """
         dx = (self.urcrnrx-self.llcrnrx)/(nx-1)
         dy = (self.urcrnry-self.llcrnry)/(ny-1)
-        x = self.llcrnrx+dx*NX.indices((ny,nx),'f')[1,:,:]
-        y = self.llcrnry+dy*NX.indices((ny,nx),'f')[0,:,:]
+        x = self.llcrnrx+dx*NX.indices((ny,nx),NX.Float32)[1,:,:]
+        y = self.llcrnry+dy*NX.indices((ny,nx),NX.Float32)[0,:,:]
         lons, lats = self(x, y, inverse=True)
         if returnxy:
             return lons, lats, x, y
