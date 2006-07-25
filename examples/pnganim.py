@@ -91,11 +91,11 @@ uin = udata.scale_factor*p.squeeze(udata[ntime1:ntime2+1,:,:]) + udata.add_offse
 vin = vdata.scale_factor*p.squeeze(vdata[ntime1:ntime2+1,:,:]) + vdata.add_offset
 datelabels = dates[ntime1:ntime2+1]
 # add cyclic points
-slp = p.zeros((slpin.shape[0],slpin.shape[1],slpin.shape[2]+1),'d')
+slp = p.zeros((slpin.shape[0],slpin.shape[1],slpin.shape[2]+1),p.Float64)
 slp[:,:,0:-1] = slpin; slp[:,:,-1] = slpin[:,:,0]
-u = p.zeros((uin.shape[0],uin.shape[1],uin.shape[2]+1),'d')
+u = p.zeros((uin.shape[0],uin.shape[1],uin.shape[2]+1),p.Float64)
 u[:,:,0:-1] = uin; u[:,:,-1] = uin[:,:,0]
-v = p.zeros((vin.shape[0],vin.shape[1],vin.shape[2]+1),'d')
+v = p.zeros((vin.shape[0],vin.shape[1],vin.shape[2]+1),p.Float64)
 v[:,:,0:-1] = vin; v[:,:,-1] = vin[:,:,0]
 longitudes.append(360.); longitudes = p.array(longitudes)
 # make 2-d grid of lons, lats
