@@ -968,8 +968,8 @@ environment variable must be set."""
                     xdist = NX.fabs(xx[1:]-xx[0:-1])
                     if max(xdist) > 1000000:
                         nmin = NX.argmax(xdist)+1
-                        xnew = NX.zeros(len(xx),'d')
-                        ynew = NX.zeros(len(xx),'d')
+                        xnew = NX.zeros(len(xx),NX.Float64)
+                        ynew = NX.zeros(len(xx),NX.Float64)
                         lonsnew = len(xx)*[0]
                         latsnew = len(xx)*[0]
                         xnew[0:len(xx)-nmin] = xx[nmin:]
