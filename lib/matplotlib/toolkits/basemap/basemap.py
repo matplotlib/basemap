@@ -2509,7 +2509,10 @@ coordinates using the shpproj utility from the shapelib tools
         for k in range(4):
             rgba[:,:,k] = NX.where(mask,rgba_land[k],rgba_ocean[k])
         # make points outside projection limb transparent.
-        rgba[:,:,3] = NX.where(mask==255,0,rgba[:,:,3]).astype(NX.UInt8)
+        try:
+            rgba[:,:,3] = NX.where(mask==255,0,rgba[:,:,3])
+        except: # kluge for Numeric
+            rgba[:,:,3] = NX.where(mask==255,0,rgba[:,:,3]).astype(NX.UInt8)
         # plot mask as rgba image.
         im = self.imshow(rgba,interpolation='nearest',ax=ax)
 
