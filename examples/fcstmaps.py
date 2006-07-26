@@ -1,5 +1,5 @@
-# this example reads weather forecasts initialized on a day
-# specified on the command line, and makes a multi-panel plot.
+# this example reads today's numerical weather forecasts 
+# from the NOAAPORT servers using OpenDap and makes a multi-panel plot.
 # Requires the pyDAP module (a pure-python module)
 # from http://pydap.org, and an active intenet connection.
 
@@ -38,19 +38,11 @@ def hrs_since_day1CE_todate(hrs):
     curdate = gregstart + hrs_sincegreg*delta
     return curdate
 
-# read in date (YYYYMMDDHH) from command line.
-
-if len(sys.argv) == 1:
-    YYYYMMDD = raw_input('Enter date forecast was started on (YYYYMMDD):')
-else:
-    YYYYMMDD = sys.argv[1]
+# today's date.
+YYYYMMDD = datetime.datetime.today().strftime('%Y%m%d')
 YYYYMM = YYYYMMDD[0:6]
 
 # set OpenDAP server URL.
-
-#HH='12'
-#URLbase="http://nomads.ncdc.noaa.gov:9091/dods/NCEP_NAM/"
-#URL=URLbase+YYYYMM+'/'+YYYYMMDD+'/nam_218_'+YYYYMMDD+'_'+HH+'00_fff'
 HH='09'
 URLbase="http://nomad3.ncep.noaa.gov:9090/dods/sref/sref"
 URL=URLbase+YYYYMMDD+"/sref_eta1_"+HH+"z.ctl"
