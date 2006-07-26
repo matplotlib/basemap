@@ -1,5 +1,5 @@
 # this example reads today's numerical weather forecasts 
-# from the NOAAPORT servers using OpenDap and makes a multi-panel plot.
+# from the NOAA OpenDAP servers and makes a multi-panel plot.
 # Requires the pyDAP module (a pure-python module)
 # from http://pydap.org, and an active intenet connection.
 
