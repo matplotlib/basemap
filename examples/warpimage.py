@@ -23,15 +23,15 @@ m = Basemap(projection='cyl',llcrnrlon=-180,llcrnrlat=-90,urcrnrlon=180,urcrnrla
 # plot (unwarped) rgba image.
 im = m.imshow(rgba)
 # draw coastlines.
-m.drawcoastlines(linewidth=0.5)
+m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw lat/lon grid lines.
-m.drawmeridians(P.arange(-180,180,60),labels=[0,0,0,1])
-m.drawparallels(P.arange(-90,90,30),labels=[1,0,0,0])
+m.drawmeridians(P.arange(-180,180,60),labels=[0,0,0,1],color='0.5')
+m.drawparallels(P.arange(-90,90,30),labels=[1,0,0,0],color='0.5')
 P.title("Blue Marble image - native 'cyl' projection",fontsize=12)
 P.show()
 
 # define orthographic projection centered on North America.
-m = Basemap(projection='ortho',lat_0=50,lon_0=-100,resolution='l')
+m = Basemap(projection='ortho',lat_0=40,lon_0=40,resolution='l')
 # transform to nx x ny regularly spaced native projection grid
 # nx and ny chosen to have roughly the same horizontal res as original image.
 dx = 2.*P.pi*m.rmajor/float(nlons)
@@ -46,10 +46,10 @@ rgba_warped = rgba_warped.filled(0.)
 # plot warped rgba image.
 im = m.imshow(rgba_warped)
 # draw coastlines.
-m.drawcoastlines(linewidth=0.5)
+m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw lat/lon grid lines every 30 degrees.
-m.drawmeridians(P.arange(0,360,30))
-m.drawparallels(P.arange(-90,90,30))
+m.drawmeridians(P.arange(0,360,30),color='0.5')
+m.drawparallels(P.arange(-90,90,30),color='0.5')
 P.title("Blue Marble image warped from 'cyl' to 'ortho' projection",fontsize=12)
 P.show()
 
@@ -68,12 +68,12 @@ for k in range(4):
 # plot warped rgba image.
 im = m.imshow(rgba_warped)
 # draw coastlines.
-m.drawcoastlines(linewidth=0.5)
+m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw parallels and meridians.
 # label on left, right and bottom of map.
 parallels = P.arange(0.,80,20.)
-m.drawparallels(parallels,labels=[1,1,0,1])
+m.drawparallels(parallels,labels=[1,1,0,1],color='0.5')
 meridians = P.arange(10.,360.,30.)
-m.drawmeridians(meridians,labels=[1,1,0,1])
+m.drawmeridians(meridians,labels=[1,1,0,1],color='0.5')
 P.title("Blue Marble image warped from 'cyl' to 'lcc' projection",fontsize=12)
 P.show()
