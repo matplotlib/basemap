@@ -5,18 +5,10 @@ from matplotlib.image import pil_to_array
 from PIL import Image
 
 # shows how to warp an image from one map projection to another.
-# image from http://www.space-graphics.com/earth_topo-bathy.htm, 
-# from the readme.txt that comes with the image:
-# e_topo-bathy - Global Earth planet imagery (c)2004
-# Usage License
-# This image is distributed as FREEWARE for Personal use only
-# NO Commercial use or Commercial redistribution allowed in any form
+# image from http://visibleearth.nasa.gov/
 
 # read in jpeg image to rgba array of normalized floats.
-try:
-    pilImage = Image.open('e_topo_bathy_4k.jpg')
-except:
-    raise IOError, 'please grab image from http://www.space-graphics.com/downloads/maps/e_topobathy/e_topo_bathy_4k.zip'
+pilImage = Image.open('land_shallow_topo_2048.jpg')
 rgba = pil_to_array(pilImage)
 rgba = rgba.astype(P.Float32)/255. # convert to normalized floats.
 
@@ -35,7 +27,7 @@ m.drawcoastlines(linewidth=0.5)
 # draw lat/lon grid lines.
 m.drawmeridians(P.arange(-180,180,60),labels=[0,0,0,1])
 m.drawparallels(P.arange(-90,90,30),labels=[1,0,0,0])
-P.title("Global earth topo-bathy image - native 'cyl' projection",fontsize=12)
+P.title("Blue Marble image - native 'cyl' projection",fontsize=12)
 P.show()
 
 # define orthographic projection centered on North America.
@@ -58,7 +50,7 @@ m.drawcoastlines(linewidth=0.5)
 # draw lat/lon grid lines every 30 degrees.
 m.drawmeridians(P.arange(0,360,30))
 m.drawparallels(P.arange(-90,90,30))
-P.title("Global earth topo-bathy image warped from 'cyl' to 'ortho' projection",fontsize=12)
+P.title("Blue Marble image warped from 'cyl' to 'ortho' projection",fontsize=12)
 P.show()
 
 # define Lambert Conformal basemap for North America.
@@ -83,5 +75,5 @@ parallels = P.arange(0.,80,20.)
 m.drawparallels(parallels,labels=[1,1,0,1])
 meridians = P.arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,1,0,1])
-P.title("Global earth topo-bathy image warped from 'cyl' to 'lcc' projection",fontsize=12)
+P.title("Blue Marble image warped from 'cyl' to 'lcc' projection",fontsize=12)
 P.show()
