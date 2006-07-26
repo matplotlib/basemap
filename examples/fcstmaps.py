@@ -9,8 +9,8 @@ except:
     raise ImportError,"requires pyDAP module (version 2.1 or higher) from http://pydap.org"
 from pylab import *
 from matplotlib.numerix import ma
-import datetime, sys
-from matplotlib.toolkits.basemap import Basemap, shiftgrid
+import datetime
+from matplotlib.toolkits.basemap import Basemap
 
 hrsgregstart = 13865688 # hrs from 00010101 to 15821015 in Julian calendar.
 # times in many datasets use mixed Gregorian/Julian calendar, datetime 
