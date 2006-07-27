@@ -21,9 +21,9 @@ include examples/etopo20lats.gz
 include examples/500hgtdata.gz
 include examples/500hgtlons.gz
 include examples/500hgtlats.gz
-include examples/st99_d90.dbf
-include examples/st99_d90.shp
-include examples/st99_d90.shx
+include examples/st99_d00.dbf
+include examples/st99_d00.shp
+include examples/st99_d00.shx
 include examples/huralll020.dbf
 include examples/huralll020.shp
 include examples/huralll020.shx
@@ -53,9 +53,8 @@ include lib/matplotlib/toolkits/basemap/proj.py
 include lib/matplotlib/toolkits/basemap/greatcircle.py
 include pyshapelib/README pyshapelib/COPYING pyshapelib/ChangeLog pyshapelib/NEWS
 include pyshapelib/*.i pyshapelib/*.c pyshapelib/*.py pyshapelib/*.h
+include pyshapelib/*.shp pyshapelib/*.shx pyshapelib/*.dbf
 include pyshapelib/shapelib/*.c pyshapelib/shapelib/*.h
-include pyshapelib/lib/dbflib/*.py
-include pyshapelib/lib/shapelib/*.py
 include MANIFEST.in 
 include data/5minmask.bin
 include data/*_c.txt
