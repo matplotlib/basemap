@@ -1,3 +1,7 @@
+20060814:  version 0.9.2 (not yet released)
+           * fixed several bugs in drawlsmask method.
+					 * removed buggy optimizations for cylindrical projections not
+					   crossing the Greenwich meridian.
 20060727:  version 0.9.1
            * make sure llcrnrlat and llcrnrlon are not at poles for mercator.
            * use Eric Firing's new quiver in Basemap quiver method.
