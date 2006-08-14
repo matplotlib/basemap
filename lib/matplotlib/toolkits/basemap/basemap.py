@@ -24,8 +24,8 @@ _datadir = os.environ.get('BASEMAP_DATA_PATH')
 if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
-__version__ = '0.9.1'
-__revision__ = '20060725'
+__version__ = '0.9.2'
+__revision__ = '20060814'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -145,7 +145,7 @@ class Basemap(object):
   Default 'c'. Coastline data is from the GSHHS
   (http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html).
   State, country and river datasets from the Generic Mapping
-  Tools ((http://gmt.soest.hawaii.edu).
+  Tools (http://gmt.soest.hawaii.edu).
 
  area_thresh - coastline or lake with an area smaller than area_thresh
   in km^2 will not be plotted.  Default 10000,1000,100,10 for resolution
@@ -228,26 +228,13 @@ class Basemap(object):
         if self.urcrnrlon < -360. or self.llcrnrlon < -360.:
             raise ValueError, 'urcrnrlon and llcrnrlon must be greater than -360'
         # set min/max lats for projection domain.
-        # only boundary segments within that range will be processed.
         self.latmax = None
         if projection in ['mill','cyl','merc']:
-            # if self.crossgreenwich is False (projection
-            # doesn't cross greenwich meridian) some time can
-            # be saved in processing boundaries.
-            if (self.llcrnrlon+360.)%360 >= (self.urcrnrlon+360.)%360:
-                self.crossgreenwich = True
-            else:
-                self.crossgreenwich = False
-                # if not crossgreenwich, adjust lon bounds
-                # to be in range 0 to 360.
-                self.urcrnrlon = (self.urcrnrlon+360.)%360
-                self.llcrnrlon = (self.llcrnrlon+360.)%360
             self.latmin = self.llcrnrlat
             self.latmax = self.urcrnrlat
         elif projection in ['ortho','moll','robin','sinu']:
             self.latmin = -90.
             self.latmax = 90.
-            self.crossgreenwich = True
 
         # set up projection parameter dict.
         # Create Proj class instance.
@@ -474,8 +461,6 @@ class Basemap(object):
             lons, lats = self.makegrid(101,101)
             self.latmin = min(NX.ravel(lats))
             self.latmax = max(NX.ravel(lats))
-            # too hard to figure out, so just assume it does.
-            self.crossgreenwich = True
 
         # if ax == None, pylab.gca may be used.
         self.ax = ax
@@ -589,107 +574,79 @@ environment variable must be set."""
                 riverlats.append(lat)
         riversegind.append(len(riverlons))
 
-        # if projection straddles Greenwich,
         # extend longitudes around the earth a second time
         # so valid longitudes can range from -360 to 720.
-        if self.crossgreenwich:
-            coastlons2 = [lon+360. for lon in coastlons]
-            cntrylons2 = [lon+360. for lon in cntrylons]
-            statelons2 = [lon+360. for lon in statelons]
-            riverlons2 = [lon+360. for lon in riverlons]
-            coastlons3 = [lon-360. for lon in coastlons]
-            cntrylons3 = [lon-360. for lon in cntrylons]
-            statelons3 = [lon-360. for lon in statelons]
-            riverlons3 = [lon-360. for lon in riverlons]
+        # This means a lot of redundant processing is done when
+        # creating the class instance, but it a lot easier to figure
+        # out what to do when the projection domain straddles the 
+        # Greenwich meridian.
+        coastlons2 = [lon+360. for lon in coastlons]
+        cntrylons2 = [lon+360. for lon in cntrylons]
+        statelons2 = [lon+360. for lon in statelons]
+        riverlons2 = [lon+360. for lon in riverlons]
+        coastlons3 = [lon-360. for lon in coastlons]
+        cntrylons3 = [lon-360. for lon in cntrylons]
+        statelons3 = [lon-360. for lon in statelons]
+        riverlons3 = [lon-360. for lon in riverlons]
 
         # transform coastline polygons to native map coordinates.
         xc,yc = proj(NX.array(coastlons),NX.array(coastlats))
         xc = xc.tolist(); yc = yc.tolist()
-        if self.crossgreenwich:
-           xc2,yc2 = proj(NX.array(coastlons2),NX.array(coastlats))
-           xc3,yc3 = proj(NX.array(coastlons3),NX.array(coastlats))
-           xc2 = xc2.tolist(); yc2 = yc2.tolist()
-           xc3 = xc3.tolist(); yc3 = yc3.tolist()
-        if self.crossgreenwich and projection == 'merc' or projection == 'mill':
-            yc2 = yc
-            yc3 = yc
+        xc2,yc2 = proj(NX.array(coastlons2),NX.array(coastlats))
+        xc3,yc3 = proj(NX.array(coastlons3),NX.array(coastlats))
+        xc2 = xc2.tolist(); yc2 = yc2.tolist()
+        xc3 = xc3.tolist(); yc3 = yc3.tolist()
 
         # set up segments in form needed for LineCollection,
         # ignoring 'inf' values that are off the map.
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:])]
         segmentsll = [zip(coastlons[i0:i1],coastlats[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:])]
         segtypes = [i for i in coastsegtype[:-1]]
-        if self.crossgreenwich:
-            segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-            segmentsll2 = [zip(coastlons2[i0:i1],coastlats[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-            segtypes2 = [i for i0,i1,i in zip(coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-            segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-            segmentsll3 = [zip(coastlons3[i0:i1],coastlats[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-            segtypes3 = [i for i0,i1,i in zip(coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-            self.coastsegs = segments+segments2+segments3
-            self.coastsegsll = segmentsll+segmentsll2+segmentsll3
-            self.coastsegtypes = segtypes+segtypes2+segtypes3
-        else:
-            self.coastsegs = segments
-            self.coastsegsll = segmentsll
-            self.coastsegtypes = segtypes
+        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+        segmentsll2 = [zip(coastlons2[i0:i1],coastlats[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+        segtypes2 = [i for i0,i1,i in zip(coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        segmentsll3 = [zip(coastlons3[i0:i1],coastlats[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        segtypes3 = [i for i0,i1,i in zip(coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        self.coastsegs = segments+segments2+segments3
+        self.coastsegsll = segmentsll+segmentsll2+segmentsll3
+        self.coastsegtypes = segtypes+segtypes2+segtypes3
 
         # same as above for country segments.
         xc,yc = proj(NX.array(cntrylons),NX.array(cntrylats))
         xc = xc.tolist(); yc = yc.tolist()
-        if self.crossgreenwich:
-            xc2,yc2 = proj(NX.array(cntrylons2),NX.array(cntrylats))
-            xc3,yc3 = proj(NX.array(cntrylons3),NX.array(cntrylats))
-            xc2 = xc2.tolist(); yc2 = yc2.tolist()
-            xc3 = xc3.tolist(); yc3 = yc3.tolist()
-        if self.crossgreenwich and projection == 'merc' or projection == 'mill':
-            yc2=yc
-            yc3=yc
+        xc2,yc2 = proj(NX.array(cntrylons2),NX.array(cntrylats))
+        xc3,yc3 = proj(NX.array(cntrylons3),NX.array(cntrylats))
+        xc2 = xc2.tolist(); yc2 = yc2.tolist()
+        xc3 = xc3.tolist(); yc3 = yc3.tolist()
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:])]
-        if self.crossgreenwich:
-            segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-            segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-            self.cntrysegs = segments+segments2+segments3
-        else:
-            self.cntrysegs = segments
+        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        self.cntrysegs = segments+segments2+segments3
 
         # same as above for state segments.
         xc,yc = proj(NX.array(statelons),NX.array(statelats))
         xc = xc.tolist(); yc = yc.tolist()
-        if self.crossgreenwich:
-            xc2,yc2 = proj(NX.array(statelons2),NX.array(statelats))
-            xc3,yc3 = proj(NX.array(statelons3),NX.array(statelats))
-            xc2 = xc2.tolist(); yc2 = yc2.tolist()
-            xc3 = xc3.tolist(); yc3 = yc3.tolist()
-        if self.crossgreenwich and projection == 'merc' or projection == 'mill':
-            yc2=yc
-            yc3=yc
+        xc2,yc2 = proj(NX.array(statelons2),NX.array(statelats))
+        xc3,yc3 = proj(NX.array(statelons3),NX.array(statelats))
+        xc2 = xc2.tolist(); yc2 = yc2.tolist()
+        xc3 = xc3.tolist(); yc3 = yc3.tolist()
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:])]
-        if self.crossgreenwich:
-            segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-            segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-            self.statesegs = segments+segments2+segments3
-        else:
-            self.statesegs = segments
+        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        self.statesegs = segments+segments2+segments3
 
         # same as above for river segments.
         xc,yc = proj(NX.array(riverlons),NX.array(riverlats))
         xc = xc.tolist(); yc = yc.tolist()
-        if self.crossgreenwich:
-            xc2,yc2 = proj(NX.array(riverlons2),NX.array(riverlats))
-            xc3,yc3 = proj(NX.array(riverlons3),NX.array(riverlats))
-            xc2 = xc2.tolist(); yc2 = yc2.tolist()
-            xc3 = xc3.tolist(); yc3 = yc3.tolist()
-        if self.crossgreenwich and projection == 'merc' or projection == 'mill':
-            yc2=yc
-            yc3=yc
+        xc2,yc2 = proj(NX.array(riverlons2),NX.array(riverlats))
+        xc3,yc3 = proj(NX.array(riverlons3),NX.array(riverlats))
+        xc2 = xc2.tolist(); yc2 = yc2.tolist()
+        xc3 = xc3.tolist(); yc3 = yc3.tolist()
         segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(riversegind[:-1],riversegind[1:])]
-        if self.crossgreenwich:
-            segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(riversegind[:-1],riversegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-            segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(riversegind[:-1],riversegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-            self.riversegs = segments+segments2+segments3
-        else:
-            self.riversegs = segments
+        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(riversegind[:-1],riversegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
+        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(riversegind[:-1],riversegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
+        self.riversegs = segments+segments2+segments3
 
         # store coast polygons for filling.
         self.coastpolygons = []
@@ -1065,15 +1022,14 @@ environment variable must be set."""
  For cylindrical equidistant projection ('cyl'), this
  does nothing (i.e. x,y == lon,lat).
 
- lon,lat can be either scalar floats or N arrays.
+ For non-cylindrical projections, the inverse transformation
+ always returns longitudes between -180 and 180 degrees. For
+ cylindrical projections (self.projection == 'cyl','mill' or 'merc')
+ the inverse transformation will return longitudes between
+ self.llcrnrlon and self.llcrnrlat.
+
+ input arguments lon, lat can be either scalar floats or N arrays.
         """
-        if not self.crossgreenwich and self.projection in ['merc','cyl','mill'] and not inverse:
-            # for cylindrical projections that don't cross greenwich,
-            # adjust lons to be in range 0 to 360.
-            try:
-                x = (360.+x)%360.
-            except:
-                x = [(360.+xx)%360. for xx in x]
         return self.projtran(x,y,inverse=inverse)
 
     def makegrid(self,nx,ny,returnxy=False):
@@ -1348,7 +1304,7 @@ environment variable must be set."""
  num_shapes is the number of shapes, type is the type code (one of
  the SHPT* constants defined in the shapelib module, see
  http://shapelib.maptools.org/shp_api.html) and min and
- max are 4-element lists with the min. and max. values of the
+ max are 4-element lists with the minimum and maximum values of the
  vertices.
         """
         # open shapefile, read vertices for each object, convert
@@ -1379,10 +1335,6 @@ in map projection coordinates. You can convert the shapefile to geographic
 coordinates using the shpproj utility from the shapelib tools
 (http://shapelib.maptools.org/shapelib-tools.html)"""
                     raise ValueError,msg
-                if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
-                    # for cylindrical projections that don't cross greenwich,
-                    # adjust lons to be in range 0 to 360.
-                    lons = [(lon + 360.)%360 for lon in lons]
                 x, y = self(lons, lats)
                 shpsegs.append(zip(x,y))
                 if ring == 0:
@@ -1445,7 +1397,7 @@ coordinates using the shpproj utility from the shapelib tools
  ax - axes instance (overrides default axes instance)
 
  additional keyword arguments control text properties for labels (see
-  NX.text documentation)
+  pylab.text documentation)
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -1649,7 +1601,7 @@ coordinates using the shpproj utility from the shapelib tools
  ax - axes instance (overrides default axes instance)
 
  additional keyword arguments control text properties for labels (see
-  NX.text documentation)
+  pylab.text documentation)
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -1679,10 +1631,6 @@ coordinates using the shpproj utility from the shapelib tools
         xdelta = 0.1*(self.xmax-self.xmin)
         ydelta = 0.1*(self.ymax-self.ymin)
         for merid in meridians:
-            if not self.crossgreenwich and self.projection in ['merc','cyl','mill']:
-                # for cylindrical projections that don't cross greenwich,
-                # adjust meridians to be in range 0 to 360.
-                merid = (merid + 360.)%360
             lons = merid*NX.ones(len(lats),NX.Float32)
             x,y = self(lons,lats)
             # remove points outside domain.
@@ -1863,6 +1811,8 @@ coordinates using the shpproj utility from the shapelib tools
  lons, lats must be rank-1 arrays containing longitudes and latitudes
  (in degrees) of datin grid in increasing order
  (i.e. from dateline eastward, and South Pole northward).
+ For non-cylindrical projections (those other than
+ cylindrical equidistant, mercator and miller) 
  lons must fit within range -180 to 180.
 
  if returnxy=True, the x and y values of the native map projection grid
@@ -1882,14 +1832,15 @@ coordinates using the shpproj utility from the shapelib tools
         delat = lats[1:]-lats[0:-1]
         if min(delon) < 0. or min(delat) < 0.:
             raise ValueError, 'lons and lats must be increasing!'
-        # check that lons in -180,180
-        lonsa = NX.array(lons)
-        count = NX.sum(lonsa < -180.00001) + NX.sum(lonsa > 180.00001)
-        if count > 1:
-            raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
-        # allow for wraparound point to be outside.
-        elif count == 1 and math.fabs(lons[-1]-lons[0]-360.) > 1.e-4:
-            raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
+        # check that lons in -180,180 for non-cylindrical projections.
+        if self.projection not in ['cyl','merc','mill']:
+            lonsa = NX.array(lons)
+            count = NX.sum(lonsa < -180.00001) + NX.sum(lonsa > 180.00001)
+            if count > 1:
+                raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
+            # allow for wraparound point to be outside.
+            elif count == 1 and math.fabs(lons[-1]-lons[0]-360.) > 1.e-4:
+                raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
         if returnxy:
             lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         else:
@@ -1912,6 +1863,8 @@ coordinates using the shpproj utility from the shapelib tools
  lons, lats must be rank-1 arrays containing longitudes and latitudes
  (in degrees) of datin grid in increasing order
  (i.e. from dateline eastward, and South Pole northward).
+ For non-cylindrical projections (those other than
+ cylindrical equidistant, mercator and miller) 
  lons must fit within range -180 to 180.
 
  The input vector field is defined in spherical coordinates (it
@@ -1936,14 +1889,15 @@ coordinates using the shpproj utility from the shapelib tools
         delat = lats[1:]-lats[0:-1]
         if min(delon) < 0. or min(delat) < 0.:
             raise ValueError, 'lons and lats must be increasing!'
-        # check that lons in -180,180
-        lonsa = NX.array(lons)
-        count = NX.sum(lonsa < -180.00001) + NX.sum(lonsa > 180.00001)
-        if count > 1:
-            raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
-        # allow for wraparound point to be outside.
-        elif count == 1 and math.fabs(lons[-1]-lons[0]-360.) > 1.e-4:
-            raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
+        # check that lons in -180,180 for non-cylindrical projections.
+        if self.projection not in ['cyl','merc','mill']:
+            lonsa = NX.array(lons)
+            count = NX.sum(lonsa < -180.00001) + NX.sum(lonsa > 180.00001)
+            if count > 1:
+                raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
+            # allow for wraparound point to be outside.
+            elif count == 1 and math.fabs(lons[-1]-lons[0]-360.) > 1.e-4:
+                raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         # interpolate to map projection coordinates.
         if _has_arrindexing:
@@ -2035,15 +1989,6 @@ coordinates using the shpproj utility from the shapelib tools
  Plot points with markers on the map (see pylab.scatter documentation).
  extra keyword 'ax' can be used to override the default axes instance.
         """
-        if not self.crossgreenwich and self.projection in ['cyl','mill','merc']:
-            # for cylindrical projections that don't cross greenwich,
-            # adjust lons to be in range 0 to 360.
-            args = list(args)
-            x = args[0]; y = args[1]
-            lons, lats = self(x,y,inverse=True)
-            lons = [(lon + 360.)%360 for lon in lons]
-            args[0], args[1] = self(lons,lats)
-            args = tuple(args)
         if not kwargs.has_key('ax') and self.ax is None:
             try:
                 ax = pylab.gca()
@@ -2082,15 +2027,6 @@ coordinates using the shpproj utility from the shapelib tools
  Draw lines and/or markers on the map (see pylab.plot documentation).
  extra keyword 'ax' can be used to override the default axis instance.
         """
-        if not self.crossgreenwich and self.projection in ['cyl','mill','merc']:
-            # for cylindrical projections that don't cross greenwich,
-            # adjust lons to be in range 0 to 360.
-            args = list(args)
-            x = args[0]; y = args[1]
-            lons, lats = self(x,y,inverse=True)
-            lons = [(lon + 360.)%360 for lon in lons]
-            args[0], args[1] = self(lons,lats)
-            args = tuple(args)
         if not kwargs.has_key('ax') and self.ax is None:
             try:
                 ax = pylab.gca()
@@ -2436,7 +2372,7 @@ coordinates using the shpproj utility from the shapelib tools
  http://www.ngdc.noaa.gov/seg/cdroms/graham/graham/graham.htm
  and has 5-minute resolution.
 
- To specify your own land-sea mask, set the 
+ To specify your own global land-sea mask, set the 
  lsmask keyword to a (nlats, nlons) array
  with 0's for ocean pixels, 1's for land pixels and
  optionally 2's for inland lake pixels.
@@ -2475,34 +2411,30 @@ coordinates using the shpproj utility from the shapelib tools
                 lsmask_lats = NX.arange(-90.+0.5*delta,90.,delta)
                 lsmask = NX.reshape(NX.fromstring(lsmaskf.read(),NX.UInt8),(nlats,nlons))
                 lsmaskf.close()
-            userlsmask = False
-        else:
-            userlsmask = True
         # instance variable lsmask is set on first invocation,
         # it contains the land-sea mask interpolated to the native
         # projection grid.  Further calls to drawlsmask will not
         # redo the interpolation (unless a new land-sea mask is passed
         # in via the lsmask, lsmask_lons, lsmask_lats keywords).
-        if self.lsmask is None and not userlsmask:
-            # transform mask to nx x ny regularly spaced native projection grid
-            # nx and ny chosen to have roughly the same horizontal
-            # resolution as mask.
-            nlons = len(lsmask_lons)
-            nlats = len(lsmask_lats)
-            dx = 2.*math.pi*self.rmajor/float(nlons)
-            nx = int((self.xmax-self.xmin)/dx)+1; ny = int((self.ymax-self.ymin)/dx)+1
-            # interpolate rgba values from proj='cyl' (geographic coords)
-            # to a rectangular map projection grid.
-            mask = self.transform_scalar(lsmask,lsmask_lons,\
-                                         lsmask_lats,nx,ny,order=0,masked=255)
-            self.lsmask = mask
+
+        # transform mask to nx x ny regularly spaced native projection grid
+        # nx and ny chosen to have roughly the same horizontal
+        # resolution as mask.
+        nlons = len(lsmask_lons)
+        nlats = len(lsmask_lats)
+        if self.projection == 'cyl':
+            dx = lsmask_lons[1]-lsmask_lons[0]
         else:
-            ny, nx = self.lsmask.shape
+            dx = 2.*math.pi*self.rmajor/float(nlons)
+        nx = int((self.xmax-self.xmin)/dx)+1; ny = int((self.ymax-self.ymin)/dx)+1
+        # interpolate rgba values from proj='cyl' (geographic coords)
+        # to a rectangular map projection grid.
+        mask = self.transform_scalar(lsmask,lsmask_lons,\
+                                     lsmask_lats,nx,ny,order=0,masked=255)
+        self.lsmask = mask
         # optionally, set lakes to ocean color.
         if lakes:
             mask = NX.where(self.lsmask==2,0,self.lsmask)
-        else:
-            mask = self.lsmask
         rgba = NX.ones((ny,nx,4),NX.UInt8)
         rgba_land = NX.array(rgba_land,NX.UInt8)
         rgba_ocean = NX.array(rgba_ocean,NX.UInt8)
