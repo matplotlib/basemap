@@ -2420,21 +2420,25 @@ coordinates using the shpproj utility from the shapelib tools
         # transform mask to nx x ny regularly spaced native projection grid
         # nx and ny chosen to have roughly the same horizontal
         # resolution as mask.
-        nlons = len(lsmask_lons)
-        nlats = len(lsmask_lats)
-        if self.projection == 'cyl':
-            dx = lsmask_lons[1]-lsmask_lons[0]
-        else:
-            dx = 2.*math.pi*self.rmajor/float(nlons)
-        nx = int((self.xmax-self.xmin)/dx)+1; ny = int((self.ymax-self.ymin)/dx)+1
+        if self.lsmask is None:
+            nlons = len(lsmask_lons)
+            nlats = len(lsmask_lats)
+            if self.projection == 'cyl':
+                dx = lsmask_lons[1]-lsmask_lons[0]
+            else:
+                dx = 2.*math.pi*self.rmajor/float(nlons)
+            nx = int((self.xmax-self.xmin)/dx)+1; ny = int((self.ymax-self.ymin)/dx)+1
         # interpolate rgba values from proj='cyl' (geographic coords)
         # to a rectangular map projection grid.
-        mask = self.transform_scalar(lsmask,lsmask_lons,\
-                                     lsmask_lats,nx,ny,order=0,masked=255)
-        self.lsmask = mask
+            mask = self.transform_scalar(lsmask,lsmask_lons,\
+                                         lsmask_lats,nx,ny,order=0,masked=255)
+            self.lsmask = mask
         # optionally, set lakes to ocean color.
         if lakes:
             mask = NX.where(self.lsmask==2,0,self.lsmask)
+        else:
+            mask = self.lsmask
+        ny, nx = mask.shape
         rgba = NX.ones((ny,nx,4),NX.UInt8)
         rgba_land = NX.array(rgba_land,NX.UInt8)
         rgba_ocean = NX.array(rgba_ocean,NX.UInt8)
