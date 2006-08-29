@@ -70,9 +70,9 @@ http://www.space-graphics.com/earth_topo-bathy.htm,
 garp.py makes a 'World According to Garp' map - an azimuthal equidistant
 projection centered on a specified location.  Straight lines from that
 location to any point on the map have true scale and show the shortest
-route. Shows how to use the included pyproj module to determine how
-to specify the upper right and lower left corners of the map, needed to
-initialize a Basemap instance.
+route.  Shows how to use the 'width' and 'height' keywords
+to specify the map projection region (instead of specifying
+the lat/lon of the upper right and lower left corners).
 
 pnganim.py shows how to make an animation.
 
