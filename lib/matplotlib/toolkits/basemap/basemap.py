@@ -25,7 +25,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
 __version__ = '0.9.2'
-__revision__ = '20060814'
+__revision__ = '20060829'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -96,10 +96,13 @@ class Basemap(object):
  Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
 
-    def __init__(self,llcrnrlon=-180.,llcrnrlat=-90.,urcrnrlon=180.,urcrnrlat=90.,\
+    def __init__(self,llcrnrlon=None,llcrnrlat=None,
+       urcrnrlon=None,urcrnrlat=None,\
+       width=None,height=None,\
        projection='cyl',resolution='c',area_thresh=None,rsphere=6370997,\
        lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
-       lon_1=None,lon_2=None,suppress_ticks=True,boundinglat=None,anchor='C',ax=None):
+       lon_1=None,lon_2=None,suppress_ticks=True,\
+       boundinglat=None,anchor='C',ax=None):
         """
  create a Basemap instance.
 
@@ -121,19 +124,22 @@ class Basemap(object):
   'sinu' - sinusoidal, 'moll' - mollweide, 'robin' - robinson,
   and 'gnom' - gnomonic are currently available.  Default 'cyl'.
 
+ The map projection region can either be specified by setting these keywords:
+
  llcrnrlon - longitude of lower left hand corner of the desired map domain
-  (Default -180).
  llcrnrlat - latitude of lower left hand corner of the desired map domain
-  (Default -90).
  urcrnrlon - longitude of upper right hand corner of the desired map domain
-  (Default 180).
  urcrnrlat - latitude of upper right hand corner of the desired map domain
-  (Default 90).
+
+ or these keywords:
+
+ width  - width of projection region in projection coordinates (meters).
+ height - height of projection region in projection coordinates (meters).
 
  If the orthographic, sinusoidal, mollweide, npstere, spstere, nplaea, splaea,
  nplaea, splaea, npaeqd, spaeqd or robinson projection is chosen
- the values of llcrnrlon,llcrnrlat,urcrnrlon and urcrnrlat are ignored
- (because either they are computed internally, or entire globe is 
+ the values of llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,width and height
+ are ignored (because either they are computed internally, or entire globe is 
  always plotted).
 
  resolution - resolution of boundary database to use. Can be 'c' (crude),
@@ -183,25 +189,31 @@ class Basemap(object):
  The following parameters are map projection parameters which all default to
  None.  Not all parameters are used by all projections, some are ignored.
 
- lat_ts - latitude of natural origin (used for mercator and stereographic
-  projections).
+ lat_ts - latitude of natural origin (used for mercator, and 
+  optionally for stereographic projection).
  lat_1 - first standard parallel for lambert conformal, albers
   equal area projection and equidistant conic projections. Latitude of one
   of the two points on the projection centerline for oblique mercator.
+  If lat_1 is not given, but lat_0 is, lat_1 is set to lat_0 for
+  lambert conformal, albers equal area and equidistant conic.
  lat_2 - second standard parallel for lambert conformal, albers
   equal area projection and equidistant conic projections. Latitude of one
   of the two points on the projection centerline for oblique mercator.
+  If lat_2 is not given, it is set to lat_1 for 
+  lambert conformal, albers equal area and equidistant conic.
  lon_1 - longitude of one of the two points on the projection centerline
   for oblique mercator.
  lon_2 - longitude of one of the two points on the projection centerline
   for oblique mercator.
  lat_0 - central latitude (y-axis origin) - used by stereographic, polyconic,
   transverse mercator, miller cylindrical, cassini-soldner, oblique mercator,
-  gnomonic, equidistant conic, orthographic and lambert azimuthal projections).
+  gnomonic, equidistant conic, orthographic, lambert azimuthal 
+  lambert conformal, albers equal area and equidistant conic projections).
  lon_0 - central meridian (x-axis origin) - used by stereographic, polyconic,
   transverse mercator, miller cylindrical, cassini-soldner, mollweide, robinson,
   gnomonic, equidistant conic, orthographic, sinusoidal and lambert
-  azimuthal projections).
+  azimuthal, lambert conformal, albers equal area and 
+  equidistant conic projections).
  boundinglat - bounding latitude for pole-centered projections (npstere,spstere,
   nplaea,splaea,npaeqd,spaeqd).  These projections are square regions centered
   on the north or south pole.  The longitude lon_0 is at 6-o'clock, and the
@@ -213,31 +225,8 @@ class Basemap(object):
         self.anchor = anchor
         # map projection.
         self.projection = projection
-        # make sure lat/lon limits are converted to floats.
-        self.llcrnrlon = float(llcrnrlon)
-        self.llcrnrlat = float(llcrnrlat)
-        self.urcrnrlon = float(urcrnrlon)
-        self.urcrnrlat = float(urcrnrlat)
-        # check values of urcrnrlon,urcrnrlat and llcrnrlon,llcrnrlat
-        if self.urcrnrlat > 90.0 or self.llcrnrlat > 90.0:
-            raise ValueError, 'urcrnrlat and llcrnrlat must be less than 90'
-        if self.urcrnrlat < -90.0 or self.llcrnrlat < -90.0:
-            raise ValueError, 'urcrnrlat and llcrnrlat must be greater than -90'
-        if self.urcrnrlon > 720. or self.llcrnrlon > 720.:
-            raise ValueError, 'urcrnrlon and llcrnrlon must be less than 720'
-        if self.urcrnrlon < -360. or self.llcrnrlon < -360.:
-            raise ValueError, 'urcrnrlon and llcrnrlon must be greater than -360'
-        # set min/max lats for projection domain.
-        self.latmax = None
-        if projection in ['mill','cyl','merc']:
-            self.latmin = self.llcrnrlat
-            self.latmax = self.urcrnrlat
-        elif projection in ['ortho','moll','robin','sinu']:
-            self.latmin = -90.
-            self.latmax = 90.
 
         # set up projection parameter dict.
-        # Create Proj class instance.
         projparams = {}
         projparams['proj'] = projection
         try:
@@ -249,42 +238,144 @@ class Basemap(object):
                 projparams['b'] = rsphere[0]
         except:
             projparams['R'] = rsphere
+        # set units to meters.
+        if not projparams.has_key('units'):
+            projparams['units']='m'
+        elif projparams['units'] != 'm':
+            print 'resetting units to meters ...'
+            projparams['units']='m'
+        # make sure proj parameter specified.
+        if 'proj' not in projparams.keys():
+            raise KeyError, "need to specify proj parameter"
+        if 'R' not in projparams.keys() and 'a' and 'b' not in projparams.keys():
+            raise KeyError, "need to specify R (perfect sphere radius), or a and b (major and minor sphere radii)"
+        # check for sane values of lon_0, lat_0, lat_ts, lat_1, lat_2
+        if lat_0 is not None:
+            if lat_0 > 90. or lat_0 < -90.:
+                raise ValueError, 'lat_0 must be between -90 and +90 degrees'
+            else:
+                projparams['lat_0'] = lat_0
+        if lon_0 is not None:
+            if lon_0 < -720. or lon_0 > 720.:
+                raise ValueError, 'lon_0 must be between -720 and +720 degrees'
+            else:
+                projparams['lon_0'] = lon_0
+        if lon_1 is not None:
+            if lon_1 < -720. or lon_1 > 720.:
+                raise ValueError, 'lon_1 must be between -720 and +720 degrees'
+            else:
+                projparams['lon_1'] = lon_1
+        if lon_2 is not None:
+            if lon_2 < -720. or lon_2 > 720.:
+                raise ValueError, 'lon_2 must be between -720 and +720 degrees'
+            else:
+                projparams['lon_2'] = lon_2
+        if lat_1 is not None:
+            if lat_1 > 90. or lat_1 < -90.:
+                raise ValueError, 'lat_1 must be between -90 and +90 degrees'
+            else:
+                projparams['lat_1'] = lat_1
+        if lat_2 is not None:
+            if lat_2 > 90. or lat_2 < -90.:
+                raise ValueError, 'lat_2 must be between -90 and +90 degrees'
+            else:
+                projparams['lat_2'] = lat_2
+        if lat_ts is not None:
+            if lat_ts > 90. or lat_ts < -90.:
+                raise ValueError, 'lat_ts must be between -90 and +90 degrees'
+            else:
+                projparams['lat_ts'] = lat_ts
 
+        if None not in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            # make sure lat/lon limits are converted to floats.
+            self.llcrnrlon = float(llcrnrlon)
+            self.llcrnrlat = float(llcrnrlat)
+            self.urcrnrlon = float(urcrnrlon)
+            self.urcrnrlat = float(urcrnrlat)
+            # check values of urcrnrlon,urcrnrlat and llcrnrlon,llcrnrlat
+            if self.urcrnrlat > 90.0 or self.llcrnrlat > 90.0:
+                raise ValueError, 'urcrnrlat and llcrnrlat must be less than 90'
+            if self.urcrnrlat < -90.0 or self.llcrnrlat < -90.0:
+                raise ValueError, 'urcrnrlat and llcrnrlat must be greater than -90'
+            if self.urcrnrlon > 720. or self.llcrnrlon > 720.:
+                raise ValueError, 'urcrnrlon and llcrnrlon must be less than 720'
+            if self.urcrnrlon < -360. or self.llcrnrlon < -360.:
+                raise ValueError, 'urcrnrlon and llcrnrlon must be greater than -360'
         if projection == 'lcc':
+            # if lat_0 is given, but not lat_1,
+            # set lat_1=lat_0
+            if lat_1 is None and lat_0 is not None:
+                lat_1 = lat_0
+                projparams['lat_1'] = lat_1
             if lat_1 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_1 and lon_0 for Lambert Conformal basemap'
-            projparams['lat_1'] = lat_1
-            if lat_2 != None:
-                 projparams['lat_2'] = lat_2
-            projparams['lon_0'] = lon_0
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+                raise ValueError, 'must specify lat_1 or lat_0 and lon_0 for Lambert Conformal basemap (lat_2 is optional)'
+            if lat_2 is None:
+               projparams['lat_2'] = lat_1
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                if width is None or height is None:
+                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                else:
+                    if lon_0 is None or lat_0 is None:
+                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+                    
         elif projection == 'eqdc':
-            if lat_1 is None or lat_2 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_1, lat_2 and lon_0 for Equidistant Conic basemap'
-            projparams['lat_1'] = lat_1
-            projparams['lat_2'] = lat_2
-            projparams['lon_0'] = lon_0
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            # if lat_0 is given, but not lat_1,
+            # set lat_1=lat_0
+            if lat_1 is None and lat_0 is not None:
+                lat_1 = lat_0
+                projparams['lat_1'] = lat_1
+            if lat_1 is None or lon_0 is None:
+                raise ValueError, 'must specify lat_1 or lat_0 and lon_0 for Equidistant Conic basemap (lat_2 is optional)'
+            if lat_2 is None:
+               projparams['lat_2'] = lat_1
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                if width is None or height is None:
+                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                else:
+                    if lon_0 is None or lat_0 is None:
+                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'aea':
-            if lat_1 is None or lat_2 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_1, lat_2 and lon_0 for Albers Equal Area basemap'
-            projparams['lat_1'] = lat_1
-            projparams['lat_2'] = lat_2
-            projparams['lon_0'] = lon_0
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            # if lat_0 is given, but not lat_1,
+            # set lat_1=lat_0
+            if lat_1 is None and lat_0 is not None:
+                lat_1 = lat_0
+                projparams['lat_1'] = lat_1
+            if lat_1 is None or lon_0 is None:
+                raise ValueError, 'must specify lat_1 or lat_0 and lon_0 for Albers Equal Area basemap (lat_2 is optional)'
+            if lat_2 is None:
+               projparams['lat_2'] = lat_1
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                if width is None or height is None:
+                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                else:
+                    if lon_0 is None or lat_0 is None:
+                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'stere':
-            if lat_ts is None or lat_0 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_ts,lat_0 and lon_0 for Stereographic basemap'
-            projparams['lat_ts'] = lat_ts
-            projparams['lat_0'] = lat_0
-            projparams['lon_0'] = lon_0
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if lat_0 is None or lon_0 is None:
+                raise ValueError, 'must specify lat_0 and lon_0 for Stereographic basemap (lat_ts is optional)'
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                if width is None or height is None:
+                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                else:
+                    if lon_0 is None or lat_0 is None:
+                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'spstere':
             if boundinglat is None or lon_0 is None:
                 raise ValueError, 'must specify boundinglat and lon_0 for South-Polar Stereographic basemap'
             projparams['lat_ts'] = -90.
             projparams['lat_0'] = -90.
-            projparams['lon_0'] = lon_0
             projparams['proj'] = 'stere'
             self.llcrnrlon = lon_0+45.
             self.urcrnrlon = lon_0-135.
@@ -292,13 +383,13 @@ class Basemap(object):
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection == 'npstere':
             if boundinglat is None or lon_0 is None:
                 raise ValueError, 'must specify boundinglat and lon_0 for North-Polar Stereographic basemap'
             projparams['lat_ts'] = 90.
             projparams['lat_0'] = 90.
-            projparams['lon_0'] = lon_0
             projparams['proj'] = 'stere'
             self.llcrnrlon = lon_0-45.
             self.urcrnrlon = lon_0+135.
@@ -306,12 +397,12 @@ class Basemap(object):
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection == 'splaea':
             if boundinglat is None or lon_0 is None:
                 raise ValueError, 'must specify boundinglat and lon_0 for South-Polar Lambert Azimuthal basemap'
             projparams['lat_0'] = -90.
-            projparams['lon_0'] = lon_0
             projparams['proj'] = 'laea'
             self.llcrnrlon = lon_0+45.
             self.urcrnrlon = lon_0-135.
@@ -319,12 +410,12 @@ class Basemap(object):
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection == 'nplaea':
             if boundinglat is None or lon_0 is None:
                 raise ValueError, 'must specify boundinglat and lon_0 for North-Polar Lambert Azimuthal basemap'
             projparams['lat_0'] = 90.
-            projparams['lon_0'] = lon_0
             projparams['proj'] = 'laea'
             self.llcrnrlon = lon_0-45.
             self.urcrnrlon = lon_0+135.
@@ -332,12 +423,12 @@ class Basemap(object):
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection == 'spaeqd':
             if boundinglat is None or lon_0 is None:
                 raise ValueError, 'must specify boundinglat and lon_0 for South-Polar Azimuthal Equidistant basemap'
             projparams['lat_0'] = -90.
-            projparams['lon_0'] = lon_0
             projparams['proj'] = 'aeqd'
             self.llcrnrlon = lon_0+45.
             self.urcrnrlon = lon_0-135.
@@ -345,12 +436,12 @@ class Basemap(object):
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection == 'npaeqd':
             if boundinglat is None or lon_0 is None:
                 raise ValueError, 'must specify boundinglat and lon_0 for North-Polar Azimuthal Equidistant basemap'
             projparams['lat_0'] = 90.
-            projparams['lon_0'] = lon_0
             projparams['proj'] = 'aeqd'
             self.llcrnrlon = lon_0-45.
             self.urcrnrlon = lon_0+135.
@@ -358,39 +449,78 @@ class Basemap(object):
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection == 'laea':
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Lambert Azimuthal basemap'
-            projparams['lat_0'] = lat_0
-            projparams['lon_0'] = lon_0
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                if width is None or height is None:
+                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                else:
+                    if lon_0 is None or lat_0 is None:
+                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'merc':
             if lat_ts is None:
                 raise ValueError, 'must specify lat_ts for Mercator basemap'
             # clip plot region to be within -89.99S to 89.99N
             # (mercator is singular at poles)
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                llcrnrlon = -180.
+                llcrnrlat = -90.
+                urcrnrlon = 180
+                urcrnrlat = 90.
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
             if llcrnrlat < -89.99: llcrnrlat = -89.99
             if llcrnrlat > 89.99: llcrnrlat = 89.99
             if urcrnrlat < -89.99: urcrnrlat = -89.99
             if urcrnrlat > 89.99: urcrnrlat = 89.99
-            self.llcrnrlat = float(llcrnrlat)
-            self.urcrnrlat = float(urcrnrlat)
-            self.latmin = self.llcrnrlat
-            self.latmax = self.urcrnrlat
-            projparams['lat_ts'] = lat_ts
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
-        elif projection in ['tmerc','gnom','cass','poly','ortho'] :
+            self.llcrnrlat = llcrnrlat
+            self.urcrnrlat = urcrnrlat
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
+        elif projection in ['tmerc','gnom','cass','poly'] :
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldner, Orthographic or Polyconic basemap'
-            projparams['lat_0'] = lat_0
-            projparams['lon_0'] = lon_0
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                if width is None or height is None:
+                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                else:
+                    if lon_0 is None or lat_0 is None:
+                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+
+                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+                    
+        elif projection == 'ortho':
+            if lat_0 is None or lon_0 is None:
+                raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldner, Orthographic or Polyconic basemap'
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                llcrnrlon = -180.
+                llcrnrlat = -90.
+                urcrnrlon = 180
+                urcrnrlat = 90.
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection in ['moll','robin','sinu']:
             if lon_0 is None:
                 raise ValueError, 'must specify lon_0 for Robinson, Mollweide, or Sinusoidal basemap'
-            projparams['lon_0'] = lon_0
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                llcrnrlon = -180.
+                llcrnrlat = -90.
+                urcrnrlon = 180
+                urcrnrlat = 90.
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'omerc':
             if lat_1 is None or lon_1 is None or lat_2 is None or lon_2 is None:
                 raise ValueError, 'must specify lat_1,lon_1 and lat_2,lon_2 for Oblique Mercator basemap'
@@ -398,23 +528,57 @@ class Basemap(object):
             projparams['lon_1'] = lon_1
             projparams['lat_2'] = lat_2
             projparams['lon_2'] = lon_2
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                if width is None or height is None:
+                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                else:
+                    if lon_0 is None or lat_0 is None:
+                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'aeqd':
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Azimuthal Equidistant basemap'
-            projparams['lat_0'] = lat_0
-            projparams['lon_0'] = lon_0
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                if width is None or height is None:
+                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                else:
+                    if lon_0 is None or lat_0 is None:
+                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'mill':
-            if lat_0 is not None:
-                projparams['lat_0'] = lat_0
-            if lon_0 is not None:
-                projparams['lon_0'] = lon_0
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                llcrnrlon = -180.
+                llcrnrlat = -90.
+                urcrnrlon = 180
+                urcrnrlat = 90.
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection == 'cyl':
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                llcrnrlon = -180.
+                llcrnrlat = -90.
+                urcrnrlon = 180
+                urcrnrlat = 90.
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection == 'sinu':
-            proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                llcrnrlon = -180.
+                llcrnrlat = -90.
+                urcrnrlon = 180
+                urcrnrlat = 90.
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         else:
             raise ValueError, """
   unsupported projection, use 'cyl' - cylindrical equidistant, 'merc' -
@@ -433,6 +597,8 @@ class Basemap(object):
   'sinu' - sinusoidal, 'moll' - mollweide, 'robin' - robinson,
   or 'gnom' - gnomonic.  You tried '%s'""" % projection
 
+        # initialize proj4
+        proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
         # make sure axis ticks are suppressed.
         self.noticks = suppress_ticks
 
@@ -456,8 +622,14 @@ class Basemap(object):
         self.urcrnrx = proj.urcrnrx
         self.urcrnry = proj.urcrnry
 
-        # find lat/lon bounds if it hasn't been done already.
-        if self.latmax is None:
+        # set min/max lats for projection domain.
+        if projection in ['mill','cyl','merc']:
+            self.latmin = self.llcrnrlat
+            self.latmax = self.urcrnrlat
+        elif projection in ['ortho','moll','robin','sinu']:
+            self.latmin = -90.
+            self.latmax = 90.
+        else:
             lons, lats = self.makegrid(101,101)
             self.latmin = min(NX.ravel(lats))
             self.latmax = max(NX.ravel(lats))
@@ -2792,3 +2964,12 @@ def addcyclic(arrin,lonsin):
     lonsout[0:nlons] = lonsin[:]
     lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
     return arrout,lonsout
+
+def _choosecorners(width,height,**kwargs):
+    """
+private function to determine lat/lon values of projection region corners, 
+given width and height of projection region in meters."""
+    p = pyproj.Proj(kwargs)
+    urcrnrlon, urcrnrlat = p(0.5*width,0.5*height, inverse=True)
+    llcrnrlon, llcrnrlat = p(-0.5*width,-0.5*height, inverse=True)
+    return llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat
