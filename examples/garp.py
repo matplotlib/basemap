@@ -21,7 +21,8 @@ lat_0 = float(raw_input('input reference lat (degrees):'))
 location = raw_input('name of location:')
 
 # use these values to setup Basemap instance.
-m = Basemap(width=28000000,height=28000000,\
+width = 28000000
+m = Basemap(width=width,height=width,\
             resolution='c',projection='aeqd',\
             lat_0=lat_0,lon_0=lon_0)
 # draw coasts and fill continents.
