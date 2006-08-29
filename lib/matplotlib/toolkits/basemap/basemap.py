@@ -208,15 +208,10 @@ class Basemap(object):
   for oblique mercator.
  lon_2 - longitude of one of the two points on the projection centerline
   for oblique mercator.
- lat_0 - central latitude (y-axis origin) - used by stereographic, polyconic,
-  transverse mercator, miller cylindrical, cassini-soldner, oblique mercator,
-  gnomonic, equidistant conic, orthographic, lambert azimuthal 
-  lambert conformal, albers equal area and equidistant conic projections).
- lon_0 - central meridian (x-axis origin) - used by stereographic, polyconic,
-  transverse mercator, miller cylindrical, cassini-soldner, mollweide, robinson,
-  gnomonic, equidistant conic, orthographic, sinusoidal and lambert
-  azimuthal, lambert conformal, albers equal area and 
-  equidistant conic projections).
+ lat_0 - central latitude (y-axis origin) - used by all projections, 
+  mandatory for all but 'ortho', 'cyl', 'mill', 'omerc' and 'merc'.
+ lon_0 - central meridian (x-axis origin) - used by all projections,
+  mandatory for all but 'ortho', 'cyl', 'mill', 'omerc' and 'merc'.
  boundinglat - bounding latitude for pole-centered projections (npstere,spstere,
   nplaea,splaea,npaeqd,spaeqd).  These projections are square regions centered
   on the north or south pole.  The longitude lon_0 is at 6-o'clock, and the
@@ -571,6 +566,8 @@ class Basemap(object):
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection == 'sinu':
+            if lon_0 is None:
+                raise ValueError, 'must specify lon_0 for Robinson, Mollweide, or Sinusoidal basemap'
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % self.projection
             if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
