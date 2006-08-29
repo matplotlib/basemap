@@ -126,21 +126,24 @@ class Basemap(object):
 
  The map projection region can either be specified by setting these keywords:
 
- llcrnrlon - longitude of lower left hand corner of the desired map domain
- llcrnrlat - latitude of lower left hand corner of the desired map domain
- urcrnrlon - longitude of upper right hand corner of the desired map domain
- urcrnrlat - latitude of upper right hand corner of the desired map domain
+ llcrnrlon - longitude of lower left hand corner of the desired map domain (degrees).
+ llcrnrlat - latitude of lower left hand corner of the desired map domain (degrees).
+ urcrnrlon - longitude of upper right hand corner of the desired map domain (degrees).
+ urcrnrlat - latitude of upper right hand corner of the desired map domain (degrees).
 
  or these keywords:
 
- width  - width of projection region in projection coordinates (meters).
- height - height of projection region in projection coordinates (meters).
+ width  - width of desired map domain in projection coordinates (meters).
+ height - height of desired map domain in projection coordinates (meters).
 
- If the orthographic, sinusoidal, mollweide, npstere, spstere, nplaea, splaea,
- nplaea, splaea, npaeqd, spaeqd or robinson projection is chosen
- the values of llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,width and height
- are ignored (because either they are computed internally, or entire globe is 
- always plotted).
+ For 'ortho', 'sinu', 'moll', 'npstere', 'spstere', 'nplaea', 'splaea', 'nplaea', 
+ 'splaea', 'npaeqd', 'spaeqd' or 'robin', the values of 
+ llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,width and height are ignored (because 
+ either they are computed internally, or entire globe is always plotted). For the 
+ cylindrical projections ('cyl','merc' and 'mill'), the default is to use 
+ llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other 
+ projections, either the lat/lon values of the corners or width and height must be 
+ specified by the user.
 
  resolution - resolution of boundary database to use. Can be 'c' (crude),
   'l' (low), 'i' (intermediate), 'h' (high), or None. Default is 'c'.
@@ -473,14 +476,12 @@ class Basemap(object):
                 llcrnrlat = -90.
                 urcrnrlon = 180
                 urcrnrlat = 90.
-                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
-                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
             if llcrnrlat < -89.99: llcrnrlat = -89.99
             if llcrnrlat > 89.99: llcrnrlat = 89.99
             if urcrnrlat < -89.99: urcrnrlat = -89.99
             if urcrnrlat > 89.99: urcrnrlat = 89.99
-            self.llcrnrlat = llcrnrlat
-            self.urcrnrlat = urcrnrlat
+            self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+            self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection in ['tmerc','gnom','cass','poly'] :
