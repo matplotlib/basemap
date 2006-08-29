@@ -12,7 +12,7 @@ import pyproj, sys, os, math, dbflib
 from proj import Proj
 from greatcircle import GreatCircle, vinc_dist, vinc_pt
 import matplotlib.numerix as NX
-from matplotlib.numerix import ma
+from matplotlib.numerix import ma, isnan
 from matplotlib.mlab import linspace
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd, is_scalar
@@ -2971,8 +2971,8 @@ given width and height of projection region in meters."""
     urcrnrlon, urcrnrlat = p(0.5*width,0.5*height, inverse=True)
     llcrnrlon, llcrnrlat = p(-0.5*width,-0.5*height, inverse=True)
     corners = llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat
-    # test for nans if numerix supports it.
-    if hasattr(NX, 'nan') and (NX.nan in corners or NX.inf in corners):
+    # test for nans,infs in output
+    if isnan(llcrnrlon) or isnan(llcrnrlon-llcrnrlon) or isnan(urcrnrlon) or isnan(urcrnrlon-urcrnrlon):
        raise ValueError, 'width and/or height too large for this projection, try smaller values'
     else:
        return corners
