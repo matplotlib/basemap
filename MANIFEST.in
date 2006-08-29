@@ -46,6 +46,7 @@ include examples/warpimage.py
 include examples/land_shallow_topo_2048.jpg
 include examples/pnganim.py
 include examples/garp.py
+include examples/setwh.py
 include examples/README
 include lib/matplotlib/toolkits/__init__.py
 include lib/matplotlib/toolkits/basemap/__init__.py
