@@ -2970,4 +2970,9 @@ given width and height of projection region in meters."""
     p = pyproj.Proj(kwargs)
     urcrnrlon, urcrnrlat = p(0.5*width,0.5*height, inverse=True)
     llcrnrlon, llcrnrlat = p(-0.5*width,-0.5*height, inverse=True)
-    return llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat
+    corners = llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat
+    # test for nans if numerix supports it.
+    if hasattr(NX, 'nan') and (NX.nan in corners or NX.inf in corners):
+       raise ValueError, 'width and/or height too large for this projection, try smaller values'
+    else:
+       return corners
