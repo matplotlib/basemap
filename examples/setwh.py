@@ -59,3 +59,24 @@ m.drawparallels(circles)
 m.drawmeridians(meridians)
 title('proj = '+proj+' centered on %sW, %sN' % (lon_0,lat_0),fontsize=10)
 show()
+
+
+lon_0 = -8
+lat_0 = 53.3
+width=350000.
+height= 1.33*width
+fig=figure()
+proj='tmerc'
+circles = arange(50,60,1)
+meridians = arange(-12,2,1)
+m = Basemap(width=width,height=height,
+            resolution='i',projection=proj,\
+            lat_0=lat_0,lon_0=lon_0)
+m.drawcoastlines(linewidth=0.5)
+m.drawcountries(linewidth=0.5)
+m.fillcontinents()
+m.drawstates(linewidth=0.5)
+m.drawparallels(circles)
+m.drawmeridians(meridians)
+title('proj = '+proj+' centered on %sW, %sN' % (lon_0,lat_0),fontsize=10)
+show()
