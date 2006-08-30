@@ -99,7 +99,7 @@ class Basemap(object):
     def __init__(self,llcrnrlon=None,llcrnrlat=None,
        urcrnrlon=None,urcrnrlat=None,\
        width=None,height=None,\
-       projection='cyl',resolution='c',area_thresh=None,rsphere=6370997,\
+       projection='cyl',resolution='c',area_thresh=None,rsphere=6370997.0,\
        lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
        lon_1=None,lon_2=None,suppress_ticks=True,\
        boundinglat=None,anchor='C',ax=None):
@@ -235,7 +235,9 @@ class Basemap(object):
                 projparams['a'] = rsphere[1]
                 projparams['b'] = rsphere[0]
         except:
-            projparams['R'] = rsphere
+            projparams['a'] = rsphere
+            # this is a workaround for bug in proj 4.4.9 tmerc where a=b.
+            projparams['b'] = rsphere - 0.01
         # set units to meters.
         if not projparams.has_key('units'):
             projparams['units']='m'
@@ -245,8 +247,6 @@ class Basemap(object):
         # make sure proj parameter specified.
         if 'proj' not in projparams.keys():
             raise KeyError, "need to specify proj parameter"
-        if 'R' not in projparams.keys() and 'a' and 'b' not in projparams.keys():
-            raise KeyError, "need to specify R (perfect sphere radius), or a and b (major and minor sphere radii)"
         # check for sane values of lon_0, lat_0, lat_ts, lat_1, lat_2
         if lat_0 is not None:
             if lat_0 > 90. or lat_0 < -90.:
@@ -489,7 +489,6 @@ class Basemap(object):
                     if lon_0 is None or lat_0 is None:
                         raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
                     llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
-
                     self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                     self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
                     
