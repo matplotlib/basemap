@@ -25,7 +25,7 @@ if not _datadir:
    _datadir = os.path.join(sys.prefix,'share','basemap')
 
 __version__ = '0.9.2'
-__revision__ = '20060829'
+__revision__ = '20060831'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -135,6 +135,8 @@ class Basemap(object):
 
  width  - width of desired map domain in projection coordinates (meters).
  height - height of desired map domain in projection coordinates (meters).
+ lon_0  - center of desired map domain (in degrees).
+ lat_0  - center of desired map domain (in degrees).
 
  For 'ortho', 'sinu', 'moll', 'npstere', 'spstere', 'nplaea', 'splaea', 'nplaea', 
  'splaea', 'npaeqd', 'spaeqd' or 'robin', the values of 
@@ -143,7 +145,7 @@ class Basemap(object):
  cylindrical projections ('cyl','merc' and 'mill'), the default is to use 
  llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other 
  projections, either the lat/lon values of the corners or width and height must be 
- specified by the user.
+ specified by the user.  
 
  resolution - resolution of boundary database to use. Can be 'c' (crude),
   'l' (low), 'i' (intermediate), 'h' (high), or None. Default is 'c'.
@@ -209,9 +211,7 @@ class Basemap(object):
  lon_2 - longitude of one of the two points on the projection centerline
   for oblique mercator.
  lat_0 - central latitude (y-axis origin) - used by all projections, 
-  mandatory for all but 'ortho', 'cyl', 'mill', 'omerc' and 'merc'.
  lon_0 - central meridian (x-axis origin) - used by all projections,
-  mandatory for all but 'ortho', 'cyl', 'mill', 'omerc' and 'merc'.
  boundinglat - bounding latitude for pole-centered projections (npstere,spstere,
   nplaea,splaea,npaeqd,spaeqd).  These projections are square regions centered
   on the north or south pole.  The longitude lon_0 is at 6-o'clock, and the
@@ -235,18 +235,12 @@ class Basemap(object):
                 projparams['a'] = rsphere[1]
                 projparams['b'] = rsphere[0]
         except:
-            projparams['a'] = rsphere
+            projparams['R'] = rsphere
             # this is a workaround for bug in proj 4.4.9 tmerc where a=b.
-            projparams['b'] = rsphere - 0.01
+            #projparams['a'] = rsphere
+            #projparams['b'] = rsphere - 0.01
         # set units to meters.
-        if not projparams.has_key('units'):
-            projparams['units']='m'
-        elif projparams['units'] != 'm':
-            print 'resetting units to meters ...'
-            projparams['units']='m'
-        # make sure proj parameter specified.
-        if 'proj' not in projparams.keys():
-            raise KeyError, "need to specify proj parameter"
+        projparams['units']='m'
         # check for sane values of lon_0, lat_0, lat_ts, lat_1, lat_2
         if lat_0 is not None:
             if lat_0 > 90. or lat_0 < -90.:
@@ -299,6 +293,8 @@ class Basemap(object):
                 raise ValueError, 'urcrnrlon and llcrnrlon must be less than 720'
             if self.urcrnrlon < -360. or self.llcrnrlon < -360.:
                 raise ValueError, 'urcrnrlon and llcrnrlon must be greater than -360'
+        # for each of the supported projections, compute lat/lon of domain corners 
+        # and set values in projparams dict as needed.
         if projection == 'lcc':
             # if lat_0 is given, but not lat_1,
             # set lat_1=lat_0
@@ -596,6 +592,7 @@ class Basemap(object):
 
         # initialize proj4
         proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
+        
         # make sure axis ticks are suppressed.
         self.noticks = suppress_ticks
 
