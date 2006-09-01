@@ -19,3 +19,15 @@ Just create your Basemap class instance, then call the 'readshapefile'
 method on that instance to import your data.  Setting 'drawbounds=True' will 
 draw the boundaries in the shapefile.  The fillstates.py example
 shows how to do this.
+
+Q: How do I specify the map projection region if I don't know what the latitude and 
+longitudes of the corners are?
+
+A: As an alternative to specifying the lat/lon values for the upper-right and 
+lower-left corners of the projection domain (using the llcrnrlat, llcrnrlon, 
+urcrnrlat and urcrnrlon keywords) you can specify the center of the map projection 
+domain (using the lat_0 and lon_0 keywords) and the width and height of the domain 
+in map projection coordinates (meters) using the width and height keywords.  
+Basemap will then calculate the corresponging values of llcrnrlat, llcrnrlon, 
+urcrnrlat and urcrnrlon. Examples of this are given in the garp.py and setwh.py 
+examples.
