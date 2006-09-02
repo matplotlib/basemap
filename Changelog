@@ -1,4 +1,4 @@
-20060831:  version 0.9.2 (not yet released)
+20060831:  version 0.9.2
            * fixed several bugs in drawlsmask method.
            * removed buggy optimizations for cylindrical projections not
              crossing the Greenwich meridian.
