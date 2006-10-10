@@ -79,6 +79,11 @@ More examples of using the 'width' and 'height' keywords (instead of
 
 pnganim.py shows how to make an animation.
 
+ccsm_popgrid.py shows how to plot data on 2d grids which are not 
+rectilinear in map projection or geographic coordinates.  The NCAR
+Parallel Ocean Program grid is used as an example.
+
 run_all.py is a driver script that runs all the examples except fcstmaps.py,
-testgdal.py, warpimage.py and pnganim.py (which rely on external dependencies).
+testgdal.py, warpimage.py, ccsm_popgrid.py and pnganim.py (which
+rely on external dependencies).
 
