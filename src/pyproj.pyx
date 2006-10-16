@@ -14,7 +14,7 @@ Example usage:
 >>> print x,y
 >>> print p(x,y,inverse=True)
 765975.641091 3805993.13406
-(-120.10799999995851, 34.3611.79972767)
+(-120.10799999995851, 34.361166659972767)
 
 Input coordinates can be given as python arrays, lists/tuples, scalars
 or Numeric/numarray/numpy arrays. Optimized for objects that support
