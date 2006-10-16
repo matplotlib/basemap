@@ -21,7 +21,7 @@ or Numeric/numarray/numpy arrays. Optimized for objects that support
 the Python buffer protocol (regular python, Numeric, numarray and
 numpy arrays).
 
-Download: http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.7.2.tar.gz
+Download: http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.7.3.tar.gz
 
 Requires: PROJ.4 library. Numeric, numarray or numpy required for tests.
 
@@ -58,7 +58,7 @@ cdef int _doublesize
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 _doublesize = sizeof(double)
-__version__ = "1.7.2"
+__version__ = "1.7.3"
 _seqtype = [types.ListType,types.TupleType]
 
 cdef extern from "proj_api.h":
