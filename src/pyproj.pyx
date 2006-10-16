@@ -79,7 +79,7 @@ cdef extern from "proj_api.h":
         PJ_VERSION
 
 cdef extern from "Python.h":
-    int PyObject_AsWriteBuffer(object, void **rbuf, int *len)
+    int PyObject_AsWriteBuffer(object, void **rbuf, Py_ssize_t *len)
     char *PyString_AsString(object)
 
 cdef class Proj:
@@ -162,7 +162,8 @@ cdef class Proj:
  if radians=True, lons/lats are radians instead of degrees.
         """
         cdef projUV projxyout, projlonlatin
-        cdef int ndim, i, buflenx, bufleny
+        cdef Py_ssize_t buflenx, bufleny
+        cdef int ndim, i
         cdef double u, v
         cdef double *lonsdata, *latsdata
         cdef void *londata, *latdata
@@ -199,7 +200,8 @@ cdef class Proj:
  if radians=True, lons/lats are radians instead of degrees.
         """
         cdef projUV projxyin, projlonlatout
-        cdef int ndim, i, buflenx, bufleny
+        cdef Py_ssize_t buflenx, bufleny
+        cdef int ndim, i
         cdef double u, v
         cdef void *xdata, *ydata
         cdef double *xdatab, *ydatab
@@ -440,7 +442,8 @@ cdef _transform(Proj p1, Proj p2, inx, iny, inz, radians):
     """private function to call pj_transform"""
     cdef void *xdata, *ydata, *zdata
     cdef double *xx, *yy, *zz
-    cdef int buflenx, bufleny, buflenz, npts, i
+    cdef Py_ssize_t buflenx, bufleny, buflenz
+    cdef int npts, i
     if PyObject_AsWriteBuffer(inx, &xdata, &buflenx) <> 0:
         raise RuntimeError
     if PyObject_AsWriteBuffer(iny, &ydata, &bufleny) <> 0:
