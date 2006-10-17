@@ -67,7 +67,7 @@ if not datadir:
 
 setup(
   name              = "basemap",
-  version           = "0.9.2",
+  version           = "0.9.3",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data
