@@ -1,3 +1,4 @@
+20061017:  version 0.9.3
            * update pyproj.c to be compatible with python 2.5.
 		   * added new example ccsm_popgrid.py (contributed by Ivan Lima).
 20060831:  version 0.9.2
