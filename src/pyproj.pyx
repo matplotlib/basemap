@@ -17,16 +17,15 @@ Example usage:
 (-120.10799999995851, 34.361166659972767)
 
 Input coordinates can be given as python arrays, lists/tuples, scalars
-or Numeric/numarray/numpy arrays. Optimized for objects that support
-the Python buffer protocol (regular python, Numeric, numarray and
-numpy arrays).
+or numpy/Numeric/numarray arrays. Optimized for objects that support
+the Python buffer protocol (regular python and numpy array objects).
 
-Download: http://www.cdc.noaa.gov/people/jeffrey.s.whitaker/python/pyproj-1.7.3.tar.gz
+Download: http://python.org/pypi/pyproj
 
-Requires: PROJ.4 library. Numeric, numarray or numpy required for tests.
+Requirements: PROJ.4 library (http://proj.maptools.org).
 
-Install:  Set PROJ_DIR environment variable to location
-          of PROJ.4 installation.  Run python setup.py install.
+Install:  Set the PROJ_DIR environment variable to point to the location 
+          of your proj.4 installation, then run 'python setup.py install'.
           If you're using Windows with mingw, see README.mingw.
 
 Example scripts are in 'test' subdirectory of source distribution.
@@ -58,7 +57,7 @@ cdef int _doublesize
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 _doublesize = sizeof(double)
-__version__ = "1.7.3"
+__version__ = "1.8.0"
 _seqtype = [types.ListType,types.TupleType]
 
 cdef extern from "proj_api.h":
@@ -75,6 +74,7 @@ cdef extern from "proj_api.h":
     int pj_is_geocent(projPJ)
     char *pj_strerrno(int)
     void pj_free(projPJ)
+    cdef extern int pj_errno
     cdef enum:
         PJ_VERSION
 
@@ -101,8 +101,12 @@ cdef class Proj:
  True (default is False), the inverse transformation from x/y
  to lon/lat is performed. If optional keyword 'radians' is True
  (default is False) lon/lat are interpreted as radians instead
- of degrees. Works with numarray/Numeric/numpy/regular python
- array objects, lists, tuples or scalars (fastest for arrays). lon and
+ of degrees. If optional keyword 'errcheck' is True (default is 
+ False) an exception is raised if the transformation is invalid.
+ If errcheck=False and the transformation is invalid, no execption
+ is raised and the platform dependent value HUGE_VAL is returned.
+ Works with numpy and regular python array objects, python sequences
+ and scalars, but is fastest for array objects. lon and
  lat must be of same type (array, list/tuple or scalar) and have the
  same length (if array, list or tuple).
     """
@@ -124,7 +128,7 @@ cdef class Proj:
         # if projparams is None, use kwargs.
         if projparams is None:
             if len(kwargs) == 0:
-                raise RuntimeError, 'no projection control parameters specified'
+                raise RuntimeError('no projection control parameters specified')
             else:
                 projparams = kwargs
         # set units to meters.
@@ -141,11 +145,8 @@ cdef class Proj:
         self.pjinitstring = PyString_AsString(''.join(pjargs))
         # initialize projection
         self.projpj = pj_init_plus(self.pjinitstring)
-        if self.projpj == NULL:
-            msg = """projection initialization failed.
- try running proj %s
- in a terminal to get a more informative error message""" % self.pjinitstring
-            raise RuntimeError(msg)
+        if pj_errno != 0:
+            raise RuntimeError(pj_strerrno(pj_errno))
         self.proj_version = PJ_VERSION/100.
 
     def __dealloc__(self):
@@ -156,10 +157,13 @@ cdef class Proj:
         """special method that allows pyproj.Proj instance to be pickled"""
         return (self.__class__,(self.projparams,))
 
-    def _fwd(self, object lons, object lats, radians=False):
+    def _fwd(self, object lons, object lats, radians=False, errcheck=False):
         """
  forward transformation - lons,lats to x,y.
  if radians=True, lons/lats are radians instead of degrees.
+ if errcheck=True, an exception is raised if the forward transformation is invalid.
+ if errcheck=False and the forward transformation is invalid, no exception is
+ raised and the platform dependent value HUGE_VAL is returned.
         """
         cdef projUV projxyout, projlonlatin
         cdef Py_ssize_t buflenx, bufleny
@@ -183,6 +187,8 @@ cdef class Proj:
                 projlonlatin.u = lonsdata[i]
                 projlonlatin.v = latsdata[i]
                 projxyout = pj_fwd(projlonlatin,self.projpj)
+                if errcheck and pj_errno != 0:
+                    raise RuntimeError(pj_strerrno(pj_errno))
                 lonsdata[i] = projxyout.u
                 latsdata[i] = projxyout.v
         else:
@@ -190,14 +196,19 @@ cdef class Proj:
                 projlonlatin.u = _dg2rad*lonsdata[i]
                 projlonlatin.v = _dg2rad*latsdata[i]
                 projxyout = pj_fwd(projlonlatin,self.projpj)
+                if errcheck and pj_errno != 0:
+                    raise RuntimeError(pj_strerrno(pj_errno))
                 lonsdata[i] = projxyout.u
                 latsdata[i] = projxyout.v
         return lons, lats
 
-    def _inv(self, object x, object y, radians=False):
+    def _inv(self, object x, object y, radians=False, errcheck=False):
         """
  inverse transformation - x,y to lons,lats.
  if radians=True, lons/lats are radians instead of degrees.
+ if errcheck=True, an exception is raised if the inverse transformation is invalid.
+ if errcheck=False and the inverse transformation is invalid, no exception is
+ raised and the platform dependent value HUGE_VAL is returned.
         """
         cdef projUV projxyin, projlonlatout
         cdef Py_ssize_t buflenx, bufleny
@@ -211,7 +222,7 @@ cdef class Proj:
         if PyObject_AsWriteBuffer(y, &ydata, &bufleny) <> 0:
             raise RuntimeError
         # process data in buffer 
-        # (for Numeric/numarray/numpy/regular python arrays).
+        # (for numpy/regular python arrays).
         if buflenx != bufleny:
             raise RuntimeError("Buffer lengths not the same")
         ndim = buflenx/_doublesize
@@ -222,6 +233,8 @@ cdef class Proj:
                 projxyin.u = xdatab[i]
                 projxyin.v = ydatab[i]
                 projlonlatout = pj_inv(projxyin,self.projpj)
+                if errcheck and pj_errno != 0:
+                    raise RuntimeError(pj_strerrno(pj_errno))
                 xdatab[i] = projlonlatout.u
                 ydatab[i] = projlonlatout.v
         else:
@@ -229,11 +242,13 @@ cdef class Proj:
                 projxyin.u = xdatab[i]
                 projxyin.v = ydatab[i]
                 projlonlatout = pj_inv(projxyin,self.projpj)
+                if errcheck and pj_errno != 0:
+                    raise RuntimeError(pj_strerrno(pj_errno))
                 xdatab[i] = _rad2dg*projlonlatout.u
                 ydatab[i] = _rad2dg*projlonlatout.v
         return x,y
 
-    def __call__(self,lon,lat,inverse=False,radians=False):
+    def __call__(self,lon,lat,inverse=False,radians=False,errcheck=False):
         """
  Calling a Proj class instance with the arguments lon, lat will
  convert lon/lat (in degrees) to x/y native map projection 
@@ -241,13 +256,18 @@ cdef class Proj:
  True (default is False), the inverse transformation from x/y
  to lon/lat is performed.  If optional keyword 'radians' is
  True (default is False) the units of lon/lat are radians instead
- of degrees.
+ of degrees. If optional keyword 'errcheck' is True (default is 
+ False) an exception is raised if the transformation is invalid.
+ If errcheck=False and the transformation is invalid, no execption
+ is raised and the platform dependent value HUGE_VAL is returned.
 
  Inputs should be doubles (they will be cast to doubles
  if they are not, causing a slight performance hit).
 
- Works with Numeric/numarray/numpy/regular python arrays,
- python lists/tuples or scalars (fastest for arrays).
+ Works with numpy and regular python array objects, python sequences
+ and scalars, but is fastest for array objects. lon and
+ lat must be of same type (array, list/tuple or scalar) and have the
+ same length (if array, list or tuple).
         """
         # if lon,lat support BufferAPI, must make sure they contain doubles.
         isfloat = False; islist = False
@@ -295,9 +315,9 @@ cdef class Proj:
                             raise TypeError, 'lon and latmust be arrays, lists/tuples or scalars (and they must all be of the same type)'
         # call proj4 functions.
         if inverse:
-            outx, outy = self._inv(inx, iny, radians=radians)
+            outx, outy = self._inv(inx, iny, radians=radians, errcheck=errcheck)
         else:
-            outx, outy = self._fwd(inx, iny, radians=radians)
+            outx, outy = self._fwd(inx, iny, radians=radians, errcheck=errcheck)
         # all done.
         # if inputs were lists, tuples or floats, convert back.
         if isfloat:
@@ -353,7 +373,7 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
  if p1.is_latlong() and p2.is_latlong() both are False, the
  radians keyword has no effect.
 
- x,y and z can be Numeric/numarray/numpy or regular python arrays,
+ x,y and z can be numpy or regular python arrays,
  python lists/tuples or scalars. Arrays are fastest. x,y and z must be
  all of the same type (array, list/tuple or scalar), and have the 
  same length (if arrays, lists or tuples).
@@ -419,7 +439,7 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
                         raise TypeError, 'x, y and z must be arrays, lists/tuples or scalars (and they must all be of the same type)'
     ierr = _transform(p1,p2,inx,iny,inz,radians)
     if ierr != 0:
-        raise RuntimeError, pj_strerrno(ierr)
+        raise RuntimeError(pj_strerrno(ierr))
     # if inputs were lists, tuples or floats, convert back.
     if inz is not None:
         if isfloat:
@@ -454,7 +474,7 @@ cdef _transform(Proj p1, Proj p2, inx, iny, inz, radians):
     else:
         buflenz = bufleny
     if not (buflenx == bufleny == buflenz):
-        raise RuntimeError,'x,y and z must be same size'
+        raise RuntimeError('x,y and z must be same size')
     xx = <double *>xdata
     yy = <double *>ydata
     if inz is not None:
