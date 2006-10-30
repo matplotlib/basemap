@@ -27,10 +27,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************
  *
- * $Log$
- * Revision 1.1  2005/02/01 22:08:43  jdh2358
- * Initial revision
- *
+ * $Log: PJ_airy.c,v $
  * Revision 1.2  2002/12/14 19:30:40  warmerda
  * updated header
  *

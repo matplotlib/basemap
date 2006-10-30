@@ -27,10 +27,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************
  *
- * $Log$
- * Revision 1.1  2005/02/01 22:08:43  jdh2358
- * Initial revision
- *
+ * $Log: nad_init.c,v $
  * Revision 1.8  2003/03/17 18:56:01  warmerda
  * implement delayed loading of ctable format files
  *

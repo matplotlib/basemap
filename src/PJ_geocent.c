@@ -29,10 +29,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************
  *
- * $Log$
- * Revision 1.1  2005/02/01 22:08:43  jdh2358
- * Initial revision
- *
+ * $Log: pj_geocent.c,v $
  * Revision 1.1  2002/12/14 20:13:21  warmerda
  * New
  *

@@ -28,10 +28,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************
  *
- * $Log$
- * Revision 1.1  2005/02/01 22:08:43  jdh2358
- * Initial revision
- *
+ * $Log: PJ_aitoff.c,v $
  * Revision 1.3  2002/12/14 19:32:27  warmerda
  * updated header
  *

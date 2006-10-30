@@ -81,10 +81,7 @@ ENTRY0(sterea)
 	P->fwd = e_forward;
 ENDENTRY(P)
 /*
-** $Log$
-** Revision 1.1  2005/02/01 22:08:43  jdh2358
-** Initial revision
-**
+** $Log: PJ_sterea.c,v $
 ** Revision 1.1  2004/10/20 17:04:00  fwarmerdam
 ** New
 **

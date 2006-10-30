@@ -29,10 +29,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************
  *
- * $Log$
- * Revision 1.1  2005/02/01 22:08:43  jdh2358
- * Initial revision
- *
+ * $Log: pj_latlong.c,v $
  * Revision 1.2  2000/07/07 06:04:23  warmerda
  * added longlat alias
  *

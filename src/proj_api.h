@@ -27,9 +27,9 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************
  *
- * $Log$
- * Revision 1.1  2005/02/01 22:08:44  jdh2358
- * Initial revision
+ * $Log: proj_api.h,v $
+ * Revision 1.14  2006/04/20 04:19:59  fwarmerdam
+ * updated version
  *
  * Revision 1.13  2004/10/30 02:33:47  fwarmerdam
  * Updated release version.
@@ -86,7 +86,7 @@ extern "C" {
 #endif
 
 /* Try to update this every version! */
-#define PJ_VERSION 449
+#define PJ_VERSION 450
 
 extern char const pj_release[]; /* global release id string */
 

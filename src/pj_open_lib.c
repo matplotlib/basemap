@@ -30,10 +30,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************
  *
- * $Log$
- * Revision 1.1  2005/02/01 22:08:43  jdh2358
- * Initial revision
- *
+ * $Log: pj_open_lib.c,v $
  * Revision 1.6  2004/09/16 15:14:01  fwarmerdam
  * * src/pj_open_lib.c: added pj_set_searchpath() provided by Eric Miller.
  *

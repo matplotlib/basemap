@@ -1,9 +1,6 @@
 static const char RCS_ID[] = "$Id$";
 /* PROJ.4 Cartographic Projection System -- Revision Log:
-**$Log$
-**Revision 1.1  2005/02/01 22:08:43  jdh2358
-**Initial revision
-**
+**$Log: PJ_lcca.c,v $
 **Revision 1.1  2003/03/04 02:59:41  warmerda
 **New
 **

@@ -93,10 +93,7 @@ pj_inv_gauss(LP slp, const void *en) {
 	return (elp);
 }
 /* Revision Log:
-** $Log$
-** Revision 1.1  2005/02/01 22:08:43  jdh2358
-** Initial revision
-**
+** $Log: pj_gauss.c,v $
 ** Revision 1.1  2004/10/20 17:04:00  fwarmerdam
 ** New
 **

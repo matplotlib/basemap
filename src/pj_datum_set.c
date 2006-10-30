@@ -27,10 +27,7 @@
  * DEALINGS IN THE SOFTWARE.
  ******************************************************************************
  *
- * $Log$
- * Revision 1.1  2005/02/01 22:08:43  jdh2358
- * Initial revision
- *
+ * $Log: pj_datum_set.c,v $
  * Revision 1.2  2001/04/04 21:13:21  warmerda
  * do arcsecond/radian and ppm datum parm transformation in pj_set_datum()
  *
