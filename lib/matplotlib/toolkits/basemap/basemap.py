@@ -2290,7 +2290,6 @@ coordinates using the shpproj utility from the shapelib tools
             ax = self.ax
         else:
             ax = popd(kwargs,'ax')
-        kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         # make x,y masked arrays
         # (masked where data is outside of projection limb)
         x = ma.masked_values(NX.where(x > 1.e20,1.e20,x), 1.e20)
@@ -2342,7 +2341,6 @@ coordinates using the shpproj utility from the shapelib tools
             ax = self.ax
         else:
             ax = popd(kwargs,'ax')
-        kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = popd(kwargs, 'hold', None)
