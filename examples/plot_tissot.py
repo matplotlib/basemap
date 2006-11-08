@@ -9,6 +9,8 @@ from matplotlib.toolkits.basemap import Basemap as Basemap
 # Tissot's indicatrix have all unit area, although their shapes and 
 # orientations vary with location.
 
+# adapted from http://www.perrygeo.net/wordpress/?p=4
+
 m = Basemap(llcrnrlon=-180,llcrnrlat=-80,urcrnrlon=180,urcrnrlat=80,
             projection='cyl')
 shp_info = m.readshapefile('tissot','tissot',drawbounds=True)
