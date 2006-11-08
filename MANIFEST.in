@@ -49,6 +49,10 @@ include examples/garp.py
 include examples/setwh.py
 include examples/ccsm_popgrid.py
 include examples/ccsm_popgrid.nc
+include examples/plot_tissot.py
+include examples/tissot.dbf
+include examples/tissot.shp
+include examples/tissot.shx
 include examples/README
 include lib/matplotlib/toolkits/__init__.py
 include lib/matplotlib/toolkits/basemap/__init__.py
