@@ -1,0 +1,79 @@
+import pylab as p
+from matplotlib.toolkits.basemap import Basemap as Basemap
+
+# Tissot's Indicatrix (http://en.wikipedia.org/wiki/Tissot's_Indicatrix). 
+# These diagrams illustrate the distortion inherent in all map projections.
+# In conformal projections, where angles are conserved around every location, 
+# the Tissot's indicatrix are all circles, with varying sizes. In equal-area 
+# projections, where area proportions between objects are conserved, the 
+# Tissot's indicatrix have all unit area, although their shapes and 
+# orientations vary with location.
+
+m = Basemap(llcrnrlon=-180,llcrnrlat=-80,urcrnrlon=180,urcrnrlat=80,
+            projection='cyl')
+shp_info = m.readshapefile('tissot','tissot',drawbounds=True)
+for nshape,seg in enumerate(m.tissot):
+    xx,yy = zip(*seg)
+    p.fill(xx,yy,'green',zorder=10)
+# draw meridians and parallels.
+m.drawparallels(p.arange(-90,91,30),labels=[1,0,0,0])
+m.drawmeridians(p.arange(-180,180,60),labels=[0,0,0,1])
+m.drawcoastlines()
+m.fillcontinents()
+p.title('Tissot Diagram - Cylindrical Equal Area')
+p.show()
+
+m = Basemap(llcrnrlon=-180,llcrnrlat=-70,urcrnrlon=180,urcrnrlat=70,
+            projection='merc',lat_ts=20)
+shp_info = m.readshapefile('tissot','tissot',drawbounds=True)
+for nshape,seg in enumerate(m.tissot):
+    xx,yy = zip(*seg)
+    p.fill(xx,yy,'green',zorder=10)
+# draw meridians and parallels.
+m.drawparallels(p.arange(-90,91,30),labels=[1,0,0,0])
+m.drawmeridians(p.arange(-180,180,60),labels=[0,0,0,1])
+m.drawcoastlines()
+m.fillcontinents()
+p.title('Tissot Diagram - Mercator Conformal')
+p.show()
+
+m = Basemap(lon_0=-60,lat_0=45,projection='ortho')
+shp_info = m.readshapefile('tissot','tissot',drawbounds=False)
+for nshape,seg in enumerate(m.tissot):
+    xx,yy = zip(*seg)
+    if max(xx) < 1.e20 and max(yy) < 1.e20:
+        p.fill(xx,yy,'green',zorder=10)
+m.drawcoastlines()
+m.fillcontinents()
+m.drawparallels(p.arange(-90,91,30))
+m.drawmeridians(p.arange(-180,180,30))
+p.title('Tissot Diagram - Orthographic')
+m.drawmapboundary()
+p.gca().set_frame_on(True)
+p.show()
+
+m = Basemap(lon_0=270,lat_0=90,boundinglat=10,projection='npstere')
+shp_info = m.readshapefile('tissot','tissot',drawbounds=True)
+for nshape,seg in enumerate(m.tissot):
+    xx,yy = zip(*seg)
+    p.fill(xx,yy,'green',zorder=10)
+# draw meridians and parallels.
+m.drawparallels(p.arange(-90,91,30),labels=[1,0,0,0])
+m.drawmeridians(p.arange(-180,180,30),labels=[0,0,0,1])
+m.drawcoastlines()
+m.fillcontinents()
+p.title('Tissot Diagram - North Polar Stereographic Conformal')
+p.show()
+
+m = Basemap(lon_0=270,lat_0=90,boundinglat=10,projection='nplaea')
+shp_info = m.readshapefile('tissot','tissot',drawbounds=True)
+for nshape,seg in enumerate(m.tissot):
+    xx,yy = zip(*seg)
+    p.fill(xx,yy,'green',zorder=10)
+# draw meridians and parallels.
+m.drawparallels(p.arange(-90,91,30),labels=[1,0,0,0])
+m.drawmeridians(p.arange(-180,180,30),labels=[0,0,0,1])
+m.drawcoastlines()
+m.fillcontinents()
+p.title('Tissot Diagram - North Polar Lambert Azimuthal Equal Area')
+p.show()
