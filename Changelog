@@ -1,3 +1,4 @@
+           * added "Tissot's indicatrix" example.
            * 'extent' keyword was erroneously being passed to pcolor.
            * update proj4 source files to version 4.5.0.
            * updated pyproj to versioni 1.8.0 (better error handling).
