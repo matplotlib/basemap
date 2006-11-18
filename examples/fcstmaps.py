@@ -38,8 +38,11 @@ def hrs_since_day1CE_todate(hrs):
     curdate = gregstart + hrs_sincegreg*delta
     return curdate
 
-# today's date.
-YYYYMMDD = datetime.datetime.today().strftime('%Y%m%d')
+# today's date is default.
+if len(sys.argv) > 1:
+    YYYYMMDD = sys.argv[1]
+else:
+   YYYYMMDD = datetime.datetime.today().strftime('%Y%m%d')
 YYYYMM = YYYYMMDD[0:6]
 
 # set OpenDAP server URL.
@@ -50,7 +53,10 @@ print URL+'\n'
 try:
     data = client.open(URL)
 except:
-    raise IOError, 'opendap server not providing the requested data'
+    msg = """
+opendap server not providing the requested data.
+Try another date by providing YYYYMM on command line."""
+    raise IOError, msg
 
 
 # read levels, lats,lons,times.
@@ -123,5 +129,5 @@ figtext(0.5,0.95,u"2-m temp (\N{DEGREE SIGN}K) forecasts from %s"%verifdates[0],
         horizontalalignment='center',fontsize=14)
 # a single colorbar.
 cax = axes([0.1, 0.03, 0.8, 0.025])
-colorbar(tickfmt='%d', cax=cax, orientation='horizontal',clabels=clevs[1:-1:2])
+colorbar(cax=cax, orientation='horizontal')
 show()
