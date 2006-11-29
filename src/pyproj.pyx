@@ -50,15 +50,15 @@ PERFORMANCE OF THIS SOFTWARE.
 
 # Make changes to this file, not the c-wrappers that Pyrex generates.
 
-import math, array, types
+import math, array
+from types import TupleType, ListType
 
-cdef double _rad2dg, _dg2rad
 cdef int _doublesize
+cdef double _dg2rad, _rad2dg
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 _doublesize = sizeof(double)
-__version__ = "1.8.0"
-_seqtype = [types.ListType,types.TupleType]
+__version__ = "1.8.1"
 
 cdef extern from "proj_api.h":
     ctypedef double *projPJ
@@ -182,24 +182,18 @@ cdef class Proj:
         ndim = buflenx/_doublesize
         lonsdata = <double *>londata
         latsdata = <double *>latdata
-        if radians:
-            for i from 0 <= i < ndim:
+        for i from 0 <= i < ndim:
+            if radians:
                 projlonlatin.u = lonsdata[i]
                 projlonlatin.v = latsdata[i]
-                projxyout = pj_fwd(projlonlatin,self.projpj)
-                if errcheck and pj_errno != 0:
-                    raise RuntimeError(pj_strerrno(pj_errno))
-                lonsdata[i] = projxyout.u
-                latsdata[i] = projxyout.v
-        else:
-            for i from 0 <= i < ndim:
+            else:
                 projlonlatin.u = _dg2rad*lonsdata[i]
                 projlonlatin.v = _dg2rad*latsdata[i]
-                projxyout = pj_fwd(projlonlatin,self.projpj)
-                if errcheck and pj_errno != 0:
-                    raise RuntimeError(pj_strerrno(pj_errno))
-                lonsdata[i] = projxyout.u
-                latsdata[i] = projxyout.v
+            projxyout = pj_fwd(projlonlatin,self.projpj)
+            if errcheck and pj_errno != 0:
+                raise RuntimeError(pj_strerrno(pj_errno))
+            lonsdata[i] = projxyout.u
+            latsdata[i] = projxyout.v
         return lons, lats
 
     def _inv(self, object x, object y, radians=False, errcheck=False):
@@ -228,25 +222,19 @@ cdef class Proj:
         ndim = buflenx/_doublesize
         xdatab = <double *>xdata
         ydatab = <double *>ydata
-        if radians:
-            for i from 0 <= i < ndim:
-                projxyin.u = xdatab[i]
-                projxyin.v = ydatab[i]
-                projlonlatout = pj_inv(projxyin,self.projpj)
-                if errcheck and pj_errno != 0:
-                    raise RuntimeError(pj_strerrno(pj_errno))
+        for i from 0 <= i < ndim:
+            projxyin.u = xdatab[i]
+            projxyin.v = ydatab[i]
+            projlonlatout = pj_inv(projxyin,self.projpj)
+            if errcheck and pj_errno != 0:
+                raise RuntimeError(pj_strerrno(pj_errno))
+            if radians:
                 xdatab[i] = projlonlatout.u
                 ydatab[i] = projlonlatout.v
-        else:
-            for i from 0 <= i < ndim:
-                projxyin.u = xdatab[i]
-                projxyin.v = ydatab[i]
-                projlonlatout = pj_inv(projxyin,self.projpj)
-                if errcheck and pj_errno != 0:
-                    raise RuntimeError(pj_strerrno(pj_errno))
+            else:
                 xdatab[i] = _rad2dg*projlonlatout.u
                 ydatab[i] = _rad2dg*projlonlatout.v
-        return x,y
+        return x, y 
 
     def __call__(self,lon,lat,inverse=False,radians=False,errcheck=False):
         """
@@ -270,22 +258,23 @@ cdef class Proj:
  same length (if array, list or tuple).
         """
         # if lon,lat support BufferAPI, must make sure they contain doubles.
-        isfloat = False; islist = False
+        isfloat = False; islist = False; istuple = False
         # first, if it's a numpy array scalar convert to float
         # (array scalars don't support buffer API)
         if hasattr(lon,'shape') and lon.shape == (): lon = float(lon)
         if hasattr(lat,'shape') and lat.shape == (): lat = float(lat)
         try:
-            # typecast Numeric/numarray arrays to double.
-            # (this makes a copy)
-            lon.typecode()
-            lat.typecode()
+            # typecast numpy arrays to double.
+            # (this makes a copy - which is crucial
+            #  since buffer is modified in place)
+            lon.dtype.char
+            lat.dtype.char
             inx = lon.astype('d')
             iny = lat.astype('d')
         except:
-            try: # perhaps they are numpy arrays?
-                lon.dtype.char
-                lat.dtype.char
+            try: # perhaps they are Numeric/numarray arrays?
+                lon.typecode()
+                lat.typecode()
                 inx = lon.astype('d')
                 iny = lat.astype('d')
             except:
@@ -298,11 +287,16 @@ cdef class Proj:
                 except: 
                     # none of the above
                     # try to convert to python array
-                    # a list or tuple.
-                    if type(lon) in _seqtype and type(lat) in _seqtype:
+                    # a list.
+                    if type(lon) is ListType and type(lon) is ListType:
                         inx = array.array('d',lon)
                         iny = array.array('d',lat)
                         islist = True
+                    # a tuple.
+                    elif type(lon) is TupleType and type(lon) is TupleType:
+                        inx = array.array('d',lon)
+                        iny = array.array('d',lat)
+                        istuple = True
                     # a float.
                     else:
                         try:
@@ -312,7 +306,7 @@ cdef class Proj:
                             iny = array.array('d',(lat,))
                             isfloat = True
                         except:
-                            raise TypeError, 'lon and latmust be arrays, lists/tuples or scalars (and they must all be of the same type)'
+                            raise TypeError, 'lon and lat must be arrays, lists/tuples or scalars (and they must all be of the same type)'
         # call proj4 functions.
         if inverse:
             outx, outy = self._inv(inx, iny, radians=radians, errcheck=errcheck)
@@ -323,8 +317,9 @@ cdef class Proj:
         if isfloat:
             return outx[0],outy[0]
         elif islist:
-            # note: if input was a tuple, output will be a list.
             return outx.tolist(),outy.tolist()
+        elif istuple:
+            return tuple(outx),tuple(outy)
         else:
             return outx,outy
 
@@ -381,27 +376,28 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
  x and y are given in meters.  z is always meters.
     """
     # make sure x,y,z support Buffer API and contain doubles.
-    isfloat = False; islist = False
+    isfloat = False; islist = False; istuple = False
     # first, if it's a numpy array scalar convert to float
     # (array scalars don't support buffer API)
     if hasattr(x,'shape') and x.shape == (): x = float(x)
     if hasattr(y,'shape') and y.shape == (): y = float(y)
     if hasattr(z,'shape') and z.shape == (): z = float(z)
     try:
-        # typecast Numeric/numarray arrays to double.
-        # (this makes a copy)
-        x.typecode()
-        y.typecode()
-        if z is not None: z.typecode()
+        # typecast numpy arrays to double.
+        # (this makes a copy - which is crucial
+        #  since buffer is modified in place)
+        x.dtype.char
+        y.dtype.char
+        if z is not None: z.dtype.char
         inx = x.astype('d')
         iny = y.astype('d')
         if z is not None:
             inz = z.astype('d')
     except:
-        try: # perhaps they are numpy arrays?
-            x.dtype.char
-            y.dtype.char
-            if z is not None: z.dtype.char
+        try: # perhaps they are Numeric/numarray arrays?
+            x.typecode()
+            y.typecode()
+            if z is not None: z.typecode()
             inx = x.astype('d')
             iny = y.astype('d')
             if z is not None:
@@ -418,13 +414,20 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
                     inz = array.array('d',z)
             except: 
                 # try to convert to python array
-                # a list or tuple?
-                if type(x) in _seqtype and type(y) in _seqtype and (type(z) is None or type(z) in _seqtype):
+                # a list.
+                if type(x) is ListType and type(y) is ListType and (type(z) is None or type(z) is ListType):
                     inx = array.array('d',x)
                     iny = array.array('d',y)
                     if z is not None:
                         inz = array.array('d',z)
                     islist = True
+                # a tuple.
+                elif type(x) is TupleType and type(y) is TupleType and (type(z) is None or type(z) is TupleType):
+                    inx = array.array('d',x)
+                    iny = array.array('d',y)
+                    if z is not None:
+                        inz = array.array('d',z)
+                    istuple = True
                 # a scalar?
                 else:
                     try:
@@ -445,16 +448,18 @@ def transform(Proj p1, Proj p2, x, y, z=None, radians=False):
         if isfloat:
             return inx[0],iny[0],inz[0]
         elif islist:
-            # note: if input was a tuple, output will be a list.
             return inx.tolist(),iny.tolist(),inz.tolist()
+        elif istuple:
+            return tuple(inx),tuple(iny),tuple(inz)
         else:
             return inx,iny,inz
     else:
         if isfloat:
             return inx[0],iny[0]
         elif islist:
-            # note: if input was a tuple, output will be a list.
             return inx.tolist(),iny.tolist()
+        elif istuple:
+            return tuple(inx),tuple(iny)
         else:
             return inx,iny
 
