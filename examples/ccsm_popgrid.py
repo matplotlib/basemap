@@ -20,14 +20,11 @@ locally orthogonal to each other.
 
 POP grids are used extensively locally in oceanographic and ice models.
 
-This example reads data from a netCDF file, so it requires either
-the netCDF4 or pynetcdf modules (both available on http://python.org/pypi).
+This example uses the pupynere pure-python netCDF 3 reader
+from Roberto De Almeida for reading netCDF files (included).
 
 """
-try:
-    from netCDF4_classic import Dataset
-except:
-    from pynetcdf import NetCDFFile as Dataset
+from pupynere import NetCDFFile
 import pylab as pl
 import matplotlib.numerix.ma as MA
 import matplotlib.numerix as N
@@ -35,11 +32,11 @@ from matplotlib.toolkits.basemap import Basemap
 
 # read in data from netCDF file.
 infile    = 'ccsm_popgrid.nc'
-fpin      = Dataset(infile,mode='r')
+fpin      = NetCDFFile(infile)
 tlat      = fpin.variables['TLAT'][:]
 tlon      = fpin.variables['TLONG'][:]
 temp      = fpin.variables['TEMP'][:]
-fillvalue = fpin.variables['TEMP']._FillValue
+fillvalue = fpin.variables['TEMP'].attributes['_FillValue']
 fpin.close()
 
 # make longitudes monotonically increasing.
