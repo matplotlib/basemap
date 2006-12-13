@@ -49,6 +49,7 @@ include examples/garp.py
 include examples/setwh.py
 include examples/ccsm_popgrid.py
 include examples/ccsm_popgrid.nc
+include examples/pupynere.py
 include examples/plot_tissot.py
 include examples/tissot.dbf
 include examples/tissot.shp
