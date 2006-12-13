@@ -87,6 +87,6 @@ rectilinear in map projection or geographic coordinates.  The NCAR
 Parallel Ocean Program grid is used as an example.
 
 run_all.py is a driver script that runs all the examples except fcstmaps.py,
-testgdal.py, warpimage.py, ccsm_popgrid.py and pnganim.py (which
+testgdal.py, warpimage.py, and pnganim.py (which
 rely on external dependencies).
 
