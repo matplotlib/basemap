@@ -46,7 +46,7 @@ fillvalue = fpin.variables['TEMP'].attributes['_FillValue']
 fpin.close()
 
 # make longitudes monotonically increasing.
-tlon = N.where(N.greater_equal(tlon,321),tlon-360,tlon)
+tlon = N.where(N.greater_equal(tlon,min(tlon[:,0])),tlon-360,tlon)
 
 # create a masked array with temperature data (continents masked).
 temp = MA.masked_values(temp,fillvalue)
