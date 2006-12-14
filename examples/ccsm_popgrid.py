@@ -26,6 +26,12 @@ from Roberto De Almeida for reading netCDF files (included).
 """
 from pupynere import NetCDFFile
 import pylab as pl
+from matplotlib import rcParams
+try:
+    import numpy
+    rcParams['numerix'] = 'numpy'
+except:
+    raise ImportError('this example requires numpy')
 import matplotlib.numerix.ma as MA
 import matplotlib.numerix as N
 from matplotlib.toolkits.basemap import Basemap
