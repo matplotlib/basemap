@@ -70,6 +70,8 @@ map.fillcontinents(color='white')
 x, y = map(tlon,tlat)
 im = map.pcolor(x,y,MA.masked_array(N.zeros(temp.shape,'f'), temp.mask),\
                 shading='faceted',cmap=pl.cm.cool,vmin=0,vmax=0)
+# disclaimer:  these are not really the grid cells because of the
+# way pcolor interprets the x and y args.
 pl.title('(A) CCSM POP Grid Cells')
 
 # subplot 2 is a contour plot of surface temperature from the
