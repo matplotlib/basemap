@@ -10,7 +10,7 @@ import struct
 import itertools
 import mmap
 
-from numpy import ndarray, zeros
+from numpy import ndarray, zeros, array
 
 
 ABSENT       = '\x00' * 8
@@ -30,7 +30,7 @@ class NetCDFFile(object):
     """A NetCDF file parser."""
 
     def __init__(self, file):
-        self._buffer = open(file, 'r')
+        self._buffer = open(file, 'rb')
         self._parse()
 
     def read(self, size=-1):
@@ -54,7 +54,7 @@ class NetCDFFile(object):
 
     def _numrecs(self):
         """Read number of records."""
-        self._numrecs = self._unpack_int()
+        self._nrecs = self._unpack_int()
 
     def _dim_array(self):
         """Read a dict with dimensions names and sizes."""
@@ -145,7 +145,7 @@ class NetCDFFile(object):
             dimensions.append(name)
             dim = self.dimensions[name]
             if dim is None and i == 0:
-                dim = self._numrecs
+                dim = self._nrecs
                 isrec = True
             shape.append(dim)
         dimensions = tuple(dimensions)
@@ -169,9 +169,12 @@ class NetCDFFile(object):
         padding = self.read((4 - (count % 4)) % 4)
         
         typecode = typecodes[nc_type-1]
-        if nc_type != 2:  # not char
+        if nc_type != 2:  # not char 
             values = struct.unpack('>%s' % (typecode * n), values)
-            values = list(values)
+            values = array(values, dtype=typecode) 
+        else:
+            # Remove EOL terminator.
+            if values.endswith('\x00'): values = values[:-1]
 
         return values
 
@@ -185,6 +188,8 @@ class NetCDFFile(object):
     def _read_string(self):
         count = struct.unpack('>i', self.read(4))[0]
         s = self.read(count)
+        # Remove EOL terminator.
+        if s.endswith('\x00'): s = s[:-1]
         padding = self.read((4 - (count % 4)) % 4)
         return s
 
@@ -199,7 +204,8 @@ class NetCDFVariable(object):
         self._begin = begin
         self.shape = shape
         self.dimensions = dimensions
-        self.attributes = attributes
+        self.attributes = attributes  # for ``dap.plugins.netcdf``
+        self.__dict__.update(attributes)
         self._is_record = isrec
 
         # Number of bytes and type.
