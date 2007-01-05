@@ -1,5 +1,4 @@
 from matplotlib.toolkits.basemap import Basemap
-from matplotlib.toolkits.basemap import pyproj
 from pylab import title, show, arange, pi
 
 # the shortest route from the center of the map
