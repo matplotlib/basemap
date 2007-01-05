@@ -1,3 +1,5 @@
+           * rename pyproj.so _pyproj.so, added a python wrapper pyproj.py,
+		     moved pyproj into matplotlib.toolkits.basemap.
 20061117:  version 0.9.4
            * added "Tissot's indicatrix" example.
            * 'extent' keyword was erroneously being passed to pcolor.
