@@ -21,9 +21,9 @@ def dbf_macros():
 
 deps = glob.glob('src/*.c')
 
-extensions = [Extension("pyproj",deps,include_dirs = ['src'],)]
 packages          = ['matplotlib.toolkits.basemap']
 package_dirs       = {'':'lib'}
+extensions = [Extension("matplotlib.toolkits.basemap._pyproj",deps,include_dirs = ['src'],)]
 
 # only install shapelib and dbflib if user hasn't got them.
 #try: import shapelib
