@@ -59,6 +59,7 @@ include lib/matplotlib/toolkits/__init__.py
 include lib/matplotlib/toolkits/basemap/__init__.py
 include lib/matplotlib/toolkits/basemap/basemap.py
 include lib/matplotlib/toolkits/basemap/proj.py
+include lib/matplotlib/toolkits/basemap/pyproj.py
 include lib/matplotlib/toolkits/basemap/greatcircle.py
 include pyshapelib/README pyshapelib/COPYING pyshapelib/ChangeLog pyshapelib/NEWS
 include pyshapelib/*.i pyshapelib/*.c pyshapelib/*.py pyshapelib/*.h
