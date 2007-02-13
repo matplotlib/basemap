@@ -32,6 +32,10 @@ cdef extern from "Python.h":
     int PyObject_AsWriteBuffer(object, void **rbuf, Py_ssize_t *len)
     char *PyString_AsString(object)
 
+cdef extern from "math.h":
+    cdef enum:
+        HUGE_VAL
+
 cdef class Proj:
     cdef projPJ projpj
     cdef public object projparams
@@ -94,8 +98,18 @@ cdef class Proj:
             projxyout = pj_fwd(projlonlatin,self.projpj)
             if errcheck and pj_errno != 0:
                 raise RuntimeError(pj_strerrno(pj_errno))
-            lonsdata[i] = projxyout.u
-            latsdata[i] = projxyout.v
+            # local mod for basemap - since HUGE_VAL can be 'inf',
+            # change it to a real (but very large) number.
+            # otherwise, postscript files end up with 'inf' in them,
+            # which ghostscript doesn't like.
+            if projxyout.u == HUGE_VAL:
+                lonsdata[i] = 1.e30
+            else:
+                lonsdata[i] = projxyout.u
+            if projxyout.v == HUGE_VAL:
+                latsdata[i] = 1.e30
+            else:     
+                latsdata[i] = projxyout.v
 
     def _inv(self, object x, object y, radians=False, errcheck=False):
         """
