@@ -1,3 +1,7 @@
+           * make sure proj returns 1.e30 instead of HUGE_VAL for
+		   undefined transformations (HUGE_VAL is inf on most
+		   platforms, which gets embedded in the postscript, resulting
+		   in a un-renderable file)
            * typedef Py_ssize_t if necessary - ADS
            * rename pyproj.so _pyproj.so, added a python wrapper pyproj.py,
 		     moved pyproj into matplotlib.toolkits.basemap.
