@@ -1,3 +1,4 @@
+           * typedef Py_ssize_t if necessary - ADS
            * rename pyproj.so _pyproj.so, added a python wrapper pyproj.py,
 		     moved pyproj into matplotlib.toolkits.basemap.
 20061117:  version 0.9.4
