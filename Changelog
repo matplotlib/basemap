@@ -1,4 +1,4 @@
-20070314:  version 0.9.5 (svn revision 3067)
+20070314:  version 0.9.5 (svn revision 3070)
            * intermediate coastlines now installed by default.
              basemap-data is no longer a separate package (couldn't
              figure out how to manage the egg).  If the 'h' res 
