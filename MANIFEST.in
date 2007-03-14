@@ -66,6 +66,6 @@ include pyshapelib/*.i pyshapelib/*.c pyshapelib/*.py pyshapelib/*.h
 include pyshapelib/*.shp pyshapelib/*.shx pyshapelib/*.dbf
 include pyshapelib/shapelib/*.c pyshapelib/shapelib/*.h
 include MANIFEST.in 
-include data/5minmask.bin
-include data/*_c.txt
-include data/*_l.txt
+include lib/matplotlib/toolkits/basemap/data/5minmask.bin
+include lib/matplotlib/toolkits/basemap/data/*_c.txt
+include lib/matplotlib/toolkits/basemap/data/*_l.txt
