@@ -1,18 +1,18 @@
-20070314:  version 0.9.5 (svn revision 3061)
-		   * intermediate coastlines now installed by default.
-		   basemap-data is no longer a separate package (couldn't
-		   figure out how to manage the egg).  If the 'h' res 
-		   boundaries are needed, the data files must be manually
-		   put in place by the user.
-		   * reorganized data files so that bdist_egg includes the data.
-           setup-data.py now used to install the high-res data files.
+20070314:  version 0.9.5 (svn revision 3062)
+           * intermediate coastlines now installed by default.
+             basemap-data is no longer a separate package (couldn't
+             figure out how to manage the egg).  If the 'h' res 
+             boundaries are needed, the data files must be manually
+             put in place by the user.
+           * reorganized data files so that bdist_egg includes the data.
+             setup-data.py now used to install the high-res data files.
            * make sure proj returns 1.e30 instead of HUGE_VAL for
-		   undefined transformations (HUGE_VAL is inf on most
-		   platforms, which gets embedded in the postscript, resulting
-		   in a un-renderable file)
+             undefined transformations (HUGE_VAL is inf on most
+             platforms, which gets embedded in the postscript, resulting
+             in a un-renderable file)
            * typedef Py_ssize_t if necessary - ADS
            * rename pyproj.so _pyproj.so, added a python wrapper pyproj.py,
-		     moved pyproj into matplotlib.toolkits.basemap.
+             moved pyproj into matplotlib.toolkits.basemap.
 20061117:  version 0.9.4
            * added "Tissot's indicatrix" example.
            * 'extent' keyword was erroneously being passed to pcolor.
