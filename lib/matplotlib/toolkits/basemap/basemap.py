@@ -650,9 +650,7 @@ class Basemap(object):
 Unable to open boundary dataset file. Only the 'crude' and 'low'
 resolution datasets are installed by default. If you
 are requesting 'intermediate' or 'high' resolution datasets, you
-need to install the basemap_data package.  If the boundary
-datasets are not installed in sys.prefix/share, the BASEMAP_DATA_PATH
-environment variable must be set."""
+need to install the basemap_data package."""
         try:
             bdatfile = open(os.path.join(basemap_datadir,'gshhs_'+resolution+'.txt'))
         except:
