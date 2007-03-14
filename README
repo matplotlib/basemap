@@ -52,18 +52,24 @@ you have problems or questions.
 
 **Install**
 
-1) run 'python setup.py install' 
+To install from source, download basemap-X.Y.Z.tar.gz from
+the sourceforge download site, unpack,
+cd to basemap-X.Y.Z and run 'python setup.py install'.
 
-This installs the basemap package including the 
-crude ('c') and low ('l') resolution boundary data files,
-plus the 5-minute land/sea mask.
-If you also want the intermediate and high resolution boundary
-datasets, you'll also need step (2).
+To install a binary egg, download the appropriate egg for your
+architecture and python version from the sourceforge download site,
+and then run "easy_install" on that egg.  This requires that a recent
+version of setuptools (http://peak.telecommunity.com/DevCenter/setuptools)
+be installed on your system. Windows users will probably prefer this
+option, since installing C extensions from source is non-trivial on windows.
 
-2) if you need the intermediate ('i') or high ('h') resolution boundary 
-datasets, download the basemap-data tarball, unpack and run "setup-data.py install"
-This does not need to be done every time you update basemap (via step 1),
-only when the basemap-data package is updated.
+The crude ('c'), low ('l') and intermediate ('i') resolution
+boundary data files, plus the 5-minute land/sea mask, are installed
+by default. If you need the high ('h') resolution boundary dataset
+you can download the files from the sourceforge download site
+(basemap-data-hires-X.Y.Z.tar.gz) and manually install them.
+To see where basemap expects them to be installed, run
+python -c "from matplotlib.toolkits.basemap import basemap_datadir; print basemap_datadir".
 
 **Contact**
 
