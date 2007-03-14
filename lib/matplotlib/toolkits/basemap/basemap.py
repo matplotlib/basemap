@@ -647,10 +647,10 @@ class Basemap(object):
         # read in coastline data (only those polygons whose area > area_thresh).
         coastlons = []; coastlats = []; coastsegind = []; coastsegtype = []
         msg = """
-Unable to open boundary dataset file. Only the 'crude' and 'low'
-resolution datasets are installed by default. If you
-are requesting 'intermediate' or 'high' resolution datasets, you
-need to install the basemap_data package."""
+Unable to open boundary dataset file. Only the 'crude', 'low'
+and 'intermediate' resolution datasets are installed by default. If you
+are requesting a 'high' resolution dataset, you need to download 
+and install those files manually (see the basemap README for details)."""
         try:
             bdatfile = open(os.path.join(basemap_datadir,'gshhs_'+resolution+'.txt'))
         except:
