@@ -1,4 +1,9 @@
-20070314:  version 0.9.5 (svn revision 3055)
+20070314:  version 0.9.5 (svn revision 3056)
+		   * intermediate coastlines now installed by default.
+		   basemap-data is no longer a separate package (couldn't
+		   figure out how to manage the egg).  If the 'h' res 
+		   boundaries are needed, the data files must be manually
+		   put in place by the user.
 		   * reorganized data files so that bdist_egg includes the data.
            setup-data.py now used to install the high-res data files.
            * make sure proj returns 1.e30 instead of HUGE_VAL for

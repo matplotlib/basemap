@@ -84,6 +84,9 @@ package_data = {'matplotlib.toolkits.basemap':[
                               'data/states_l.txt',
                               'data/rivers_l.txt',
                               'data/gshhs_l.txt',
+                              'data/states_i.txt',
+                              'data/rivers_i.txt',
+                              'data/gshhs_i.txt',
                               'data/5minmask.bin',
                               ]}
 setup(

@@ -69,3 +69,4 @@ include MANIFEST.in
 include lib/matplotlib/toolkits/basemap/data/5minmask.bin
 include lib/matplotlib/toolkits/basemap/data/*_c.txt
 include lib/matplotlib/toolkits/basemap/data/*_l.txt
+include lib/matplotlib/toolkits/basemap/data/*_i.txt
