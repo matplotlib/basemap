@@ -18,11 +18,8 @@ from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd, is_scalar
 from shapelib import ShapeFile
 
-# look in sys.prefix for directory containing basemap files if
-# BASEMAP_DATA_PATH env var not set.
-_datadir = os.environ.get('BASEMAP_DATA_PATH')
-if not _datadir:
-   _datadir = os.path.join(sys.prefix,'share','basemap')
+# basemap data files now installed in lib/matplotlib/toolkits/basemap/data
+basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
 __version__ = '0.9.5'
 
@@ -657,7 +654,7 @@ need to install the basemap_data package.  If the boundary
 datasets are not installed in sys.prefix/share, the BASEMAP_DATA_PATH
 environment variable must be set."""
         try:
-            bdatfile = open(os.path.join(_datadir,'gshhs_'+resolution+'.txt'))
+            bdatfile = open(os.path.join(basemap_datadir,'gshhs_'+resolution+'.txt'))
         except:
             raise IOError, msg
         for line in bdatfile:
@@ -682,7 +679,7 @@ environment variable must be set."""
         # read in country boundary data.
         cntrylons = []; cntrylats = []; cntrysegind = []
         try:
-            bdatfile = open(os.path.join(_datadir,'countries_'+resolution+'.txt'))
+            bdatfile = open(os.path.join(basemap_datadir,'countries_'+resolution+'.txt'))
         except:
             raise IOError, msg
         for line in bdatfile:
@@ -702,7 +699,7 @@ environment variable must be set."""
         # read in state boundaries (Americas only).
         statelons = []; statelats = []; statesegind = []
         try:
-            bdatfile = open(os.path.join(_datadir,'states_'+resolution+'.txt'))
+            bdatfile = open(os.path.join(basemap_datadir,'states_'+resolution+'.txt'))
         except:
             raise IOError, msg
         for line in bdatfile:
@@ -722,7 +719,7 @@ environment variable must be set."""
         # read in major rivers.
         riverlons = []; riverlats = []; riversegind = []
         try:
-            bdatfile = open(os.path.join(_datadir,'rivers_'+resolution+'.txt'))
+            bdatfile = open(os.path.join(basemap_datadir,'rivers_'+resolution+'.txt'))
         except:
             raise IOError, msg
         for line in bdatfile:
@@ -2567,7 +2564,7 @@ coordinates using the shpproj utility from the shapelib tools
             # read in.
             if self.lsmask is None:
                 # read in land/sea mask.
-                lsmaskf = open(os.path.join(_datadir,'5minmask.bin'),'rb')
+                lsmaskf = open(os.path.join(basemap_datadir,'5minmask.bin'),'rb')
                 nlons = 4320; nlats = nlons/2
                 delta = 360./float(nlons)
                 lsmask_lons = NX.arange(-180+0.5*delta,180.,delta)

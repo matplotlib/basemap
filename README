@@ -60,13 +60,8 @@ plus the 5-minute land/sea mask.
 If you also want the intermediate and high resolution boundary
 datasets, you'll also need step (2).
 
-If you don't want the boundary data files to be installed in the 
-default location (sys.prefix/share), set the BASEMAP_DATA_PATH
-environment variable to where you would like them to go.  This
-environment variable is also used at run-time to find the files.
-
 2) if you need the intermediate ('i') or high ('h') resolution boundary 
-datasets, download the basemap-data tarball, unpack and run "setup.py install"
+datasets, download the basemap-data tarball, unpack and run "setup-data.py install"
 This does not need to be done every time you update basemap (via step 1),
 only when the basemap-data package is updated.
 

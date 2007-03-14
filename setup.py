@@ -61,10 +61,31 @@ if 'setuptools' in sys.modules:
 else:
     additional_params = {}
 
-datadir = os.environ.get('BASEMAP_DATA_PATH')
-if not datadir:
-    datadir ='share/basemap'
+major, minor1, minor2, s, tmp = sys.version_info
 
+if major==2 and minor1<=3:
+    # setuptools monkeypatches distutils.core.Distribution to support
+    # package_data
+    try: import setuptools 
+    except ImportError:
+        raise SystemExit("""\
+matplotlib requires setuptools for installation.  Please download
+http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
+you are doing a system wide install) to install the proper version of
+setuptools for your system""")
+    
+# Specify all the required mpl data
+package_data = {'matplotlib.toolkits.basemap':[
+                              'data/countries_c.txt',
+                              'data/states_c.txt',
+                              'data/rivers_c.txt',
+                              'data/gshhs_c.txt',
+                              'data/countries_l.txt', 
+                              'data/states_l.txt',
+                              'data/rivers_l.txt',
+                              'data/gshhs_l.txt',
+                              'data/5minmask.bin',
+                              ]}
 setup(
   name              = "basemap",
   version           = "0.9.5",
@@ -90,6 +111,6 @@ setup(
   packages          = packages,
   package_dir       = package_dirs,
   ext_modules       = extensions,
-  data_files        = [(datadir,['data/countries_c.txt','data/states_c.txt','data/rivers_c.txt','data/gshhs_c.txt','data/countries_l.txt','data/states_l.txt','data/rivers_l.txt','data/gshhs_l.txt','data/5minmask.bin'])],
+  package_data = package_data,
   **additional_params
   )
