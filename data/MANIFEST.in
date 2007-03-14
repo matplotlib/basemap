@@ -1,5 +1,0 @@
-include MANIFEST.in
-include LICENSE_data
-include setup.py
-include setupegg.py
-include *.txt
