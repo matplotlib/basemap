@@ -23,7 +23,7 @@ for proj in projs:
                 resolution='c',projection=proj,\
                 lat_0=lat_0,lon_0=lon_0)
     npanel = npanel + 1
-    subplot(3,2,npanel)
+    fig.add_subplot(3,2,npanel)
     # setup figure with same aspect ratio as map.
     m.drawcoastlines()
     m.drawcountries()
@@ -32,7 +32,6 @@ for proj in projs:
     m.drawparallels(circles)
     m.drawmeridians(meridians)
     title('proj = '+proj+' centered on %sW, %sN' % (lon_0,lat_0),fontsize=10)
-show()
 
 proj = 'omerc'
 delat = 10.
@@ -58,7 +57,6 @@ m.drawstates(linewidth=0.5)
 m.drawparallels(circles)
 m.drawmeridians(meridians)
 title('proj = '+proj+' centered on %sW, %sN' % (lon_0,lat_0),fontsize=10)
-show()
 
 
 #lon_0 = -8
@@ -79,4 +77,5 @@ show()
 #m.drawparallels(circles)
 #m.drawmeridians(meridians)
 #title('proj = '+proj+' centered on %sW, %sN' % (lon_0,lat_0),fontsize=10)
-#show()
+
+show()
