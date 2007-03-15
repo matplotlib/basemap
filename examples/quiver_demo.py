@@ -50,7 +50,6 @@ delon = 45.
 meridians = arange(-180,180,delon)
 m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Surface Winds Winds and Pressure (lat-lon grid)',y=1.075)
-show()
  
 # plot vectors in map projection coordinates.
 
