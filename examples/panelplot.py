@@ -17,11 +17,12 @@ lons, lats = P.meshgrid(lons, lats)
 rcParams['figure.subplot.hspace'] = 0.4 # more height between subplots
 rcParams['figure.subplot.wspace'] = 0.5 # more width between subplots
 
+# create new figure
+fig=P.figure()
 # panel 1
 mnh = Basemap(lon_0=-105,boundinglat=20.,
              resolution='c',area_thresh=10000.,projection='nplaea')
 xnh,ynh = mnh(lons,lats)
-fig = P.figure()
 ax = fig.add_subplot(211)
 CS = mnh.contour(xnh,ynh,hgt,15,linewidths=0.5,colors='k')
 CS = mnh.contourf(xnh,ynh,hgt,15,cmap=P.cm.Spectral)
@@ -57,7 +58,6 @@ msh.drawcoastlines(linewidth=0.5)
 msh.drawparallels(circles,labels=[1,0,0,0])
 msh.drawmeridians(meridians,labels=[1,0,0,1])
 P.title('SH 500 hPa Height (cm.Spectral)')
-P.show()
 
 # 2-panel plot, oriented horizontally, colorbar on right.
 
