@@ -11,9 +11,10 @@ lats = load('500hgtlats.gz')
 hgt,lons = shiftgrid(180.,hgt,lons,start=False)
 lons, lats = meshgrid(lons, lats)
 
+# create new figure
+fig=figure()
 # setup of sinusoidal basemap
 m = Basemap(resolution='c',projection='sinu',lon_0=0)
-fig = figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
@@ -33,11 +34,12 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = arange(-360.,360.,30.)
 m.drawmeridians(meridians)
 title('Sinusoidal Filled Contour Demo')
-show()
+print 'plotting with sinusoidal basemap ...'
 
+# create new figure
+fig=figure()
 # setup of mollweide basemap
 m = Basemap(resolution='c',projection='moll',lon_0=0)
-fig = figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
@@ -57,11 +59,12 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = arange(-360.,360.,30.)
 m.drawmeridians(meridians)
 title('Mollweide Filled Contour Demo')
-show()
+print 'plotting with mollweide basemap ...'
 
+# create new figure
+fig=figure()
 # set up Robinson map projection.
 m = Basemap(resolution='c',projection='robin',lon_0=0)
-fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
@@ -81,11 +84,12 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = arange(-360.,360.,60.)
 m.drawmeridians(meridians,labels=[0,0,0,1])
 title('Robinson Filled Contour Demo')
-show()
+print 'plotting with robinson basemap ...'
 
+# create new figure
+fig=figure()
 # set up map projection (azimuthal equidistant).
 m = Basemap(projection='npaeqd',lon_0=-90,boundinglat=15.,resolution='c')
-fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
@@ -105,12 +109,13 @@ m.drawparallels(parallels,labels=[0,0,1,1])
 meridians = arange(10.,360.,20.)
 m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Azimuthal Equidistant Filled Contour Demo',y=1.075)
-show()
+print 'plottint with azimuthal equidistant basemap ...'
 
+# create new figure
+fig=figure()
 # setup of orthographic basemap
 m = Basemap(resolution='c',projection='ortho',\
             lat_0=50.,lon_0=-120.)
-fig=figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
@@ -130,5 +135,6 @@ m.drawparallels(parallels)
 meridians = arange(0.,360.,20.)
 m.drawmeridians(meridians)
 title('Orthographic Filled Contour Demo')
+print 'plotting with orthographic basemap ..'
 show()
 
