@@ -18,6 +18,8 @@ delta = 360./float(nlons)
 lons = P.arange(-180.+0.5*delta,180.,delta)
 lats = P.arange(-90.+0.5*delta,90.,delta)
 
+# create new figure
+fig=P.figure()
 # define cylindrical equidistant projection.
 m = Basemap(projection='cyl',llcrnrlon=-180,llcrnrlat=-90,urcrnrlon=180,urcrnrlat=90,resolution='l')
 # plot (unwarped) rgba image.
@@ -28,8 +30,10 @@ m.drawcoastlines(linewidth=0.5,color='0.5')
 m.drawmeridians(P.arange(-180,180,60),labels=[0,0,0,1],color='0.5')
 m.drawparallels(P.arange(-90,90,30),labels=[1,0,0,0],color='0.5')
 P.title("Blue Marble image - native 'cyl' projection",fontsize=12)
-P.show()
+print 'plot cylindrical map (no warping needed) ...'
 
+# create new figure
+fig=P.figure()
 # define orthographic projection centered on North America.
 m = Basemap(projection='ortho',lat_0=40,lon_0=40,resolution='l')
 # transform to nx x ny regularly spaced native projection grid
@@ -51,8 +55,10 @@ m.drawcoastlines(linewidth=0.5,color='0.5')
 m.drawmeridians(P.arange(0,360,30),color='0.5')
 m.drawparallels(P.arange(-90,90,30),color='0.5')
 P.title("Blue Marble image warped from 'cyl' to 'ortho' projection",fontsize=12)
-P.show()
+print 'warp to orthographic map ...'
 
+# create new figure
+fig=P.figure()
 # define Lambert Conformal basemap for North America.
 m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
             rsphere=(6378137.00,6356752.3142),lat_1=50.,lon_0=-107.,\
@@ -76,4 +82,5 @@ m.drawparallels(parallels,labels=[1,1,0,1],color='0.5')
 meridians = P.arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,1,0,1],color='0.5')
 P.title("Blue Marble image warped from 'cyl' to 'lcc' projection",fontsize=12)
+print 'warp to lambert conformal map ...'
 P.show()
