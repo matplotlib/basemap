@@ -140,7 +140,7 @@ for nt,date in enumerate(datelabels[1:]):
     ugrid,newlons = shiftgrid(180.,u[nt,::-1,:],longitudes,start=False)
     vgrid,newlons = shiftgrid(180.,v[nt,::-1,:],longitudes,start=False)
     # transform vectors to projection grid.
-    urot,vrot,xx,yy = m.transform_vector(ugrid,vgrid,newlons,latitudes[::-1],51,51,returnxy=True)
+    urot,vrot,xx,yy = m.transform_vector(ugrid,vgrid,newlons,latitudes[::-1],51,51,returnxy=True,masked=True)
     # plot wind vectors over map.
     Q = m.quiver(xx,yy,urot,vrot,scale=500)
     # make quiver key.
