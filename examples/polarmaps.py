@@ -65,5 +65,5 @@ for hem in ['North','South']:
         m.drawmapboundary()
         # draw title.
         title(hem+' Polar '+projname,y=1.05,fontsize=12)
-    show()
-    #savefig('polarmap'+hem+'.eps')
+        print 'plotting '+hem+' Polar '+projname+' basemap ...'
+show()
