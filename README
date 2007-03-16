@@ -56,12 +56,10 @@ To install from source, download basemap-X.Y.Z.tar.gz from
 the sourceforge download site, unpack,
 cd to basemap-X.Y.Z and run 'python setup.py install'.
 
-To install a binary egg, download the appropriate egg for your
-architecture and python version from the sourceforge download site,
-and then run "easy_install" on that egg.  This requires that a recent
-version of setuptools (http://peak.telecommunity.com/DevCenter/setuptools)
-be installed on your system. Windows users will probably prefer this
-option, since installing C extensions from source is non-trivial on windows.
+Binary, double-clickable installers are also provided for MacOS X and
+Windows.  The Mac installers have a .dmg file extension, the Windows
+installers have a .exe extension. Windows users will probably prefer
+s option, since it is non-trivial to build C extensions for python on Windows.
 
 The crude ('c'), low ('l') and intermediate ('i') resolution
 boundary data files, plus the 5-minute land/sea mask, are installed
