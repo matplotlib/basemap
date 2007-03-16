@@ -5,6 +5,9 @@ To make a release:
 3) run python setupegg.py bdist_egg to make a binary egg.
    (repeat this step on ppc mac, intel mac and windows, for
     python 2.4 and python 2.5).
+   to create binary installers, run
+   python setup.py build --compiler=mingw32 bdist_wininst on windows.
+   bdist_mpkg (http://cheeseshop.python.org/pypi/bdist_mpkg/ on macos x.
 4) put the *_h.txt boundary files in a tar.gz file
    (basemap-data-hires-X.Y.Z.tar.gz).
 5) anon ftp the files files to SF
