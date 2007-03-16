@@ -1,0 +1,5 @@
+To install the 'h' (high) resolution data files, manually copy them
+to basmap's data directory.  To find out where this is, run
+
+python -c "from matplotlib.toolkits.basemap import basemap_datadir; print basemap_datadir"
+
