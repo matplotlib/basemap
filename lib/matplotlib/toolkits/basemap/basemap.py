@@ -1257,10 +1257,6 @@ and install those files manually (see the basemap README for details)."""
             ax.axesPatch.set_facecolor(ax.get_axis_bgcolor())
             ax.axesPatch.set_edgecolor(color)
             ax.set_frame_on(True)
-        # make sure axis ticks are turned off.
-        if self.noticks:
-            ax.set_xticks([])
-            ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
@@ -1339,10 +1335,6 @@ and install those files manually (see the basemap README for details)."""
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
         ax.add_collection(coastlines)
-        # make sure axis ticks are turned off
-        if self.noticks:
-            ax.set_xticks([])
-            ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
@@ -1426,10 +1418,6 @@ and install those files manually (see the basemap README for details)."""
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # make sure axis ticks are turned off.
-        if self.noticks:
-            ax.set_xticks([])
-            ax.set_yticks([])
 
     def readshapefile(self,shapefile,name,drawbounds=True,
                       linewidth=0.5,color='k',antialiased=1,ax=None):
@@ -1519,10 +1507,6 @@ coordinates using the shpproj utility from the shapelib tools
             lines.set_color(color)
             lines.set_linewidth(linewidth)
             ax.add_collection(lines)
-            # make sure axis ticks are turned off
-            if self.noticks == True:
-                ax.set_xticks([])
-                ax.set_yticks([])
             # set axes limits to fit map region.
             self.set_axes_limits(ax=ax)
         # save segments/polygons and shape attribute dicts as class attributes.
@@ -1729,10 +1713,6 @@ coordinates using the shpproj utility from the shapelib tools
                         else:
                             ax.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
 
-        # make sure axis ticks are turned off is parallels labelled.
-        if self.noticks or max(labels):
-            ax.set_xticks([])
-            ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
@@ -1919,10 +1899,6 @@ coordinates using the shpproj utility from the shapelib tools
                             if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
                                 ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
 
-        # make sure axis ticks are turned off if meridians labelled.
-        if self.noticks or max(labels):
-            ax.set_xticks([])
-            ax.set_yticks([])
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
@@ -2143,6 +2119,10 @@ coordinates using the shpproj utility from the shapelib tools
         # (anchor instance var determines where plot is placed)
         ax.set_aspect('equal',adjustable='box',anchor=self.anchor)
         ax.apply_aspect()
+        # make sure axis ticks are turned off.
+        if self.noticks:
+            ax.set_xticks([])
+            ax.set_yticks([])
 
     def scatter(self, *args, **kwargs):
         """
@@ -2176,10 +2156,6 @@ coordinates using the shpproj utility from the shapelib tools
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # make sure axis ticks are turned off.
-        if self.noticks:
-            ax.set_xticks([])
-            ax.set_yticks([])
         return ret
 
     def plot(self, *args, **kwargs):
@@ -2214,10 +2190,6 @@ coordinates using the shpproj utility from the shapelib tools
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # make sure axis ticks are turned off.
-        if self.noticks:
-            ax.set_xticks([])
-            ax.set_yticks([])
         return ret
 
     def imshow(self, *args, **kwargs):
@@ -2310,10 +2282,6 @@ coordinates using the shpproj utility from the shapelib tools
             pass
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # make sure axis ticks are turned off.
-        if self.noticks:
-            ax.set_xticks([])
-            ax.set_yticks([])
         return ret
 
     def pcolormesh(self,x,y,data,**kwargs):
@@ -2357,10 +2325,6 @@ coordinates using the shpproj utility from the shapelib tools
             pass
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # make sure axis ticks are turned off.
-        if self.noticks:
-            ax.set_xticks([])
-            ax.set_yticks([])
         return ret
 
     def contour(self,x,y,data,*args,**kwargs):
@@ -2401,10 +2365,6 @@ coordinates using the shpproj utility from the shapelib tools
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # make sure axis ticks are turned off.
-        if self.noticks:
-            ax.set_xticks([])
-            ax.set_yticks([])
         # reset current active image (only if pylab is imported).
         try:
             try: # new contour.
@@ -2455,10 +2415,6 @@ coordinates using the shpproj utility from the shapelib tools
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # make sure axis ticks are turned off.
-        if self.noticks:
-            ax.set_xticks([])
-            ax.set_yticks([])
         # reset current active image (only if pylab is imported).
         try:
             try: # new contour.
@@ -2504,10 +2460,6 @@ coordinates using the shpproj utility from the shapelib tools
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # make sure axis ticks are turned off.
-        if self.noticks:
-            ax.set_xticks([])
-            ax.set_yticks([])
         return ret
 
     def drawlsmask(self,rgba_land,rgba_ocean,lsmask=None,
