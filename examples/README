@@ -23,7 +23,8 @@ portions of the plot (in this case the oceans) using pcolor and imshow.
 nytolondon.py shows how to draw a great circle on a map (NY to London)
 
 ireland.py draws maps of ireland with the crude, low and intermediate
-resolution boundary datasets. It also shows how to pickle and re-load a
+resolution boundary datasets. Also does high res coastlines if they
+are installed. Shows how to pickle and re-load a
 Basemap class instance (useful for high-res coastlines when you are plotting
 the same small map region many times in different scripts).
 
