@@ -67,7 +67,7 @@ class Basemap(object):
  Example Usage:
 
 >>> from matplotlib.toolkits.basemap import Basemap
->>> from pylab import *
+>>> from pylab import load, meshgrid, title, arange, show
 >>> # read in topo data (on a regular lat/lon grid)
 >>> etopo = load('etopo20data.gz')
 >>> lons  = load('etopo20lons.gz')
