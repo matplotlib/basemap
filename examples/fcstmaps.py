@@ -7,7 +7,8 @@ try:
     from dap import client
 except:
     raise ImportError,"requires pyDAP module (version 2.1 or higher) from http://pydap.org"
-from pylab import *
+from pylab import title, show, figure, cm, arange, frange, axes, colorbar
+import sys
 from matplotlib.numerix import ma
 import datetime
 from matplotlib.toolkits.basemap import Basemap
