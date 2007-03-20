@@ -1,6 +1,6 @@
 # example demonstrating how to draw a great circle on a map.
 from matplotlib.toolkits.basemap import Basemap
-from pylab import *
+from pylab import title, arange, show, figure
 
 # setup lambert azimuthal map projection.
 # create new figure
