@@ -1,5 +1,5 @@
 from matplotlib.toolkits.basemap import Basemap, basemap_datadir
-from pylab import *
+from pylab import show, title, arange, figure, draw, ion, ioff, clf
 import cPickle
 import time
 import os
