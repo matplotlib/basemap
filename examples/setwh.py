@@ -2,7 +2,7 @@
 # to the Basemap constructor.
 
 from matplotlib.toolkits.basemap import Basemap
-from pylab import *
+from pylab import arange, show, title, figure
 
 # setup projection centered on lon_0,lat_0
 lat_0 = 40.
