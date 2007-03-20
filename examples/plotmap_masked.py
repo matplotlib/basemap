@@ -6,7 +6,8 @@
 # (in this case the oceans)
 
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
-from pylab import *
+from pylab import title, colorbar, show, axes, cm, load, arange, figure, \
+                  text, where
 from matplotlib.numerix import ma
 import matplotlib.colors as colors
 
