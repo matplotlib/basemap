@@ -1,5 +1,5 @@
 from matplotlib.toolkits.basemap import Basemap
-from pylab import *
+from pylab import title, show, arange
 # create Basemap instance for Orthographic (satellite view) projection.
 lon_0 = float(raw_input('enter reference longitude (lon_0):'))
 lat_0 = float(raw_input('enter reference latitude (lat_0):'))
