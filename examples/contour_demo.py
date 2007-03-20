@@ -1,5 +1,6 @@
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
-from pylab import *
+from pylab import load, show, colorbar, axes, gca,\
+                  figure, title, meshgrid, cm, arange
 
 # examples of filled contour plots on map projections.
 
