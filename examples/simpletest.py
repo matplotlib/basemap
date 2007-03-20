@@ -1,5 +1,5 @@
 from matplotlib.toolkits.basemap import Basemap
-from pylab import *
+from pylab import load, show, title, meshgrid, cm, arange
 # read in topo data (on a regular lat/lon grid)
 etopo=load('etopo20data.gz')
 lons=load('etopo20lons.gz')
