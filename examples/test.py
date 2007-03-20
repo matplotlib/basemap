@@ -4,7 +4,8 @@
 # parallels/meridians
 
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
-from pylab import *
+from pylab import show,arange,draw,figure,load,ravel,cm,axes,\
+                  colorbar,title,gca,pi,meshgrid
 import matplotlib.colors as colors
 
 # read in topo data (on a regular lat/lon grid)
