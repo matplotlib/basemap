@@ -1,5 +1,5 @@
-from pylab import *
-import math, random
+from pylab import show, title, arange, figure, title, arccos, pi, cm
+import random
 from matplotlib.toolkits.basemap import Basemap
 from matplotlib.numerix.random_array import uniform
 
@@ -23,7 +23,7 @@ except: # this works for Numeric/numarray
     v = uniform(0.,1.,shape=npts)
     z = uniform(0.,1.,shape=npts)
 lons = 360.*u
-lats = (180./math.pi)*arccos(2*v-1) - 90.
+lats = (180./pi)*arccos(2*v-1) - 90.
 # transform lons and lats to map coordinates.
 x,y = m(lons,lats)
 # plot them as filled circles on the map.
