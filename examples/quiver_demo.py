@@ -1,5 +1,6 @@
 from matplotlib.toolkits.basemap import Basemap, interp
-from pylab import *
+from pylab import show, title, arange, meshgrid, cm, figure, sqrt, \
+                  colorbar, axes, gca, reshape, array, Float32, quiverkey
 
 # read in data.
 file = open('fcover.dat','r')
