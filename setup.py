@@ -20,12 +20,12 @@ def dbf_macros():
         return [("HAVE_UPDATE_HEADER", "0")]
 
 deps = glob.glob('src/*.c')
-deps.remove('src/_pyproj.c')
+deps.remove('src/_proj.c')
 deps.remove('src/_geod.c')
 
 packages          = ['matplotlib.toolkits.basemap']
 package_dirs       = {'':'lib'}
-extensions = [Extension("matplotlib.toolkits.basemap._pyproj",deps+['src/_pyproj.c'],include_dirs = ['src'],)]
+extensions = [Extension("matplotlib.toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
 extensions.append(Extension("matplotlib.toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
 
 # only install shapelib and dbflib if user hasn't got them.
