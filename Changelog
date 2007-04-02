@@ -1,3 +1,7 @@
+version 0.9.6 (not yet released).
+		   * updated pyproj to version 1.8.2.  Now uses pyproj.Geod
+		     for Great Circle calculations.  proj.4 data files now
+			 included.
            * make sure axes ticks are always turned off, unless noticks=False
              set when creating Basemap instance.
 20070314:  version 0.9.5 (svn revision 3083)
