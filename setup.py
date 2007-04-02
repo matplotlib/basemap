@@ -20,10 +20,13 @@ def dbf_macros():
         return [("HAVE_UPDATE_HEADER", "0")]
 
 deps = glob.glob('src/*.c')
+deps.remove('src/_pyproj.c')
+deps.remove('src/_geod.c')
 
 packages          = ['matplotlib.toolkits.basemap']
 package_dirs       = {'':'lib'}
-extensions = [Extension("matplotlib.toolkits.basemap._pyproj",deps,include_dirs = ['src'],)]
+extensions = [Extension("matplotlib.toolkits.basemap._pyproj",deps+['src/_pyproj.c'],include_dirs = ['src'],)]
+extensions.append(Extension("matplotlib.toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
 
 # only install shapelib and dbflib if user hasn't got them.
 #try: import shapelib
@@ -75,8 +78,8 @@ you are doing a system wide install) to install the proper version of
 setuptools for your system""")
     
 # Specify all the required mpl data
-package_data = {'matplotlib.toolkits.basemap':[
-                              'data/countries_c.txt',
+pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world']
+basemap_datafiles = [         'data/countries_c.txt',
                               'data/states_c.txt',
                               'data/rivers_c.txt',
                               'data/gshhs_c.txt',
@@ -89,10 +92,11 @@ package_data = {'matplotlib.toolkits.basemap':[
                               'data/rivers_i.txt',
                               'data/gshhs_i.txt',
                               'data/5minmask.bin',
-                              ]}
+                              ]
+package_data = {'matplotlib.toolkits.basemap':pyproj_datafiles+basemap_datafiles}
 setup(
   name              = "basemap",
-  version           = "0.9.5",
+  version           = "0.9.6",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data

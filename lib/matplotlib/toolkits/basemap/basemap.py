@@ -10,7 +10,7 @@ from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
 import pyproj, sys, os, math, dbflib
 from proj import Proj
-from greatcircle import GreatCircle, vinc_dist, vinc_pt
+#from greatcircle import GreatCircle, vinc_dist, vinc_pt
 import matplotlib.numerix as NX
 from matplotlib.numerix import ma, isnan
 from matplotlib.mlab import linspace
@@ -21,7 +21,7 @@ from shapelib import ShapeFile
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
-__version__ = '0.9.5'
+__version__ = '0.9.6'
 
 # test to see if array indexing is supported
 # (it is not for Numeric, but is for numarray and numpy)
@@ -1006,7 +1006,8 @@ and install those files manually (see the basemap README for details)."""
             lat_0 = math.radians(self.projparams['lat_0'])
             lon_0 = math.radians(self.projparams['lon_0'])
             rad = (2.*self.rmajor + self.rminor)/3.
-            dtheta = 0.01
+            del_s = 50.
+            gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
             coastpolygons = []
             coastpolygontypes = []
             for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,coastpolygonsll):
@@ -1020,19 +1021,46 @@ and install those files manually (see the basemap README for details)."""
                 ysave = False
                 if NX.sum(mask):
                     i1,i2 = self._splitseg(x,y,mask=mask)
+              # loop over segments of polygon that are outside projection limb.
                     for i,j in zip(i1,i2):
+              # if it's not the rest of the polygon ...
                         if i and j != len(x):
-                            dist,az1,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[i]),math.radians(lons[i]))
-                            lat1,lon1,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az1,0.5*math.pi*rad)
-                            dist,az2,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[j]),math.radians(lons[j]))
-                            lat2,lon2,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az2,0.5*math.pi*rad)
-                            gc = GreatCircle(self.rmajor,self.rminor,math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1))
-                            npoints = int(gc.gcarclen/dtheta)+1
+              # compute distance and azimuth between projection center
+              # and last point inside project limb.
+                            #dist,az1,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[i]),math.radians(lons[i]))
+                            az1,alpha21,dist=gc.inv(lon_0,lat_0,math.radians(lons[i]),math.radians(lats[i]),radians=True)
+              # also compute lat, lon of that great circle, plus back
+              # azimuth.
+                            #lat1,lon1,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az1,0.5*math.pi*rad)
+                            lon1,lat1,az=gc.fwd(lon_0,lat_0,az1,0.5*math.pi*rad,radians=True)
+              # compute distance and azimuth between projection center
+              # and next point inside projection limb.
+                            #dist,az2,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[j]),math.radians(lons[j]))
+                            az2,alpha21,dist=gc.inv(lon_0,lat_0,math.radians(lons[j]),math.radians(lats[j]),radians=True)
+              # also compute lat, lon of that great circle, plus back
+              # azimuth.
+                            #lat2,lon2,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az2,0.5*math.pi*rad)
+                            lon2,lat2,az=gc.fwd(lon_0,lat_0,az2,0.5*math.pi*rad,radians=True)
+              # compute distance between those two points.
+                            #gc2 = GreatCircle(self.rmajor,self.rminor,math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1))
+                            az12,az21,dist = gc.inv(lon1,lon2,lat1,lat2,radians=True)
+              # compute set of equally space points del_s meters apart
+              # along great circle between those two points (the last
+              # inside the projection limb and the next point inside the
+              # the projection limb).
+                            #npoints = dist/(npts+1)int(gc.gcarclen/dtheta)+1
+                            npoints = int((dist+0.5*1000.*del_s)/(1000.*del_s))
                             if npoints < 2: npoints=2
-                            lonstmp, latstmp = gc.points(npoints)
+                            #lonstmp, latstmp = gc2.points(npoints)
+                            lonlats = gc.npts(math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1),npoints)
+                            lonstmp=[math.degrees(lon2)];latstmp=[math.degrees(lat2)]
+                            for lon,lat in lonlats:
+                                lonstmp.append(lon); latstmp.append(lat)
+                            lonstmp.append(math.degrees(lon1)); latstmp.append(math.degrees(lat1))
+              # convert that set of points to projection coordinates.
+              # replace the points in the polygon which were outside
+              # the projection limb.
                             xx, yy = self(lonstmp, latstmp)
-                            xnew = x[i:j]
-                            ynew = y[i:j]
                             xnew = x[i:j] + xx
                             ynew = y[i:j] + yy
                             coastpolygons.append((xnew,ynew))
@@ -1042,25 +1070,37 @@ and install those files manually (see the basemap README for details)."""
                             ysave = y[0:j]
                             lats_save = lats[0:j]
                             lons_save = lons[0:j]
+              # it's the entire rest of the polygon ...
                         elif j == len(x):
                             xnew = x[i:j] + xsave
                             ynew = y[i:j] + ysave
                             lonsnew = lons[i:j] + lons_save
                             latsnew = lats[i:j] + lats_save
-                            dist,az1,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(latsnew[0]),math.radians(lonsnew[0]))
-                            lat1,lon1,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az1,0.5*math.pi*rad)
-                            dist,az2,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(latsnew[-1]),math.radians(lonsnew[-1]))
-                            lat2,lon2,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az2,0.5*math.pi*rad)
-                            gc = GreatCircle(self.rmajor,self.rminor,math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1))
-                            npoints = int(gc.gcarclen/dtheta)+1
+                            #dist,az1,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(latsnew[0]),math.radians(lonsnew[0]))
+                            az1,alpha21,dist=gc.inv(lon_0,lat_0,math.radians(lonsnew[0]),math.radians(latsnew[0]),radians=True)
+                            #lat1,lon1,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az1,0.5*math.pi*rad)
+                            lon1,lat1,az=gc.fwd(lon_0,lat_0,az1,0.5*math.pi*rad,radians=True)
+                            #dist,az2,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(latsnew[-1]),math.radians(lonsnew[-1]))
+                            az2,alpha21,dist=gc.inv(lon_0,lat_0,math.radians(lonsnew[-1]),math.radians(latsnew[-1]),radians=True)
+                            #lat2,lon2,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az2,0.5*math.pi*rad)
+                            lon2,lat2,az=gc.fwd(lon_0,lat_0,az2,0.5*math.pi*rad,radians=True)
+                            #gc2 = GreatCircle(self.rmajor,self.rminor,math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1))
+                            az12,az21,dist = gc.inv(lon2,lat2,lon1,lat1,radians=True)
+                            #npoints = int(gc.gcarclen/dtheta)+1
+                            npoints = int((dist+0.5*1000.*del_s)/(1000.*del_s))
                             if npoints < 2: npoints=2
-                            lonstmp, latstmp = gc.points(npoints)
+                            #lonstmp, latstmp = gc2.points(npoints)
+                            lonlats = gc.npts(math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1),npoints)
+                            lonstmp=[math.degrees(lon2)];latstmp=[math.degrees(lat2)]
+                            for lon,lat in lonlats:
+                                lonstmp.append(lon); latstmp.append(lat)
+                            lonstmp.append(math.degrees(lon1));latstmp.append(math.degrees(lat1))
                             xx, yy = self(lonstmp, latstmp)
                             xnew = xnew + xx
                             ynew = ynew + yy
                             coastpolygons.append((xnew,ynew))
                             coastpolygontypes.append(polytype)
-                else:
+                else: # no part of polygon outside projection limb.
                     coastpolygons.append(poly)
                     coastpolygontypes.append(polytype)
             self.coastpolygons = coastpolygons
@@ -1908,18 +1948,24 @@ coordinates using the shpproj utility from the shapelib tools
  (lon1,lat1) and (lon2,lat2).  Returns arrays x,y
  with map projection coordinates.
         """
-        gc = GreatCircle(self.rmajor,self.rminor,lon1,lat1,lon2,lat2)
-        lons, lats = gc.points(npoints)
+        #gc = GreatCircle(self.rmajor,self.rminor,lon1,lat1,lon2,lat2)
+        gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
+        #lons, lats = gc.points(npoints)
+        lonlats = gc.npts(lon1,lat1,lon2,lat2,npoints-2)
+        lons=[lon1];lats=[lat1]
+        for lon,lat in lonlats:
+            lons.append(lon); lats.append(lat)
+        lons.append(lon2); lats.append(lat2)
         x, y = self(lons, lats)
         return x,y
 
-    def drawgreatcircle(self,lon1,lat1,lon2,lat2,dtheta=0.02,**kwargs):
+    def drawgreatcircle(self,lon1,lat1,lon2,lat2,del_s=100.,**kwargs):
         """
  draw a great circle on the map.
 
  lon1,lat1 - longitude,latitude of one endpoint of the great circle.
  lon2,lat2 - longitude,latitude of the other endpoint of the great circle.
- dtheta - points on great circle computed every dtheta radians (default 0.02).
+ del_s - points on great circle computed every delta kilometers (default 100).
 
  Other keyword arguments (**kwargs) control plotting of great circle line,
  see pylab.plot documentation for details.
@@ -1928,12 +1974,28 @@ coordinates using the shpproj utility from the shapelib tools
  the edge of the map projection domain, and then re-enters the domain.
         """
         # use great circle formula for a perfect sphere.
-        gc = GreatCircle(self.rmajor,self.rminor,lon1,lat1,lon2,lat2)
-        if gc.antipodal:
-            raise ValueError,'cannot draw great circle whose endpoints are antipodal'
+        #gc = GreatCircle(self.rmajor,self.rminor,lon1,lat1,lon2,lat2)
+        gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
+        #if gc.antipodal:
+        #    raise ValueError,'cannot draw great circle whose endpoints are antipodal'
         # points have spacing of dtheta radians.
-        npoints = int(gc.gcarclen/dtheta)+1
-        lons, lats = gc.points(npoints)
+        #npoints = int(gc.gcarclen/dtheta)+1
+        #lons, lats = gc.points(npoints)
+        # spherical great circle arc length (gcarclen)
+        #lat1r = math.degrees(lat1)
+        #lat2r = math.degrees(lat2)
+        #lon1r = math.degrees(lon1)
+        #lon2r = math.degrees(lon2)
+        #gcarclen = 2.*math.asin(math.sqrt((math.sin((lat1r-lat2r)/2))**2+\
+        # math.cos(lat1r)*math.cos(lat2r)*(math.sin((lon1r-lon2r)/2))**2))
+        az12,az21,dist = gc.inv(lon1,lat1,lon2,lat2)
+        npoints = int((dist+0.5*1000.*del_s)/(1000.*del_s))
+        lonlats = gc.npts(lon1,lat1,lon2,lat2,npoints)
+        lons = [lon1]; lats = [lat1]
+        for lon, lat in lonlats:
+            lons.append(lon)
+            lats.append(lat)
+        lons.append(lon2); lats.append(lat2)
         x, y = self(lons, lats)
         self.plot(x,y,**kwargs)
 
