@@ -1,4 +1,5 @@
 version 0.9.6 (not yet released)
+           * added 'srs' (spatial reference system) instance variable.
            * updated pyproj to version 1.8.2.  Now uses pyproj.Geod
              for Great Circle calculations.  proj.4 data files now included.
            * make sure axes ticks are always turned off, unless noticks=False
