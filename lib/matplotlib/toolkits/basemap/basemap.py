@@ -63,6 +63,8 @@ class Basemap(object):
  resolution - resolution of boundary dataset being used ('c' for crude,
    'l' for low, etc.). If None, no boundary dataset is associated with the
    Basemap instance.  
+ srs - a string representing the 'spatial reference system' for the map
+   projection as defined by PROJ.4.
 
  Example Usage:
 
@@ -598,6 +600,19 @@ class Basemap(object):
         atts = ['rmajor','rminor','esq','flattening','ellipsoid','projparams']
         for att in atts:
             self.__dict__[att] = proj.__dict__[att]
+        # spatial reference string (useful for georeferencing output
+        # images with gdal_translate).
+        if hasattr(self,'_proj4'):
+            self.srs = proj._proj4.srs
+        else:
+            pjargs = []
+            for key,value in self.projparams.iteritems():
+                if projection == 'cyl' and key == 'proj':
+                    value = 'eqc'
+                elif projection == 'cyl' and key in ['x_0','y_0']:
+                    continue
+                pjargs.append('+'+key+"="+str(value)+' ')
+            self.srs = ''.join(pjargs)
         # set instance variables defining map region.
         self.xmin = proj.xmin
         self.xmax = proj.xmax
