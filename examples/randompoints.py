@@ -14,14 +14,9 @@ npts = 750
 # so that every small area on the sphere is expected
 # to have the same number of points.
 # http://mathworld.wolfram.com/SpherePointPicking.html
-try: # this works for numpy
-    u = uniform(0.,1.,size=npts)
-    v = uniform(0.,1.,size=npts)
-    z = uniform(0,100,size=npts)
-except: # this works for Numeric/numarray
-    u = uniform(0.,1.,shape=npts)
-    v = uniform(0.,1.,shape=npts)
-    z = uniform(0,100,shape=npts)
+u = uniform(0.,1.,size=npts)
+v = uniform(0.,1.,size=npts)
+z = uniform(0,100,size=npts)
 lons = 360.*u
 lats = (180./pi)*arccos(2*v-1) - 90.
 # transform lons and lats to map coordinates.
