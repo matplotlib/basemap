@@ -1,7 +1,7 @@
 from matplotlib import rcParams
 from matplotlib import __version__ as matplotlib_version
 # check to make sure matplotlib is not too old.
-mpl_required_version = '0.87.3'
+mpl_required_version = '0.90'
 if matplotlib_version < mpl_required_version:
     raise ImportError('your matplotlib is too old - basemap '
                       'requires at least %s'%mpl_required_version)
@@ -10,9 +10,8 @@ from matplotlib.patches import Polygon
 from matplotlib.lines import Line2D
 import pyproj, sys, os, math, dbflib
 from proj import Proj
-#from greatcircle import GreatCircle, vinc_dist, vinc_pt
 import matplotlib.numerix as NX
-from matplotlib.numerix import ma, isnan
+from matplotlib.numerix import ma
 from matplotlib.mlab import linspace
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd, is_scalar
@@ -23,13 +22,9 @@ basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
 __version__ = '0.9.6'
 
-# test to see if array indexing is supported
-# (it is not for Numeric, but is for numarray and numpy)
-try:
-    NX.ones(10)[[1,2]]
-    _has_arrindexing = True
-except:
-    _has_arrindexing = False
+# test to see numerix set to use numpy (if not, raise an error)
+if NX.which[0] != 'numpy':
+    raise ImportError("numerix must be set to use numpy")
 
 class Basemap(object):
 
@@ -607,8 +602,11 @@ class Basemap(object):
         else:
             pjargs = []
             for key,value in self.projparams.iteritems():
+                # 'cyl' projection translates to 'eqc' in PROJ.4
                 if projection == 'cyl' and key == 'proj':
                     value = 'eqc'
+                # ignore x_0 and y_0 settings for 'cyl' projection
+                # (they are not consistent with what PROJ.4 uses)
                 elif projection == 'cyl' and key in ['x_0','y_0']:
                     continue
                 pjargs.append('+'+key+"="+str(value)+' ')
@@ -1042,31 +1040,24 @@ and install those files manually (see the basemap README for details)."""
                         if i and j != len(x):
               # compute distance and azimuth between projection center
               # and last point inside project limb.
-                            #dist,az1,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[i]),math.radians(lons[i]))
                             az1,alpha21,dist=gc.inv(lon_0,lat_0,math.radians(lons[i]),math.radians(lats[i]),radians=True)
               # also compute lat, lon of that great circle, plus back
               # azimuth.
-                            #lat1,lon1,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az1,0.5*math.pi*rad)
                             lon1,lat1,az=gc.fwd(lon_0,lat_0,az1,0.5*math.pi*rad,radians=True)
               # compute distance and azimuth between projection center
               # and next point inside projection limb.
-                            #dist,az2,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(lats[j]),math.radians(lons[j]))
                             az2,alpha21,dist=gc.inv(lon_0,lat_0,math.radians(lons[j]),math.radians(lats[j]),radians=True)
               # also compute lat, lon of that great circle, plus back
               # azimuth.
-                            #lat2,lon2,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az2,0.5*math.pi*rad)
                             lon2,lat2,az=gc.fwd(lon_0,lat_0,az2,0.5*math.pi*rad,radians=True)
               # compute distance between those two points.
-                            #gc2 = GreatCircle(self.rmajor,self.rminor,math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1))
                             az12,az21,dist = gc.inv(lon1,lon2,lat1,lat2,radians=True)
               # compute set of equally space points del_s meters apart
               # along great circle between those two points (the last
               # inside the projection limb and the next point inside the
               # the projection limb).
-                            #npoints = dist/(npts+1)int(gc.gcarclen/dtheta)+1
                             npoints = int((dist+0.5*1000.*del_s)/(1000.*del_s))
                             if npoints < 2: npoints=2
-                            #lonstmp, latstmp = gc2.points(npoints)
                             lonlats = gc.npts(math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1),npoints)
                             lonstmp=[math.degrees(lon2)];latstmp=[math.degrees(lat2)]
                             for lon,lat in lonlats:
@@ -1091,20 +1082,13 @@ and install those files manually (see the basemap README for details)."""
                             ynew = y[i:j] + ysave
                             lonsnew = lons[i:j] + lons_save
                             latsnew = lats[i:j] + lats_save
-                            #dist,az1,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(latsnew[0]),math.radians(lonsnew[0]))
                             az1,alpha21,dist=gc.inv(lon_0,lat_0,math.radians(lonsnew[0]),math.radians(latsnew[0]),radians=True)
-                            #lat1,lon1,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az1,0.5*math.pi*rad)
                             lon1,lat1,az=gc.fwd(lon_0,lat_0,az1,0.5*math.pi*rad,radians=True)
-                            #dist,az2,alpha21=vinc_dist(self.flattening,rad,lat_0,lon_0,math.radians(latsnew[-1]),math.radians(lonsnew[-1]))
                             az2,alpha21,dist=gc.inv(lon_0,lat_0,math.radians(lonsnew[-1]),math.radians(latsnew[-1]),radians=True)
-                            #lat2,lon2,az=vinc_pt(self.flattening,rad,lat_0,lon_0,az2,0.5*math.pi*rad)
                             lon2,lat2,az=gc.fwd(lon_0,lat_0,az2,0.5*math.pi*rad,radians=True)
-                            #gc2 = GreatCircle(self.rmajor,self.rminor,math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1))
                             az12,az21,dist = gc.inv(lon2,lat2,lon1,lat1,radians=True)
-                            #npoints = int(gc.gcarclen/dtheta)+1
                             npoints = int((dist+0.5*1000.*del_s)/(1000.*del_s))
                             if npoints < 2: npoints=2
-                            #lonstmp, latstmp = gc2.points(npoints)
                             lonlats = gc.npts(math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1),npoints)
                             lonstmp=[math.degrees(lon2)];latstmp=[math.degrees(lat2)]
                             for lon,lat in lonlats:
@@ -1963,9 +1947,7 @@ coordinates using the shpproj utility from the shapelib tools
  (lon1,lat1) and (lon2,lat2).  Returns arrays x,y
  with map projection coordinates.
         """
-        #gc = GreatCircle(self.rmajor,self.rminor,lon1,lat1,lon2,lat2)
         gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
-        #lons, lats = gc.points(npoints)
         lonlats = gc.npts(lon1,lat1,lon2,lat2,npoints-2)
         lons=[lon1];lats=[lat1]
         for lon,lat in lonlats:
@@ -1989,20 +1971,7 @@ coordinates using the shpproj utility from the shapelib tools
  the edge of the map projection domain, and then re-enters the domain.
         """
         # use great circle formula for a perfect sphere.
-        #gc = GreatCircle(self.rmajor,self.rminor,lon1,lat1,lon2,lat2)
         gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
-        #if gc.antipodal:
-        #    raise ValueError,'cannot draw great circle whose endpoints are antipodal'
-        # points have spacing of dtheta radians.
-        #npoints = int(gc.gcarclen/dtheta)+1
-        #lons, lats = gc.points(npoints)
-        # spherical great circle arc length (gcarclen)
-        #lat1r = math.degrees(lat1)
-        #lat2r = math.degrees(lat2)
-        #lon1r = math.degrees(lon1)
-        #lon2r = math.degrees(lon2)
-        #gcarclen = 2.*math.asin(math.sqrt((math.sin((lat1r-lat2r)/2))**2+\
-        # math.cos(lat1r)*math.cos(lat2r)*(math.sin((lon1r-lon2r)/2))**2))
         az12,az21,dist = gc.inv(lon1,lat1,lon2,lat2)
         npoints = int((dist+0.5*1000.*del_s)/(1000.*del_s))
         lonlats = gc.npts(lon1,lat1,lon2,lat2,npoints)
@@ -2058,10 +2027,7 @@ coordinates using the shpproj utility from the shapelib tools
             lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         else:
             lonsout, latsout = self.makegrid(nx,ny)
-        if _has_arrindexing:
-            datout = interp(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
-        else:
-            datout = interp_numeric(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
+        datout = interp(datin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
         if returnxy:
             return datout, x, y
         else:
@@ -2113,12 +2079,8 @@ coordinates using the shpproj utility from the shapelib tools
                 raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         # interpolate to map projection coordinates.
-        if _has_arrindexing:
-            uin = interp(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
-            vin = interp(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
-        else:
-            uin = interp_numeric(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
-            vin = interp_numeric(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
+        uin = interp(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
+        vin = interp(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
         # rotate from geographic to map coordinates.
         delta = 0.1 # incement in latitude used to estimate derivatives.
         xn,yn = self(lonsout,NX.where(latsout+delta<90.,latsout+delta,latsout-delta))
@@ -2632,10 +2594,7 @@ coordinates using the shpproj utility from the shapelib tools
         for k in range(4):
             rgba[:,:,k] = NX.where(mask,rgba_land[k],rgba_ocean[k])
         # make points outside projection limb transparent.
-        try:
-            rgba[:,:,3] = NX.where(mask==255,0,rgba[:,:,3])
-        except: # kluge for Numeric
-            rgba[:,:,3] = NX.where(mask==255,0,rgba[:,:,3]).astype(NX.UInt8)
+        rgba[:,:,3] = NX.where(mask==255,0,rgba[:,:,3])
         # plot mask as rgba image.
         im = self.imshow(rgba,interpolation='nearest',ax=ax)
 
@@ -2669,144 +2628,9 @@ def _searchlist(a,x):
         itemprev = item
     return nslot
 
-def interp_numeric(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
-    """
- dataout = interp(datain,xin,yin,xout,yout,order=1)
-
- This version uses 'take' instead of array indexing, and
- thus is compatible with Numeric.
-
- interpolate data (datain) on a rectilinear grid (with x=xin
- y=yin) to a grid with x=xout, y=yout.
-
- datain is a rank-2 array with 1st dimension corresponding to y,
- 2nd dimension x.
-
- xin, yin are rank-1 arrays containing x and y of
- datain grid in increasing order.
-
- xout, yout are rank-2 arrays containing x and y of desired output grid.
-
- If checkbounds=True, values of xout and yout are checked to see that
- they lie within the range specified by xin and xin.  Default is False.
- If checkbounds=False, and xout,yout are outside xin,yin, interpolated
- values will be clipped to values on boundary of input grid (xin,yin)
- if masked=False. If masked=True, the return value will be a masked
- array with those points masked. If masked is set to a number, then
- points outside the range of xin and yin will be set to that number.
-
- The order keyword can be 0 for nearest-neighbor interpolation,
- or 1 for bilinear interpolation (default 1).
-
- If datain is a masked array and order=1 (bilinear interpolation) is 
- used, elements of dataout will be masked if any of the four surrounding
- points in datain are masked.  To avoid this, do the interpolation in two
- passes, first with order=1 (producing dataout1), then with order=0
- (producing dataout2).  Then replace all the masked values in dataout1
- with the corresponding elements in dataout2 (using numerix.where).
- This effectively uses nearest neighbor interpolation if any of the
- four surrounding points in datain are masked, and bilinear interpolation
- otherwise.
-    """
-    # xin and yin must be monotonically increasing.
-    if xin[-1]-xin[0] < 0 or yin[-1]-yin[0] < 0:
-        raise ValueError, 'xin and yin must be increasing!'
-    if xout.shape != yout.shape:
-        raise ValueError, 'xout and yout must have same shape!'
-    # check that xout,yout are
-    # within region defined by xin,yin.
-    if checkbounds:
-        if min(NX.ravel(xout)) < min(xin) or \
-           max(NX.ravel(xout)) > max(xin) or \
-           min(NX.ravel(yout)) < min(yin) or \
-           max(NX.ravel(yout)) > max(yin):
-            raise ValueError, 'yout or xout outside range of yin or xin'
-    # compute grid coordinates of output grid.
-    xoutflat = NX.ravel(xout)
-    youtflat = NX.ravel(yout)
-    datainflat = NX.ravel(datain)
-    delx = xin[1:]-xin[0:-1]
-    dely = yin[1:]-yin[0:-1]
-    if max(delx)-min(delx) < 1.e-4 and max(dely)-min(dely) < 1.e-4:
-        # regular input grid.
-        xcoords = (len(xin)-1)*(xoutflat-xin[0])/(xin[-1]-xin[0])
-        ycoords = (len(yin)-1)*(youtflat-yin[0])/(yin[-1]-yin[0])
-    else:
-        # irregular (but still rectilinear) input grid.
-        ix = (NX.searchsorted(xin,xoutflat)-1).tolist()
-        iy = (NX.searchsorted(yin,youtflat)-1).tolist()
-        xoutflat = xoutflat.tolist(); xin = xin.tolist()
-        youtflat = youtflat.tolist(); yin = yin.tolist()
-        xcoords = []; ycoords = []
-        for n,i in enumerate(ix):
-            if i < 0:
-                xcoords.append(-1) # outside of range on xin (lower end)
-            elif i >= len(xin)-1:
-                xcoords.append(len(xin)) # outside range on upper end.
-            else:
-                xcoords.append(float(i)+(xoutflat[n]-xin[i])/(xin[i+1]-xin[i]))
-        xcoords = NX.array(xcoords,NX.Float32)
-        for m,j in enumerate(iy):
-            if j < 0:
-                ycoords.append(-1) # outside of range of yin (on lower end)
-            elif j >= len(yin)-1:
-                ycoords.append(len(yin)) # outside range on upper end
-            else:
-                ycoords.append(float(j)+(youtflat[m]-yin[j])/(yin[j+1]-yin[j]))
-        ycoords = NX.array(ycoords,NX.Float32)
-    # data outside range xin,yin will be clipped to
-    # values on boundary.
-    if masked:
-        xmask = NX.logical_or(NX.less(xcoords,0),NX.greater(xcoords,len(xin)-1))
-        ymask = NX.logical_or(NX.less(ycoords,0),NX.greater(ycoords,len(yin)-1))
-        xymask = NX.logical_or(xmask,ymask)   
-        xymask = NX.reshape(xymask,xout.shape)
-    xcoords = NX.clip(xcoords,0,len(xin)-1)
-    ycoords = NX.clip(ycoords,0,len(yin)-1)
-    # interpolate to output grid using bilinear interpolation.
-    if order == 1:
-        xi = xcoords.astype(NX.Int32)
-        yi = ycoords.astype(NX.Int32)
-        xip1 = xi+1
-        yip1 = yi+1
-        xip1 = NX.clip(xip1,0,len(xin)-1)
-        yip1 = NX.clip(yip1,0,len(yin)-1)
-        delx = xcoords-xi.astype(NX.Float32)
-        dely = ycoords-yi.astype(NX.Float32)
-        coords = yi*datain.shape[1]+xi
-        data11 = NX.take(datainflat,coords)
-        coords = yip1*datain.shape[1]+xip1
-        data22 = NX.take(datainflat,coords)
-        coords = yi*datain.shape[1]+xip1
-        data12 = NX.take(datainflat,coords)
-        coords = yip1*datain.shape[1]+xi
-        data21 = NX.take(datainflat,coords)
-        dataout = (1.-delx)*(1.-dely)*data11 + \
-                  delx*dely*data22 + \
-                  (1.-delx)*dely*data21 + \
-                  delx*(1.-dely)*data12
-        dataout = NX.reshape(dataout,xout.shape)
-    elif order == 0:
-        xcoordsi = NX.around(xcoords).astype(NX.Int32)
-        ycoordsi = NX.around(ycoords).astype(NX.Int32)
-        coords = ycoordsi*datain.shape[1]+xcoordsi
-        dataout = NX.take(datainflat,coords)
-        dataout = NX.reshape(dataout,xout.shape)
-    else:
-        raise ValueError,'order keyword must be 0 or 1'
-    if masked and isinstance(masked,bool):
-        dataout = ma.masked_array(dataout)
-        newmask = ma.mask_or(ma.getmask(dataout), xymask)
-        dataout = ma.masked_array(dataout,mask=newmask)
-    elif masked and is_scalar(masked):
-        dataout = NX.where(xymask,masked,dataout)
-    return dataout
-
 def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     """
  dataout = interp(datain,xin,yin,xout,yout,order=1)
-
- This version uses array indexing and is not compatible with Numeric.
 
  interpolate data (datain) on a rectilinear grid (with x=xin
  y=yin) to a grid with x=xout, y=yout.
@@ -2940,12 +2764,8 @@ def shiftgrid(lon0,datain,lonsin,start=True):
     if lon0 < lonsin[0] or lon0 > lonsin[-1]:
         raise ValueError, 'lon0 outside of range of lonsin'
     i0 = NX.argsort(NX.fabs(lonsin-lon0))[0]
-    try:
-        dataout = NX.zeros(datain.shape,datain.typecode())
-        lonsout = NX.zeros(lonsin.shape,lonsin.typecode())
-    except:
-        dataout = NX.zeros(datain.shape,datain.dtype)
-        lonsout = NX.zeros(lonsin.shape,lonsin.dtype)
+    dataout = NX.zeros(datain.shape,datain.dtype)
+    lonsout = NX.zeros(lonsin.shape,lonsin.dtype)
     if start:
         lonsout[0:len(lonsin)-i0] = lonsin[i0:]
     else:
@@ -2966,16 +2786,10 @@ def addcyclic(arrin,lonsin):
     """
     nlats = arrin.shape[0]
     nlons = arrin.shape[1]
-    try:
-        arrout  = NX.zeros((nlats,nlons+1),arrin.typecode())
-    except:
-        arrout  = NX.zeros((nlats,nlons+1),arrin.dtype)
+    arrout  = NX.zeros((nlats,nlons+1),arrin.dtype)
     arrout[:,0:nlons] = arrin[:,:]
     arrout[:,nlons] = arrin[:,0]
-    try:
-        lonsout = NX.zeros(nlons+1,lonsin.typecode())
-    except:
-        lonsout = NX.zeros(nlons+1,lonsin.dtype)
+    lonsout = NX.zeros(nlons+1,lonsin.dtype)
     lonsout[0:nlons] = lonsin[:]
     lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
     return arrout,lonsout
@@ -2988,8 +2802,8 @@ given width and height of projection region in meters."""
     urcrnrlon, urcrnrlat = p(0.5*width,0.5*height, inverse=True)
     llcrnrlon, llcrnrlat = p(-0.5*width,-0.5*height, inverse=True)
     corners = llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat
-    # test for nans,infs in output
-    if isnan(llcrnrlon) or isnan(llcrnrlon-llcrnrlon) or isnan(urcrnrlon) or isnan(urcrnrlon-urcrnrlon):
+    # test for invalid projection points on output
+    if llcrnrlon > 1.e20 or urcrnrlon > 1.e20:
        raise ValueError, 'width and/or height too large for this projection, try smaller values'
     else:
        return corners
