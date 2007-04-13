@@ -24,7 +24,7 @@ __version__ = '0.9.6'
 
 # test to see numerix set to use numpy (if not, raise an error)
 if NX.which[0] != 'numpy':
-    raise ImportError("numerix must be set to use numpy")
+    raise ImportError("numerix must be set to numpy")
 
 class Basemap(object):
 
@@ -1304,7 +1304,9 @@ and install those files manually (see the basemap README for details)."""
  Fill continents.
 
  color - color to fill continents (default gray).
- ax - axes instance (overrides default axes instance)
+ ax - axes instance (overrides default axes instance).
+ zorder - set the zorder for the continent polygons (default 1 - set 
+  to zero if you want to paint over the filled continents).
 
  After filling continents, lakes are re-filled with axis background color.
         """
