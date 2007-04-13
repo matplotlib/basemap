@@ -1,4 +1,6 @@
 version 0.9.6 (not yet released)
+           * added zorder keyword (so you can paint over filled continents
+             by using zorder=0).
            * numpy now required.
            * added 'srs' (spatial reference system) instance variable.
            * updated pyproj to version 1.8.2.  Now uses pyproj.Geod
