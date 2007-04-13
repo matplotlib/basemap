@@ -1299,7 +1299,7 @@ and install those files manually (see the basemap README for details)."""
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
-    def fillcontinents(self,color='0.8',ax=None):
+    def fillcontinents(self,color='0.8',ax=None,zorder=1):
         """
  Fill continents.
 
@@ -1342,9 +1342,9 @@ and install those files manually (see the basemap README for details)."""
             if not hasp1 or not hasp2 or not hasp3 or not hasp4:
                 xy = zip(xa.tolist(),ya.tolist())
                 if self.coastpolygontypes[np] != 2:
-                    poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0)
+                    poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0,zorder=zorder)
                 else: # lakes filled with background color.
-                    poly = Polygon(xy,facecolor=axisbgc,edgecolor=axisbgc,linewidth=0)
+                    poly = Polygon(xy,facecolor=axisbgc,edgecolor=axisbgc,linewidth=0,zorder=zorder)
                 ax.add_patch(poly)
             np = np + 1
         # set axes limits to fit map region.
