@@ -1,6 +1,17 @@
-from distutils.core import setup, Extension
-from distutils.util import convert_path
 import sys, glob, os
+major, minor1, minor2, s, tmp = sys.version_info
+if major==2 and minor1<=3:
+    # setuptools monkeypatches distutils.core.Distribution to support
+    # package_data
+    try: import setuptools
+    except ImportError:
+        raise SystemExit("""\
+matplotlib requires setuptools for installation.  Please download
+http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
+you are doing a system wide install) to install the proper version of
+setuptools for your system""")
+from distutils.core import Extension
+from distutils.util import convert_path
 
 def dbf_macros():
     """Return the macros to define when compiling the dbflib wrapper.
@@ -56,26 +67,18 @@ if 1:
                         include_dirs = ["pyshapelib/shapelib"],
                         define_macros = dbf_macros()) ]
 
-if 'setuptools' in sys.modules:
-    # Are we running with setuptools?
-    # if so, need to specify all the packages in heirarchy
-    additional_params = {'namespace_packages' : ['matplotlib.toolkits']}    
-    packages.extend(['matplotlib', 'matplotlib.toolkits'])
-else:
-    additional_params = {}
-
 major, minor1, minor2, s, tmp = sys.version_info
 
-if major==2 and minor1<=3:
-    # setuptools monkeypatches distutils.core.Distribution to support
-    # package_data
-    try: import setuptools 
-    except ImportError:
-        raise SystemExit("""\
-matplotlib requires setuptools for installation.  Please download
-http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
-you are doing a system wide install) to install the proper version of
-setuptools for your system""")
+if 'setuptools' in sys.modules:
+# Are we running with setuptools?
+# if so, need to specify all the packages in heirarchy
+    additional_params = {'namespace_packages' : ['matplotlib.toolkits']}    
+    packages.extend(['matplotlib', 'matplotlib.toolkits'])
+    setup = setuptools.setup
+else:
+    additional_params = {}
+    from distutils.core import setup
+    
     
 # Specify all the required mpl data
 pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world']
