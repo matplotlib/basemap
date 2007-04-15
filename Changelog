@@ -1,4 +1,5 @@
 version 0.9.6 (not yet released)
+           * fixed setup.py so it works with python 2.3.
            * added zorder keyword (so you can paint over filled continents
              by using zorder=0).
            * numpy now required.
