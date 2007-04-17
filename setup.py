@@ -67,8 +67,6 @@ if 1:
                         include_dirs = ["pyshapelib/shapelib"],
                         define_macros = dbf_macros()) ]
 
-major, minor1, minor2, s, tmp = sys.version_info
-
 if 'setuptools' in sys.modules:
 # Are we running with setuptools?
 # if so, need to specify all the packages in heirarchy
