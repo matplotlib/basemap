@@ -2396,10 +2396,11 @@ coordinates using the shpproj utility from the shapelib tools
             if xl != xs:
                 print """
  WARNING: x coordinate not montonically increasing - contour plot
- may not be what you expect.  If it looks odd, and your data is on a 
- global lat/lon grid, you can use the shiftgrid function to adjust your
- data to be consistent with the map projection region. See 
- examples/contour_demo.py for an example of how do to this."""
+ may not be what you expect.  If it looks odd, your can either
+ adjust the map projection region to be consistent with your data, or
+ (if your data is on a global lat/lon grid) use the shiftgrid function
+ to adjust your data to be consistent with the map projection region 
+ (see examples/contour_demo.py for an example of this)."""
         # mask for points outside projection limb.
         xymask = NX.logical_or(NX.greater(x,1.e20),NX.greater(y,1.e20))
         data = ma.asarray(data)
@@ -2463,10 +2464,11 @@ coordinates using the shpproj utility from the shapelib tools
             if xl != xs:
                 print """
  WARNING: x coordinate not montonically increasing - contour plot
- may not be what you expect.  If it looks odd, and your data is on a 
- global lat/lon grid, you can use the shiftgrid function to adjust your
- data to be consistent with the map projection region. See 
- examples/contour_demo.py for an example of how to do this."""
+ may not be what you expect.  If it looks odd, your can either
+ adjust the map projection region to be consistent with your data, or
+ (if your data is on a global lat/lon grid) use the shiftgrid function
+ to adjust your data to be consistent with the map projection region 
+ (see examples/contour_demo.py for an example of this)."""
         # mask for points outside projection limb.
         xymask = NX.logical_or(NX.greater(x,1.e20),NX.greater(y,1.e20))
         data = ma.asarray(data)
