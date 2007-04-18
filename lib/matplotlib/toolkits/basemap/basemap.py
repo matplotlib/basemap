@@ -2383,6 +2383,23 @@ coordinates using the shpproj utility from the shapelib tools
             ax = self.ax
         else:
             ax = popd(kwargs,'ax')
+        # make sure x is monotonically increasing - if not, 
+        # print warning suggesting that the data be shifted in longitude
+        # with the shiftgrid function.
+        # only do this check for global projections.
+        if self.projection in ['merc','cyl','mill','moll','robin','sinu']:
+            xx = x[x.shape[0]/2,:]
+            condition = (xx >= self.xmin) & (xx <= self.xmax)
+            xl = xx.compress(condition).tolist()
+            xs = xl[:]
+            xs.sort()
+            if xl != xs:
+                print """
+ WARNING: x coordinate not montonically increasing - contour plot
+ may not be what you expect.  If it looks odd, and your data is on a 
+ global lat/lon grid, you can use the shiftgrid function to adjust your
+ data to be consistent with the map projection region. See 
+ examples/contour_demo.py for an example of how do to this."""
         # mask for points outside projection limb.
         xymask = NX.logical_or(NX.greater(x,1.e20),NX.greater(y,1.e20))
         data = ma.asarray(data)
@@ -2433,6 +2450,22 @@ coordinates using the shpproj utility from the shapelib tools
             ax = self.ax
         else:
             ax = popd(kwargs,'ax')
+        # make sure x is monotonically increasing - if not, 
+        # print warning suggesting that the data be shifted in longitude
+        # with the shiftgrid function.
+        if self.projection in ['merc','cyl','mill','moll','robin','sinu']:
+            xx = x[x.shape[0]/2,:]
+            condition = (xx >= self.xmin) & (xx <= self.xmax)
+            xl = xx.compress(condition).tolist()
+            xs = xl[:]
+            xs.sort()
+            if xl != xs:
+                print """
+ WARNING: x coordinate not montonically increasing - contour plot
+ may not be what you expect.  If it looks odd, and your data is on a 
+ global lat/lon grid, you can use the shiftgrid function to adjust your
+ data to be consistent with the map projection region. See 
+ examples/contour_demo.py for an example of how to do this."""
         # mask for points outside projection limb.
         xymask = NX.logical_or(NX.greater(x,1.e20),NX.greater(y,1.e20))
         data = ma.asarray(data)
