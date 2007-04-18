@@ -2453,6 +2453,7 @@ coordinates using the shpproj utility from the shapelib tools
         # make sure x is monotonically increasing - if not, 
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
+        # only do this check for global projections.
         if self.projection in ['merc','cyl','mill','moll','robin','sinu']:
             xx = x[x.shape[0]/2,:]
             condition = (xx >= self.xmin) & (xx <= self.xmax)
