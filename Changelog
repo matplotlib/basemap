@@ -1,4 +1,9 @@
 version 0.9.6 (not yet released)
+           * print a warning in contour, contourf in situations that may 
+             result in a screwy looking plot (x not monotonically increasing,
+             because the data wraps around the edge of the plot). The warning
+             suggests using the shiftgrid function to recenter the data on
+             the map projection region.
            * fixed setup.py so it works with python 2.3.
            * added zorder keyword (so you can paint over filled continents
              by using zorder=0).
