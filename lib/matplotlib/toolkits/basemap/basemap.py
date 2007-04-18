@@ -2765,7 +2765,7 @@ def shiftgrid(lon0,datain,lonsin,start=True):
         raise ValueError, 'cyclic point not included'
     if lon0 < lonsin[0] or lon0 > lonsin[-1]:
         raise ValueError, 'lon0 outside of range of lonsin'
-    i0 = NX.argsort(NX.fabs(lonsin-lon0))[0]
+    i0 = NX.argmin(NX.fabs(lonsin-lon0))
     dataout = NX.zeros(datain.shape,datain.dtype)
     lonsout = NX.zeros(lonsin.shape,lonsin.dtype)
     if start:
