@@ -110,7 +110,7 @@ m.drawparallels(parallels,labels=[0,0,1,1])
 meridians = arange(10.,360.,20.)
 m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Azimuthal Equidistant Filled Contour Demo',y=1.075)
-print 'plottint with azimuthal equidistant basemap ...'
+print 'plotting with azimuthal equidistant basemap ...'
 
 # create new figure
 fig=figure()
