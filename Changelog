@@ -1,4 +1,6 @@
 version 0.9.6 (not yet released)
+           * orthographic projection only defined for perfect sphere - raise
+             an error if user tries to use an ellipsoid.
            * print a warning in contour, contourf in situations that may 
              result in a screwy looking plot (x not monotonically increasing,
              because the data wraps around the edge of the plot). The warning
