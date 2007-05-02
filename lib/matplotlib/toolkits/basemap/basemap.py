@@ -482,6 +482,9 @@ class Basemap(object):
                     self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
                     
         elif projection == 'ortho':
+            if projparams.has_key('a') and projparams.has_key('b'):
+                if projparams['a'] != projparams['b']:
+                    raise ValueError, 'orthographic projection only works for perfect spheres - not ellipsoids'
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldner, Orthographic or Polyconic basemap'
             if width is not None or height is not None:
