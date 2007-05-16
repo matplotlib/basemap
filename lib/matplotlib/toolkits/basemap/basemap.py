@@ -2401,14 +2401,9 @@ coordinates using the shpproj utility from the shapelib tools
  WARNING: x coordinate not montonically increasing - contour plot
  may not be what you expect.  If it looks odd, your can either
  adjust the map projection region to be consistent with your data, or
- (if your data is on a global lat/lon grid) do the following:
- >>> lons = numpy.concatenate((lons-360,lons),1) # lons are the longitudes of the grid
- >>> lats = numpy.concatenate((lats,lats),1) # lats are the latitudes of the grid
- >>> data = numpy.concatenate((data,data),1) # data is the array to plot
- >>> x, y = m(lons, lats) # m is the Basemap instance
- This stacks the arrays to be plotted side-by-side.
- The resulting x,y and data arrays can then be passed to contour/contourf 
- to make a plot over any range of longitudes."""
+ (if your data is on a global lat/lon grid) use the shiftgrid
+ function to adjust the data to be consistent with the map projection
+ region (see examples/contour_demo.py)."""
         # mask for points outside projection limb.
         xymask = NX.logical_or(NX.greater(x,1.e20),NX.greater(y,1.e20))
         data = ma.asarray(data)
@@ -2474,14 +2469,9 @@ coordinates using the shpproj utility from the shapelib tools
  WARNING: x coordinate not montonically increasing - contour plot
  may not be what you expect.  If it looks odd, your can either
  adjust the map projection region to be consistent with your data, or
- (if your data is on a global lat/lon grid) do the following:
- >>> lons = numpy.concatenate((lons-360,lons),1) # lons are the longitudes of the grid
- >>> lats = numpy.concatenate((lats,lats),1) # lats are the latitudes of the grid
- >>> data = numpy.concatenate((data,data),1) # data is the array to plot
- >>> x, y = m(lons, lats) # m is the Basemap instance
- This stacks the arrays to be plotted side-by-side.
- The resulting x,y and data arrays can then be passed to contour/contourf 
- to make a plot over any range of longitudes."""
+ (if your data is on a global lat/lon grid) use the shiftgrid
+ function to adjust the data to be consistent with the map projection
+ region (see examples/contour_demo.py)."""
         # mask for points outside projection limb.
         xymask = NX.logical_or(NX.greater(x,1.e20),NX.greater(y,1.e20))
         data = ma.asarray(data)
