@@ -1,8 +1,6 @@
 from matplotlib.toolkits.basemap import Basemap, basemap_datadir
 from pylab import show, title, arange, figure, draw, ion, ioff, clf
-import cPickle
-import time
-import os
+import cPickle, time, sys, os
 
 # turn interactive mode on.
 ion()
@@ -91,13 +89,11 @@ m2.drawparallels(circles,labels=[1,1,0,0])
 m2.drawmeridians(meridians,labels=[0,0,1,1])
 print 'plotting with intermediate res boundaries from a saved pickle ...'
 title("Intermediate Res Boundaries ('i') with major rivers",y=1.05)
+draw()
+time.sleep(5)
 # only do high-res coastlines if they are installed, otherwise stop here.
 if not os.path.isfile(os.path.join(basemap_datadir,'gshhs_h.txt')):
-    show()
     sys.exit(0)
-else:
-    draw()
-    time.sleep(5)
 
 import time
 t1 = time.clock()
