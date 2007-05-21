@@ -2,6 +2,7 @@ import pylab as p
 import matplotlib.numerix as nx
 from matplotlib.toolkits.basemap import Basemap as Basemap
 from matplotlib.colors import rgb2hex
+from matplotlib.patches import Polygon
 
 # Lambert Conformal map of lower 48 states.
 m = Basemap(llcrnrlon=-119,llcrnrlat=22,urcrnrlon=-64,urcrnrlat=49,
@@ -81,12 +82,13 @@ for shapedict in m.states_info:
         colors[statename] = cmap(1.-p.sqrt((pop-vmin)/(vmax-vmin)))[:3]
     statenames.append(statename)
 # cycle through state names, color each one.
+ax = p.gca() # get current axes instance
 for nshape,seg in enumerate(m.states):
-    xx,yy = zip(*seg)
     # skip DC and Puerto Rico.
     if statenames[nshape] not in ['District of Columbia','Puerto Rico']:
         color = rgb2hex(colors[statenames[nshape]]) 
-        p.fill(xx,yy,color,edgecolor=color)
+        poly = Polygon(seg,facecolor=color,edgecolor=color)
+        ax.add_patch(poly)
 # draw meridians and parallels.
 m.drawparallels(nx.arange(25,65,20),labels=[1,0,0,0])
 m.drawmeridians(nx.arange(-120,-40,20),labels=[0,0,0,1])
