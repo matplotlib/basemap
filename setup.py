@@ -39,33 +39,24 @@ package_dirs       = {'':'lib'}
 extensions = [Extension("matplotlib.toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
 extensions.append(Extension("matplotlib.toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
 
-# only install shapelib and dbflib if user hasn't got them.
-#try: import shapelib
-#except ImportError: haveshapelib = False
-#else: haveshapelib = True
-#try: import dbflib
-#except ImportError: havedbflib = False
-#else: havedbflib = True
-#if not haveshapelib or not havedbflib:
-# always intall shapelib and dbflib.
-if 1:
-    packages = packages + ['shapelib','dbflib']
-    package_dirs['shapelib'] ='lib/shapelib'
-    package_dirs['dbflib'] ='lib/dbflib'
-    extensions = extensions + \
-             [Extension("shapelibc",
-                        ["pyshapelib/shapelib_wrap.c",
-                         "pyshapelib/shapelib/shpopen.c",
-                         "pyshapelib/shapelib/shptree.c"],
-                        include_dirs = ["pyshapelib/shapelib"]),
-              Extension("shptree",
-                        ["pyshapelib/shptreemodule.c"],
-                        include_dirs = ["pyshapelib/shapelib"]),
-              Extension("dbflibc",
-                        ["pyshapelib/dbflib_wrap.c",
-                         "pyshapelib/shapelib/dbfopen.c"],
-                        include_dirs = ["pyshapelib/shapelib"],
-                        define_macros = dbf_macros()) ]
+# install shapelib and dbflib.
+packages = packages + ['shapelib','dbflib']
+package_dirs['shapelib'] ='lib/shapelib'
+package_dirs['dbflib'] ='lib/dbflib'
+extensions = extensions + \
+         [Extension("shapelibc",
+                    ["pyshapelib/shapelib_wrap.c",
+                     "pyshapelib/shapelib/shpopen.c",
+                     "pyshapelib/shapelib/shptree.c"],
+                    include_dirs = ["pyshapelib/shapelib"]),
+          Extension("shptree",
+                    ["pyshapelib/shptreemodule.c"],
+                    include_dirs = ["pyshapelib/shapelib"]),
+          Extension("dbflibc",
+                    ["pyshapelib/dbflib_wrap.c",
+                     "pyshapelib/shapelib/dbfopen.c"],
+                    include_dirs = ["pyshapelib/shapelib"],
+                    define_macros = dbf_macros()) ]
 
 if 'setuptools' in sys.modules:
 # Are we running with setuptools?
