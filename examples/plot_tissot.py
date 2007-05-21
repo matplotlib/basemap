@@ -1,5 +1,6 @@
 import pylab as p
 from matplotlib.toolkits.basemap import Basemap as Basemap
+from matplotlib.patches import Polygon
 
 # Tissot's Indicatrix (http://en.wikipedia.org/wiki/Tissot's_Indicatrix). 
 # These diagrams illustrate the distortion inherent in all map projections.
@@ -16,9 +17,10 @@ fig=p.figure()
 m = Basemap(llcrnrlon=-180,llcrnrlat=-80,urcrnrlon=180,urcrnrlat=80,
             projection='cyl')
 shp_info = m.readshapefile('tissot','tissot',drawbounds=True)
+ax = p.gca()
 for nshape,seg in enumerate(m.tissot):
-    xx,yy = zip(*seg)
-    p.fill(xx,yy,'green',zorder=10)
+    poly = Polygon(seg,facecolor='green',zorder=10)
+    ax.add_patch(poly)
 # draw meridians and parallels.
 m.drawparallels(p.arange(-90,91,30),labels=[1,0,0,0])
 m.drawmeridians(p.arange(-180,180,60),labels=[0,0,0,1])
@@ -32,9 +34,10 @@ fig=p.figure()
 m = Basemap(llcrnrlon=-180,llcrnrlat=-70,urcrnrlon=180,urcrnrlat=70,
             projection='merc',lat_ts=20)
 shp_info = m.readshapefile('tissot','tissot',drawbounds=True)
+ax = p.gca()
 for nshape,seg in enumerate(m.tissot):
-    xx,yy = zip(*seg)
-    p.fill(xx,yy,'green',zorder=10)
+    poly = Polygon(seg,facecolor='green',zorder=10)
+    ax.add_patch(poly)
 # draw meridians and parallels.
 m.drawparallels(p.arange(-90,91,30),labels=[1,0,0,0])
 m.drawmeridians(p.arange(-180,180,60),labels=[0,0,0,1])
@@ -47,10 +50,12 @@ print 'plot Mercator Conformal Tissot diagram ...'
 fig=p.figure()
 m = Basemap(lon_0=-60,lat_0=45,projection='ortho')
 shp_info = m.readshapefile('tissot','tissot',drawbounds=False)
+ax = p.gca()
 for nshape,seg in enumerate(m.tissot):
     xx,yy = zip(*seg)
     if max(xx) < 1.e20 and max(yy) < 1.e20:
-        p.fill(xx,yy,'green',zorder=10)
+        poly = Polygon(seg,facecolor='green',zorder=10)
+        ax.add_patch(poly)
 m.drawcoastlines()
 m.fillcontinents()
 m.drawparallels(p.arange(-90,91,30))
@@ -64,9 +69,10 @@ print 'plot Orthographic Tissot diagram ...'
 fig=p.figure()
 m = Basemap(lon_0=270,lat_0=90,boundinglat=10,projection='npstere')
 shp_info = m.readshapefile('tissot','tissot',drawbounds=True)
+ax = p.gca()
 for nshape,seg in enumerate(m.tissot):
-    xx,yy = zip(*seg)
-    p.fill(xx,yy,'green',zorder=10)
+    poly = Polygon(seg,facecolor='green',zorder=10)
+    ax.add_patch(poly)
 # draw meridians and parallels.
 m.drawparallels(p.arange(-90,91,30),labels=[1,0,0,0])
 m.drawmeridians(p.arange(-180,180,30),labels=[0,0,0,1])
@@ -79,9 +85,10 @@ print 'plot North Polar Stereographic Conformal Tissot diagram ...'
 fig=p.figure()
 m = Basemap(lon_0=270,lat_0=90,boundinglat=10,projection='nplaea')
 shp_info = m.readshapefile('tissot','tissot',drawbounds=True)
+ax = p.gca()
 for nshape,seg in enumerate(m.tissot):
-    xx,yy = zip(*seg)
-    p.fill(xx,yy,'green',zorder=10)
+    poly = Polygon(seg,facecolor='green',zorder=10)
+    ax.add_patch(poly)
 # draw meridians and parallels.
 m.drawparallels(p.arange(-90,91,30),labels=[1,0,0,0])
 m.drawmeridians(p.arange(-180,180,30),labels=[0,0,0,1])
