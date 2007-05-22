@@ -1,7 +1,7 @@
 from pylab import show, title, arange, figure, title, arccos, pi, cm, text
 from matplotlib.colors import rgb2hex
 from matplotlib.toolkits.basemap import Basemap
-from matplotlib.numerix.random_array import uniform
+from numpy.random import uniform
 
 # Plot a bunch of randomly distributed points on the earth.
 
