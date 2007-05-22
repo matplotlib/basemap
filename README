@@ -5,7 +5,8 @@ using matplotlib.
 
 **Requirements**
 
-matplotlib 0.87.3 (or higher)
+matplotlib 0.90 (or higher)
+numpy 1.0 (or higher)
 
 **Copyright**
 
