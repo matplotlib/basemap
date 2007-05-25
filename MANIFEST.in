@@ -54,12 +54,16 @@ include examples/plot_tissot.py
 include examples/tissot.dbf
 include examples/tissot.shp
 include examples/tissot.shx
+include examples/show_colorbar.py
+include examples/plotprecip.py
+include examples/nws_precip_conus_20061222.nc
 include examples/README
 include lib/matplotlib/toolkits/__init__.py
 include lib/matplotlib/toolkits/basemap/__init__.py
 include lib/matplotlib/toolkits/basemap/basemap.py
 include lib/matplotlib/toolkits/basemap/proj.py
 include lib/matplotlib/toolkits/basemap/pyproj.py
+include lib/matplotlib/toolkits/basemap/cm.py
 include pyshapelib/README pyshapelib/COPYING pyshapelib/ChangeLog pyshapelib/NEWS
 include pyshapelib/*.i pyshapelib/*.c pyshapelib/*.py pyshapelib/*.h
 include pyshapelib/*.shp pyshapelib/*.shx pyshapelib/*.dbf
