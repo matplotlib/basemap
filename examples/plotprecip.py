@@ -1,6 +1,11 @@
 from pupynere import NetCDFFile
 from matplotlib.toolkits.basemap import Basemap, cm
 import pylab, copy
+from matplotlib import rcParams
+
+# make tick labels smaller
+rcParams['xtick.labelsize']=9
+rcParams['ytick.labelsize']=9
 
 # plot rainfall from NWS using special precipitation
 # colormap used by the NWS, and included in basemap.
@@ -36,11 +41,11 @@ m.drawcountries()
 # draw parallels.
 delat = 10.0
 parallels = pylab.arange(0.,90,delat)
-m.drawparallels(parallels,labels=[1,0,0,0])
+m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
 # draw meridians
 delon = 10.
 meridians = pylab.arange(180.,360.,delon)
-m.drawmeridians(meridians,labels=[0,0,0,1])
+m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
 ny = data.shape[0]; nx = data.shape[1]
 lons, lats = m.makegrid(nx, ny) # get lat/lons of ny by nx evenly space grid.
 x, y = m(lons, lats) # compute map proj coordinates.
@@ -63,9 +68,9 @@ m.drawcoastlines()
 m.drawstates()
 m.drawcountries()
 # draw parallels.
-m.drawparallels(parallels,labels=[1,0,0,0])
+m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
 # draw meridians
-m.drawmeridians(meridians,labels=[0,0,0,1])
+m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
 # draw image
 im = m.imshow(data,cmap=cm.s3pcpn,interpolation='nearest',vmin=0,vmax=750)
 # make a copy of the image object, change
