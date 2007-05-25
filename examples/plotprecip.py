@@ -78,9 +78,8 @@ cax = pylab.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
 pylab.colorbar(im2, cax, format='%d') # draw colorbar
 pylab.axes(ax)  # make the original axes current again
 # reset colorbar tick labels (hack to get
-yticks = cax.get_yticks()
-cax.set_yticks(pylab.linspace(yticks[0],yticks[-1],len(clevs)))
-cax.set_yticklabels([repr(clev) for clev in clevs])
+cax.set_yticks(pylab.linspace(0,1,len(clevs)))
+cax.set_yticklabels(['%g' % clev for clev in clevs])
 # plot title
 pylab.title(plottitle+' - imshow',fontsize=10)
 pylab.show() # display onscreen.
