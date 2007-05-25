@@ -3,6 +3,7 @@ from matplotlib.toolkits.basemap import Basemap, cm
 import pylab, copy
 
 nc = NetCDFFile('nws_precip_conus_20061222.nc')
+# data from http://www.srh.noaa.gov/rfcshare/precip_analysis_new.php
 prcpvar = nc.variables['amountofprecip']
 data = 0.01*prcpvar[:]
 data = pylab.clip(data,0,10000)
@@ -62,16 +63,21 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 # draw meridians
 m.drawmeridians(meridians,labels=[0,0,0,1])
 # draw image
-cs = m.imshow(data,cmap=cm.s3pcpn,interpolation='nearest')
-cs2 = copy.copy(cs)
-cs2.set_cmap(cm.s3pcpn_l)
-pylab.clim(0,750)
+im = m.imshow(data,cmap=cm.s3pcpn,interpolation='nearest')
+# make a copy of the image object, change
+# colormap to linear version of the precip colormap.
+im2 = copy.copy(im)
+im2.set_cmap(cm.s3pcpn_l)
+pylab.clim(0,750) # re-set color limits  
 # new axis for colorbar.
 l,b,w,h=ax.get_position()
 cax = pylab.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
-pylab.colorbar(cs2, cax, format='%d') # draw colorbar
+# using im2, not im (hack to prevent colors from being
+# too compressed at the low end on the colorbar - results
+# from highly nonuniform colormap)
+pylab.colorbar(im2, cax, format='%d') # draw colorbar
 pylab.axes(ax)  # make the original axes current again
-# reset colorbar tick labels
+# reset colorbar tick labels (hack to get
 yticks = cax.get_yticks()
 cax.set_yticks(pylab.linspace(yticks[0],yticks[-1],len(clevs)))
 cax.set_yticklabels([repr(clev) for clev in clevs])
