@@ -87,6 +87,8 @@ ccsm_popgrid.py shows how to plot data on 2d grids which are not
 rectilinear in map projection or geographic coordinates.  The NCAR
 Parallel Ocean Program grid is used as an example.
 
+show_colormaps.py plots the extra colormaps included with basemap.
+
 run_all.py is a driver script that runs all the examples except fcstmaps.py,
 testgdal.py, warpimage.py, and pnganim.py (which
 rely on external dependencies).
