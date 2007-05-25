@@ -67,12 +67,11 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 # draw meridians
 m.drawmeridians(meridians,labels=[0,0,0,1])
 # draw image
-im = m.imshow(data,cmap=cm.s3pcpn,interpolation='nearest')
+im = m.imshow(data,cmap=cm.s3pcpn,interpolation='nearest',vmin=0,vmax=750)
 # make a copy of the image object, change
 # colormap to linear version of the precip colormap.
 im2 = copy.copy(im)
 im2.set_cmap(cm.s3pcpn_l)
-pylab.clim(0,750) # re-set color limits  
 # new axis for colorbar.
 l,b,w,h=ax.get_position()
 cax = pylab.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
