@@ -2,6 +2,9 @@ from pupynere import NetCDFFile
 from matplotlib.toolkits.basemap import Basemap, cm
 import pylab, copy
 
+# plot rainfall from NWS using special precipitation
+# colormap used by the NWS, and included in basemap.
+
 nc = NetCDFFile('nws_precip_conus_20061222.nc')
 # data from http://www.srh.noaa.gov/rfcshare/precip_analysis_new.php
 prcpvar = nc.variables['amountofprecip']
@@ -17,11 +20,12 @@ print plottitle
 print data.shape
 lon_0 = -nc.variables['true_lon'].getValue()
 lat_0 = nc.variables['true_lat'].getValue()
+# create polar stereographic Basemap instance.
 m = Basemap(projection='stere',lon_0=lon_0,lat_0=90.,lat_ts=lat_0,\
             llcrnrlat=latcorners[0],urcrnrlat=latcorners[2],\
             llcrnrlon=loncorners[0],urcrnrlon=loncorners[2],\
             rsphere=6371200.,resolution='l',area_thresh=10000)
-# setup fig axes so map aspect ratio is preserved.
+# create figure
 fig = pylab.figure(figsize=(6,8.5))
 pylab.subplot(211)
 ax = pylab.gca()
@@ -38,7 +42,7 @@ delon = 10.
 meridians = pylab.arange(180.,360.,delon)
 m.drawmeridians(meridians,labels=[0,0,0,1])
 ny = data.shape[0]; nx = data.shape[1]
-lons, lats = m.makegrid(nx, ny)
+lons, lats = m.makegrid(nx, ny) # get lat/lons of ny by nx evenly space grid.
 x, y = m(lons, lats) # compute map proj coordinates.
 # draw filled contours.
 clevs = [0,1,2.5,5,7.5,10,15,20,30,40,50,70,100,150,200,250,300,400,500,600,750]
