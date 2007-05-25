@@ -1,4 +1,6 @@
 version 0.9.6 (not yet released)
+           * added a bunch of extra colormaps (many from GMT
+             and GIST), and a script to plot them (examples/show_colormaps.py).
            * orthographic projection only defined for perfect sphere - raise
              an error if user tries to use an ellipsoid.
            * print a warning in contour, contourf in situations that may 
