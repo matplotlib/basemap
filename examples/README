@@ -89,6 +89,9 @@ Parallel Ocean Program grid is used as an example.
 
 show_colormaps.py plots the extra colormaps included with basemap.
 
+plotprecip.py use nonlinear precip colormap included with basemap
+to make a rainfall plot.
+
 run_all.py is a driver script that runs all the examples except fcstmaps.py,
 testgdal.py, warpimage.py, and pnganim.py (which
 rely on external dependencies).
