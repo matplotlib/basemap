@@ -4,7 +4,7 @@ extra colormaps:
 * Generic Mapping Tools colormaps: GMT_drywet,GMT_gebco,GMT_globe,GMT_haxby
 GMT_no_green,GMT_ocean,GMT_polar,GMT_red2green,GMT_relief,GMT_split,
 GMT_wysiwyg
-* GIST_colormaps: GIST_earth, GIST_ncar, GIST_stern, GIST_heat
+* GIST colormaps: GIST_earth, GIST_ncar, GIST_stern, GIST_heat
 * Stepped-sequential scheme: StepSeq
 * A nonlinear precipitation colormap:  s3pcpn
 * A linear version of the precip colormap: s3pcpn_l
