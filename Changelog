@@ -1,6 +1,8 @@
 version 0.9.6 (not yet released)
            * added a bunch of extra colormaps (many from GMT
              and GIST), and a script to plot them (examples/show_colormaps.py).
+             To import new colormaps, use 'from matplotlib.toolkits.basemap
+             import cm'
            * orthographic projection only defined for perfect sphere - raise
              an error if user tries to use an ellipsoid.
            * print a warning in contour, contourf in situations that may 
@@ -9,11 +11,11 @@ version 0.9.6 (not yet released)
              suggests using the shiftgrid function to recenter the data on
              the map projection region.
            * fixed setup.py so it works with python 2.3.
-           * added zorder keyword (so you can paint over filled continents
-             by using zorder=0).
+           * added zorder keyword to fillcontinents (so you can paint over
+             filled continents by using zorder=0).
            * numpy now required.
            * added 'srs' (spatial reference system) instance variable.
-           * updated pyproj to version 1.8.2.  Now uses pyproj.Geod
+           * updated pyproj to version 1.8.3.  Now uses pyproj.Geod
              for Great Circle calculations.  proj.4 data files now included.
            * make sure axes ticks are always turned off, unless noticks=False
              set when creating Basemap instance.
