@@ -1571,7 +1571,7 @@ coordinates using the shpproj utility from the shapelib tools
             lines = LineCollection(shpsegs,antialiaseds=(1,))
             lines.set_color(color)
             lines.set_linewidth(linewidth)
-            if zoder is not None:
+            if zorder is not None:
                 lines.set_zorder(zorder)
             ax.add_collection(lines)
             # set axes limits to fit map region.
