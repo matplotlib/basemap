@@ -1482,7 +1482,7 @@ and install those files manually (see the basemap README for details)."""
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
-    def readshapefile(self,shapefile,name,drawbounds=True,
+    def readshapefile(self,shapefile,name,drawbounds=True,zorder=None,
                       linewidth=0.5,color='k',antialiased=1,ax=None):
         """
  read in shape file, draw boundaries on map.
@@ -1506,6 +1506,8 @@ and install those files manually (see the basemap README for details)."""
   into separate polygons.  Additional keys
   'RINGNUM' and 'SHAPENUM' are added to shape attribute dictionary.
  drawbounds - draw boundaries of shapes (default True)
+ zorder = shape boundary zorder (if not specified, default for LineCollection
+ is used).
  linewidth - shape boundary line width (default 0.5)
  color - shape boundary line color (default black)
  antialiased - antialiasing switch for shape boundaries (default True).
@@ -1569,6 +1571,8 @@ coordinates using the shpproj utility from the shapelib tools
             lines = LineCollection(shpsegs,antialiaseds=(1,))
             lines.set_color(color)
             lines.set_linewidth(linewidth)
+            if zoder is not None:
+                lines.set_zorder(zorder)
             ax.add_collection(lines)
             # set axes limits to fit map region.
             self.set_axes_limits(ax=ax)
