@@ -1579,7 +1579,7 @@ coordinates using the shpproj utility from the shapelib tools
         dbf.close()
         return info
 
-    def drawparallels(self,circles,color='k',linewidth=1., \
+    def drawparallels(self,circles,color='k',linewidth=1.,zorder=None, \
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0], \
                       fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
@@ -1588,6 +1588,8 @@ coordinates using the shpproj utility from the shapelib tools
  circles - list containing latitude values to draw (in degrees).
  color - color to draw parallels (default black).
  linewidth - line width for parallels (default 1.)
+ zorder - sets the zorder for parallels (if not specified,
+ uses default zorder for Line2D class).
  linestyle - line style for parallels (default '--', i.e. dashed).
  dashes - dash pattern for parallels (default [1,1], i.e. 1 pixel on,
   1 pixel off).
@@ -1680,6 +1682,8 @@ coordinates using the shpproj utility from the shapelib tools
                         l = Line2D(x,y,linewidth=linewidth,linestyle=linestyle)
                         l.set_color(color)
                         l.set_dashes(dashes)
+                        if zorder is not None:
+                            l.set_zorder(zorder)
                         ax.add_line(l)
         # draw labels for parallels
         # parallels not labelled for orthographic, robinson, 
@@ -1779,7 +1783,7 @@ coordinates using the shpproj utility from the shapelib tools
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
-    def drawmeridians(self,meridians,color='k',linewidth=1., \
+    def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0],\
                       fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
@@ -1788,6 +1792,8 @@ coordinates using the shpproj utility from the shapelib tools
  meridians - list containing longitude values to draw (in degrees).
  color - color to draw meridians (default black).
  linewidth - line width for meridians (default 1.)
+ zorder - sets the zorder for meridians (if not specified,
+ uses default zorder for Line2D class).
  linestyle - line style for meridians (default '--', i.e. dashed).
  dashes - dash pattern for meridians (default [1,1], i.e. 1 pixel on,
   1 pixel off).
@@ -1870,6 +1876,8 @@ coordinates using the shpproj utility from the shapelib tools
                         l = Line2D(x,y,linewidth=linewidth,linestyle=linestyle)
                         l.set_color(color)
                         l.set_dashes(dashes)
+                        if zorder is not None:
+                            l.set_zorder(zorder)
                         ax.add_line(l)
         # draw labels for meridians.
         # meridians not labelled for orthographic, sinusoidal,
