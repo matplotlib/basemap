@@ -2668,7 +2668,7 @@ coordinates using the shpproj utility from the shapelib tools
         # make points outside projection limb transparent.
         rgba[:,:,3] = NX.where(mask==255,0,rgba[:,:,3])
         # plot mask as rgba image.
-        im = self.imshow(rgba,interpolation='nearest',ax=ax)
+        im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
 
 def _searchlist(a,x):
     """
