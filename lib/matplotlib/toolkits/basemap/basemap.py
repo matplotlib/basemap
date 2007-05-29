@@ -1302,14 +1302,15 @@ and install those files manually (see the basemap README for details)."""
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
-    def fillcontinents(self,color='0.8',ax=None,zorder=1):
+    def fillcontinents(self,color='0.8',ax=None,zorder=None):
         """
  Fill continents.
 
  color - color to fill continents (default gray).
  ax - axes instance (overrides default axes instance).
- zorder - set the zorder for the continent polygons (default 1 - set 
-  to zero if you want to paint over the filled continents).
+ zorder - sets the zorder for the continent polygons (if not specified,
+ uses default zorder for a Polygon patch). Set to zero if you want to paint
+ over the filled continents).
 
  After filling continents, lakes are re-filled with axis background color.
         """
@@ -1347,15 +1348,17 @@ and install those files manually (see the basemap README for details)."""
             if not hasp1 or not hasp2 or not hasp3 or not hasp4:
                 xy = zip(xa.tolist(),ya.tolist())
                 if self.coastpolygontypes[np] != 2:
-                    poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0,zorder=zorder)
+                    poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0)
                 else: # lakes filled with background color.
-                    poly = Polygon(xy,facecolor=axisbgc,edgecolor=axisbgc,linewidth=0,zorder=zorder)
+                    poly = Polygon(xy,facecolor=axisbgc,edgecolor=axisbgc,linewidth=0)
+                if zorder is not None:
+                    poly.set_zorder(zorder)
                 ax.add_patch(poly)
             np = np + 1
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
-    def drawcoastlines(self,linewidth=1.,color='k',antialiased=1,ax=None):
+    def drawcoastlines(self,linewidth=1.,color='k',antialiased=1,ax=None,zorder=None):
         """
  Draw coastlines.
 
@@ -1363,6 +1366,8 @@ and install those files manually (see the basemap README for details)."""
  color - coastline color (default black)
  antialiased - antialiasing switch for coastlines (default True).
  ax - axes instance (overrides default axes instance)
+ zorder - sets the zorder for the coastlines (if not specified,
+ uses default zorder for LineCollections).
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
@@ -1378,11 +1383,13 @@ and install those files manually (see the basemap README for details)."""
         coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
+        if zorder is not None:
+            coastlines.set_zorder(zorder)
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
-    def drawcountries(self,linewidth=0.5,color='k',antialiased=1,ax=None):
+    def drawcountries(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
         """
  Draw country boundaries.
 
@@ -1390,6 +1397,8 @@ and install those files manually (see the basemap README for details)."""
  color - country boundary line color (default black)
  antialiased - antialiasing switch for country boundaries (default True).
  ax - axes instance (overrides default axes instance)
+ zorder - sets the zorder for the country boundaries (if not specified,
+ uses default zorder for LineCollections).
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
@@ -1405,11 +1414,13 @@ and install those files manually (see the basemap README for details)."""
         coastlines = LineCollection(self.cntrysegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
+        if zorder is not None:
+            coastlines.set_zorder(zorder)
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
-    def drawstates(self,linewidth=0.5,color='k',antialiased=1,ax=None):
+    def drawstates(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
         """
  Draw state boundaries in Americas.
 
@@ -1417,6 +1428,8 @@ and install those files manually (see the basemap README for details)."""
  color - state boundary line color (default black)
  antialiased - antialiasing switch for state boundaries (default True).
  ax - axes instance (overrides default axes instance)
+ zorder - sets the zorder for the state boundaries (if not specified,
+ uses default zorder for LineCollections).
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
@@ -1432,11 +1445,13 @@ and install those files manually (see the basemap README for details)."""
         coastlines = LineCollection(self.statesegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
+        if zorder is not None:
+            coastlines.set_zorder(zorder)
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
-    def drawrivers(self,linewidth=0.5,color='k',antialiased=1,ax=None):
+    def drawrivers(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
         """
  Draw major rivers.
 
@@ -1444,6 +1459,8 @@ and install those files manually (see the basemap README for details)."""
  color - river boundary line color (default black)
  antialiased - antialiasing switch for river boundaries (default True).
  ax - axes instance (overrides default axes instance)
+ zorder - sets the zorder for the rivers (if not specified,
+ uses default zorder for LineCollections).
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
@@ -1459,6 +1476,8 @@ and install those files manually (see the basemap README for details)."""
         coastlines = LineCollection(self.riversegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
+        if zorder is not None:
+            coastlines.set_zorder(zorder)
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
