@@ -16,6 +16,7 @@ from matplotlib.mlab import linspace
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd, is_scalar
 from shapelib import ShapeFile
+from matplotlib.patches import Ellipse
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -34,7 +35,7 @@ class Basemap(object):
  transverse mercator, miller cylindrical, lambert conformal conic,
  azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
  albers equal area conic, gnomonic, orthographic, sinusoidal, mollweide, 
- robinson, cassini-soldner or stereographic).
+ geostationary, robinson, cassini-soldner or stereographic).
  Doesn't actually draw anything, but sets up the map projection class and
  creates the coastline, lake river and political boundary data
  structures in native map projection coordinates.
@@ -45,7 +46,7 @@ class Basemap(object):
  projection - map projection ('cyl','merc','mill','lcc','eqdc','aea',
   'laea', 'nplaea', 'splaea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly', 
   'sinu', 'moll', 'ortho', 'robin', 'aeqd', 'npaeqd', 'spaeqd', 'stere',
-  'npstere' or 'spstere')
+  'geos', 'npstere' or 'spstere')
  (projections prefixed with 'np' or 'sp' are special case polar-centric
   versions of the parent projection)
  aspect - map aspect ratio (size of y dimension / size of x dimension).
@@ -95,7 +96,7 @@ class Basemap(object):
        projection='cyl',resolution='c',area_thresh=None,rsphere=6370997.0,\
        lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
        lon_1=None,lon_2=None,suppress_ticks=True,\
-       boundinglat=None,anchor='C',ax=None):
+       satellite_height=None,boundinglat=None,anchor='C',ax=None):
         """
  create a Basemap instance.
 
@@ -115,7 +116,8 @@ class Basemap(object):
   'cass' - cassini-soldner (transverse cylindrical equidistant),
   'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
   'sinu' - sinusoidal, 'moll' - mollweide, 'robin' - robinson,
-  and 'gnom' - gnomonic are currently available.  Default 'cyl'.
+  'geos' - geostationary, and 'gnom' - gnomonic are currently available.
+  Default is 'cyl'.
 
  The map projection region can either be specified by setting these keywords:
 
@@ -132,7 +134,7 @@ class Basemap(object):
  lat_0  - center of desired map domain (in degrees).
 
  For 'ortho', 'sinu', 'moll', 'npstere', 'spstere', 'nplaea', 'splaea', 'nplaea', 
- 'splaea', 'npaeqd', 'spaeqd' or 'robin', the values of 
+ 'geos', 'splaea', 'npaeqd', 'spaeqd' or 'robin', the values of 
  llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,width and height are ignored (because 
  either they are computed internally, or entire globe is always plotted). For the 
  cylindrical projections ('cyl','merc' and 'mill'), the default is to use 
@@ -209,6 +211,9 @@ class Basemap(object):
   nplaea,splaea,npaeqd,spaeqd).  These projections are square regions centered
   on the north or south pole.  The longitude lon_0 is at 6-o'clock, and the
   latitude circle boundinglat is tangent to the edge of the map at lon_0.
+ satellite_height - height of satellite (in m) from center of the earth -
+  only relevant for geostationary projections ('geos').
+  
 
         """
 
@@ -228,10 +233,8 @@ class Basemap(object):
                 projparams['a'] = rsphere[1]
                 projparams['b'] = rsphere[0]
         except:
-            projparams['R'] = rsphere
-            # this is a workaround for bug in proj 4.4.9 tmerc where a=b.
-            #projparams['a'] = rsphere
-            #projparams['b'] = rsphere - 0.01
+            projparams['a'] = rsphere
+            projparams['b'] = rsphere
         # set units to meters.
         projparams['units']='m'
         # check for sane values of lon_0, lat_0, lat_ts, lat_1, lat_2
@@ -270,6 +273,11 @@ class Basemap(object):
                 raise ValueError, 'lat_ts must be between -90 and +90 degrees'
             else:
                 projparams['lat_ts'] = lat_ts
+        if satellite_height is not None:
+            if satellite_height < projparams['a']:
+                raise ValueError, 'satellite_height must be greater than equatorial earth radius'
+            else:
+                projparams['h'] = satellite_height - projparams['a']
 
         if None not in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
             # make sure lat/lon limits are converted to floats.
@@ -486,7 +494,19 @@ class Basemap(object):
                 if projparams['a'] != projparams['b']:
                     raise ValueError, 'orthographic projection only works for perfect spheres - not ellipsoids'
             if lat_0 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldner, Orthographic or Polyconic basemap'
+                raise ValueError, 'must specify lat_0 and lon_0 for Orthographic basemap'
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % self.projection
+            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+                llcrnrlon = -180.
+                llcrnrlat = -90.
+                urcrnrlon = 180
+                urcrnrlat = 90.
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+        elif projection == 'geos':
+            if lon_0 is None and satellite_height is None:
+                raise ValueError, 'must specify lon_0 and satellite_height for Geostationary basemap'
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % self.projection
             if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
@@ -583,8 +603,8 @@ class Basemap(object):
   'splaea' - lambert azimuthal, special case centered on south pole,
   'cass' - cassini-soldner (transverse cylindrical equidistant),
   'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
-  'sinu' - sinusoidal, 'moll' - mollweide, 'robin' - robinson,
-  or 'gnom' - gnomonic.  You tried '%s'""" % projection
+  'geos' - geostationary, 'sinu' - sinusoidal, 'moll' - mollweide,
+  'robin' - robinson, or 'gnom' - gnomonic.  You tried '%s'""" % projection
 
         # initialize proj4
         proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
@@ -632,7 +652,7 @@ class Basemap(object):
         if projection in ['mill','cyl','merc']:
             self.latmin = self.llcrnrlat
             self.latmax = self.urcrnrlat
-        elif projection in ['ortho','moll','robin','sinu']:
+        elif projection in ['ortho','geos','moll','robin','sinu']:
             self.latmin = -90.
             self.latmax = 90.
         else:
@@ -1016,7 +1036,7 @@ and install those files manually (see the basemap README for details)."""
         self.coastsegtypes = coastsegtypes
 
         # special treatment of coastline polygons for
-        # orthographic, sinusoidal, mollweide and robinson.
+        # geostationary, orthographic, sinusoidal, mollweide and robinson.
         # (polygon clipping along projection limb)
         if self.projection == 'ortho':
             lat_0 = math.radians(self.projparams['lat_0'])
@@ -1269,6 +1289,27 @@ and install those files manually (see the basemap README for details)."""
             ax.add_collection(bound)
             bound.set_fill(False)
             bound.set_clip_on(False)
+        elif self.projection == 'geos': # elliptical region
+            delta = 0.1
+            lon_0 = self.projparams['lon_0']
+            lats = NX.arange(0,90,delta)
+            lons = lon_0*NX.ones(len(lats),'d')
+            x, y = self(lons, lats)
+            yi = (y > 1.e20).tolist()
+            ny = yi.index(1)-1
+            height = y[ny]-self.rminor
+            lons = NX.arange(lon_0,lon_0+90,delta)
+            lats = NX.zeros(len(lons),'d')
+            x, y = self(lons, lats)
+            xi = (x > 1.e20).tolist()
+            nx = xi.index(1)-1
+            width = x[nx]-self.rmajor
+            ellps = Ellipse((self.rmajor,self.rminor),2.*width,2.*height)
+            ax.add_patch(ellps)
+            ellps.set_fill(False)
+            ellps.set_edgecolor(color)
+            ellps.set_linewidth(linewidth)
+            ellps.set_clip_on(False)
         elif self.projection in ['moll','robin','sinu']:  # elliptical region.
             # left side
             lats = NX.arange(-89.9,89.9+dtheta,dtheta).tolist()
@@ -1692,8 +1733,8 @@ coordinates using the shpproj utility from the shapelib tools
         # draw labels for parallels
         # parallels not labelled for orthographic, robinson, 
         # sinusoidal or mollweide.
-        if self.projection in ['ortho'] and max(labels):
-            print 'Warning: Cannot label parallels on Orthographic basemap'
+        if self.projection in ['ortho','geos'] and max(labels):
+            print 'Warning: Cannot label parallels on Orthographic or Geostationary basemap'
             labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
@@ -1886,8 +1927,8 @@ coordinates using the shpproj utility from the shapelib tools
         # draw labels for meridians.
         # meridians not labelled for orthographic, sinusoidal,
         # robinson or mollweide
-        if self.projection in ['sinu','ortho','moll'] and max(labels):
-            print 'Warning: Cannot label meridians on Sinusoidal, Mollweide or Orthographic basemap'
+        if self.projection in ['sinu','ortho','geos','moll'] and max(labels):
+            print 'Warning: Cannot label meridians on Sinusoidal, Mollweide, Geostationary or Orthographic basemap'
             labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
@@ -2187,7 +2228,7 @@ coordinates using the shpproj utility from the shapelib tools
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
         ax.set_ylim((self.llcrnry, self.urcrnry))
         # turn off axes frame for non-rectangular projections.
-        if self.projection in ['ortho','moll','robin','sinu']:
+        if self.projection in ['ortho','geos','moll','robin','sinu']:
             ax.set_frame_on(False)
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
