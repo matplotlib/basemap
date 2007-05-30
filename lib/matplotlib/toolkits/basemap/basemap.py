@@ -30,7 +30,7 @@ if NX.which[0] != 'numpy':
 class Basemap(object):
 
     """
- Set up a basemap with one of 18 supported map projections
+ Set up a basemap with one of 19 supported map projections
  (cylindrical equidistant, mercator, polyconic, oblique mercator,
  transverse mercator, miller cylindrical, lambert conformal conic,
  azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
