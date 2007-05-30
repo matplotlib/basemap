@@ -14,8 +14,6 @@ version 0.9.6 (not yet released)
            * added zorder keyword to drawmeridians, drawparallels,
              drawcoastlines, drawstates, drawcountries, drawrivers,
              readshapefile and fillcontinents.
-           * added zorder keyword to fillcontinents (so you can paint over
-             filled continents by using zorder=0).
            * numpy now required.
            * added 'srs' (spatial reference system) instance variable.
            * updated pyproj to version 1.8.3.  Now uses pyproj.Geod
