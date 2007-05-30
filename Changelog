@@ -11,6 +11,9 @@ version 0.9.6 (not yet released)
              suggests using the shiftgrid function to recenter the data on
              the map projection region.
            * fixed setup.py so it works with python 2.3.
+           * added zorder keyword to drawmeridians, drawparallels,
+             drawcoastlines, drawstates, drawcountries, drawrivers,
+             readshapefile and fillcontinents.
            * added zorder keyword to fillcontinents (so you can paint over
              filled continents by using zorder=0).
            * numpy now required.
