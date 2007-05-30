@@ -1731,7 +1731,7 @@ coordinates using the shpproj utility from the shapelib tools
                         ax.add_line(l)
         # draw labels for parallels
         # parallels not labelled for orthographic, robinson, 
-        # sinusoidal or mollweide.
+        # geostationary, sinusoidal or mollweide.
         if self.projection in ['ortho','geos'] and max(labels):
             print 'Warning: Cannot label parallels on Orthographic or Geostationary basemap'
             labels = [0,0,0,0]
@@ -1925,7 +1925,7 @@ coordinates using the shpproj utility from the shapelib tools
                         ax.add_line(l)
         # draw labels for meridians.
         # meridians not labelled for orthographic, sinusoidal,
-        # robinson or mollweide
+        # geostationary, robinson or mollweide
         if self.projection in ['sinu','ortho','geos','moll'] and max(labels):
             print 'Warning: Cannot label meridians on Sinusoidal, Mollweide, Geostationary or Orthographic basemap'
             labels = [0,0,0,0]
