@@ -1,4 +1,6 @@
 version 0.9.6 (not yet released)
+           * Added support for geostationary satellite projection 
+             (projection='geos'), contributed by Scott Sinclair.
            * added a bunch of extra colormaps (many from GMT
              and GIST), and a script to plot them (examples/show_colormaps.py).
              To import new colormaps, use 'from matplotlib.toolkits.basemap
