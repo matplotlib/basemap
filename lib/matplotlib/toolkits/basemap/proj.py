@@ -56,7 +56,7 @@ class Proj(object):
         self.esq = (self.rmajor**2 - self.rminor**2)/self.rmajor**2
         self.llcrnrlon = llcrnrlon
         self.llcrnrlat = llcrnrlat
-        if self.projection not in ['cyl','ortho','moll','robin','sinu']:
+        if self.projection not in ['cyl','ortho','geos','moll','robin','sinu']:
             self._proj4 = pyproj.Proj(projparams)
             llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
         elif self.projection == 'cyl':
@@ -66,6 +66,29 @@ class Proj(object):
             self._proj4 = pyproj.Proj(projparams)
             llcrnrx = -self.rmajor
             llcrnry = -self.rmajor
+            urcrnrx = -llcrnrx
+            urcrnry = -llcrnry
+        elif self.projection == 'geos':
+            self._proj4 = pyproj.Proj(projparams)
+            # find major and minor axes of ellipse defining map proj region.
+            delta = 0.01
+            lats = NX.arange(0,90,delta)
+            lon_0 = projparams['lon_0']
+            lons = lon_0*NX.ones(len(lats),'d')
+            x, y = self._proj4(lons, lats)
+            yi = (y > 1.e20).tolist()
+            ny = yi.index(1)-1
+            height = y[ny]
+            lons = NX.arange(lon_0,lon_0+90,delta)
+            lats = NX.zeros(len(lons),'d')
+            x, y = self(lons, lats)
+            xi = (x > 1.e20).tolist()
+            nx = xi.index(1)-1
+            width = x[nx]
+            self._height = height
+            self._width = width
+            llcrnrx = -width
+            llcrnry = -height
             urcrnrx = -llcrnrx
             urcrnry = -llcrnry
         elif self.projection in ['moll','robin','sinu']:
@@ -89,11 +112,14 @@ class Proj(object):
         if urcrnrislatlon:
             self.urcrnrlon = urcrnrlon
             self.urcrnrlat = urcrnrlat
-            if self.projection not in ['ortho','moll','robin','sinu']:
+            if self.projection not in ['ortho','geos','moll','robin','sinu']:
                 urcrnrx,urcrnry = self(urcrnrlon,urcrnrlat)
             elif self.projection == 'ortho':
                 urcrnrx = 2.*self.rmajor
                 urcrnry = 2.*self.rmajor
+            elif self.projection == 'geos':
+                urcrnrx = 2.*self._width
+                urcrnry = 2.*self._height
             elif self.projection in ['moll','robin','sinu']:
                 xtmp,urcrnry = self(projparams['lon_0'],90.)
                 urcrnrx,xtmp = self(projparams['lon_0']+180.,0)

@@ -618,6 +618,11 @@ class Basemap(object):
         atts = ['rmajor','rminor','esq','flattening','ellipsoid','projparams']
         for att in atts:
             self.__dict__[att] = proj.__dict__[att]
+        # these only exist for geostationary projection.
+        if hasattr(proj,'_width'):
+            self.__dict__['_width'] = proj.__dict__['_width']
+        if hasattr(proj,'_height'):
+            self.__dict__['_height'] = proj.__dict__['_height']
         # spatial reference string (useful for georeferencing output
         # images with gdal_translate).
         if hasattr(self,'_proj4'):
@@ -1038,10 +1043,18 @@ and install those files manually (see the basemap README for details)."""
         # special treatment of coastline polygons for
         # geostationary, orthographic, sinusoidal, mollweide and robinson.
         # (polygon clipping along projection limb)
-        if self.projection == 'ortho':
-            lat_0 = math.radians(self.projparams['lat_0'])
-            lon_0 = math.radians(self.projparams['lon_0'])
-            rad = (2.*self.rmajor + self.rminor)/3.
+        if self.projection in ['ortho','geos']:
+            if self.projection == 'ortho':
+                lat_0 = math.radians(self.projparams['lat_0'])
+            else:
+                lat_0 = 0.
+            lon_0d = self.projparams['lon_0']
+            lon_0 = math.radians(lon_0d)
+            if self.projection == 'ortho':
+                rad = (2.*self.rmajor + self.rminor)/3.
+            else:
+                print self._width, self._height
+                rad = (2.*self._width + self._height)/3.
             del_s = 50.
             gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
             coastpolygons = []
@@ -1290,21 +1303,8 @@ and install those files manually (see the basemap README for details)."""
             bound.set_fill(False)
             bound.set_clip_on(False)
         elif self.projection == 'geos': # elliptical region
-            delta = 0.1
-            lon_0 = self.projparams['lon_0']
-            lats = NX.arange(0,90,delta)
-            lons = lon_0*NX.ones(len(lats),'d')
-            x, y = self(lons, lats)
-            yi = (y > 1.e20).tolist()
-            ny = yi.index(1)-1
-            height = y[ny]-self.rminor
-            lons = NX.arange(lon_0,lon_0+90,delta)
-            lats = NX.zeros(len(lons),'d')
-            x, y = self(lons, lats)
-            xi = (x > 1.e20).tolist()
-            nx = xi.index(1)-1
-            width = x[nx]-self.rmajor
-            ellps = Ellipse((self.rmajor,self.rminor),2.*width,2.*height)
+            # define an Ellipse patch, add it to axes instance.
+            ellps = Ellipse((self._width,self._height),2.*self._width,2.*self._height)
             ax.add_patch(ellps)
             ellps.set_fill(False)
             ellps.set_edgecolor(color)
