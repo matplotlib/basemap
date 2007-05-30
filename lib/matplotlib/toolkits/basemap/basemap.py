@@ -1053,7 +1053,6 @@ and install those files manually (see the basemap README for details)."""
             if self.projection == 'ortho':
                 rad = (2.*self.rmajor + self.rminor)/3.
             else:
-                print self._width, self._height
                 rad = (2.*self._width + self._height)/3.
             del_s = 50.
             gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
