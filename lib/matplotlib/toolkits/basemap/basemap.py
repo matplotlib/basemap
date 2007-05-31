@@ -477,7 +477,7 @@ class Basemap(object):
                 print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection in ['tmerc','gnom','cass','poly'] :
             if lat_0 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldner, Orthographic or Polyconic basemap'
+                raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldnerr Polyconic basemap'
             if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
@@ -574,18 +574,6 @@ class Basemap(object):
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % self.projection
-        elif projection == 'sinu':
-            if lon_0 is None:
-                raise ValueError, 'must specify lon_0 for Robinson, Mollweide, or Sinusoidal basemap'
-            if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
-                llcrnrlon = -180.
-                llcrnrlat = -90.
-                urcrnrlon = 180
-                urcrnrlat = 90.
-                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
-                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         else:
             raise ValueError, """
   unsupported projection, use 'cyl' - cylindrical equidistant, 'merc' -
