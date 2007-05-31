@@ -6,7 +6,7 @@ if matplotlib_version < mpl_required_version:
     raise ImportError('your matplotlib is too old - basemap '
                       'requires at least %s'%mpl_required_version)
 from matplotlib.collections import LineCollection
-from matplotlib.patches import Polygon
+from matplotlib.patches import Ellipse, Circle, Polygon
 from matplotlib.lines import Line2D
 import pyproj, sys, os, math, dbflib
 from proj import Proj
@@ -16,7 +16,6 @@ from matplotlib.mlab import linspace
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd, is_scalar
 from shapelib import ShapeFile
-from matplotlib.patches import Ellipse
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -490,9 +489,8 @@ class Basemap(object):
                     self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
                     
         elif projection == 'ortho':
-            if projparams.has_key('a') and projparams.has_key('b'):
-                if projparams['a'] != projparams['b']:
-                    raise ValueError, 'orthographic projection only works for perfect spheres - not ellipsoids'
+            if projparams['a'] != projparams['b']:
+                raise ValueError, 'orthographic projection only works for perfect spheres - not ellipsoids'
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Orthographic basemap'
             if width is not None or height is not None:
@@ -1051,9 +1049,10 @@ and install those files manually (see the basemap README for details)."""
             lon_0d = self.projparams['lon_0']
             lon_0 = math.radians(lon_0d)
             if self.projection == 'ortho':
-                rad = (2.*self.rmajor + self.rminor)/3.
+                rad = self.rmajor
             else:
-                rad = (2.*self._width + self._height)/3.
+                # quadratic mean radius of ellipsoid.
+                rad = math.sqrt((3.*self._width**2 + self._height**2)/4.)
             del_s = 50.
             gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
             coastpolygons = []
@@ -1292,15 +1291,13 @@ and install those files manually (see the basemap README for details)."""
         y = []
         dtheta = 0.01
         if self.projection == 'ortho': # circular region.
-            r = (2.*self.rmajor+self.rminor)/3.
-            for az in NX.arange(0.,2.*math.pi+dtheta,dtheta):
-                x.append(r*math.cos(az)+0.5*self.xmax)
-                y.append(r*math.sin(az)+0.5*self.ymax)
-            xy = zip(x,y)
-            bound = Polygon(xy,edgecolor=color,linewidth=linewidth)
-            ax.add_collection(bound)
-            bound.set_fill(False)
-            bound.set_clip_on(False)
+            # define a circle patch, add it to axes instance.
+            circle = Circle((self.rmajor,self.rmajor),self.rmajor)
+            ax.add_patch(circle)
+            circle.set_fill(False)
+            circle.set_edgecolor(color)
+            circle.set_linewidth(linewidth)
+            circle.set_clip_on(False)
         elif self.projection == 'geos': # elliptical region
             # define an Ellipse patch, add it to axes instance.
             ellps = Ellipse((self._width,self._height),2.*self._width,2.*self._height)
