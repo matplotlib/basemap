@@ -48,6 +48,7 @@ meridians = arange(-180,180,delon)
 m.drawmeridians(meridians,labels=[1,0,0,1])
 title('Cylindrical Equidistant')
 print 'plotting Cylindrical Equidistant example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -67,6 +68,7 @@ m.drawparallels(circles,labels=[1,1,1,1])
 m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Miller Cylindrical',y=1.1)
 print 'plotting Miller Cylindrical example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -90,6 +92,7 @@ m.drawparallels(circles,labels=[1,1,1,1])
 m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Mercator',y=1.1)
 print 'plotting Mercator example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -120,6 +123,7 @@ meridians = arange(-10,10,delon)
 m.drawmeridians(meridians,labels=[1,0,0,1],fontsize=10)
 title('Cassini-Soldner Projection')
 print 'plotting Cassini-Soldner example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -151,6 +155,7 @@ meridians = arange(-180,180,delon)
 m.drawmeridians(meridians,labels=[1,0,0,1],fontsize=10)
 title('Gnomonic Projection')
 print 'plotting Gnomonic example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -181,6 +186,7 @@ meridians = arange(-180,180,delon)
 m.drawmeridians(meridians,labels=[1,0,0,0],fontsize=10)
 title('Transverse Mercator Projection')
 print 'plotting Transverse Mercator example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -213,6 +219,7 @@ meridians = arange(-140,-120,delon)
 m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
 title('Oblique Mercator Projection')
 print 'plotting Oblique Mercator example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -244,6 +251,7 @@ meridians = arange(-180,180,delon)
 m.drawmeridians(meridians,labels=[1,0,0,1],fontsize=10)
 title('Polyconic Projection')
 print 'plotting Polyconic example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -275,6 +283,7 @@ meridians = arange(-100,-60,delon)
 m.drawmeridians(meridians,labels=[0,0,0,1])
 title('Equidistant Conic')
 print 'plotting Equidistant Conic example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -307,6 +316,7 @@ meridians = arange(10.,360.,delon)
 m.drawmeridians(meridians,labels=[1,1,0,1])
 title('Lambert Conformal Conic')
 print 'plotting Lambert Conformal example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -338,6 +348,7 @@ meridians = arange(10.,360.,delon)
 m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Albers Equal Area Conic',y=1.075)
 print 'plotting Albers Equal Area example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -367,6 +378,7 @@ m.drawparallels(circles)
 m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Polar Stereographic',y=1.075)
 print 'plotting Stereographic example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -397,6 +409,7 @@ m.drawparallels(circles)
 m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Lambert Azimuthal Equal Area',y=1.075)
 print 'plotting Lambert Azimuthal example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -427,6 +440,7 @@ m.drawparallels(circles)
 m.drawmeridians(meridians,labels=[1,1,1,1])
 title('Azimuthal Equidistant',y=1.075)
 print 'plotting Azimuthal Equidistant example ...'
+print m.srs
 
 # projections with elliptical boundaries (orthographic, sinusoidal,
 # mollweide and robinson)
@@ -468,6 +482,47 @@ m.drawmeridians(meridians)
 m.drawmapboundary()
 title('Orthographic')
 print 'plotting Orthographic example ...'
+print m.srs
+
+# create new figure
+fig=figure()
+# setup of basemap ('geos' = geostationary projection)
+m = Basemap(projection='geos',
+            rsphere=(6378137.00,6356752.3142),\
+            resolution='c',area_thresh=10000.,lon_0=0,satellite_height=42500000.)
+# transform to nx x ny regularly spaced native projection grid
+# nx and ny chosen to have roughly the same horizontal res as original image.
+dx = 2.*pi*m.rmajor/len(lons)
+nx = int((m.xmax-m.xmin)/dx)+1; ny = int((m.ymax-m.ymin)/dx)+1
+# interpolate to native projection grid.
+# values outside of projection limb will be masked.
+topo = m.transform_scalar(topoin,lons,lats,nx,ny,masked=True)
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# set missing value in color pallette.
+palette = cm.jet
+palette.set_bad(ax.get_axis_bgcolor(), 0.0)
+# plot image over map with imshow.
+# (if contourf were used, no interpolation would be necessary
+#  and values outside projection limb would be handled transparently
+#  - see contour_demo.py)
+im = m.imshow(topo,palette,norm=colors.normalize(clip=False))
+l,b,w,h = ax.get_position()
+cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
+colorbar(cax=cax) # draw colorbar
+axes(ax)  # make the original axes current again
+# draw coastlines and political boundaries.
+m.drawcoastlines()
+# draw parallels and meridians (labelling is 
+# not implemented for geostationary).
+parallels = arange(-80.,90,20.)
+m.drawparallels(parallels)
+meridians = arange(0.,360.,20.)
+m.drawmeridians(meridians)
+# draw boundary around map region.
+m.drawmapboundary()
+title('Geostationary')
+print 'plotting Geostationary example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -493,6 +548,7 @@ m.drawmeridians(meridians)
 m.drawmapboundary()
 title('Sinusoidal')
 print 'plotting Sinusoidal example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -518,6 +574,7 @@ m.drawmeridians(meridians)
 m.drawmapboundary()
 title('Mollweide')
 print 'plotting Mollweide example ...'
+print m.srs
 
 # create new figure
 fig=figure()
@@ -543,6 +600,7 @@ m.drawmeridians(meridians,labels=[0,0,0,1])
 m.drawmapboundary()
 title('Robinson')
 print 'plotting Robinson example ...'
+print m.srs
 show()
 
 
