@@ -1,4 +1,9 @@
 version 0.9.6 (not yet released)
+           * Added "labelstyle" keyword to drawparallels and drawmeridians.
+             If set to "+/-", labels are given prefixed by "+" or "-", 
+             instead of suffixed with "N","S","E" or "W". Useful for 
+             astronomical plots, where the is no such thing and north, south
+             east or west.
            * Added support for geostationary satellite projection 
              (projection='geos'), contributed by Scott Sinclair.
            * added a bunch of extra colormaps (many from GMT
