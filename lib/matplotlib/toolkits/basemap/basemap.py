@@ -1624,7 +1624,7 @@ coordinates using the shpproj utility from the shapelib tools
         return info
 
     def drawparallels(self,circles,color='k',linewidth=1.,zorder=None, \
-                      linestyle='--',dashes=[1,1],labels=[0,0,0,0], \
+                      linestyle='--',dashes=[1,1],labels=[0,0,0,0],labelstyle=None, \
                       fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
  draw parallels (latitude lines).
@@ -1642,6 +1642,8 @@ coordinates using the shpproj utility from the shapelib tools
   bottom of the plot. For example labels=[1,0,0,1] will cause parallels
   to be labelled where they intersect the left and bottom of the plot,
   but not the right and top.
+ labelstyle - if set to "+/-", north and south latitudes are labelled
+  with "+" and "-", otherwise they are labelled with "N" and "S".
  fmt is a format string to format the parallel labels (default '%g').
  xoffset - label offset from edge of map in x-direction
   (default is 0.01 times width of map in map projection coordinates).
@@ -1784,15 +1786,27 @@ coordinates using the shpproj utility from the shapelib tools
                 if nr != -1: nr = len(lons)-nr-1
                 if lat<0:
                     if rcParams['text.usetex']:
-                        latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
+                        if labelstyle=='+/-':
+                            latlabstr = r'${\/-%s\/^{\circ}}$'%fmt
+                        else:
+                            latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
                     else:
-                        latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
+                        if labelstyle=='+/-':
+                            latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                        else:
+                            latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
                     latlab = latlabstr%NX.fabs(lat)
                 elif lat>0:
                     if rcParams['text.usetex']:
-                        latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
+                        if labelstyle=='+/-':
+                            latlabstr = r'${\/+%s\/^{\circ}}$'%fmt
+                        else:
+                            latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
                     else:
-                        latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
+                        if labelstyle=='+/-':
+                            latlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                        else:
+                            latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
                     latlab = latlabstr%lat
                 else:
                     if rcParams['text.usetex']:
@@ -1828,7 +1842,7 @@ coordinates using the shpproj utility from the shapelib tools
         self.set_axes_limits(ax=ax)
 
     def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
-                      linestyle='--',dashes=[1,1],labels=[0,0,0,0],\
+                      linestyle='--',dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
                       fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
  draw meridians (longitude lines).
@@ -1846,6 +1860,8 @@ coordinates using the shpproj utility from the shapelib tools
   bottom of the plot. For example labels=[1,0,0,1] will cause meridians
   to be labelled where they intersect the left and bottom of the plot,
   but not the right and top.
+ labelstyle - if set to "+/-", east and west longitudes are labelled
+  with "+" and "-", otherwise they are labelled with "E" and "W".
  fmt is a format string to format the meridian labels (default '%g').
  xoffset - label offset from edge of map in x-direction
   (default is 0.01 times width of map in map projection coordinates).
@@ -1979,15 +1995,27 @@ coordinates using the shpproj utility from the shapelib tools
                 if nr != -1: nr = len(lons)-nr-1
                 if lon>180:
                     if rcParams['text.usetex']:
-                        lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
+                        if labelstyle=='+/-':
+                            lonlabstr = r'${\/-%s\/^{\circ}}$'%fmt
+                        else:
+                            lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
                     else:
-                        lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
+                        if labelstyle=='+/-':
+                            lonlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                        else:
+                            lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
                     lonlab = lonlabstr%NX.fabs(lon-360)
                 elif lon<180 and lon != 0:
                     if rcParams['text.usetex']:
-                        lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
+                        if labelstyle=='+/-':
+                            lonlabstr = r'${\/+%s\/^{\circ}}$'%fmt
+                        else:
+                            lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
                     else:
-                        lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
+                        if labelstyle=='+/-':
+                            lonlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                        else:
+                            lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
                     lonlab = lonlabstr%lon
                 else:
                     if rcParams['text.usetex']:
