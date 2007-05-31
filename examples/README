@@ -38,6 +38,10 @@ enter the reference lat/lon (the viewpoint of the satellite). Also shows
 how to plot the default 5 minute land-sea mask, specifying the colors
 to be used for land and ocean areas.
 
+geos_demo.py demonstrates the geostationary projection - you can interactively
+enter the reference longitude and height above the equator of the
+satellite.
+
 fcstmaps.py is a sample multi-panel plot.  Care is taken to preserve the aspect ratio of the map in each panel, and a common title and colorbar is created.  
 Requires the opendap module (http://opendap.oceanografia.org) and an 
 active internet connection to fetch the data to be plotted.
