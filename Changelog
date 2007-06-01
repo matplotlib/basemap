@@ -1,4 +1,6 @@
 version 0.9.6 (not yet released)
+           * Subregions of the globe may be specified with llcrnrlat,
+             llcrnrlon,urcrnrlat,urcrnrlon keywords for 'ortho' and 'geos'.
            * Added "labelstyle" keyword to drawparallels and drawmeridians.
              If set to "+/-", labels are given prefixed by "+" or "-", 
              instead of suffixed with "N","S","E" or "W". Useful for 
