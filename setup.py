@@ -31,8 +31,8 @@ def dbf_macros():
         return [("HAVE_UPDATE_HEADER", "0")]
 
 deps = glob.glob('src/*.c')
-deps.remove('src/_proj.c')
-deps.remove('src/_geod.c')
+deps.remove(os.path.join('src','_proj.c'))
+deps.remove(os.path.join('src','_geod.c'))
 
 packages          = ['matplotlib.toolkits.basemap']
 package_dirs       = {'':'lib'}
@@ -41,8 +41,8 @@ extensions.append(Extension("matplotlib.toolkits.basemap._geod",deps+['src/_geod
 
 # install shapelib and dbflib.
 packages = packages + ['shapelib','dbflib']
-package_dirs['shapelib'] ='lib/shapelib'
-package_dirs['dbflib'] ='lib/dbflib'
+package_dirs['shapelib'] = os.path.join('lib','shapelib')
+package_dirs['dbflib'] = os.path.join('lib','dbflib')
 extensions = extensions + \
          [Extension("shapelibc",
                     ["pyshapelib/shapelib_wrap.c",
