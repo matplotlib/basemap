@@ -63,11 +63,19 @@ class Proj(object):
             llcrnrx = llcrnrlon
             llcrnry = llcrnrlat
         elif self.projection == 'ortho':
-            self._proj4 = pyproj.Proj(projparams)
-            llcrnrx = -self.rmajor
-            llcrnry = -self.rmajor
-            urcrnrx = -llcrnrx
-            urcrnry = -llcrnry
+            if  llcrnrlon == -180 and llcrnrlat == -90 and urcrnrlon == 180 and urcrnrlat == 90:
+                self._fulldisk = True 
+                self._proj4 = pyproj.Proj(projparams)
+                llcrnrx = -self.rmajor
+                llcrnry = -self.rmajor
+                urcrnrx = -llcrnrx
+                urcrnry = -llcrnry
+            else:
+                self._fulldisk = False
+                self._proj4 = pyproj.Proj(projparams)
+                llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
+                if llcrnrx > 1.e20 or llcrnry > 1.e20:
+                    raise ValueError('the lower left corner of the plot is not in the map projection region')
         elif self.projection == 'geos':
             self._proj4 = pyproj.Proj(projparams)
             # find major and minor axes of ellipse defining map proj region.
@@ -87,10 +95,17 @@ class Proj(object):
             width = x[nx]
             self._height = height
             self._width = width
-            llcrnrx = -width
-            llcrnry = -height
-            urcrnrx = -llcrnrx
-            urcrnry = -llcrnry
+            if  llcrnrlon == -180 and llcrnrlat == -90 and urcrnrlon == 180 and urcrnrlat == 90:
+                self._fulldisk = True
+                llcrnrx = -width
+                llcrnry = -height
+                urcrnrx = -llcrnrx
+                urcrnry = -llcrnry
+            else:
+                self._fulldisk = False
+                llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
+                if llcrnrx > 1.e20 or llcrnry > 1.e20:
+                    raise ValueError('the lower left corner of the plot is not in the map projection region')
         elif self.projection in ['moll','robin','sinu']:
             self._proj4 = pyproj.Proj(projparams)
             xtmp,urcrnry = self(projparams['lon_0'],90.)
@@ -115,11 +130,21 @@ class Proj(object):
             if self.projection not in ['ortho','geos','moll','robin','sinu']:
                 urcrnrx,urcrnry = self(urcrnrlon,urcrnrlat)
             elif self.projection == 'ortho':
-                urcrnrx = 2.*self.rmajor
-                urcrnry = 2.*self.rmajor
+                if self._fulldisk:
+                    urcrnrx = 2.*self.rmajor
+                    urcrnry = 2.*self.rmajor
+                else:
+                    urcrnrx,urcrnry = self(urcrnrlon,urcrnrlat)
+                    if urcrnrx > 1.e20 or urcrnry > 1.e20:
+                        raise ValueError('the upper right corner of the plot is not in the map projection region')
             elif self.projection == 'geos':
-                urcrnrx = 2.*self._width
-                urcrnry = 2.*self._height
+                if self._fulldisk:
+                    urcrnrx = 2.*self._width
+                    urcrnry = 2.*self._height
+                else:
+                    urcrnrx,urcrnry = self(urcrnrlon,urcrnrlat)
+                    if urcrnrx > 1.e20 or urcrnry > 1.e20:
+                        raise ValueError('the upper right corner of the plot is not in the map projection region')
             elif self.projection in ['moll','robin','sinu']:
                 xtmp,urcrnry = self(projparams['lon_0'],90.)
                 urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
