@@ -1724,7 +1724,7 @@ coordinates using the shpproj utility from the shapelib tools
         # parallels not labelled for fulldisk orthographic or geostationary
         if self.projection in ['ortho','geos'] and max(labels):
             if self._fulldisk:
-                print 'Warning: Cannot label parallels on Orthographic or Geostationary basemap'
+                print 'Warning: Cannot label parallels on full-disk Orthographic or Geostationary basemap'
                 labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
@@ -1932,11 +1932,11 @@ coordinates using the shpproj utility from the shapelib tools
         # meridians not labelled for sinusoidal, mollweide, or
         # or full-disk orthographic/geostationary.
         if self.projection in ['sinu','moll'] and max(labels):
-            print 'Warning: Cannot label meridians on Sinusoidal, Mollweide, Geostationary or Orthographic basemap'
+            print 'Warning: Cannot label meridians on Sinusoidal or Mollweide basemap'
             labels = [0,0,0,0]
         if self.projection in ['ortho','geos'] and max(labels):
             if self._fulldisk:
-                print 'Warning: Cannot label meridians on Sinusoidal, Mollweide, Geostationary or Orthographic basemap'
+                print 'Warning: Cannot label meridians on full-disk Geostationary or Orthographic basemap'
                 labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
