@@ -6,6 +6,7 @@ test_files.remove('testgdal.py')
 test_files.remove('pnganim.py')
 test_files.remove('warpimage.py')
 test_files.remove('pupynere.py')
+test_files.remove('geos_demo_2.py')
 print test_files
 py_path = os.environ.get('PYTHONPATH')
 if py_path is None:

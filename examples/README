@@ -42,6 +42,9 @@ geos_demo.py demonstrates the geostationary projection - you can interactively
 enter the reference longitude and height above the equator of the
 satellite.
 
+geos_demo_2.py demonstrates how to read in a geostationary satellite image
+from a jpeg file, then plot only a portion of the full earth (contributed
+by Scott Sinclair, requires PIL).
 fcstmaps.py is a sample multi-panel plot.  Care is taken to preserve the aspect ratio of the map in each panel, and a common title and colorbar is created.  
 Requires the opendap module (http://opendap.oceanografia.org) and an 
 active internet connection to fetch the data to be plotted.
@@ -97,6 +100,5 @@ plotprecip.py use nonlinear precip colormap included with basemap
 to make a rainfall plot.
 
 run_all.py is a driver script that runs all the examples except fcstmaps.py,
-testgdal.py, warpimage.py, and pnganim.py (which
+testgdal.py, geos_demo_2.py, warpimage.py, and pnganim.py (which
 rely on external dependencies).
-
