@@ -10,7 +10,7 @@ Dependencies: Matplotlib, Basemap toolkit, Python Imaging Library
 """
 from PIL import Image
 from matplotlib.toolkits.basemap import Basemap
-from pylab import cm, arange, colorbar, text, savefig, gcf, clim, title, show
+from pylab import figure, cm, arange, colorbar, text, savefig, gcf, clim, title, show
 from matplotlib.image import pil_to_array
 
 plot_name = 'geos_demo.png'
@@ -30,11 +30,14 @@ ur_lat = 0.2
 lon_0 = 0.0
 satellite_height = 35785831.0
 
+fig = figure(figsize=(7,7))
+ax = fig.add_axes((0.1,0.1,0.8,0.8))
 # create Basemap instance for a Geostationary projection.
 m = Basemap(projection='geos', lon_0=lon_0, satellite_height=satellite_height,
             resolution='l', llcrnrlon=ll_lon, llcrnrlat=ll_lat, urcrnrlon=ur_lon, urcrnrlat=ur_lat)
 # add data
 m.imshow(data, cmap=cm.gray, interpolation='nearest')
+clim(0, 255)
 # draw coastlines.
 m.drawcoastlines(linewidth=0.5, color=overlay_color)
 m.drawcountries(linewidth=0.5, color=overlay_color)
@@ -43,8 +46,7 @@ m.drawcountries(linewidth=0.5, color=overlay_color)
 m.drawmeridians(arange(10,76,5), labels=[0,0,1,0], color=overlay_color)
 m.drawparallels(arange(-90,90,5), labels=[1,0,0,0], color=overlay_color)
 # add a colobar
-clim(0, 255)
-colorbar()
+#colorbar()
 # add timestamp and save
 fig = gcf()
 fig.text(x=0.275, y=0.025, s=u'Meteosat-9 VIS 0.6 channel - 12:00 UTC 04/06/2007\n    \N{COPYRIGHT SIGN} EUMETSAT 2007',
