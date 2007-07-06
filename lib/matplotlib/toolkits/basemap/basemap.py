@@ -1665,9 +1665,9 @@ coordinates using the shpproj utility from the shapelib tools
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection in ['merc','cyl','mill','moll','robin','sinu']:
-            lons = NX.arange(self.llcrnrlon,self.urcrnrlon+0.1,0.1).astype(NX.Float32)
+            lons = NX.arange(self.llcrnrlon,self.urcrnrlon+0.01,0.01)
         else:
-            lons = NX.arange(0,360.1,0.1).astype(NX.Float32)
+            lons = NX.arange(0,360.01,0.01)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = circles.tolist()
@@ -1729,7 +1729,7 @@ coordinates using the shpproj utility from the shapelib tools
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
         if self.projection == 'cyl':
-            dx = 0.01; dy = 0.01
+            dx = 0.001; dy = 0.001
         else:
             dx = 1000; dy = 1000
         if self.projection in ['moll','robin','sinu']:
@@ -1883,11 +1883,11 @@ coordinates using the shpproj utility from the shapelib tools
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
-            lats = NX.arange(-latmax,latmax+0.1,0.1).astype(NX.Float32)
+            lats = NX.arange(-latmax,latmax+0.01,0.01)
         else:
-            lats = NX.arange(-90,90.1,0.1).astype(NX.Float32)
-        xdelta = 0.1*(self.xmax-self.xmin)
-        ydelta = 0.1*(self.ymax-self.ymin)
+            lats = NX.arange(-90,90.01,0.01)
+        xdelta = 0.01*(self.xmax-self.xmin)
+        ydelta = 0.01*(self.ymax-self.ymin)
         for merid in meridians:
             lons = merid*NX.ones(len(lats),NX.Float32)
             x,y = self(lons,lats)
@@ -1941,7 +1941,7 @@ coordinates using the shpproj utility from the shapelib tools
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
         if self.projection == 'cyl':
-            dx = 0.01; dy = 0.01
+            dx = 0.001; dy = 0.001
         else:
             dx = 1000; dy = 1000
         if self.projection in ['moll','sinu','robin']:
