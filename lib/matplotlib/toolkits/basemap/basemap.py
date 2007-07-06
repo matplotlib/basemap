@@ -1731,7 +1731,7 @@ coordinates using the shpproj utility from the shapelib tools
         if self.projection == 'cyl':
             dx = 0.001; dy = 0.001
         else:
-            dx = 1000; dy = 1000
+            dx = 100; dy = 100
         if self.projection in ['moll','robin','sinu']:
             lon_0 = self.projparams['lon_0']
         for dolab,side in zip(labels,['l','r','t','b']):
@@ -1943,7 +1943,7 @@ coordinates using the shpproj utility from the shapelib tools
         if self.projection == 'cyl':
             dx = 0.001; dy = 0.001
         else:
-            dx = 1000; dy = 1000
+            dx = 100; dy = 100
         if self.projection in ['moll','sinu','robin']:
             lon_0 = self.projparams['lon_0']
             xmin,ymin = self(lon_0-179.9,-90)
