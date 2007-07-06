@@ -1,4 +1,6 @@
 version 0.9.6 (not yet released)
+           * labelling of meridians and parallels now works with
+             very small map regions (less than 0.2 degrees square).
            * Subregions of the globe may be specified with llcrnrlat,
              llcrnrlon,urcrnrlat,urcrnrlon keywords for 'ortho' and 'geos'.
              (illustrated by examples/geos_demo_2.py).
