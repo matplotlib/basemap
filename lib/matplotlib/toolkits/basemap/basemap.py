@@ -1728,10 +1728,8 @@ coordinates using the shpproj utility from the shapelib tools
                 labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
-        if self.projection == 'cyl':
-            dx = 0.001; dy = 0.001
-        else:
-            dx = 100; dy = 100
+        dx = (self.xmax-self.xmin)/1000.
+        dy = (self.ymax-self.ymin)/1000.
         if self.projection in ['moll','robin','sinu']:
             lon_0 = self.projparams['lon_0']
         for dolab,side in zip(labels,['l','r','t','b']):
@@ -1940,10 +1938,8 @@ coordinates using the shpproj utility from the shapelib tools
                 labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
-        if self.projection == 'cyl':
-            dx = 0.001; dy = 0.001
-        else:
-            dx = 100; dy = 100
+        dx = (self.xmax-self.xmin)/1000.
+        dy = (self.ymax-self.ymin)/1000.
         if self.projection in ['moll','sinu','robin']:
             lon_0 = self.projparams['lon_0']
             xmin,ymin = self(lon_0-179.9,-90)
