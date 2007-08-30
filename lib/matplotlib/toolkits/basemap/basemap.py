@@ -4,7 +4,7 @@ from matplotlib import __version__ as matplotlib_version
 mpl_required_version = '0.90'
 if matplotlib_version < mpl_required_version:
     raise ImportError('your matplotlib is too old - basemap '
-                      'requires at least %s'%mpl_required_version)
+                      'requires at least %s, you have %s'%(mpl_required_version,matplotlib_version))
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Ellipse, Circle, Polygon
 from matplotlib.lines import Line2D
