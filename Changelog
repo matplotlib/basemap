@@ -1,4 +1,4 @@
-version 0.9.6 (not yet released)
+version 0.9.6 (svn revision 3875)
            * labelling of meridians and parallels now works with
              very small map regions (less than 0.2 degrees square).
            * Subregions of the globe may be specified with llcrnrlat,
