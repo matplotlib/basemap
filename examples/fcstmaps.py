@@ -50,7 +50,7 @@ YYYYMM = YYYYMMDD[0:6]
 # set OpenDAP server URL.
 HH='09'
 URLbase="http://nomad3.ncep.noaa.gov:9090/dods/sref/sref"
-URL=URLbase+YYYYMMDD+"/sref_eta1_"+HH+"z.ctl"
+URL=URLbase+YYYYMMDD+"/sref_eta_ctl1_"+HH+"z"
 print URL+'\n'
 try:
     data = client.open(URL)
