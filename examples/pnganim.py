@@ -47,10 +47,10 @@ if YYYY != YYYYMMDDHH2[0:4]:
     raise ValueError,'dates must be in same year'
 
 # set OpenDAP server URL.
-URLbase="http://www.cdc.noaa.gov/cgi-bin/nph-nc/Datasets/ncep.reanalysis/surface/"
-URL=URLbase+'slp.'+YYYY+'.nc'
-URLu=URLbase+'uwnd.sig995.'+YYYY+'.nc'
-URLv=URLbase+'vwnd.sig995.'+YYYY+'.nc'
+URLbase="http://nomad3.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-2/6hr/pgb/"
+URL=URLbase+'pres'
+URLu=URLbase+'wind'
+URLv=URLbase+'wind'
 print URL
 print URLu
 print URLv
@@ -71,7 +71,8 @@ times = data['time'][:]
 # put times in YYYYMMDDHH format.
 dates=[]
 for t in times:
-    fdate = hrs_since_day1CE_todate(int(t)) 
+    t = t*24
+    fdate = hrs_since_day1CE_todate(int(t))
     dates.append(fdate.strftime('%Y%m%d%H'))
 if YYYYMMDDHH1 not in dates or YYYYMMDDHH2 not in dates:
     raise ValueError, 'date1 or date2 not a valid date (must be in form YYYYMMDDHH, where HH is 00,06,12 or 18)'
@@ -82,13 +83,13 @@ print 'ntime1,ntime2:',ntime1,ntime2
 if ntime1 >= ntime2:
     raise ValueError,'date2 must be greater than date1'
 # get sea level pressure and 10-m wind data.
-slpdata = data['slp']
-udata = datau['uwnd']
-vdata = datav['vwnd']
+slpdata = data['presmsl']
+udata = datau['ugrdprs']
+vdata = datau['vgrdprs']
 # mult slp by 0.01 to put in units of millibars.
-slpin = 0.01*(slpdata.scale_factor*p.squeeze(slpdata[ntime1:ntime2+1,:,:]) + slpdata.add_offset)
-uin = udata.scale_factor*p.squeeze(udata[ntime1:ntime2+1,:,:]) + udata.add_offset
-vin = vdata.scale_factor*p.squeeze(vdata[ntime1:ntime2+1,:,:]) + vdata.add_offset
+slpin = 0.01*p.squeeze(slpdata[ntime1:ntime2+1,:,:])
+uin = p.squeeze(udata[ntime1:ntime2+1,0,:,:]) 
+vin = p.squeeze(vdata[ntime1:ntime2+1,0,:,:]) 
 datelabels = dates[ntime1:ntime2+1]
 # add cyclic points
 slp = p.zeros((slpin.shape[0],slpin.shape[1],slpin.shape[2]+1),p.Float64)
@@ -106,6 +107,12 @@ print min(p.ravel(uin)),max(p.ravel(uin))
 print min(p.ravel(vin)),max(p.ravel(vin))
 print 'dates'
 print datelabels
+# make orthographic basemap.
+m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
+p.ion() # interactive mode on.
+uin = p.squeeze(udata[ntime1:ntime2+1,0,:,:]) 
+vin = p.squeeze(vdata[ntime1:ntime2+1,0,:,:]) 
+datelabels = dates[ntime1:ntime2+1]
 # make orthographic basemap.
 m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
 p.ion() # interactive mode on.
@@ -135,12 +142,10 @@ for nt,date in enumerate(datelabels[1:]):
     # plot wind vectors on projection grid (looks better).
     # first, shift grid so it goes from -180 to 180 (instead of 0 to 360
     # in longitude).  Otherwise, interpolation is messed up.
-    # also reverse latitudes (since interpolation expects monotonically
-    # increasing x and y).
-    ugrid,newlons = shiftgrid(180.,u[nt,::-1,:],longitudes,start=False)
-    vgrid,newlons = shiftgrid(180.,v[nt,::-1,:],longitudes,start=False)
+    ugrid,newlons = shiftgrid(180.,u[nt,:,:],longitudes,start=False)
+    vgrid,newlons = shiftgrid(180.,v[nt,:,:],longitudes,start=False)
     # transform vectors to projection grid.
-    urot,vrot,xx,yy = m.transform_vector(ugrid,vgrid,newlons,latitudes[::-1],51,51,returnxy=True,masked=True)
+    urot,vrot,xx,yy = m.transform_vector(ugrid,vgrid,newlons,latitudes,51,51,returnxy=True,masked=True)
     # plot wind vectors over map.
     Q = m.quiver(xx,yy,urot,vrot,scale=500)
     # make quiver key.
