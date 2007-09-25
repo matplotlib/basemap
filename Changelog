@@ -1,4 +1,5 @@
-version 0.9.6 (svn revision 3878)
+version 0.9.6 (svn revision 3888)
+		   * fix addcyclic function so it handles masked arrays.
            * labelling of meridians and parallels now works with
              very small map regions (less than 0.2 degrees square).
            * Subregions of the globe may be specified with llcrnrlat,
