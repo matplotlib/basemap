@@ -2917,10 +2917,16 @@ def addcyclic(arrin,lonsin):
     """
     nlats = arrin.shape[0]
     nlons = arrin.shape[1]
-    arrout  = NX.zeros((nlats,nlons+1),arrin.dtype)
+    if hasattr(arrin,'mask'):
+        arrout  = ma.zeros((nlats,nlons+1),arrin.dtype)
+    else:
+        arrout  = NX.zeros((nlats,nlons+1),arrin.dtype)
     arrout[:,0:nlons] = arrin[:,:]
     arrout[:,nlons] = arrin[:,0]
-    lonsout = NX.zeros(nlons+1,lonsin.dtype)
+    if hasattr(lonsin,'mask'):
+        lonsout = ma.zeros(nlons+1,lonsin.dtype)
+    else:
+        lonsout = NX.zeros(nlons+1,lonsin.dtype)
     lonsout[0:nlons] = lonsin[:]
     lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
     return arrout,lonsout
