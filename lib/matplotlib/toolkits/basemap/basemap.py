@@ -12,7 +12,7 @@ import pyproj, sys, os, math, dbflib
 from proj import Proj
 import matplotlib.numerix as NX
 from matplotlib.numerix import ma
-from matplotlib.mlab import linspace
+from numpy import linspace
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd, is_scalar
 from shapelib import ShapeFile
@@ -2175,12 +2175,11 @@ coordinates using the shpproj utility from the shapelib tools
         uin = interp(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
         vin = interp(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
         # rotate from geographic to map coordinates.
-        delta = 0.1 # incement in latitude used to estimate derivatives.
+        delta = 0.1 # increment in latitude used to estimate derivatives.
         xn,yn = self(lonsout,NX.where(latsout+delta<90.,latsout+delta,latsout-delta))
-        dxdlat = NX.where(latsout+delta<90.,(xn-x)/(latsout+delta),(x-xn)/(latsout+delta))
-        dydlat = NX.where(latsout+delta<90.,(yn-y)/(latsout+delta),(y-yn)/(latsout+delta))
         # northangle is the angle between true north and the y axis.
-        northangle = NX.arctan2(dxdlat,dydlat)
+        northangle = NX.where(lats+delta<90, NX.arctan2(xn-x, yn-y),
+                                             NX.arctan2(x-xn, y-yn))
         uout = uin*NX.cos(northangle) + vin*NX.sin(northangle)
         vout = vin*NX.cos(northangle) - uin*NX.sin(northangle)
         if returnxy:
@@ -2211,12 +2210,10 @@ coordinates using the shpproj utility from the shapelib tools
         """
         x, y = self(lons, lats)
         # rotate from geographic to map coordinates.
-        delta = 0.1 # incement in latitude used to estimate derivatives.
+        delta = 0.1 # increment in latitude used to estimate derivatives.
         xn,yn = self(lons,NX.where(lats+delta<90.,lats+delta,lats-delta))
-        dxdlat = NX.where(lats+delta<90.,(xn-x)/(lats+delta),(x-xn)/(lats+delta))
-        dydlat = NX.where(lats+delta<90.,(yn-y)/(lats+delta),(y-yn)/(lats+delta))
-        # northangle is the angle between true north and the y axis.
-        northangle = NX.arctan2(dxdlat,dydlat)
+        northangle = NX.where(lats+delta<90, NX.arctan2(xn-x, yn-y),
+                                             NX.arctan2(x-xn, y-yn))
         uout = uin*NX.cos(northangle) + vin*NX.sin(northangle)
         vout = vin*NX.cos(northangle) - uin*NX.sin(northangle)
         if returnxy:
