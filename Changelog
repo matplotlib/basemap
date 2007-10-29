@@ -1,9 +1,9 @@
 version 0.9.7 (not yet released)
            * fix rotate_vector so it works in S. Hem and for non-orthogonal
-		     grids. Support for masked velocity vectors also added. (EF)
+             grids. Support for masked velocity vectors also added. (EF)
            * numpification. (EF)
 version 0.9.6 (svn revision 3888)
-		   * fix addcyclic function so it handles masked arrays.
+           * fix addcyclic function so it handles masked arrays.
            * labelling of meridians and parallels now works with
              very small map regions (less than 0.2 degrees square).
            * Subregions of the globe may be specified with llcrnrlat,
