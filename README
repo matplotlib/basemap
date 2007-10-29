@@ -73,3 +73,16 @@ python -c "from matplotlib.toolkits.basemap import basemap_datadir; print basema
 **Contact**
 
 Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
+
+
+**Thanks**
+
+to
+
+John Hunter
+Andrew Straw
+Eric Firing
+Rob Hetland
+Scott Sinclair
+
+for valuable contributions.
