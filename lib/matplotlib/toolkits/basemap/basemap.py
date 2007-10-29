@@ -12,6 +12,7 @@ import pyproj, sys, os, math, dbflib
 from proj import Proj
 import matplotlib.numerix as NX
 from matplotlib.numerix import ma
+import numpy as npy
 from numpy import linspace
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd, is_scalar
@@ -20,7 +21,7 @@ from shapelib import ShapeFile
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
-__version__ = '0.9.6'
+__version__ = '0.9.7'
 
 # test to see numerix set to use numpy (if not, raise an error)
 if NX.which[0] != 'numpy':
@@ -2175,13 +2176,33 @@ coordinates using the shpproj utility from the shapelib tools
         uin = interp(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
         vin = interp(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
         # rotate from geographic to map coordinates.
-        delta = 0.1 # increment in latitude used to estimate derivatives.
-        xn,yn = self(lonsout,NX.where(latsout+delta<90.,latsout+delta,latsout-delta))
-        # northangle is the angle between true north and the y axis.
-        northangle = NX.where(lats+delta<90, NX.arctan2(xn-x, yn-y),
-                                             NX.arctan2(x-xn, y-yn))
-        uout = uin*NX.cos(northangle) + vin*NX.sin(northangle)
-        vout = vin*NX.cos(northangle) - uin*NX.sin(northangle)
+        if ma.isMaskedArray(uin):
+            mask = ma.getmaskarray(uin)
+            uin = uin.filled(1)
+            vin = vin.filled(1)
+            masked = True  # override kwarg with reality
+        uvc = uin + 1j*vin
+        uvmag = npy.abs(uvc)
+        delta = 0.1 # increment in longitude
+        dlon = delta*uin/uvmag
+        dlat = delta*(vin/uvmag)*npy.cos(latsout*npy.pi/180.0)
+        farnorth = latsout+dlat >= 90.0
+        somenorth = farnorth.any()
+        if somenorth:
+            dlon[farnorth] *= -1.0
+            dlat[farnorth] *= -1.0
+        lon1 = lonsout + dlon
+        lat1 = latsout + dlat
+        xn, yn = self(lon1, lat1)
+        vecangle = npy.arctan2(yn-y, xn-x)
+        if somenorth:
+            vecangle[farnorth] += npy.pi
+        uvcout = uvmag * npy.exp(1j*vecangle)
+        uout = uvcout.real
+        vout = uvcout.imag
+        if masked:
+            uout = ma.array(uout, mask=mask)
+            vout = ma.array(vout, mask=mask)
         if returnxy:
             return uout,vout,x,y
         else:
@@ -2210,12 +2231,35 @@ coordinates using the shpproj utility from the shapelib tools
         """
         x, y = self(lons, lats)
         # rotate from geographic to map coordinates.
-        delta = 0.1 # increment in latitude used to estimate derivatives.
-        xn,yn = self(lons,NX.where(lats+delta<90.,lats+delta,lats-delta))
-        northangle = NX.where(lats+delta<90, NX.arctan2(xn-x, yn-y),
-                                             NX.arctan2(x-xn, y-yn))
-        uout = uin*NX.cos(northangle) + vin*NX.sin(northangle)
-        vout = vin*NX.cos(northangle) - uin*NX.sin(northangle)
+        if ma.isMaskedArray(uin):
+            mask = ma.getmaskarray(uin)
+            masked = True
+            uin = uin.filled(1)
+            vin = vin.filled(1)
+        else:
+            masked = False
+        uvc = uin + 1j*vin
+        uvmag = npy.abs(uvc)
+        delta = 0.1 # increment in longitude
+        dlon = delta*uin/uvmag
+        dlat = delta*(vin/uvmag)*npy.cos(lats*npy.pi/180.0)
+        farnorth = lats+dlat >= 90.0
+        somenorth = farnorth.any()
+        if somenorth:
+            dlon[farnorth] *= -1.0
+            dlat[farnorth] *= -1.0
+        lon1 = lons + dlon
+        lat1 = lats + dlat
+        xn, yn = self(lon1, lat1)
+        vecangle = npy.arctan2(yn-y, xn-x)
+        if somenorth:
+            vecangle[farnorth] += npy.pi
+        uvcout = uvmag * npy.exp(1j*vecangle)
+        uout = uvcout.real
+        vout = uvcout.imag
+        if masked:
+            uout = ma.array(uout, mask=mask)
+            vout = ma.array(vout, mask=mask)
         if returnxy:
             return uout,vout,x,y
         else:

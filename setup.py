@@ -88,7 +88,7 @@ basemap_datafiles = [         'data/countries_c.txt',
 package_data = {'matplotlib.toolkits.basemap':pyproj_datafiles+basemap_datafiles}
 setup(
   name              = "basemap",
-  version           = "0.9.6",
+  version           = "0.9.7",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data
