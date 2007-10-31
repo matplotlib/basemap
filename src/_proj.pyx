@@ -1,12 +1,16 @@
 # Make changes to this file, not the c-wrappers that Pyrex generates.
 
+cimport c_numpy
+import numpy
+c_numpy.import_array()
+
 include "_pyproj.pxi"
 
 def set_datapath(datapath):
     cdef char *searchpath
     searchpath = PyString_AsString(datapath)
     pj_set_searchpath(1, &searchpath)
-    
+
 cdef class Proj:
     cdef projPJ projpj
     cdef public object projparams
@@ -38,11 +42,11 @@ cdef class Proj:
 
     def _fwd(self, object lons, object lats, radians=False, errcheck=False):
         """
- forward transformation - lons,lats to x,y (done in place).
- if radians=True, lons/lats are radians instead of degrees.
- if errcheck=True, an exception is raised if the forward transformation is invalid.
- if errcheck=False and the forward transformation is invalid, no exception is
- raised and 1.e30 is returned.
+        forward transformation - lons,lats to x,y (done in place).
+        if radians=True, lons/lats are radians instead of degrees.
+        if errcheck=True, an exception is raised if the forward transformation is invalid.
+        if errcheck=False and the forward transformation is invalid, no exception is
+        raised and 1.e30 is returned.
         """
         cdef projUV projxyout, projlonlatin
         cdef Py_ssize_t buflenx, bufleny, ndim, i
@@ -78,16 +82,89 @@ cdef class Proj:
                 lonsdata[i] = projxyout.u
             if projxyout.v == HUGE_VAL:
                 latsdata[i] = 1.e30
-            else:     
+            else:
                 latsdata[i] = projxyout.v
+
+    def _fwdn(self, c_numpy.ndarray lonlat, radians=False, errcheck=False):
+        """
+        forward transformation - lons,lats to x,y (done in place).
+        Uses ndarray of shape ...,2.
+        if radians=True, lons/lats are radians instead of degrees.
+        if errcheck=True, an exception is raised if the forward
+                        transformation is invalid.
+        if errcheck=False and the forward transformation is
+                        invalid, no exception is
+                        raised and 1.e30 is returned.
+        """
+        cdef projUV projxyout, projlonlatin
+        cdef projUV *llptr
+        cdef Py_ssize_t npts, i
+        npts = c_numpy.PyArray_SIZE(lonlat)//2
+        llptr = <projUV *>lonlat.data
+        for i from 0 <= i < npts:
+            if radians:
+                projlonlatin = llptr[i]
+            else:
+                projlonlatin.u = _dg2rad*llptr[i].u
+                projlonlatin.v = _dg2rad*llptr[i].v
+            projxyout = pj_fwd(projlonlatin,self.projpj)
+
+            if errcheck and pj_errno != 0:
+                raise RuntimeError(pj_strerrno(pj_errno))
+            # since HUGE_VAL can be 'inf',
+            # change it to a real (but very large) number.
+            if projxyout.u == HUGE_VAL:
+                llptr[i].u = 1.e30
+            else:
+                llptr[i].u = projxyout.u
+            if projxyout.v == HUGE_VAL:
+                llptr[i].u = 1.e30
+            else:
+                llptr[i].v = projxyout.v
+
+    def _invn(self, c_numpy.ndarray xy, radians=False, errcheck=False):
+        """
+        inverse transformation - x,y to lons,lats (done in place).
+        Uses ndarray of shape ...,2.
+        if radians=True, lons/lats are radians instead of degrees.
+        if errcheck=True, an exception is raised if the inverse transformation is invalid.
+        if errcheck=False and the inverse transformation is invalid, no exception is
+        raised and 1.e30 is returned.
+        """
+        cdef projUV projxyin, projlonlatout
+        cdef projUV *llptr
+        cdef Py_ssize_t npts, i
+        npts = c_numpy.PyArray_SIZE(xy)//2
+        llptr = <projUV *>xy.data
+
+        for i from 0 <= i < npts:
+            projxyin = llptr[i]
+            projlonlatout = pj_inv(projxyin, self.projpj)
+            if errcheck and pj_errno != 0:
+                raise RuntimeError(pj_strerrno(pj_errno))
+            # since HUGE_VAL can be 'inf',
+            # change it to a real (but very large) number.
+            if projlonlatout.u == HUGE_VAL:
+                llptr[i].u = 1.e30
+            elif radians:
+                llptr[i].u = projlonlatout.u
+            else:
+                llptr[i].u = _rad2dg*projlonlatout.u
+            if projlonlatout.v == HUGE_VAL:
+                llptr[i].v = 1.e30
+            elif radians:
+                llptr[i].v = projlonlatout.v
+            else:
+                llptr[i].v = _rad2dg*projlonlatout.v
+
 
     def _inv(self, object x, object y, radians=False, errcheck=False):
         """
- inverse transformation - x,y to lons,lats (done in place).
- if radians=True, lons/lats are radians instead of degrees.
- if errcheck=True, an exception is raised if the inverse transformation is invalid.
- if errcheck=False and the inverse transformation is invalid, no exception is
- raised and 1.e30 is returned.
+        inverse transformation - x,y to lons,lats (done in place).
+        if radians=True, lons/lats are radians instead of degrees.
+        if errcheck=True, an exception is raised if the inverse transformation is invalid.
+        if errcheck=False and the inverse transformation is invalid, no exception is
+        raised and 1.e30 is returned.
         """
         cdef projUV projxyin, projlonlatout
         cdef Py_ssize_t buflenx, bufleny, ndim, i
@@ -99,7 +176,7 @@ cdef class Proj:
             raise RuntimeError
         if PyObject_AsWriteBuffer(y, &ydata, &bufleny) <> 0:
             raise RuntimeError
-        # process data in buffer 
+        # process data in buffer
         # (for numpy/regular python arrays).
         if buflenx != bufleny:
             raise RuntimeError("Buffer lengths not the same")
