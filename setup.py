@@ -73,6 +73,7 @@ else:
 pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world']
 boundaryfiles = glob.glob('lib/matplotlib/toolkits/basemap/data/*dat')
 boundaryfiles = [os.path.join('data',os.path.basename(bfile)) for bfile in boundaryfiles]
+boundaryfiles.remove('data/proj_def.dat')
 basemap_datafiles = boundaryfiles + ['data/5minmask.bin']
 package_data = {'matplotlib.toolkits.basemap':pyproj_datafiles+basemap_datafiles}
 setup(
