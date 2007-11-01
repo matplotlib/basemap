@@ -757,24 +757,29 @@ and install those files manually (see the basemap README for details)."""
 
                 if name == 'gshhs' and self.projection in ['cyl','merc','mill']:
                     b = npy.asarray(poly.boundary)
-                    lons = b[:,0].tolist()
-                    lats = b[:,1].tolist()
-                    if (math.fabs(lons[0]-360.) < 1.e-5 or 
-                        math.fabs(lons[0]+360.) or 
-                        math.fabs(lons[0]-0.) < 1.e-5) and lats[-1] < -68.:
-                        lons = lons[:-2]
-                        lats = lats[:-2]
-                        lonstart,latstart = lons[0], lats[0]
-                        lonend,latend = lons[-1], lats[-1]
-                        lons.insert(0,lonstart)
-                        lats.insert(0,-90.)
-                        lons.append(lonend)
-                        lats.append(-90.)
-                        poly = PolygonShape(zip(lons,lats))
-                        #b = npy.asarray(poly.boundary)
-                        #import pylab
-                        #pylab.fill(b[:,0],b[:,1],'b')
-                        #pylab.show()
+                    lons = b[:,0]
+                    lats = b[:,1]
+                    if south < -68:
+                        if math.fabs(lons[0]+0.) < 1.e-5:
+                            lons1 = lons[:-2][::-1]
+                            lats1 = lats[:-2][::-1]
+                            lons2 = lons1 + 360.
+                            lons3 = lons2 + 360.
+                            lons = lons1.tolist()+lons2.tolist()+lons3.tolist()
+                            lats = lats1.tolist()+lats1.tolist()+lats1.tolist()
+                            lonstart,latstart = lons[0], lats[0]
+                            lonend,latend = lons[-1], lats[-1]
+                            lons.insert(0,lonstart)
+                            lats.insert(0,-90.)
+                            lons.append(lonend)
+                            lats.append(-90.)
+                            poly = PolygonShape(zip(lons,lats))
+                            #b = npy.asarray(poly.boundary)
+                            #import pylab
+                            #pylab.fill(b[:,0],b[:,1],'b')
+                            #pylab.show()
+                        else:
+                            continue
                 if poly.intersects(self._boundarypoly):
                     poly = poly.intersection(self._boundarypoly)
                     if hasattr(poly,'geoms'): 
