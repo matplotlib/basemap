@@ -17,6 +17,8 @@ from numpy import linspace
 from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd, is_scalar
 from shapelib import ShapeFile
+from shapely.geometry import Polygon as PolygonShape
+from shapely import wkb
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -676,520 +678,22 @@ class Basemap(object):
                 area_thresh = 10.
             else:
                 raise ValueError, "boundary resolution must be one of 'c','l','i' or 'h'"
-        # read in coastline data (only those polygons whose area > area_thresh).
-        coastlons = []; coastlats = []; coastsegind = []; coastsegtype = []
-        msg = """
-Unable to open boundary dataset file. Only the 'crude', 'low'
-and 'intermediate' resolution datasets are installed by default. If you
-are requesting a 'high' resolution dataset, you need to download 
-and install those files manually (see the basemap README for details)."""
-        try:
-            bdatfile = open(os.path.join(basemap_datadir,'gshhs_'+resolution+'.txt'))
-        except:
-            raise IOError, msg
-        for line in bdatfile:
-            linesplit = line.split()
-            if line.startswith('P'):
-                area = float(linesplit[5])
-                west,east,south,north = float(linesplit[6]),float(linesplit[7]),float(linesplit[8]),float(linesplit[9])
-                typ = int(linesplit[3])
-                useit = self.latmax>=south and self.latmin<=north and area>area_thresh
-                if useit:
-                    coastsegind.append(len(coastlons))
-                    coastsegtype.append(typ)
-                continue
-            # lon/lat
-            if useit:
-                lon, lat = [float(val) for val in linesplit]
-                coastlons.append(lon)
-                coastlats.append(lat)
-        coastsegtype.append(typ)
-        coastsegind.append(len(coastlons))
-
-        # read in country boundary data.
-        cntrylons = []; cntrylats = []; cntrysegind = []
-        try:
-            bdatfile = open(os.path.join(basemap_datadir,'countries_'+resolution+'.txt'))
-        except:
-            raise IOError, msg
-        for line in bdatfile:
-            linesplit = line.split()
-            if line.startswith('>'):
-                west,east,south,north = float(linesplit[7]),float(linesplit[8]),float(linesplit[9]),float(linesplit[10])
-                useit = self.latmax>=south and self.latmin<=north
-                if useit: cntrysegind.append(len(cntrylons))
-                continue
-            # lon/lat
-            if useit:
-                lon, lat = [float(val) for val in linesplit]
-                cntrylons.append(lon)
-                cntrylats.append(lat)
-        cntrysegind.append(len(cntrylons))
-
-        # read in state boundaries (Americas only).
-        statelons = []; statelats = []; statesegind = []
-        try:
-            bdatfile = open(os.path.join(basemap_datadir,'states_'+resolution+'.txt'))
-        except:
-            raise IOError, msg
-        for line in bdatfile:
-            linesplit = line.split()
-            if line.startswith('>'):
-                west,east,south,north = float(linesplit[7]),float(linesplit[8]),float(linesplit[9]),float(linesplit[10])
-                useit = self.latmax>=south and self.latmin<=north
-                if useit: statesegind.append(len(statelons))
-                continue
-            # lon/lat
-            if useit:
-                lon, lat = [float(val) for val in linesplit]
-                statelons.append(lon)
-                statelats.append(lat)
-        statesegind.append(len(statelons))
-
-        # read in major rivers.
-        riverlons = []; riverlats = []; riversegind = []
-        try:
-            bdatfile = open(os.path.join(basemap_datadir,'rivers_'+resolution+'.txt'))
-        except:
-            raise IOError, msg
-        for line in bdatfile:
-            linesplit = line.split()
-            if line.startswith('>'):
-                west,east,south,north = float(linesplit[7]),float(linesplit[8]),float(linesplit[9]),float(linesplit[10])
-                useit = self.latmax>=south and self.latmin<=north
-                if useit: riversegind.append(len(riverlons))
-                continue
-            # lon/lat
-            if useit:
-                lon, lat = [float(val) for val in linesplit]
-                riverlons.append(lon)
-                riverlats.append(lat)
-        riversegind.append(len(riverlons))
-
-        # extend longitudes around the earth a second time
-        # so valid longitudes can range from -360 to 720.
-        # This means a lot of redundant processing is done when
-        # creating the class instance, but it a lot easier to figure
-        # out what to do when the projection domain straddles the 
-        # Greenwich meridian.
-        coastlons2 = [lon+360. for lon in coastlons]
-        cntrylons2 = [lon+360. for lon in cntrylons]
-        statelons2 = [lon+360. for lon in statelons]
-        riverlons2 = [lon+360. for lon in riverlons]
-        coastlons3 = [lon-360. for lon in coastlons]
-        cntrylons3 = [lon-360. for lon in cntrylons]
-        statelons3 = [lon-360. for lon in statelons]
-        riverlons3 = [lon-360. for lon in riverlons]
-
-        # transform coastline polygons to native map coordinates.
-        xc,yc = proj(NX.array(coastlons),NX.array(coastlats))
-        xc = xc.tolist(); yc = yc.tolist()
-        xc2,yc2 = proj(NX.array(coastlons2),NX.array(coastlats))
-        xc3,yc3 = proj(NX.array(coastlons3),NX.array(coastlats))
-        xc2 = xc2.tolist(); yc2 = yc2.tolist()
-        xc3 = xc3.tolist(); yc3 = yc3.tolist()
-
-        # set up segments in form needed for LineCollection,
-        # ignoring 'inf' values that are off the map.
-        segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:])]
-        segmentsll = [zip(coastlons[i0:i1],coastlats[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:])]
-        segtypes = [i for i in coastsegtype[:-1]]
-        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segmentsll2 = [zip(coastlons2[i0:i1],coastlats[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segtypes2 = [i for i0,i1,i in zip(coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        segmentsll3 = [zip(coastlons3[i0:i1],coastlats[i0:i1]) for i0,i1 in zip(coastsegind[:-1],coastsegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        segtypes3 = [i for i0,i1,i in zip(coastsegind[:-1],coastsegind[1:],coastsegtype[:-1]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        self.coastsegs = segments+segments2+segments3
-        self.coastsegsll = segmentsll+segmentsll2+segmentsll3
-        self.coastsegtypes = segtypes+segtypes2+segtypes3
-
-        # same as above for country segments.
-        xc,yc = proj(NX.array(cntrylons),NX.array(cntrylats))
-        xc = xc.tolist(); yc = yc.tolist()
-        xc2,yc2 = proj(NX.array(cntrylons2),NX.array(cntrylats))
-        xc3,yc3 = proj(NX.array(cntrylons3),NX.array(cntrylats))
-        xc2 = xc2.tolist(); yc2 = yc2.tolist()
-        xc3 = xc3.tolist(); yc3 = yc3.tolist()
-        segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:])]
-        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(cntrysegind[:-1],cntrysegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        self.cntrysegs = segments+segments2+segments3
-
-        # same as above for state segments.
-        xc,yc = proj(NX.array(statelons),NX.array(statelats))
-        xc = xc.tolist(); yc = yc.tolist()
-        xc2,yc2 = proj(NX.array(statelons2),NX.array(statelats))
-        xc3,yc3 = proj(NX.array(statelons3),NX.array(statelats))
-        xc2 = xc2.tolist(); yc2 = yc2.tolist()
-        xc3 = xc3.tolist(); yc3 = yc3.tolist()
-        segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:])]
-        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(statesegind[:-1],statesegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        self.statesegs = segments+segments2+segments3
-
-        # same as above for river segments.
-        xc,yc = proj(NX.array(riverlons),NX.array(riverlats))
-        xc = xc.tolist(); yc = yc.tolist()
-        xc2,yc2 = proj(NX.array(riverlons2),NX.array(riverlats))
-        xc3,yc3 = proj(NX.array(riverlons3),NX.array(riverlats))
-        xc2 = xc2.tolist(); yc2 = yc2.tolist()
-        xc3 = xc3.tolist(); yc3 = yc3.tolist()
-        segments = [zip(xc[i0:i1],yc[i0:i1]) for i0,i1 in zip(riversegind[:-1],riversegind[1:])]
-        segments2 = [zip(xc2[i0:i1],yc2[i0:i1]) for i0,i1 in zip(riversegind[:-1],riversegind[1:]) if max(xc2[i0:i1]) < 1.e20 and max(yc2[i0:i1]) < 1.e20]
-        segments3 = [zip(xc3[i0:i1],yc3[i0:i1]) for i0,i1 in zip(riversegind[:-1],riversegind[1:]) if max(xc3[i0:i1]) < 1.e20 and max(yc3[i0:i1]) < 1.e20]
-        self.riversegs = segments+segments2+segments3
-
-        # store coast polygons for filling.
+        self.area_thresh = area_thresh
+        # define map boundary polygon (in lat/lon coordinates)
+        self._boundarypoly = self._getmapboundary()
+        # read in coastline polygons, only keeping those that
+        # intersect map boundary polygon.
+        self.coastsegs, self.coastpolygontypes = self._readboundarydata('gshhs')
+        # same for countries, states, rivers.
+        self.cntrysegs, types = self._readboundarydata('countries')
+        self.statesegs, types = self._readboundarydata('states')
+        self.riversegs, types = self._readboundarydata('rivers')
+        # for coastlines, reformat as polygons.
         self.coastpolygons = []
-        coastpolygonsll = []
-        self.coastpolygontypes = []
-        if projection in ['merc','mill']:
-            xsp,ysp = proj(0.,-89.9) # s. pole coordinates.
-            xa,ya = proj(0.,-68.) # edge of antarctica.
-            x0,y0 = proj(0.,0.)
-            xm360,ym360 = proj(-360.,0.)
-            x360,y360 = proj(360.,0.)
-            x720,y720 = proj(720.,0.)
-        for seg,segtype,segll in zip(self.coastsegs,self.coastsegtypes,self.coastsegsll):
-            x = [lon for lon,lat in seg]
-            y = [lat for lon,lat in seg]
-            lons = [lon for lon,lat in segll]
-            lats = [lat for lon,lat in segll]
-            # the antarctic polygon is a nuisance, since it
-            # spans all longitudes, it's not closed and will not be filled
-            # without some projection dependant tweaking.
-            if projection == 'cyl':
-                if x[-1] == 0.000 and y[-1] < -68.: # close antarctica
-                    x.append(0.)
-                    y.append(-90.0000)
-                    x.insert(0,360.)
-                    y.insert(0,-90)
-                    lons.append(0.)
-                    lats.append(-90.)
-                    lons.insert(0,360.)
-                    lats.insert(0,-90.)
-                if x[-1] == 360.000 and y[-1] < -68.:
-                    x.append(360.)
-                    y.append(-90)
-                    x.insert(0,720.)
-                    y.insert(0,-90)
-                    lons.append(360.)
-                    lats.append(-90.)
-                    lons.insert(0,720.)
-                    lats.insert(0,-90.)
-                if x[-1] == -360.000 and y[-1] < -68.:
-                    x.append(-360.)
-                    y.append(-90)
-                    x.insert(0,0.)
-                    y.insert(0,-90)
-                    lons.append(-360.)
-                    lats.append(-90.)
-                    lons.insert(0,0.)
-                    lats.insert(0,-90.)
-            elif projection in ['merc','mill']:
-                if math.fabs(x[-1]-x0) < 1. and y[-1] < ya: # close antarctica
-                    x.append(x0)
-                    y.append(ysp)
-                    x.insert(0,x360)
-                    y.insert(0,ysp)
-                    lons.append(0.)
-                    lats.append(-90.)
-                    lons.insert(0,360.)
-                    lats.insert(0,-90.)
-                if math.fabs(x[-1]-x360) < 1. and y[-1] < ya:
-                    x.append(x360)
-                    y.append(ysp)
-                    x.insert(0,x720)
-                    y.insert(0,ysp)
-                    lons.append(360.)
-                    lats.append(-90.)
-                    lons.insert(0,720.)
-                    lats.insert(0,-90.)
-                if math.fabs(x[-1]-xm360) < 1. and y[-1] < ya:
-                    x.append(xm360)
-                    y.append(ysp)
-                    x.insert(0,x0)
-                    y.insert(0,ysp)
-                    lons.append(-360.)
-                    lats.append(-90.)
-                    lons.insert(0,0.)
-                    lats.insert(0,-90.)
+        for xy in self.coastsegs:
+            x = [x1 for x1,x2 in xy]
+            y = [x2 for x1,x2 in xy]
             self.coastpolygons.append((x,y))
-            coastpolygonsll.append((lons,lats))
-            self.coastpolygontypes.append(segtype)
-
-        # remove those segments/polygons that don't intersect map region.
-        coastsegs = []
-        coastsegtypes = []
-        for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
-            if self._insidemap_seg(seg):
-                coastsegs.append(seg)
-                coastsegtypes.append(segtype)
-        self.coastsegs = coastsegs
-        self.coastsegtypes = coastsegtypes
-        polygons = []
-        polygonsll = []
-        polygontypes = []
-        for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,coastpolygonsll):
-            if self._insidemap_poly(poly,polyll):
-                polygons.append(poly)
-                polygontypes.append(polytype)
-                polygonsll.append(polyll)
-        self.coastpolygons = polygons
-        coastpolygonsll = polygonsll
-        self.coastpolygontypes = polygontypes
-        states = []; rivers = []; countries = []
-        for seg in self.cntrysegs:
-            if self._insidemap_seg(seg):
-                countries.append(seg)
-        for seg in self.statesegs:
-            if self._insidemap_seg(seg):
-                states.append(seg)
-        for seg in self.riversegs:
-            if self._insidemap_seg(seg):
-                rivers.append(seg)
-        self.statesegs = states
-        self.riversegs = rivers
-        self.cntryegs = countries
-
-        # split up segments that go outside projection limb
-        coastsegs = []
-        coastsegtypes = []
-        for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
-            xx = NX.array([x for x,y in seg],NX.Float32)
-            yy = NX.array([y for x,y in seg],NX.Float32)
-            i1,i2 = self._splitseg(xx,yy)
-            if i1 and i2:
-                for i,j in zip(i1,i2):
-                    segment = zip(xx[i:j].tolist(),yy[i:j].tolist())
-                    coastsegs.append(segment)
-                    coastsegtypes.append(segtype)
-            else:
-                coastsegs.append(seg)
-                coastsegs.append(segtype)
-        self.coastsegs = coastsegs
-        self.coastsegtypes = coastsegtypes
-        states = []
-        for seg in self.statesegs:
-            xx = NX.array([x for x,y in seg],NX.Float32)
-            yy = NX.array([y for x,y in seg],NX.Float32)
-            i1,i2 = self._splitseg(xx,yy)
-            if i1 and i2:
-                for i,j in zip(i1,i2):
-                    segment = zip(xx[i:j].tolist(),yy[i:j].tolist())
-                    states.append(segment)
-            else:
-                states.append(seg)
-        self.statesegs = states
-        countries = []
-        for seg in self.cntrysegs:
-            xx = NX.array([x for x,y in seg],NX.Float32)
-            yy = NX.array([y for x,y in seg],NX.Float32)
-            i1,i2 = self._splitseg(xx,yy)
-            if i1 and i2:
-                for i,j in zip(i1,i2):
-                    segment = zip(xx[i:j].tolist(),yy[i:j].tolist())
-                    countries.append(segment)
-            else:
-                countries.append(seg)
-        self.cntrysegs = countries
-        rivers = []
-        for seg in self.riversegs:
-            xx = NX.array([x for x,y in seg],NX.Float32)
-            yy = NX.array([y for x,y in seg],NX.Float32)
-            i1,i2 = self._splitseg(xx,yy)
-            if i1 and i2:
-                for i,j in zip(i1,i2):
-                    segment = zip(xx[i:j].tolist(),yy[i:j].tolist())
-                    rivers.append(segment)
-            else:
-                rivers.append(seg)
-        self.riversegs = rivers
-
-        # split coastline segments that jump across entire plot.
-        coastsegs = []
-        coastsegtypes = []
-        for seg,segtype in zip(self.coastsegs,self.coastsegtypes):
-            xx = NX.array([x for x,y in seg],NX.Float32)
-            yy = NX.array([y for x,y in seg],NX.Float32)
-            xd = (xx[1:]-xx[0:-1])**2
-            yd = (yy[1:]-yy[0:-1])**2
-            dist = NX.sqrt(xd+yd)
-            split = dist > 5000000.
-            if NX.sum(split) and self.projection not in ['merc','cyl','mill']:
-               ind = (NX.compress(split,squeeze(split*NX.indices(xd.shape)))+1).tolist()
-               iprev = 0
-               ind.append(len(xd))
-               for i in ind:
-                   coastsegs.append(zip(xx[iprev:i],yy[iprev:i]))
-                   coastsegtypes.append(segtype)
-                   iprev = i
-            else:
-                coastsegs.append(seg)
-                coastsegtypes.append(segtype)
-        self.coastsegs = coastsegs
-        self.coastsegtypes = coastsegtypes
-
-        # special treatment of coastline polygons for
-        # geostationary, orthographic, sinusoidal, mollweide and robinson.
-        # (polygon clipping along projection limb)
-        if self.projection in ['ortho','geos']:
-            if self.projection == 'ortho':
-                lat_0 = math.radians(self.projparams['lat_0'])
-            else:
-                lat_0 = 0.
-            lon_0d = self.projparams['lon_0']
-            lon_0 = math.radians(lon_0d)
-            if self.projection == 'ortho':
-                rad = self.rmajor
-            else:
-                # quadratic mean radius of ellipsoid.
-                rad = math.sqrt((3.*self._width**2 + self._height**2)/4.)
-            del_s = 50.
-            gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
-            coastpolygons = []
-            coastpolygontypes = []
-            for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,coastpolygonsll):
-                x = poly[0]
-                y = poly[1]
-                lons = polyll[0]
-                lats = polyll[1]
-                mask = NX.logical_or(NX.greater(x,1.e20),NX.greater(y,1.e20))
-                # replace values in polygons that are over the horizon.
-                xsave = False
-                ysave = False
-                if NX.sum(mask):
-                    i1,i2 = self._splitseg(x,y,mask=mask)
-              # loop over segments of polygon that are outside projection limb.
-                    for i,j in zip(i1,i2):
-              # if it's not the rest of the polygon ...
-                        if i and j != len(x):
-              # compute distance and azimuth between projection center
-              # and last point inside project limb.
-                            az1,alpha21,dist=gc.inv(lon_0,lat_0,math.radians(lons[i]),math.radians(lats[i]),radians=True)
-              # also compute lat, lon of that great circle, plus back
-              # azimuth.
-                            lon1,lat1,az=gc.fwd(lon_0,lat_0,az1,0.5*math.pi*rad,radians=True)
-              # compute distance and azimuth between projection center
-              # and next point inside projection limb.
-                            az2,alpha21,dist=gc.inv(lon_0,lat_0,math.radians(lons[j]),math.radians(lats[j]),radians=True)
-              # also compute lat, lon of that great circle, plus back
-              # azimuth.
-                            lon2,lat2,az=gc.fwd(lon_0,lat_0,az2,0.5*math.pi*rad,radians=True)
-              # compute distance between those two points.
-                            az12,az21,dist = gc.inv(lon1,lon2,lat1,lat2,radians=True)
-              # compute set of equally space points del_s meters apart
-              # along great circle between those two points (the last
-              # inside the projection limb and the next point inside the
-              # the projection limb).
-                            npoints = int((dist+0.5*1000.*del_s)/(1000.*del_s))
-                            if npoints < 2: npoints=2
-                            lonlats = gc.npts(math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1),npoints)
-                            lonstmp=[math.degrees(lon2)];latstmp=[math.degrees(lat2)]
-                            for lon,lat in lonlats:
-                                lonstmp.append(lon); latstmp.append(lat)
-                            lonstmp.append(math.degrees(lon1)); latstmp.append(math.degrees(lat1))
-              # convert that set of points to projection coordinates.
-              # replace the points in the polygon which were outside
-              # the projection limb.
-                            xx, yy = self(lonstmp, latstmp)
-                            xnew = x[i:j] + xx
-                            ynew = y[i:j] + yy
-                            coastpolygons.append((xnew,ynew))
-                            coastpolygontypes.append(polytype)
-                        elif i == 0:
-                            xsave = x[0:j]
-                            ysave = y[0:j]
-                            lats_save = lats[0:j]
-                            lons_save = lons[0:j]
-              # it's the entire rest of the polygon ...
-                        elif j == len(x):
-                            xnew = x[i:j] + xsave
-                            ynew = y[i:j] + ysave
-                            lonsnew = lons[i:j] + lons_save
-                            latsnew = lats[i:j] + lats_save
-                            az1,alpha21,dist=gc.inv(lon_0,lat_0,math.radians(lonsnew[0]),math.radians(latsnew[0]),radians=True)
-                            lon1,lat1,az=gc.fwd(lon_0,lat_0,az1,0.5*math.pi*rad,radians=True)
-                            az2,alpha21,dist=gc.inv(lon_0,lat_0,math.radians(lonsnew[-1]),math.radians(latsnew[-1]),radians=True)
-                            lon2,lat2,az=gc.fwd(lon_0,lat_0,az2,0.5*math.pi*rad,radians=True)
-                            az12,az21,dist = gc.inv(lon2,lat2,lon1,lat1,radians=True)
-                            npoints = int((dist+0.5*1000.*del_s)/(1000.*del_s))
-                            if npoints < 2: npoints=2
-                            lonlats = gc.npts(math.degrees(lon2),math.degrees(lat2),math.degrees(lon1),math.degrees(lat1),npoints)
-                            lonstmp=[math.degrees(lon2)];latstmp=[math.degrees(lat2)]
-                            for lon,lat in lonlats:
-                                lonstmp.append(lon); latstmp.append(lat)
-                            lonstmp.append(math.degrees(lon1));latstmp.append(math.degrees(lat1))
-                            xx, yy = self(lonstmp, latstmp)
-                            xnew = xnew + xx
-                            ynew = ynew + yy
-                            coastpolygons.append((xnew,ynew))
-                            coastpolygontypes.append(polytype)
-                else: # no part of polygon outside projection limb.
-                    coastpolygons.append(poly)
-                    coastpolygontypes.append(polytype)
-            self.coastpolygons = coastpolygons
-            self.coastpolygontypes = coastpolygontypes
-        elif self.projection in ['moll','robin','sinu']:
-            lon_0 = self.projparams['lon_0']
-            coastpolygons=[]
-            for poly,polytype,polyll in zip(self.coastpolygons,self.coastpolygontypes,coastpolygonsll):
-                x = poly[0]
-                y = poly[1]
-                lons = polyll[0]
-                lats = polyll[1]
-                xn=[]
-                yn=[]
-                # antarctic segment goes from 360 back to 0
-                # reorder to go from lon_0-180 to lon_0+180.
-                if lats[-1] < -68.0:
-                    lons.reverse()
-                    lats.reverse()
-                    xx,yy = self(lons,lats)
-                    xx = NX.array(xx); yy = NX.array(yy)
-                    xdist = NX.fabs(xx[1:]-xx[0:-1])
-                    if max(xdist) > 1000000:
-                        nmin = NX.argmax(xdist)+1
-                        xnew = NX.zeros(len(xx),NX.Float64)
-                        ynew = NX.zeros(len(xx),NX.Float64)
-                        lonsnew = len(xx)*[0]
-                        latsnew = len(xx)*[0]
-                        xnew[0:len(xx)-nmin] = xx[nmin:]
-                        ynew[0:len(xx)-nmin] = yy[nmin:]
-                        xnew[len(xx)-nmin:] = xx[0:nmin]
-                        ynew[len(xx)-nmin:] = yy[0:nmin]
-                        lonsnew[0:len(xx)-nmin] = lons[nmin:]
-                        latsnew[0:len(xx)-nmin] = lats[nmin:]
-                        lonsnew[len(xx)-nmin:] = lons[0:nmin]
-                        latsnew[len(xx)-nmin:] = lats[0:nmin]
-                        x = xnew.tolist(); y = ynew.tolist()
-                        lons = lonsnew; lats = latsnew
-                    else:
-                        x.reverse()
-                        y.reverse()
-                    # close polygon (add lines along left and right edges down to S pole)
-                    for phi in NX.arange(-89.999,lats[0],0.1):
-                        xx,yy = self(lon_0-179.99,phi)
-                        xn.append(xx); yn.append(yy)
-                    xn = xn+x
-                    yn = yn+y
-                    for phi in NX.arange(lats[-1],-89.999,-0.1):
-                        xx,yy = self(lon_0+179.99,phi)
-                        xn.append(xx); yn.append(yy)
-                # move points outside map to edge of map
-                # along constant latitude.
-                else:
-                    for x,y,lon,lat in zip(x,y,lons,lats):
-                        if lon > lon_0+180 or lon < lon_0-180:
-                            if lon >= lon_0+180: lon=lon_0+180.
-                            if lon <= lon_0-180: lon=lon_0-180.
-                            xx,yy = self(lon,lat)
-                            xn.append(xx); yn.append(yy)
-                        else:
-                            xn.append(x); yn.append(y)
-                coastpolygons.append((xn,yn))
-            self.coastpolygons = coastpolygons
 
     def _splitseg(self,xx,yy,mask=None):
         """split segment up around missing values (outside projection limb)"""
@@ -1265,6 +769,138 @@ and install those files manually (see the basemap README for details)."""
  if returnxy = True, the x,y values of the grid are returned also.
         """
         return self.projtran.makegrid(nx,ny,returnxy=returnxy)
+
+    def _readboundarydata(self,name):
+        msg = """
+Unable to open boundary dataset file. Only the 'crude', 'low'
+and 'intermediate' resolution datasets are installed by default. If you
+are requesting a 'high' resolution dataset, you need to download 
+and install those files manually (see the basemap README for details)."""
+        try:
+            bdatfile = open(os.path.join(basemap_datadir,name+'_'+self.resolution+'.dat'),'rb')
+            bdatmetafile = open(os.path.join(basemap_datadir,name+'meta_'+self.resolution+'.dat'),'r')
+        except:
+            raise IOError, msg
+        polygons = []
+        polygon_types = []
+        for line in bdatmetafile:
+            linesplit = line.split()
+            area = float(linesplit[1])
+            type = int(linesplit[0])
+            south = float(linesplit[2])
+            north = float(linesplit[3])
+            if area < 0.: area = 1.e30
+            useit = self.latmax>=south and self.latmin<=north and area>self.area_thresh
+            # skip Antartica for now.
+            if name == 'gshhs' and south < -60.: useit=False
+            if useit:
+                offsetbytes = int(linesplit[4])
+                bytecount = int(linesplit[5])
+                bdatfile.seek(offsetbytes,0)
+                polystring = bdatfile.read(bytecount)
+                poly = wkb.loads(polystring)
+                if poly.intersects(self._boundarypoly):
+                    #a = npy.asarray(self._boundarypoly.boundary)
+                    #b = npy.asarray(poly.boundary)
+                    #import pylab
+                    #pylab.fill(a[:,0],a[:,1],'r')
+                    #pylab.fill(b[:,0],b[:,1],'b')
+                    #pylab.show()
+                    poly = poly.intersection(self._boundarypoly)
+                    if hasattr(poly,'geoms'): 
+                        geoms = poly.geoms
+                    else:
+                        geoms = [poly]
+                    for psub in geoms:
+                        if name == 'gshhs':
+                            b = npy.asarray(psub.boundary)
+                        else:
+                            b = npy.asarray(psub.coords)
+                        blons = b[:,0]; blats = b[:,1]
+                        bx, by = self(blons, blats)
+                        #if (bx > 1.20).any() or (by > 1.e20).any():
+                        #    continue
+                        polygons.append(zip(bx,by))
+                        polygon_types.append(type)
+        return polygons, polygon_types
+
+
+    def _getmapboundary(self):
+        """
+ define map boundary polygon (in lat/lon coordinates)
+        """
+        dtheta = 0.1
+        dx = (self.xmax-self.xmin)/100.
+        dy = (self.ymax-self.ymin)/100.
+        if self.projection == 'ortho' and self._fulldisk:
+            # circular region.
+            thetas = npy.arange(0.,2.*npy.pi,dtheta)
+            radius = self.rmajor
+            x = radius*npy.cos(thetas) + 0.5*self.xmax
+            y = radius*npy.sin(thetas) + 0.5*self.ymax
+        elif self.projection == 'geos' and self._fulldisk:
+            # elliptical region
+            thetas = npy.arange(0.,2.*npy.pi+0.5*dtheta,dtheta)
+            rminor = self._height
+            rmajor = self._width
+            x = rmajor*npy.cos(thetas) + 0.5*self.xmax
+            y = rminor*npy.sin(thetas) + 0.5*self.ymax
+        elif self.projection in ['moll','robin','sinu']:  
+            # quasi-elliptical region.
+            x = []; y = []
+            # left side
+            lats = NX.arange(-89.9,89.9+dtheta,dtheta).tolist()
+            lons = len(lats)*[self.projparams['lon_0']-179.9]
+            x,y = self(lons,lats)
+            # top.
+            lons = NX.arange(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179+dtheta,dtheta).tolist()
+            lats = len(lons)*[89.9]
+            xx,yy = self(lons,lats)
+            x = x+xx; y = y+yy
+            # right side
+            lats = NX.arange(89.9,-89.9-dtheta,-dtheta).tolist()
+            lons = len(lats)*[self.projparams['lon_0']+179.9]
+            xx,yy = self(lons,lats)
+            x = x+xx; y = y+yy
+            # bottom.
+            lons = NX.arange(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180-dtheta,-dtheta).tolist()
+            lats = len(lons)*[-89.9]
+            xx,yy = self(lons,lats)
+            x = x+xx; y = y+yy
+            x = npy.array(x,npy.float64)
+            y = npy.array(y,npy.float64)
+        else: # all other projections are rectangular.
+            # left side (x = xmin, ymin <= y <= ymax)
+            yy = npy.arange(self.ymin, self.ymax+0.5*dy, dy)
+            x = len(yy)*[self.xmin]; y = yy.tolist()
+            # top (y = ymax, xmin <= x <= xmax)
+            xx = npy.arange(self.xmin, self.xmax+0.5*dx, dx)
+            x = x + xx.tolist()
+            y = y + len(xx)*[self.ymax]
+            # right side (x = xmax, ymin <= y <= ymax)
+            yy = npy.arange(self.ymax, self.ymin-0.5*dy, -dy)
+            x = x + len(yy)*[self.xmax]; y = y + yy.tolist()
+            # bottom (y = ymin, xmin <= x <= xmax)
+            xx = npy.arange(self.xmax, self.xmin-0.5*dx, -dx)
+            x = x + xx.tolist()
+            y = y + len(xx)*[self.ymin]
+            x = npy.array(x,npy.float64)
+            y = npy.array(y,npy.float64)
+        lons, lats = self(x,y,inverse=True)
+        # fix lons so there are no jumps.
+        n = 1
+        lonprev = lons[0]
+        for lon,lat in zip(lons[1:],lats[1:]):
+            if npy.abs(lon-lonprev) > 90.:
+                if lonprev < 0: 
+                    lon = lon - 360.
+                else:
+                    lon = lon + 360
+                lons[n] = lon
+            lonprev = lon
+            n = n + 1
+        return PolygonShape(zip(lons,lats))
+
 
     def drawmapboundary(self,color='k',linewidth=1.0,ax=None):
         """
