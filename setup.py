@@ -13,9 +13,6 @@ setuptools for your system""")
 from distutils.core import Extension
 from distutils.util import convert_path
 
-import numpy
-
-
 def dbf_macros():
     """Return the macros to define when compiling the dbflib wrapper.
 
@@ -39,9 +36,7 @@ deps.remove(os.path.join('src','_geod.c'))
 
 packages          = ['matplotlib.toolkits.basemap']
 package_dirs       = {'':'lib'}
-extensions = [Extension("matplotlib.toolkits.basemap._proj",
-                deps+['src/_proj.c'],
-                include_dirs = ['src', numpy.get_include()],)]
+extensions = [Extension("matplotlib.toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
 extensions.append(Extension("matplotlib.toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
 
 # install shapelib and dbflib.
@@ -66,30 +61,19 @@ extensions = extensions + \
 if 'setuptools' in sys.modules:
 # Are we running with setuptools?
 # if so, need to specify all the packages in heirarchy
-    additional_params = {'namespace_packages' : ['matplotlib.toolkits']}
+    additional_params = {'namespace_packages' : ['matplotlib.toolkits']}    
     packages.extend(['matplotlib', 'matplotlib.toolkits'])
     setup = setuptools.setup
 else:
     additional_params = {}
     from distutils.core import setup
-
-
+    
+    
 # Specify all the required mpl data
 pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world']
-basemap_datafiles = [         'data/countries_c.txt',
-                              'data/states_c.txt',
-                              'data/rivers_c.txt',
-                              'data/gshhs_c.txt',
-                              'data/countries_l.txt',
-                              'data/states_l.txt',
-                              'data/rivers_l.txt',
-                              'data/gshhs_l.txt',
-                              'data/countries_i.txt',
-                              'data/states_i.txt',
-                              'data/rivers_i.txt',
-                              'data/gshhs_i.txt',
-                              'data/5minmask.bin',
-                              ]
+boundaryfiles = glob.glob('lib/matplotlib/toolkits/basemap/data/*dat')
+boundaryfiles = [os.path.join('data',os.path.basename(bfile)) for bfile in boundaryfiles]
+basemap_datafiles = boundaryfiles + ['data/5minmask.bin']
 package_data = {'matplotlib.toolkits.basemap':pyproj_datafiles+basemap_datafiles}
 setup(
   name              = "basemap",
@@ -108,8 +92,8 @@ setup(
   license           = "OSI Approved",
   keywords          = ["python","plotting","plots","graphs","charts","GIS","mapping","map projections","maps"],
   classifiers       = ["Development Status :: 4 - Beta",
-			           "Intended Audience :: Science/Research",
-			           "License :: OSI Approved",
+			           "Intended Audience :: Science/Research", 
+			           "License :: OSI Approved", 
 			           "Topic :: Scientific/Engineering :: Visualization",
 			           "Topic :: Software Development :: Libraries :: Python Modules",
 			           "Operating System :: OS Independent"],
