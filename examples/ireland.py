@@ -92,7 +92,7 @@ title("Intermediate Res Boundaries ('i') with major rivers",y=1.05)
 draw()
 time.sleep(5)
 # only do high-res coastlines if they are installed, otherwise stop here.
-if not os.path.isfile(os.path.join(basemap_datadir,'gshhs_h.txt')):
+if not os.path.isfile(os.path.join(basemap_datadir,'gshhs_h.dat')):
     sys.exit(0)
 
 import time
