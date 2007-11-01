@@ -747,20 +747,36 @@ and install those files manually (see the basemap README for details)."""
             if area < 0.: area = 1.e30
             useit = self.latmax>=south and self.latmin<=north and area>self.area_thresh
             # skip Antartica for now.
-            if name == 'gshhs' and south < -60.: useit=False
             if useit:
                 offsetbytes = int(linesplit[4])
                 bytecount = int(linesplit[5])
                 bdatfile.seek(offsetbytes,0)
                 polystring = bdatfile.read(bytecount)
                 poly = wkb.loads(polystring)
+                # close Antarctica for cylindrical projections
+
+                if name == 'gshhs' and self.projection in ['cyl','merc','mill']:
+                    b = npy.asarray(poly.boundary)
+                    lons = b[:,0].tolist()
+                    lats = b[:,1].tolist()
+                    if (math.fabs(lons[0]-360.) < 1.e-5 or 
+                        math.fabs(lons[0]+360.) or 
+                        math.fabs(lons[0]-0.) < 1.e-5) and lats[-1] < -68.:
+                        lons = lons[:-2]
+                        lats = lats[:-2]
+                        lonstart,latstart = lons[0], lats[0]
+                        lonend,latend = lons[-1], lats[-1]
+                        lons.insert(0,lonstart)
+                        lats.insert(0,-90.)
+                        lons.append(lonend)
+                        lats.append(-90.)
+                    if south < -68:
+                        poly = PolygonShape(zip(lons,lats))
+                        #b = npy.asarray(poly.boundary)
+                        #import pylab
+                        #pylab.fill(b[:,0],b[:,1],'b')
+                        #pylab.show()
                 if poly.intersects(self._boundarypoly):
-                    #a = npy.asarray(self._boundarypoly.boundary)
-                    #b = npy.asarray(poly.boundary)
-                    #import pylab
-                    #pylab.fill(a[:,0],a[:,1],'r')
-                    #pylab.fill(b[:,0],b[:,1],'b')
-                    #pylab.show()
                     poly = poly.intersection(self._boundarypoly)
                     if hasattr(poly,'geoms'): 
                         geoms = poly.geoms
