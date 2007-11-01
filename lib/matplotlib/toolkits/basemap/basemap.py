@@ -770,7 +770,6 @@ and install those files manually (see the basemap README for details)."""
                         lats.insert(0,-90.)
                         lons.append(lonend)
                         lats.append(-90.)
-                    if south < -68:
                         poly = PolygonShape(zip(lons,lats))
                         #b = npy.asarray(poly.boundary)
                         #import pylab
