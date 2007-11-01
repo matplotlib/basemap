@@ -747,14 +747,14 @@ and install those files manually (see the basemap README for details)."""
             if area < 0.: area = 1.e30
             useit = self.latmax>=south and self.latmin<=north and area>self.area_thresh
             # skip Antartica for now.
+            #if south < -68: useit = False
             if useit:
                 offsetbytes = int(linesplit[4])
                 bytecount = int(linesplit[5])
                 bdatfile.seek(offsetbytes,0)
                 polystring = bdatfile.read(bytecount)
                 poly = wkb.loads(polystring)
-                # close Antarctica for cylindrical projections
-
+                # close Antartica for cylindrical projections.
                 if name == 'gshhs' and self.projection in ['cyl','merc','mill']:
                     b = npy.asarray(poly.boundary)
                     lons = b[:,0]
