@@ -688,58 +688,13 @@ class Basemap(object):
         self.cntrysegs, types = self._readboundarydata('countries')
         self.statesegs, types = self._readboundarydata('states')
         self.riversegs, types = self._readboundarydata('rivers')
-        # for coastlines, reformat as polygons.
+        # for coastlines, reformat for use in 
+        # matplotlib.patches.Polygon.
         self.coastpolygons = []
         for xy in self.coastsegs:
             x = [x1 for x1,x2 in xy]
             y = [x2 for x1,x2 in xy]
             self.coastpolygons.append((x,y))
-
-    def _splitseg(self,xx,yy,mask=None):
-        """split segment up around missing values (outside projection limb)"""
-        if mask is None:
-            mask = (NX.logical_or(NX.greater_equal(xx,1.e20),NX.greater_equal(yy,1.e20))).tolist()
-        i1=[]; i2=[]
-        mprev = 1
-        for i,m in enumerate(mask):
-            if not m and mprev:
-                i1.append(i)
-            if m and not mprev:
-                i2.append(i)
-            mprev = m
-        if not mprev: i2.append(len(mask))
-        if len(i1) != len(i2):
-            raise ValueError,'error in splitting boundary segments'
-        return i1,i2
-
-    def _insidemap_seg(self,seg):
-        """returns True if any point in segment is inside map region"""
-        xx = [x for x,y in seg]
-        yy = [y for x,y in seg]
-        isin = False
-        for x,y in zip(xx,yy):
-            if x >= self.xmin and x <= self.xmax and y >= self.ymin and y <= self.ymax:
-                isin = True
-                break
-        return isin
-
-    def _insidemap_poly(self,poly,polyll):
-        """returns True if any point in polygon is inside map region"""
-        isin = False
-        xx = poly[0]; yy = poly[1]
-        if self.projection in ['moll','robin','sinu']:
-            lon_0 = self.projparams['lon_0']
-            lons = polyll[0]
-            for lon in lons:
-                if lon < lon_0+180 and lon > lon_0-180:
-                    isin = True
-                    break
-        else:
-            for x,y in zip(xx,yy):
-                if x >= self.xmin and x <= self.xmax and y >= self.ymin and y <= self.ymax:
-                    isin = True
-                    break
-        return isin
 
     def __call__(self,x,y,inverse=False):
         """
