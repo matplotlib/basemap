@@ -10,7 +10,6 @@ from matplotlib.patches import Ellipse, Circle, Polygon
 from matplotlib.lines import Line2D
 import pyproj, sys, os, math, dbflib
 from proj import Proj
-import matplotlib.numerix as NX
 from matplotlib.numerix import ma
 import numpy as npy
 from numpy import linspace
@@ -18,16 +17,14 @@ from matplotlib.numerix.mlab import squeeze
 from matplotlib.cbook import popd, is_scalar
 from shapelib import ShapeFile
 from shapely.geometry import Polygon as PolygonShape
-from shapely import wkb
+from shapely.geometry import LineString as LineShape
+from shapely.geometry import Point as PointShape
+from shapely import wkb, wkt
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
 __version__ = '0.9.7'
-
-# test to see numerix set to use numpy (if not, raise an error)
-if NX.which[0] != 'numpy':
-    raise ImportError("numerix must be set to numpy")
 
 class Basemap(object):
 
@@ -655,8 +652,8 @@ class Basemap(object):
             self.latmax = 90.
         else:
             lons, lats = self.makegrid(101,101)
-            self.latmin = min(NX.ravel(lats))
-            self.latmax = max(NX.ravel(lats))
+            self.latmin = lats.min()
+            self.latmax = lats.max()
 
         # if ax == None, pylab.gca may be used.
         self.ax = ax
@@ -680,7 +677,7 @@ class Basemap(object):
                 raise ValueError, "boundary resolution must be one of 'c','l','i' or 'h'"
         self.area_thresh = area_thresh
         # define map boundary polygon (in lat/lon coordinates)
-        self._boundarypoly = self._getmapboundary()
+        self._boundarypolyll, self._boundarypolyxy = self._getmapboundary()
         # read in coastline polygons, only keeping those that
         # intersect map boundary polygon.
         self.coastsegs, self.coastpolygontypes = self._readboundarydata('gshhs')
@@ -738,6 +735,13 @@ and install those files manually (see the basemap README for details)."""
             raise IOError, msg
         polygons = []
         polygon_types = []
+        # see if map projection region polygon contains a pole.
+        NPole = PointShape(self(0.,90.))
+        SPole = PointShape(self(0.,-90.))
+        hasNP = self._boundarypolyxy.contains(NPole)
+        hasSP = self._boundarypolyxy.contains(SPole)
+        containsPole = hasNP or hasSP
+        # iterate over boundary geometries.
         for line in bdatmetafile:
             linesplit = line.split()
             area = float(linesplit[1])
@@ -746,57 +750,117 @@ and install those files manually (see the basemap README for details)."""
             north = float(linesplit[3])
             if area < 0.: area = 1.e30
             useit = self.latmax>=south and self.latmin<=north and area>self.area_thresh
-            # skip Antartica for now.
-            #if south < -68: useit = False
             if useit:
                 offsetbytes = int(linesplit[4])
                 bytecount = int(linesplit[5])
                 bdatfile.seek(offsetbytes,0)
                 polystring = bdatfile.read(bytecount)
                 poly = wkb.loads(polystring)
-                # close Antartica for cylindrical projections.
-                if name == 'gshhs' and self.projection in ['cyl','merc','mill']:
-                    b = npy.asarray(poly.boundary)
-                    lons = b[:,0]
-                    lats = b[:,1]
-                    if south < -68:
-                        if math.fabs(lons[0]+0.) < 1.e-5:
-                            lons1 = lons[:-2][::-1]
-                            lats1 = lats[:-2][::-1]
-                            lons2 = lons1 + 360.
-                            lons3 = lons2 + 360.
-                            lons = lons1.tolist()+lons2.tolist()+lons3.tolist()
-                            lats = lats1.tolist()+lats1.tolist()+lats1.tolist()
-                            lonstart,latstart = lons[0], lats[0]
-                            lonend,latend = lons[-1], lats[-1]
-                            lons.insert(0,lonstart)
-                            lats.insert(0,-90.)
-                            lons.append(lonend)
-                            lats.append(-90.)
-                            poly = PolygonShape(zip(lons,lats))
-                            #b = npy.asarray(poly.boundary)
-                            #import pylab
-                            #pylab.fill(b[:,0],b[:,1],'b')
-                            #pylab.show()
+                # if map boundary polygon is a valid one in lat/lon
+                # coordinates (i.e. it does not contain either pole),
+                # the intersections of the boundary geometries
+                # and the map projection region can be computed before
+                # transforming the boundary geometry to map projection 
+                # coordinates (this saves time, especially for small map
+                # regions and high-resolution boundary geometries).
+                if not containsPole:
+                    # close Antarctica for cylindrical projections.
+                    if name == 'gshhs' and self.projection in ['cyl','merc','mill']:
+                        b = npy.asarray(poly.boundary)
+                        lons = b[:,0]
+                        lats = b[:,1]
+                        if south < -68:
+                            if math.fabs(lons[0]+0.) < 1.e-5:
+                                lons1 = lons[:-2][::-1]
+                                lats1 = lats[:-2][::-1]
+                                lons2 = lons1 + 360.
+                                lons3 = lons2 + 360.
+                                lons = lons1.tolist()+lons2.tolist()+lons3.tolist()
+                                lats = lats1.tolist()+lats1.tolist()+lats1.tolist()
+                                lonstart,latstart = lons[0], lats[0]
+                                lonend,latend = lons[-1], lats[-1]
+                                lons.insert(0,lonstart)
+                                lats.insert(0,-90.)
+                                lons.append(lonend)
+                                lats.append(-90.)
+                                poly = PolygonShape(zip(lons,lats))
+                                #b = npy.asarray(poly.boundary)
+                                #import pylab
+                                #pylab.fill(b[:,0],b[:,1],'b')
+                                #pylab.show()
+                            else:
+                                continue
+                    if poly.intersects(self._boundarypolyll):
+                        poly = poly.intersection(self._boundarypolyll)
+                        if hasattr(poly,'geoms'): 
+                            geoms = poly.geoms
                         else:
-                            continue
-                if poly.intersects(self._boundarypoly):
-                    poly = poly.intersection(self._boundarypoly)
-                    if hasattr(poly,'geoms'): 
-                        geoms = poly.geoms
+                            geoms = [poly]
+                        for psub in geoms:
+                            if name == 'gshhs':
+                                b = npy.asarray(psub.boundary)
+                            else:
+                                b = npy.asarray(psub.coords)
+                            blons = b[:,0]; blats = b[:,1]
+                            bx, by = self(blons, blats)
+                            #if (bx > 1.20).any() or (by > 1.e20).any():
+                            #    continue
+                            polygons.append(zip(bx,by))
+                            polygon_types.append(type)
+                # if map boundary polygon is not valid in lat/lon
+                # coordinates, compute intersection between map
+                # projection region and boundary geometries in map
+                # projection coordinates.
+                else:
+                    if name == 'gshhs':
+                        b = npy.asarray(poly.boundary)
                     else:
-                        geoms = [poly]
-                    for psub in geoms:
-                        if name == 'gshhs':
-                            b = npy.asarray(psub.boundary)
+                        b = npy.asarray(poly.coords)
+                    bx, by = self(b[:,0], b[:,1])
+                    mask = npy.logical_and(bx<1.e20,by<1.e20)
+                    if sum(mask) <= 1: continue
+                    if name == 'gshhs':
+                        poly = PolygonShape(zip(bx,by))
+                    else:
+                        # remove parts of geometry that are undefined
+                        # in this map projection.
+                        bx = npy.compress(mask, bx)
+                        by = npy.compress(mask, by)
+                        poly = LineShape(zip(bx,by))
+                    if 0:
+                        import pylab
+                        print poly
+                        pp = self._boundarypolyxy.intersection(poly)
+                        print name, pp
+                        a = npy.asarray(self._boundarypolyxy.boundary)
+                        pylab.plot(a[:,0],a[:,1],'b')
+                        pylab.plot(bx,by,'r')
+                        if hasattr(pp,'geoms'):
+                            px = pp.geoms
                         else:
-                            b = npy.asarray(psub.coords)
-                        blons = b[:,0]; blats = b[:,1]
-                        bx, by = self(blons, blats)
-                        #if (bx > 1.20).any() or (by > 1.e20).any():
-                        #    continue
-                        polygons.append(zip(bx,by))
-                        polygon_types.append(type)
+                            px = [pp]
+                        for p in px:
+                            c = npy.asarray(p.boundary)
+                            pylab.fill(c[:,0],c[:,1],'g')
+                            pylab.show()
+                            raise SystemExit(0)
+                    if self._boundarypolyxy.intersects(poly):
+                        try:
+                            poly = self._boundarypolyxy.intersection(poly)
+                        except:
+                            continue
+                        if hasattr(poly,'geoms'): 
+                            geoms = poly.geoms
+                        else:
+                            geoms = [poly]
+                        for psub in geoms:
+                            if name == 'gshhs':
+                                b = npy.asarray(psub.boundary)
+                            else:
+                                b = npy.asarray(psub.coords)
+                            polygons.append(zip(b[:,0],b[:,1]))
+                            polygon_types.append(type)
+        print name,len(polygons)
         return polygons, polygon_types
 
 
@@ -804,77 +868,89 @@ and install those files manually (see the basemap README for details)."""
         """
  define map boundary polygon (in lat/lon coordinates)
         """
-        dtheta = 0.1
-        dx = (self.xmax-self.xmin)/100.
-        dy = (self.ymax-self.ymin)/100.
+        nx = 100
+        ny = 100
         if self.projection == 'ortho' and self._fulldisk:
             # circular region.
-            thetas = npy.arange(0.,2.*npy.pi,dtheta)
+            thetas = linspace(0.,2.*npy.pi,2*nx*ny)[:-1]
             radius = self.rmajor
             x = radius*npy.cos(thetas) + 0.5*self.xmax
             y = radius*npy.sin(thetas) + 0.5*self.ymax
+            boundaryxy = PolygonShape(zip(x,y))
         elif self.projection == 'geos' and self._fulldisk:
             # elliptical region
-            thetas = npy.arange(0.,2.*npy.pi+0.5*dtheta,dtheta)
+            thetas = linspace(0.,2.*npy.pi,2*nx*ny)[:-1]
             rminor = self._height
             rmajor = self._width
             x = rmajor*npy.cos(thetas) + 0.5*self.xmax
             y = rminor*npy.sin(thetas) + 0.5*self.ymax
+            boundaryxy = PolygonShape(zip(x,y))
         elif self.projection in ['moll','robin','sinu']:  
             # quasi-elliptical region.
             x = []; y = []
             # left side
-            lats = NX.arange(-89.9,89.9+dtheta,dtheta).tolist()
+            lats = linspace(-89.9,89.9,ny).tolist()
             lons = len(lats)*[self.projparams['lon_0']-179.9]
             x,y = self(lons,lats)
             # top.
-            lons = NX.arange(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179+dtheta,dtheta).tolist()
+            lons = linspace(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179,nx).tolist()
             lats = len(lons)*[89.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
             # right side
-            lats = NX.arange(89.9,-89.9-dtheta,-dtheta).tolist()
+            lats = linspace(89.9,-89.9,ny).tolist()
             lons = len(lats)*[self.projparams['lon_0']+179.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
             # bottom.
-            lons = NX.arange(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180-dtheta,-dtheta).tolist()
+            lons = linspace(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180).tolist()
             lats = len(lons)*[-89.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
             x = npy.array(x,npy.float64)
             y = npy.array(y,npy.float64)
+            boundaryxy = PolygonShape(zip(x,y))
         else: # all other projections are rectangular.
             # left side (x = xmin, ymin <= y <= ymax)
-            yy = npy.arange(self.ymin, self.ymax+0.5*dy, dy)
+            yy = linspace(self.ymin, self.ymax, ny)[:-1]
             x = len(yy)*[self.xmin]; y = yy.tolist()
             # top (y = ymax, xmin <= x <= xmax)
-            xx = npy.arange(self.xmin, self.xmax+0.5*dx, dx)
+            xx = npy.linspace(self.xmin, self.xmax, nx)[:-1]
             x = x + xx.tolist()
             y = y + len(xx)*[self.ymax]
             # right side (x = xmax, ymin <= y <= ymax)
-            yy = npy.arange(self.ymax, self.ymin-0.5*dy, -dy)
+            yy = linspace(self.ymax, self.ymin, ny)[:-1]
             x = x + len(yy)*[self.xmax]; y = y + yy.tolist()
             # bottom (y = ymin, xmin <= x <= xmax)
-            xx = npy.arange(self.xmax, self.xmin-0.5*dx, -dx)
+            xx = linspace(self.xmax, self.xmin, nx)[:-1]
             x = x + xx.tolist()
             y = y + len(xx)*[self.ymin]
             x = npy.array(x,npy.float64)
             y = npy.array(y,npy.float64)
-        lons, lats = self(x,y,inverse=True)
-        # fix lons so there are no jumps.
-        n = 1
-        lonprev = lons[0]
-        for lon,lat in zip(lons[1:],lats[1:]):
-            if npy.abs(lon-lonprev) > 90.:
-                if lonprev < 0: 
-                    lon = lon - 360.
-                else:
-                    lon = lon + 360
-                lons[n] = lon
-            lonprev = lon
-            n = n + 1
-        return PolygonShape(zip(lons,lats))
+            boundaryxy = PolygonShape([(self.xmin,self.ymin),\
+                                       (self.xmin,self.ymax),\
+                                       (self.xmax,self.ymax),\
+                                       (self.xmax,self.ymin)])
+        if self.projection in ['mill','merc','cyl']:
+            lons = [self.llcrnrlon, self.llcrnrlon, self.urcrnrlon, self.urcrnrlon]
+            lats = [self.llcrnrlat, self.urcrnrlat, self.urcrnrlat, self.llcrnrlat]
+        else:
+            lons, lats = self(x,y,inverse=True)
+            # fix lons so there are no jumps.
+            n = 1
+            lonprev = lons[0]
+            for lon,lat in zip(lons[1:],lats[1:]):
+                if npy.abs(lon-lonprev) > 90.:
+                    if lonprev < 0: 
+                        lon = lon - 360.
+                    else:
+                        lon = lon + 360
+                    lons[n] = lon
+                lonprev = lon
+                n = n + 1
+        boundaryll = PolygonShape(zip(lons,lats))
+        #print 'map projection region',boundaryll.geom_type,boundaryll.is_valid
+        return PolygonShape(zip(lons,lats)), boundaryxy
 
 
     def drawmapboundary(self,color='k',linewidth=1.0,ax=None):
@@ -912,21 +988,21 @@ and install those files manually (see the basemap README for details)."""
             ellps.set_clip_on(False)
         elif self.projection in ['moll','robin','sinu']:  # elliptical region.
             # left side
-            lats = NX.arange(-89.9,89.9+dtheta,dtheta).tolist()
+            lats = npy.arange(-89.9,89.9+dtheta,dtheta).tolist()
             lons = len(lats)*[self.projparams['lon_0']-179.9]
             x,y = self(lons,lats)
             # top.
-            lons = NX.arange(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179+dtheta,dtheta).tolist()
+            lons = npy.arange(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179+dtheta,dtheta).tolist()
             lats = len(lons)*[89.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
             # right side
-            lats = NX.arange(89.9,-89.9-dtheta,-dtheta).tolist()
+            lats = npy.arange(89.9,-89.9-dtheta,-dtheta).tolist()
             lons = len(lats)*[self.projparams['lon_0']+179.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
             # bottom.
-            lons = NX.arange(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180-dtheta,-dtheta).tolist()
+            lons = npy.arange(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180-dtheta,-dtheta).tolist()
             lats = len(lons)*[-89.9]
             xx,yy = self(lons,lats)
             x = x+xx; y = y+yy
@@ -970,18 +1046,18 @@ and install those files manually (see the basemap README for details)."""
         axisbgc = ax.get_axis_bgcolor()
         np = 0
         for x,y in self.coastpolygons:
-            xa = NX.array(x,NX.Float32)
-            ya = NX.array(y,NX.Float32)
+            xa = npy.array(x,npy.float32)
+            ya = npy.array(y,npy.float32)
         # check to see if all four corners of domain in polygon (if so,
         # don't draw since it will just fill in the whole map).
             delx = 10; dely = 10
             if self.projection in ['cyl']:
                 delx = 0.1
                 dely = 0.1
-            test1 = NX.fabs(xa-self.urcrnrx) < delx
-            test2 = NX.fabs(xa-self.llcrnrx) < delx
-            test3 = NX.fabs(ya-self.urcrnry) < dely
-            test4 = NX.fabs(ya-self.llcrnry) < dely
+            test1 = npy.fabs(xa-self.urcrnrx) < delx
+            test2 = npy.fabs(xa-self.llcrnrx) < delx
+            test3 = npy.fabs(ya-self.urcrnry) < dely
+            test4 = npy.fabs(ya-self.llcrnry) < dely
             hasp1 = sum(test1*test3)
             hasp2 = sum(test2*test3)
             hasp4 = sum(test2*test4)
@@ -1277,9 +1353,9 @@ coordinates using the shpproj utility from the shapelib tools
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection in ['merc','cyl','mill','moll','robin','sinu']:
-            lons = NX.arange(self.llcrnrlon,self.urcrnrlon+0.01,0.01)
+            lons = npy.arange(self.llcrnrlon,self.urcrnrlon+0.01,0.01)
         else:
-            lons = NX.arange(0,360.01,0.01)
+            lons = npy.arange(0,360.01,0.01)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = circles.tolist()
@@ -1293,24 +1369,24 @@ coordinates using the shpproj utility from the shapelib tools
         xdelta = 0.01*(self.xmax-self.xmin)
         ydelta = 0.01*(self.ymax-self.ymin)
         for circ in circlesl:
-            lats = circ*NX.ones(len(lons),NX.Float32)
+            lats = circ*npy.ones(len(lons),npy.float32)
             x,y = self(lons,lats)
             # remove points outside domain.
-            testx = NX.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
-            x = NX.compress(testx, x)
-            y = NX.compress(testx, y)
-            testy = NX.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
-            x = NX.compress(testy, x)
-            y = NX.compress(testy, y)
+            testx = npy.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
+            x = npy.compress(testx, x)
+            y = npy.compress(testx, y)
+            testy = npy.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
+            x = npy.compress(testy, x)
+            y = npy.compress(testy, y)
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
                 # (not necessary for mercator or cylindrical or miller).
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
-                dist = NX.sqrt(xd+yd)
+                dist = npy.sqrt(xd+yd)
                 split = dist > 500000.
-                if NX.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
-                   ind = (NX.compress(split,squeeze(split*NX.indices(xd.shape)))+1).tolist()
+                if npy.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
+                   ind = (npy.compress(split,squeeze(split*npy.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
                    iprev = 0
@@ -1355,10 +1431,10 @@ coordinates using the shpproj utility from the shapelib tools
                 if self.projection == 'moll' and yy[0] < 1.e-4:
                     yy[0] = 1.e-4
                 if side == 'l':
-                    lons,lats = self(self.llcrnrx*NX.ones(yy.shape,NX.Float32),yy,inverse=True)
+                    lons,lats = self(self.llcrnrx*npy.ones(yy.shape,npy.float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(self.urcrnrx*NX.ones(yy.shape,NX.Float32),yy,inverse=True)
+                    lons,lats = self(self.urcrnrx*npy.ones(yy.shape,npy.float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
@@ -1368,10 +1444,10 @@ coordinates using the shpproj utility from the shapelib tools
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
                 if side == 'b':
-                    lons,lats = self(xx,self.llcrnry*NX.ones(xx.shape,NX.Float32),inverse=True)
+                    lons,lats = self(xx,self.llcrnry*npy.ones(xx.shape,npy.float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(xx,self.urcrnry*NX.ones(xx.shape,NX.Float32),inverse=True)
+                    lons,lats = self(xx,self.urcrnry*npy.ones(xx.shape,npy.float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
@@ -1394,7 +1470,7 @@ coordinates using the shpproj utility from the shapelib tools
                             latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
                         else:
                             latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
-                    latlab = latlabstr%NX.fabs(lat)
+                    latlab = latlabstr%npy.fabs(lat)
                 elif lat>0:
                     if rcParams['text.usetex']:
                         if labelstyle=='+/-':
@@ -1493,30 +1569,30 @@ coordinates using the shpproj utility from the shapelib tools
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
-            lats = NX.arange(-latmax,latmax+0.01,0.01)
+            lats = npy.arange(-latmax,latmax+0.01,0.01)
         else:
-            lats = NX.arange(-90,90.01,0.01)
+            lats = npy.arange(-90,90.01,0.01)
         xdelta = 0.01*(self.xmax-self.xmin)
         ydelta = 0.01*(self.ymax-self.ymin)
         for merid in meridians:
-            lons = merid*NX.ones(len(lats),NX.Float32)
+            lons = merid*npy.ones(len(lats),npy.float32)
             x,y = self(lons,lats)
             # remove points outside domain.
-            testx = NX.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
-            x = NX.compress(testx, x)
-            y = NX.compress(testx, y)
-            testy = NX.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
-            x = NX.compress(testy, x)
-            y = NX.compress(testy, y)
+            testx = npy.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
+            x = npy.compress(testx, x)
+            y = npy.compress(testx, y)
+            testy = npy.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
+            x = npy.compress(testy, x)
+            y = npy.compress(testy, y)
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
                 # (not necessary for mercator or cylindrical or miller).
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
-                dist = NX.sqrt(xd+yd)
+                dist = npy.sqrt(xd+yd)
                 split = dist > 500000.
-                if NX.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
-                   ind = (NX.compress(split,squeeze(split*NX.indices(xd.shape)))+1).tolist()
+                if npy.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
+                   ind = (npy.compress(split,squeeze(split*npy.indices(xd.shape)))+1).tolist()
                    xl = []
                    yl = []
                    iprev = 0
@@ -1564,10 +1640,10 @@ coordinates using the shpproj utility from the shapelib tools
                 nmax = int((self.ymax-self.ymin)/dy+1)
                 yy = linspace(self.llcrnry,self.urcrnry,nmax)
                 if side == 'l':
-                    lons,lats = self(self.llcrnrx*NX.ones(yy.shape,NX.Float32),yy,inverse=True)
+                    lons,lats = self(self.llcrnrx*npy.ones(yy.shape,npy.float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(self.urcrnrx*NX.ones(yy.shape,NX.Float32),yy,inverse=True)
+                    lons,lats = self(self.urcrnrx*npy.ones(yy.shape,npy.float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
@@ -1577,10 +1653,10 @@ coordinates using the shpproj utility from the shapelib tools
                 nmax = int((self.xmax-self.xmin)/dx+1)
                 xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
                 if side == 'b':
-                    lons,lats = self(xx,self.llcrnry*NX.ones(xx.shape,NX.Float32),inverse=True)
+                    lons,lats = self(xx,self.llcrnry*npy.ones(xx.shape,npy.float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(xx,self.urcrnry*NX.ones(xx.shape,NX.Float32),inverse=True)
+                    lons,lats = self(xx,self.urcrnry*npy.ones(xx.shape,npy.float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
@@ -1605,7 +1681,7 @@ coordinates using the shpproj utility from the shapelib tools
                             lonlabstr = u'-%s\N{DEGREE SIGN}'%fmt
                         else:
                             lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
-                    lonlab = lonlabstr%NX.fabs(lon-360)
+                    lonlab = lonlabstr%npy.fabs(lon-360)
                 elif lon<180 and lon != 0:
                     if rcParams['text.usetex']:
                         if labelstyle=='+/-':
@@ -1721,8 +1797,8 @@ coordinates using the shpproj utility from the shapelib tools
             raise ValueError, 'lons and lats must be increasing!'
         # check that lons in -180,180 for non-cylindrical projections.
         if self.projection not in ['cyl','merc','mill']:
-            lonsa = NX.array(lons)
-            count = NX.sum(lonsa < -180.00001) + NX.sum(lonsa > 180.00001)
+            lonsa = npy.array(lons)
+            count = npy.sum(lonsa < -180.00001) + npy.sum(lonsa > 180.00001)
             if count > 1:
                 raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
             # allow for wraparound point to be outside.
@@ -1775,8 +1851,8 @@ coordinates using the shpproj utility from the shapelib tools
             raise ValueError, 'lons and lats must be increasing!'
         # check that lons in -180,180 for non-cylindrical projections.
         if self.projection not in ['cyl','merc','mill']:
-            lonsa = NX.array(lons)
-            count = NX.sum(lonsa < -180.00001) + NX.sum(lonsa > 180.00001)
+            lonsa = npy.array(lons)
+            count = npy.sum(lonsa < -180.00001) + npy.sum(lonsa > 180.00001)
             if count > 1:
                 raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
             # allow for wraparound point to be outside.
@@ -2044,8 +2120,8 @@ coordinates using the shpproj utility from the shapelib tools
             ax = popd(kwargs,'ax')
         # make x,y masked arrays
         # (masked where data is outside of projection limb)
-        x = ma.masked_values(NX.where(x > 1.e20,1.e20,x), 1.e20)
-        y = ma.masked_values(NX.where(y > 1.e20,1.e20,y), 1.e20)
+        x = ma.masked_values(npy.where(x > 1.e20,1.e20,x), 1.e20)
+        y = ma.masked_values(npy.where(y > 1.e20,1.e20,y), 1.e20)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = popd(kwargs, 'hold', None)
@@ -2147,10 +2223,10 @@ coordinates using the shpproj utility from the shapelib tools
  function to adjust the data to be consistent with the map projection
  region (see examples/contour_demo.py)."""
         # mask for points outside projection limb.
-        xymask = NX.logical_or(NX.greater(x,1.e20),NX.greater(y,1.e20))
+        xymask = npy.logical_or(npy.greater(x,1.e20),npy.greater(y,1.e20))
         data = ma.asarray(data)
         # combine with data mask.
-        mask = NX.logical_or(ma.getmaskarray(data),xymask)
+        mask = npy.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -2215,10 +2291,10 @@ coordinates using the shpproj utility from the shapelib tools
  function to adjust the data to be consistent with the map projection
  region (see examples/contour_demo.py)."""
         # mask for points outside projection limb.
-        xymask = NX.logical_or(NX.greater(x,1.e20),NX.greater(y,1.e20))
+        xymask = npy.logical_or(npy.greater(x,1.e20),npy.greater(y,1.e20))
         data = ma.asarray(data)
         # combine with data mask.
-        mask = NX.logical_or(ma.getmaskarray(data),xymask)
+        mask = npy.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -2339,9 +2415,9 @@ coordinates using the shpproj utility from the shapelib tools
                 lsmaskf = open(os.path.join(basemap_datadir,'5minmask.bin'),'rb')
                 nlons = 4320; nlats = nlons/2
                 delta = 360./float(nlons)
-                lsmask_lons = NX.arange(-180+0.5*delta,180.,delta)
-                lsmask_lats = NX.arange(-90.+0.5*delta,90.,delta)
-                lsmask = NX.reshape(NX.fromstring(lsmaskf.read(),NX.UInt8),(nlats,nlons))
+                lsmask_lons = npy.arange(-180+0.5*delta,180.,delta)
+                lsmask_lats = npy.arange(-90.+0.5*delta,90.,delta)
+                lsmask = npy.reshape(npy.fromstring(lsmaskf.read(),npy.uint8),(nlats,nlons))
                 lsmaskf.close()
         # instance variable lsmask is set on first invocation,
         # it contains the land-sea mask interpolated to the native
@@ -2367,17 +2443,17 @@ coordinates using the shpproj utility from the shapelib tools
             self.lsmask = mask
         # optionally, set lakes to ocean color.
         if lakes:
-            mask = NX.where(self.lsmask==2,0,self.lsmask)
+            mask = npy.where(self.lsmask==2,0,self.lsmask)
         else:
             mask = self.lsmask
         ny, nx = mask.shape
-        rgba = NX.ones((ny,nx,4),NX.UInt8)
-        rgba_land = NX.array(rgba_land,NX.UInt8)
-        rgba_ocean = NX.array(rgba_ocean,NX.UInt8)
+        rgba = npy.ones((ny,nx,4),npy.uint8)
+        rgba_land = npy.array(rgba_land,npy.uint8)
+        rgba_ocean = npy.array(rgba_ocean,npy.uint8)
         for k in range(4):
-            rgba[:,:,k] = NX.where(mask,rgba_land[k],rgba_ocean[k])
+            rgba[:,:,k] = npy.where(mask,rgba_land[k],rgba_ocean[k])
         # make points outside projection limb transparent.
-        rgba[:,:,3] = NX.where(mask==255,0,rgba[:,:,3])
+        rgba[:,:,3] = npy.where(mask==255,0,rgba[:,:,3])
         # plot mask as rgba image.
         im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
 
@@ -2455,10 +2531,10 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     # check that xout,yout are
     # within region defined by xin,yin.
     if checkbounds:
-        if min(NX.ravel(xout)) < min(xin) or \
-           max(NX.ravel(xout)) > max(xin) or \
-           min(NX.ravel(yout)) < min(yin) or \
-           max(NX.ravel(yout)) > max(yin):
+        if xout.min() < xin.min() or \
+           xout.max() > xin.max() or \
+           yout.min() < yin.min() or \
+           yout.max() > yin.max():
             raise ValueError, 'yout or xout outside range of yin or xin'
     # compute grid coordinates of output grid.
     delx = xin[1:]-xin[0:-1]
@@ -2469,9 +2545,9 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         ycoords = (len(yin)-1)*(yout-yin[0])/(yin[-1]-yin[0])
     else:
         # irregular (but still rectilinear) input grid.
-        xoutflat = NX.ravel(xout); youtflat = NX.ravel(yout)
-        ix = (NX.searchsorted(xin,xoutflat)-1).tolist()
-        iy = (NX.searchsorted(yin,youtflat)-1).tolist()
+        xoutflat = xout.flatten(); youtflat = yout.flatten()
+        ix = (npy.searchsorted(xin,xoutflat)-1).tolist()
+        iy = (npy.searchsorted(yin,youtflat)-1).tolist()
         xoutflat = xoutflat.tolist(); xin = xin.tolist()
         youtflat = youtflat.tolist(); yin = yin.tolist()
         xcoords = []; ycoords = []
@@ -2489,33 +2565,33 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
                 ycoords.append(len(yin)) # outside range on upper end
             else:
                 ycoords.append(float(j)+(youtflat[m]-yin[j])/(yin[j+1]-yin[j]))
-        xcoords = NX.reshape(xcoords,xout.shape)
-        ycoords = NX.reshape(ycoords,yout.shape)
+        xcoords = npy.reshape(xcoords,xout.shape)
+        ycoords = npy.reshape(ycoords,yout.shape)
     # data outside range xin,yin will be clipped to
     # values on boundary.
     if masked:
-        xmask = NX.logical_or(NX.less(xcoords,0),NX.greater(xcoords,len(xin)-1))
-        ymask = NX.logical_or(NX.less(ycoords,0),NX.greater(ycoords,len(yin)-1))
-        xymask = NX.logical_or(xmask,ymask)   
-    xcoords = NX.clip(xcoords,0,len(xin)-1)
-    ycoords = NX.clip(ycoords,0,len(yin)-1)
+        xmask = npy.logical_or(npy.less(xcoords,0),npy.greater(xcoords,len(xin)-1))
+        ymask = npy.logical_or(npy.less(ycoords,0),npy.greater(ycoords,len(yin)-1))
+        xymask = npy.logical_or(xmask,ymask)   
+    xcoords = npy.clip(xcoords,0,len(xin)-1)
+    ycoords = npy.clip(ycoords,0,len(yin)-1)
     # interpolate to output grid using bilinear interpolation.
     if order == 1:
-        xi = xcoords.astype(NX.Int32)
-        yi = ycoords.astype(NX.Int32)
+        xi = xcoords.astype(npy.int32)
+        yi = ycoords.astype(npy.int32)
         xip1 = xi+1
         yip1 = yi+1
-        xip1 = NX.clip(xip1,0,len(xin)-1)
-        yip1 = NX.clip(yip1,0,len(yin)-1)
-        delx = xcoords-xi.astype(NX.Float32)
-        dely = ycoords-yi.astype(NX.Float32)
+        xip1 = npy.clip(xip1,0,len(xin)-1)
+        yip1 = npy.clip(yip1,0,len(yin)-1)
+        delx = xcoords-xi.astype(npy.float32)
+        dely = ycoords-yi.astype(npy.float32)
         dataout = (1.-delx)*(1.-dely)*datain[yi,xi] + \
                   delx*dely*datain[yip1,xip1] + \
                   (1.-delx)*dely*datain[yip1,xi] + \
                   delx*(1.-dely)*datain[yi,xip1]
     elif order == 0:
-        xcoordsi = NX.around(xcoords).astype(NX.Int32)
-        ycoordsi = NX.around(ycoords).astype(NX.Int32)
+        xcoordsi = npy.around(xcoords).astype(npy.int32)
+        ycoordsi = npy.around(ycoords).astype(npy.int32)
         dataout = datain[ycoordsi,xcoordsi]
     else:
         raise ValueError,'order keyword must be 0 or 1'
@@ -2524,7 +2600,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         newmask = ma.mask_or(ma.getmask(dataout), xymask)
         dataout = ma.masked_array(dataout,mask=newmask)
     elif masked and is_scalar(masked):
-        dataout = NX.where(xymask,masked,dataout)
+        dataout = npy.where(xymask,masked,dataout)
     return dataout
 
 def shiftgrid(lon0,datain,lonsin,start=True):
@@ -2542,13 +2618,13 @@ def shiftgrid(lon0,datain,lonsin,start=True):
 
  returns dataout,lonsout (data and longitudes on shifted grid).
     """
-    if NX.fabs(lonsin[-1]-lonsin[0]-360.) > 1.e-4:
+    if npy.fabs(lonsin[-1]-lonsin[0]-360.) > 1.e-4:
         raise ValueError, 'cyclic point not included'
     if lon0 < lonsin[0] or lon0 > lonsin[-1]:
         raise ValueError, 'lon0 outside of range of lonsin'
-    i0 = NX.argmin(NX.fabs(lonsin-lon0))
-    dataout = NX.zeros(datain.shape,datain.dtype)
-    lonsout = NX.zeros(lonsin.shape,lonsin.dtype)
+    i0 = npy.argmin(npy.fabs(lonsin-lon0))
+    dataout = npy.zeros(datain.shape,datain.dtype)
+    lonsout = npy.zeros(lonsin.shape,lonsin.dtype)
     if start:
         lonsout[0:len(lonsin)-i0] = lonsin[i0:]
     else:
@@ -2572,13 +2648,13 @@ def addcyclic(arrin,lonsin):
     if hasattr(arrin,'mask'):
         arrout  = ma.zeros((nlats,nlons+1),arrin.dtype)
     else:
-        arrout  = NX.zeros((nlats,nlons+1),arrin.dtype)
+        arrout  = npy.zeros((nlats,nlons+1),arrin.dtype)
     arrout[:,0:nlons] = arrin[:,:]
     arrout[:,nlons] = arrin[:,0]
     if hasattr(lonsin,'mask'):
         lonsout = ma.zeros(nlons+1,lonsin.dtype)
     else:
-        lonsout = NX.zeros(nlons+1,lonsin.dtype)
+        lonsout = npy.zeros(nlons+1,lonsin.dtype)
     lonsout[0:nlons] = lonsin[:]
     lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
     return arrout,lonsout
