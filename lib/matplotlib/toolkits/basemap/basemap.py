@@ -661,9 +661,6 @@ class Basemap(object):
 
         # set defaults for area_thresh.
         self.resolution = resolution
-        # if no boundary data needed, we are done.
-        if self.resolution is None:
-            return
         if area_thresh is None:
             if resolution == 'c':
                 area_thresh = 10000.
@@ -680,18 +677,14 @@ class Basemap(object):
         self._boundarypolyll, self._boundarypolyxy = self._getmapboundary()
         # read in coastline polygons, only keeping those that
         # intersect map boundary polygon.
-        self.coastsegs, self.coastpolygontypes = self._readboundarydata('gshhs')
-        # same for countries, states, rivers.
-        self.cntrysegs, types = self._readboundarydata('countries')
-        self.statesegs, types = self._readboundarydata('states')
-        self.riversegs, types = self._readboundarydata('rivers')
-        # for coastlines, reformat for use in 
-        # matplotlib.patches.Polygon.
-        self.coastpolygons = []
-        for xy in self.coastsegs:
-            x = [x1 for x1,x2 in xy]
-            y = [x2 for x1,x2 in xy]
-            self.coastpolygons.append((x,y))
+        if self.resolution is not None:
+            self.coastsegs, self.coastpolygontypes = self._readboundarydata('gshhs')
+            # reformat for use in matplotlib.patches.Polygon.
+            self.coastpolygons = []
+            for xy in self.coastsegs:
+                x = [x1 for x1,x2 in xy]
+                y = [x2 for x1,x2 in xy]
+                self.coastpolygons.append((x,y))
 
     def __call__(self,x,y,inverse=False):
         """
@@ -791,22 +784,25 @@ and install those files manually (see the basemap README for details)."""
                             else:
                                 continue
                     if poly.intersects(self._boundarypolyll):
-                        poly = poly.intersection(self._boundarypolyll)
-                        if hasattr(poly,'geoms'): 
-                            geoms = poly.geoms
-                        else:
-                            geoms = [poly]
-                        for psub in geoms:
-                            if name == 'gshhs':
-                                b = npy.asarray(psub.boundary)
+                        try:
+                            poly = poly.intersection(self._boundarypolyll)
+                            if hasattr(poly,'geoms'): 
+                                geoms = poly.geoms
                             else:
-                                b = npy.asarray(psub.coords)
-                            blons = b[:,0]; blats = b[:,1]
-                            bx, by = self(blons, blats)
-                            #if (bx > 1.20).any() or (by > 1.e20).any():
-                            #    continue
-                            polygons.append(zip(bx,by))
-                            polygon_types.append(type)
+                                geoms = [poly]
+                            for psub in geoms:
+                                if name == 'gshhs':
+                                    b = npy.asarray(psub.boundary)
+                                else:
+                                    b = npy.asarray(psub.coords)
+                                blons = b[:,0]; blats = b[:,1]
+                                bx, by = self(blons, blats)
+                                #if (bx > 1.20).any() or (by > 1.e20).any():
+                                #    continue
+                                polygons.append(zip(bx,by))
+                                polygon_types.append(type)
+                        except:
+                            pass
                 # if map boundary polygon is not valid in lat/lon
                 # coordinates, compute intersection between map
                 # projection region and boundary geometries in map
@@ -860,7 +856,6 @@ and install those files manually (see the basemap README for details)."""
                                 b = npy.asarray(psub.coords)
                             polygons.append(zip(b[:,0],b[:,1]))
                             polygon_types.append(type)
-        print name,len(polygons)
         return polygons, polygon_types
 
 
@@ -1119,6 +1114,10 @@ and install those files manually (see the basemap README for details)."""
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
+        # read in country line segments, only keeping those that
+        # intersect map boundary polygon.
+        if not hasattr(self,'cntrysegs'):
+            self.cntrysegs, types = self._readboundarydata('countries')
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
@@ -1150,6 +1149,10 @@ and install those files manually (see the basemap README for details)."""
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
+        # read in state line segments, only keeping those that
+        # intersect map boundary polygon.
+        if not hasattr(self,'statesegs'):
+            self.statesegs, types = self._readboundarydata('states')
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
@@ -1181,6 +1184,10 @@ and install those files manually (see the basemap README for details)."""
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
+        # read in river line segments, only keeping those that
+        # intersect map boundary polygon.
+        if not hasattr(self,'riversegs'):
+            self.riversegs, types = self._readboundarydata('rivers')
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
