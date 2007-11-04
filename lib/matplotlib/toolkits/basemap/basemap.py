@@ -777,10 +777,6 @@ and install those files manually (see the basemap README for details)."""
                                 lons.append(lonend)
                                 lats.append(-90.)
                                 poly = PolygonShape(zip(lons,lats))
-                                #b = npy.asarray(poly.boundary)
-                                #import pylab
-                                #pylab.fill(b[:,0],b[:,1],'b')
-                                #pylab.show()
                             else:
                                 continue
                     if poly.intersects(self._boundarypolyll):
@@ -797,8 +793,6 @@ and install those files manually (see the basemap README for details)."""
                                     b = npy.asarray(psub.coords)
                                 blons = b[:,0]; blats = b[:,1]
                                 bx, by = self(blons, blats)
-                                #if (bx > 1.20).any() or (by > 1.e20).any():
-                                #    continue
                                 polygons.append(zip(bx,by))
                                 polygon_types.append(type)
                         except:
@@ -814,6 +808,8 @@ and install those files manually (see the basemap README for details)."""
                         b = npy.asarray(poly.coords)
                     bx, by = self(b[:,0], b[:,1])
                     mask = npy.logical_and(bx<1.e20,by<1.e20)
+                    # if less than two points are valid in 
+                    # map proj coords, skip this geometry.
                     if sum(mask) <= 1: continue
                     if name == 'gshhs':
                         poly = PolygonShape(zip(bx,by))
@@ -823,23 +819,6 @@ and install those files manually (see the basemap README for details)."""
                         bx = npy.compress(mask, bx)
                         by = npy.compress(mask, by)
                         poly = LineShape(zip(bx,by))
-                    if 0:
-                        import pylab
-                        print poly
-                        pp = self._boundarypolyxy.intersection(poly)
-                        print name, pp
-                        a = npy.asarray(self._boundarypolyxy.boundary)
-                        pylab.plot(a[:,0],a[:,1],'b')
-                        pylab.plot(bx,by,'r')
-                        if hasattr(pp,'geoms'):
-                            px = pp.geoms
-                        else:
-                            px = [pp]
-                        for p in px:
-                            c = npy.asarray(p.boundary)
-                            pylab.fill(c[:,0],c[:,1],'g')
-                            pylab.show()
-                            raise SystemExit(0)
                     if self._boundarypolyxy.intersects(poly):
                         try:
                             poly = self._boundarypolyxy.intersection(poly)
@@ -857,7 +836,6 @@ and install those files manually (see the basemap README for details)."""
                             polygons.append(zip(b[:,0],b[:,1]))
                             polygon_types.append(type)
         return polygons, polygon_types
-
 
     def _getmapboundary(self):
         """
