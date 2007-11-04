@@ -758,7 +758,7 @@ and install those files manually (see the basemap README for details)."""
                 # regions and high-resolution boundary geometries).
                 if not containsPole:
                     # close Antarctica for cylindrical projections.
-                    if name == 'gshhs' and self.projection in ['cyl','merc','mill']:
+                    if name == 'gshhs' and self.projection in ['cyl','merc','mill','moll','robin','sinu']:
                         b = npy.asarray(poly.boundary)
                         lons = b[:,0]
                         lats = b[:,1]
