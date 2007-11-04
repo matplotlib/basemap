@@ -653,8 +653,8 @@ class Basemap(object):
             self.latmax = 90.
         else:
             lons, lats = self.makegrid(101,101)
-            self.latmin = min(NX.ravel(lats))
-            self.latmax = max(NX.ravel(lats))
+            self.latmin = lats.min()
+            self.latmax = lats.max()
 
         # if ax == None, pylab.gca may be used.
         self.ax = ax
@@ -2844,10 +2844,10 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     # check that xout,yout are
     # within region defined by xin,yin.
     if checkbounds:
-        if min(NX.ravel(xout)) < min(xin) or \
-           max(NX.ravel(xout)) > max(xin) or \
-           min(NX.ravel(yout)) < min(yin) or \
-           max(NX.ravel(yout)) > max(yin):
+        if xout.min() < xin.min() or \
+           xout.max() > xin.max() or \
+           yout.min() < yin.min() or \
+           yout.max() > yin.max():
             raise ValueError, 'yout or xout outside range of yin or xin'
     # compute grid coordinates of output grid.
     delx = xin[1:]-xin[0:-1]
@@ -2858,7 +2858,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         ycoords = (len(yin)-1)*(yout-yin[0])/(yin[-1]-yin[0])
     else:
         # irregular (but still rectilinear) input grid.
-        xoutflat = NX.ravel(xout); youtflat = NX.ravel(yout)
+        xoutflat = xout.flatten(); youtflat = yout.flatten()
         ix = (NX.searchsorted(xin,xoutflat)-1).tolist()
         iy = (NX.searchsorted(yin,youtflat)-1).tolist()
         xoutflat = xoutflat.tolist(); xin = xin.tolist()
