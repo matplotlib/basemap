@@ -504,6 +504,9 @@ class Basemap(object):
                 self._fulldisk = False
             self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
             self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+            # FIXME: won't work for points exactly on equator??
+            if npy.abs(lat_0) < 1.e-2: lat_0 = 1.e-2
+            projparams['lat_0'] = lat_0
         elif projection == 'geos':
             if lon_0 is None and satellite_height is None:
                 raise ValueError, 'must specify lon_0 and satellite_height for Geostationary basemap'
@@ -758,12 +761,10 @@ and install those files manually (see the basemap README for details)."""
         # make sure orthographic projection has containsPole=True
         # we will compute the intersections in stereographic
         # coordinates, then transform to orthographic.
-        if self.projection == 'ortho':  
+        if self.projection == 'ortho' and name == 'gshhs':  
             containsPole = True
             lon_0=self.projparams['lon_0']
             lat_0=self.projparams['lat_0']
-            # FIXME: won't work for points exactly on equator??
-            if npy.abs(lat_0) < 1.e-4: lat_0 = 1.e04
             maptran = pyproj.Proj(proj='stere',lon_0=lon_0,lat_0=lat_0)
             # boundary polygon for orthographic projection
             # in stereographic coorindates.
@@ -845,7 +846,7 @@ and install those files manually (see the basemap README for details)."""
                     blons = b[:,0]; blats = b[:,1]
                     # special case for ortho, compute polygon
                     # coordinates in stereographic coords.
-                    if self.projection == 'ortho':
+                    if name == 'gshhs' and self.projection == 'ortho':
                         bx, by = maptran(blons, blats)
                     else:
                         bx, by = self(blons, blats)
@@ -860,6 +861,13 @@ and install those files manually (see the basemap README for details)."""
                         # in this map projection.
                         bx = npy.compress(mask, bx)
                         by = npy.compress(mask, by)
+                        # for orthographic projection, all points
+                        # outside map projection region are eliminated
+                        # with the above step, so we're done.
+                        if self.projection == 'ortho':
+                            polygons.append(zip(bx,by))
+                            polygon_types.append(type)
+                            continue
                         poly = LineShape(zip(bx,by))
                     if boundarypolyxy.intersects(poly):
                         try:
