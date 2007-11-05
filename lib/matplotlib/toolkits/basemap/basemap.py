@@ -734,6 +734,10 @@ and install those files manually (see the basemap README for details)."""
         hasNP = self._boundarypolyxy.contains(NPole)
         hasSP = self._boundarypolyxy.contains(SPole)
         containsPole = hasNP or hasSP
+        # make sure geostationary projection has containsPole=False
+        # even if only a limited area is requested (since entire
+        # disk will be used to subset boundary geometries).
+        if self.projection == 'geos':  containsPole = False
         # iterate over boundary geometries.
         for line in bdatmetafile:
             linesplit = line.split()
@@ -843,47 +847,55 @@ and install those files manually (see the basemap README for details)."""
         """
         nx = 100
         ny = 100
-        if self.projection == 'ortho' and self._fulldisk:
+        maptran = self
+        if self.projection in ['ortho','geos']:
             # circular region.
             thetas = linspace(0.,2.*npy.pi,2*nx*ny)[:-1]
-            radius = self.rmajor
-            x = radius*npy.cos(thetas) + 0.5*self.xmax
-            y = radius*npy.sin(thetas) + 0.5*self.ymax
+            if self.projection == 'ortho':
+                rminor = self.rmajor
+                rmajor = self.rmajor
+            else:
+                rminor = self._height
+                rmajor = self._width
+            x = rmajor*npy.cos(thetas) + rmajor
+            y = rminor*npy.sin(thetas) + rminor
             boundaryxy = PolygonShape(zip(x,y))
-        elif self.projection == 'geos' and self._fulldisk:
-            # elliptical region
-            thetas = linspace(0.,2.*npy.pi,2*nx*ny)[:-1]
-            rminor = self._height
-            rmajor = self._width
-            x = rmajor*npy.cos(thetas) + 0.5*self.xmax
-            y = rminor*npy.sin(thetas) + 0.5*self.ymax
-            boundaryxy = PolygonShape(zip(x,y))
+            # compute proj instance for full disk, if necessary.
+            if not self._fulldisk:
+                projparms = self.projparams
+                del projparms['x_0']
+                del projparms['y_0']
+                if self.projection == 'ortho':
+                    llcrnrx = -self.rmajor
+                    llcrnry = -self.rmajor
+                    urcrnrx = -llcrnrx
+                    urcrnry = -llcrnry
+                else:
+                    llcrnrx = -self._width
+                    llcrnry = -self._height
+                    urcrnrx = -llcrnrx
+                    urcrnry = -llcrnry
+                projparms['x_0']=-llcrnrx
+                projparms['y_0']=-llcrnry
+                maptran = pyproj.Proj(projparms)
         elif self.projection in ['moll','robin','sinu']:  
             # quasi-elliptical region.
-            x = []; y = []
+            lon_0 = self.projparams['lon_0']
             # left side
             lats1 = linspace(-89.9,89.9,ny).tolist()
-            lons1 = len(lats1)*[self.projparams['lon_0']-179.9]
-            x,y = self(lons1,lats1)
+            lons1 = len(lats1)*[lon_0-179.9]
             # top.
-            lons2 = linspace(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179,nx).tolist()
+            lons2 = linspace(lon_0-179.9,lon_0+179.9,nx).tolist()
             lats2 = len(lons2)*[89.9]
-            xx,yy = self(lons2,lats2)
-            x = x+xx; y = y+yy
             # right side
             lats3 = linspace(89.9,-89.9,ny).tolist()
-            lons3 = len(lats3)*[self.projparams['lon_0']+179.9]
-            xx,yy = self(lons3,lats3)
-            x = x+xx; y = y+yy
+            lons3 = len(lats3)*[lon_0+179.9]
             # bottom.
-            lons4 = linspace(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180).tolist()
+            lons4 = linspace(lon_0+179.9,lon_0-179.9,nx).tolist()
             lats4 = len(lons4)*[-89.9]
-            xx,yy = self(lons4,lats4)
-            x = x+xx; y = y+yy
-            x = npy.array(x,npy.float64)
-            y = npy.array(y,npy.float64)
-            lons = lons1+lons2+lons3+lons4
-            lats = lats1+lats2+lats3+lats4
+            lons = npy.array(lons1+lons2+lons3+lons4,npy.float64)
+            lats = npy.array(lats1+lats2+lats3+lats4,npy.float64)
+            x, y = maptran(lons,lats)
             boundaryxy = PolygonShape(zip(x,y))
         else: # all other projections are rectangular.
             # left side (x = xmin, ymin <= y <= ymax)
@@ -911,7 +923,7 @@ and install those files manually (see the basemap README for details)."""
             lats = [self.llcrnrlat, self.urcrnrlat, self.urcrnrlat, self.llcrnrlat]
         else:
             if self.projection not in ['moll','robin','sinu']:  
-                lons, lats = self(x,y,inverse=True)
+                lons, lats = maptran(x,y,inverse=True)
                 # fix lons so there are no jumps.
                 n = 1
                 lonprev = lons[0]
