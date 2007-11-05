@@ -661,7 +661,7 @@ class Basemap(object):
 
         # set defaults for area_thresh.
         self.resolution = resolution
-        if area_thresh is None:
+        if area_thresh is None and resolution is not None:
             if resolution == 'c':
                 area_thresh = 10000.
             elif resolution == 'l':
@@ -681,13 +681,11 @@ class Basemap(object):
             self.coastsegs, self.coastpolygontypes = self._readboundarydata('gshhs')
             # reformat for use in matplotlib.patches.Polygon.
             self.coastpolygons = []
-            for xy in self.coastsegs:
-                x, y = zip(*xy)
-                self.coastpolygons.append((x,y))
-            # split coastline segments that jump across entire plot.
+            # also, split coastline segments that jump across entire plot.
             coastsegs = []
             for seg in self.coastsegs:
                 x, y = zip(*seg)
+                self.coastpolygons.append((x,y))
                 x = npy.array(x,npy.float64); y = npy.array(y,npy.float64)
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
@@ -749,13 +747,29 @@ and install those files manually (see the basemap README for details)."""
         # see if map projection region polygon contains a pole.
         NPole = PointShape(self(0.,90.))
         SPole = PointShape(self(0.,-90.))
-        hasNP = self._boundarypolyxy.contains(NPole)
-        hasSP = self._boundarypolyxy.contains(SPole)
+        boundarypolyxy = self._boundarypolyxy
+        hasNP = boundarypolyxy.contains(NPole)
+        hasSP = boundarypolyxy.contains(SPole)
         containsPole = hasNP or hasSP
         # make sure geostationary projection has containsPole=False
         # even if only a limited area is requested (since entire
         # disk will be used to subset boundary geometries).
         if self.projection == 'geos':  containsPole = False
+        # make sure orthographic projection has containsPole=True
+        # we will compute the intersections in stereographic
+        # coordinates, then transform to orthographic.
+        if self.projection == 'ortho':  
+            containsPole = True
+            lon_0=self.projparams['lon_0']
+            lat_0=self.projparams['lat_0']
+            # FIXME: won't work for points exactly on equator??
+            if npy.abs(lat_0) < 1.e-4: lat_0 = 1.e04
+            maptran = pyproj.Proj(proj='stere',lon_0=lon_0,lat_0=lat_0)
+            # boundary polygon for orthographic projection
+            # in stereographic coorindates.
+            b = npy.asarray(self._boundarypolyll.boundary)
+            blons = b[:,0]; blats = b[:,1]
+            boundarypolyxy = PolygonShape(zip(*maptran(blons,blats)))
         # iterate over boundary geometries.
         for line in bdatmetafile:
             linesplit = line.split()
@@ -828,7 +842,13 @@ and install those files manually (see the basemap README for details)."""
                         b = npy.asarray(poly.boundary)
                     else:
                         b = npy.asarray(poly.coords)
-                    bx, by = self(b[:,0], b[:,1])
+                    blons = b[:,0]; blats = b[:,1]
+                    # special case for ortho, compute polygon
+                    # coordinates in stereographic coords.
+                    if self.projection == 'ortho':
+                        bx, by = maptran(blons, blats)
+                    else:
+                        bx, by = self(blons, blats)
                     mask = npy.logical_and(bx<1.e20,by<1.e20)
                     # if less than two points are valid in 
                     # map proj coords, skip this geometry.
@@ -841,9 +861,9 @@ and install those files manually (see the basemap README for details)."""
                         bx = npy.compress(mask, bx)
                         by = npy.compress(mask, by)
                         poly = LineShape(zip(bx,by))
-                    if self._boundarypolyxy.intersects(poly):
+                    if boundarypolyxy.intersects(poly):
                         try:
-                            poly = self._boundarypolyxy.intersection(poly)
+                            poly = boundarypolyxy.intersection(poly)
                         except:
                             continue
                         if hasattr(poly,'geoms'): 
@@ -855,6 +875,19 @@ and install those files manually (see the basemap README for details)."""
                                 b = npy.asarray(psub.boundary)
                             else:
                                 b = npy.asarray(psub.coords)
+                            # if projection == 'ortho',
+                            # transform polygon from stereographic
+                            # to orthographic coordinates.
+                            if self.projection == 'ortho':
+                                # if coastline polygon covers more than 99%
+                                # of map region, it's probably bogus, so
+                                # skip it.
+                                if name == 'gshhs' and \
+                                   psub.area/boundarypolyxy.area > 0.99: continue
+                                bx = b[:,0]; by = b[:,1]
+                                blons, blats = maptran(bx, by, inverse=True)
+                                bx, by = self(blons, blats)
+                                b[:,0] = bx; b[:,1] = by
                             polygons.append(zip(b[:,0],b[:,1]))
                             polygon_types.append(type)
         return polygons, polygon_types
