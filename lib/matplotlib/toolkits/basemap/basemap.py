@@ -682,9 +682,27 @@ class Basemap(object):
             # reformat for use in matplotlib.patches.Polygon.
             self.coastpolygons = []
             for xy in self.coastsegs:
-                x = [x1 for x1,x2 in xy]
-                y = [x2 for x1,x2 in xy]
+                x, y = zip(*xy)
                 self.coastpolygons.append((x,y))
+            # split coastline segments that jump across entire plot.
+            coastsegs = []
+            for seg in self.coastsegs:
+                x, y = zip(*seg)
+                x = npy.array(x,npy.float64); y = npy.array(y,npy.float64)
+                xd = (x[1:]-x[0:-1])**2
+                yd = (y[1:]-y[0:-1])**2
+                dist = npy.sqrt(xd+yd)
+                split = dist > 5000000.
+                if npy.sum(split) and self.projection not in ['merc','cyl','mill']:
+                   ind = (npy.compress(split,squeeze(split*npy.indices(xd.shape)))+1).tolist()
+                   iprev = 0
+                   ind.append(len(xd))
+                   for i in ind:
+                       coastsegs.append(zip(x[iprev:i],y[iprev:i]))
+                       iprev = i
+                else:
+                    coastsegs.append(seg)
+            self.coastsegs = coastsegs
 
     def __call__(self,x,y,inverse=False):
         """
