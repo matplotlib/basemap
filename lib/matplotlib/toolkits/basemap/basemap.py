@@ -10,10 +10,8 @@ from matplotlib.patches import Ellipse, Circle, Polygon
 from matplotlib.lines import Line2D
 import pyproj, sys, os, math, dbflib
 from proj import Proj
-from matplotlib.numerix import ma
 import numpy as npy
-from numpy import linspace
-from matplotlib.numerix.mlab import squeeze
+from numpy import linspace, squeeze, ma
 from matplotlib.cbook import popd, is_scalar
 from shapelib import ShapeFile
 from shapely.geometry import Polygon as PolygonShape
@@ -2572,7 +2570,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
  points in datain are masked.  To avoid this, do the interpolation in two
  passes, first with order=1 (producing dataout1), then with order=0
  (producing dataout2).  Then replace all the masked values in dataout1
- with the corresponding elements in dataout2 (using numerix.where).
+ with the corresponding elements in dataout2 (using numpy.where).
  This effectively uses nearest neighbor interpolation if any of the
  four surrounding points in datain are masked, and bilinear interpolation
  otherwise.
