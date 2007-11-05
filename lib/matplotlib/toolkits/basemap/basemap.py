@@ -862,26 +862,28 @@ and install those files manually (see the basemap README for details)."""
             # quasi-elliptical region.
             x = []; y = []
             # left side
-            lats = linspace(-89.9,89.9,ny).tolist()
-            lons = len(lats)*[self.projparams['lon_0']-179.9]
-            x,y = self(lons,lats)
+            lats1 = linspace(-89.9,89.9,ny).tolist()
+            lons1 = len(lats1)*[self.projparams['lon_0']-179.9]
+            x,y = self(lons1,lats1)
             # top.
-            lons = linspace(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179,nx).tolist()
-            lats = len(lons)*[89.9]
-            xx,yy = self(lons,lats)
+            lons2 = linspace(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179,nx).tolist()
+            lats2 = len(lons2)*[89.9]
+            xx,yy = self(lons2,lats2)
             x = x+xx; y = y+yy
             # right side
-            lats = linspace(89.9,-89.9,ny).tolist()
-            lons = len(lats)*[self.projparams['lon_0']+179.9]
-            xx,yy = self(lons,lats)
+            lats3 = linspace(89.9,-89.9,ny).tolist()
+            lons3 = len(lats3)*[self.projparams['lon_0']+179.9]
+            xx,yy = self(lons3,lats3)
             x = x+xx; y = y+yy
             # bottom.
-            lons = linspace(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180).tolist()
-            lats = len(lons)*[-89.9]
-            xx,yy = self(lons,lats)
+            lons4 = linspace(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180).tolist()
+            lats4 = len(lons4)*[-89.9]
+            xx,yy = self(lons4,lats4)
             x = x+xx; y = y+yy
             x = npy.array(x,npy.float64)
             y = npy.array(y,npy.float64)
+            lons = lons1+lons2+lons3+lons4
+            lats = lats1+lats2+lats3+lats4
             boundaryxy = PolygonShape(zip(x,y))
         else: # all other projections are rectangular.
             # left side (x = xmin, ymin <= y <= ymax)
@@ -908,21 +910,21 @@ and install those files manually (see the basemap README for details)."""
             lons = [self.llcrnrlon, self.llcrnrlon, self.urcrnrlon, self.urcrnrlon]
             lats = [self.llcrnrlat, self.urcrnrlat, self.urcrnrlat, self.llcrnrlat]
         else:
-            lons, lats = self(x,y,inverse=True)
-            # fix lons so there are no jumps.
-            n = 1
-            lonprev = lons[0]
-            for lon,lat in zip(lons[1:],lats[1:]):
-                if npy.abs(lon-lonprev) > 90.:
-                    if lonprev < 0: 
-                        lon = lon - 360.
-                    else:
-                        lon = lon + 360
-                    lons[n] = lon
-                lonprev = lon
-                n = n + 1
+            if self.projection not in ['moll','robin','sinu']:  
+                lons, lats = self(x,y,inverse=True)
+                # fix lons so there are no jumps.
+                n = 1
+                lonprev = lons[0]
+                for lon,lat in zip(lons[1:],lats[1:]):
+                    if npy.abs(lon-lonprev) > 90.:
+                        if lonprev < 0: 
+                            lon = lon - 360.
+                        else:
+                            lon = lon + 360
+                        lons[n] = lon
+                    lonprev = lon
+                    n = n + 1
         boundaryll = PolygonShape(zip(lons,lats))
-        #print 'map projection region',boundaryll.geom_type,boundaryll.is_valid
         return PolygonShape(zip(lons,lats)), boundaryxy
 
 
