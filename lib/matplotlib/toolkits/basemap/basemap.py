@@ -19,7 +19,7 @@ from shapelib import ShapeFile
 from shapely.geometry import Polygon as PolygonShape
 from shapely.geometry import LineString as LineShape
 from shapely.geometry import Point as PointShape
-from shapely import wkb, wkt
+from shapely import wkb
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -1013,9 +1013,6 @@ and install those files manually (see the basemap README for details)."""
                 ax = pylab.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
-        x = []
-        y = []
-        dtheta = 0.01
         if self.projection == 'ortho' and self._fulldisk: # circular region.
             # define a circle patch, add it to axes instance.
             circle = Circle((self.rmajor,self.rmajor),self.rmajor)
@@ -1033,25 +1030,24 @@ and install those files manually (see the basemap README for details)."""
             ellps.set_linewidth(linewidth)
             ellps.set_clip_on(False)
         elif self.projection in ['moll','robin','sinu']:  # elliptical region.
+            nx = 100; ny = 100
+            # quasi-elliptical region.
+            lon_0 = self.projparams['lon_0']
             # left side
-            lats = npy.arange(-89.9,89.9+dtheta,dtheta).tolist()
-            lons = len(lats)*[self.projparams['lon_0']-179.9]
-            x,y = self(lons,lats)
+            lats1 = linspace(-89.9,89.9,ny).tolist()
+            lons1 = len(lats1)*[lon_0-179.9]
             # top.
-            lons = npy.arange(self.projparams['lon_0']-179.9,self.projparams['lon_0']+179+dtheta,dtheta).tolist()
-            lats = len(lons)*[89.9]
-            xx,yy = self(lons,lats)
-            x = x+xx; y = y+yy
+            lons2 = linspace(lon_0-179.9,lon_0+179.9,nx).tolist()
+            lats2 = len(lons2)*[89.9]
             # right side
-            lats = npy.arange(89.9,-89.9-dtheta,-dtheta).tolist()
-            lons = len(lats)*[self.projparams['lon_0']+179.9]
-            xx,yy = self(lons,lats)
-            x = x+xx; y = y+yy
+            lats3 = linspace(89.9,-89.9,ny).tolist()
+            lons3 = len(lats3)*[lon_0+179.9]
             # bottom.
-            lons = npy.arange(self.projparams['lon_0']+179.9,self.projparams['lon_0']-180-dtheta,-dtheta).tolist()
-            lats = len(lons)*[-89.9]
-            xx,yy = self(lons,lats)
-            x = x+xx; y = y+yy
+            lons4 = linspace(lon_0+179.9,lon_0-179.9,nx).tolist()
+            lats4 = len(lons4)*[-89.9]
+            lons = npy.array(lons1+lons2+lons3+lons4,npy.float64)
+            lats = npy.array(lats1+lats2+lats3+lats4,npy.float64)
+            x, y = self(lons,lats)
             xy = zip(x,y)
             poly = Polygon(xy,edgecolor=color,linewidth=linewidth)
             ax.add_patch(poly)
