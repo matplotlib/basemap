@@ -887,10 +887,12 @@ and install those files manually (see the basemap README for details)."""
                             # to orthographic coordinates.
                             if self.projection == 'ortho':
                                 # if coastline polygon covers more than 99%
-                                # of map region, it's probably bogus, so
-                                # skip it.
-                                if name == 'gshhs' and \
-                                   psub.area/boundarypolyxy.area > 0.99: continue
+                                # of map region for fulldisk projection,
+                                # it's probably bogus, so skip it.
+                                areafrac = psub.area/boundarypolyxy.area
+                                if name == 'gshhs' and\
+                                   self._fulldisk and\
+                                   areafrac > 0.99: continue
                                 bx = b[:,0]; by = b[:,1]
                                 blons, blats = maptran(bx, by, inverse=True)
                                 bx, by = self(blons, blats)
