@@ -792,7 +792,8 @@ and install those files manually (see the basemap README for details)."""
                 # coordinates (this saves time, especially for small map
                 # regions and high-resolution boundary geometries).
                 if not containsPole:
-                    # close Antarctica for cylindrical projections.
+                    # close Antarctica for cylindrical and 
+                    # pseudo-cylindrical projections.
                     if name == 'gshhs' and self.projection in ['cyl','merc','mill','moll','robin','sinu']:
                         b = npy.asarray(poly.boundary)
                         lons = b[:,0]
@@ -900,7 +901,7 @@ and install those files manually (see the basemap README for details)."""
 
     def _getmapboundary(self):
         """
- define map boundary polygon (in lat/lon coordinates)
+ create map boundary polygon (in lat/lon and x/y coordinates)
         """
         nx = 100
         ny = 100
@@ -994,7 +995,7 @@ and install those files manually (see the basemap README for details)."""
                     lonprev = lon
                     n = n + 1
         boundaryll = PolygonShape(zip(lons,lats))
-        return PolygonShape(zip(lons,lats)), boundaryxy
+        return boundaryll, boundaryxy
 
 
     def drawmapboundary(self,color='k',linewidth=1.0,ax=None):
