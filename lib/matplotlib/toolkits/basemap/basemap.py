@@ -10,10 +10,8 @@ from matplotlib.patches import Ellipse, Circle, Polygon
 from matplotlib.lines import Line2D
 import pyproj, sys, os, math, dbflib
 from proj import Proj
-from matplotlib.numerix import npyma as ma
 import numpy as npy
-from numpy import linspace
-from matplotlib.numerix.mlab import squeeze
+from numpy import linspace, ma, squeeze
 from matplotlib.cbook import is_scalar, dedent
 
 from shapelib import ShapeFile
