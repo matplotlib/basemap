@@ -792,9 +792,9 @@ and install those files manually (see the basemap README for details)."""
                 # coordinates (this saves time, especially for small map
                 # regions and high-resolution boundary geometries).
                 if not containsPole:
-                    # close Antarctica for cylindrical and 
-                    # pseudo-cylindrical projections.
-                    if name == 'gshhs' and self.projection in ['cyl','merc','mill','moll','robin','sinu']:
+                    # close Antarctica for projections in which this
+                    # is necessary.
+                    if name == 'gshhs' and self.projection in ['cyl','merc','mill','moll','robin','sinu','geos']:
                         b = npy.asarray(poly.boundary)
                         lons = b[:,0]
                         lats = b[:,1]
@@ -818,10 +818,7 @@ and install those files manually (see the basemap README for details)."""
                     # if polygon instersects map projection
                     # region, process it.
                     if poly.intersects(self._boundarypolyll):
-                        try:
-                            poly = poly.intersection(self._boundarypolyll)
-                        except:
-                            continue
+                        poly = poly.intersection(self._boundarypolyll)
                         # create iterable object with geometries
                         # that intersect map region.
                         if hasattr(poly,'geoms'): 
@@ -866,10 +863,11 @@ and install those files manually (see the basemap README for details)."""
                         bx, by = maptran(blons, blats)
                     else:
                         bx, by = self(blons, blats)
-                    mask = npy.logical_and(bx<1.e20,by<1.e20)
+                    goodmask = npy.logical_and(bx<1.e20,by<1.e20)
+                    badmask = npy.logical_or(bx>1.e20,by>1.e20)
                     # if less than two points are valid in 
                     # map proj coords, skip this geometry.
-                    if sum(mask) <= 1: continue
+                    if npy.sum(goodmask) <= 1: continue
                     if name == 'gshhs':
                         # create a polygon object for coastline
                         # geometry.
@@ -878,8 +876,8 @@ and install those files manually (see the basemap README for details)."""
                         # if not a polygon,
                         # just remove parts of geometry that are undefined
                         # in this map projection.
-                        bx = npy.compress(mask, bx)
-                        by = npy.compress(mask, by)
+                        bx = npy.compress(goodmask, bx)
+                        by = npy.compress(goodmask, by)
                         # for orthographic projection, all points
                         # outside map projection region are eliminated
                         # with the above step, so we're done.
@@ -891,11 +889,15 @@ and install those files manually (see the basemap README for details)."""
                         poly = LineShape(zip(bx,by))
                     # if polygon instersects map projection
                     # region, process it.
-                    if boundarypolyxy.intersects(poly):
-                        try:
-                            poly = boundarypolyxy.intersection(poly)
-                        except:
-                            continue
+                    if not npy.sum(badmask) and boundarypolyxy.intersects(poly):
+                        #print poly.is_valid, poly.geom_type
+                        #import pylab
+                        #a = npy.asarray(boundarypolyxy.boundary)
+                        #b = npy.asarray(poly.boundary)
+                        #pylab.plot(a[:,0],a[:,1],'b')
+                        #pylab.plot(b[:,0],b[:,1],'b')
+                        #pylab.show()
+                        poly = boundarypolyxy.intersection(poly)
                         # create iterable object with geometries
                         # that intersect map region.
                         if hasattr(poly,'geoms'): 
@@ -1131,10 +1133,10 @@ and install those files manually (see the basemap README for details)."""
             test2 = npy.fabs(xa-self.llcrnrx) < delx
             test3 = npy.fabs(ya-self.urcrnry) < dely
             test4 = npy.fabs(ya-self.llcrnry) < dely
-            hasp1 = sum(test1*test3)
-            hasp2 = sum(test2*test3)
-            hasp4 = sum(test2*test4)
-            hasp3 = sum(test1*test4)
+            hasp1 = npy.sum(test1*test3)
+            hasp2 = npy.sum(test2*test3)
+            hasp4 = npy.sum(test2*test4)
+            hasp3 = npy.sum(test1*test4)
             if not hasp1 or not hasp2 or not hasp3 or not hasp4:
                 xy = zip(xa.tolist(),ya.tolist())
                 if self.coastpolygontypes[np] != 2:
