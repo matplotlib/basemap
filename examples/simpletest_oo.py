@@ -7,7 +7,7 @@ matplotlib.use('Agg')
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.toolkits.basemap import Basemap
 from matplotlib.figure import Figure
-from matplotlib.mlab import meshgrid
+from numpy import meshgrid
 import matplotlib.numerix as nx
 import matplotlib.cm as cm
 from matplotlib.mlab import load
