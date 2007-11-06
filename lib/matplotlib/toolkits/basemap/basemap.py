@@ -815,36 +815,53 @@ and install those files manually (see the basemap README for details)."""
                                 poly = PolygonShape(zip(lons,lats))
                             else:
                                 continue
+                    # if polygon instersects map projection
+                    # region, process it.
                     if poly.intersects(self._boundarypolyll):
                         try:
                             poly = poly.intersection(self._boundarypolyll)
-                            if hasattr(poly,'geoms'): 
-                                geoms = poly.geoms
-                            else:
-                                geoms = [poly]
-                            for psub in geoms:
-                                if name == 'gshhs':
-                                    b = npy.asarray(psub.boundary)
-                                else:
-                                    b = npy.asarray(psub.coords)
-                                blons = b[:,0]; blats = b[:,1]
-                                bx, by = self(blons, blats)
-                                polygons.append(zip(bx,by))
-                                polygon_types.append(type)
                         except:
-                            pass
+                            continue
+                        # create iterable object with geometries
+                        # that intersect map region.
+                        if hasattr(poly,'geoms'): 
+                            geoms = poly.geoms
+                        else:
+                            geoms = [poly]
+                        # iterate over geometries in intersection.
+                        for psub in geoms:
+                            # only coastlines are polygons,
+                            # which have a 'boundary' attribute.
+                            # otherwise, use 'coords' attribute
+                            # to extract coordinates.
+                            if name == 'gshhs':
+                                b = npy.asarray(psub.boundary)
+                            else:
+                                b = npy.asarray(psub.coords)
+                            blons = b[:,0]; blats = b[:,1]
+                            # transformation from lat/lon to
+                            # map projection coordinates.
+                            bx, by = self(blons, blats)
+                            polygons.append(zip(bx,by))
+                            polygon_types.append(type)
                 # if map boundary polygon is not valid in lat/lon
                 # coordinates, compute intersection between map
                 # projection region and boundary geometries in map
                 # projection coordinates.
                 else:
+                    # only coastlines are polygons,
+                    # which have a 'boundary' attribute.
+                    # otherwise, use 'coords' attribute
+                    # to extract coordinates.
                     if name == 'gshhs':
                         b = npy.asarray(poly.boundary)
                     else:
                         b = npy.asarray(poly.coords)
                     blons = b[:,0]; blats = b[:,1]
-                    # special case for ortho, compute polygon
-                    # coordinates in stereographic coords.
+                    # transform coordinates from lat/lon
+                    # to map projection coordinates.
+                    # special case for ortho, compute coastline polygon
+                    # vertices in stereographic coords.
                     if name == 'gshhs' and self.projection == 'ortho':
                         bx, by = maptran(blons, blats)
                     else:
@@ -854,9 +871,12 @@ and install those files manually (see the basemap README for details)."""
                     # map proj coords, skip this geometry.
                     if sum(mask) <= 1: continue
                     if name == 'gshhs':
+                        # create a polygon object for coastline
+                        # geometry.
                         poly = PolygonShape(zip(bx,by))
                     else:
-                        # remove parts of geometry that are undefined
+                        # if not a polygon,
+                        # just remove parts of geometry that are undefined
                         # in this map projection.
                         bx = npy.compress(mask, bx)
                         by = npy.compress(mask, by)
@@ -867,16 +887,22 @@ and install those files manually (see the basemap README for details)."""
                             polygons.append(zip(bx,by))
                             polygon_types.append(type)
                             continue
+                        # create a Line object for other geometries.
                         poly = LineShape(zip(bx,by))
+                    # if polygon instersects map projection
+                    # region, process it.
                     if boundarypolyxy.intersects(poly):
                         try:
                             poly = boundarypolyxy.intersection(poly)
                         except:
                             continue
+                        # create iterable object with geometries
+                        # that intersect map region.
                         if hasattr(poly,'geoms'): 
                             geoms = poly.geoms
                         else:
                             geoms = [poly]
+                        # iterate over geometries in intersection.
                         for psub in geoms:
                             if name == 'gshhs':
                                 b = npy.asarray(psub.boundary)
@@ -894,7 +920,11 @@ and install those files manually (see the basemap README for details)."""
                                    self._fulldisk and\
                                    areafrac > 0.99: continue
                                 bx = b[:,0]; by = b[:,1]
+                                # inverse transform from stereographic
+                                # to lat/lon.
                                 blons, blats = maptran(bx, by, inverse=True)
+                                # forward transform from lat/lon to
+                                # orthographic.
                                 bx, by = self(blons, blats)
                                 b[:,0] = bx; b[:,1] = by
                             polygons.append(zip(b[:,0],b[:,1]))
