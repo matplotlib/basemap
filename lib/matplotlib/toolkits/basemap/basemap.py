@@ -18,6 +18,7 @@ from shapely.geometry import Polygon as PolygonShape
 from shapely.geometry import LineString as LineShape
 from shapely.geometry import Point as PointShape
 from shapely import wkb
+import time
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -743,6 +744,7 @@ and install those files manually (see the basemap README for details)."""
             bdatmetafile = open(os.path.join(basemap_datadir,name+'meta_'+self.resolution+'.dat'),'r')
         except:
             raise IOError, msg
+        timetot = 0.
         polygons = []
         polygon_types = []
         # see if map projection region polygon contains a pole.
@@ -792,29 +794,25 @@ and install those files manually (see the basemap README for details)."""
                 # coordinates (this saves time, especially for small map
                 # regions and high-resolution boundary geometries).
                 if not containsPole:
-                    # close Antarctica. for projections in which this
-                    # is necessary.
-                    if name == 'gshhs':
+                    # close Antarctica.
+                    if name == 'gshhs' and south < -68:
                         b = npy.asarray(poly.boundary)
                         lons = b[:,0]
                         lats = b[:,1]
-                        if south < -68:
-                            if math.fabs(lons[0]+0.) < 1.e-5:
-                                lons1 = lons[:-2][::-1]
-                                lats1 = lats[:-2][::-1]
-                                lons2 = lons1 + 360.
-                                lons3 = lons2 + 360.
-                                lons = lons1.tolist()+lons2.tolist()+lons3.tolist()
-                                lats = lats1.tolist()+lats1.tolist()+lats1.tolist()
-                                lonstart,latstart = lons[0], lats[0]
-                                lonend,latend = lons[-1], lats[-1]
-                                lons.insert(0,lonstart)
-                                lats.insert(0,-90.)
-                                lons.append(lonend)
-                                lats.append(-90.)
-                                poly = PolygonShape(zip(lons,lats))
-                            else:
-                                continue
+                        if math.fabs(lons[0]+0.) < 1.e-5:
+                            lons1 = lons[:-2][::-1]
+                            lats1 = lats[:-2][::-1]
+                            lons2 = lons1 + 360.
+                            lons3 = lons2 + 360.
+                            lons = lons1.tolist()+lons2.tolist()+lons3.tolist()
+                            lats = lats1.tolist()+lats1.tolist()+lats1.tolist()
+                            lonstart,latstart = lons[0], lats[0]
+                            lonend,latend = lons[-1], lats[-1]
+                            lons.insert(0,lonstart)
+                            lats.insert(0,-90.)
+                            lons.append(lonend)
+                            lats.append(-90.)
+                            poly = PolygonShape(zip(lons,lats))
                     # if polygon instersects map projection
                     # region, process it.
                     if poly.intersects(boundarypolyll):
