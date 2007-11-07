@@ -749,9 +749,13 @@ and install those files manually (see the basemap README for details)."""
         NPole = PointShape(self(0.,90.))
         SPole = PointShape(self(0.,-90.))
         boundarypolyxy = self._boundarypolyxy
+        boundarypolyll = self._boundarypolyll
         hasNP = boundarypolyxy.contains(NPole)
         hasSP = boundarypolyxy.contains(SPole)
         containsPole = hasNP or hasSP
+        # these projections cannot cross pole.
+        if containsPole and self.projection in ['tmerc','cass','omerc','merc']:
+            raise ValueError('%s projection cannot cross pole'%(self.projection))
         # make sure geostationary projection has containsPole=False
         # even if only a limited area is requested (since entire
         # disk will be used to subset boundary geometries).
@@ -769,7 +773,6 @@ and install those files manually (see the basemap README for details)."""
             b = npy.asarray(self._boundarypolyll.boundary)
             blons = b[:,0]; blats = b[:,1]
             boundarypolyxy = PolygonShape(zip(*maptran(blons,blats)))
-        # iterate over boundary geometries.
         for line in bdatmetafile:
             linesplit = line.split()
             area = float(linesplit[1])
@@ -794,7 +797,7 @@ and install those files manually (see the basemap README for details)."""
                 if not containsPole:
                     # close Antarctica for projections in which this
                     # is necessary.
-                    if name == 'gshhs' and self.projection in ['cyl','merc','mill','moll','robin','sinu','geos']:
+                    if name == 'gshhs' and self.projection in ['cyl','merc','mill','moll','robin','sinu','geos','tmerc','cass','omerc']:
                         b = npy.asarray(poly.boundary)
                         lons = b[:,0]
                         lats = b[:,1]
@@ -817,8 +820,8 @@ and install those files manually (see the basemap README for details)."""
                                 continue
                     # if polygon instersects map projection
                     # region, process it.
-                    if poly.intersects(self._boundarypolyll):
-                        poly = poly.intersection(self._boundarypolyll)
+                    if poly.intersects(boundarypolyll):
+                        poly = poly.intersection(boundarypolyll)
                         # create iterable object with geometries
                         # that intersect map region.
                         if hasattr(poly,'geoms'): 
@@ -887,17 +890,15 @@ and install those files manually (see the basemap README for details)."""
                             continue
                         # create a Line object for other geometries.
                         poly = LineShape(zip(bx,by))
-                    # if polygon instersects map projection
-                    # region, process it.
-                    if not npy.sum(badmask) and boundarypolyxy.intersects(poly):
-                        #print poly.is_valid, poly.geom_type
-                        #import pylab
-                        #a = npy.asarray(boundarypolyxy.boundary)
-                        #b = npy.asarray(poly.boundary)
-                        #pylab.plot(a[:,0],a[:,1],'b')
-                        #pylab.plot(b[:,0],b[:,1],'b')
-                        #pylab.show()
-                        poly = boundarypolyxy.intersection(poly)
+                    # if geometry instersects map projection
+                    # region, and doesn't have any invalid points, process it.
+                    if not badmask.any() and boundarypolyxy.intersects(poly):
+                        # if geometry intersection calculation fails,
+                        # just skip this polygon.
+                        try:
+                            poly = boundarypolyxy.intersection(poly)
+                        except:
+                            continue
                         # create iterable object with geometries
                         # that intersect map region.
                         if hasattr(poly,'geoms'): 
