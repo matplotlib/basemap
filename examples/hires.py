@@ -4,6 +4,8 @@ import time
 
 # create new figure
 fig=figure()
+# background color will be used for 'wet' areas.
+fig.add_axes([0.1,0.1,0.8,0.8],axisbg='aqua')
 # create Basemap instance. Use 'high' resolution coastlines.
 t1 = time.clock()
 m = Basemap(llcrnrlon=-11.,llcrnrlat=49.,urcrnrlon=5.,urcrnrlat=59.,
@@ -11,7 +13,7 @@ m = Basemap(llcrnrlon=-11.,llcrnrlat=49.,urcrnrlon=5.,urcrnrlat=59.,
 print 'time to create instance with high-res boundaries = ',time.clock()-t1
 # draw coastlines and fill continents.
 m.drawcoastlines()
-m.fillcontinents()
+m.fillcontinents(color='coral')
 # draw political boundaries.
 m.drawcountries(linewidth=1)
 # draw major rivers.
