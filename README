@@ -1,12 +1,19 @@
 **Descripton**
 
-basemap.py - plot on map projections (with coastlines and political boundaries)
+basemap - plot on map projections (with coastlines and political boundaries)
 using matplotlib.
 
 **Requirements**
 
 matplotlib 0.90 (or higher)
+
 numpy 1.0 (or higher)
+
+Shapely (http://trac.gispython.org/projects/PCL/wiki/Shapely - svn version)
+
+Shapely requires libgoes_c version 2.2.3, available from
+http://geos.refractions.net/, and ctypes (which comes with python >= 2.5,
+but can be installed separately for python 2.4)
 
 **Copyright**
 
@@ -53,14 +60,11 @@ you have problems or questions.
 
 **Install**
 
-To install from source, download basemap-X.Y.Z.tar.gz from
+First, install pre-requisites (see **Requirements** above).
+
+Then download basemap-X.Y.Z.tar.gz from
 the sourceforge download site, unpack,
 cd to basemap-X.Y.Z and run 'python setup.py install'.
-
-Binary, double-clickable installers are also provided for MacOS X and
-Windows.  The Mac installers have a .dmg file extension, the Windows
-installers have a .exe extension. Windows users will probably prefer
-s option, since it is non-trivial to build C extensions for python on Windows.
 
 The crude ('c'), low ('l') and intermediate ('i') resolution
 boundary data files, plus the 5-minute land/sea mask, are installed
