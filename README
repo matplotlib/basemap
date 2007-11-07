@@ -32,9 +32,10 @@ a public domain 5-minute land/sea/lake mask dataset from
 http://www.ngdc.noaa.gov/seg/cdroms/graham/graham/graham.htm
 is included.
 
-Everything else (include src/pyproj.pyx and src/pyproj.c):
+Everything else (including src/_proj.pyx, src/_geod.pyx, src/_pyproj.pxi,
+src/_proj.c and src/_geod.c):
 
-copyright (c) 2004 by Jeffrey Whitaker.
+copyright (c) 2007 by Jeffrey Whitaker.
 
 Permission to use, copy, modify, and distribute this software and its
 documentation for any purpose and without fee is hereby granted,
