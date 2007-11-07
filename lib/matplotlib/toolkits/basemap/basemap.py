@@ -813,6 +813,8 @@ and install those files manually (see the basemap README for details)."""
                             lons.append(lonend)
                             lats.append(-90.)
                             poly = PolygonShape(zip(lons,lats))
+                        else:
+                            continue
                     # if polygon instersects map projection
                     # region, process it.
                     if poly.intersects(boundarypolyll):
