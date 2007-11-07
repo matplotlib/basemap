@@ -160,8 +160,8 @@ print m.srs
 # create new figure
 fig=figure()
 # setup transverse mercator basemap.
-m = Basemap(llcrnrlon=170.,llcrnrlat=-45,urcrnrlon=10.,urcrnrlat=45.,\
-            resolution='c',area_thresh=10000.,projection='tmerc',\
+m = Basemap(width=2*6370997,height=3.1*6370997,\
+            resolution='c',area_thresh=10000.,projection='cass',\
             lat_0=0.,lon_0=-90.)
 fig.add_axes([0.125,0.2,0.6,0.6])
 # transform to nx x ny regularly spaced native projection grid
