@@ -1317,10 +1317,10 @@ and install those files manually (see the basemap README for details)."""
             test2 = npy.fabs(xa-self.llcrnrx) < delx
             test3 = npy.fabs(ya-self.urcrnry) < dely
             test4 = npy.fabs(ya-self.llcrnry) < dely
-            hasp1 = sum(test1*test3)
-            hasp2 = sum(test2*test3)
-            hasp4 = sum(test2*test4)
-            hasp3 = sum(test1*test4)
+            hasp1 = npy.sum(test1*test3)
+            hasp2 = npy.sum(test2*test3)
+            hasp4 = npy.sum(test2*test4)
+            hasp3 = npy.sum(test1*test4)
             if not hasp1 or not hasp2 or not hasp3 or not hasp4:
                 xy = zip(xa.tolist(),ya.tolist())
                 if self.coastpolygontypes[np] != 2:
