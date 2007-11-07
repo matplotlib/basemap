@@ -66,9 +66,13 @@ The crude ('c'), low ('l') and intermediate ('i') resolution
 boundary data files, plus the 5-minute land/sea mask, are installed
 by default. If you need the high ('h') resolution boundary dataset
 you can download the files from the sourceforge download site
-(basemap-data-hires-X.Y.Z.tar.gz) and manually install them.
-To see where basemap expects them to be installed, run
-python -c "from matplotlib.toolkits.basemap import basemap_datadir; print basemap_datadir".
+(basemap-data-hires-X.Y.Z.tar.gz). To install them,
+untar the file in the top-level directory of the basemap source 
+distribution (where this README file lives), then run 
+'python setup.py install' again.
+
+Note:  if you install from a subversion checkout, you will get the high 
+resolution coastlines by default.
 
 **Contact**
 
