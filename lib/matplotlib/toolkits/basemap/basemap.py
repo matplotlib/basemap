@@ -754,12 +754,9 @@ and install those files manually (see the basemap README for details)."""
         hasSP = boundarypolyxy.contains(SPole)
         containsPole = hasNP or hasSP
         # these projections cannot cross pole.
-        if containsPole and self.projection in ['tmerc','cass','omerc','merc']:
+        if containsPole and\
+           self.projection in ['tmerc','cass','omerc','merc','mill','cyl','robin','moll','sinu','geos']:
             raise ValueError('%s projection cannot cross pole'%(self.projection))
-        # make sure geostationary projection has containsPole=False
-        # even if only a limited area is requested (since entire
-        # disk will be used to subset boundary geometries).
-        if self.projection == 'geos':  containsPole = False
         # make sure orthographic projection has containsPole=True
         # we will compute the intersections in stereographic
         # coordinates, then transform to orthographic.
@@ -795,9 +792,9 @@ and install those files manually (see the basemap README for details)."""
                 # coordinates (this saves time, especially for small map
                 # regions and high-resolution boundary geometries).
                 if not containsPole:
-                    # close Antarctica for projections in which this
+                    # close Antarctica. for projections in which this
                     # is necessary.
-                    if name == 'gshhs' and self.projection in ['cyl','merc','mill','moll','robin','sinu','geos','tmerc','cass','omerc']:
+                    if name == 'gshhs':
                         b = npy.asarray(poly.boundary)
                         lons = b[:,0]
                         lats = b[:,1]
