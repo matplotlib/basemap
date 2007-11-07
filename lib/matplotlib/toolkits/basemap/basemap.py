@@ -18,7 +18,6 @@ from shapely.geometry import Polygon as PolygonShape
 from shapely.geometry import LineString as LineShape
 from shapely.geometry import Point as PointShape
 from shapely import wkb
-import time
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -744,7 +743,6 @@ and install those files manually (see the basemap README for details)."""
             bdatmetafile = open(os.path.join(basemap_datadir,name+'meta_'+self.resolution+'.dat'),'r')
         except:
             raise IOError, msg
-        timetot = 0.
         polygons = []
         polygon_types = []
         # see if map projection region polygon contains a pole.
