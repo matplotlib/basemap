@@ -791,10 +791,8 @@ and install those files manually (see the basemap README for details)."""
                 # read in binary string convert into an npts by 2 
                 # numpy array (first column is lons, second is lats).
                 polystring = bdatfile.read(bytecount)
-                if not npy.little_endian:
-                    b = npy.reshape(npy.fromstring(polystring,dtype=npy.float64).byteswap(),(npts,2))
-                else:
-                    b = npy.reshape(npy.fromstring(polystring,dtype=npy.float64),(npts,2))
+                # binary data is little endian.
+                b = npy.reshape(npy.fromstring(polystring,dtype='<f8'),(npts,2))
                 # if map boundary polygon is a valid one in lat/lon
                 # coordinates (i.e. it does not contain either pole),
                 # the intersections of the boundary geometries
