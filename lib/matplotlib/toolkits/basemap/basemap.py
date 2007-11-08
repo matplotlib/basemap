@@ -792,7 +792,7 @@ and install those files manually (see the basemap README for details)."""
                 # numpy array (first column is lons, second is lats).
                 polystring = bdatfile.read(bytecount)
                 if not npy.little_endian:
-                    b = npy.reshape(npy.fromstring(polystring,dtype=npy.float64).byteswapped(),(npts,2))
+                    b = npy.reshape(npy.fromstring(polystring,dtype=npy.float64).byteswap(),(npts,2))
                 else:
                     b = npy.reshape(npy.fromstring(polystring,dtype=npy.float64),(npts,2))
                 # if map boundary polygon is a valid one in lat/lon
@@ -853,8 +853,8 @@ and install those files manually (see the basemap README for details)."""
                             #    pylab.show()
                             if poly.is_valid:
                                 poly = poly.intersection(boundarypolyll)
-                            else:
-                                print 'warning, invalid ',name,' geometry',poly.area
+                            #else:
+                            #    print 'warning, invalid ',name,' geometry',poly.area
                             # create iterable object with geometries
                             # that intersect map region.
                             if hasattr(poly,'geoms'): 
@@ -919,8 +919,8 @@ and install those files manually (see the basemap README for details)."""
                         #try:
                         if poly.is_valid:
                             poly = boundarypolyxy.intersection(poly)
-                        else:
-                            print 'warning, invalid ',name,' geometry',poly.area
+                        #else:
+                        #    print 'warning, invalid ',name,' geometry',poly.area
                         #except:
                         #    continue
                         # create iterable object with geometries
