@@ -792,7 +792,7 @@ and install those files manually (see the basemap README for details)."""
                 # numpy array (first column is lons, second is lats).
                 polystring = bdatfile.read(bytecount)
                 # binary data is little endian.
-                b = npy.reshape(npy.fromstring(polystring,dtype='<f8'),(npts,2))
+                b = npy.reshape(npy.fromstring(polystring,dtype='<f4'),(npts,2))
                 # if map boundary polygon is a valid one in lat/lon
                 # coordinates (i.e. it does not contain either pole),
                 # the intersections of the boundary geometries
@@ -819,7 +819,7 @@ and install those files manually (see the basemap README for details)."""
                         lats.append(-90.)
                         poly = PolygonShape(zip(lons,lats))
                         antart = True
-                        b = npy.empty((len(lons),2),npy.float64)
+                        b = npy.empty((len(lons),2),npy.float32)
                         b[:,0] = lons; b[:,1] = lats
                     else:
                         antart = False
