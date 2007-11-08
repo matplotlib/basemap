@@ -17,7 +17,6 @@ from shapelib import ShapeFile
 from shapely.geometry import Polygon as PolygonShape
 from shapely.geometry import LineString as LineShape
 from shapely.geometry import Point as PointShape
-from shapely import wkb
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -745,18 +744,24 @@ and install those files manually (see the basemap README for details)."""
             raise IOError, msg
         polygons = []
         polygon_types = []
+        # coastlines are polygons, other boundaries are line segments.
+        if name == 'gshhs':
+            Shape = PolygonShape
+        else:
+            Shape = LineShape
         # see if map projection region polygon contains a pole.
         NPole = PointShape(self(0.,90.))
         SPole = PointShape(self(0.,-90.))
         boundarypolyxy = self._boundarypolyxy
         boundarypolyll = self._boundarypolyll
-        hasNP = boundarypolyxy.contains(NPole)
-        hasSP = boundarypolyxy.contains(SPole)
+        hasNP = NPole.within(boundarypolyxy)
+        hasSP = SPole.within(boundarypolyxy)
         containsPole = hasNP or hasSP
         # these projections cannot cross pole.
         if containsPole and\
            self.projection in ['tmerc','cass','omerc','merc','mill','cyl','robin','moll','sinu','geos']:
             raise ValueError('%s projection cannot cross pole'%(self.projection))
+
         # make sure orthographic projection has containsPole=True
         # we will compute the intersections in stereographic
         # coordinates, then transform to orthographic.
@@ -773,17 +778,23 @@ and install those files manually (see the basemap README for details)."""
         for line in bdatmetafile:
             linesplit = line.split()
             area = float(linesplit[1])
-            type = int(linesplit[0])
-            south = float(linesplit[2])
-            north = float(linesplit[3])
+            south = float(linesplit[3])
+            north = float(linesplit[4])
             if area < 0.: area = 1.e30
             useit = self.latmax>=south and self.latmin<=north and area>self.area_thresh
             if useit:
-                offsetbytes = int(linesplit[4])
-                bytecount = int(linesplit[5])
+                type = int(linesplit[0])
+                npts = int(linesplit[2])
+                offsetbytes = int(linesplit[5])
+                bytecount = int(linesplit[6])
                 bdatfile.seek(offsetbytes,0)
+                # read in binary string convert into an npts by 2 
+                # numpy array (first column is lons, second is lats).
                 polystring = bdatfile.read(bytecount)
-                poly = wkb.loads(polystring)
+                if not npy.little_endian:
+                    b = npy.reshape(npy.fromstring(polystring,dtype=npy.float64).byteswapped(),(npts,2))
+                else:
+                    b = npy.reshape(npy.fromstring(polystring,dtype=npy.float64),(npts,2))
                 # if map boundary polygon is a valid one in lat/lon
                 # coordinates (i.e. it does not contain either pole),
                 # the intersections of the boundary geometries
@@ -794,64 +805,83 @@ and install those files manually (see the basemap README for details)."""
                 if not containsPole:
                     # close Antarctica.
                     if name == 'gshhs' and south < -68:
-                        b = npy.asarray(poly.boundary)
                         lons = b[:,0]
                         lats = b[:,1]
-                        if math.fabs(lons[0]+0.) < 1.e-5:
-                            lons1 = lons[:-2][::-1]
-                            lats1 = lats[:-2][::-1]
-                            lons2 = lons1 + 360.
-                            lons3 = lons2 + 360.
-                            lons = lons1.tolist()+lons2.tolist()+lons3.tolist()
-                            lats = lats1.tolist()+lats1.tolist()+lats1.tolist()
-                            lonstart,latstart = lons[0], lats[0]
-                            lonend,latend = lons[-1], lats[-1]
-                            lons.insert(0,lonstart)
-                            lats.insert(0,-90.)
-                            lons.append(lonend)
-                            lats.append(-90.)
-                            poly = PolygonShape(zip(lons,lats))
-                        else:
-                            continue
-                    # if polygon instersects map projection
-                    # region, process it.
-                    if poly.intersects(boundarypolyll):
-                        poly = poly.intersection(boundarypolyll)
-                        # create iterable object with geometries
-                        # that intersect map region.
-                        if hasattr(poly,'geoms'): 
-                            geoms = poly.geoms
-                        else:
-                            geoms = [poly]
-                        # iterate over geometries in intersection.
-                        for psub in geoms:
-                            # only coastlines are polygons,
-                            # which have a 'boundary' attribute.
-                            # otherwise, use 'coords' attribute
-                            # to extract coordinates.
-                            if name == 'gshhs':
-                                b = npy.asarray(psub.boundary)
+                        lons2 = lons[:-2][::-1]
+                        lats2 = lats[:-2][::-1]
+                        lons1 = lons2 - 360.
+                        lons3 = lons2 + 360.
+                        lons = lons1.tolist()+lons2.tolist()+lons3.tolist()
+                        lats = lats2.tolist()+lats2.tolist()+lats2.tolist()
+                        lonstart,latstart = lons[0], lats[0]
+                        lonend,latend = lons[-1], lats[-1]
+                        lons.insert(0,lonstart)
+                        lats.insert(0,-90.)
+                        lons.append(lonend)
+                        lats.append(-90.)
+                        poly = PolygonShape(zip(lons,lats))
+                        antart = True
+                        b = npy.empty((len(lons),2),npy.float64)
+                        b[:,0] = lons; b[:,1] = lats
+                    else:
+                        antart = False
+                    # create Shapely geometry from lons/lons array.
+                    blons = b[:,0]; blats = b[:,1]
+                    poly = Shape(zip(blons,blats))
+                    # create duplicate polygons shifted by -360 and +360
+                    # (so as to properly treat polygons that cross 
+                    # Greenwich meridian).
+                    if not antart:
+                        blons = b[:,0]-360
+                        poly1 = Shape(zip(blons,blats))
+                        blons = b[:,0]+360
+                        poly2 = Shape(zip(blons,blats))
+                        polys = [poly1,poly,poly2]
+                    else: # Antartica already extends from -360 to +720.
+                        polys = [poly]
+                    for poly in polys:
+                        # if polygon instersects map projection
+                        # region, process it.
+                        if poly.intersects(boundarypolyll):
+                            #if not poly.is_valid:
+                            #    print poly.geom_type, poly.is_ring, boundarypolyll.is_valid
+                            #    import pylab
+                            #    a = npy.asarray(boundarypolyll.boundary)
+                            #    b = npy.asarray(poly.boundary)
+                            #    pylab.plot(a[:,0],a[:,1],'b')
+                            #    pylab.plot(b[:,0],b[:,1],'b')
+                            #    pylab.show()
+                            if poly.is_valid:
+                                poly = poly.intersection(boundarypolyll)
                             else:
-                                b = npy.asarray(psub.coords)
-                            blons = b[:,0]; blats = b[:,1]
-                            # transformation from lat/lon to
-                            # map projection coordinates.
-                            bx, by = self(blons, blats)
-                            polygons.append(zip(bx,by))
-                            polygon_types.append(type)
+                                print 'warning, invalid ',name,' geometry',poly.area
+                            # create iterable object with geometries
+                            # that intersect map region.
+                            if hasattr(poly,'geoms'): 
+                                geoms = poly.geoms
+                            else:
+                                geoms = [poly]
+                            # iterate over geometries in intersection.
+                            for psub in geoms:
+                                # only coastlines are polygons,
+                                # which have a 'boundary' attribute.
+                                # otherwise, use 'coords' attribute
+                                # to extract coordinates.
+                                if name == 'gshhs':
+                                    b = npy.asarray(psub.boundary)
+                                else:
+                                    b = npy.asarray(psub.coords)
+                                blons = b[:,0]; blats = b[:,1]
+                                # transformation from lat/lon to
+                                # map projection coordinates.
+                                bx, by = self(blons, blats)
+                                polygons.append(zip(bx,by))
+                                polygon_types.append(type)
                 # if map boundary polygon is not valid in lat/lon
                 # coordinates, compute intersection between map
                 # projection region and boundary geometries in map
                 # projection coordinates.
                 else:
-                    # only coastlines are polygons,
-                    # which have a 'boundary' attribute.
-                    # otherwise, use 'coords' attribute
-                    # to extract coordinates.
-                    if name == 'gshhs':
-                        b = npy.asarray(poly.boundary)
-                    else:
-                        b = npy.asarray(poly.coords)
                     blons = b[:,0]; blats = b[:,1]
                     # transform coordinates from lat/lon
                     # to map projection coordinates.
@@ -866,11 +896,7 @@ and install those files manually (see the basemap README for details)."""
                     # if less than two points are valid in 
                     # map proj coords, skip this geometry.
                     if npy.sum(goodmask) <= 1: continue
-                    if name == 'gshhs':
-                        # create a polygon object for coastline
-                        # geometry.
-                        poly = PolygonShape(zip(bx,by))
-                    else:
+                    if name != 'gshhs':
                         # if not a polygon,
                         # just remove parts of geometry that are undefined
                         # in this map projection.
@@ -883,17 +909,20 @@ and install those files manually (see the basemap README for details)."""
                             polygons.append(zip(bx,by))
                             polygon_types.append(type)
                             continue
-                        # create a Line object for other geometries.
-                        poly = LineShape(zip(bx,by))
+                    # create a Shapely geometry object.
+                    poly = Shape(zip(bx,by))
                     # if geometry instersects map projection
                     # region, and doesn't have any invalid points, process it.
                     if not badmask.any() and boundarypolyxy.intersects(poly):
                         # if geometry intersection calculation fails,
                         # just skip this polygon.
-                        try:
+                        #try:
+                        if poly.is_valid:
                             poly = boundarypolyxy.intersection(poly)
-                        except:
-                            continue
+                        else:
+                            print 'warning, invalid ',name,' geometry',poly.area
+                        #except:
+                        #    continue
                         # create iterable object with geometries
                         # that intersect map region.
                         if hasattr(poly,'geoms'): 
@@ -1007,8 +1036,19 @@ and install those files manually (see the basemap README for details)."""
                                        (self.xmax,self.ymax),\
                                        (self.xmax,self.ymin)])
         if self.projection in ['mill','merc','cyl']:
+            # make sure map boundary doesn't quite include pole.
+            if self.urcrnrlat > 89.9999: 
+                urcrnrlat = 89.9999
+            else:
+                urcrnrlat = self.urcrnrlat
+            if self.llcrnrlat < -89.9999:
+                llcrnrlat = -89.9999
+            else:
+                llcrnrlat = self.llcrnrlat
             lons = [self.llcrnrlon, self.llcrnrlon, self.urcrnrlon, self.urcrnrlon]
-            lats = [self.llcrnrlat, self.urcrnrlat, self.urcrnrlat, self.llcrnrlat]
+            lats = [llcrnrlat, urcrnrlat, urcrnrlat, llcrnrlat]
+            x, y = self(lons, lats)
+            boundaryxy = PolygonShape(zip(x,y))
         else:
             if self.projection not in ['moll','robin','sinu']:  
                 lons, lats = maptran(x,y,inverse=True)
