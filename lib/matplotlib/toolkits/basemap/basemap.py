@@ -775,15 +775,6 @@ and install those files manually (see the basemap README for details)."""
             b = npy.asarray(self._boundarypolyll.boundary)
             blons = b[:,0]; blats = b[:,1]
             boundarypolyxy = PolygonShape(zip(*maptran(blons,blats)))
-        # for map regions that don't contain Pole, see if Greenwich
-        # meridian is contained.
-        if not containsPole:
-            lon_0,lat_0 = self(self.xmin+0.5*(self.xmax-self.xmin),\
-                               self.ymin+0.5*(self.ymax-self.ymin),inverse=True)
-            GM0 = PointShape((0,lat_0))
-            GM360 = PointShape((360,lat_0))
-            hasGM0 = GM0.within(boundarypolyll)
-            hasGM360 = GM360.within(boundarypolyll)
         for line in bdatmetafile:
             linesplit = line.split()
             area = float(linesplit[1])
@@ -839,16 +830,11 @@ and install those files manually (see the basemap README for details)."""
                     # (so as to properly treat polygons that cross 
                     # Greenwich meridian).
                     if not antart:
-                        if hasGM0:
-                            blons = b[:,0]-360
-                            poly1 = Shape(zip(blons,blats))
-                            polys = [poly1,poly]
-                        elif hasGM360:
-                            blons = b[:,0]+360
-                            poly2 = Shape(zip(blons,blats))
-                            polys = [poly,poly2]
-                        else:
-                            polys = [poly]
+                        blons = b[:,0]-360
+                        poly1 = Shape(zip(blons,blats))
+                        blons = b[:,0]+360
+                        poly2 = Shape(zip(blons,blats))
+                        polys = [poly1,poly,poly2]
                     else: # Antartica already extends from -360 to +720.
                         polys = [poly]
                     for poly in polys:
