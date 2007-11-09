@@ -841,18 +841,12 @@ and install those files manually (see the basemap README for details)."""
                         # if polygon instersects map projection
                         # region, process it.
                         if poly.intersects(boundarypolyll):
-                            #if not poly.is_valid:
-                            #    print poly.geom_type, poly.is_ring, boundarypolyll.is_valid
-                            #    import pylab
-                            #    a = npy.asarray(boundarypolyll.boundary)
-                            #    b = npy.asarray(poly.boundary)
-                            #    pylab.plot(a[:,0],a[:,1],'b')
-                            #    pylab.plot(b[:,0],b[:,1],'b')
-                            #    pylab.show()
-                            if poly.is_valid:
+                            # if geometry intersection calculation fails,
+                            # just move on.
+                            try:
                                 poly = poly.intersection(boundarypolyll)
-                            #else:
-                            #    print 'warning, invalid ',name,' geometry',poly.area
+                            except:
+                                pass
                             # create iterable object with geometries
                             # that intersect map region.
                             if hasattr(poly,'geoms'): 
@@ -912,15 +906,22 @@ and install those files manually (see the basemap README for details)."""
                     # if geometry instersects map projection
                     # region, and doesn't have any invalid points, process it.
                     if not badmask.any() and boundarypolyxy.intersects(poly):
+                        #if not poly.is_valid:
+                        #    print poly.geom_type, poly.is_ring, boundarypolyll.is_valid
+                        #    import pylab
+                        #    a = npy.asarray(boundarypolyxy.boundary)
+                        #    b = npy.asarray(poly.boundary)
+                        #    poly2 = boundarypolyxy.intersection(poly)
+                        #    c = npy.asarray(poly2.boundary)
+                        #    pylab.plot(a[:,0],a[:,1],'b')
+                        #    pylab.fill(c[:,0],c[:,1],'r')
+                        #    pylab.show()
                         # if geometry intersection calculation fails,
-                        # just skip this polygon.
-                        #try:
-                        if poly.is_valid:
+                        # just move on.
+                        try:
                             poly = boundarypolyxy.intersection(poly)
-                        #else:
-                        #    print 'warning, invalid ',name,' geometry',poly.area
-                        #except:
-                        #    continue
+                        except:
+                            pass
                         # create iterable object with geometries
                         # that intersect map region.
                         if hasattr(poly,'geoms'): 
