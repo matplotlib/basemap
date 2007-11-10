@@ -23,30 +23,29 @@ This function is pure python.
     scale = pow(2.,bits)
     return numpy.around(scale*data)/scale
 
-def get_coast_polygons(coastfile,area_thresh=-1.,latmin=-91.,latmax=91.):
+def get_coast_polygons(coastfile):
     polymeta = []; polybounds = []
     lats = []; lons = []
     for line in open(coastfile):
+        if line.startswith('#'): continue
         linesplit = line.split()
         if line.startswith('P'):
             area = float(linesplit[5])
             west,east,south,north = float(linesplit[6]),float(linesplit[7]),float(linesplit[8]),float(linesplit[9])
             typ = int(linesplit[3])
-            useit = latmax>=south and latmin<=north and area>area_thresh
-            if useit:
-                polymeta.append((typ,area,south,north))
-                if lons:
-                    #lons.append(lons[0]); lats.append(lats[0])
-                    b = numpy.empty((len(lons),2),numpy.float32)
-                    b[:,0] = lons; b[:,1] = lats
-                    if lsd is not None:
-                        b = quantize(b,lsd)
-                    polybounds.append(b)
-                lats = []; lons = []
+            polymeta.append((typ,area,south,north))
+            if lons:
+                #lons.append(lons[0]); lats.append(lats[0])
+                b = numpy.empty((len(lons),2),numpy.float32)
+                b[:,0] = lons; b[:,1] = lats
+                if lsd is not None:
+                    b = quantize(b,lsd)
+                polybounds.append(b)
+            lats = []; lons = []
             continue
-        if useit:
-            lon, lat = [float(val) for val in linesplit]
-            lons.append(lon); lats.append(lat)
+        lon = float(line[0:10])
+        lat = float(line[11:20])
+        lons.append(lon); lats.append(lat)
     #lons.append(lons[0]); lats.append(lats[0])
     b = numpy.empty((len(lons),2),numpy.float32)
     b[:,0] = lons; b[:,1] = lats
@@ -59,45 +58,41 @@ def get_coast_polygons(coastfile,area_thresh=-1.,latmin=-91.,latmax=91.):
         polymeta2.append(meta+(npts,))
     return polybounds, polymeta2
 
-def get_boundary_lines(bdatfile,latmin=-91.,latmax=91.):
-    polymeta = []; polybounds = []
-    lons = []; lats = []
+def get_boundary_lines(bdatfile):
+    lons = []; lats = []; polybounds = []
     for line in open(bdatfile):
+        if line.startswith('#'): continue
         linesplit = line.split()
         if line.startswith('>'):
-            west,east,south,north = float(linesplit[7]),float(linesplit[8]),float(linesplit[9]),float(linesplit[10])
-            useit = latmax>=south and latmin<=north
-            if useit:
-                polymeta.append((south,north))
-                if lons:
-                    b = numpy.empty((len(lons),2),numpy.float32)
-                    b[:,0] = lons; b[:,1] = lats
-                    if lsd is not None:
-                        b = quantize(b,lsd)
-                    polybounds.append(b)
-                lons = []; lats = []
-            continue
-        if useit:
-            lon, lat = [float(val) for val in linesplit]
-            lats.append(lat); lons.append(lon)
+           if lons:
+               b = numpy.empty((len(lons),2),numpy.float32)
+               b[:,0] = lons; b[:,1] = lats
+               if lsd is not None:
+                   b = quantize(b,lsd)
+               polybounds.append(b)
+           lons = []; lats = []
+           continue
+        lon, lat = [float(val) for val in linesplit]
+        lats.append(lat); lons.append(lon)
     b = numpy.empty((len(lons),2),numpy.float32)
     b[:,0] = lons; b[:,1] = lats
     if lsd is not None:
         b = quantize(b,lsd)
     polybounds.append(b)
-    polymeta2 = []
+    polymeta = []
     polybounds2 = []
-    for meta,bounds in zip(polymeta,polybounds):
+    for bounds in polybounds:
         npts = bounds.shape[0]
         if npts == 2 and\
            bounds[0,0] == bounds[1,0] and\
            bounds[0,1] == bounds[1,1]: continue
         polybounds2.append(bounds)
-        polymeta2.append(meta+(npts,))
-    return polybounds2, polymeta2
+        south = bounds[:,1].min()
+        north = bounds[:,1].max()
+        polymeta.append((south,north,npts))
+    return polybounds2, polymeta
 
 # read in coastline data (only those polygons whose area > area_thresh).
-#resolution = sys.argv[1]
 for resolution in ['c','l','i','h']:
     coastlons = []; coastlats = []; coastsegind = []; coastsegtype = []
     coastfile = 'gshhs_'+resolution+'.txt'
