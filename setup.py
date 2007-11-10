@@ -71,11 +71,9 @@ else:
     
 # Specify all the required mpl data
 pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world']
-boundaryfiles = glob.glob('lib/matplotlib/toolkits/basemap/data/*_c.dat')
-boundaryfiles = boundaryfiles + glob.glob('lib/matplotlib/toolkits/basemap/data/*_l.dat')
-boundaryfiles = boundaryfiles + glob.glob('lib/matplotlib/toolkits/basemap/data/*_i.dat')
-boundaryfiles = boundaryfiles + glob.glob('lib/matplotlib/toolkits/basemap/data/*_h.dat')
-boundaryfiles = [os.path.join('data',os.path.basename(bfile)) for bfile in boundaryfiles]
+boundaryfiles = []
+for resolution in ['c','l','i','h']:
+    boundaryfiles = boundaryfiles + glob.glob("lib/matplotlib/toolkits/basemap/data/*_"+resolution+".dat")
 basemap_datafiles = boundaryfiles + ['data/5minmask.bin']
 package_data = {'matplotlib.toolkits.basemap':pyproj_datafiles+basemap_datafiles}
 setup(
