@@ -67,18 +67,6 @@ Then download basemap-X.Y.Z.tar.gz from
 the sourceforge download site, unpack,
 cd to basemap-X.Y.Z and run 'python setup.py install'.
 
-The crude ('c'), low ('l') and intermediate ('i') resolution
-boundary data files, plus the 5-minute land/sea mask, are installed
-by default. If you need the high ('h') resolution boundary dataset
-you can download the files from the sourceforge download site
-(basemap-data-hires-X.Y.Z.tar.gz). To install them,
-untar the file in the top-level directory of the basemap source 
-distribution (where this README file lives), then run 
-'python setup.py install' again.
-
-Note:  if you install from a subversion checkout, you will get the high 
-resolution coastlines by default.
-
 **Contact**
 
 Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
