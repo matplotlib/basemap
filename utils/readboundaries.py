@@ -43,8 +43,8 @@ def get_coast_polygons(coastfile):
                 polybounds.append(b)
             lats = []; lons = []
             continue
-        lon = float(line[0:10])
-        lat = float(line[11:20])
+        lon = float(line[1:10])
+        lat = float(line[10:20])
         lons.append(lon); lats.append(lat)
     #lons.append(lons[0]); lats.append(lats[0])
     b = numpy.empty((len(lons),2),numpy.float32)
