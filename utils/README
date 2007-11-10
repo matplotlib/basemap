@@ -1,3 +1,6 @@
-1) run dumpcoast.sh and dumpbounds.sh to dump GMT boundaries into text files.
-2) run readboundaries.py to process into binary files, with metadata in
-text files.
+1) install GMT, download gshhs boundary data and source code
+from ftp://ftp.soest.hawaii.edu/pwessel/gshhs/.
+2) compile gshhs.c, use to create gshhs_{c,l,i,h}.txt files.
+3) run dumpbounds.sh to create states, countries, rivers text files.
+4) run readboundaries.py to process into binary files, with metadata in
+separate text files.
