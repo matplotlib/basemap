@@ -74,6 +74,7 @@ pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'd
 boundaryfiles = []
 for resolution in ['c','l','i','h']:
     boundaryfiles = boundaryfiles + glob.glob("lib/matplotlib/toolkits/basemap/data/*_"+resolution+".dat")
+boundaryfiles = [os.path.join('data',os.path.basename(bfile)) for bfile in boundaryfiles]
 basemap_datafiles = boundaryfiles + ['data/5minmask.bin']
 package_data = {'matplotlib.toolkits.basemap':pyproj_datafiles+basemap_datafiles}
 setup(
