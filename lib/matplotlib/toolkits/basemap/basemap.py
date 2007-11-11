@@ -670,6 +670,8 @@ class Basemap(object):
                 area_thresh = 100.
             elif resolution == 'h':
                 area_thresh = 10.
+            elif resolution == 'f':
+                area_thresh = 1.
             else:
                 raise ValueError, "boundary resolution must be one of 'c','l','i' or 'h'"
         self.area_thresh = area_thresh
@@ -792,7 +794,9 @@ and install those files manually (see the basemap README for details)."""
                 # numpy array (first column is lons, second is lats).
                 polystring = bdatfile.read(bytecount)
                 # binary data is little endian.
-                b = npy.reshape(npy.fromstring(polystring,dtype='<f4'),(npts,2))
+                b = npy.array(npy.fromstring(polystring,dtype='<f4'),'f8')
+                b.shape = (npts,2)
+                b2 = b.copy()
                 # if map boundary polygon is a valid one in lat/lon
                 # coordinates (i.e. it does not contain either pole),
                 # the intersections of the boundary geometries
@@ -819,21 +823,20 @@ and install those files manually (see the basemap README for details)."""
                         lats.append(-90.)
                         poly = PolygonShape(zip(lons,lats))
                         antart = True
-                        b = npy.empty((len(lons),2),npy.float32)
+                        b = npy.empty((len(lons),2),npy.float64)
                         b[:,0] = lons; b[:,1] = lats
                     else:
                         antart = False
                     # create Shapely geometry from lons/lons array.
-                    blons = b[:,0]; blats = b[:,1]
-                    poly = Shape(zip(blons,blats))
+                    poly = Shape(b)
                     # create duplicate polygons shifted by -360 and +360
                     # (so as to properly treat polygons that cross 
                     # Greenwich meridian).
                     if not antart:
-                        blons = b[:,0]-360
-                        poly1 = Shape(zip(blons,blats))
-                        blons = b[:,0]+360
-                        poly2 = Shape(zip(blons,blats))
+                        b2[:,0] = b[:,0]-360
+                        poly1 = Shape(b2)
+                        b2[:,0] = b[:,0]+360
+                        poly2 = Shape(b2)
                         polys = [poly1,poly,poly2]
                     else: # Antartica already extends from -360 to +720.
                         polys = [poly]
@@ -874,17 +877,15 @@ and install those files manually (see the basemap README for details)."""
                 # projection region and boundary geometries in map
                 # projection coordinates.
                 else:
-                    blons = b[:,0]; blats = b[:,1]
                     # transform coordinates from lat/lon
                     # to map projection coordinates.
                     # special case for ortho, compute coastline polygon
                     # vertices in stereographic coords.
                     if name == 'gshhs' and self.projection == 'ortho':
-                        bx, by = maptran(blons, blats)
+                        b[:,0], b[:,1] = maptran(b[:,0], b[:,1])
                     else:
-                        bx, by = self(blons, blats)
-                    goodmask = npy.logical_and(bx<1.e20,by<1.e20)
-                    badmask = npy.logical_or(bx>1.e20,by>1.e20)
+                        b[:,0], b[:,1] = self(b[:,0], b[:,1])
+                    goodmask = npy.logical_and(b[:,0]<1.e20,b[:,1]<1.e20)
                     # if less than two points are valid in 
                     # map proj coords, skip this geometry.
                     if npy.sum(goodmask) <= 1: continue
@@ -892,8 +893,8 @@ and install those files manually (see the basemap README for details)."""
                         # if not a polygon,
                         # just remove parts of geometry that are undefined
                         # in this map projection.
-                        bx = npy.compress(goodmask, bx)
-                        by = npy.compress(goodmask, by)
+                        bx = npy.compress(goodmask, b[:,0])
+                        by = npy.compress(goodmask, b[:,1])
                         # for orthographic projection, all points
                         # outside map projection region are eliminated
                         # with the above step, so we're done.
@@ -902,10 +903,10 @@ and install those files manually (see the basemap README for details)."""
                             polygon_types.append(type)
                             continue
                     # create a Shapely geometry object.
-                    poly = Shape(zip(bx,by))
+                    poly = Shape(b)
                     # if geometry instersects map projection
                     # region, and doesn't have any invalid points, process it.
-                    if not badmask.any() and boundarypolyxy.intersects(poly):
+                    if goodmask.all() and boundarypolyxy.intersects(poly):
                         # if geometry intersection calculation fails,
                         # just move on.
                         try:
@@ -935,14 +936,11 @@ and install those files manually (see the basemap README for details)."""
                                 if name == 'gshhs' and\
                                    self._fulldisk and\
                                    areafrac > 0.99: continue
-                                bx = b[:,0]; by = b[:,1]
                                 # inverse transform from stereographic
                                 # to lat/lon.
-                                blons, blats = maptran(bx, by, inverse=True)
-                                # forward transform from lat/lon to
+                                b[:,0], b[:,1] = maptran(b[:,0], b[:,1], inverse=True)
                                 # orthographic.
-                                bx, by = self(blons, blats)
-                                b[:,0] = bx; b[:,1] = by
+                                b[:,0], b[:,1]= self(b[:,0], b[:,1])
                             polygons.append(zip(b[:,0],b[:,1]))
                             polygon_types.append(type)
         return polygons, polygon_types
