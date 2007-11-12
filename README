@@ -5,13 +5,17 @@ using matplotlib.
 
 **Requirements**
 
+python 2.4 or higher.
+
 matplotlib 0.90 (or higher)
 
 numpy 1.0 (or higher)
 
-libgoes_c version 2.2.3, available from
-http://geos.refractions.net/, and ctypes (which comes with python >= 2.5,
-but can be installed separately for python 2.4)
+libgoes_c version 2.2.3, available from http://geos.refractions.net/.
+
+ctypes (which comes with python >= 2.5,
+but can be installed separately for python 2.4 from
+http:/python.org/pypi/ctypes).
 
 **Copyright**
 
