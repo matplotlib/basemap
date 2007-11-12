@@ -9,9 +9,7 @@ matplotlib 0.90 (or higher)
 
 numpy 1.0 (or higher)
 
-Shapely (http://trac.gispython.org/projects/PCL/wiki/Shapely - svn version)
-
-Shapely requires libgoes_c version 2.2.3, available from
+libgoes_c version 2.2.3, available from
 http://geos.refractions.net/, and ctypes (which comes with python >= 2.5,
 but can be installed separately for python 2.4)
 
