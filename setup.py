@@ -1,15 +1,8 @@
 import sys, glob, os
 major, minor1, minor2, s, tmp = sys.version_info
-if major==2 and minor1<=3:
-    # setuptools monkeypatches distutils.core.Distribution to support
-    # package_data
-    try: import setuptools
-    except ImportError:
-        raise SystemExit("""\
-matplotlib requires setuptools for installation.  Please download
-http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
-you are doing a system wide install) to install the proper version of
-setuptools for your system""")
+if major==2 and minor1<4:
+    raise SystemExit("""
+python 2.4 or higher required""")
 from distutils.core import Extension
 from distutils.util import convert_path
 
@@ -67,7 +60,32 @@ if 'setuptools' in sys.modules:
 else:
     additional_params = {}
     from distutils.core import setup
-    
+
+# check for ctypes
+try: from ctypes.util import find_library
+except ImportError: havectypes = False
+else: havectypes = True
+if not havectypes:
+    raise SystemExit("""
+basemap requires ctypes, which comes with python 2.5.  If you are 
+running python 2.4, please install ctypes from 
+http://pypi.python.org/pypi/ctypes""")
+
+# check for libgeos_c
+sys.path.append('lib/shapely')
+from find_geoslib import find_geoslib
+lgeos = find_geoslib()
+sys.path.remove('lib/shapely')
+
+# check for shapely
+try: import shapely
+except ImportError: haveshapely = False
+else: haveshapely = True
+if not haveshapely:
+    packages.append('shapely')
+    packages.append('shapely.geometry')
+    package_dirs['shapely'] = os.path.join('lib','shapely')
+
     
 # Specify all the required mpl data
 pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world']
