@@ -772,7 +772,7 @@ and install those files manually (see the basemap README for details)."""
             maptran = pyproj.Proj(proj='stere',lon_0=lon_0,lat_0=lat_0)
             # boundary polygon for orthographic projection
             # in stereographic coorindates.
-            b = self._boundarypolyll.get_coords()
+            b = self._boundarypolyll.boundary
             blons = b[:,0]; blats = b[:,1]
             b[:,0], b[:,1] = maptran(blons, blats)
             boundarypolyxy = _geos.Polygon(b)
@@ -854,7 +854,7 @@ and install those files manually (see the basemap README for details)."""
                                 # which have a 'boundary' attribute.
                                 # otherwise, use 'coords' attribute
                                 # to extract coordinates.
-                                b = psub.get_coords()
+                                b = psub.boundary
                                 blons = b[:,0]; blats = b[:,1]
                                 # transformation from lat/lon to
                                 # map projection coordinates.
@@ -904,7 +904,7 @@ and install those files manually (see the basemap README for details)."""
                             pass
                         # iterate over geometries in intersection.
                         for psub in geoms:
-                            b = psub.get_coords()
+                            b = psub.boundary
                             # if projection == 'ortho',
                             # transform polygon from stereographic
                             # to orthographic coordinates.

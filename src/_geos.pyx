@@ -164,33 +164,31 @@ cdef class BaseGeometry:
         g3 =  GEOSIntersection(g1, g2)
         typeid = GEOSGeomTypeId(g3)
         if typeid == GEOS_POLYGON:
-            p = Polygon() # create an empty Polygon instance
-            p = _add_geom(p,g3) # add geometry to it.
-            # above should be faster than this ..
-            #b = _get_coords(g3)
-            #p = Polygon(b)
-            pout = [p] # return a list with a single element
+            b = _get_coords(g3)
+            p = Polygon(b)
+            pout = [p]
         elif typeid == GEOS_LINESTRING:
-            p = LineString() # create an empty LineString instance
-            p = _add_geom(p,g3) # add geometry to it.
-            return [p]
+            b = _get_coords(g3)
+            p = LineString(b)
+            pout = [p]
         elif typeid == GEOS_MULTIPOLYGON:
             numgeoms = GEOSGetNumGeometries(g3)
             pout = []
             for i from 0 <= i < numgeoms:
                 gout = GEOSGetGeometryN(g3, i)
-                p = Polygon() # create an empty Polygon instance
-                p = _add_geom(p,gout) # add geometry to it.
+                b = _get_coords(gout)
+                p = Polygon(b)
                 pout.append(p)
         elif typeid == GEOS_MULTILINESTRING:
             numgeoms = GEOSGetNumGeometries(g3)
             pout = []
             for i from 0 <= i < numgeoms:
                 gout = GEOSGetGeometryN(g3, i)
-                p = LineString() # create an LineString instance
-                p = _add_geom(p,gout) # add geometry to it.
+                b = _get_coords(gout)
+                p = LineString(b)
                 pout.append(p)
         else:
+            type = PyString_FromString(GEOSGeomType(g3))
             raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
         return pout
 
@@ -207,16 +205,12 @@ cdef class BaseGeometry:
     
 cdef class Polygon(BaseGeometry):
 
-    def __init__(self, ndarray b=None):
+    def __init__(self, ndarray b):
         cdef unsigned int M, m, n, i
         cdef double dx, dy
         cdef double *bbuffer
         cdef GEOSCoordSeq *cs
         cdef GEOSGeom *lr
-
-        # just return an empty class
-        if b is None:
-            return
 
         # make sure data is contiguous.
         # if not, make a local copy.
@@ -302,15 +296,11 @@ cdef _get_coords(GEOSGeom *geom):
     return b
 
 cdef class LineString(BaseGeometry):
-    def __init__(self, ndarray b=None):
+    def __init__(self, ndarray b):
         cdef double dx, dy
         cdef GEOSCoordSeq *cs
         cdef int i, M
         cdef double *bbuffer
-
-        # just return an empty class
-        if b is None:
-            return
 
         # make sure data is contiguous.
         # if not, make a local copy.
@@ -339,12 +329,9 @@ cdef class LineString(BaseGeometry):
 
 cdef class Point(BaseGeometry):
     cdef public x,y
-    def __init__(self, b=None):
+    def __init__(self, b):
         cdef double dx, dy
         cdef GEOSCoordSeq *cs
-        # just return an empty class
-        if b is None:
-            return
         # Create a coordinate sequence
         cs = GEOSCoordSeq_create(1, 2)
         dx = b[0]; dy = b[1]
