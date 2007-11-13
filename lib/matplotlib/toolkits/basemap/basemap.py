@@ -893,7 +893,7 @@ and install those files manually (see the basemap README for details)."""
                             polygons.append(zip(bx,by))
                             polygon_types.append(type)
                             continue
-                    # create a Shapely geometry object.
+                    # create a GEOS geometry object.
                     poly = Shape(b)
                     # if geometry instersects map projection
                     # region, and doesn't have any invalid points, process it.
