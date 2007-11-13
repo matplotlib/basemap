@@ -11,6 +11,7 @@ include setup.py
 include setupegg.py
 include src/*
 include examples/simpletest.py
+include examples/hires.py
 include examples/simpletest_oo.py
 include examples/randompoints.py
 include examples/test.py
@@ -76,3 +77,4 @@ include lib/matplotlib/toolkits/basemap/data/5minmask.bin
 include lib/matplotlib/toolkits/basemap/data/*_c.dat
 include lib/matplotlib/toolkits/basemap/data/*_l.dat
 include lib/matplotlib/toolkits/basemap/data/*_i.dat
+include lib/matplotlib/toolkits/basemap/data/*_h.dat
