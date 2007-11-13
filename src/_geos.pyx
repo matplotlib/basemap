@@ -259,20 +259,6 @@ cdef class Polygon(BaseGeometry):
         GEOSArea(self._geom, &area)
         return area
 
-cdef _add_geom(BaseGeometry p, GEOSGeom *geom):
-    cdef GEOSCoordSeq *cs
-    cdef GEOSGeom *lr
-    cdef unsigned int M
-    if GEOSGeomTypeId(geom) == GEOS_POLYGON:
-        lr = GEOSGetExteriorRing(geom)
-        cs = GEOSGeom_getCoordSeq(lr)
-    else:
-        cs = GEOSGeom_getCoordSeq(geom)
-    GEOSCoordSeq_getSize(cs, &M)
-    p._geom = geom
-    p._npts = M
-    return p
-
 cdef _get_coords(GEOSGeom *geom):
     cdef GEOSCoordSeq *cs
     cdef GEOSGeom *lr
