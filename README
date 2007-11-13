@@ -29,7 +29,7 @@ http://www.ngdc.noaa.gov/seg/cdroms/graham/graham/graham.htm
 is included.
 
 Everything else (including src/_proj.pyx, src/_geod.pyx, src/_pyproj.pxi,
-src/_proj.c and src/_geod.c, src/_geos.c, src/_geos.pyx):
+src/_proj.c, src/_geod.c, src/_geos.c, and src/_geos.pyx):
 
 copyright (c) 2007 by Jeffrey Whitaker.
 
