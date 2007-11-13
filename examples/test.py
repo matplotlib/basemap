@@ -489,7 +489,7 @@ fig=figure()
 # setup of basemap ('geos' = geostationary projection)
 m = Basemap(projection='geos',
             rsphere=(6378137.00,6356752.3142),\
-            resolution='c',area_thresh=10000.,lon_0=0,satellite_height=42500000.)
+            resolution='c',area_thresh=10000.,lon_0=0,satellite_height=35785831)
 # transform to nx x ny regularly spaced native projection grid
 # nx and ny chosen to have roughly the same horizontal res as original image.
 dx = 2.*pi*m.rmajor/len(lons)
