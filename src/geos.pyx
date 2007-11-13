@@ -1,7 +1,5 @@
-# Initialize numpy
 import sys
 import numpy
-import_array()
 
 __version__ = "0.1"
 
@@ -23,6 +21,9 @@ cdef extern from "numpy/arrayobject.h":
     npy_intp PyArray_SIZE(ndarray arr)
     npy_intp PyArray_ISCONTIGUOUS(ndarray arr)
     void import_array()
+
+# Initialize numpy
+import_array()
 
 # GENERAL NOTES:
 #
@@ -113,16 +114,12 @@ cdef void error_h(char *fmt, char*msg):
         warn_msg = format
     sys.stderr.write('GEOS_ERROR: %s\n' % warn_msg)
 
-# The initGEOS routine should be called first, however, that routine takes
-#  the notice and error functions as parameters.
+# intialize GEOS (parameters are notice and error function callbacks).
 initGEOS(notice_h, error_h)
 
 cdef class BaseGeometry:
     cdef GEOSGeom *_geom
     cdef unsigned int _npts
-
-    #def __init__(self):
-    #    pass
 
     def is_valid(self):
         cdef char valid
@@ -173,8 +170,8 @@ cdef class BaseGeometry:
             #p = Polygon(b)
             pout = [p] # return a list with a single element
         elif typeid == GEOS_LINESTRING:
-            p = LineString()
-            p = _add_geom(p,g3)
+            p = LineString() # create an empty LineString instance
+            p = _add_geom(p,g3) # add geometry to it.
             return [p]
         elif typeid == GEOS_MULTIPOLYGON:
             numgeoms = GEOSGetNumGeometries(g3)
@@ -189,7 +186,7 @@ cdef class BaseGeometry:
             pout = []
             for i from 0 <= i < numgeoms:
                 gout = GEOSGetGeometryN(g3, i)
-                p = LineString() # create an empty Polygon instance
+                p = LineString() # create an LineString instance
                 p = _add_geom(p,gout) # add geometry to it.
                 pout.append(p)
         else:
@@ -198,6 +195,14 @@ cdef class BaseGeometry:
 
     def get_coords(self):
         return _get_coords(self._geom)
+
+    def __dealloc__(self):
+        """destroy GEOS geometry"""
+        GEOSGeom_destroy(self._geom)
+
+    def __reduce__(self):
+        """special method that allows geos instance to be pickled"""
+        return (self.__class__,(self.get_coords(),))
     
 cdef class Polygon(BaseGeometry):
 
@@ -207,8 +212,6 @@ cdef class Polygon(BaseGeometry):
         cdef double *bbuffer
         cdef GEOSCoordSeq *cs
         cdef GEOSGeom *lr
-
-        #BaseGeometry.__init__(self)
 
         # just return an empty class
         if b is None:
@@ -253,6 +256,7 @@ cdef class Polygon(BaseGeometry):
 
         # create Polygon from LinearRing (assuming no holes)
         self._geom = GEOSGeom_createPolygon(lr,NULL,0)
+
 
     def area(self):
         cdef double area
