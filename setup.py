@@ -37,16 +37,19 @@ if GEOS_dir is None:
 geos_include_dirs=[os.path.join(GEOS_dir,'include'),numpy.get_include()]
 geos_library_dirs=[os.path.join(GEOS_dir,'lib')]
 
+# proj4 and geos extensions.
 deps = glob.glob('src/*.c')
 deps.remove(os.path.join('src','_proj.c'))
 deps.remove(os.path.join('src','_geod.c'))
-deps.remove(os.path.join('src','geos.c'))
+deps.remove(os.path.join('src','_geos.c'))
 
 packages          = ['matplotlib.toolkits.basemap']
 package_dirs       = {'':'lib'}
 extensions = [Extension("matplotlib.toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
 extensions.append(Extension("matplotlib.toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
-extensions.append(Extension("matplotlib.toolkits.basemap.geos",deps+['src/geos.c'],library_dirs=geos_library_dirs,include_dirs=geos_include_dirs,runtime_library_dirs=geos_library_dirs,libraries=['geos_c']))
+# for some reason, pickling won't work if this extension is installed
+# as "matplotlib.toolkits.basemap._geos"
+extensions.append(Extension("_geos",deps+['src/_geos.c'],library_dirs=geos_library_dirs,include_dirs=geos_include_dirs,runtime_library_dirs=geos_library_dirs,libraries=['geos_c']))
 
 # install shapelib and dbflib.
 packages = packages + ['shapelib','dbflib']

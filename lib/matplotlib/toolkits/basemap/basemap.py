@@ -14,9 +14,7 @@ import numpy as npy
 from numpy import linspace, squeeze, ma
 from matplotlib.cbook import popd, is_scalar
 from shapelib import ShapeFile
-from geos import Polygon as PolygonShape
-from geos import LineString as LineShape
-from geos import Point as PointShape
+import _geos
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -31,7 +29,7 @@ class Basemap(object):
  transverse mercator, miller cylindrical, lambert conformal conic,
  azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
  albers equal area conic, gnomonic, orthographic, sinusoidal, mollweide, 
- geostationary, robinson, cassini-soldner or stereographic).
+ _geostationary, robinson, cassini-soldner or stereographic).
  Doesn't actually draw anything, but sets up the map projection class and
  creates the coastline, lake river and political boundary data
  structures in native map projection coordinates.
@@ -42,7 +40,7 @@ class Basemap(object):
  projection - map projection ('cyl','merc','mill','lcc','eqdc','aea',
   'laea', 'nplaea', 'splaea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly', 
   'sinu', 'moll', 'ortho', 'robin', 'aeqd', 'npaeqd', 'spaeqd', 'stere',
-  'geos', 'npstere' or 'spstere')
+  '_geos', 'npstere' or 'spstere')
  (projections prefixed with 'np' or 'sp' are special case polar-centric
   versions of the parent projection)
  aspect - map aspect ratio (size of y dimension / size of x dimension).
@@ -112,7 +110,7 @@ class Basemap(object):
   'cass' - cassini-soldner (transverse cylindrical equidistant),
   'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
   'sinu' - sinusoidal, 'moll' - mollweide, 'robin' - robinson,
-  'geos' - geostationary, and 'gnom' - gnomonic are currently available.
+  '_geos' - _geostationary, and 'gnom' - gnomonic are currently available.
   Default is 'cyl'.
 
  The map projection region can either be specified by setting these keywords:
@@ -135,9 +133,9 @@ class Basemap(object):
  either they are computed internally, or entire globe is always plotted). For the 
  cylindrical projections ('cyl','merc' and 'mill'), the default is to use 
  llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other 
- projections except 'ortho' and 'geos', either the lat/lon values of the
+ projections except 'ortho' and '_geos', either the lat/lon values of the
  corners or width and height must be specified by the user.
- For 'ortho' and 'geos', the lat/lon values of the corners may be specified,
+ For 'ortho' and '_geos', the lat/lon values of the corners may be specified,
  but if they are not, the entire globe is plotted.
 
  resolution - resolution of boundary database to use. Can be 'c' (crude),
@@ -210,7 +208,7 @@ class Basemap(object):
   on the north or south pole.  The longitude lon_0 is at 6-o'clock, and the
   latitude circle boundinglat is tangent to the edge of the map at lon_0.
  satellite_height - height of satellite (in m) above equator -
-  only relevant for geostationary projections ('geos').
+  only relevant for _geostationary projections ('_geos').
   
 
         """
@@ -504,7 +502,7 @@ class Basemap(object):
             # FIXME: won't work for points exactly on equator??
             if npy.abs(lat_0) < 1.e-2: lat_0 = 1.e-2
             projparams['lat_0'] = lat_0
-        elif projection == 'geos':
+        elif projection == '_geos':
             if lon_0 is None and satellite_height is None:
                 raise ValueError, 'must specify lon_0 and satellite_height for Geostationary basemap'
             if width is not None or height is not None:
@@ -593,7 +591,7 @@ class Basemap(object):
   'splaea' - lambert azimuthal, special case centered on south pole,
   'cass' - cassini-soldner (transverse cylindrical equidistant),
   'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
-  'geos' - geostationary, 'sinu' - sinusoidal, 'moll' - mollweide,
+  '_geos' - _geostationary, 'sinu' - sinusoidal, 'moll' - mollweide,
   'robin' - robinson, or 'gnom' - gnomonic.  You tried '%s'""" % projection
 
         # initialize proj4
@@ -608,7 +606,7 @@ class Basemap(object):
         atts = ['rmajor','rminor','esq','flattening','ellipsoid','projparams']
         for att in atts:
             self.__dict__[att] = proj.__dict__[att]
-        # these only exist for geostationary projection.
+        # these only exist for _geostationary projection.
         if hasattr(proj,'_width'):
             self.__dict__['_width'] = proj.__dict__['_width']
         if hasattr(proj,'_height'):
@@ -647,7 +645,7 @@ class Basemap(object):
         if projection in ['mill','cyl','merc']:
             self.latmin = self.llcrnrlat
             self.latmax = self.urcrnrlat
-        elif projection in ['ortho','geos','moll','robin','sinu']:
+        elif projection in ['ortho','_geos','moll','robin','sinu']:
             self.latmin = -90.
             self.latmax = 90.
         else:
@@ -748,12 +746,12 @@ and install those files manually (see the basemap README for details)."""
         polygon_types = []
         # coastlines are polygons, other boundaries are line segments.
         if name == 'gshhs':
-            Shape = PolygonShape
+            Shape = _geos.Polygon
         else:
-            Shape = LineShape
+            Shape = _geos.LineString
         # see if map projection region polygon contains a pole.
-        NPole = PointShape(self(0.,90.))
-        SPole = PointShape(self(0.,-90.))
+        NPole = _geos.Point(self(0.,90.))
+        SPole = _geos.Point(self(0.,-90.))
         boundarypolyxy = self._boundarypolyxy
         boundarypolyll = self._boundarypolyll
         hasNP = NPole.within(boundarypolyxy)
@@ -761,7 +759,7 @@ and install those files manually (see the basemap README for details)."""
         containsPole = hasNP or hasSP
         # these projections cannot cross pole.
         if containsPole and\
-           self.projection in ['tmerc','cass','omerc','merc','mill','cyl','robin','moll','sinu','geos']:
+           self.projection in ['tmerc','cass','omerc','merc','mill','cyl','robin','moll','sinu','_geos']:
             raise ValueError('%s projection cannot cross pole'%(self.projection))
 
         # make sure orthographic projection has containsPole=True
@@ -777,7 +775,7 @@ and install those files manually (see the basemap README for details)."""
             b = self._boundarypolyll.get_coords()
             blons = b[:,0]; blats = b[:,1]
             b[:,0], b[:,1] = maptran(blons, blats)
-            boundarypolyxy = PolygonShape(b)
+            boundarypolyxy = _geos.Polygon(b)
         for line in bdatmetafile:
             linesplit = line.split()
             area = float(linesplit[1])
@@ -824,7 +822,7 @@ and install those files manually (see the basemap README for details)."""
                         lats.append(-90.)
                         b = npy.empty((len(lons),2),npy.float64)
                         b[:,0] = lons; b[:,1] = lats
-                        poly = PolygonShape(b)
+                        poly = _geos.Polygon(b)
                         antart = True
                     else:
                         poly = Shape(b)
@@ -934,7 +932,7 @@ and install those files manually (see the basemap README for details)."""
         nx = 100
         ny = 100
         maptran = self
-        if self.projection in ['ortho','geos']:
+        if self.projection in ['ortho','_geos']:
             # circular region.
             thetas = linspace(0.,2.*npy.pi,2*nx*ny)[:-1]
             if self.projection == 'ortho':
@@ -947,7 +945,7 @@ and install those files manually (see the basemap README for details)."""
             y = rminor*npy.sin(thetas) + rminor
             b = npy.empty((len(x),2),npy.float64)
             b[:,0]=x; b[:,1]=y
-            boundaryxy = PolygonShape(b)
+            boundaryxy = _geos.Polygon(b)
             # compute proj instance for full disk, if necessary.
             if not self._fulldisk:
                 projparms = self.projparams
@@ -986,7 +984,7 @@ and install those files manually (see the basemap README for details)."""
             x, y = maptran(lons,lats)
             b = npy.empty((len(x),2),npy.float64)
             b[:,0]=x; b[:,1]=y
-            boundaryxy = PolygonShape(b)
+            boundaryxy = _geos.Polygon(b)
         else: # all other projections are rectangular.
             # left side (x = xmin, ymin <= y <= ymax)
             yy = linspace(self.ymin, self.ymax, ny)[:-1]
@@ -1007,7 +1005,7 @@ and install those files manually (see the basemap README for details)."""
             b = npy.empty((4,2),npy.float64)
             b[:,0]=[self.xmin,self.xmin,self.xmax,self.xmax]
             b[:,1]=[self.ymin,self.ymax,self.ymax,self.ymin]
-            boundaryxy = PolygonShape(b)
+            boundaryxy = _geos.Polygon(b)
         if self.projection in ['mill','merc','cyl']:
             # make sure map boundary doesn't quite include pole.
             if self.urcrnrlat > 89.9999: 
@@ -1023,7 +1021,7 @@ and install those files manually (see the basemap README for details)."""
             x, y = self(lons, lats)
             b = npy.empty((len(x),2),npy.float64)
             b[:,0]=x; b[:,1]=y
-            boundaryxy = PolygonShape(b)
+            boundaryxy = _geos.Polygon(b)
         else:
             if self.projection not in ['moll','robin','sinu']:  
                 lons, lats = maptran(x,y,inverse=True)
@@ -1041,7 +1039,7 @@ and install those files manually (see the basemap README for details)."""
                     n = n + 1
         b = npy.empty((len(lons),2),npy.float64)
         b[:,0]=lons; b[:,1]=lats
-        boundaryll = PolygonShape(b)
+        boundaryll = _geos.Polygon(b)
         return boundaryll, boundaryxy
 
 
@@ -1067,7 +1065,7 @@ and install those files manually (see the basemap README for details)."""
             circle.set_edgecolor(color)
             circle.set_linewidth(linewidth)
             circle.set_clip_on(False)
-        elif self.projection == 'geos' and self._fulldisk: # elliptical region
+        elif self.projection == '_geos' and self._fulldisk: # elliptical region
             # define an Ellipse patch, add it to axes instance.
             ellps = Ellipse((self._width,self._height),2.*self._width,2.*self._height)
             ax.add_patch(ellps)
@@ -1509,8 +1507,8 @@ coordinates using the shpproj utility from the shapelib tools
                             l.set_zorder(zorder)
                         ax.add_line(l)
         # draw labels for parallels
-        # parallels not labelled for fulldisk orthographic or geostationary
-        if self.projection in ['ortho','geos'] and max(labels):
+        # parallels not labelled for fulldisk orthographic or _geostationary
+        if self.projection in ['ortho','_geos'] and max(labels):
             if self._fulldisk:
                 print 'Warning: Cannot label parallels on full-disk Orthographic or Geostationary basemap'
                 labels = [0,0,0,0]
@@ -1716,11 +1714,11 @@ coordinates using the shpproj utility from the shapelib tools
                         ax.add_line(l)
         # draw labels for meridians.
         # meridians not labelled for sinusoidal, mollweide, or
-        # or full-disk orthographic/geostationary.
+        # or full-disk orthographic/_geostationary.
         if self.projection in ['sinu','moll'] and max(labels):
             print 'Warning: Cannot label meridians on Sinusoidal or Mollweide basemap'
             labels = [0,0,0,0]
-        if self.projection in ['ortho','geos'] and max(labels):
+        if self.projection in ['ortho','_geos'] and max(labels):
             if self._fulldisk:
                 print 'Warning: Cannot label meridians on full-disk Geostationary or Orthographic basemap'
                 labels = [0,0,0,0]
@@ -2074,7 +2072,7 @@ coordinates using the shpproj utility from the shapelib tools
         # turn off axes frame for non-rectangular projections.
         if self.projection in ['moll','robin','sinu']:
             ax.set_frame_on(False)
-        if self.projection in ['ortho','geos'] and self._fulldisk:
+        if self.projection in ['ortho','_geos'] and self._fulldisk:
             ax.set_frame_on(False)
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.

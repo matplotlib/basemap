@@ -120,6 +120,7 @@ initGEOS(notice_h, error_h)
 cdef class BaseGeometry:
     cdef GEOSGeom *_geom
     cdef unsigned int _npts
+    cdef public object boundary
 
     def is_valid(self):
         cdef char valid
@@ -202,7 +203,7 @@ cdef class BaseGeometry:
 
     def __reduce__(self):
         """special method that allows geos instance to be pickled"""
-        return (self.__class__,(self.get_coords(),))
+        return (self.__class__,(self.boundary,))
     
 cdef class Polygon(BaseGeometry):
 
@@ -256,6 +257,7 @@ cdef class Polygon(BaseGeometry):
 
         # create Polygon from LinearRing (assuming no holes)
         self._geom = GEOSGeom_createPolygon(lr,NULL,0)
+        self.boundary = b
 
 
     def area(self):
@@ -333,6 +335,7 @@ cdef class LineString(BaseGeometry):
 
         # create LineString
         self._geom = GEOSGeom_createLineString(cs)
+        self.boundary = b
 
 cdef class Point(BaseGeometry):
     cdef public x,y
@@ -349,3 +352,4 @@ cdef class Point(BaseGeometry):
         GEOSCoordSeq_setY(cs, 0, dy)
         self._geom = GEOSGeom_createPoint(cs)
         self._npts = 1
+        self.boundary = b
