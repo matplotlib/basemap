@@ -14,9 +14,9 @@ import numpy as npy
 from numpy import linspace, squeeze, ma
 from matplotlib.cbook import popd, is_scalar
 from shapelib import ShapeFile
-from shapely.geometry import Polygon as PolygonShape
-from shapely.geometry import LineString as LineShape
-from shapely.geometry import Point as PointShape
+from geos import Polygon as PolygonShape
+from geos import LineString as LineShape
+from geos import Point as PointShape
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -774,9 +774,10 @@ and install those files manually (see the basemap README for details)."""
             maptran = pyproj.Proj(proj='stere',lon_0=lon_0,lat_0=lat_0)
             # boundary polygon for orthographic projection
             # in stereographic coorindates.
-            b = npy.asarray(self._boundarypolyll.boundary)
+            b = self._boundarypolyll.get_coords()
             blons = b[:,0]; blats = b[:,1]
-            boundarypolyxy = PolygonShape(zip(*maptran(blons,blats)))
+            b[:,0], b[:,1] = maptran(blons, blats)
+            boundarypolyxy = PolygonShape(b)
         for line in bdatmetafile:
             linesplit = line.split()
             area = float(linesplit[1])
@@ -821,14 +822,13 @@ and install those files manually (see the basemap README for details)."""
                         lats.insert(0,-90.)
                         lons.append(lonend)
                         lats.append(-90.)
-                        poly = PolygonShape(zip(lons,lats))
-                        antart = True
                         b = npy.empty((len(lons),2),npy.float64)
                         b[:,0] = lons; b[:,1] = lats
+                        poly = PolygonShape(b)
+                        antart = True
                     else:
+                        poly = Shape(b)
                         antart = False
-                    # create Shapely geometry from lons/lons array.
-                    poly = Shape(b)
                     # create duplicate polygons shifted by -360 and +360
                     # (so as to properly treat polygons that cross 
                     # Greenwich meridian).
@@ -847,25 +847,16 @@ and install those files manually (see the basemap README for details)."""
                             # if geometry intersection calculation fails,
                             # just move on.
                             try:
-                                poly = poly.intersection(boundarypolyll)
+                                geoms = poly.intersection(boundarypolyll)
                             except:
                                 pass
-                            # create iterable object with geometries
-                            # that intersect map region.
-                            if hasattr(poly,'geoms'): 
-                                geoms = poly.geoms
-                            else:
-                                geoms = [poly]
                             # iterate over geometries in intersection.
                             for psub in geoms:
                                 # only coastlines are polygons,
                                 # which have a 'boundary' attribute.
                                 # otherwise, use 'coords' attribute
                                 # to extract coordinates.
-                                if name == 'gshhs':
-                                    b = npy.asarray(psub.boundary)
-                                else:
-                                    b = npy.asarray(psub.coords)
+                                b = psub.get_coords()
                                 blons = b[:,0]; blats = b[:,1]
                                 # transformation from lat/lon to
                                 # map projection coordinates.
@@ -906,25 +897,16 @@ and install those files manually (see the basemap README for details)."""
                     poly = Shape(b)
                     # if geometry instersects map projection
                     # region, and doesn't have any invalid points, process it.
-                    if goodmask.all() and boundarypolyxy.intersects(poly):
+                    if goodmask.all() and poly.intersects(boundarypolyxy):
                         # if geometry intersection calculation fails,
                         # just move on.
                         try:
-                            poly = boundarypolyxy.intersection(poly)
+                            geoms = poly.intersection(boundarypolyxy)
                         except:
                             pass
-                        # create iterable object with geometries
-                        # that intersect map region.
-                        if hasattr(poly,'geoms'): 
-                            geoms = poly.geoms
-                        else:
-                            geoms = [poly]
                         # iterate over geometries in intersection.
                         for psub in geoms:
-                            if name == 'gshhs':
-                                b = npy.asarray(psub.boundary)
-                            else:
-                                b = npy.asarray(psub.coords)
+                            b = psub.get_coords()
                             # if projection == 'ortho',
                             # transform polygon from stereographic
                             # to orthographic coordinates.
@@ -932,7 +914,7 @@ and install those files manually (see the basemap README for details)."""
                                 # if coastline polygon covers more than 99%
                                 # of map region for fulldisk projection,
                                 # it's probably bogus, so skip it.
-                                areafrac = psub.area/boundarypolyxy.area
+                                areafrac = psub.area()/boundarypolyxy.area()
                                 if name == 'gshhs' and\
                                    self._fulldisk and\
                                    areafrac > 0.99: continue
@@ -963,7 +945,9 @@ and install those files manually (see the basemap README for details)."""
                 rmajor = self._width
             x = rmajor*npy.cos(thetas) + rmajor
             y = rminor*npy.sin(thetas) + rminor
-            boundaryxy = PolygonShape(zip(x,y))
+            b = npy.empty((len(x),2),npy.float64)
+            b[:,0]=x; b[:,1]=y
+            boundaryxy = PolygonShape(b)
             # compute proj instance for full disk, if necessary.
             if not self._fulldisk:
                 projparms = self.projparams
@@ -1000,7 +984,9 @@ and install those files manually (see the basemap README for details)."""
             lons = npy.array(lons1+lons2+lons3+lons4,npy.float64)
             lats = npy.array(lats1+lats2+lats3+lats4,npy.float64)
             x, y = maptran(lons,lats)
-            boundaryxy = PolygonShape(zip(x,y))
+            b = npy.empty((len(x),2),npy.float64)
+            b[:,0]=x; b[:,1]=y
+            boundaryxy = PolygonShape(b)
         else: # all other projections are rectangular.
             # left side (x = xmin, ymin <= y <= ymax)
             yy = linspace(self.ymin, self.ymax, ny)[:-1]
@@ -1018,10 +1004,10 @@ and install those files manually (see the basemap README for details)."""
             y = y + len(xx)*[self.ymin]
             x = npy.array(x,npy.float64)
             y = npy.array(y,npy.float64)
-            boundaryxy = PolygonShape([(self.xmin,self.ymin),\
-                                       (self.xmin,self.ymax),\
-                                       (self.xmax,self.ymax),\
-                                       (self.xmax,self.ymin)])
+            b = npy.empty((4,2),npy.float64)
+            b[:,0]=[self.xmin,self.xmin,self.xmax,self.xmax]
+            b[:,1]=[self.ymin,self.ymax,self.ymax,self.ymin]
+            boundaryxy = PolygonShape(b)
         if self.projection in ['mill','merc','cyl']:
             # make sure map boundary doesn't quite include pole.
             if self.urcrnrlat > 89.9999: 
@@ -1035,7 +1021,9 @@ and install those files manually (see the basemap README for details)."""
             lons = [self.llcrnrlon, self.llcrnrlon, self.urcrnrlon, self.urcrnrlon]
             lats = [llcrnrlat, urcrnrlat, urcrnrlat, llcrnrlat]
             x, y = self(lons, lats)
-            boundaryxy = PolygonShape(zip(x,y))
+            b = npy.empty((len(x),2),npy.float64)
+            b[:,0]=x; b[:,1]=y
+            boundaryxy = PolygonShape(b)
         else:
             if self.projection not in ['moll','robin','sinu']:  
                 lons, lats = maptran(x,y,inverse=True)
@@ -1051,7 +1039,9 @@ and install those files manually (see the basemap README for details)."""
                         lons[n] = lon
                     lonprev = lon
                     n = n + 1
-        boundaryll = PolygonShape(zip(lons,lats))
+        b = npy.empty((len(lons),2),npy.float64)
+        b[:,0]=lons; b[:,1]=lats
+        boundaryll = PolygonShape(b)
         return boundaryll, boundaryxy
 
 
