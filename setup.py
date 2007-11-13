@@ -1,10 +1,18 @@
 import sys, glob, os
 major, minor1, minor2, s, tmp = sys.version_info
-if major==2 and minor1<4:
-    raise SystemExit("""
-python 2.4 or higher required""")
+if major==2 and minor1<=3:
+    # setuptools monkeypatches distutils.core.Distribution to support
+    # package_data
+    try: import setuptools
+    except ImportError:
+        raise SystemExit("""\
+matplotlib requires setuptools for installation.  Please download
+http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
+you are doing a system wide install) to install the proper version of
+setuptools for your system""")
 from distutils.core import Extension
 from distutils.util import convert_path
+import numpy
 
 def dbf_macros():
     """Return the macros to define when compiling the dbflib wrapper.
@@ -23,14 +31,22 @@ def dbf_macros():
     else:
         return [("HAVE_UPDATE_HEADER", "0")]
 
+GEOS_dir = os.environ.get('GEOS_DIR')
+if GEOS_dir is None:
+    raise KeyError, 'please specify the location of geos library and headers with GEOS_DIR environment variable'
+geos_include_dirs=[os.path.join(GEOS_dir,'include'),numpy.get_include()]
+geos_library_dirs=[os.path.join(GEOS_dir,'lib')]
+
 deps = glob.glob('src/*.c')
 deps.remove(os.path.join('src','_proj.c'))
 deps.remove(os.path.join('src','_geod.c'))
+deps.remove(os.path.join('src','geos.c'))
 
 packages          = ['matplotlib.toolkits.basemap']
 package_dirs       = {'':'lib'}
 extensions = [Extension("matplotlib.toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
 extensions.append(Extension("matplotlib.toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
+extensions.append(Extension("matplotlib.toolkits.basemap.geos",deps+['src/geos.c'],library_dirs=geos_library_dirs,include_dirs=geos_include_dirs,runtime_library_dirs=geos_library_dirs,libraries=['geos_c']))
 
 # install shapelib and dbflib.
 packages = packages + ['shapelib','dbflib']
@@ -61,32 +77,6 @@ else:
     additional_params = {}
     from distutils.core import setup
 
-# check for ctypes
-try: from ctypes.util import find_library
-except ImportError: havectypes = False
-else: havectypes = True
-if not havectypes:
-    raise SystemExit("""
-basemap requires ctypes, which comes with python 2.5.  If you are 
-running python 2.4, please install ctypes from 
-http://pypi.python.org/pypi/ctypes""")
-
-# check for libgeos_c
-sys.path.append('lib/shapely')
-from find_geoslib import find_geoslib
-lgeos = find_geoslib()
-sys.path.remove('lib/shapely')
-
-# check for shapely
-try: import shapely
-except ImportError: haveshapely = False
-else: haveshapely = True
-if not haveshapely:
-    packages.append('shapely')
-    packages.append('shapely.geometry')
-    package_dirs['shapely'] = os.path.join('lib','shapely')
-
-    
 # Specify all the required mpl data
 pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world']
 boundaryfiles = []

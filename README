@@ -13,10 +13,6 @@ numpy 1.0 (or higher)
 
 libgoes_c version 2.2.3, available from http://geos.refractions.net/.
 
-ctypes (which comes with python >= 2.5,
-but can be installed separately for python 2.4 from
-http:/python.org/pypi/ctypes).
-
 **Copyright**
 
 source code from proj.4 (http://proj.maptools.org) is included in the
@@ -24,10 +20,6 @@ source code from proj.4 (http://proj.maptools.org) is included in the
 
 pyshapelib by Bernhard Herzog is included in the 'pyshapelib' directory
 under the terms given in LICENSE_pyshapelib.
-
-The Shapely module (http://trac.gispython.org/projects/PCL/wiki/Shapely) by
-Sean Gillies is included in the 'lib/shapely' directory under the terms
-given in LICENSE_shapely.
 
 the coastline, lake, river and political boundary data are extracted
 from datasets provided with the Generic Mapping Tools
@@ -39,7 +31,7 @@ http://www.ngdc.noaa.gov/seg/cdroms/graham/graham/graham.htm
 is included.
 
 Everything else (including src/_proj.pyx, src/_geod.pyx, src/_pyproj.pxi,
-src/_proj.c and src/_geod.c):
+src/_proj.c and src/_geod.c, src/_geos.c, src/_geos.pyx):
 
 copyright (c) 2007 by Jeffrey Whitaker.
 
