@@ -139,7 +139,7 @@ class Basemap(object):
  but if they are not, the entire globe is plotted.
 
  resolution - resolution of boundary database to use. Can be 'c' (crude),
-  'l' (low), 'i' (intermediate), 'h' (high), or None. Default is 'c'.
+  'l' (low), 'i' (intermediate), 'h' (high), 'f' (full) or None. 
   If None, no boundary data will be read in (and class methods
   such as drawcoastlines will raise an exception if invoked).
   Resolution drops off by roughly 80%
@@ -150,8 +150,8 @@ class Basemap(object):
   Tools (http://gmt.soest.hawaii.edu).
 
  area_thresh - coastline or lake with an area smaller than area_thresh
-  in km^2 will not be plotted.  Default 10000,1000,100,10 for resolution
-  'c','l','i','h'.
+  in km^2 will not be plotted.  Default 10000,1000,100,10,1 for resolution
+  'c','l','i','h','f'.
 
  rsphere - radius of the sphere used to define map projection (default
   6370997 meters, close to the arithmetic mean radius of the earth). If
@@ -671,7 +671,7 @@ class Basemap(object):
             elif resolution == 'f':
                 area_thresh = 1.
             else:
-                raise ValueError, "boundary resolution must be one of 'c','l','i' or 'h'"
+                raise ValueError, "boundary resolution must be one of 'c','l','i','h' or 'f'"
         self.area_thresh = area_thresh
         # define map boundary polygon (in lat/lon coordinates)
         self._boundarypolyll, self._boundarypolyxy = self._getmapboundary()
@@ -733,10 +733,10 @@ class Basemap(object):
 
     def _readboundarydata(self,name):
         msg = """
-Unable to open boundary dataset file. Only the 'crude', 'low'
-and 'intermediate' resolution datasets are installed by default. If you
-are requesting a 'high' resolution dataset, you need to download 
-and install those files manually (see the basemap README for details)."""
+Unable to open boundary dataset file. Only the 'crude', 'low',
+'intermediate' and 'high' resolution datasets are installed by default. If you
+are requesting a 'full' resolution dataset, you need to download 
+and install those files separately(see the basemap README for details)."""
         try:
             bdatfile = open(os.path.join(basemap_datadir,name+'_'+self.resolution+'.dat'),'rb')
             bdatmetafile = open(os.path.join(basemap_datadir,name+'meta_'+self.resolution+'.dat'),'r')
