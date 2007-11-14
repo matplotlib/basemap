@@ -36,7 +36,12 @@ def check_geosversion(GEOS_dir):
     try:
         f = open(os.path.join(GEOS_dir,'include/geos_c.h'))
     except:
-        raise IOError('cannot find geos header file in %s/include'%GEOS_dir)
+        msg = """
+Cannot find geos header file (geos_c.h) in %s/include.  Please check
+your geos installation and make sure the GEOS_DIR environment
+variable is set correctly""" %GEOS_dir
+        print msg
+        raise SystemExit(1)
     geos_version = None
     for line in f:
         if line.startswith('#define GEOS_VERSION'):
