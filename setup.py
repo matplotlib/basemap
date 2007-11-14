@@ -58,8 +58,10 @@ is installed in /usr/local/lib, and geos_c.h is installed in
 geos_version = check_geosversion(GEOS_dir)
 if geos_version != '"2.2.3"':
     msg = """\
-geos library version 2.2.3 is required, you have version %s.
-Please download and install 2.2.3 from http://geos.refractions.net.""" % geos_version
+geos library version 2.2.3 is required, you have version %s
+installed in %s. Please change the GEOS_DIR environment variable
+to point to the location where geos 2.2.3 is installed, or
+download and install 2.2.3 from http://geos.refractions.net.""" % (geos_version, GEOS_dir)
     print msg
     raise SystemExit(1)
 else:
