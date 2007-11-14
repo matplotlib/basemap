@@ -46,14 +46,20 @@ def check_geosversion(GEOS_dir):
 # get location of geos lib from environment variable.
 GEOS_dir = os.environ.get('GEOS_DIR')
 if GEOS_dir is None:
-    raise KeyError('please specify the location of geos library and headers with GEOS_DIR environment variable')
+    msg = """\
+please specify the location of geos library and headers with
+the GEOS_DIR environment variable. For example if libgeos_c
+is installed in /usr/local/lib, and geos_c.h is installed in
+/usr/local/include, set GEOS_DIR to /usr/local."""
+    raise ValueError(msg)
 # check that header geos_c.h is in GEOS_dir/include,
 # and that the version number in the header file is 2.2.3.
 geos_version = check_geosversion(GEOS_dir)
 if geos_version != '"2.2.3"':
-    raise ValueError("""
+    msg = """\
 geos library version 2.2.3 is required, you have version %s.
-Please download and install 2.2.3 from http://geos.refractions.net.""" % geos_version)
+Please download and install 2.2.3 from http://geos.refractions.net.""" % geos_version
+    raise ValueError(msg)
 else:
     geos_include_dirs=[os.path.join(GEOS_dir,'include'),numpy.get_include()]
     geos_library_dirs=[os.path.join(GEOS_dir,'lib')]
