@@ -5,7 +5,7 @@ if major==2 and minor1<=3:
     # package_data
     try: import setuptools
     except ImportError:
-        raise SystemExit("""\
+        raise SystemExit("""
 matplotlib requires setuptools for installation.  Please download
 http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
 you are doing a system wide install) to install the proper version of
@@ -36,12 +36,10 @@ def check_geosversion(GEOS_dir):
     try:
         f = open(os.path.join(GEOS_dir,'include/geos_c.h'))
     except:
-        msg = """
+        raise SystemExit("""
 Cannot find geos header file (geos_c.h) in %s/include.  Please check
 your geos installation and make sure the GEOS_DIR environment
-variable is set correctly""" %GEOS_dir
-        print msg
-        raise SystemExit(1)
+variable is set correctly.""" %GEOS_dir)
     geos_version = None
     for line in f:
         if line.startswith('#define GEOS_VERSION'):
@@ -51,24 +49,20 @@ variable is set correctly""" %GEOS_dir
 # get location of geos lib from environment variable.
 GEOS_dir = os.environ.get('GEOS_DIR')
 if GEOS_dir is None:
-    msg = """\
+    raise SystemExit("""
 please specify the location of geos library and headers with
 the GEOS_DIR environment variable. For example if libgeos_c
 is installed in /usr/local/lib, and geos_c.h is installed in
-/usr/local/include, set GEOS_DIR to /usr/local."""
-    print msg
-    raise SystemExit(1)
+/usr/local/include, set GEOS_DIR to /usr/local.""")
 # check that header geos_c.h is in GEOS_dir/include,
 # and that the version number in the header file is 2.2.3.
 geos_version = check_geosversion(GEOS_dir)
 if geos_version != '"2.2.3"':
-    msg = """\
+    raise SystemExit("""
 geos library version 2.2.3 is required, you have version %s
 installed in %s. Please change the GEOS_DIR environment variable
 to point to the location where geos 2.2.3 is installed, or
-download and install 2.2.3 from http://geos.refractions.net.""" % (geos_version, GEOS_dir)
-    print msg
-    raise SystemExit(1)
+download and install 2.2.3 from http://geos.refractions.net.""" % (geos_version, GEOS_dir))
 else:
     geos_include_dirs=[os.path.join(GEOS_dir,'include'),numpy.get_include()]
     geos_library_dirs=[os.path.join(GEOS_dir,'lib')]
