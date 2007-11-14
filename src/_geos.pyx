@@ -46,6 +46,9 @@ cdef extern from "geos_c.h":
         GEOS_MULTILINESTRING
         GEOS_MULTIPOLYGON
         GEOS_GEOMETRYCOLLECTION
+        GEOS_VERSION_MAJOR 
+        GEOS_VERSION_MINOR 
+        GEOS_VERSION_PATCH 
     ctypedef struct GEOSGeom:
         pass
     ctypedef struct GEOSCoordSeq:
@@ -114,6 +117,10 @@ cdef void error_h(char *fmt, char*msg):
         warn_msg = format
     sys.stderr.write('GEOS_ERROR: %s\n' % warn_msg)
 
+# check library version
+geos_version = GEOS_VERSION_MAJOR,GEOS_VERSION_MINOR,GEOS_VERSION_PATCH
+if geos_version != (2,2,3):
+     raise ValueError('version 2.2.3 of the geos library is required')
 # intialize GEOS (parameters are notice and error function callbacks).
 initGEOS(notice_h, error_h)
 
@@ -260,28 +267,6 @@ cdef class Polygon(BaseGeometry):
         GEOSArea(self._geom, &area)
         return area
 
-cdef _get_coords(GEOSGeom *geom):
-    cdef GEOSCoordSeq *cs
-    cdef GEOSGeom *lr
-    cdef unsigned int i, M
-    cdef double dx, dy
-    cdef ndarray b
-    cdef double *bbuffer
-    if GEOSGeomTypeId(geom) == GEOS_POLYGON:
-        lr = GEOSGetExteriorRing(geom)
-        cs = GEOSGeom_getCoordSeq(lr)
-    else:
-        cs = GEOSGeom_getCoordSeq(geom)
-    GEOSCoordSeq_getSize(cs, &M)
-    b = numpy.empty((M,2), numpy.float64)
-    bbuffer = <double *>b.data
-    for i from 0 <= i < M:
-        GEOSCoordSeq_getX(cs, i, &dx)
-        GEOSCoordSeq_getY(cs, i, &dy)
-        bbuffer[2*i] = dx
-        bbuffer[2*i+1] = dy
-    return b
-
 cdef class LineString(BaseGeometry):
     def __init__(self, ndarray b):
         cdef double dx, dy
@@ -327,3 +312,25 @@ cdef class Point(BaseGeometry):
         self._geom = GEOSGeom_createPoint(cs)
         self._npts = 1
         self.boundary = b
+
+cdef _get_coords(GEOSGeom *geom):
+    cdef GEOSCoordSeq *cs
+    cdef GEOSGeom *lr
+    cdef unsigned int i, M
+    cdef double dx, dy
+    cdef ndarray b
+    cdef double *bbuffer
+    if GEOSGeomTypeId(geom) == GEOS_POLYGON:
+        lr = GEOSGetExteriorRing(geom)
+        cs = GEOSGeom_getCoordSeq(lr)
+    else:
+        cs = GEOSGeom_getCoordSeq(geom)
+    GEOSCoordSeq_getSize(cs, &M)
+    b = numpy.empty((M,2), numpy.float64)
+    bbuffer = <double *>b.data
+    for i from 0 <= i < M:
+        GEOSCoordSeq_getX(cs, i, &dx)
+        GEOSCoordSeq_getY(cs, i, &dy)
+        bbuffer[2*i] = dx
+        bbuffer[2*i+1] = dy
+    return b
