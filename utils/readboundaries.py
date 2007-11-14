@@ -93,7 +93,7 @@ def get_boundary_lines(bdatfile):
     return polybounds2, polymeta
 
 # read in coastline data (only those polygons whose area > area_thresh).
-for resolution in ['c','l','i','h']:
+for resolution in ['c','l','i','h','f']:
     coastlons = []; coastlats = []; coastsegind = []; coastsegtype = []
     coastfile = 'gshhs_'+resolution+'.txt'
     countryfile = 'countries_'+resolution+'.txt'
