@@ -78,3 +78,4 @@ include lib/matplotlib/toolkits/basemap/data/*_c.dat
 include lib/matplotlib/toolkits/basemap/data/*_l.dat
 include lib/matplotlib/toolkits/basemap/data/*_i.dat
 include lib/matplotlib/toolkits/basemap/data/*_h.dat
+recursive-include geos-2.2.3 *

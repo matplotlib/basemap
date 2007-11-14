@@ -78,6 +78,7 @@ the source code included with basemap by following these steps:
  > export GEOS_DIR=<where you want the libs and headers to go>
    A reasonable choice on a Unix-like system is /usr/local, or
    if you don't have permission to write there, your home directory.
+ > ./configure --prefix=$GEOS_DIR
  > make; make install
 
 3) cd back to the top level basemap directory (basemap-X.Y.Z) and
