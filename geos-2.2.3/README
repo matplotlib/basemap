@@ -1,0 +1,56 @@
+BUILDING
+========
+
+Unix
+-----
+
+	# ./configure
+	# make
+	# make install
+
+Win32
+-----
+
+Win32 Visual Studio Builds:
+	source\makefile.vc
+
+
+CLIENT APPLICATIONS
+===================
+
+Using the C interface (recommended)
+-----------------------------------
+
+To compile programs against the C lib (recommended):
+
+	CFLAGS += `geos-config --cflags`
+	LDFLAGS += `geos-config --ldflags` -lgeos_c
+	#include <geos_c.h>
+
+Example usage:
+
+	source/capi/geostest.c contains basic usage
+	examples.
+
+Using the C++ interface (discouraged)
+-------------------------------------
+
+To compile programs against the C++ lib:
+
+	CFLAGS += `geos-config --cflags`
+	LDFLAGS += `geos-config --ldflags` -lgeos
+	#include <geos.h>
+
+Example usage:
+
+	doc/example.cpp contains basic usage
+	examples.
+
+
+DOCUMENTATION
+=============
+
+	# cd doc; make doxygen-html
+
+	http://geos.refractions.net
+

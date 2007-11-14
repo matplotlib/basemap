@@ -1,0 +1,47 @@
+#ifndef GEOS_PLATFORM_H
+#define GEOS_PLATFORM_H
+
+/* Set to 1 if `long int' is 64 bits */
+#undef HAVE_LONG_INT_64
+
+/* Set to 1 if `long long int' is 64 bits */
+#undef HAVE_LONG_LONG_INT_64
+
+/* Set to 1 if you have ieeefp.h */
+#undef HAVE_IEEEFP_H
+
+#ifdef HAVE_IEEEFP_H
+extern "C"
+{
+#include <ieeefp.h>
+}
+#endif
+
+
+//Defines NaN for intel platforms
+//Don't forget to define infinities
+#define DoubleNotANumber 1.7e-308
+#define DoubleInfinity 1.7e+308
+#define DoubleNegInfinity -1.7e+308
+
+#define FINITE(x) ( (x) != DoubleNotANumber && (x) != DoubleInfinity && (x) != DoubleNegInfinity )
+#define ISNAN(x) ( (x) == DoubleNotANumber )
+
+#ifdef HAVE_LONG_LONG_INT_64
+ typedef long long int int64;
+#else
+ typedef long int int64;
+#ifndef HAVE_LONG_INT_64
+#define INT64_IS_REALLY32 1
+#warning "Could not find 64bit integer definition!"
+#endif
+#endif
+
+inline int getMachineByteOrder() {
+        static int endian_check = 1; // don't modify !!
+        return *((char *)&endian_check); // 0 == big_endian | xdr,
+                                         // 1 == little_endian | ndr
+}
+
+
+#endif

@@ -62,7 +62,8 @@ if geos_version != '"2.2.3"':
 geos library version 2.2.3 is required, you have version %s
 installed in %s. Please change the GEOS_DIR environment variable
 to point to the location where geos 2.2.3 is installed, or
-download and install 2.2.3 from http://geos.refractions.net.""" % (geos_version, GEOS_dir))
+install 2.2.3 from the source code included with basemap
+(see the README for details).""" % (geos_version, GEOS_dir))
 else:
     geos_include_dirs=[os.path.join(GEOS_dir,'include'),numpy.get_include()]
     geos_library_dirs=[os.path.join(GEOS_dir,'lib')]
