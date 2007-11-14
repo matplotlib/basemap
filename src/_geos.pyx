@@ -190,6 +190,7 @@ cdef class BaseGeometry:
         else:
             type = PyString_FromString(GEOSGeomType(g3))
             raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
+        GEOSGeom_destroy(g3)
         return pout
 
     def get_coords(self):
@@ -206,7 +207,7 @@ cdef class BaseGeometry:
 cdef class Polygon(BaseGeometry):
 
     def __init__(self, ndarray b):
-        cdef unsigned int M, m, n, i
+        cdef unsigned int M, m, i
         cdef double dx, dy
         cdef double *bbuffer
         cdef GEOSCoordSeq *cs
@@ -279,7 +280,6 @@ cdef _get_coords(GEOSGeom *geom):
         GEOSCoordSeq_getY(cs, i, &dy)
         bbuffer[2*i] = dx
         bbuffer[2*i+1] = dy
-    GEOSCoordSeq_destroy(cs)
     return b
 
 cdef class LineString(BaseGeometry):
