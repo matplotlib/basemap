@@ -1,11 +1,11 @@
 version 0.9.7 (not yet released)
-		   * use Shapely (http://trac.gispython.org/projects/PCL/wiki/Shapely)
+           * use a Pyrex/Cython interface to the GEOS library
+             (http://geos.refractions.net - LGPL license)
              to find geometries that are within map projection region.
              This speeds up instance creation for small map regions and
              high resolution coastlines. Boundary datasets now in binary
-             format (I/O handled by Shapely). Requires geos C++ lib
-             (http://geos.refractions.net/) and Shapely, which is a ctypes
-             interface to libgeos.
+             format (I/O is faster). Requires GEOS version 2.2.3, source
+             code included.
            * remove all numerix imports.
            * fix rotate_vector so it works in S. Hem and for non-orthogonal
              grids. Support for masked velocity vectors also added. (EF)
