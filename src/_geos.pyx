@@ -279,6 +279,7 @@ cdef _get_coords(GEOSGeom *geom):
         GEOSCoordSeq_getY(cs, i, &dy)
         bbuffer[2*i] = dx
         bbuffer[2*i+1] = dy
+    GEOSCoordSeq_destroy(cs)
     return b
 
 cdef class LineString(BaseGeometry):
