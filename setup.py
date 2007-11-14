@@ -31,11 +31,32 @@ def dbf_macros():
     else:
         return [("HAVE_UPDATE_HEADER", "0")]
 
+def check_geosversion(GEOS_dir):
+    """check geos C-API header file (geos_c.h)"""
+    try:
+        f = open(os.path.join(GEOS_dir,'include/geos_c.h'))
+    except:
+        raise IOError('cannot find geos header file in %s/include'%GEOS_dir)
+    geos_version = None
+    for line in f:
+        if line.startswith('#define GEOS_VERSION'):
+            geos_version = line.split()[2]
+    return geos_version
+
+# get location of geos lib from environment variable.
 GEOS_dir = os.environ.get('GEOS_DIR')
 if GEOS_dir is None:
-    raise KeyError, 'please specify the location of geos library and headers with GEOS_DIR environment variable'
-geos_include_dirs=[os.path.join(GEOS_dir,'include'),numpy.get_include()]
-geos_library_dirs=[os.path.join(GEOS_dir,'lib')]
+    raise KeyError('please specify the location of geos library and headers with GEOS_DIR environment variable')
+# check that header geos_c.h is in GEOS_dir/include,
+# and that the version number in the header file is 2.2.3.
+geos_version = check_geosversion(GEOS_dir)
+if geos_version != '"2.2.3"':
+    raise ValueError("""
+geos library version 2.2.3 is required, you have version %s.
+Please download and install 2.2.3 from http://geos.refractions.net.""" % geos_version)
+else:
+    geos_include_dirs=[os.path.join(GEOS_dir,'include'),numpy.get_include()]
+    geos_library_dirs=[os.path.join(GEOS_dir,'lib')]
 
 # proj4 and geos extensions.
 deps = glob.glob('src/*.c')
