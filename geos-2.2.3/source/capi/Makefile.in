@@ -294,9 +294,6 @@ clean-noinstPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
-geostest$(EXEEXT): $(geostest_OBJECTS) $(geostest_DEPENDENCIES) 
-	@rm -f geostest$(EXEEXT)
-	$(LINK) $(geostest_LDFLAGS) $(geostest_OBJECTS) $(geostest_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
