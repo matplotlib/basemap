@@ -1,7 +1,11 @@
 version 0.9.7 (not yet released)
            * added support for full-resolution boundaries (will be
-             a separate download).
+             a separate download).  Full-res files (totaling around
+             100 mb) available in SVN.
            * high-resolution boundaries now included.
+           * postpone processing of countries, states and river
+             boundaries until a draw is requested. Only the
+             coastlines are processed in __init__.
            * use a Pyrex/Cython interface to the GEOS library
              (http://geos.refractions.net - LGPL license)
              to find geometries that are within map projection region.
