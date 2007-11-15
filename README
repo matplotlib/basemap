@@ -19,7 +19,7 @@ source code from proj.4 (http://proj.maptools.org) is included in the
 
 source code for the GEOS library is
 included in the 'geos-2.2.3' directory under the terms given in
-geos-2.2.3/COPYING.
+LICENSE_geos.
 
 pyshapelib by Bernhard Herzog is included in the 'pyshapelib' directory
 under the terms given in LICENSE_pyshapelib.
