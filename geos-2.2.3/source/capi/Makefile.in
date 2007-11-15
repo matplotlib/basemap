@@ -16,7 +16,7 @@
 
 
 
-SOURCES = $(libgeos_c_la_SOURCES) $(geostest_SOURCES)
+SOURCES = $(libgeos_c_la_SOURCES) 
 
 srcdir = @srcdir@
 VPATH = @srcdir@
@@ -40,7 +40,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-noinst_PROGRAMS = geostest$(EXEEXT)
+noinst_PROGRAMS =
 subdir = source/capi
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/geos_c.h.in
@@ -66,9 +66,6 @@ am__objects_1 = libgeos_c_la-geos_c.lo
 am_libgeos_c_la_OBJECTS = $(am__objects_1)
 libgeos_c_la_OBJECTS = $(am_libgeos_c_la_OBJECTS)
 PROGRAMS = $(noinst_PROGRAMS)
-am_geostest_OBJECTS = geostest.$(OBJEXT)
-geostest_OBJECTS = $(am_geostest_OBJECTS)
-geostest_DEPENDENCIES = libgeos_c.la
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/source/headers -I$(top_builddir)/source/headers/geos
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -88,8 +85,8 @@ LTCXXCOMPILE = $(LIBTOOL) --mode=compile --tag=CXX $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --mode=link --tag=CXX $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libgeos_c_la_SOURCES) $(geostest_SOURCES)
-DIST_SOURCES = $(libgeos_c_la_SOURCES) $(geostest_SOURCES)
+SOURCES = $(libgeos_c_la_SOURCES) 
+DIST_SOURCES = $(libgeos_c_la_SOURCES) 
 nodist_capiHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(nodist_capi_HEADERS)
 ETAGS = etags
@@ -205,9 +202,6 @@ target_os = @target_os@
 target_vendor = @target_vendor@
 GEOS_CAPI_VERSION = "@VERSION@-CAPI-@CAPI_VERSION@"
 GEOS_JTS_PORT = "@JTS_PORT@"
-geostest_SOURCES = geostest.c
-geostest_LDADD = libgeos_c.la
-geostest_INCLUDES = -I.
 INCLUDES = -I$(top_srcdir)/source/headers
 capidir = $(includedir)
 nodist_capi_HEADERS = \
@@ -301,7 +295,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/geostest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgeos_c_la-geos_c.Plo@am__quote@
 
 .c.o:
