@@ -10,6 +10,9 @@ test.py exercises all the available map projections by plotting the etopo
 
 contour_demo.py demonstrates the use of filled contours with map projections.
 
+customticks.py shows how to create custom tick labels for a cylindrical
+projection.
+
 plotmap.py is the example on the matplotlib 'screenshots' page (included
 in test.py) which shows the ETOPO topography as an image on a Lambert
 Conformal projection (using imshow).
