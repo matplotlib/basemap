@@ -34,6 +34,7 @@ include examples/plotmap.py
 include examples/plotmap_oo.py
 include examples/plotmap_masked.py
 include examples/contour_demo.py
+include examples/customticks.py
 include examples/quiver_demo.py
 include examples/nytolondon.py
 include examples/ireland.py
