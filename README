@@ -84,6 +84,26 @@ the source code included with basemap by following these steps:
 3) cd back to the top level basemap directory (basemap-X.Y.Z) and
 run the usual 'python setup.py install'.
 
+Note for Mac OS X users:
+-----------------------
+On intel, your build may fail with a message like this:
+
+/usr/bin/ld: for architecture ppc /usr/bin/ld: warning
+/sw/lib/libgeos_c.dylib cputype (7, architecture i386) does not match
+cputype (18) for specified -arch flag: ppc (file not loaded) lipo: can't
+open input file: /var/tmp//ccJKju2Z.out (No such file or directory)
+error: Command "gcc -arch i386 -arch ppc -isysroot
+/Developer/SDKs/MacOSX10.4u.sdk -g -bundle -undefined dynamic_lookup
+build/temp.macosx-10.3-fat-2.4/src/_geos.o -L/sw/lib -L/sw/lib -lgeos_c
+-o build/lib.macosx-10.3-fat-2.4/_geos.so" failed with exit status 1
+
+If so, just cut and past the gcc command in double quotes, removing the
+'-arch ppc -isysroot /Developer/SDKs/MacOSX10.4u.sdk' flags. Then run
+'setup.py install' again to finish the build.
+
+On ppc, there may be a similar failure, but remove the '-arch i386' flag
+instead.
+
 **Contact**
 
 Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
