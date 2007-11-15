@@ -46,14 +46,12 @@ cdef extern from "geos_c.h":
         GEOS_MULTILINESTRING
         GEOS_MULTIPOLYGON
         GEOS_GEOMETRYCOLLECTION
-        GEOS_VERSION_MAJOR 
-        GEOS_VERSION_MINOR 
-        GEOS_VERSION_PATCH 
     ctypedef struct GEOSGeom:
         pass
     ctypedef struct GEOSCoordSeq:
         pass
     ctypedef void (*GEOSMessageHandler)(char *fmt, char *list)
+    char *GEOSversion()
     void initGEOS(GEOSMessageHandler notice_function, GEOSMessageHandler error_function)
     void finishGEOS()
     GEOSCoordSeq *GEOSCoordSeq_create(unsigned int size, unsigned int dims)
@@ -118,8 +116,10 @@ cdef void error_h(char *fmt, char*msg):
     sys.stderr.write('GEOS_ERROR: %s\n' % warn_msg)
 
 # check library version
-geos_version = GEOS_VERSION_MAJOR,GEOS_VERSION_MINOR,GEOS_VERSION_PATCH
-if geos_version != (2,2,3):
+cdef geos_version():
+    return PyString_FromString(GEOSversion())
+__geos_version__ = geos_version() # module variable.
+if __geos_version__ != "2.2.3-CAPI-1.1.1":
      raise ValueError('version 2.2.3 of the geos library is required')
 # intialize GEOS (parameters are notice and error function callbacks).
 initGEOS(notice_h, error_h)
