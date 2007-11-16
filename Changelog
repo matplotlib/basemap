@@ -1,4 +1,8 @@
 version 0.9.7 (not yet released)
+           * fixed a bug in the 'tmerc' projection.
+           * added pure python NetCDFFile reader from Roberto De Almeida 
+             to basemap namespace
+             (from matplotlib.toolkits.basemap import NetCDFFile).
            * added support for full-resolution boundaries (will be
              a separate download).  Full-res files (totaling around
              100 mb) available in SVN.
