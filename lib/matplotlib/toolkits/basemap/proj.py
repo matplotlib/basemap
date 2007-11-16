@@ -54,7 +54,10 @@ class Proj(object):
             self.rmajor = projparams['a']
             self.rminor = projparams['b']
         except:
-            self.rmajor = projparams['R']
+            try:
+                self.rmajor = projparams['R']
+            except:
+                self.rmajor = projparams['Ra']
             self.rminor = self.rmajor
         if self.rmajor == self.rminor:
             self.ellipsoid = False

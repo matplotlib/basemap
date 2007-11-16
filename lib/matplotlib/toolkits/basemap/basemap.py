@@ -229,8 +229,12 @@ class Basemap(object):
                 projparams['a'] = rsphere[1]
                 projparams['b'] = rsphere[0]
         except:
-            projparams['a'] = rsphere
-            projparams['b'] = rsphere
+            if projection == 'tmerc':
+            # use Ra instead of R because of obscure bug
+            # in proj4 for tmerc projection.
+                projparams['Ra'] = rsphere
+            else:
+                projparams['R'] = rsphere
         # set units to meters.
         projparams['units']='m'
         # check for sane values of lon_0, lat_0, lat_ts, lat_1, lat_2
@@ -483,7 +487,7 @@ class Basemap(object):
                     self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
                     
         elif projection == 'ortho':
-            if projparams['a'] != projparams['b']:
+            if not projparams.has_key('R'):
                 raise ValueError, 'orthographic projection only works for perfect spheres - not ellipsoids'
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Orthographic basemap'
@@ -1452,6 +1456,10 @@ coordinates using the shpproj utility from the shapelib tools
 
         if self.projection in ['merc','cyl','mill','moll','robin','sinu']:
             lons = npy.arange(self.llcrnrlon,self.urcrnrlon+0.01,0.01)
+        elif self.projection in ['tmerc']:
+            lon_0 = self.projparams['lon_0']
+            # tmerc only defined within +/- 90 degrees of lon_0
+            lons = npy.arange(lon_0-90,lon_0+90.01,0.01)
         else:
             lons = npy.arange(0,360.01,0.01)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
