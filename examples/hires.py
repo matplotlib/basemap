@@ -7,8 +7,8 @@ fig = figure()
 
 # create Basemap instance. Use 'high' resolution coastlines.
 t1 = time.clock()
-m = Basemap(llcrnrlon=-11.,llcrnrlat=49.,urcrnrlon=5.,urcrnrlat=59.,
-            resolution='h',projection='tmerc',lon_0=-8,lat_0=0)
+m = Basemap(llcrnrlon=-10.5,llcrnrlat=49.5,urcrnrlon=3.5,urcrnrlat=59.5,
+            resolution='h',projection='tmerc',lon_0=-4,lat_0=0)
 # make sure countries and rivers are loaded
 m.drawcountries()
 m.drawrivers()
