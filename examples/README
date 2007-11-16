@@ -25,14 +25,11 @@ portions of the plot (in this case the oceans) using pcolor and imshow.
 
 nytolondon.py shows how to draw a great circle on a map (NY to London)
 
-hires.py illustrates the use of the optional high-resolution coastlines, by
-drawing the coastlines, political boundaries and rivers of the British Isles.
-
-ireland.py draws maps of ireland with the crude, low and intermediate
-resolution boundary datasets. Also does high res coastlines if they
-are installed. Shows how to pickle and re-load a
-Basemap class instance (useful for high-res coastlines when you are plotting
-the same small map region many times in different scripts).
+hires.py illustrates the use of the high-resolution coastlines, by
+drawing the coastlines, political boundaries and rivers of the British
+Isles. Shows how to pickle and re-load a Basemap class instance (useful
+for high-res coastlines when you are plotting the same small map region
+many times in different scripts).
 
 quiver_demo.py shows how to plot wind vectors on a map.
 
