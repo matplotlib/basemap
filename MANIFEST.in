@@ -54,7 +54,6 @@ include examples/garp.py
 include examples/setwh.py
 include examples/ccsm_popgrid.py
 include examples/ccsm_popgrid.nc
-include examples/pupynere.py
 include examples/plot_tissot.py
 include examples/tissot.dbf
 include examples/tissot.shp
@@ -69,6 +68,7 @@ include lib/matplotlib/toolkits/basemap/basemap.py
 include lib/matplotlib/toolkits/basemap/proj.py
 include lib/matplotlib/toolkits/basemap/pyproj.py
 include lib/matplotlib/toolkits/basemap/cm.py
+include lib/matplotlib/toolkits/basemap/pupynere.py
 include pyshapelib/README pyshapelib/COPYING pyshapelib/ChangeLog pyshapelib/NEWS
 include pyshapelib/*.i pyshapelib/*.c pyshapelib/*.py pyshapelib/*.h
 include pyshapelib/*.shp pyshapelib/*.shx pyshapelib/*.dbf

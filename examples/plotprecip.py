@@ -1,5 +1,4 @@
-from pupynere import NetCDFFile
-from matplotlib.toolkits.basemap import Basemap, cm
+from matplotlib.toolkits.basemap import Basemap, cm, NetCDFFile
 import pylab, copy
 from matplotlib import rcParams
 
