@@ -19,10 +19,6 @@ The lines defined by the rows and columns of the rectangular arrays are
 locally orthogonal to each other.
 
 POP grids are used extensively locally in oceanographic and ice models.
-
-This example uses the pupynere pure-python netCDF 3 reader
-from Roberto De Almeida for reading netCDF files (included).
-
 """
 import pylab as pl
 from matplotlib import rcParams
