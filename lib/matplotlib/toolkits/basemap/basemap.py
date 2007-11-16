@@ -805,7 +805,7 @@ and install those files separately(see the basemap README for details)."""
                 # regions and high-resolution boundary geometries).
                 if not containsPole:
                     # close Antarctica.
-                    if name == 'gshhs' and south < -68:
+                    if name == 'gshhs' and south < -68 and area > 10000:
                         lons = b[:,0]
                         lats = b[:,1]
                         lons2 = lons[:-2][::-1]
