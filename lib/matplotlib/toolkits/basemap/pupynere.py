@@ -48,7 +48,7 @@ NC_ATTRIBUTE = '\x00\x00\x00\x0c'
 
 
 class NetCDFFile(object):
-    """A NetCDF file parser."""
+    """A NetCDF file reader. API is the same as Scientific.IO.NetCDF."""
 
     def __init__(self, file):
         self._buffer = open(file, 'rb')
