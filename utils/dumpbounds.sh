@@ -15,4 +15,4 @@ pscoast -M -Dc -R0/360/-90/90 -Ir -JQ180/4.5i -W -A${area} > rivers_c.txt
 pscoast -M -Dl -R0/360/-90/90 -Ir -JQ180/4.5i -W -A${area} > rivers_l.txt
 pscoast -M -Di -R0/360/-90/90 -Ir -JQ180/4.5i -W -A${area} > rivers_i.txt
 pscoast -M -Dh -R0/360/-90/90 -Ir -JQ180/4.5i -W -A${area} > rivers_h.txt
-pscoast -M -Dh -R0/360/-90/90 -Ir -JQ180/4.5i -W -A${area} > rivers_f.txt
+pscoast -M -Df -R0/360/-90/90 -Ir -JQ180/4.5i -W -A${area} > rivers_f.txt
