@@ -1,0 +1,12 @@
+include MANIFEST-data.in
+include README
+include setup-data.py
+include lib/matplotlib/toolkits/basemap/data/__init__.py
+include lib/matplotlib/toolkits/basemap/data/countries_f.dat
+include lib/matplotlib/toolkits/basemap/data/countriesmeta_f.dat
+include lib/matplotlib/toolkits/basemap/data/gshhs_f.dat
+include lib/matplotlib/toolkits/basemap/data/gshhsmeta_f.dat
+include lib/matplotlib/toolkits/basemap/data/rivers_f.dat
+include lib/matplotlib/toolkits/basemap/data/riversmeta_f.dat
+include lib/matplotlib/toolkits/basemap/data/states_f.dat
+include lib/matplotlib/toolkits/basemap/data/statesmeta_f.dat

@@ -8,12 +8,11 @@ if 'setuptools' in sys.modules:
 else:
     additional_params = {}
     from distutils.core import setup
-packages          = ['matplotlib.toolkits.basemap']
+packages          = ['matplotlib.toolkits.basemap.data']
 package_dirs       = {'':'lib'}
 boundaryfiles = glob.glob("lib/matplotlib/toolkits/basemap/data/*_f.dat")
 basemap_datafiles = [os.path.join('data',os.path.basename(bfile)) for bfile in boundaryfiles]
-package_data = {'matplotlib.toolkits.basemap':basemap_datafiles}
-print package_data
+package_data = {'matplotlib.toolkits.basemap.data':basemap_datafiles}
 setup(
   name              = "basemap-data-fullres",
   version           = "0.9.7",
