@@ -766,7 +766,8 @@ and install those files separately(see the basemap README for details)."""
             containsPole = True
             lon_0=self.projparams['lon_0']
             lat_0=self.projparams['lat_0']
-            maptran = pyproj.Proj(proj='stere',lon_0=lon_0,lat_0=lat_0)
+            re = self.projparams['R']
+            maptran = pyproj.Proj(proj='stere',lon_0=lon_0,lat_0=lat_0,R=re)
             # boundary polygon for orthographic projection
             # in stereographic coorindates.
             b = self._boundarypolyll.boundary
