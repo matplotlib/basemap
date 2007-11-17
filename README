@@ -86,7 +86,8 @@ run the usual 'python setup.py install'.
 
 4) if you want the full-resolution coastlines, download 
 basemap-data-fullres-X.Y.Z.tar.gz (about 70 mb), untar
-it in the top level basemap directory and run setup.py install again.
+it, cd into basemap-data-fullres-X.Y.Z and
+run 'python setup-data.py install'.
 
 **Contact**
 
