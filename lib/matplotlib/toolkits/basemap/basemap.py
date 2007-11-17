@@ -230,9 +230,9 @@ class Basemap(object):
                 projparams['b'] = rsphere[0]
         except:
             if projection == 'tmerc':
-            # use Ra instead of R because of obscure bug
+            # use bR_a instead of R because of obscure bug
             # in proj4 for tmerc projection.
-                projparams['Ra'] = rsphere
+                projparams['bR_a'] = rsphere
             else:
                 projparams['R'] = rsphere
         # set units to meters.
