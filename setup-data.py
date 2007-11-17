@@ -11,7 +11,7 @@ else:
 packages          = ['matplotlib.toolkits.basemap.data']
 package_dirs       = {'':'lib'}
 boundaryfiles = glob.glob("lib/matplotlib/toolkits/basemap/data/*_f.dat")
-basemap_datafiles = [os.path.join('data',os.path.basename(bfile)) for bfile in boundaryfiles]
+basemap_datafiles = [os.path.basename(bfile) for bfile in boundaryfiles]
 package_data = {'matplotlib.toolkits.basemap.data':basemap_datafiles}
 setup(
   name              = "basemap-data-fullres",
