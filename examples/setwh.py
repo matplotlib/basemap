@@ -4,7 +4,7 @@
 from matplotlib.toolkits.basemap import Basemap
 from pylab import arange, show, title, figure
 
-# setup projection centered on lon_0,lat_0
+# setup projection parameters
 lat_0 = 40.
 lon_0 = -100.
 width = 6000000.
@@ -24,7 +24,6 @@ for proj in projs:
                 lat_0=lat_0,lon_0=lon_0)
     npanel = npanel + 1
     fig.add_subplot(3,2,npanel)
-    # setup figure with same aspect ratio as map.
     m.drawcoastlines()
     m.drawcountries()
     m.fillcontinents()
