@@ -541,7 +541,7 @@ class Basemap(object):
             projparams['lon_2'] = lon_2
             if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
                 if width is None or height is None:
-                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                    raise ValueError, 'cannot specify map region with width and height keywords for this projection, please specify lat/lon values of corners'
                 else:
                     if lon_0 is None or lat_0 is None:
                         raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
