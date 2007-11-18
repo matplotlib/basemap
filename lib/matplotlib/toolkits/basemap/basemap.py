@@ -12,7 +12,7 @@ import pyproj, sys, os, math, dbflib
 from proj import Proj
 import numpy as npy
 from numpy import linspace, squeeze, ma
-from matplotlib.cbook import popd, is_scalar
+from matplotlib.cbook import is_scalar, dedent
 from shapelib import ShapeFile
 import _geos
 
@@ -21,77 +21,10 @@ basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
 __version__ = '0.9.7'
 
-class Basemap(object):
-
-    """
- Set up a basemap with one of 19 supported map projections
- (cylindrical equidistant, mercator, polyconic, oblique mercator,
- transverse mercator, miller cylindrical, lambert conformal conic,
- azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
- albers equal area conic, gnomonic, orthographic, sinusoidal, mollweide, 
- geostationary, robinson, cassini-soldner or stereographic).
- Doesn't actually draw anything, but sets up the map projection class and
- creates the coastline, lake river and political boundary data
- structures in native map projection coordinates.
- Uses a pyrex interface to C-code from proj.4 (http://proj.maptools.org).
-
- Useful instance variables:
-
- projection - map projection ('cyl','merc','mill','lcc','eqdc','aea',
-  'laea', 'nplaea', 'splaea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly', 
-  'sinu', 'moll', 'ortho', 'robin', 'aeqd', 'npaeqd', 'spaeqd', 'stere',
-  'geos', 'npstere' or 'spstere')
- (projections prefixed with 'np' or 'sp' are special case polar-centric
-  versions of the parent projection)
- aspect - map aspect ratio (size of y dimension / size of x dimension).
- llcrnrlon - longitude of lower left hand corner of the desired map domain.
- llcrnrlon - latitude of lower left hand corner of the desired map domain.
- urcrnrlon - longitude of upper right hand corner of the desired map domain.
- urcrnrlon - latitude of upper right hand corner of the desired map domain.
- llcrnrx,llcrnry,urcrnrx,urcrnry - corners of map domain in projection coordinates.
- rmajor,rminor - equatorial and polar radii of ellipsoid used (in meters).
- resolution - resolution of boundary dataset being used ('c' for crude,
-   'l' for low, etc.). If None, no boundary dataset is associated with the
-   Basemap instance.  
- srs - a string representing the 'spatial reference system' for the map
-   projection as defined by PROJ.4.
-
- Example Usage:
-
->>> from matplotlib.toolkits.basemap import Basemap
->>> from pylab import load, meshgrid, title, arange, show
->>> # read in topo data (on a regular lat/lon grid)
->>> etopo = load('etopo20data.gz')
->>> lons  = load('etopo20lons.gz')
->>> lats  = load('etopo20lats.gz')
->>> # create Basemap instance for Robinson projection.
->>> m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]))
->>> # compute native map projection coordinates for lat/lon grid.
->>> x, y = m(*meshgrid(lons,lats))
->>> # make filled contour plot.
->>> cs = m.contourf(x,y,etopo,30,cmap=cm.jet)
->>> m.drawcoastlines() # draw coastlines
->>> m.drawmapboundary() # draw a line around the map region
->>> m.drawparallels(arange(-90.,120.,30.),labels=[1,0,0,0]) # draw parallels
->>> m.drawmeridians(arange(0.,420.,60.),labels=[0,0,0,1]) # draw meridians
->>> title('Robinson Projection') # add a title
->>> show()
-
- [this example (simpletest.py) plus many others can be found in the
-  examples directory of source distribution.  The "OO" version of this
-  example (which does not use pylab) is called "simpletest_oo.py".]
-
- Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
-    """
-
-    def __init__(self,llcrnrlon=None,llcrnrlat=None,
-       urcrnrlon=None,urcrnrlat=None,\
-       width=None,height=None,\
-       projection='cyl',resolution='c',area_thresh=None,rsphere=6370997.0,\
-       lat_ts=None,lat_1=None,lat_2=None,lat_0=None,lon_0=None,\
-       lon_1=None,lon_2=None,suppress_ticks=True,\
-       satellite_height=None,boundinglat=None,anchor='C',ax=None):
-        """
+# The __init__ docstring is pulled out here because it is so long;
+# Having it in the usual place makes it hard to get from the
+# __init__ argument list to the code that uses the arguments.
+_Basemap_init_doc = """
  create a Basemap instance.
 
  arguments:
@@ -127,19 +60,19 @@ class Basemap(object):
  lon_0  - center of desired map domain (in degrees).
  lat_0  - center of desired map domain (in degrees).
 
- For 'sinu', 'moll', 'npstere', 'spstere', 'nplaea', 'splaea', 'nplaea', 
- 'splaea', 'npaeqd', 'spaeqd' or 'robin', the values of 
- llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,width and height are ignored (because 
- either they are computed internally, or entire globe is always plotted). For the 
- cylindrical projections ('cyl','merc' and 'mill'), the default is to use 
- llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other 
+ For 'sinu', 'moll', 'npstere', 'spstere', 'nplaea', 'splaea', 'nplaea',
+ 'splaea', 'npaeqd', 'spaeqd' or 'robin', the values of
+ llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,width and height are ignored (because
+ either they are computed internally, or entire globe is always plotted). For the
+ cylindrical projections ('cyl','merc' and 'mill'), the default is to use
+ llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other
  projections except 'ortho' and 'geos', either the lat/lon values of the
  corners or width and height must be specified by the user.
  For 'ortho' and 'geos', the lat/lon values of the corners may be specified,
  but if they are not, the entire globe is plotted.
 
  resolution - resolution of boundary database to use. Can be 'c' (crude),
-  'l' (low), 'i' (intermediate), 'h' (high), 'f' (full) or None. 
+  'l' (low), 'i' (intermediate), 'h' (high), or None. Default is 'c'.
   If None, no boundary data will be read in (and class methods
   such as drawcoastlines will raise an exception if invoked).
   Resolution drops off by roughly 80%
@@ -150,8 +83,8 @@ class Basemap(object):
   Tools (http://gmt.soest.hawaii.edu).
 
  area_thresh - coastline or lake with an area smaller than area_thresh
-  in km^2 will not be plotted.  Default 10000,1000,100,10,1 for resolution
-  'c','l','i','h','f'.
+  in km^2 will not be plotted.  Default 10000,1000,100,10 for resolution
+  'c','l','i','h'.
 
  rsphere - radius of the sphere used to define map projection (default
   6370997 meters, close to the arithmetic mean radius of the earth). If
@@ -185,7 +118,7 @@ class Basemap(object):
  The following parameters are map projection parameters which all default to
  None.  Not all parameters are used by all projections, some are ignored.
 
- lat_ts - latitude of natural origin (used for mercator, and 
+ lat_ts - latitude of natural origin (used for mercator, and
   optionally for stereographic projection).
  lat_1 - first standard parallel for lambert conformal, albers
   equal area projection and equidistant conic projections. Latitude of one
@@ -195,13 +128,13 @@ class Basemap(object):
  lat_2 - second standard parallel for lambert conformal, albers
   equal area projection and equidistant conic projections. Latitude of one
   of the two points on the projection centerline for oblique mercator.
-  If lat_2 is not given, it is set to lat_1 for 
+  If lat_2 is not given, it is set to lat_1 for
   lambert conformal, albers equal area and equidistant conic.
  lon_1 - longitude of one of the two points on the projection centerline
   for oblique mercator.
  lon_2 - longitude of one of the two points on the projection centerline
   for oblique mercator.
- lat_0 - central latitude (y-axis origin) - used by all projections, 
+ lat_0 - central latitude (y-axis origin) - used by all projections,
  lon_0 - central meridian (x-axis origin) - used by all projections,
  boundinglat - bounding latitude for pole-centered projections (npstere,spstere,
   nplaea,splaea,npaeqd,spaeqd).  These projections are square regions centered
@@ -209,10 +142,146 @@ class Basemap(object):
   latitude circle boundinglat is tangent to the edge of the map at lon_0.
  satellite_height - height of satellite (in m) above equator -
   only relevant for geostationary projections ('geos').
-  
+
 
         """
 
+_unsupported_projection = """
+  unsupported projection, use 'cyl' - cylindrical equidistant, 'merc' -
+  mercator, 'lcc' - lambert conformal conic, 'stere' - stereographic,
+  'npstere' - stereographic, special case centered on north pole.
+  'spstere' - stereographic, special case centered on south pole,
+  'aea' - albers equal area conic, 'tmerc' - transverse mercator,
+  'aeqd' - azimuthal equidistant, 'mill' - miller cylindrical,
+  'npaeqd' - azimuthal equidistant, special case centered on north pole,
+  'spaeqd' - azimuthal equidistant, special case centered on south pole,
+  'eqdc' - equidistant conic, 'laea' - lambert azimuthal equal area,
+  'nplaea' - lambert azimuthal, special case centered on north pole,
+  'splaea' - lambert azimuthal, special case centered on south pole,
+  'cass' - cassini-soldner (transverse cylindrical equidistant),
+  'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
+  'geos' - geostationary, 'sinu' - sinusoidal, 'moll' - mollweide,
+  'robin' - robinson, or 'gnom' - gnomonic.  You tried '%s'
+  """
+
+# This allows substitution of longer names into error messages.
+projnames = {'cyl'      : 'Cylindrical Equidistant',
+             'merc'     : 'Mercator',
+             'tmerc'    : 'Transverse Mercator',
+             'omerc'    : 'Oblique Mercator',
+             'mill'     : 'Miller Cylindrical',
+             'llc'      : 'Lambert Conformal',
+             'laea'     : 'Lambert Azimuthal Equal Area',
+             'nplaea'   : 'North-Polar Lambert Azimuthal',
+             'splaea'   : 'South-Polar Lambert Azimuthal',
+             'eqdc'     : 'Equidistant Conic',
+             'eaqd'     : 'Azimuthal Equidistant',
+             'npaeqd'   : 'North-Polar Azimuthal Equidistant',
+             'spaeqd'   : 'South-Polar Azimuthal Equidistant',
+             'aea'      : 'Albers Equal Area',
+             'stere'    : 'Stereographic',
+             'npstere'  : 'Nouth-Polar Stereographic',
+             'spstere'  : 'South-Polar Stereographic',
+             'cass'     : 'Cassini-Soldner',
+             'poly'     : 'Polyconic',
+             'ortho'    : 'Orthographic',
+             'geos'     : 'Geostationary',
+             'sinu'     : 'Sinusoidal',
+             'moll'     : 'Mollweide',
+             'robin'    : 'Robinson',
+             'gnom'     : 'Gnomonic',
+             }
+
+def _validated_ll(param, name, minval, maxval):
+    param = float(param)
+    if param > maxval or param < minval:
+        raise ValueError('%s must be between %f and %f degrees' %
+                                           (name, minval, maxval))
+    return param
+
+def _insert_validated(d, param, name, minval, maxval):
+    if param is not None:
+        d[name] = _validated_ll(param, name, minval, maxval)
+
+class Basemap(object):
+    """
+    Set up a basemap with one of 19 supported map projections
+    (cylindrical equidistant, mercator, polyconic, oblique mercator,
+    transverse mercator, miller cylindrical, lambert conformal conic,
+    azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
+    albers equal area conic, gnomonic, orthographic, sinusoidal, mollweide,
+    geostationary, robinson, cassini-soldner or stereographic).
+    Doesn't actually draw anything, but sets up the map projection class and
+    creates the coastline, lake river and political boundary data
+    structures in native map projection coordinates.
+    Uses a pyrex interface to C-code from proj.4 (http://proj.maptools.org).
+
+    Useful instance variables:
+
+    projection - map projection ('cyl','merc','mill','lcc','eqdc','aea',
+     'laea', 'nplaea', 'splaea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly',
+     'sinu', 'moll', 'ortho', 'robin', 'aeqd', 'npaeqd', 'spaeqd', 'stere',
+     'geos', 'npstere' or 'spstere')
+    (projections prefixed with 'np' or 'sp' are special case polar-centric
+     versions of the parent projection)
+    aspect - map aspect ratio (size of y dimension / size of x dimension).
+    llcrnrlon - longitude of lower left hand corner of the desired map domain.
+    llcrnrlon - latitude of lower left hand corner of the desired map domain.
+    urcrnrlon - longitude of upper right hand corner of the desired map domain.
+    urcrnrlon - latitude of upper right hand corner of the desired map domain.
+    llcrnrx,llcrnry,urcrnrx,urcrnry - corners of map domain in projection coordinates.
+    rmajor,rminor - equatorial and polar radii of ellipsoid used (in meters).
+    resolution - resolution of boundary dataset being used ('c' for crude,
+      'l' for low, etc.). If None, no boundary dataset is associated with the
+      Basemap instance.
+    srs - a string representing the 'spatial reference system' for the map
+      projection as defined by PROJ.4.
+
+    Example Usage:
+
+    >>> from matplotlib.toolkits.basemap import Basemap
+    >>> from pylab import load, meshgrid, title, arange, show
+    >>> # read in topo data (on a regular lat/lon grid)
+    >>> etopo = load('etopo20data.gz')
+    >>> lons  = load('etopo20lons.gz')
+    >>> lats  = load('etopo20lats.gz')
+    >>> # create Basemap instance for Robinson projection.
+    >>> m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]))
+    >>> # compute native map projection coordinates for lat/lon grid.
+    >>> x, y = m(*meshgrid(lons,lats))
+    >>> # make filled contour plot.
+    >>> cs = m.contourf(x,y,etopo,30,cmap=cm.jet)
+    >>> m.drawcoastlines() # draw coastlines
+    >>> m.drawmapboundary() # draw a line around the map region
+    >>> m.drawparallels(arange(-90.,120.,30.),labels=[1,0,0,0]) # draw parallels
+    >>> m.drawmeridians(arange(0.,420.,60.),labels=[0,0,0,1]) # draw meridians
+    >>> title('Robinson Projection') # add a title
+    >>> show()
+
+    [this example (simpletest.py) plus many others can be found in the
+     examples directory of source distribution.  The "OO" version of this
+     example (which does not use pylab) is called "simpletest_oo.py".]
+
+    Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
+    """
+
+
+    def __init__(self, llcrnrlon=None, llcrnrlat=None,
+                       urcrnrlon=None, urcrnrlat=None,
+                       width=None, height=None,
+                       projection='cyl', resolution='c',
+                       area_thresh=None, rsphere=6370997.0,
+                       lat_ts=None,
+                       lat_1=None, lat_2=None,
+                       lat_0=None, lon_0=None,
+                       lon_1=None, lon_2=None,
+                       suppress_ticks=True,
+                       satellite_height=None,
+                       boundinglat=None,
+                       anchor='C',
+                       ax=None):
+        # docstring is added after definition
+        #print "starting: ", time.clock()
         # where to put plot in figure (default is 'C' or center)
         self.anchor = anchor
         # map projection.
@@ -238,205 +307,74 @@ class Basemap(object):
         # set units to meters.
         projparams['units']='m'
         # check for sane values of lon_0, lat_0, lat_ts, lat_1, lat_2
-        if lat_0 is not None:
-            if lat_0 > 90. or lat_0 < -90.:
-                raise ValueError, 'lat_0 must be between -90 and +90 degrees'
-            else:
-                projparams['lat_0'] = lat_0
-        if lon_0 is not None:
-            if lon_0 < -720. or lon_0 > 720.:
-                raise ValueError, 'lon_0 must be between -720 and +720 degrees'
-            else:
-                projparams['lon_0'] = lon_0
-        if lon_1 is not None:
-            if lon_1 < -720. or lon_1 > 720.:
-                raise ValueError, 'lon_1 must be between -720 and +720 degrees'
-            else:
-                projparams['lon_1'] = lon_1
-        if lon_2 is not None:
-            if lon_2 < -720. or lon_2 > 720.:
-                raise ValueError, 'lon_2 must be between -720 and +720 degrees'
-            else:
-                projparams['lon_2'] = lon_2
-        if lat_1 is not None:
-            if lat_1 > 90. or lat_1 < -90.:
-                raise ValueError, 'lat_1 must be between -90 and +90 degrees'
-            else:
-                projparams['lat_1'] = lat_1
-        if lat_2 is not None:
-            if lat_2 > 90. or lat_2 < -90.:
-                raise ValueError, 'lat_2 must be between -90 and +90 degrees'
-            else:
-                projparams['lat_2'] = lat_2
-        if lat_ts is not None:
-            if lat_ts > 90. or lat_ts < -90.:
-                raise ValueError, 'lat_ts must be between -90 and +90 degrees'
-            else:
-                projparams['lat_ts'] = lat_ts
+        _insert_validated(projparams, lat_0, 'lat_0', -90, 90)
+        _insert_validated(projparams, lat_1, 'lat_1', -90, 90)
+        _insert_validated(projparams, lat_2, 'lat_2', -90, 90)
+        _insert_validated(projparams, lat_ts, 'lat_ts', -90, 90)
+        _insert_validated(projparams, lon_0, 'lon_0', -360, 720)
+        _insert_validated(projparams, lon_1, 'lon_1', -360, 720)
+        _insert_validated(projparams, lon_2, 'lon_2', -360, 720)
         if satellite_height is not None:
             projparams['h'] = satellite_height
+
         using_corners = (None not in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat])
         if using_corners:
-            # make sure lat/lon limits are converted to floats.
-            self.llcrnrlon = float(llcrnrlon)
-            self.llcrnrlat = float(llcrnrlat)
-            self.urcrnrlon = float(urcrnrlon)
-            self.urcrnrlat = float(urcrnrlat)
-            # check values of urcrnrlon,urcrnrlat and llcrnrlon,llcrnrlat
-            if self.urcrnrlat > 90.0 or self.llcrnrlat > 90.0:
-                raise ValueError, 'urcrnrlat and llcrnrlat must be less than 90'
-            if self.urcrnrlat < -90.0 or self.llcrnrlat < -90.0:
-                raise ValueError, 'urcrnrlat and llcrnrlat must be greater than -90'
-            if self.urcrnrlon > 720. or self.llcrnrlon > 720.:
-                raise ValueError, 'urcrnrlon and llcrnrlon must be less than 720'
-            if self.urcrnrlon < -360. or self.llcrnrlon < -360.:
-                raise ValueError, 'urcrnrlon and llcrnrlon must be greater than -360'
-        # for each of the supported projections, compute lat/lon of domain corners 
+            self.llcrnrlon = _validated_ll(llcrnrlon, 'llcrnrlon', -360, 720)
+            self.urcrnrlon = _validated_ll(urcrnrlon, 'urcrnrlon', -360, 720)
+            self.llcrnrlat = _validated_ll(llcrnrlat, 'llcrnrlat', -90, 90)
+            self.urcrnrlat = _validated_ll(urcrnrlat, 'urcrnrlat', -90, 90)
+
+        # for each of the supported projections, 
+        # compute lat/lon of domain corners 
         # and set values in projparams dict as needed.
-        if projection == 'lcc':
+        if projection in ['lcc', 'eqdc', 'aea']:
             # if lat_0 is given, but not lat_1,
             # set lat_1=lat_0
             if lat_1 is None and lat_0 is not None:
                 lat_1 = lat_0
                 projparams['lat_1'] = lat_1
             if lat_1 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_1 or lat_0 and lon_0 for Lambert Conformal basemap (lat_2 is optional)'
+                raise ValueError('must specify lat_1 or lat_0 and lon_0 for %(projection)s basemap (lat_2 is optional)' % projnames)
             if lat_2 is None:
                projparams['lat_2'] = lat_1
             if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
-                else:
-                    if lon_0 is None or lat_0 is None:
-                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
-                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
-                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
-                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
-                    
-        elif projection == 'eqdc':
-            # if lat_0 is given, but not lat_1,
-            # set lat_1=lat_0
-            if lat_1 is None and lat_0 is not None:
-                lat_1 = lat_0
-                projparams['lat_1'] = lat_1
-            if lat_1 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_1 or lat_0 and lon_0 for Equidistant Conic basemap (lat_2 is optional)'
-            if lat_2 is None:
-               projparams['lat_2'] = lat_1
-            if not using_corners:
-                if width is None or height is None:
-                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
-                else:
-                    if lon_0 is None or lat_0 is None:
-                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
-                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
-                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
-                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
-        elif projection == 'aea':
-            # if lat_0 is given, but not lat_1,
-            # set lat_1=lat_0
-            if lat_1 is None and lat_0 is not None:
-                lat_1 = lat_0
-                projparams['lat_1'] = lat_1
-            if lat_1 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_1 or lat_0 and lon_0 for Albers Equal Area basemap (lat_2 is optional)'
-            if lat_2 is None:
-               projparams['lat_2'] = lat_1
-            if not using_corners:
-                if width is None or height is None:
-                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
-                else:
-                    if lon_0 is None or lat_0 is None:
-                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
-                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
-                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
-                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+                if lon_0 is None or lat_0 is None:
+                    raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+
+        # skipping over the following for now; it can be beautified and
+        # consolidated later
         elif projection == 'stere':
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Stereographic basemap (lat_ts is optional)'
             if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
-                else:
-                    if lon_0 is None or lat_0 is None:
-                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
-                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
-                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
-                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
-        elif projection == 'spstere':
+                if lon_0 is None or lat_0 is None:
+                    raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+        elif projection in ['spstere', 'npstere',
+                            'splaea', 'nplaea',
+                            'spaeqd', 'npaeqd']:
             if boundinglat is None or lon_0 is None:
-                raise ValueError, 'must specify boundinglat and lon_0 for South-Polar Stereographic basemap'
-            projparams['lat_ts'] = -90.
-            projparams['lat_0'] = -90.
-            projparams['proj'] = 'stere'
-            self.llcrnrlon = lon_0+45.
-            self.urcrnrlon = lon_0-135.
-            proj = pyproj.Proj(projparams)
-            x,y = proj(lon_0,boundinglat)
-            lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
-            self.urcrnrlat = self.llcrnrlat
-            if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
-        elif projection == 'npstere':
-            if boundinglat is None or lon_0 is None:
-                raise ValueError, 'must specify boundinglat and lon_0 for North-Polar Stereographic basemap'
-            projparams['lat_ts'] = 90.
-            projparams['lat_0'] = 90.
-            projparams['proj'] = 'stere'
-            self.llcrnrlon = lon_0-45.
-            self.urcrnrlon = lon_0+135.
-            proj = pyproj.Proj(projparams)
-            x,y = proj(lon_0,boundinglat)
-            lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
-            self.urcrnrlat = self.llcrnrlat
-            if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
-        elif projection == 'splaea':
-            if boundinglat is None or lon_0 is None:
-                raise ValueError, 'must specify boundinglat and lon_0 for South-Polar Lambert Azimuthal basemap'
-            projparams['lat_0'] = -90.
-            projparams['proj'] = 'laea'
-            self.llcrnrlon = lon_0+45.
-            self.urcrnrlon = lon_0-135.
-            proj = pyproj.Proj(projparams)
-            x,y = proj(lon_0,boundinglat)
-            lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
-            self.urcrnrlat = self.llcrnrlat
-            if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
-        elif projection == 'nplaea':
-            if boundinglat is None or lon_0 is None:
-                raise ValueError, 'must specify boundinglat and lon_0 for North-Polar Lambert Azimuthal basemap'
-            projparams['lat_0'] = 90.
-            projparams['proj'] = 'laea'
-            self.llcrnrlon = lon_0-45.
-            self.urcrnrlon = lon_0+135.
-            proj = pyproj.Proj(projparams)
-            x,y = proj(lon_0,boundinglat)
-            lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
-            self.urcrnrlat = self.llcrnrlat
-            if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
-        elif projection == 'spaeqd':
-            if boundinglat is None or lon_0 is None:
-                raise ValueError, 'must specify boundinglat and lon_0 for South-Polar Azimuthal Equidistant basemap'
-            projparams['lat_0'] = -90.
-            projparams['proj'] = 'aeqd'
-            self.llcrnrlon = lon_0+45.
-            self.urcrnrlon = lon_0-135.
-            proj = pyproj.Proj(projparams)
-            x,y = proj(lon_0,boundinglat)
-            lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
-            self.urcrnrlat = self.llcrnrlat
-            if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
-        elif projection == 'npaeqd':
-            if boundinglat is None or lon_0 is None:
-                raise ValueError, 'must specify boundinglat and lon_0 for North-Polar Azimuthal Equidistant basemap'
-            projparams['lat_0'] = 90.
-            projparams['proj'] = 'aeqd'
-            self.llcrnrlon = lon_0-45.
-            self.urcrnrlon = lon_0+135.
+                raise ValueError('must specify boundinglat and lon_0 for %(projection) basemap' % projnames)
+            if projection[0] == 's':
+                sgn = -1
+            else:
+                sgn = 1
+            rootproj = projection[2:]
+            projparams['proj'] = rootproj
+            if rootproj == 'stere':
+                projparams['lat_ts'] = sgn * 90.
+            projparams['lat_0'] = sgn * 90.
+            self.llcrnrlon = lon_0 - sgn*45.
+            self.urcrnrlon = lon_0 + sgn*135.
             proj = pyproj.Proj(projparams)
             x,y = proj(lon_0,boundinglat)
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
@@ -449,12 +387,11 @@ class Basemap(object):
             if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
-                else:
-                    if lon_0 is None or lat_0 is None:
-                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
-                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
-                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
-                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+                if lon_0 is None or lat_0 is None:
+                    raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'merc':
             if lat_ts is None:
                 raise ValueError, 'must specify lat_ts for Mercator basemap'
@@ -479,13 +416,12 @@ class Basemap(object):
             if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
-                else:
-                    if lon_0 is None or lat_0 is None:
-                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
-                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
-                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
-                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
-                    
+                if lon_0 is None or lat_0 is None:
+                    raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+
         elif projection == 'ortho':
             if not projparams.has_key('R'):
                 raise ValueError, 'orthographic projection only works for perfect spheres - not ellipsoids'
@@ -547,12 +483,11 @@ class Basemap(object):
             if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
-                else:
-                    if lon_0 is None or lat_0 is None:
-                        raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
-                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
-                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
-                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+                if lon_0 is None or lat_0 is None:
+                    raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'mill':
             if not using_corners:
                 llcrnrlon = -180.
@@ -574,22 +509,7 @@ class Basemap(object):
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % self.projection
         else:
-            raise ValueError, """
-  unsupported projection, use 'cyl' - cylindrical equidistant, 'merc' -
-  mercator, 'lcc' - lambert conformal conic, 'stere' - stereographic,
-  'npstere' - stereographic, special case centered on north pole.
-  'spstere' - stereographic, special case centered on south pole,
-  'aea' - albers equal area conic, 'tmerc' - transverse mercator,
-  'aeqd' - azimuthal equidistant, 'mill' - miller cylindrical,
-  'npaeqd' - azimuthal equidistant, special case centered on north pole,
-  'spaeqd' - azimuthal equidistant, special case centered on south pole,
-  'eqdc' - equidistant conic, 'laea' - lambert azimuthal equal area,
-  'nplaea' - lambert azimuthal, special case centered on north pole,
-  'splaea' - lambert azimuthal, special case centered on south pole,
-  'cass' - cassini-soldner (transverse cylindrical equidistant),
-  'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
-  'geos' - geostationary, 'sinu' - sinusoidal, 'moll' - mollweide,
-  'robin' - robinson, or 'gnom' - gnomonic.  You tried '%s'""" % projection
+            raise ValueError(_unsupported_projection % projection)
 
         # initialize proj4
         proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
@@ -701,34 +621,37 @@ class Basemap(object):
 
     def __call__(self,x,y,inverse=False):
         """
- Calling a Basemap class instance with the arguments lon, lat will
- convert lon/lat (in degrees) to x/y native map projection
- coordinates (in meters).  If optional keyword 'inverse' is
- True (default is False), the inverse transformation from x/y
- to lon/lat is performed.
+        Calling a Basemap class instance with the arguments lon, lat will
+        convert lon/lat (in degrees) to x/y native map projection
+        coordinates (in meters).  If optional keyword 'inverse' is
+        True (default is False), the inverse transformation from x/y
+        to lon/lat is performed.
 
- For cylindrical equidistant projection ('cyl'), this
- does nothing (i.e. x,y == lon,lat).
+        For cylindrical equidistant projection ('cyl'), this
+        does nothing (i.e. x,y == lon,lat).
 
- For non-cylindrical projections, the inverse transformation
- always returns longitudes between -180 and 180 degrees. For
- cylindrical projections (self.projection == 'cyl','mill' or 'merc')
- the inverse transformation will return longitudes between
- self.llcrnrlon and self.llcrnrlat.
+        For non-cylindrical projections, the inverse transformation
+        always returns longitudes between -180 and 180 degrees. For
+        cylindrical projections (self.projection == 'cyl','mill' or 'merc')
+        the inverse transformation will return longitudes between
+        self.llcrnrlon and self.llcrnrlat.
 
- input arguments lon, lat can be either scalar floats or N arrays.
+        input arguments lon, lat can be either scalar floats or N arrays.
         """
         return self.projtran(x,y,inverse=inverse)
 
     def makegrid(self,nx,ny,returnxy=False):
         """
- return arrays of shape (ny,nx) containing lon,lat coordinates of
- an equally spaced native projection grid.
- if returnxy = True, the x,y values of the grid are returned also.
+        return arrays of shape (ny,nx) containing lon,lat coordinates of
+        an equally spaced native projection grid.
+        if returnxy = True, the x,y values of the grid are returned also.
         """
         return self.projtran.makegrid(nx,ny,returnxy=returnxy)
 
     def _readboundarydata(self,name):
+        """
+        read boundary data, clip to map projection region
+        """
         msg = """
 Unable to open boundary dataset file. Only the 'crude', 'low',
 'intermediate' and 'high' resolution datasets are installed by default. If you
@@ -925,7 +848,7 @@ and install those files separately(see the basemap README for details)."""
 
     def _getmapboundary(self):
         """
- create map boundary polygon (in lat/lon and x/y coordinates)
+        create map boundary polygon (in lat/lon and x/y coordinates)
         """
         nx = 100
         ny = 100
@@ -1043,8 +966,9 @@ and install those files separately(see the basemap README for details)."""
 
     def drawmapboundary(self,color='k',linewidth=1.0,ax=None):
         """
- draw boundary around map projection region. If ax=None (default),
- default axis instance is used, otherwise specified axis instance is used.
+        draw boundary around map projection region. If ax=None (default),
+        default axis instance is used, otherwise specified axis
+        instance is used.
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -1105,15 +1029,15 @@ and install those files separately(see the basemap README for details)."""
 
     def fillcontinents(self,color='0.8',ax=None,zorder=None):
         """
- Fill continents.
+        Fill continents.
 
- color - color to fill continents (default gray).
- ax - axes instance (overrides default axes instance).
- zorder - sets the zorder for the continent polygons (if not specified,
- uses default zorder for a Polygon patch). Set to zero if you want to paint
- over the filled continents).
+        color - color to fill continents (default gray).
+        ax - axes instance (overrides default axes instance).
+        zorder - sets the zorder for the continent polygons (if not specified,
+        uses default zorder for a Polygon patch). Set to zero if you want to paint
+        over the filled continents).
 
- After filling continents, lakes are re-filled with axis background color.
+        After filling continents, lakes are re-filled with axis background color.
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
@@ -1161,14 +1085,14 @@ and install those files separately(see the basemap README for details)."""
 
     def drawcoastlines(self,linewidth=1.,color='k',antialiased=1,ax=None,zorder=None):
         """
- Draw coastlines.
+        Draw coastlines.
 
- linewidth - coastline width (default 1.)
- color - coastline color (default black)
- antialiased - antialiasing switch for coastlines (default True).
- ax - axes instance (overrides default axes instance)
- zorder - sets the zorder for the coastlines (if not specified,
- uses default zorder for LineCollections).
+        linewidth - coastline width (default 1.)
+        color - coastline color (default black)
+        antialiased - antialiasing switch for coastlines (default True).
+        ax - axes instance (overrides default axes instance)
+        zorder - sets the zorder for the coastlines (if not specified,
+        uses default zorder for LineCollections).
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
@@ -1192,14 +1116,14 @@ and install those files separately(see the basemap README for details)."""
 
     def drawcountries(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
         """
- Draw country boundaries.
+        Draw country boundaries.
 
- linewidth - country boundary line width (default 0.5)
- color - country boundary line color (default black)
- antialiased - antialiasing switch for country boundaries (default True).
- ax - axes instance (overrides default axes instance)
- zorder - sets the zorder for the country boundaries (if not specified,
- uses default zorder for LineCollections).
+        linewidth - country boundary line width (default 0.5)
+        color - country boundary line color (default black)
+        antialiased - antialiasing switch for country boundaries (default True).
+        ax - axes instance (overrides default axes instance)
+        zorder - sets the zorder for the country boundaries (if not specified,
+        uses default zorder for LineCollections).
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
@@ -1227,14 +1151,14 @@ and install those files separately(see the basemap README for details)."""
 
     def drawstates(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
         """
- Draw state boundaries in Americas.
+        Draw state boundaries in Americas.
 
- linewidth - state boundary line width (default 0.5)
- color - state boundary line color (default black)
- antialiased - antialiasing switch for state boundaries (default True).
- ax - axes instance (overrides default axes instance)
- zorder - sets the zorder for the state boundaries (if not specified,
- uses default zorder for LineCollections).
+        linewidth - state boundary line width (default 0.5)
+        color - state boundary line color (default black)
+        antialiased - antialiasing switch for state boundaries (default True).
+        ax - axes instance (overrides default axes instance)
+        zorder - sets the zorder for the state boundaries (if not specified,
+        uses default zorder for LineCollections).
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
@@ -1262,14 +1186,14 @@ and install those files separately(see the basemap README for details)."""
 
     def drawrivers(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
         """
- Draw major rivers.
+        Draw major rivers.
 
- linewidth - river boundary line width (default 0.5)
- color - river boundary line color (default black)
- antialiased - antialiasing switch for river boundaries (default True).
- ax - axes instance (overrides default axes instance)
- zorder - sets the zorder for the rivers (if not specified,
- uses default zorder for LineCollections).
+        linewidth - river boundary line width (default 0.5)
+        color - river boundary line color (default black)
+        antialiased - antialiasing switch for river boundaries (default True).
+        ax - axes instance (overrides default axes instance)
+        zorder - sets the zorder for the rivers (if not specified,
+        uses default zorder for LineCollections).
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
@@ -1298,40 +1222,40 @@ and install those files separately(see the basemap README for details)."""
     def readshapefile(self,shapefile,name,drawbounds=True,zorder=None,
                       linewidth=0.5,color='k',antialiased=1,ax=None):
         """
- read in shape file, draw boundaries on map.
+        read in shape file, draw boundaries on map.
 
- Restrictions:
-  - Assumes shapes are 2D
-  - vertices must be in geographic (lat/lon) coordinates.
+        Restrictions:
+         - Assumes shapes are 2D
+         - vertices must be in geographic (lat/lon) coordinates.
 
- shapefile - path to shapefile components.  Example:
-  shapefile='/home/jeff/esri/world_borders' assumes that
-  world_borders.shp, world_borders.shx and world_borders.dbf
-  live in /home/jeff/esri.
- name - name for Basemap attribute to hold the shapefile
-  vertices in native map projection coordinates.
-  Class attribute name+'_info' is a list of dictionaries, one
-  for each shape, containing attributes of each shape from dbf file.
-  For example, if name='counties', self.counties
-  will be a list of vertices for each shape in map projection
-  coordinates and self.counties_info will be a list of dictionaries
-  with shape attributes. Rings in individual shapes are split out
-  into separate polygons.  Additional keys
-  'RINGNUM' and 'SHAPENUM' are added to shape attribute dictionary.
- drawbounds - draw boundaries of shapes (default True)
- zorder = shape boundary zorder (if not specified, default for LineCollection
- is used).
- linewidth - shape boundary line width (default 0.5)
- color - shape boundary line color (default black)
- antialiased - antialiasing switch for shape boundaries (default True).
- ax - axes instance (overrides default axes instance)
+        shapefile - path to shapefile components.  Example:
+         shapefile='/home/jeff/esri/world_borders' assumes that
+         world_borders.shp, world_borders.shx and world_borders.dbf
+         live in /home/jeff/esri.
+        name - name for Basemap attribute to hold the shapefile
+         vertices in native map projection coordinates.
+         Class attribute name+'_info' is a list of dictionaries, one
+         for each shape, containing attributes of each shape from dbf file.
+         For example, if name='counties', self.counties
+         will be a list of vertices for each shape in map projection
+         coordinates and self.counties_info will be a list of dictionaries
+         with shape attributes. Rings in individual shapes are split out
+         into separate polygons.  Additional keys
+         'RINGNUM' and 'SHAPENUM' are added to shape attribute dictionary.
+        drawbounds - draw boundaries of shapes (default True)
+        zorder = shape boundary zorder (if not specified, default for LineCollection
+        is used).
+        linewidth - shape boundary line width (default 0.5)
+        color - shape boundary line color (default black)
+        antialiased - antialiasing switch for shape boundaries (default True).
+        ax - axes instance (overrides default axes instance)
 
- returns a tuple (num_shapes, type, min, max) containing shape file info.
- num_shapes is the number of shapes, type is the type code (one of
- the SHPT* constants defined in the shapelib module, see
- http://shapelib.maptools.org/shp_api.html) and min and
- max are 4-element lists with the minimum and maximum values of the
- vertices.
+        returns a tuple (num_shapes, type, min, max) containing shape file info.
+        num_shapes is the number of shapes, type is the type code (one of
+        the SHPT* constants defined in the shapelib module, see
+        http://shapelib.maptools.org/shp_api.html) and min and
+        max are 4-element lists with the minimum and maximum values of the
+        vertices.
         """
         # open shapefile, read vertices for each object, convert
         # to map projection coordinates (only works for 2D shape types).
@@ -1355,11 +1279,11 @@ and install those files separately(see the basemap README for details)."""
             for ring in range(rings):
                 lons, lats = zip(*verts[ring])
                 if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
-                    msg="""
-shapefile must have lat/lon vertices  - it looks like this one has vertices
-in map projection coordinates. You can convert the shapefile to geographic
-coordinates using the shpproj utility from the shapelib tools
-(http://shapelib.maptools.org/shapelib-tools.html)"""
+                    msg=dedent("""
+                        shapefile must have lat/lon vertices  - it looks like this one has vertices
+                        in map projection coordinates. You can convert the shapefile to geographic
+                        coordinates using the shpproj utility from the shapelib tools
+                        (http://shapelib.maptools.org/shapelib-tools.html)""")
                     raise ValueError,msg
                 x, y = self(lons, lats)
                 shpsegs.append(zip(x,y))
@@ -1400,32 +1324,32 @@ coordinates using the shpproj utility from the shapelib tools
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0],labelstyle=None, \
                       fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
- draw parallels (latitude lines).
+        draw parallels (latitude lines).
 
- circles - list containing latitude values to draw (in degrees).
- color - color to draw parallels (default black).
- linewidth - line width for parallels (default 1.)
- zorder - sets the zorder for parallels (if not specified,
- uses default zorder for Line2D class).
- linestyle - line style for parallels (default '--', i.e. dashed).
- dashes - dash pattern for parallels (default [1,1], i.e. 1 pixel on,
-  1 pixel off).
- labels - list of 4 values (default [0,0,0,0]) that control whether
-  parallels are labelled where they intersect the left, right, top or
-  bottom of the plot. For example labels=[1,0,0,1] will cause parallels
-  to be labelled where they intersect the left and bottom of the plot,
-  but not the right and top.
- labelstyle - if set to "+/-", north and south latitudes are labelled
-  with "+" and "-", otherwise they are labelled with "N" and "S".
- fmt is a format string to format the parallel labels (default '%g').
- xoffset - label offset from edge of map in x-direction
-  (default is 0.01 times width of map in map projection coordinates).
- yoffset - label offset from edge of map in y-direction
-  (default is 0.01 times height of map in map projection coordinates).
- ax - axes instance (overrides default axes instance)
+        circles - list containing latitude values to draw (in degrees).
+        color - color to draw parallels (default black).
+        linewidth - line width for parallels (default 1.)
+        zorder - sets the zorder for parallels (if not specified,
+        uses default zorder for Line2D class).
+        linestyle - line style for parallels (default '--', i.e. dashed).
+        dashes - dash pattern for parallels (default [1,1], i.e. 1 pixel on,
+         1 pixel off).
+        labels - list of 4 values (default [0,0,0,0]) that control whether
+         parallels are labelled where they intersect the left, right, top or
+         bottom of the plot. For example labels=[1,0,0,1] will cause parallels
+         to be labelled where they intersect the left and bottom of the plot,
+         but not the right and top.
+        labelstyle - if set to "+/-", north and south latitudes are labelled
+         with "+" and "-", otherwise they are labelled with "N" and "S".
+        fmt is a format string to format the parallel labels (default '%g').
+        xoffset - label offset from edge of map in x-direction
+         (default is 0.01 times width of map in map projection coordinates).
+        yoffset - label offset from edge of map in y-direction
+         (default is 0.01 times height of map in map projection coordinates).
+        ax - axes instance (overrides default axes instance)
 
- additional keyword arguments control text properties for labels (see
-  pylab.text documentation)
+        additional keyword arguments control text properties for labels (see
+         pylab.text documentation)
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -1620,32 +1544,32 @@ coordinates using the shpproj utility from the shapelib tools
                       linestyle='--',dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
                       fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
- draw meridians (longitude lines).
+        draw meridians (longitude lines).
 
- meridians - list containing longitude values to draw (in degrees).
- color - color to draw meridians (default black).
- linewidth - line width for meridians (default 1.)
- zorder - sets the zorder for meridians (if not specified,
- uses default zorder for Line2D class).
- linestyle - line style for meridians (default '--', i.e. dashed).
- dashes - dash pattern for meridians (default [1,1], i.e. 1 pixel on,
-  1 pixel off).
- labels - list of 4 values (default [0,0,0,0]) that control whether
-  meridians are labelled where they intersect the left, right, top or
-  bottom of the plot. For example labels=[1,0,0,1] will cause meridians
-  to be labelled where they intersect the left and bottom of the plot,
-  but not the right and top.
- labelstyle - if set to "+/-", east and west longitudes are labelled
-  with "+" and "-", otherwise they are labelled with "E" and "W".
- fmt is a format string to format the meridian labels (default '%g').
- xoffset - label offset from edge of map in x-direction
-  (default is 0.01 times width of map in map projection coordinates).
- yoffset - label offset from edge of map in y-direction
-  (default is 0.01 times height of map in map projection coordinates).
- ax - axes instance (overrides default axes instance)
+        meridians - list containing longitude values to draw (in degrees).
+        color - color to draw meridians (default black).
+        linewidth - line width for meridians (default 1.)
+        zorder - sets the zorder for meridians (if not specified,
+        uses default zorder for Line2D class).
+        linestyle - line style for meridians (default '--', i.e. dashed).
+        dashes - dash pattern for meridians (default [1,1], i.e. 1 pixel on,
+         1 pixel off).
+        labels - list of 4 values (default [0,0,0,0]) that control whether
+         meridians are labelled where they intersect the left, right, top or
+         bottom of the plot. For example labels=[1,0,0,1] will cause meridians
+         to be labelled where they intersect the left and bottom of the plot,
+         but not the right and top.
+        labelstyle - if set to "+/-", east and west longitudes are labelled
+         with "+" and "-", otherwise they are labelled with "E" and "W".
+        fmt is a format string to format the meridian labels (default '%g').
+        xoffset - label offset from edge of map in x-direction
+         (default is 0.01 times width of map in map projection coordinates).
+        yoffset - label offset from edge of map in y-direction
+         (default is 0.01 times height of map in map projection coordinates).
+        ax - axes instance (overrides default axes instance)
 
- additional keyword arguments control text properties for labels (see
-  pylab.text documentation)
+        additional keyword arguments control text properties for labels (see
+         pylab.text documentation)
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -1824,9 +1748,9 @@ coordinates using the shpproj utility from the shapelib tools
 
     def gcpoints(self,lon1,lat1,lon2,lat2,npoints):
         """
- compute npoints points along a great circle with endpoints
- (lon1,lat1) and (lon2,lat2).  Returns arrays x,y
- with map projection coordinates.
+        compute npoints points along a great circle with endpoints
+        (lon1,lat1) and (lon2,lat2).  Returns arrays x,y
+        with map projection coordinates.
         """
         gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
         lonlats = gc.npts(lon1,lat1,lon2,lat2,npoints-2)
@@ -1839,17 +1763,17 @@ coordinates using the shpproj utility from the shapelib tools
 
     def drawgreatcircle(self,lon1,lat1,lon2,lat2,del_s=100.,**kwargs):
         """
- draw a great circle on the map.
+        draw a great circle on the map.
 
- lon1,lat1 - longitude,latitude of one endpoint of the great circle.
- lon2,lat2 - longitude,latitude of the other endpoint of the great circle.
- del_s - points on great circle computed every delta kilometers (default 100).
+        lon1,lat1 - longitude,latitude of one endpoint of the great circle.
+        lon2,lat2 - longitude,latitude of the other endpoint of the great circle.
+        del_s - points on great circle computed every delta kilometers (default 100).
 
- Other keyword arguments (**kwargs) control plotting of great circle line,
- see pylab.plot documentation for details.
+        Other keyword arguments (**kwargs) control plotting of great circle line,
+        see pylab.plot documentation for details.
 
- Note:  cannot handle situations in which the great circle intersects
- the edge of the map projection domain, and then re-enters the domain.
+        Note:  cannot handle situations in which the great circle intersects
+        the edge of the map projection domain, and then re-enters the domain.
         """
         # use great circle formula for a perfect sphere.
         gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
@@ -1866,29 +1790,29 @@ coordinates using the shpproj utility from the shapelib tools
 
     def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1,masked=False):
         """
- interpolate a scalar field (datin) from a lat/lon grid with longitudes =
- lons and latitudes = lats to a (ny,nx) native map projection grid.
- Typically used to transform data to map projection coordinates
- so it can be plotted on the map with imshow.
+        interpolate a scalar field (datin) from a lat/lon grid with longitudes =
+        lons and latitudes = lats to a (ny,nx) native map projection grid.
+        Typically used to transform data to map projection coordinates
+        so it can be plotted on the map with imshow.
 
- lons, lats must be rank-1 arrays containing longitudes and latitudes
- (in degrees) of datin grid in increasing order
- (i.e. from dateline eastward, and South Pole northward).
- For non-cylindrical projections (those other than
- cylindrical equidistant, mercator and miller) 
- lons must fit within range -180 to 180.
+        lons, lats must be rank-1 arrays containing longitudes and latitudes
+        (in degrees) of datin grid in increasing order
+        (i.e. from dateline eastward, and South Pole northward).
+        For non-cylindrical projections (those other than
+        cylindrical equidistant, mercator and miller)
+        lons must fit within range -180 to 180.
 
- if returnxy=True, the x and y values of the native map projection grid
- are also returned.
+        if returnxy=True, the x and y values of the native map projection grid
+        are also returned.
 
- If checkbounds=True, values of lons and lats are checked to see that
- they lie within the map projection region.  Default is False.
- If checkbounds=False, points outside map projection region will
- be clipped to values on the boundary if masked=False. If masked=True,
- the return value will be a masked array with those points masked.
+        If checkbounds=True, values of lons and lats are checked to see that
+        they lie within the map projection region.  Default is False.
+        If checkbounds=False, points outside map projection region will
+        be clipped to values on the boundary if masked=False. If masked=True,
+        the return value will be a masked array with those points masked.
 
- The order keyword can be 0 for nearest-neighbor interpolation,
- or 1 for bilinear interpolation (default 1).
+        The order keyword can be 0 for nearest-neighbor interpolation,
+        or 1 for bilinear interpolation (default 1).
         """
         # check that lons, lats increasing
         delon = lons[1:]-lons[0:-1]
@@ -1916,33 +1840,33 @@ coordinates using the shpproj utility from the shapelib tools
 
     def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1,masked=False):
         """
- rotate and interpolate a vector field (uin,vin) from a lat/lon grid
- with longitudes = lons and latitudes = lats to a
- (ny,nx) native map projection grid.
+        rotate and interpolate a vector field (uin,vin) from a lat/lon grid
+        with longitudes = lons and latitudes = lats to a
+        (ny,nx) native map projection grid.
 
- lons, lats must be rank-1 arrays containing longitudes and latitudes
- (in degrees) of datin grid in increasing order
- (i.e. from dateline eastward, and South Pole northward).
- For non-cylindrical projections (those other than
- cylindrical equidistant, mercator and miller) 
- lons must fit within range -180 to 180.
+        lons, lats must be rank-1 arrays containing longitudes and latitudes
+        (in degrees) of datin grid in increasing order
+        (i.e. from dateline eastward, and South Pole northward).
+        For non-cylindrical projections (those other than
+        cylindrical equidistant, mercator and miller)
+        lons must fit within range -180 to 180.
 
- The input vector field is defined in spherical coordinates (it
- has eastward and northward components) while the output
- vector field is rotated to map projection coordinates (relative
- to x and y). The magnitude of the vector is preserved.
+        The input vector field is defined in spherical coordinates (it
+        has eastward and northward components) while the output
+        vector field is rotated to map projection coordinates (relative
+        to x and y). The magnitude of the vector is preserved.
 
- if returnxy=True, the x and y values of the native map projection grid
- are also returned (default False).
+        if returnxy=True, the x and y values of the native map projection grid
+        are also returned (default False).
 
- If checkbounds=True, values of lons and lats are checked to see that
- they lie within the map projection region.  Default is False.
- If checkbounds=False, points outside map projection region will
- be clipped to values on the boundary if masked=False. If masked=True,
- the return value will be a masked array with those points masked.
+        If checkbounds=True, values of lons and lats are checked to see that
+        they lie within the map projection region.  Default is False.
+        If checkbounds=False, points outside map projection region will
+        be clipped to values on the boundary if masked=False. If masked=True,
+        the return value will be a masked array with those points masked.
 
- The order keyword can be 0 for nearest-neighbor interpolation,
- or 1 for bilinear interpolation (default 1).
+        The order keyword can be 0 for nearest-neighbor interpolation,
+        or 1 for bilinear interpolation (default 1).
         """
         # check that lons, lats increasing
         delon = lons[1:]-lons[0:-1]
@@ -1997,24 +1921,24 @@ coordinates using the shpproj utility from the shapelib tools
 
     def rotate_vector(self,uin,vin,lons,lats,returnxy=False):
         """
- rotate a vector field (uin,vin) on a rectilinear lat/lon grid
- with longitudes = lons and latitudes = lats from geographical into map
- projection coordinates.
+        rotate a vector field (uin,vin) on a rectilinear lat/lon grid
+        with longitudes = lons and latitudes = lats from geographical into map
+        projection coordinates.
 
- Differs from transform_vector in that no interpolation is done,
- the vector is returned on the same lat/lon grid, but rotated into
- x,y coordinates.
+        Differs from transform_vector in that no interpolation is done,
+        the vector is returned on the same lat/lon grid, but rotated into
+        x,y coordinates.
 
- lons, lats must be rank-2 arrays containing longitudes and latitudes
- (in degrees) of grid.
+        lons, lats must be rank-2 arrays containing longitudes and latitudes
+        (in degrees) of grid.
 
- if returnxy=True, the x and y values of the lat/lon grid
- are also returned (default False).
+        if returnxy=True, the x and y values of the lat/lon grid
+        are also returned (default False).
 
- The input vector field is defined in spherical coordinates (it
- has eastward and northward components) while the output
- vector field is rotated to map projection coordinates (relative
- to x and y). The magnitude of the vector is preserved.
+        The input vector field is defined in spherical coordinates (it
+        has eastward and northward components) while the output
+        vector field is rotated to map projection coordinates (relative
+        to x and y). The magnitude of the vector is preserved.
         """
         x, y = self(lons, lats)
         # rotate from geographic to map coordinates.
@@ -2054,8 +1978,8 @@ coordinates using the shpproj utility from the shapelib tools
 
     def set_axes_limits(self,ax=None):
         """
- Set axis limits, fix aspect ratio for map domain using current
- or specified axes instance.
+        Set axis limits, fix aspect ratio for map domain using current
+        or specified axes instance.
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -2088,8 +2012,8 @@ coordinates using the shpproj utility from the shapelib tools
 
     def scatter(self, *args, **kwargs):
         """
- Plot points with markers on the map (see pylab.scatter documentation).
- extra keyword 'ax' can be used to override the default axes instance.
+        Plot points with markers on the map (see pylab.scatter documentation).
+        extra keyword 'ax' can be used to override the default axes instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2100,10 +2024,10 @@ coordinates using the shpproj utility from the shapelib tools
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
-            ax = popd(kwargs,'ax')
+            ax = kwargs.pop('ax')
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = popd(kwargs, 'hold', None)
+        h = kwargs.pop('hold',None)
         if h is not None:
             ax.hold(h)
         try:
@@ -2122,8 +2046,8 @@ coordinates using the shpproj utility from the shapelib tools
 
     def plot(self, *args, **kwargs):
         """
- Draw lines and/or markers on the map (see pylab.plot documentation).
- extra keyword 'ax' can be used to override the default axis instance.
+        Draw lines and/or markers on the map (see pylab.plot documentation).
+        extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2134,10 +2058,10 @@ coordinates using the shpproj utility from the shapelib tools
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
-            ax = popd(kwargs,'ax')
+            ax = kwargs.pop('ax')
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = popd(kwargs, 'hold', None)
+        h = kwargs.pop('hold',None)
         if h is not None:
             ax.hold(h)
         try:
@@ -2156,10 +2080,10 @@ coordinates using the shpproj utility from the shapelib tools
 
     def imshow(self, *args, **kwargs):
         """
- Display an image over the map (see pylab.imshow documentation).
- extent and origin keywords set automatically so image will be drawn
- over map region.
- extra keyword 'ax' can be used to override the default axis instance.
+        Display an image over the map (see pylab.imshow documentation).
+        extent and origin keywords set automatically so image will be drawn
+        over map region.
+        extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2170,14 +2094,14 @@ coordinates using the shpproj utility from the shapelib tools
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
-            ax = popd(kwargs,'ax')
+            ax = kwargs.pop('ax')
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         # use origin='lower', unless overridden.
         if not kwargs.has_key('origin'):
             kwargs['origin']='lower'
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = popd(kwargs, 'hold', None)
+        h = kwargs.pop('hold',None)
         if h is not None:
             ax.hold(h)
         try:
@@ -2201,12 +2125,12 @@ coordinates using the shpproj utility from the shapelib tools
 
     def pcolor(self,x,y,data,**kwargs):
         """
- Make a pseudo-color plot over the map.
- see pylab.pcolor documentation for definition of **kwargs
- If x or y are outside projection limb (i.e. they have values > 1.e20)
- they will be convert to masked arrays with those values masked.
- As a result, those values will not be plotted.
- extra keyword 'ax' can be used to override the default axis instance.
+        Make a pseudo-color plot over the map.
+        see pylab.pcolor documentation for definition of **kwargs
+        If x or y are outside projection limb (i.e. they have values > 1.e20)
+        they will be convert to masked arrays with those values masked.
+        As a result, those values will not be plotted.
+        extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2217,14 +2141,14 @@ coordinates using the shpproj utility from the shapelib tools
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
-            ax = popd(kwargs,'ax')
+            ax = kwargs.pop('ax')
         # make x,y masked arrays
         # (masked where data is outside of projection limb)
         x = ma.masked_values(npy.where(x > 1.e20,1.e20,x), 1.e20)
         y = ma.masked_values(npy.where(y > 1.e20,1.e20,y), 1.e20)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = popd(kwargs, 'hold', None)
+        h = kwargs.pop('hold',None)
         if h is not None:
             ax.hold(h)
         try:
@@ -2248,12 +2172,12 @@ coordinates using the shpproj utility from the shapelib tools
 
     def pcolormesh(self,x,y,data,**kwargs):
         """
- Make a pseudo-color plot over the map.
- see pylab.pcolormesh documentation for definition of **kwargs
- Unlike pcolor, pcolormesh cannot handle masked arrays, and so
- cannot be used to plot data when the grid lies partially outside
- the projection limb (use pcolor or contourf instead).
- extra keyword 'ax' can be used to override the default axis instance.
+        Make a pseudo-color plot over the map.
+        see pylab.pcolormesh documentation for definition of **kwargs
+        Unlike pcolor, pcolormesh cannot handle masked arrays, and so
+        cannot be used to plot data when the grid lies partially outside
+        the projection limb (use pcolor or contourf instead).
+        extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2264,10 +2188,10 @@ coordinates using the shpproj utility from the shapelib tools
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
-            ax = popd(kwargs,'ax')
+            ax = kwargs.pop('ax')
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = popd(kwargs, 'hold', None)
+        h = kwargs.pop('hold',None)
         if h is not None:
             ax.hold(h)
         try:
@@ -2291,8 +2215,8 @@ coordinates using the shpproj utility from the shapelib tools
 
     def contour(self,x,y,data,*args,**kwargs):
         """
- Make a contour plot over the map (see pylab.contour documentation).
- extra keyword 'ax' can be used to override the default axis instance.
+        Make a contour plot over the map (see pylab.contour documentation).
+        extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2303,7 +2227,7 @@ coordinates using the shpproj utility from the shapelib tools
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
-            ax = popd(kwargs,'ax')
+            ax = kwargs.pop('ax')
         # make sure x is monotonically increasing - if not, 
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
@@ -2315,13 +2239,13 @@ coordinates using the shpproj utility from the shapelib tools
             xs = xl[:]
             xs.sort()
             if xl != xs:
-                print """
- WARNING: x coordinate not montonically increasing - contour plot
- may not be what you expect.  If it looks odd, your can either
- adjust the map projection region to be consistent with your data, or
- (if your data is on a global lat/lon grid) use the shiftgrid
- function to adjust the data to be consistent with the map projection
- region (see examples/contour_demo.py)."""
+                print dedent("""
+                     WARNING: x coordinate not montonically increasing - contour plot
+                     may not be what you expect.  If it looks odd, your can either
+                     adjust the map projection region to be consistent with your data, or
+                     (if your data is on a global lat/lon grid) use the shiftgrid
+                     function to adjust the data to be consistent with the map projection
+                     region (see examples/contour_demo.py).""")
         # mask for points outside projection limb.
         xymask = npy.logical_or(npy.greater(x,1.e20),npy.greater(y,1.e20))
         data = ma.asarray(data)
@@ -2330,7 +2254,7 @@ coordinates using the shpproj utility from the shapelib tools
         data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = popd(kwargs, 'hold', None)
+        h = kwargs.pop('hold',None)
         if h is not None:
             ax.hold(h)
         try:
@@ -2357,10 +2281,10 @@ coordinates using the shpproj utility from the shapelib tools
 
     def contourf(self,x,y,data,*args,**kwargs):
         """
- Make a filled contour plot over the map (see pylab.contourf documentation).
- If x or y are outside projection limb (i.e. they have values > 1.e20),
- the corresponing data elements will be masked.
- Extra keyword 'ax' can be used to override the default axis instance.
+        Make a filled contour plot over the map (see pylab.contourf documentation).
+        If x or y are outside projection limb (i.e. they have values > 1.e20),
+        the corresponing data elements will be masked.
+        Extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2371,7 +2295,7 @@ coordinates using the shpproj utility from the shapelib tools
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
-            ax = popd(kwargs,'ax')
+            ax = kwargs.pop('ax')
         # make sure x is monotonically increasing - if not, 
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
@@ -2383,13 +2307,13 @@ coordinates using the shpproj utility from the shapelib tools
             xs = xl[:]
             xs.sort()
             if xl != xs:
-                print """
- WARNING: x coordinate not montonically increasing - contour plot
- may not be what you expect.  If it looks odd, your can either
- adjust the map projection region to be consistent with your data, or
- (if your data is on a global lat/lon grid) use the shiftgrid
- function to adjust the data to be consistent with the map projection
- region (see examples/contour_demo.py)."""
+                print dedent("""
+                     WARNING: x coordinate not montonically increasing - contour plot
+                     may not be what you expect.  If it looks odd, your can either
+                     adjust the map projection region to be consistent with your data, or
+                     (if your data is on a global lat/lon grid) use the shiftgrid
+                     function to adjust the data to be consistent with the map projection
+                     region (see examples/contour_demo.py).""")
         # mask for points outside projection limb.
         xymask = npy.logical_or(npy.greater(x,1.e20),npy.greater(y,1.e20))
         data = ma.asarray(data)
@@ -2398,7 +2322,7 @@ coordinates using the shpproj utility from the shapelib tools
         data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = popd(kwargs, 'hold', None)
+        h = kwargs.pop('hold',None)
         if h is not None:
             ax.hold(h)
         try:
@@ -2425,11 +2349,11 @@ coordinates using the shpproj utility from the shapelib tools
 
     def quiver(self, x, y, u, v, *args, **kwargs):
         """
- Make a vector plot (u, v) with arrows on the map.
+        Make a vector plot (u, v) with arrows on the map.
 
- Extra arguments (*args and **kwargs) passed to quiver Axes method (see
- pylab.quiver documentation for details).
- extra keyword 'ax' can be used to override the default axis instance.
+        Extra arguments (*args and **kwargs) passed to quiver Axes method (see
+        pylab.quiver documentation for details).
+        extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2440,10 +2364,10 @@ coordinates using the shpproj utility from the shapelib tools
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
-            ax = popd(kwargs,'ax')
+            ax = kwargs.pop('ax')
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
-        h = popd(kwargs, 'hold', None)
+        h = kwargs.pop('hold',None)
         if h is not None:
             ax.hold(h)
         try:
@@ -2463,35 +2387,35 @@ coordinates using the shpproj utility from the shapelib tools
     def drawlsmask(self,rgba_land,rgba_ocean,lsmask=None,
                    lsmask_lons=None,lsmask_lats=None,lakes=False,**kwargs):
         """
- draw land-sea mask image.
+        draw land-sea mask image.
 
- land is colored with rgba integer tuple rgba_land.
- ocean is colored with rgba integer tuple rgba_ocean.
+        land is colored with rgba integer tuple rgba_land.
+        ocean is colored with rgba integer tuple rgba_ocean.
 
- For example, to color oceans blue and land green, use
- rgba_ocean = (0,0,255,255) and rgba_land  = (0,255,0,255).
- To make oceans transparent (useful if you just want to mask land
- regions over another image), use rgba_ocean = (0,0,255,0).
+        For example, to color oceans blue and land green, use
+        rgba_ocean = (0,0,255,255) and rgba_land  = (0,255,0,255).
+        To make oceans transparent (useful if you just want to mask land
+        regions over another image), use rgba_ocean = (0,0,255,0).
 
- If lakes=True, inland lakes are also colored with 
- rgba_ocean (default is lakes=False).
+        If lakes=True, inland lakes are also colored with
+        rgba_ocean (default is lakes=False).
 
- Default land-sea mask is from
- http://www.ngdc.noaa.gov/seg/cdroms/graham/graham/graham.htm
- and has 5-minute resolution.
+        Default land-sea mask is from
+        http://www.ngdc.noaa.gov/seg/cdroms/graham/graham/graham.htm
+        and has 5-minute resolution.
 
- To specify your own global land-sea mask, set the 
- lsmask keyword to a (nlats, nlons) array
- with 0's for ocean pixels, 1's for land pixels and
- optionally 2's for inland lake pixels.
- The lsmask_lons keyword should be a 1-d array
- with the longitudes of the mask, lsmask_lats should be
- a 1-d array with the latitudes.  Longitudes should be ordered
- from -180 W eastward, latitudes from -90 S northward.
- If any of the lsmask, lsmask_lons or lsmask_lats keywords are not
- set, the default land-sea mask is used.
+        To specify your own global land-sea mask, set the
+        lsmask keyword to a (nlats, nlons) array
+        with 0's for ocean pixels, 1's for land pixels and
+        optionally 2's for inland lake pixels.
+        The lsmask_lons keyword should be a 1-d array
+        with the longitudes of the mask, lsmask_lats should be
+        a 1-d array with the latitudes.  Longitudes should be ordered
+        from -180 W eastward, latitudes from -90 S northward.
+        If any of the lsmask, lsmask_lons or lsmask_lats keywords are not
+        set, the default land-sea mask is used.
 
- extra keyword 'ax' can be used to override the default axis instance.
+        extra keyword 'ax' can be used to override the default axis instance.
         """
         # look for axes instance (as keyword, an instance variable
         # or from pylab.gca().
@@ -2504,7 +2428,7 @@ coordinates using the shpproj utility from the shapelib tools
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
-            ax = popd(kwargs,'ax')
+            ax = kwargs.pop('ax')
         # if lsmask,lsmask_lons,lsmask_lats keywords not given,
         # read default land-sea mask in from file.
         if lsmask is None or lsmask_lons is None or lsmask_lats is None:
@@ -2557,11 +2481,13 @@ coordinates using the shpproj utility from the shapelib tools
         # plot mask as rgba image.
         im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
 
+### End of Basemap class
+
 def _searchlist(a,x):
     """
- like bisect, but works for lists that are not sorted,
- and are not in increasing order.
- returns -1 if x does not fall between any two elements"""
+    like bisect, but works for lists that are not sorted,
+    and are not in increasing order.
+    returns -1 if x does not fall between any two elements"""
     # make sure x is a float (and not an array scalar)
     x = float(x)
     itemprev = a[0]
@@ -2589,39 +2515,39 @@ def _searchlist(a,x):
 
 def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     """
- dataout = interp(datain,xin,yin,xout,yout,order=1)
+    dataout = interp(datain,xin,yin,xout,yout,order=1)
 
- interpolate data (datain) on a rectilinear grid (with x=xin
- y=yin) to a grid with x=xout, y=yout.
+    interpolate data (datain) on a rectilinear grid (with x=xin
+    y=yin) to a grid with x=xout, y=yout.
 
- datain is a rank-2 array with 1st dimension corresponding to y,
- 2nd dimension x.
+    datain is a rank-2 array with 1st dimension corresponding to y,
+    2nd dimension x.
 
- xin, yin are rank-1 arrays containing x and y of
- datain grid in increasing order.
+    xin, yin are rank-1 arrays containing x and y of
+    datain grid in increasing order.
 
- xout, yout are rank-2 arrays containing x and y of desired output grid.
+    xout, yout are rank-2 arrays containing x and y of desired output grid.
 
- If checkbounds=True, values of xout and yout are checked to see that
- they lie within the range specified by xin and xin.  Default is False.
- If checkbounds=False, and xout,yout are outside xin,yin, interpolated
- values will be clipped to values on boundary of input grid (xin,yin)
- if masked=False. If masked=True, the return value will be a masked
- array with those points masked. If masked is set to a number, then
- points outside the range of xin and yin will be set to that number.
+    If checkbounds=True, values of xout and yout are checked to see that
+    they lie within the range specified by xin and xin.  Default is False.
+    If checkbounds=False, and xout,yout are outside xin,yin, interpolated
+    values will be clipped to values on boundary of input grid (xin,yin)
+    if masked=False. If masked=True, the return value will be a masked
+    array with those points masked. If masked is set to a number, then
+    points outside the range of xin and yin will be set to that number.
 
- The order keyword can be 0 for nearest-neighbor interpolation,
- or 1 for bilinear interpolation (default 1).
+    The order keyword can be 0 for nearest-neighbor interpolation,
+    or 1 for bilinear interpolation (default 1).
 
- If datain is a masked array and order=1 (bilinear interpolation) is 
- used, elements of dataout will be masked if any of the four surrounding
- points in datain are masked.  To avoid this, do the interpolation in two
- passes, first with order=1 (producing dataout1), then with order=0
- (producing dataout2).  Then replace all the masked values in dataout1
- with the corresponding elements in dataout2 (using numpy.where).
- This effectively uses nearest neighbor interpolation if any of the
- four surrounding points in datain are masked, and bilinear interpolation
- otherwise.
+    If datain is a masked array and order=1 (bilinear interpolation) is
+    used, elements of dataout will be masked if any of the four surrounding
+    points in datain are masked.  To avoid this, do the interpolation in two
+    passes, first with order=1 (producing dataout1), then with order=0
+    (producing dataout2).  Then replace all the masked values in dataout1
+    with the corresponding elements in dataout2 (using numerix.where).
+    This effectively uses nearest neighbor interpolation if any of the
+    four surrounding points in datain are masked, and bilinear interpolation
+    otherwise.
     """
     # xin and yin must be monotonically increasing.
     if xin[-1]-xin[0] < 0 or yin[-1]-yin[0] < 0:
@@ -2705,18 +2631,18 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
 
 def shiftgrid(lon0,datain,lonsin,start=True):
     """
- shift global lat/lon grid east or west.
- assumes wraparound (or cyclic point) is included.
+    shift global lat/lon grid east or west.
+    assumes wraparound (or cyclic point) is included.
 
- lon0:  starting longitude for shifted grid
-        (ending longitude if start=False). lon0 must be on
-        input grid (within the range of lonsin).
- datain:  original data.
- lonsin:  original longitudes.
- start[True]: if True, lon0 represents the starting longitude
- of the new grid. if False, lon0 is the ending longitude.
+    lon0:  starting longitude for shifted grid
+           (ending longitude if start=False). lon0 must be on
+           input grid (within the range of lonsin).
+    datain:  original data.
+    lonsin:  original longitudes.
+    start[True]: if True, lon0 represents the starting longitude
+    of the new grid. if False, lon0 is the ending longitude.
 
- returns dataout,lonsout (data and longitudes on shifted grid).
+    returns dataout,lonsout (data and longitudes on shifted grid).
     """
     if npy.fabs(lonsin[-1]-lonsin[0]-360.) > 1.e-4:
         raise ValueError, 'cyclic point not included'
@@ -2739,9 +2665,9 @@ def shiftgrid(lon0,datain,lonsin,start=True):
 
 def addcyclic(arrin,lonsin):
     """
- arrout, lonsout = addcyclic(arrin, lonsin)
+    arrout, lonsout = addcyclic(arrin, lonsin)
 
- Add cyclic (wraparound) point in longitude.
+    Add cyclic (wraparound) point in longitude.
     """
     nlats = arrin.shape[0]
     nlons = arrin.shape[1]
@@ -2761,8 +2687,9 @@ def addcyclic(arrin,lonsin):
 
 def _choosecorners(width,height,**kwargs):
     """
-private function to determine lat/lon values of projection region corners, 
-given width and height of projection region in meters."""
+    private function to determine lat/lon values of projection region corners,
+    given width and height of projection region in meters.
+    """
     p = pyproj.Proj(kwargs)
     urcrnrlon, urcrnrlat = p(0.5*width,0.5*height, inverse=True)
     llcrnrlon, llcrnrlat = p(-0.5*width,-0.5*height, inverse=True)
