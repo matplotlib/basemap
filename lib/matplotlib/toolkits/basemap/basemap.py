@@ -22,7 +22,7 @@ basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 __version__ = '0.9.7'
 
 # supported map projections.
-projnames = {'cyl'      : 'Cylindrical Equidistant',
+_projnames = {'cyl'      : 'Cylindrical Equidistant',
              'merc'     : 'Mercator',
              'tmerc'    : 'Transverse Mercator',
              'omerc'    : 'Oblique Mercator',
@@ -49,7 +49,7 @@ projnames = {'cyl'      : 'Cylindrical Equidistant',
              'gnom'     : 'Gnomonic',
              }
 supported_projections = []
-for k,v in projnames.iteritems(): 
+for k,v in _projnames.iteritems(): 
      supported_projections.append("'%s' = %s\n" % (k,v))
 supported_projections = ''.join(supported_projections)
 
@@ -191,9 +191,7 @@ class Basemap(object):
     Useful instance variables:
 
     projection - map projection. Print the module variable
-    "supported_projections" to see a list.
-    (projections prefixed with 'np' or 'sp' are special case polar-centric
-     versions of the parent projection)
+    "supported_projections" to see a list of supported projections.
     aspect - map aspect ratio (size of y dimension / size of x dimension).
     llcrnrlon - longitude of lower left hand corner of the desired map domain.
     llcrnrlon - latitude of lower left hand corner of the desired map domain.
@@ -301,7 +299,7 @@ class Basemap(object):
                 lat_1 = lat_0
                 projparams['lat_1'] = lat_1
             if lat_1 is None or lon_0 is None:
-                raise ValueError('must specify lat_1 or lat_0 and lon_0 for %(projection)s basemap (lat_2 is optional)' % projnames)
+                raise ValueError('must specify lat_1 or lat_0 and lon_0 for %(projection)s basemap (lat_2 is optional)' % _projnames)
             if lat_2 is None:
                projparams['lat_2'] = lat_1
             if not using_corners:
@@ -330,7 +328,7 @@ class Basemap(object):
                             'splaea', 'nplaea',
                             'spaeqd', 'npaeqd']:
             if boundinglat is None or lon_0 is None:
-                raise ValueError('must specify boundinglat and lon_0 for %(projection) basemap' % projnames)
+                raise ValueError('must specify boundinglat and lon_0 for %(projection) basemap' % _projnames)
             if projection[0] == 's':
                 sgn = -1
             else:
