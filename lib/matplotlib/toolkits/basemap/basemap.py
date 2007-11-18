@@ -275,8 +275,8 @@ class Basemap(object):
                 projparams['lat_ts'] = lat_ts
         if satellite_height is not None:
             projparams['h'] = satellite_height
-
-        if None not in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+        using_corners = (None not in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat])
+        if using_corners:
             # make sure lat/lon limits are converted to floats.
             self.llcrnrlon = float(llcrnrlon)
             self.llcrnrlat = float(llcrnrlat)
@@ -303,7 +303,7 @@ class Basemap(object):
                 raise ValueError, 'must specify lat_1 or lat_0 and lon_0 for Lambert Conformal basemap (lat_2 is optional)'
             if lat_2 is None:
                projparams['lat_2'] = lat_1
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
                 else:
@@ -323,7 +323,7 @@ class Basemap(object):
                 raise ValueError, 'must specify lat_1 or lat_0 and lon_0 for Equidistant Conic basemap (lat_2 is optional)'
             if lat_2 is None:
                projparams['lat_2'] = lat_1
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
                 else:
@@ -342,7 +342,7 @@ class Basemap(object):
                 raise ValueError, 'must specify lat_1 or lat_0 and lon_0 for Albers Equal Area basemap (lat_2 is optional)'
             if lat_2 is None:
                projparams['lat_2'] = lat_1
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
                 else:
@@ -354,7 +354,7 @@ class Basemap(object):
         elif projection == 'stere':
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Stereographic basemap (lat_ts is optional)'
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
                 else:
@@ -446,7 +446,7 @@ class Basemap(object):
         elif projection == 'laea':
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Lambert Azimuthal basemap'
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
                 else:
@@ -460,7 +460,7 @@ class Basemap(object):
                 raise ValueError, 'must specify lat_ts for Mercator basemap'
             # clip plot region to be within -89.99S to 89.99N
             # (mercator is singular at poles)
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 llcrnrlon = -180.
                 llcrnrlat = -90.
                 urcrnrlon = 180
@@ -476,7 +476,7 @@ class Basemap(object):
         elif projection in ['tmerc','gnom','cass','poly'] :
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldnerr Polyconic basemap'
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
                 else:
@@ -493,7 +493,7 @@ class Basemap(object):
                 raise ValueError, 'must specify lat_0 and lon_0 for Orthographic basemap'
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % self.projection
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 llcrnrlon = -180.
                 llcrnrlat = -90.
                 urcrnrlon = 180
@@ -511,7 +511,7 @@ class Basemap(object):
                 raise ValueError, 'must specify lon_0 and satellite_height for Geostationary basemap'
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % self.projection
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 llcrnrlon = -180.
                 llcrnrlat = -90.
                 urcrnrlon = 180
@@ -539,12 +539,12 @@ class Basemap(object):
             projparams['lon_1'] = lon_1
             projparams['lat_2'] = lat_2
             projparams['lon_2'] = lon_2
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 raise ValueError, 'cannot specify map region with width and height keywords for this projection, please specify lat/lon values of corners'
         elif projection == 'aeqd':
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Azimuthal Equidistant basemap'
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
                 else:
@@ -554,7 +554,7 @@ class Basemap(object):
                     self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                     self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'mill':
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 llcrnrlon = -180.
                 llcrnrlat = -90.
                 urcrnrlon = 180
@@ -564,7 +564,7 @@ class Basemap(object):
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection == 'cyl':
-            if None in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat]:
+            if not using_corners:
                 llcrnrlon = -180.
                 llcrnrlat = -90.
                 urcrnrlon = 180
