@@ -21,6 +21,38 @@ basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
 __version__ = '0.9.7'
 
+# supported map projections.
+projnames = {'cyl'      : 'Cylindrical Equidistant',
+             'merc'     : 'Mercator',
+             'tmerc'    : 'Transverse Mercator',
+             'omerc'    : 'Oblique Mercator',
+             'mill'     : 'Miller Cylindrical',
+             'lcc'      : 'Lambert Conformal',
+             'laea'     : 'Lambert Azimuthal Equal Area',
+             'nplaea'   : 'North-Polar Lambert Azimuthal',
+             'splaea'   : 'South-Polar Lambert Azimuthal',
+             'eqdc'     : 'Equidistant Conic',
+             'aeqd'     : 'Azimuthal Equidistant',
+             'npaeqd'   : 'North-Polar Azimuthal Equidistant',
+             'spaeqd'   : 'South-Polar Azimuthal Equidistant',
+             'aea'      : 'Albers Equal Area',
+             'stere'    : 'Stereographic',
+             'npstere'  : 'North-Polar Stereographic',
+             'spstere'  : 'South-Polar Stereographic',
+             'cass'     : 'Cassini-Soldner',
+             'poly'     : 'Polyconic',
+             'ortho'    : 'Orthographic',
+             'geos'     : 'Geostationary',
+             'sinu'     : 'Sinusoidal',
+             'moll'     : 'Mollweide',
+             'robin'    : 'Robinson',
+             'gnom'     : 'Gnomonic',
+             }
+supported_projections = []
+for k,v in projnames.iteritems(): 
+     supported_projections.append("'%s' = %s\n" % (k,v))
+supported_projections = ''.join(supported_projections)
+
 # The __init__ docstring is pulled out here because it is so long;
 # Having it in the usual place makes it hard to get from the
 # __init__ argument list to the code that uses the arguments.
@@ -29,21 +61,8 @@ _Basemap_init_doc = """
 
  arguments:
 
- projection - map projection.  'cyl' - cylindrical equidistant, 'merc' -
-  mercator, 'lcc' - lambert conformal conic, 'stere' - stereographic,
-  'npstere' - stereographic, special case centered on north pole.
-  'spstere' - stereographic, special case centered on south pole,
-  'aea' - albers equal area conic, 'tmerc' - transverse mercator,
-  'aeqd' - azimuthal equidistant, 'mill' - miller cylindrical,
-  'npaeqd' - azimuthal equidistant, special case centered on north pole,
-  'spaeqd' - azimuthal equidistant, special case centered on south pole,
-  'eqdc' - equidistant conic, 'laea' - lambert azimuthal equal area,
-  'nplaea' - lambert azimuthal, special case centered on north pole,
-  'splaea' - lambert azimuthal, special case centered on south pole,
-  'cass' - cassini-soldner (transverse cylindrical equidistant),
-  'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
-  'sinu' - sinusoidal, 'moll' - mollweide, 'robin' - robinson,
-  'geos' - geostationary, and 'gnom' - gnomonic are currently available.
+ projection - map projection. Supported projections are:\n"""+\
+supported_projections+"""
   Default is 'cyl'.
 
  The map projection region can either be specified by setting these keywords:
@@ -142,40 +161,12 @@ _Basemap_init_doc = """
   latitude circle boundinglat is tangent to the edge of the map at lon_0.
  satellite_height - height of satellite (in m) above equator -
   only relevant for geostationary projections ('geos').
-        """
+"""
 
-# This allows substitution of longer names into error messages.
-projnames = {'cyl'      : 'Cylindrical Equidistant',
-             'merc'     : 'Mercator',
-             'tmerc'    : 'Transverse Mercator',
-             'omerc'    : 'Oblique Mercator',
-             'mill'     : 'Miller Cylindrical',
-             'llc'      : 'Lambert Conformal',
-             'laea'     : 'Lambert Azimuthal Equal Area',
-             'nplaea'   : 'North-Polar Lambert Azimuthal',
-             'splaea'   : 'South-Polar Lambert Azimuthal',
-             'eqdc'     : 'Equidistant Conic',
-             'eaqd'     : 'Azimuthal Equidistant',
-             'npaeqd'   : 'North-Polar Azimuthal Equidistant',
-             'spaeqd'   : 'South-Polar Azimuthal Equidistant',
-             'aea'      : 'Albers Equal Area',
-             'stere'    : 'Stereographic',
-             'npstere'  : 'North-Polar Stereographic',
-             'spstere'  : 'South-Polar Stereographic',
-             'cass'     : 'Cassini-Soldner',
-             'poly'     : 'Polyconic',
-             'ortho'    : 'Orthographic',
-             'geos'     : 'Geostationary',
-             'sinu'     : 'Sinusoidal',
-             'moll'     : 'Mollweide',
-             'robin'    : 'Robinson',
-             'gnom'     : 'Gnomonic',
-             }
-
+# unsupported projection error message.
 _unsupported_projection = ["'%s' is an unsupported projection.\n"]
 _unsupported_projection.append("The supported projections are:\n")
-for k,v in projnames.iteritems(): 
-     _unsupported_projection.append("'%s' = %s\n" % (k,v))
+_unsupported_projection.append(supported_projections)
 _unsupported_projection = ''.join(_unsupported_projection)
 
 def _validated_ll(param, name, minval, maxval):
@@ -191,12 +182,7 @@ def _insert_validated(d, param, name, minval, maxval):
 
 class Basemap(object):
     """
-    Set up a basemap with one of 19 supported map projections
-    (cylindrical equidistant, mercator, polyconic, oblique mercator,
-    transverse mercator, miller cylindrical, lambert conformal conic,
-    azimuthal equidistant, equidistant conic, lambert azimuthal equal area,
-    albers equal area conic, gnomonic, orthographic, sinusoidal, mollweide,
-    geostationary, robinson, cassini-soldner or stereographic).
+    Set up a basemap with specified map projection.
     Doesn't actually draw anything, but sets up the map projection class and
     creates the coastline, lake river and political boundary data
     structures in native map projection coordinates.
@@ -204,10 +190,8 @@ class Basemap(object):
 
     Useful instance variables:
 
-    projection - map projection ('cyl','merc','mill','lcc','eqdc','aea',
-     'laea', 'nplaea', 'splaea', 'tmerc', 'omerc', 'cass', 'gnom', 'poly',
-     'sinu', 'moll', 'ortho', 'robin', 'aeqd', 'npaeqd', 'spaeqd', 'stere',
-     'geos', 'npstere' or 'spstere')
+    projection - map projection. Print the module variable
+    "supported_projections" to see a list.
     (projections prefixed with 'np' or 'sp' are special case polar-centric
      versions of the parent projection)
     aspect - map aspect ratio (size of y dimension / size of x dimension).
@@ -247,10 +231,7 @@ class Basemap(object):
     [this example (simpletest.py) plus many others can be found in the
      examples directory of source distribution.  The "OO" version of this
      example (which does not use pylab) is called "simpletest_oo.py".]
-
-    Contact: Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
     """
-
 
     def __init__(self, llcrnrlon=None, llcrnrlat=None,
                        urcrnrlon=None, urcrnrlat=None,
@@ -267,7 +248,7 @@ class Basemap(object):
                        anchor='C',
                        ax=None):
         # docstring is added after definition
-        #print "starting: ", time.clock()
+
         # where to put plot in figure (default is 'C' or center)
         self.anchor = anchor
         # map projection.
@@ -604,6 +585,7 @@ class Basemap(object):
                 else:
                     coastsegs.append(seg)
             self.coastsegs = coastsegs
+    __init__.__doc__ = _Basemap_init_doc
 
     def __call__(self,x,y,inverse=False):
         """
