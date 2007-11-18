@@ -72,7 +72,7 @@ _Basemap_init_doc = """
  but if they are not, the entire globe is plotted.
 
  resolution - resolution of boundary database to use. Can be 'c' (crude),
-  'l' (low), 'i' (intermediate), 'h' (high), or None. Default is 'c'.
+  'l' (low), 'i' (intermediate), 'h' (high), 'f' (full) or None. 
   If None, no boundary data will be read in (and class methods
   such as drawcoastlines will raise an exception if invoked).
   Resolution drops off by roughly 80%
@@ -83,8 +83,8 @@ _Basemap_init_doc = """
   Tools (http://gmt.soest.hawaii.edu).
 
  area_thresh - coastline or lake with an area smaller than area_thresh
-  in km^2 will not be plotted.  Default 10000,1000,100,10 for resolution
-  'c','l','i','h'.
+  in km^2 will not be plotted.  Default 10000,1000,100,10,1 for resolution
+  'c','l','i','h','f'.
 
  rsphere - radius of the sphere used to define map projection (default
   6370997 meters, close to the arithmetic mean radius of the earth). If
@@ -142,27 +142,7 @@ _Basemap_init_doc = """
   latitude circle boundinglat is tangent to the edge of the map at lon_0.
  satellite_height - height of satellite (in m) above equator -
   only relevant for geostationary projections ('geos').
-
-
         """
-
-_unsupported_projection = """
-  unsupported projection, use 'cyl' - cylindrical equidistant, 'merc' -
-  mercator, 'lcc' - lambert conformal conic, 'stere' - stereographic,
-  'npstere' - stereographic, special case centered on north pole.
-  'spstere' - stereographic, special case centered on south pole,
-  'aea' - albers equal area conic, 'tmerc' - transverse mercator,
-  'aeqd' - azimuthal equidistant, 'mill' - miller cylindrical,
-  'npaeqd' - azimuthal equidistant, special case centered on north pole,
-  'spaeqd' - azimuthal equidistant, special case centered on south pole,
-  'eqdc' - equidistant conic, 'laea' - lambert azimuthal equal area,
-  'nplaea' - lambert azimuthal, special case centered on north pole,
-  'splaea' - lambert azimuthal, special case centered on south pole,
-  'cass' - cassini-soldner (transverse cylindrical equidistant),
-  'poly' - polyconic, 'omerc' - oblique mercator, 'ortho' - orthographic,
-  'geos' - geostationary, 'sinu' - sinusoidal, 'moll' - mollweide,
-  'robin' - robinson, or 'gnom' - gnomonic.  You tried '%s'
-  """
 
 # This allows substitution of longer names into error messages.
 projnames = {'cyl'      : 'Cylindrical Equidistant',
@@ -180,7 +160,7 @@ projnames = {'cyl'      : 'Cylindrical Equidistant',
              'spaeqd'   : 'South-Polar Azimuthal Equidistant',
              'aea'      : 'Albers Equal Area',
              'stere'    : 'Stereographic',
-             'npstere'  : 'Nouth-Polar Stereographic',
+             'npstere'  : 'North-Polar Stereographic',
              'spstere'  : 'South-Polar Stereographic',
              'cass'     : 'Cassini-Soldner',
              'poly'     : 'Polyconic',
@@ -191,6 +171,12 @@ projnames = {'cyl'      : 'Cylindrical Equidistant',
              'robin'    : 'Robinson',
              'gnom'     : 'Gnomonic',
              }
+
+_unsupported_projection = ["'%s' is an unsupported projection.\n"]
+_unsupported_projection.append("The supported projections are:\n")
+for k,v in projnames.iteritems(): 
+     _unsupported_projection.append("'%s' = %s\n" % (k,v))
+_unsupported_projection = ''.join(_unsupported_projection)
 
 def _validated_ll(param, name, minval, maxval):
     param = float(param)
@@ -650,13 +636,14 @@ class Basemap(object):
 
     def _readboundarydata(self,name):
         """
-        read boundary data, clip to map projection region
+        read boundary data, clip to map projection region.
         """
-        msg = """
-Unable to open boundary dataset file. Only the 'crude', 'low',
-'intermediate' and 'high' resolution datasets are installed by default. If you
-are requesting a 'full' resolution dataset, you need to download 
-and install those files separately(see the basemap README for details)."""
+        msg = dedent("""
+        Unable to open boundary dataset file. Only the 'crude', 'low',
+        'intermediate' and 'high' resolution datasets are installed by default.
+        If you are requesting a 'full' resolution dataset, you may need to 
+        download and install those files separately
+        (see the basemap README for details).""")
         try:
             bdatfile = open(os.path.join(basemap_datadir,name+'_'+self.resolution+'.dat'),'rb')
             bdatmetafile = open(os.path.join(basemap_datadir,name+'meta_'+self.resolution+'.dat'),'r')
