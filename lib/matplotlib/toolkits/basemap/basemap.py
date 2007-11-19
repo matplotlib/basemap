@@ -1,10 +1,10 @@
 from matplotlib import rcParams
-from matplotlib import __version__ as matplotlib_version
+from matplotlib import __version__ as _matplotlib_version
 # check to make sure matplotlib is not too old.
-mpl_required_version = '0.90'
-if matplotlib_version < mpl_required_version:
+_mpl_required_version = '0.90'
+if _matplotlib_version < _mpl_required_version:
     raise ImportError('your matplotlib is too old - basemap '
-                      'requires at least %s, you have %s'%(mpl_required_version,matplotlib_version))
+    'requires version %s or higher'% _matplotlib_version)
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Ellipse, Circle, Polygon
 from matplotlib.lines import Line2D
@@ -49,8 +49,8 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'gnom'     : 'Gnomonic',
              }
 supported_projections = []
-for k,v in _projnames.iteritems(): 
-     supported_projections.append("'%s' = %s\n" % (k,v))
+for _items in _projnames.iteritems(): 
+     supported_projections.append("'%s' = %s\n" % (_items))
 supported_projections = ''.join(supported_projections)
 
 # The __init__ docstring is pulled out here because it is so long;
@@ -61,8 +61,8 @@ _Basemap_init_doc = """
 
  arguments:
 
- projection - map projection. Supported projections are:\n"""+\
-supported_projections+"""
+ projection - map projection. Supported projections are:
+%(supported_projections)s
   Default is 'cyl'.
 
  The map projection region can either be specified by setting these keywords:
@@ -94,7 +94,7 @@ supported_projections+"""
   'l' (low), 'i' (intermediate), 'h' (high), 'f' (full) or None. 
   If None, no boundary data will be read in (and class methods
   such as drawcoastlines will raise an exception if invoked).
-  Resolution drops off by roughly 80%
+  Resolution drops off by roughly 80%%
   between datasets.  Higher res datasets are much slower to draw.
   Default 'c'. Coastline data is from the GSHHS
   (http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html).
@@ -161,7 +161,7 @@ supported_projections+"""
   latitude circle boundinglat is tangent to the edge of the map at lon_0.
  satellite_height - height of satellite (in m) above equator -
   only relevant for geostationary projections ('geos').
-"""
+""" % locals()
 
 # unsupported projection error message.
 _unsupported_projection = ["'%s' is an unsupported projection.\n"]
@@ -191,7 +191,7 @@ class Basemap(object):
     Useful instance variables:
 
     projection - map projection. Print the module variable
-    "supported_projections" to see a list of supported projections.
+    "supported_projections" to see a list.
     aspect - map aspect ratio (size of y dimension / size of x dimension).
     llcrnrlon - longitude of lower left hand corner of the desired map domain.
     llcrnrlon - latitude of lower left hand corner of the desired map domain.
@@ -245,7 +245,7 @@ class Basemap(object):
                        boundinglat=None,
                        anchor='C',
                        ax=None):
-        # docstring is added after definition
+        # docstring is added after __init__ method definition
 
         # where to put plot in figure (default is 'C' or center)
         self.anchor = anchor
@@ -281,7 +281,7 @@ class Basemap(object):
         _insert_validated(projparams, lon_2, 'lon_2', -360, 720)
         if satellite_height is not None:
             projparams['h'] = satellite_height
-
+        # check for sane values of projection corners.
         using_corners = (None not in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat])
         if using_corners:
             self.llcrnrlon = _validated_ll(llcrnrlon, 'llcrnrlon', -360, 720)
@@ -292,6 +292,7 @@ class Basemap(object):
         # for each of the supported projections, 
         # compute lat/lon of domain corners 
         # and set values in projparams dict as needed.
+
         if projection in ['lcc', 'eqdc', 'aea']:
             # if lat_0 is given, but not lat_1,
             # set lat_1=lat_0
@@ -310,9 +311,6 @@ class Basemap(object):
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
-
-        # skipping over the following for now; it can be beautified and
-        # consolidated later
         elif projection == 'stere':
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Stereographic basemap (lat_ts is optional)'
@@ -386,7 +384,6 @@ class Basemap(object):
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
-
         elif projection == 'ortho':
             if not projparams.has_key('R'):
                 raise ValueError, 'orthographic projection only works for perfect spheres - not ellipsoids'
@@ -583,6 +580,7 @@ class Basemap(object):
                 else:
                     coastsegs.append(seg)
             self.coastsegs = coastsegs
+    # set __init__'s docstring
     __init__.__doc__ = _Basemap_init_doc
 
     def __call__(self,x,y,inverse=False):
@@ -648,7 +646,6 @@ class Basemap(object):
         if containsPole and\
            self.projection in ['tmerc','cass','omerc','merc','mill','cyl','robin','moll','sinu','geos']:
             raise ValueError('%s projection cannot cross pole'%(self.projection))
-
         # make sure orthographic projection has containsPole=True
         # we will compute the intersections in stereographic
         # coordinates, then transform to orthographic.
@@ -2141,9 +2138,6 @@ class Basemap(object):
         """
         Make a pseudo-color plot over the map.
         see pylab.pcolormesh documentation for definition of **kwargs
-        Unlike pcolor, pcolormesh cannot handle masked arrays, and so
-        cannot be used to plot data when the grid lies partially outside
-        the projection limb (use pcolor or contourf instead).
         extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
