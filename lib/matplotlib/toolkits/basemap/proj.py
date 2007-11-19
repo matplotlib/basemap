@@ -341,4 +341,3 @@ if __name__ == "__main__":
 
     assert (lons==lonlat[...,0]).all(), "The longitudes are different"
     assert (lats==lonlat[...,1]).all(), "The latitudes are different"
-
