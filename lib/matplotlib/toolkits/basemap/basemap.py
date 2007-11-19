@@ -49,8 +49,8 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'gnom'     : 'Gnomonic',
              }
 supported_projections = []
-for _items in _projnames.iteritems(): 
-     supported_projections.append("'%s' = %s\n" % (_items))
+for _items in _projnames.iteritems():
+    supported_projections.append("'%s' = %s\n" % (_items))
 supported_projections = ''.join(supported_projections)
 
 # The __init__ docstring is pulled out here because it is so long;
@@ -91,7 +91,7 @@ _Basemap_init_doc = """
  but if they are not, the entire globe is plotted.
 
  resolution - resolution of boundary database to use. Can be 'c' (crude),
-  'l' (low), 'i' (intermediate), 'h' (high), 'f' (full) or None. 
+  'l' (low), 'i' (intermediate), 'h' (high), 'f' (full) or None.
   If None, no boundary data will be read in (and class methods
   such as drawcoastlines will raise an exception if invoked).
   Resolution drops off by roughly 80%%
@@ -289,8 +289,8 @@ class Basemap(object):
             self.llcrnrlat = _validated_ll(llcrnrlat, 'llcrnrlat', -90, 90)
             self.urcrnrlat = _validated_ll(urcrnrlat, 'urcrnrlat', -90, 90)
 
-        # for each of the supported projections, 
-        # compute lat/lon of domain corners 
+        # for each of the supported projections,
+        # compute lat/lon of domain corners
         # and set values in projparams dict as needed.
 
         if projection in ['lcc', 'eqdc', 'aea']:
@@ -302,7 +302,7 @@ class Basemap(object):
             if lat_1 is None or lon_0 is None:
                 raise ValueError('must specify lat_1 or lat_0 and lon_0 for %(projection)s basemap (lat_2 is optional)' % _projnames)
             if lat_2 is None:
-               projparams['lat_2'] = lat_1
+                projparams['lat_2'] = lat_1
             if not using_corners:
                 if width is None or height is None:
                     raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
@@ -475,7 +475,7 @@ class Basemap(object):
 
         # initialize proj4
         proj = Proj(projparams,self.llcrnrlon,self.llcrnrlat,self.urcrnrlon,self.urcrnrlat)
-        
+
         # make sure axis ticks are suppressed.
         self.noticks = suppress_ticks
 
@@ -571,12 +571,12 @@ class Basemap(object):
                 dist = npy.sqrt(xd+yd)
                 split = dist > 5000000.
                 if npy.sum(split) and self.projection not in ['merc','cyl','mill']:
-                   ind = (npy.compress(split,squeeze(split*npy.indices(xd.shape)))+1).tolist()
-                   iprev = 0
-                   ind.append(len(xd))
-                   for i in ind:
-                       coastsegs.append(zip(x[iprev:i],y[iprev:i]))
-                       iprev = i
+                    ind = (npy.compress(split,squeeze(split*npy.indices(xd.shape)))+1).tolist()
+                    iprev = 0
+                    ind.append(len(xd))
+                    for i in ind:
+                        coastsegs.append(zip(x[iprev:i],y[iprev:i]))
+                        iprev = i
                 else:
                     coastsegs.append(seg)
             self.coastsegs = coastsegs
@@ -619,7 +619,7 @@ class Basemap(object):
         msg = dedent("""
         Unable to open boundary dataset file. Only the 'crude', 'low',
         'intermediate' and 'high' resolution datasets are installed by default.
-        If you are requesting a 'full' resolution dataset, you may need to 
+        If you are requesting a 'full' resolution dataset, you may need to
         download and install those files separately
         (see the basemap README for details).""")
         try:
@@ -649,7 +649,7 @@ class Basemap(object):
         # make sure orthographic projection has containsPole=True
         # we will compute the intersections in stereographic
         # coordinates, then transform to orthographic.
-        if self.projection == 'ortho' and name == 'gshhs':  
+        if self.projection == 'ortho' and name == 'gshhs':
             containsPole = True
             lon_0=self.projparams['lon_0']
             lat_0=self.projparams['lat_0']
@@ -674,7 +674,7 @@ class Basemap(object):
                 offsetbytes = int(linesplit[5])
                 bytecount = int(linesplit[6])
                 bdatfile.seek(offsetbytes,0)
-                # read in binary string convert into an npts by 2 
+                # read in binary string convert into an npts by 2
                 # numpy array (first column is lons, second is lats).
                 polystring = bdatfile.read(bytecount)
                 # binary data is little endian.
@@ -685,7 +685,7 @@ class Basemap(object):
                 # coordinates (i.e. it does not contain either pole),
                 # the intersections of the boundary geometries
                 # and the map projection region can be computed before
-                # transforming the boundary geometry to map projection 
+                # transforming the boundary geometry to map projection
                 # coordinates (this saves time, especially for small map
                 # regions and high-resolution boundary geometries).
                 if not containsPole:
@@ -713,7 +713,7 @@ class Basemap(object):
                         poly = Shape(b)
                         antart = False
                     # create duplicate polygons shifted by -360 and +360
-                    # (so as to properly treat polygons that cross 
+                    # (so as to properly treat polygons that cross
                     # Greenwich meridian).
                     if not antart:
                         b2[:,0] = b[:,0]-360
@@ -760,7 +760,7 @@ class Basemap(object):
                     else:
                         b[:,0], b[:,1] = self(b[:,0], b[:,1])
                     goodmask = npy.logical_and(b[:,0]<1.e20,b[:,1]<1.e20)
-                    # if less than two points are valid in 
+                    # if less than two points are valid in
                     # map proj coords, skip this geometry.
                     if npy.sum(goodmask) <= 1: continue
                     if name != 'gshhs':
@@ -849,7 +849,7 @@ class Basemap(object):
                 projparms['x_0']=-llcrnrx
                 projparms['y_0']=-llcrnry
                 maptran = pyproj.Proj(projparms)
-        elif self.projection in ['moll','robin','sinu']:  
+        elif self.projection in ['moll','robin','sinu']:
             # quasi-elliptical region.
             lon_0 = self.projparams['lon_0']
             # left side
@@ -893,7 +893,7 @@ class Basemap(object):
             boundaryxy = _geos.Polygon(b)
         if self.projection in ['mill','merc','cyl']:
             # make sure map boundary doesn't quite include pole.
-            if self.urcrnrlat > 89.9999: 
+            if self.urcrnrlat > 89.9999:
                 urcrnrlat = 89.9999
             else:
                 urcrnrlat = self.urcrnrlat
@@ -908,14 +908,14 @@ class Basemap(object):
             b[:,0]=x; b[:,1]=y
             boundaryxy = _geos.Polygon(b)
         else:
-            if self.projection not in ['moll','robin','sinu']:  
+            if self.projection not in ['moll','robin','sinu']:
                 lons, lats = maptran(x,y,inverse=True)
                 # fix lons so there are no jumps.
                 n = 1
                 lonprev = lons[0]
                 for lon,lat in zip(lons[1:],lats[1:]):
                     if npy.abs(lon-lonprev) > 90.:
-                        if lonprev < 0: 
+                        if lonprev < 0:
                             lon = lon - 360.
                         else:
                             lon = lon + 360
@@ -1004,7 +1004,7 @@ class Basemap(object):
         After filling continents, lakes are re-filled with axis background color.
         """
         if self.resolution is None:
-            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
+            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
@@ -1059,7 +1059,7 @@ class Basemap(object):
         uses default zorder for LineCollections).
         """
         if self.resolution is None:
-            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
+            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
@@ -1090,7 +1090,7 @@ class Basemap(object):
         uses default zorder for LineCollections).
         """
         if self.resolution is None:
-            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
+            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
         # read in country line segments, only keeping those that
         # intersect map boundary polygon.
         if not hasattr(self,'cntrysegs'):
@@ -1125,7 +1125,7 @@ class Basemap(object):
         uses default zorder for LineCollections).
         """
         if self.resolution is None:
-            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
+            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
         # read in state line segments, only keeping those that
         # intersect map boundary polygon.
         if not hasattr(self,'statesegs'):
@@ -1160,7 +1160,7 @@ class Basemap(object):
         uses default zorder for LineCollections).
         """
         if self.resolution is None:
-            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance' 
+            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
         # read in river line segments, only keeping those that
         # intersect map boundary polygon.
         if not hasattr(self,'riversegs'):
@@ -1374,15 +1374,15 @@ class Basemap(object):
                 dist = npy.sqrt(xd+yd)
                 split = dist > 500000.
                 if npy.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
-                   ind = (npy.compress(split,squeeze(split*npy.indices(xd.shape)))+1).tolist()
-                   xl = []
-                   yl = []
-                   iprev = 0
-                   ind.append(len(xd))
-                   for i in ind:
-                       xl.append(x[iprev:i])
-                       yl.append(y[iprev:i])
-                       iprev = i
+                    ind = (npy.compress(split,squeeze(split*npy.indices(xd.shape)))+1).tolist()
+                    xl = []
+                    yl = []
+                    iprev = 0
+                    ind.append(len(xd))
+                    for i in ind:
+                        xl.append(x[iprev:i])
+                        yl.append(y[iprev:i])
+                        iprev = i
                 else:
                     xl = [x]
                     yl = [y]
@@ -1580,15 +1580,15 @@ class Basemap(object):
                 dist = npy.sqrt(xd+yd)
                 split = dist > 500000.
                 if npy.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
-                   ind = (npy.compress(split,squeeze(split*npy.indices(xd.shape)))+1).tolist()
-                   xl = []
-                   yl = []
-                   iprev = 0
-                   ind.append(len(xd))
-                   for i in ind:
-                       xl.append(x[iprev:i])
-                       yl.append(y[iprev:i])
-                       iprev = i
+                    ind = (npy.compress(split,squeeze(split*npy.indices(xd.shape)))+1).tolist()
+                    xl = []
+                    yl = []
+                    iprev = 0
+                    ind.append(len(xd))
+                    for i in ind:
+                        xl.append(x[iprev:i])
+                        yl.append(y[iprev:i])
+                        iprev = i
                 else:
                     xl = [x]
                     yl = [y]
@@ -2189,7 +2189,7 @@ class Basemap(object):
             ax = self.ax
         else:
             ax = kwargs.pop('ax')
-        # make sure x is monotonically increasing - if not, 
+        # make sure x is monotonically increasing - if not,
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
         # only do this check for global projections.
@@ -2233,7 +2233,7 @@ class Basemap(object):
         # reset current active image (only if pylab is imported).
         try:
             try: # new contour.
-                if CS._A is not None: pylab.gci._current = CS  
+                if CS._A is not None: pylab.gci._current = CS
             except: # old contour.
                 if CS[1].mappable is not None: pylab.gci._current = CS[1].mappable
         except:
@@ -2257,7 +2257,7 @@ class Basemap(object):
             ax = self.ax
         else:
             ax = kwargs.pop('ax')
-        # make sure x is monotonically increasing - if not, 
+        # make sure x is monotonically increasing - if not,
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
         # only do this check for global projections.
@@ -2559,7 +2559,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     if masked:
         xmask = npy.logical_or(npy.less(xcoords,0),npy.greater(xcoords,len(xin)-1))
         ymask = npy.logical_or(npy.less(ycoords,0),npy.greater(ycoords,len(yin)-1))
-        xymask = npy.logical_or(xmask,ymask)   
+        xymask = npy.logical_or(xmask,ymask)
     xcoords = npy.clip(xcoords,0,len(xin)-1)
     ycoords = npy.clip(ycoords,0,len(yin)-1)
     # interpolate to output grid using bilinear interpolation.
@@ -2657,6 +2657,6 @@ def _choosecorners(width,height,**kwargs):
     corners = llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat
     # test for invalid projection points on output
     if llcrnrlon > 1.e20 or urcrnrlon > 1.e20:
-       raise ValueError, 'width and/or height too large for this projection, try smaller values'
+        raise ValueError, 'width and/or height too large for this projection, try smaller values'
     else:
-       return corners
+        return corners
