@@ -53,6 +53,34 @@ for _items in _projnames.iteritems():
     supported_projections.append("'%s' = %s\n" % (_items))
 supported_projections = ''.join(supported_projections)
 
+# projection specific parameters.
+projection_params = {'cyl'      : 'corners only (no width/height)',
+             'merc'     : 'corners plus lat_ts (no width/height)',
+             'tmerc'    : 'lon_0,lat_0',
+             'omerc'    : 'lon_0,lat_0,lat_1,lat_2,lon_1,lon_2,no width/height',
+             'mill'     : 'corners only (no width/height)',
+             'lcc'      : 'lon_0,lat_0,lat_1,lat_2',
+             'laea'     : 'lon_0,lat_0',
+             'nplaea'   : 'bounding_lat,lon_0,lat_0,no corners or width/height',
+             'splaea'   : 'bounding_lat,lon_0,lat_0,no corners or width/height',
+             'eqdc'     : 'lon_0,lat_0,lat_1,lat_2',
+             'aeqd'     : 'lon_0,lat_0',
+             'npaeqd'   : 'bounding_lat,lon_0,lat_0,no corners or width/height',
+             'spaeqd'   : 'bounding_lat,lon_0,lat_0,no corners or width/height',
+             'aea'      : 'lon_0,lat_0,lat_1',
+             'stere'    : 'lon_0,lat_0,lat_ts',
+             'npstere'  : 'bounding_lat,lon_0,lat_0,no corners or width/height',
+             'spstere'  : 'bounding_lat,lon_0,lat_0,no corners or width/height',
+             'cass'     : 'lon_0,lat_0',
+             'poly'     : 'lon_0,lat_0',
+             'ortho'    : 'lon_0,lat_0',
+             'geos'     : 'lon_0,lat_0,satellite_height',
+             'sinu'     : 'lon_0,lat_0,no corners or width/height',
+             'moll'     : 'lon_0,lat_0,no corners or width/height',
+             'robin'    : 'lon_0,lat_0,no corners or width/height',
+             'gnom'     : 'lon_0,lat_0',
+             }
+
 # The __init__ docstring is pulled out here because it is so long;
 # Having it in the usual place makes it hard to get from the
 # __init__ argument list to the code that uses the arguments.
@@ -65,7 +93,8 @@ _Basemap_init_doc = """
 %(supported_projections)s
   Default is 'cyl'.
 
- The map projection region can either be specified by setting these keywords:
+ For most map projections, the map projection region can either be
+ specified by setting these keywords:
 
  llcrnrlon - longitude of lower left hand corner of the desired map domain (degrees).
  llcrnrlat - latitude of lower left hand corner of the desired map domain (degrees).
@@ -81,9 +110,10 @@ _Basemap_init_doc = """
 
  For 'sinu', 'moll', 'npstere', 'spstere', 'nplaea', 'splaea', 'nplaea',
  'splaea', 'npaeqd', 'spaeqd' or 'robin', the values of
- llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,width and height are ignored (because
- either they are computed internally, or entire globe is always plotted). For the
- cylindrical projections ('cyl','merc' and 'mill'), the default is to use
+ llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,width and height are ignored
+ (because either they are computed internally, or entire globe is
+ always plotted). For the cylindrical projections
+ ('cyl','merc' and 'mill'), the default is to use
  llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other
  projections except 'ortho' and 'geos', either the lat/lon values of the
  corners or width and height must be specified by the user.
@@ -117,9 +147,10 @@ _Basemap_init_doc = """
  in map projection coordinates.  Default False, so parallels and meridians
  can be labelled instead. If parallel or meridian labelling is requested
  (using drawparallels and drawmeridians methods), automatic tick labelling
- will be supressed even is suppress_ticks=False.  Typically, you will
- only want to override the default if you want to label the axes in meters
- using native map projection coordinates.
+ will be supressed even is suppress_ticks=False.  suppress_ticks=False
+ is useful if you want to use your own custom tick formatter, or
+ if you want to let matplotlib label the axes in meters
+ using native map projection coordinates
 
  anchor - determines how map is placed in axes rectangle (passed to
  axes.set_aspect). Default is 'C', which means map is centered.
@@ -136,9 +167,11 @@ _Basemap_init_doc = """
 
  The following parameters are map projection parameters which all default to
  None.  Not all parameters are used by all projections, some are ignored.
+ The module variable 'projection_params' lists which parameters apply
+ to which projections.
 
- lat_ts - latitude of natural origin (used for mercator, and
-  optionally for stereographic projection).
+ lat_ts - latitude of true scale for mercator projection, optional
+  for stereographic projection.
  lat_1 - first standard parallel for lambert conformal, albers
   equal area projection and equidistant conic projections. Latitude of one
   of the two points on the projection centerline for oblique mercator.
@@ -154,6 +187,7 @@ _Basemap_init_doc = """
  lon_2 - longitude of one of the two points on the projection centerline
   for oblique mercator.
  lat_0 - central latitude (y-axis origin) - used by all projections,
+  Must be equator for mercator projection.
  lon_0 - central meridian (x-axis origin) - used by all projections,
  boundinglat - bounding latitude for pole-centered projections (npstere,spstere,
   nplaea,splaea,npaeqd,spaeqd).  These projections are square regions centered
