@@ -991,11 +991,12 @@ class Basemap(object):
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
-    def fillcontinents(self,color='0.8',ax=None,zorder=None):
+    def fillcontinents(self,color='0.8',lake_color=None,ax=None,zorder=None):
         """
         Fill continents.
 
         color - color to fill continents (default gray).
+        lake_color - color to fill inland lakes (default axes background).
         ax - axes instance (overrides default axes instance).
         zorder - sets the zorder for the continent polygons (if not specified,
         uses default zorder for a Polygon patch). Set to zero if you want to paint
@@ -1038,8 +1039,11 @@ class Basemap(object):
                 xy = zip(xa.tolist(),ya.tolist())
                 if self.coastpolygontypes[np] != 2:
                     poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0)
-                else: # lakes filled with background color.
-                    poly = Polygon(xy,facecolor=axisbgc,edgecolor=axisbgc,linewidth=0)
+                else: # lakes filled with background color by default
+                    if lake_color is None:
+                        poly = Polygon(xy,facecolor=axisbgc,edgecolor=axisbgc,linewidth=0)
+                    else:
+                        poly = Polygon(xy,facecolor=lake_color,edgecolor=lake_color,linewidth=0)
                 if zorder is not None:
                     poly.set_zorder(zorder)
                 ax.add_patch(poly)
