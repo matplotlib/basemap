@@ -167,8 +167,8 @@ _Basemap_init_doc = """
 
  The following parameters are map projection parameters which all default to
  None.  Not all parameters are used by all projections, some are ignored.
- The module variable 'projection_params' lists which parameters apply
- to which projections.
+ The module variable 'projection_params' is a dictionary which 
+ lists which parameters apply to which projections.
 
  lat_ts - latitude of true scale for mercator projection, optional
   for stereographic projection.
