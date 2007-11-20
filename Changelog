@@ -1,4 +1,5 @@
 version 0.9.7 (not yet released)
+           * added lake_color keyword to fillcontinents.
            * fixed a bug in the 'tmerc' projection.
            * added pure python NetCDFFile reader from Roberto De Almeida 
              to basemap namespace
