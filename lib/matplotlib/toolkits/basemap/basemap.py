@@ -2461,8 +2461,22 @@ class Basemap(object):
             nx = int((self.xmax-self.xmin)/dx)+1; ny = int((self.ymax-self.ymin)/dx)+1
         # interpolate rgba values from proj='cyl' (geographic coords)
         # to a rectangular map projection grid.
-            mask = self.transform_scalar(lsmask,lsmask_lons,\
-                                         lsmask_lats,nx,ny,order=0,masked=255)
+            mask,x,y = self.transform_scalar(lsmask,lsmask_lons,\
+                       lsmask_lats,nx,ny,returnxy=True,order=0,masked=255)
+            # for these projections, points outside the projection
+            # limb have to be set to transparent manually.
+            if self.projection in ['moll','robin','sinu']:
+                lons, lats = self(x, y, inverse=True)
+                lon_0 = self.projparams['lon_0']
+                lats = lats[:,nx/2]
+                lons1 = (lon_0+180.)*npy.ones(lons.shape[0],npy.float64)
+                lons2 = (lon_0-180.)*npy.ones(lons.shape[0],npy.float64)
+                xmax,ytmp = self(lons1,lats)
+                xmin,ytmp = self(lons2,lats)
+                for j in range(lats.shape[0]):
+                    xx = x[j,:]
+                    mask[j,:]=npy.where(npy.logical_or(xx<xmin[j],xx>xmax[j]),\
+                                        255,mask[j,:])
             self.lsmask = mask
         # optionally, set lakes to ocean color.
         if lakes:
@@ -2479,6 +2493,7 @@ class Basemap(object):
         rgba[:,:,3] = npy.where(mask==255,0,rgba[:,:,3])
         # plot mask as rgba image.
         im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
+        return im
 
 ### End of Basemap class
 
