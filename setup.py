@@ -80,7 +80,7 @@ extensions = [Extension("matplotlib.toolkits.basemap._proj",deps+['src/_proj.c']
 extensions.append(Extension("matplotlib.toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
 # for some reason, pickling won't work if this extension is installed
 # as "matplotlib.toolkits.basemap._geos"
-extensions.append(Extension("_geos",['src/_geos.c'],library_dirs=geos_library_dirs,include_dirs=geos_include_dirs,runtime_library_dirs=geos_library_dirs,libraries=['geos_c','geos']))
+extensions.append(Extension("_geos",['src/_geos.c'],library_dirs=geos_library_dirs,include_dirs=geos_include_dirs,libraries=['geos_c','geos']))
 
 # install shapelib and dbflib.
 packages = packages + ['shapelib','dbflib']
