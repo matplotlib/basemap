@@ -334,7 +334,7 @@ class Basemap(object):
                 lat_1 = lat_0
                 projparams['lat_1'] = lat_1
             if lat_1 is None or lon_0 is None:
-                raise ValueError('must specify lat_1 or lat_0 and lon_0 for %(projection)s basemap (lat_2 is optional)' % _projnames)
+                raise ValueError('must specify lat_1 or lat_0 and lon_0 for %s basemap (lat_2 is optional)' % _projnames[projection])
             if lat_2 is None:
                 projparams['lat_2'] = lat_1
             if not using_corners:
@@ -360,7 +360,7 @@ class Basemap(object):
                             'splaea', 'nplaea',
                             'spaeqd', 'npaeqd']:
             if boundinglat is None or lon_0 is None:
-                raise ValueError('must specify boundinglat and lon_0 for %(projection) basemap' % _projnames)
+                raise ValueError('must specify boundinglat and lon_0 for %s basemap' % _projnames[projection])
             if projection[0] == 's':
                 sgn = -1
             else:
@@ -377,7 +377,7 @@ class Basemap(object):
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
+                print 'warning: width and height keywords ignored for %s projection' % _projnames[projection]
         elif projection == 'laea':
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Lambert Azimuthal basemap'
