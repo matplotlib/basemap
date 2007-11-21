@@ -1,4 +1,6 @@
 version 0.9.7 (not yet released)
+           * fixed bug in drawlsmask for 'moll','robin' and 'sinu'
+             projections.
            * added lake_color keyword to fillcontinents.
            * fixed a bug in the 'tmerc' projection.
            * added pure python NetCDFFile reader from Roberto De Almeida 
