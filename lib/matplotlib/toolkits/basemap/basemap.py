@@ -167,7 +167,7 @@ _Basemap_init_doc = """
 
  The following parameters are map projection parameters which all default to
  None.  Not all parameters are used by all projections, some are ignored.
- The module variable 'projection_params' is a dictionary which 
+ The module variable 'projection_params' is a dictionary which
  lists which parameters apply to which projections.
 
  lat_ts - latitude of true scale for mercator projection, optional
@@ -2387,6 +2387,9 @@ class Basemap(object):
                    lsmask_lons=None,lsmask_lats=None,lakes=False,**kwargs):
         """
         draw land-sea mask image.
+
+        *Note*  the land-sea mask image cannot be overlaid on top
+        of other images, due to limitations in matplotlib image handling.
 
         land is colored with rgba integer tuple rgba_land.
         ocean is colored with rgba integer tuple rgba_ocean.
