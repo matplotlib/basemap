@@ -1,4 +1,4 @@
-version 0.9.7 (not yet released)
+version 0.9.7 (svn revision 4421)
            * fixed bug in drawlsmask for 'moll','robin' and 'sinu'
              projections.
            * added lake_color keyword to fillcontinents.
