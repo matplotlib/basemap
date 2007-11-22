@@ -1071,7 +1071,7 @@ class Basemap(object):
             hasp3 = npy.sum(test1*test4)
             if not hasp1 or not hasp2 or not hasp3 or not hasp4:
                 xy = zip(xa.tolist(),ya.tolist())
-                if self.coastpolygontypes[np] != 2:
+                if self.coastpolygontypes[np] not in [2,4]:
                     poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0)
                 else: # lakes filled with background color by default
                     if lake_color is None:
