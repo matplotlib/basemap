@@ -22,7 +22,7 @@ import time
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
-__version__ = '0.9.7'
+__version__ = '0.9.6.1'
 
 
 

@@ -1,4 +1,4 @@
-version 0.9.7 (not yet released)
+version 0.9.6.1 (not yet released)
            * fix rotate_vector so it works in S. Hem and for non-orthogonal
              grids. Support for masked velocity vectors also added. (EF)
            * numpification. (EF)
