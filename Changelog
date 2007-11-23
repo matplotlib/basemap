@@ -1,3 +1,5 @@
+           * added 'sstanom' colormap from
+             http://www.ghrsst-pp.org/GHRSST-PP-Data-Tools.html
 version 0.9.7 (svn revision 4422)
            * fixed bug in drawlsmask for 'moll','robin' and 'sinu'
              projections.
