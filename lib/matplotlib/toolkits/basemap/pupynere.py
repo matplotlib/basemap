@@ -31,7 +31,7 @@ import struct
 import itertools
 import mmap
 
-from numpy import ndarray, zeros, array
+from numpy import ndarray, zeros, array, ma, squeeze
 
 
 ABSENT       = '\x00' * 8
@@ -257,7 +257,23 @@ class NetCDFVariable(object):
                                    }
 
     def __getitem__(self, index):
-        return self.__array_data__.__getitem__(index)
+        # modified by jsw to automatically
+        # - remove singleton dimensions
+        # - create a masked array using missing_value or _FillValue attribute
+        # - apply scale_factor and add_offset to packed integer data
+        datout = squeeze(self.__array_data__.__getitem__(index))
+        try:
+            datout = ma.masked_values(datout, self.missing_value)
+        except:
+            try:
+                datout = ma.masked_values(datout, self._FillValue)
+            except:
+                pass
+        try:
+            datout = self.scale_factor*datout + self.add_offset
+        except:
+            pass
+        return datout
 
     def getValue(self):
         """For scalars."""
