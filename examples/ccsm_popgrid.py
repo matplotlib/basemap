@@ -36,15 +36,12 @@ infile    = 'ccsm_popgrid.nc'
 fpin      = NetCDFFile(infile)
 tlat      = fpin.variables['TLAT'][:]
 tlon      = fpin.variables['TLONG'][:]
+# masked array returned, masked where data == _FillValue
 temp      = fpin.variables['TEMP'][:]
-fillvalue = fpin.variables['TEMP'].attributes['_FillValue']
 fpin.close()
 
 # make longitudes monotonically increasing.
 tlon = N.where(N.greater_equal(tlon,min(tlon[:,0])),tlon-360,tlon)
-
-# create a masked array with temperature data (continents masked).
-temp = MA.masked_values(temp,fillvalue)
 
 # stack grids side-by-side (in longitiudinal direction), so
 # any range of longitudes may be plotted on a world map.
