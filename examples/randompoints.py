@@ -24,8 +24,6 @@ x,y = m(lons,lats)
 # plot them as filled circles on the map.
 # first, create a figure.
 fig=figure()
-# background color will be used for 'wet' areas.
-fig.add_axes([0.1,0.1,0.8,0.8],axisbg='aqua')
 # draw colored markers.
 # use zorder=10 to make sure markers are drawn last.
 # (otherwise they are covered up when continents are filled)
@@ -39,9 +37,11 @@ for numstr,zval,xpt,ypt in zip(zn,z,x,y):
     if xpt > m.xmin and xpt < m.xmax and ypt > m.ymin and ypt < m.ymax:
         hexcolor = rgb2hex(cm.jet(zval/100.)[:3])
         text(xpt,ypt,numstr,fontsize=9,weight='bold',color=hexcolor)
-# draw coasts and fill continents.
+# draw coasts and fill continents/lakes.
 m.drawcoastlines(linewidth=0.5)
-m.fillcontinents(color='coral')
+m.fillcontinents(color='coral',lake_color='aqua')
+# color ocean areas 
+m.drawmapboundary(fill_color='aqua')
 # draw parallels and meridians.
 delat = 20.
 circles = arange(0.,90.,delat).tolist()+\

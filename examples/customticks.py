@@ -20,17 +20,17 @@ def deg2str(deg, dir='E', fmt="%3.1f"):
 
 # create figure.
 fig=pylab.figure()
-# background color will be used for 'wet' areas.
-fig.add_axes([0.1,0.1,0.8,0.8],axisbg='aqua')
 # create Basemap instance (regular lat/lon projection).
 # suppress_ticks=False allows custom axes ticks to be used
 # Ticks are suppressed by default, so Basemap methods
 # drawparallels and drawmeridians used to draw labelled lat/lon grid.
 m = Basemap(llcrnrlon=-156.5,llcrnrlat=18.75,urcrnrlon=-154.5,urcrnrlat=20.5,
             resolution='h',projection='cyl',suppress_ticks=False)
-# draw coastlines, fill land areas.
+# draw coastlines, fill land and lake areas.
 m.drawcoastlines()
-m.fillcontinents(color="coral")
+m.fillcontinents(color='coral',lake_color='aqua')
+# background color will be used for oceans.
+m.drawmapboundary(fill_color='aqua')
 # get axes instance.
 ax = pylab.gca()
 # add custom ticks.

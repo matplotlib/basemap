@@ -962,11 +962,20 @@ class Basemap(object):
         return boundaryll, boundaryxy
 
 
-    def drawmapboundary(self,color='k',linewidth=1.0,ax=None):
+    def drawmapboundary(self,color='k',linewidth=1.0,fill_color=None,\
+                        zorder=None,ax=None):
         """
-        draw boundary around map projection region. If ax=None (default),
-        default axis instance is used, otherwise specified axis
-        instance is used.
+        draw boundary around map projection region, optionally
+        filling interior of region.
+
+        linewidth - line width for boundary (default 1.)
+        color - color of boundary line (default black)
+        fill_color - fill the map region background with this
+         color (default is no fill or fill with axis background color).
+        zorder - sets the zorder for filling map background
+         (default 0).
+        ax - axes instance to use (default None, use default axes 
+         instance).
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -981,18 +990,30 @@ class Basemap(object):
             # define a circle patch, add it to axes instance.
             circle = Circle((self.rmajor,self.rmajor),self.rmajor)
             ax.add_patch(circle)
-            circle.set_fill(False)
+            if fill_color is None:
+                circle.set_fill(False)
+            else:
+                circle.set_facecolor(fill_color)
+                circle.set_zorder(0)
             circle.set_edgecolor(color)
             circle.set_linewidth(linewidth)
             circle.set_clip_on(False)
+            if zorder is not None:
+                circle.set_zorder(zorder)
         elif self.projection == 'geos' and self._fulldisk: # elliptical region
             # define an Ellipse patch, add it to axes instance.
             ellps = Ellipse((self._width,self._height),2.*self._width,2.*self._height)
             ax.add_patch(ellps)
-            ellps.set_fill(False)
+            if fill_color is None:
+                ellps.set_fill(False)
+            else:
+                ellps.set_facecolor(fill_color)
+                ellps.set_zorder(0)
             ellps.set_edgecolor(color)
             ellps.set_linewidth(linewidth)
             ellps.set_clip_on(False)
+            if zorder is not None:
+                ellps.set_zorder(0)
         elif self.projection in ['moll','robin','sinu']:  # elliptical region.
             nx = 100; ny = 100
             # quasi-elliptical region.
@@ -1015,13 +1036,25 @@ class Basemap(object):
             xy = zip(x,y)
             poly = Polygon(xy,edgecolor=color,linewidth=linewidth)
             ax.add_patch(poly)
-            poly.set_fill(False)
+            if fill_color is None:
+                poly.set_fill(False)
+            else:
+                poly.set_facecolor(fill_color)
+                poly.set_zorder(0)
             poly.set_clip_on(False)
+            if zorder is not None:
+                poly.set_zorder(zorder)
         else: # all other projections are rectangular.
             ax.axesPatch.set_linewidth(linewidth)
-            ax.axesPatch.set_facecolor(ax.get_axis_bgcolor())
+            if fill_color is None:
+                ax.axesPatch.set_facecolor(ax.get_axis_bgcolor())
+            else:
+                ax.axesPatch.set_facecolor(fill_color)
+                ax.axesPatch.set_zorder(0)
             ax.axesPatch.set_edgecolor(color)
             ax.set_frame_on(True)
+            if zorder is not None:
+                ax.axesPatch.set_zorder(zorder)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 

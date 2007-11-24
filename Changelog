@@ -1,3 +1,5 @@
+           * add 'fill_color' option to drawmapboundary, to optionally
+             fill the map projection background a certain color.
            * added 'sstanom' colormap from
              http://www.ghrsst-pp.org/GHRSST-PP-Data-Tools.html
 version 0.9.7 (svn revision 4422)

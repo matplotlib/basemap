@@ -21,15 +21,18 @@ cPickle.dump(m,open('map.pickle','wb'),-1)
 
 # clear the figure
 clf()
-ax = fig.add_axes([0.1,0.1,0.8,0.8],axisbg='aqua')
 # read cPickle back in and plot it again (should be much faster).
 t1 = time.clock()
 m2 = cPickle.load(open('map.pickle','rb'))
 # draw coastlines and fill continents.
 m.drawcoastlines()
-m.fillcontinents(color='coral')
+# fill continents and lakes
+m.fillcontinents(color='coral',lake_color='aqua')
 # draw political boundaries.
 m.drawcountries(linewidth=1)
+# fill map projection region light blue (this will
+# paint ocean areas same color as lakes).
+m.drawmapboundary(fill_color='aqua')
 # draw major rivers.
 m.drawrivers(color='b')
 print time.clock()-t1,' secs to plot using using a pickled Basemap instance'
