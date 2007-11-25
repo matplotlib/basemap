@@ -1,3 +1,6 @@
+           * modify NetCDFFile to automatically apply scale_factor
+             and add_offset, and return masked arrays masked where
+             data == missing_value or _FillValue.
            * add 'fill_color' option to drawmapboundary, to optionally
              fill the map projection background a certain color.
            * added 'sstanom' colormap from
