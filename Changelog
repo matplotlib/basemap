@@ -1,3 +1,5 @@
+           * modify NetCDFFile to use dap module to read remote
+             datasets over http.  Include dap module.
            * modify NetCDFFile to automatically apply scale_factor
              and add_offset, and return masked arrays masked where
              data == missing_value or _FillValue.

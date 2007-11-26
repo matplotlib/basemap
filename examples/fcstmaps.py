@@ -1,18 +1,13 @@
 # this example reads today's numerical weather forecasts 
 # from the NOAA OpenDAP servers and makes a multi-panel plot.
-# Requires the pyDAP module (a pure-python module)
-# from http://pydap.org, and an active intenet connection.
-
-try:
-    from dap import client
-except:
-    raise ImportError,"requires pyDAP module (version 2.1 or higher) from http://pydap.org"
-from pylab import title, show, figure, cm, arange, frange, figtext, \
-                  meshgrid, axes, colorbar, where, amin, amax, around
+from pylab import title, show, figure, cm,  figtext, \
+                  meshgrid, axes, colorbar
+import numpy
 import sys
 from matplotlib.numerix import ma
 import datetime
-from matplotlib.toolkits.basemap import Basemap
+from matplotlib.toolkits.basemap import Basemap, NetCDFFile, addcyclic
+
 
 hrsgregstart = 13865688 # hrs from 00010101 to 15821015 in Julian calendar.
 # times in many datasets use mixed Gregorian/Julian calendar, datetime 
@@ -48,12 +43,11 @@ else:
 YYYYMM = YYYYMMDD[0:6]
 
 # set OpenDAP server URL.
-HH='09'
-URLbase="http://nomad3.ncep.noaa.gov:9090/dods/sref/sref"
-URL=URLbase+YYYYMMDD+"/sref_eta_ctl1_"+HH+"z"
+URLbase="http://nomad3.ncep.noaa.gov:9090/dods/mrf/mrf"
+URL=URLbase+YYYYMMDD+'/mrf'+YYYYMMDD
 print URL+'\n'
 try:
-    data = client.open(URL)
+    data = NetCDFFile(URL)
 except:
     msg = """
 opendap server not providing the requested data.
@@ -61,14 +55,14 @@ Try another date by providing YYYYMM on command line."""
     raise IOError, msg
 
 
-# read levels, lats,lons,times.
+# read lats,lons,times.
 
-print data.keys()
-levels = data['lev']
-latitudes = data['lat']
-longitudes = data['lon']
-fcsttimes = data['time']
-times = fcsttimes[:]
+print data.variables.keys()
+latitudes = data.variables['lat']
+longitudes = data.variables['lon']
+fcsttimes = data.variables['time']
+times = fcsttimes[0:6] # first 6 forecast times.
+ntimes = len(times)
 # put forecast times in YYYYMMDDHH format.
 verifdates = []
 fcsthrs=[]
@@ -79,55 +73,43 @@ for time in times:
     verifdates.append(fdate.strftime('%Y%m%d%H'))
 print fcsthrs
 print verifdates
-levs = levels[:]
 lats = latitudes[:]
-lons = longitudes[:]
-lons, lats = meshgrid(lons,lats)
+nlats = len(lats)
+lons1 = longitudes[:]
+nlons = len(lons1)
 
 # unpack 2-meter temp forecast data.
 
-t2mvar = data['tmp2m']
-missval = t2mvar.missing_value
-t2m = t2mvar[:,:,:]
-if missval < 0:
-    t2m = ma.masked_values(where(t2m>-1.e20,t2m,1.e20), 1.e20)
-else:
-    t2m = ma.masked_values(where(t2m<1.e20,t2m,1.e20), 1.e20)
-t2min = amin(t2m.compressed()); t2max= amax(t2m.compressed())
-print t2min,t2max
-clevs = frange(around(t2min/10.)*10.-5.,around(t2max/10.)*10.+5.,4)
-print clevs[0],clevs[-1]
-llcrnrlat = 22.0
-urcrnrlat = 48.0
-latminout = 22.0
-llcrnrlon = -125.0
-urcrnrlon = -60.0
-standardpar = 50.0
-centerlon=-105.
-# create Basemap instance for Lambert Conformal Conic projection.
-m = Basemap(llcrnrlon=llcrnrlon,llcrnrlat=llcrnrlat,
-            urcrnrlon=urcrnrlon,urcrnrlat=urcrnrlat,
+t2mvar = data.variables['tmp2m']
+t2min = t2mvar[0:ntimes,:,:]
+t2m = numpy.zeros((ntimes,nlats,nlons+1),t2min.dtype)
+# create Basemap instance for Orthographic projection.
+m = Basemap(lon_0=-105,lat_0=40,
             rsphere=6371200.,
-            resolution='l',area_thresh=5000.,projection='lcc',
-            lat_1=standardpar,lon_0=centerlon)
+            resolution='c',area_thresh=5000.,projection='ortho')
+# add wrap-around point in longitude.
+for nt in range(ntimes):
+    t2m[nt,:,:], lons = addcyclic(t2min[nt,:,:], lons1)
+# convert to celsius.
+t2m = t2m-273.15
+# contour levels
+clevs = numpy.arange(-30,30.1,2.)
+lons, lats = meshgrid(lons, lats)
 x, y = m(lons, lats)
 # create figure.
-fig=figure(figsize=(8,8))
-yoffset = (m.urcrnry-m.llcrnry)/30.
-for npanel,fcsthr in enumerate(arange(0,72,12)):
-    nt = fcsthrs.index(fcsthr)
-    ax = fig.add_subplot(320+npanel+1)
-    #cs = m.contour(x,y,t2m[nt,:,:],clevs,colors='k')
-    cs = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet)
-    m.drawcoastlines()
-    m.drawstates()
+fig=figure(figsize=(6,8))
+# make subplots.
+for nt,fcsthr in enumerate(fcsthrs):
+    ax = fig.add_subplot(321+nt)
+    cs = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet,extend='both')
+    m.drawcoastlines(linewidth=0.5)
     m.drawcountries()
-    m.drawparallels(arange(25,75,20),labels=[1,0,0,0],fontsize=8,fontstyle='oblique')
-    m.drawmeridians(arange(-140,0,20),labels=[0,0,0,1],fontsize=8,yoffset=yoffset,fontstyle='oblique')
+    m.drawparallels(numpy.arange(-80,81,20))
+    m.drawmeridians(numpy.arange(0,360,20))
     # panel title
-    title(repr(fcsthr)+'-h forecast valid '+verifdates[nt],fontsize=12)
+    title(repr(fcsthr)+'-h forecast valid '+verifdates[nt],fontsize=9)
 # figure title
-figtext(0.5,0.95,u"2-m temp (\N{DEGREE SIGN}K) forecasts from %s"%verifdates[0],
+figtext(0.5,0.95,u"2-m temp (\N{DEGREE SIGN}C) forecasts from %s"%verifdates[0],
         horizontalalignment='center',fontsize=14)
 # a single colorbar.
 cax = axes([0.1, 0.03, 0.8, 0.025])

@@ -31,7 +31,10 @@ import struct
 import itertools
 import mmap
 
-from numpy import ndarray, zeros, array, ma, squeeze
+from numpy import ndarray, empty, array, ma, squeeze
+
+from dap.client import open as open_remote
+from dap.dtypes import ArrayType, GridType, typemap
 
 
 ABSENT       = '\x00' * 8
@@ -46,8 +49,92 @@ NC_DIMENSION = '\x00\x00\x00\n'
 NC_VARIABLE  = '\x00\x00\x00\x0b'
 NC_ATTRIBUTE = '\x00\x00\x00\x0c'
 
+_typecodes = dict([[_v,_k] for _k,_v in typemap.items()])
 
-class NetCDFFile(object):
+def NetCDFFile(file):
+    if file.startswith('http'):
+        return RemoteFile(file)
+    else:
+        return LocalFile(file)
+ 
+def _maskandscale(var,datout):
+    if hasattr(var, 'missing_value') and (datout == var.missing_value).any():
+        datout = ma.masked_values(datout, var.missing_value)
+    elif hasattr(var, '_FillValue') and (datout == var._FillValue).any():
+        datout = ma.masked_values(datout, var._FillValue)
+    try:
+        datout = var.scale_factor*datout + var.add_offset
+    except:
+        pass
+    return datout
+
+class RemoteFile(object):
+    """A NetCDF file reader. API is the same as Scientific.IO.NetCDF."""
+
+    def __init__(self, file):
+        self._buffer = open_remote(file)
+        self._parse()
+
+    def read(self, size=-1):
+        """Alias for reading the file buffer."""
+        return self._buffer.read(size)
+
+    def _parse(self):
+        """Initial parsing of the header."""
+        # Read header info.
+        self._dim_array()
+        self._gatt_array()
+        self._var_array()
+
+    def _dim_array(self):
+        """Read a dict with dimensions names and sizes."""
+        self.dimensions = {}
+        self._dims = []
+        for k,d in self._buffer.iteritems():
+            if (isinstance(d, ArrayType) or isinstance(d, GridType)) and len(d.shape) == 1 and k == d.dimensions[0]:
+                name = k
+                length = len(d)
+                self.dimensions[name] = length
+                self._dims.append(name)  # preserve dim order
+
+    def _gatt_array(self):
+        """Read global attributes."""
+        self.__dict__.update(self._buffer.attributes)
+
+    def _var_array(self):
+        """Read all variables."""
+        # Read variables.
+        self.variables = {}
+        for k,d in self._buffer.iteritems():
+            if isinstance(d, GridType) or isinstance(d, ArrayType):
+                name = k
+                self.variables[name] = RemoteVariable(d)
+
+    def close(self):
+        self._buffer.close()
+
+
+class RemoteVariable(object):
+    def __init__(self, var):
+        self._var = var
+        self.dtype = var.type
+        self.shape = var.shape
+        self.dimensions = var.dimensions
+        self.__dict__.update(var.attributes)
+
+    def __getitem__(self, index):
+        datout = squeeze(self._var.__getitem__(index))
+        # automatically
+        # - remove singleton dimensions
+        # - create a masked array using missing_value or _FillValue attribute
+        # - apply scale_factor and add_offset to packed integer data
+        return _maskandscale(self,datout)
+
+    def typecode(self):
+        return _typecodes[self.dtype]
+
+
+class LocalFile(object):
     """A NetCDF file reader. API is the same as Scientific.IO.NetCDF."""
 
     def __init__(self, file):
@@ -179,7 +266,7 @@ class NetCDFFile(object):
         # Read offset.
         begin = [self._unpack_int, self._unpack_int64][self.version_byte-1]()
 
-        return NetCDFVariable(self._buffer.fileno(), nc_type, vsize, begin, shape, dimensions, attributes, isrec, self._recsize)
+        return LocalVariable(self._buffer.fileno(), nc_type, vsize, begin, shape, dimensions, attributes, isrec, self._recsize)
 
     def _read_values(self, n, nc_type):
         bytes = [1, 1, 2, 4, 4, 8]
@@ -218,7 +305,7 @@ class NetCDFFile(object):
         self._buffer.close()
 
 
-class NetCDFVariable(object):
+class LocalVariable(object):
     def __init__(self, fileno, nc_type, vsize, begin, shape, dimensions, attributes, isrec=False, recsize=0):
         self._nc_type = nc_type
         self._vsize = vsize
@@ -238,7 +325,7 @@ class NetCDFVariable(object):
         if isrec:
             # Record variables are not stored contiguosly on disk, so we 
             # need to create a separate array for each record.
-            self.__array_data__ = zeros(shape, dtype)
+            self.__array_data__ = empty(shape, dtype)
             bytes += (shape[0] - 1) * recsize
             for n in range(shape[0]):
                 offset = self._begin + (n * recsize)
@@ -257,23 +344,12 @@ class NetCDFVariable(object):
                                    }
 
     def __getitem__(self, index):
-        # modified by jsw to automatically
+        datout = squeeze(self.__array_data__.__getitem__(index))
+        # automatically
         # - remove singleton dimensions
         # - create a masked array using missing_value or _FillValue attribute
         # - apply scale_factor and add_offset to packed integer data
-        datout = squeeze(self.__array_data__.__getitem__(index))
-        try:
-            datout = ma.masked_values(datout, self.missing_value)
-        except:
-            try:
-                datout = ma.masked_values(datout, self._FillValue)
-            except:
-                pass
-        try:
-            datout = self.scale_factor*datout + self.add_offset
-        except:
-            pass
-        return datout
+        return _maskandscale(self,datout)
 
     def getValue(self):
         """For scalars."""

@@ -74,6 +74,9 @@ include pyshapelib/*.shp pyshapelib/*.shx pyshapelib/*.dbf
 include pyshapelib/shapelib/*.c pyshapelib/shapelib/*.h
 include MANIFEST.in 
 recursive-include geos-2.2.3 *
+recursive-include lib/dap *
+recursive-include lib/dbflib *
+recursive-include lib/shapelib *
 include lib/matplotlib/toolkits/basemap/data/5minmask.bin
 include lib/matplotlib/toolkits/basemap/data/GL27
 include lib/matplotlib/toolkits/basemap/data/countries_c.dat
