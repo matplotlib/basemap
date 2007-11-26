@@ -101,12 +101,17 @@ extensions = extensions + \
                     include_dirs = ["pyshapelib/shapelib"],
                     define_macros = dbf_macros()) ]
 
-# install dap, if not already available.
-try:
-    from dap import client
-except ImportError:
-    packages = packages + ['dap','dap.util','dap.parsers']
-    package_dirs['dap'] = os.path.join('lib','dap')
+# install dap and httplib2, if not already available.
+#try:
+#    from dap import client
+#except ImportError:
+packages = packages + ['dap','dap.util','dap.parsers']
+package_dirs['dap'] = os.path.join('lib','dap')
+#try:
+#    import httplib2
+#except ImportError:
+packages = packages + ['httplib2']
+package_dirs['httlib2'] = os.path.join('lib','httplib2')
 
 if 'setuptools' in sys.modules:
 # Are we running with setuptools?
