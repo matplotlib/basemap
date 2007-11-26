@@ -114,14 +114,14 @@ class _RemoteFile(object):
         for k,d in self._buffer.iteritems():
             if isinstance(d, GridType) or isinstance(d, ArrayType):
                 name = k
-                self.variables[name] = _RemoveVariable(d)
+                self.variables[name] = _RemoteVariable(d)
 
     def close(self):
         # this is a no-op provided for compatibility
         pass
 
 
-class _RemoveVariable(object):
+class _RemoteVariable(object):
     def __init__(self, var):
         self._var = var
         self.dtype = var.type
