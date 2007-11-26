@@ -84,9 +84,7 @@ t2mvar = data.variables['tmp2m']
 t2min = t2mvar[0:ntimes,:,:]
 t2m = numpy.zeros((ntimes,nlats,nlons+1),t2min.dtype)
 # create Basemap instance for Orthographic projection.
-m = Basemap(lon_0=-105,lat_0=40,
-            rsphere=6371200.,
-            resolution='c',area_thresh=5000.,projection='ortho')
+m = Basemap(lon_0=-90,lat_0=60,projection='ortho')
 # add wrap-around point in longitude.
 for nt in range(ntimes):
     t2m[nt,:,:], lons = addcyclic(t2min[nt,:,:], lons1)
