@@ -114,7 +114,8 @@ class _RemoteFile(object):
                 self.variables[name] = _RemoveVariable(d)
 
     def close(self):
-        self._buffer.close()
+        # this is a no-op provided for compatibility
+        pass
 
 
 class _RemoveVariable(object):
