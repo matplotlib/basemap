@@ -52,10 +52,13 @@ NC_ATTRIBUTE = '\x00\x00\x00\x0c'
 _typecodes = dict([[_v,_k] for _k,_v in typemap.items()])
 
 def NetCDFFile(file):
+    """NetCDF File reader.  API is the same as Scientific.IO.NetCDF.
+    if 'file' is a URL that starts with 'http', the pydap client is
+    is used to read the data over http."""
     if file.startswith('http'):
-        return RemoteFile(file)
+        return _RemoteFile(file)
     else:
-        return LocalFile(file)
+        return _LocalFile(file)
  
 def _maskandscale(var,datout):
     if hasattr(var, 'missing_value') and (datout == var.missing_value).any():
@@ -68,7 +71,7 @@ def _maskandscale(var,datout):
         pass
     return datout
 
-class RemoteFile(object):
+class _RemoteFile(object):
     """A NetCDF file reader. API is the same as Scientific.IO.NetCDF."""
 
     def __init__(self, file):
@@ -108,13 +111,13 @@ class RemoteFile(object):
         for k,d in self._buffer.iteritems():
             if isinstance(d, GridType) or isinstance(d, ArrayType):
                 name = k
-                self.variables[name] = RemoteVariable(d)
+                self.variables[name] = _RemoveVariable(d)
 
     def close(self):
         self._buffer.close()
 
 
-class RemoteVariable(object):
+class _RemoveVariable(object):
     def __init__(self, var):
         self._var = var
         self.dtype = var.type
@@ -134,7 +137,7 @@ class RemoteVariable(object):
         return _typecodes[self.dtype]
 
 
-class LocalFile(object):
+class _LocalFile(object):
     """A NetCDF file reader. API is the same as Scientific.IO.NetCDF."""
 
     def __init__(self, file):
@@ -266,7 +269,7 @@ class LocalFile(object):
         # Read offset.
         begin = [self._unpack_int, self._unpack_int64][self.version_byte-1]()
 
-        return LocalVariable(self._buffer.fileno(), nc_type, vsize, begin, shape, dimensions, attributes, isrec, self._recsize)
+        return _LocalVariable(self._buffer.fileno(), nc_type, vsize, begin, shape, dimensions, attributes, isrec, self._recsize)
 
     def _read_values(self, n, nc_type):
         bytes = [1, 1, 2, 4, 4, 8]
@@ -305,7 +308,7 @@ class LocalFile(object):
         self._buffer.close()
 
 
-class LocalVariable(object):
+class _LocalVariable(object):
     def __init__(self, fileno, nc_type, vsize, begin, shape, dimensions, attributes, isrec=False, recsize=0):
         self._nc_type = nc_type
         self._vsize = vsize
