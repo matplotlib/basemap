@@ -1,5 +1,6 @@
+version 0.9.8 (not yet released)
            * modify NetCDFFile to use dap module to read remote
-             datasets over http.  Include dap module.
+             datasets over http.  Include dap and httplib2 modules.
            * modify NetCDFFile to automatically apply scale_factor
              and add_offset, and return masked arrays masked where
              data == missing_value or _FillValue.
