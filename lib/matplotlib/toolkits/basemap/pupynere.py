@@ -53,8 +53,11 @@ _typecodes = dict([[_v,_k] for _k,_v in typemap.items()])
 
 def NetCDFFile(file):
     """NetCDF File reader.  API is the same as Scientific.IO.NetCDF.
-    if 'file' is a URL that starts with 'http', the pydap client is
-    is used to read the data over http."""
+    If 'file' is a URL that starts with 'http', it is assumed
+    to be a remote OPenDAP dataest, and the python dap client is used
+    to retrieve the data. Only the OPenDAP Array and Grid data
+    types are recognized.  If file does not start with 'http', it
+    is assumed to be a local NetCDF file."""
     if file.startswith('http'):
         return _RemoteFile(file)
     else:
@@ -361,8 +364,3 @@ class _LocalVariable(object):
 
     def typecode(self):
         return ['b', 'c', 'h', 'i', 'f', 'd'][self._nc_type-1]
-
-            
-def _test():
-    import doctest
-    doctest.testmod()
