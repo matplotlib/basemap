@@ -1,4 +1,11 @@
 version 0.9.8 (not yet released)
+           * added 'maskandscale' kwarg to NetCDFFile to
+             optionally turn off automatic masking and rescaling
+             of variable data.
+           * NetCDFFile will try to use PyNIO if it installed
+             and the file cannot be read with pupynere.  This
+             allows GRIB1,GRIB2,HDF4 and HDFEOS2 files to 
+             be read.
            * 'fmt' kwarg to drawparallels and drawmeridians can 
              now be a custom string formatting function (example
              customticks.py demonstrates usage).
