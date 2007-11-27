@@ -1519,7 +1519,6 @@ class Basemap(object):
                 nl = _searchlist(lats,lat)
                 nr = _searchlist(lats[::-1],lat)
                 if nr != -1: nr = len(lons)-nr-1
-                latlab = fmt(lat)
                 try: # fmt is a function that returns a formatted string
                     latlab = fmt(lat)
                 except: # fmt is a format string.
