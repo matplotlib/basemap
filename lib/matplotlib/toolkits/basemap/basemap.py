@@ -1375,7 +1375,9 @@ class Basemap(object):
          but not the right and top.
         labelstyle - if set to "+/-", north and south latitudes are labelled
          with "+" and "-", otherwise they are labelled with "N" and "S".
-        fmt is a format string to format the parallel labels (default '%g').
+        fmt can be is a format string to format the parallel labels
+         (default '%g') or a function that takes a latitude value 
+         in degrees as it's only argument and returns a formatted string.
         xoffset - label offset from edge of map in x-direction
          (default is 0.01 times width of map in map projection coordinates).
         yoffset - label offset from edge of map in y-direction
@@ -1517,36 +1519,40 @@ class Basemap(object):
                 nl = _searchlist(lats,lat)
                 nr = _searchlist(lats[::-1],lat)
                 if nr != -1: nr = len(lons)-nr-1
-                if lat<0:
-                    if rcParams['text.usetex']:
-                        if labelstyle=='+/-':
-                            latlabstr = r'${\/-%s\/^{\circ}}$'%fmt
+                latlab = fmt(lat)
+                try: # fmt is a function that returns a formatted string
+                    latlab = fmt(lat)
+                except: # fmt is a format string.
+                    if lat<0:
+                        if rcParams['text.usetex']:
+                            if labelstyle=='+/-':
+                                latlabstr = r'${\/-%s\/^{\circ}}$'%fmt
+                            else:
+                                latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
                         else:
-                            latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
+                            if labelstyle=='+/-':
+                                latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                            else:
+                                latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
+                        latlab = latlabstr%npy.fabs(lat)
+                    elif lat>0:
+                        if rcParams['text.usetex']:
+                            if labelstyle=='+/-':
+                                latlabstr = r'${\/+%s\/^{\circ}}$'%fmt
+                            else:
+                                latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
+                        else:
+                            if labelstyle=='+/-':
+                                latlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                            else:
+                                latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
+                        latlab = latlabstr%lat
                     else:
-                        if labelstyle=='+/-':
-                            latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                        if rcParams['text.usetex']:
+                            latlabstr = r'${%s\/^{\circ}}$'%fmt
                         else:
-                            latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
-                    latlab = latlabstr%npy.fabs(lat)
-                elif lat>0:
-                    if rcParams['text.usetex']:
-                        if labelstyle=='+/-':
-                            latlabstr = r'${\/+%s\/^{\circ}}$'%fmt
-                        else:
-                            latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
-                    else:
-                        if labelstyle=='+/-':
-                            latlabstr = u'+%s\N{DEGREE SIGN}'%fmt
-                        else:
-                            latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
-                    latlab = latlabstr%lat
-                else:
-                    if rcParams['text.usetex']:
-                        latlabstr = r'${%s\/^{\circ}}$'%fmt
-                    else:
-                        latlabstr = u'%s\N{DEGREE SIGN}'%fmt
-                    latlab = latlabstr%lat
+                            latlabstr = u'%s\N{DEGREE SIGN}'%fmt
+                        latlab = latlabstr%lat
                 # parallels can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     # don't bother if close to the first label.
@@ -1594,7 +1600,9 @@ class Basemap(object):
          but not the right and top.
         labelstyle - if set to "+/-", east and west longitudes are labelled
          with "+" and "-", otherwise they are labelled with "E" and "W".
-        fmt is a format string to format the meridian labels (default '%g').
+        fmt can be is a format string to format the meridian labels
+         (default '%g') or a function that takes a longitude value
+         in degrees as it's only argument and returns a formatted string.
         xoffset - label offset from edge of map in x-direction
          (default is 0.01 times width of map in map projection coordinates).
         yoffset - label offset from edge of map in y-direction
@@ -1721,42 +1729,45 @@ class Basemap(object):
                 lons = [(lon+360) % 360 for lon in lons]
             for lon in meridians:
                 # adjust so 0 <= lon < 360
-                lon = (lon+360) % 360
+                lon2 = (lon+360) % 360
                 # find index of meridian (there may be two, so
                 # search from left and right).
-                nl = _searchlist(lons,lon)
-                nr = _searchlist(lons[::-1],lon)
+                nl = _searchlist(lons,lon2)
+                nr = _searchlist(lons[::-1],lon2)
                 if nr != -1: nr = len(lons)-nr-1
-                if lon>180:
-                    if rcParams['text.usetex']:
-                        if labelstyle=='+/-':
-                            lonlabstr = r'${\/-%s\/^{\circ}}$'%fmt
+                try: # fmt is a function that returns a formatted string
+                    lonlab = fmt(lon)
+                except: # fmt is a format string.
+                    if lon2>180:
+                        if rcParams['text.usetex']:
+                            if labelstyle=='+/-':
+                                lonlabstr = r'${\/-%s\/^{\circ}}$'%fmt
+                            else:
+                                lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
                         else:
-                            lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
+                            if labelstyle=='+/-':
+                                lonlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                            else:
+                                lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
+                        lonlab = lonlabstr%npy.fabs(lon2-360)
+                    elif lon2<180 and lon2 != 0:
+                        if rcParams['text.usetex']:
+                            if labelstyle=='+/-':
+                                lonlabstr = r'${\/+%s\/^{\circ}}$'%fmt
+                            else:
+                                lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
+                        else:
+                            if labelstyle=='+/-':
+                                lonlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                            else:
+                                lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
+                        lonlab = lonlabstr%lon2
                     else:
-                        if labelstyle=='+/-':
-                            lonlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                        if rcParams['text.usetex']:
+                            lonlabstr = r'${%s\/^{\circ}}$'%fmt
                         else:
-                            lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
-                    lonlab = lonlabstr%npy.fabs(lon-360)
-                elif lon<180 and lon != 0:
-                    if rcParams['text.usetex']:
-                        if labelstyle=='+/-':
-                            lonlabstr = r'${\/+%s\/^{\circ}}$'%fmt
-                        else:
-                            lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
-                    else:
-                        if labelstyle=='+/-':
-                            lonlabstr = u'+%s\N{DEGREE SIGN}'%fmt
-                        else:
-                            lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
-                    lonlab = lonlabstr%lon
-                else:
-                    if rcParams['text.usetex']:
-                        lonlabstr = r'${%s\/^{\circ}}$'%fmt
-                    else:
-                        lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
-                    lonlab = lonlabstr%lon
+                            lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
+                        lonlab = lonlabstr%lon2
                 # meridians can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     lat = lats[n]/100.

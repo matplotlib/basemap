@@ -1,4 +1,7 @@
 version 0.9.8 (not yet released)
+           * 'fmt' kwarg to drawparallels and drawmeridians can 
+             now be a custom string formatting function (example
+             customticks.py demonstrates usage).
            * remove 'linestyle' kwarg from drawparallels and 
              drawmeridians (it never did anything anyway since
              it was overridden by the 'dashes' kwarg).
