@@ -56,7 +56,7 @@ NC_ATTRIBUTE = '\x00\x00\x00\x0c'
 
 _typecodes = dict([[_v,_k] for _k,_v in typemap.items()])
 
-def NetCDFFile(file):
+def NetCDFFile(file, maskandscale=True):
     """NetCDF File reader.  API is the same as Scientific.IO.NetCDF.
     If 'file' is a URL that starts with 'http', it is assumed
     to be a remote OPenDAP dataset, and the python dap client is used
@@ -66,9 +66,18 @@ def NetCDFFile(file):
     with a pure python NetCDF reader, otherwise PyNIO 
     (http://www.pyngl.ucar.edu/Nio.shtml) will be used (if it is installed).
     PyNIO supports NetCDF version 4, GRIB1, GRIB2, HDF4 and HDFEOS2 files.
+    Data read from OPenDAP and NetCDF version 3 datasets will 
+    automatically be converted to masked arrays if the variable has either
+    a 'missing_value' or '_FillValue' attribute, and some data points
+    are equal to the value specified by that attribute.  In addition,
+    variables stored as integers that have the 'scale_factor' and
+    'add_offset' attribute will automatically be rescaled to floats when
+    read. If PyNIO is used, neither of the automatic conversions will
+    be performed.  To suppress these automatic conversions, set the
+    maskandscale keyword to False. 
     """
     if file.startswith('http'):
-        return _RemoteFile(file)
+        return _RemoteFile(file,maskandscale)
     else:
         # use pynio if it is installed and the file cannot
         # be read with the pure python netCDF reader.  This allows
@@ -76,13 +85,13 @@ def NetCDFFile(file):
         # to be read.
         if has_pynio:
             try:
-                f = _LocalFile(file)
+                f = _LocalFile(file,maskandscale)
             except:
                 f = nio.open_file(file)
         # otherwise, use the pupynere netCDF 3 pure python reader.
         # (will fail if file is not a netCDF version 3 file).
         else:
-            f = _LocalFile(file)
+            f = _LocalFile(file,maskandscale)
         return f
  
 def _maskandscale(var,datout):
@@ -99,8 +108,9 @@ def _maskandscale(var,datout):
 class _RemoteFile(object):
     """A NetCDF file reader. API is the same as Scientific.IO.NetCDF."""
 
-    def __init__(self, file):
+    def __init__(self, file, maskandscale):
         self._buffer = open_remote(file)
+        self._maskandscale = maskandscale
         self._parse()
 
     def read(self, size=-1):
@@ -136,7 +146,7 @@ class _RemoteFile(object):
         for k,d in self._buffer.iteritems():
             if isinstance(d, GridType) or isinstance(d, ArrayType):
                 name = k
-                self.variables[name] = _RemoteVariable(d)
+                self.variables[name] = _RemoteVariable(d,self._maskandscale)
 
     def close(self):
         # this is a no-op provided for compatibility
@@ -144,8 +154,9 @@ class _RemoteFile(object):
 
 
 class _RemoteVariable(object):
-    def __init__(self, var):
+    def __init__(self, var, maskandscale):
         self._var = var
+        self._maskandscale = maskandscale
         self.dtype = var.type
         self.shape = var.shape
         self.dimensions = var.dimensions
@@ -157,7 +168,10 @@ class _RemoteVariable(object):
         # - remove singleton dimensions
         # - create a masked array using missing_value or _FillValue attribute
         # - apply scale_factor and add_offset to packed integer data
-        return _maskandscale(self,datout)
+        if self._maskandscale:
+            return _maskandscale(self,datout)
+        else:
+            return datout
 
     def typecode(self):
         return _typecodes[self.dtype]
@@ -166,8 +180,9 @@ class _RemoteVariable(object):
 class _LocalFile(object):
     """A NetCDF file reader. API is the same as Scientific.IO.NetCDF."""
 
-    def __init__(self, file):
+    def __init__(self, file, maskandscale):
         self._buffer = open(file, 'rb')
+        self._maskandscale = maskandscale
         self._parse()
 
     def read(self, size=-1):
@@ -295,7 +310,7 @@ class _LocalFile(object):
         # Read offset.
         begin = [self._unpack_int, self._unpack_int64][self.version_byte-1]()
 
-        return _LocalVariable(self._buffer.fileno(), nc_type, vsize, begin, shape, dimensions, attributes, isrec, self._recsize)
+        return _LocalVariable(self._buffer.fileno(), nc_type, vsize, begin, shape, dimensions, attributes, isrec, self._recsize, maskandscale=self._maskandscale)
 
     def _read_values(self, n, nc_type):
         bytes = [1, 1, 2, 4, 4, 8]
@@ -335,7 +350,7 @@ class _LocalFile(object):
 
 
 class _LocalVariable(object):
-    def __init__(self, fileno, nc_type, vsize, begin, shape, dimensions, attributes, isrec=False, recsize=0):
+    def __init__(self, fileno, nc_type, vsize, begin, shape, dimensions, attributes, isrec=False, recsize=0, maskandscale=True):
         self._nc_type = nc_type
         self._vsize = vsize
         self._begin = begin
@@ -344,6 +359,7 @@ class _LocalVariable(object):
         self.attributes = attributes  # for ``dap.plugins.netcdf``
         self.__dict__.update(attributes)
         self._is_record = isrec
+        self._maskandscale = maskandscale
 
         # Number of bytes and type.
         self._bytes = [1, 1, 2, 4, 4, 8][self._nc_type-1]
@@ -378,7 +394,10 @@ class _LocalVariable(object):
         # - remove singleton dimensions
         # - create a masked array using missing_value or _FillValue attribute
         # - apply scale_factor and add_offset to packed integer data
-        return _maskandscale(self,datout)
+        if self._maskandscale:
+            return _maskandscale(self,datout)
+        else:
+            return datout
 
     def getValue(self):
         """For scalars."""
