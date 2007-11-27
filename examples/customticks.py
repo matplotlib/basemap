@@ -6,7 +6,6 @@ from matplotlib.ticker import FuncFormatter
 # projection.
 
 def lat2str(deg):
-    fmt = "%d"
     min = 60 * (deg - numpy.floor(deg))
     deg = numpy.floor(deg)
     dir = 'N'
@@ -14,8 +13,8 @@ def lat2str(deg):
         if min != 0.0:
             deg += 1.0
             min -= 60.0
-        dir='S'
-    return (u"%d\N{DEGREE SIGN} %g' %s") % (numpy.abs(deg), numpy.abs(min), dir)
+        dir = 'S'
+    return (u"%d\N{DEGREE SIGN} %g' %s") % (numpy.abs(deg),numpy.abs(min),dir)
 
 def lon2str(deg):
     min = 60 * (deg - numpy.floor(deg))
@@ -25,8 +24,8 @@ def lon2str(deg):
         if min != 0.0:
             deg += 1.0
             min -= 60.0
-        dir='W'
-    return (u"%d\N{DEGREE SIGN} %g' %s") % (numpy.abs(deg), numpy.abs(min), dir)
+        dir = 'W'
+    return (u"%d\N{DEGREE SIGN} %g' %s") % (numpy.abs(deg),numpy.abs(min),dir)
 
 # (1) use matplotlib custom tick formatter
 #     instead of Basemap labelling methods.
