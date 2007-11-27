@@ -1356,7 +1356,7 @@ class Basemap(object):
         return info
 
     def drawparallels(self,circles,color='k',linewidth=1.,zorder=None, \
-                      linestyle='--',dashes=[1,1],labels=[0,0,0,0],labelstyle=None, \
+                      dashes=[1,1],labels=[0,0,0,0],labelstyle=None, \
                       fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
         draw parallels (latitude lines).
@@ -1366,7 +1366,6 @@ class Basemap(object):
         linewidth - line width for parallels (default 1.)
         zorder - sets the zorder for parallels (if not specified,
         uses default zorder for Line2D class).
-        linestyle - line style for parallels (default '--', i.e. dashed).
         dashes - dash pattern for parallels (default [1,1], i.e. 1 pixel on,
          1 pixel off).
         labels - list of 4 values (default [0,0,0,0]) that control whether
@@ -1461,7 +1460,7 @@ class Basemap(object):
                 for x,y in zip(xl,yl):
                     # skip if only a point.
                     if len(x) > 1 and len(y) > 1:
-                        l = Line2D(x,y,linewidth=linewidth,linestyle=linestyle)
+                        l = Line2D(x,y,linewidth=linewidth)
                         l.set_color(color)
                         l.set_dashes(dashes)
                         if zorder is not None:
@@ -1576,7 +1575,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
 
     def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
-                      linestyle='--',dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
+                      dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
                       fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
         draw meridians (longitude lines).
@@ -1586,7 +1585,6 @@ class Basemap(object):
         linewidth - line width for meridians (default 1.)
         zorder - sets the zorder for meridians (if not specified,
         uses default zorder for Line2D class).
-        linestyle - line style for meridians (default '--', i.e. dashed).
         dashes - dash pattern for meridians (default [1,1], i.e. 1 pixel on,
          1 pixel off).
         labels - list of 4 values (default [0,0,0,0]) that control whether
@@ -1667,7 +1665,7 @@ class Basemap(object):
                 for x,y in zip(xl,yl):
                     # skip if only a point.
                     if len(x) > 1 and len(y) > 1:
-                        l = Line2D(x,y,linewidth=linewidth,linestyle=linestyle)
+                        l = Line2D(x,y,linewidth=linewidth)
                         l.set_color(color)
                         l.set_dashes(dashes)
                         if zorder is not None:

@@ -1,4 +1,7 @@
 version 0.9.8 (not yet released)
+           * remove 'linestyle' kwarg from drawparallels and 
+             drawmeridians (it never did anything anyway since
+             it was overridden by the 'dashes' kwarg).
            * modify NetCDFFile to use dap module to read remote
              datasets over http.  Include dap and httplib2 modules.
            * modify NetCDFFile to automatically apply scale_factor
