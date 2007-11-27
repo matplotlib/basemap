@@ -73,8 +73,8 @@ m.fillcontinents(color='coral',lake_color='aqua')
 m.drawmapboundary(fill_color='aqua')
 # label meridians and parallels, passing string formatting function
 # with 'fmt' keyword.
-m.drawparallels(numpy.linspace(18,21,7),labels=[1,0,0,0],fmt=lat2str)
-m.drawmeridians(numpy.linspace(-157,-154,7),labels=[0,0,0,1],fmt=lon2str)
+m.drawparallels(numpy.linspace(18,21,7),labels=[1,0,0,0],fmt=lat2str,dashes=[2,2])
+m.drawmeridians(numpy.linspace(-157,-154,7),labels=[0,0,0,1],fmt=lon2str,dashes=[2,2])
 pylab.title('Hawaii')
 
 pylab.show()
