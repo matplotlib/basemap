@@ -36,6 +36,11 @@ from numpy import ndarray, empty, array, ma, squeeze
 from dap.client import open as open_remote
 from dap.dtypes import ArrayType, GridType, typemap
 
+has_pynio = True
+try:
+    from PyNGL import nio
+except ImportError:
+    has_pynio = False
 
 ABSENT       = '\x00' * 8
 ZERO         = '\x00' * 4
@@ -54,14 +59,31 @@ _typecodes = dict([[_v,_k] for _k,_v in typemap.items()])
 def NetCDFFile(file):
     """NetCDF File reader.  API is the same as Scientific.IO.NetCDF.
     If 'file' is a URL that starts with 'http', it is assumed
-    to be a remote OPenDAP dataest, and the python dap client is used
+    to be a remote OPenDAP dataset, and the python dap client is used
     to retrieve the data. Only the OPenDAP Array and Grid data
     types are recognized.  If file does not start with 'http', it
-    is assumed to be a local NetCDF file."""
+    is assumed to be a local file.  If possible, the file will be read 
+    with a pure python NetCDF reader, otherwise PyNIO 
+    (http://www.pyngl.ucar.edu/Nio.shtml) will be used (if it is installed).
+    PyNIO supports NetCDF version 4, GRIB1, GRIB2, HDF4 and HDFEOS2 files.
+    """
     if file.startswith('http'):
         return _RemoteFile(file)
     else:
-        return _LocalFile(file)
+        # use pynio if it is installed and the file cannot
+        # be read with the pure python netCDF reader.  This allows
+        # netCDF version 4, GRIB1, GRIB2, HDF4 and HDFEOS files
+        # to be read.
+        if has_pynio:
+            try:
+                f = _LocalFile(file)
+            except:
+                f = nio.open_file(file)
+        # otherwise, use the pupynere netCDF 3 pure python reader.
+        # (will fail if file is not a netCDF version 3 file).
+        else:
+            f = _LocalFile(file)
+        return f
  
 def _maskandscale(var,datout):
     if hasattr(var, 'missing_value') and (datout == var.missing_value).any():

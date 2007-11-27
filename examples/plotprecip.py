@@ -13,7 +13,6 @@ nc = NetCDFFile('nws_precip_conus_20061222.nc')
 # data from http://www.srh.noaa.gov/rfcshare/precip_analysis_new.php
 prcpvar = nc.variables['amountofprecip']
 data = 0.01*prcpvar[:]
-data = pylab.clip(data,0,10000)
 latcorners = nc.variables['lat'][:]
 loncorners = -nc.variables['lon'][:]
 plottitle = prcpvar.long_name+' for period ending '+prcpvar.dateofdata
