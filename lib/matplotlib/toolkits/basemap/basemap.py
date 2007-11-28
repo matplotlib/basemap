@@ -688,7 +688,10 @@ class Basemap(object):
             lon_0=self.projparams['lon_0']
             lat_0=self.projparams['lat_0']
             re = self.projparams['R']
-            maptran = pyproj.Proj(proj='stere',lon_0=lon_0,lat_0=lat_0,R=re)
+            # center of stereographic projection restricted
+            # to be one of 60 points on the sphere (every 45 deg lat/lon).
+            lon0 = 45*(int(lon_0)/45); lat0 = 45*(int(lat_0)/45)
+            maptran = pyproj.Proj(proj='stere',lon_0=lon0,lat0=lat_0,R=re)
             # boundary polygon for orthographic projection
             # in stereographic coorindates.
             b = self._boundarypolyll.boundary
