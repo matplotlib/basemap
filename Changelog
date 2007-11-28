@@ -1,4 +1,5 @@
 version 0.9.8 (not yet released)
+           * fixes for filling continents in orthographic projection.
            * added 'maskandscale' kwarg to NetCDFFile to
              optionally turn off automatic masking and rescaling
              of variable data.
