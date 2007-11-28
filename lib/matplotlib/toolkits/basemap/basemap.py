@@ -689,10 +689,11 @@ class Basemap(object):
             lat_0=self.projparams['lat_0']
             re = self.projparams['R']
             # center of stereographic projection restricted to be 
-            # nearest one of 60 points on the sphere (every 45 deg lat/lon).
-            lon0 = 45.*(npy.around(lon_0/45.))
-            lat0 = 45.*(npy.around(lat_0/45.))
-            maptran = pyproj.Proj(proj='stere',lon_0=lon0,lat0=lat_0,R=re)
+            # nearest one of 6 points on the sphere (every 90 deg lat/lon).
+            lon0 = 90.*(npy.around(lon_0/90.))
+            lat0 = 90.*(npy.around(lat_0/90.))
+            if npy.abs(int(lat0)) == 90: lon0=0.
+            maptran = pyproj.Proj(proj='stere',lon_0=lon0,lat_0=lat0,R=re)
             # boundary polygon for orthographic projection
             # in stereographic coorindates.
             b = self._boundarypolyll.boundary
