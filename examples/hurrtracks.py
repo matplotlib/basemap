@@ -9,9 +9,8 @@ from matplotlib.toolkits.basemap import Basemap as Basemap
 m = Basemap(llcrnrlon=-100.,llcrnrlat=0.,urcrnrlon=-20.,urcrnrlat=57.,
             projection='lcc',lat_1=20.,lat_2=40.,lon_0=-60.,
             resolution ='l',area_thresh=1000.)
-# create figure, add axes.
+# create figure.
 fig=p.figure()
-fig.add_axes([0.1,0.1,0.8,0.8],axisbg='#99ffff')
 # read shapefile.
 shp_info = m.readshapefile('huralll020','hurrtracks',drawbounds=False)
 print shp_info
@@ -39,7 +38,8 @@ for shapedict,shape in zip(m.hurrtracks_info,m.hurrtracks):
 # draw coastlines, meridians and parallels.
 m.drawcoastlines()
 m.drawcountries()
-m.fillcontinents(color='#cc9966')
+m.drawmapboundary(fill_color='#99ffff')
+m.fillcontinents(color='#cc9966',lake_color='#99ffff')
 m.drawparallels(p.arange(10,70,20),labels=[1,1,0,0])
 m.drawmeridians(p.arange(-100,0,20),labels=[0,0,0,1])
 p.title('Atlantic Hurricane Tracks (Storms Reaching Category 4, 1851-2004)')
