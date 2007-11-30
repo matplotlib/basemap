@@ -24,9 +24,11 @@ width = 28000000
 m = Basemap(width=width,height=width,\
             resolution='c',projection='aeqd',\
             lat_0=lat_0,lon_0=lon_0)
+# fill background.
+m.drawmapboundary(fill_color='aqua')
 # draw coasts and fill continents.
 m.drawcoastlines(linewidth=0.5)
-m.fillcontinents()
+m.fillcontinents(color='coral',lake_color='aqua')
 # 20 degree graticule.
 m.drawparallels(arange(-80,81,20))
 m.drawmeridians(arange(-180,180,20))
