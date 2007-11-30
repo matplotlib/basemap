@@ -1,3 +1,17 @@
+"""
+Module for plotting data on maps with matplotlib.
+
+Contains the Basemap class (which does most of the 
+heavy lifting), and the following functions:
+
+NetCDFFile: Read local and remote NetCDF datasets.
+
+interp:  bilinear interpolation between rectilinear grids.
+
+shiftgrid:  shifts global lat/lon grids east or west.
+
+addcyclic: Add cyclic (wraparound) point in longitude.
+"""
 from matplotlib import rcParams
 from matplotlib import __version__ as _matplotlib_version
 # check to make sure matplotlib is not too old.
@@ -86,6 +100,10 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
 # __init__ argument list to the code that uses the arguments.
 _Basemap_init_doc = """
  create a Basemap instance.
+
+ This sets up a basemap with specified map projection.
+ and creates the coastline data structures in native map projection
+ coordinates.
 
  arguments:
 
@@ -195,6 +213,39 @@ _Basemap_init_doc = """
   latitude circle boundinglat is tangent to the edge of the map at lon_0.
  satellite_height - height of satellite (in m) above equator -
   only relevant for geostationary projections ('geos').
+
+ Here are the most commonly used class methods (see the docstring
+ for each for more details):
+
+ To draw a graticule grid (labelled latitude and longitude lines)
+ use the drawparallels and drawmeridians methods.
+
+ To draw coastline, rivers and political boundaries, use the
+ the drawcontinents, drawrivers, drawcountries and drawstates methods.
+
+ To fill the continents and inland lakes, use the fillcontinents method.
+
+ To draw the boundary of the map projection region, and fill the 
+ interior a certain color, use the drawmapboundary method.
+
+ The contour, contourf, pcolor, pcolormesh, plot, scatter
+ quiver and imshow methods use the corresponding matplotlib axes
+ methods to draw on the map.
+
+ The transform_scalar method can be used to interpolate regular
+ lat/lon grids of scalar data to native map projection grids.
+
+ The transform_vector method can be used to interpolate and rotate
+ regular lat/lon grids of vector data to native map projection grids.
+
+ The rotate_vector method rotates a vector field from lat/lon
+ coordinates into map projections coordinates, without doing any 
+ interpolation.
+
+ The readshapefile method can be used to read in data from ESRI
+ shapefiles.
+
+ The drawgreatcircle method draws great circles on the map.
 """ % locals()
 
 # unsupported projection error message.
@@ -216,11 +267,9 @@ def _insert_validated(d, param, name, minval, maxval):
 
 class Basemap(object):
     """
-    Set up a basemap with specified map projection.
-    Doesn't actually draw anything, but sets up the map projection class and
-    creates the coastline, lake river and political boundary data
-    structures in native map projection coordinates.
-    Uses a pyrex interface to C-code from proj.4 (http://proj.maptools.org).
+    Class for plotting data on map projections with matplotlib.
+    See __init__ docstring for details on how to create a class
+    instance for a given map projection.
 
     Useful instance variables:
 
