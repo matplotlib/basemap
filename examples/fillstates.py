@@ -1,5 +1,5 @@
 import pylab as p
-import matplotlib.numerix as nx
+import numpy
 from matplotlib.toolkits.basemap import Basemap as Basemap
 from matplotlib.colors import rgb2hex
 from matplotlib.patches import Polygon
@@ -90,7 +90,7 @@ for nshape,seg in enumerate(m.states):
         poly = Polygon(seg,facecolor=color,edgecolor=color)
         ax.add_patch(poly)
 # draw meridians and parallels.
-m.drawparallels(nx.arange(25,65,20),labels=[1,0,0,0])
-m.drawmeridians(nx.arange(-120,-40,20),labels=[0,0,0,1])
+m.drawparallels(numpy.arange(25,65,20),labels=[1,0,0,0])
+m.drawmeridians(numpy.arange(-120,-40,20),labels=[0,0,0,1])
 p.title('Filling State Polygons by Population Density')
 p.show()

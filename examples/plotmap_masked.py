@@ -8,7 +8,7 @@
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from pylab import title, colorbar, show, axes, cm, load, arange, figure, \
                   text, where
-from matplotlib.numerix import ma
+from numpy import ma
 import matplotlib.colors as colors
 
 # read in topo data (on a regular lat/lon grid)

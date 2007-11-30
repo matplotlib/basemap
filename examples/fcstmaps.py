@@ -4,7 +4,7 @@ from pylab import title, show, figure, cm,  figtext, \
                   meshgrid, axes, colorbar
 import numpy
 import sys
-from matplotlib.numerix import ma
+from numpy import ma
 import datetime
 from matplotlib.toolkits.basemap import Basemap, NetCDFFile, addcyclic
 

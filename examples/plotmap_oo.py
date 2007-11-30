@@ -14,7 +14,7 @@ matplotlib.use('Agg')
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.toolkits.basemap import Basemap, shiftgrid
 from matplotlib.figure import Figure
-import matplotlib.numerix as NX
+import numpy
 import matplotlib.cm as cm
 from matplotlib.mlab import load
 
@@ -57,9 +57,9 @@ m.drawcountries()
 m.drawstates()
 # draw parallels and meridians.
 # label on left, right and bottom of map.
-parallels = NX.arange(0.,80,20.)
+parallels = numpy.arange(0.,80,20.)
 m.drawparallels(parallels,labels=[1,1,0,1])
-meridians = NX.arange(10.,360.,30.)
+meridians = numpy.arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,1,0,1])
 # set title.
 ax.set_title('ETOPO Topography - Lambert Conformal Conic')

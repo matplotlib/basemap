@@ -22,13 +22,8 @@ POP grids are used extensively locally in oceanographic and ice models.
 """
 import pylab as pl
 from matplotlib import rcParams
-try:
-    import numpy
-    rcParams['numerix'] = 'numpy'
-except:
-    raise ImportError('this example requires numpy')
-import matplotlib.numerix.ma as MA
-import matplotlib.numerix as N
+from numpy import ma as MA
+import numpy as N
 from matplotlib.toolkits.basemap import Basemap, NetCDFFile
 
 # read in data from netCDF file.
