@@ -2,15 +2,13 @@
 # as an animation using a tool like imagemagick animate, or
 # converted to an animate gif (using imagemagick convert).
 
-# requires pydap module.
-try:
-    from dap import client
-except:
-    raise ImportError,"requires pyDAP module (version 2.1 or higher) from http://pydap.org"
-import pylab as p
-from matplotlib.numerix import ma
+# reads data over http - needs an active internet connection.
+
+import numpy
+import pylab
+from numpy import ma
 import datetime, sys, time, subprocess
-from matplotlib.toolkits.basemap import Basemap, shiftgrid
+from matplotlib.toolkits.basemap import Basemap, shiftgrid, NetCDFFile
 
 hrsgregstart = 13865688 # hrs from 00010101 to 15821015 in Julian calendar.
 # times in many datasets use mixed Gregorian/Julian calendar, datetime 
@@ -55,19 +53,19 @@ print URL
 print URLu
 print URLv
 try:
-    data = client.open(URL)
-    datau = client.open(URLu)
-    datav = client.open(URLv)
+    data = NetCDFFile(URL)
+    datau = NetCDFFile(URLu)
+    datav = NetCDFFile(URLv)
 except:
     raise IOError, 'opendap server not providing the requested data'
 
 # read lats,lons,times.
-print data.keys()
-print datau.keys()
-print datav.keys()
-latitudes = data['lat'][:]
-longitudes = data['lon'][:].tolist()
-times = data['time'][:]
+print data.variables.keys()
+print datau.variables.keys()
+print datav.variables.keys()
+latitudes = data.variables['lat'][:]
+longitudes = data.variables['lon'][:].tolist()
+times = data.variables['time'][:]
 # put times in YYYYMMDDHH format.
 dates=[]
 for t in times:
@@ -83,49 +81,49 @@ print 'ntime1,ntime2:',ntime1,ntime2
 if ntime1 >= ntime2:
     raise ValueError,'date2 must be greater than date1'
 # get sea level pressure and 10-m wind data.
-slpdata = data['presmsl']
-udata = datau['ugrdprs']
-vdata = datau['vgrdprs']
+slpdata = data.variables['presmsl']
+udata = datau.variables['ugrdprs']
+vdata = datau.variables['vgrdprs']
 # mult slp by 0.01 to put in units of millibars.
-slpin = 0.01*p.squeeze(slpdata[ntime1:ntime2+1,:,:])
-uin = p.squeeze(udata[ntime1:ntime2+1,0,:,:]) 
-vin = p.squeeze(vdata[ntime1:ntime2+1,0,:,:]) 
+slpin = 0.01*slpdata[ntime1:ntime2+1,:,:]
+uin = udata[ntime1:ntime2+1,0,:,:] 
+vin = vdata[ntime1:ntime2+1,0,:,:] 
 datelabels = dates[ntime1:ntime2+1]
 # add cyclic points
-slp = p.zeros((slpin.shape[0],slpin.shape[1],slpin.shape[2]+1),p.Float64)
+slp = numpy.zeros((slpin.shape[0],slpin.shape[1],slpin.shape[2]+1),numpy.float64)
 slp[:,:,0:-1] = slpin; slp[:,:,-1] = slpin[:,:,0]
-u = p.zeros((uin.shape[0],uin.shape[1],uin.shape[2]+1),p.Float64)
+u = numpy.zeros((uin.shape[0],uin.shape[1],uin.shape[2]+1),numpy.float64)
 u[:,:,0:-1] = uin; u[:,:,-1] = uin[:,:,0]
-v = p.zeros((vin.shape[0],vin.shape[1],vin.shape[2]+1),p.Float64)
+v = numpy.zeros((vin.shape[0],vin.shape[1],vin.shape[2]+1),numpy.float64)
 v[:,:,0:-1] = vin; v[:,:,-1] = vin[:,:,0]
-longitudes.append(360.); longitudes = p.array(longitudes)
+longitudes.append(360.); longitudes = numpy.array(longitudes)
 # make 2-d grid of lons, lats
-lons, lats = p.meshgrid(longitudes,latitudes)
+lons, lats = numpy.meshgrid(longitudes,latitudes)
 print 'min/max slp,u,v'
-print min(p.ravel(slp)),max(p.ravel(slp))
-print min(p.ravel(uin)),max(p.ravel(uin))
-print min(p.ravel(vin)),max(p.ravel(vin))
+print slp.min(), slp.max()
+print uin.min(), uin.max()
+print vin.min(), vin.max()
 print 'dates'
 print datelabels
-# make orthographic basemap.
+# make orthographic basemapylab.
 m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
-p.ion() # interactive mode on.
-uin = p.squeeze(udata[ntime1:ntime2+1,0,:,:]) 
-vin = p.squeeze(vdata[ntime1:ntime2+1,0,:,:]) 
+pylab.ion() # interactive mode on.
+uin = udata[ntime1:ntime2+1,0,:,:] 
+vin = vdata[ntime1:ntime2+1,0,:,:] 
 datelabels = dates[ntime1:ntime2+1]
-# make orthographic basemap.
+# make orthographic basemapylab.
 m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
-p.ion() # interactive mode on.
+pylab.ion() # interactive mode on.
 # create figure, add axes (leaving room for colorbar on right)
-fig = p.figure()
+fig = pylab.figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # set desired contour levels.
-clevs = p.arange(960,1061,5)
+clevs = numpy.arange(960,1061,5)
 # compute native x,y coordinates of grid.
 x, y = m(lons, lats)
 # define parallels and meridians to draw.
-parallels = p.arange(-80.,90,20.)
-meridians = p.arange(0.,360.,20.)
+parallels = numpy.arange(-80.,90,20.)
+meridians = numpy.arange(0.,360.,20.)
 # number of repeated frames at beginning and end is n1.
 nframe = 0; n1 = 10
 l,b,w,h=ax.get_position()
@@ -133,42 +131,42 @@ l,b,w,h=ax.get_position()
 # parallels, meridians and title.
 for nt,date in enumerate(datelabels[1:]):
     CS = m.contour(x,y,slp[nt,:,:],clevs,linewidths=0.5,colors='k',animated=True)
-    CS = m.contourf(x,y,slp[nt,:,:],clevs,cmap=p.cm.RdBu_r,animated=True)
+    CS = m.contourf(x,y,slp[nt,:,:],clevs,cmap=pylab.cm.RdBu_r,animated=True)
     # plot wind vectors on lat/lon grid.
     # rotate wind vectors to map projection coordinates.
     #urot,vrot = m.rotate_vector(u[nt,:,:],v[nt,:,:],lons,lats)
-    # plot wind vectors over map.
+    # plot wind vectors over mapylab.
     #Q = m.quiver(x,y,urot,vrot,scale=500) 
     # plot wind vectors on projection grid (looks better).
     # first, shift grid so it goes from -180 to 180 (instead of 0 to 360
-    # in longitude).  Otherwise, interpolation is messed up.
+    # in longitude).  Otherwise, interpolation is messed upylab.
     ugrid,newlons = shiftgrid(180.,u[nt,:,:],longitudes,start=False)
     vgrid,newlons = shiftgrid(180.,v[nt,:,:],longitudes,start=False)
     # transform vectors to projection grid.
     urot,vrot,xx,yy = m.transform_vector(ugrid,vgrid,newlons,latitudes,51,51,returnxy=True,masked=True)
-    # plot wind vectors over map.
+    # plot wind vectors over mapylab.
     Q = m.quiver(xx,yy,urot,vrot,scale=500)
     # make quiver key.
-    qk = p.quiverkey(Q, 0.1, 0.1, 20, '20 m/s', labelpos='W')
+    qk = pylab.quiverkey(Q, 0.1, 0.1, 20, '20 m/s', labelpos='W')
     # draw coastlines, parallels, meridians, title.
     m.drawcoastlines(linewidth=1.5)
     m.drawparallels(parallels)
     m.drawmeridians(meridians)
-    p.title('SLP and Wind Vectors '+date)
+    pylab.title('SLP and Wind Vectors '+date)
     if nt == 0: # plot colorbar on a separate axes (only for first frame)
-        cax = p.axes([l+w-0.05, b, 0.03, h]) # setup colorbar axes
+        cax = pylab.axes([l+w-0.05, b, 0.03, h]) # setup colorbar axes
         fig.colorbar(CS,drawedges=True, cax=cax) # draw colorbar
         cax.text(0.0,-0.05,'mb')
-        p.axes(ax) # reset current axes
-    p.draw() # draw the plot
+        pylab.axes(ax) # reset current axes
+    pylab.draw() # draw the plot
     # save first and last frame n1 times 
     # (so gif animation pauses at beginning and end)
     if nframe == 0 or nt == slp.shape[0]-1:
        for n in range(n1):
-           p.savefig('anim%03i'%nframe+'.png')
+           pylab.savefig('anim%03i'%nframe+'.png')
            nframe = nframe + 1
     else:
-       p.savefig('anim%03i'%nframe+'.png')
+       pylab.savefig('anim%03i'%nframe+'.png')
        nframe = nframe + 1
     ax.clear() # clear the axes for the next plot.
 
