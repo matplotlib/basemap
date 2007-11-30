@@ -17,7 +17,7 @@ meridians = arange(10.,360.,delon)
 npanel = 0
 # plots of the US.
 projs = ['lcc','aeqd','aea','laea','eqdc','stere']
-fig = figure(figsize=(8,12))
+fig = figure(figsize=(7,7))
 for proj in projs:
     m = Basemap(width=width,height=height,
                 resolution='c',projection=proj,\
