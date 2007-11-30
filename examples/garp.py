@@ -32,9 +32,9 @@ m.fillcontinents(color='coral',lake_color='aqua')
 # 20 degree graticule.
 m.drawparallels(arange(-80,81,20))
 m.drawmeridians(arange(-180,180,20))
-# draw a red dot at the center.
+# draw a black dot at the center.
 xpt, ypt = m(lon_0, lat_0)
-m.plot([xpt],[ypt],'ro') 
+m.plot([xpt],[ypt],'ko') 
 # draw the title.
 title('The World According to Garp in '+location)
 show()
