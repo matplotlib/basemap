@@ -44,7 +44,10 @@ nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat,x,y = m.transform_scalar(topoin,lons,lats,nx,ny,returnxy=True)
 # plot image over map with imshow.
 im = m.imshow(topodat,cm.jet)
-l,b,w,h = ax.get_position()
+try: 
+    l,b,w,h = ax.get_position()
+except:
+    l,b,w,h = (ax.get_position()).bounds
 cax = fig.add_axes([l+w+0.075, b, 0.05, h],frameon=False) # setup colorbar axes
 fig.colorbar(im, cax=cax) # draw colorbar
 # plot blue dot on boulder, colorado and label it as such.

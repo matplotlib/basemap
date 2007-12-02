@@ -32,7 +32,10 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with imshow.
 im = m.imshow(topodat,cm.jet)
 # setup colorbar axes instance.
-l,b,w,h = ax.get_position()
+try: 
+    l,b,w,h = ax.get_position()
+except:
+    l,b,w,h = (ax.get_position()).bounds
 cax = axes([l+w+0.075, b, 0.05, h])
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again

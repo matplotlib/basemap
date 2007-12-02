@@ -126,7 +126,10 @@ parallels = numpy.arange(-80.,90,20.)
 meridians = numpy.arange(0.,360.,20.)
 # number of repeated frames at beginning and end is n1.
 nframe = 0; n1 = 10
-l,b,w,h=ax.get_position()
+try: 
+    l,b,w,h = ax.get_position()
+except:
+    l,b,w,h = (ax.get_position()).bounds
 # loop over times, make contour plots, draw coastlines, 
 # parallels, meridians and title.
 for nt,date in enumerate(datelabels[1:]):

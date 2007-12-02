@@ -21,7 +21,10 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
-l,b,w,h=ax.get_position()
+try: 
+    l,b,w,h = ax.get_position()
+except:
+    l,b,w,h = (ax.get_position()).bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -46,7 +49,10 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
-l,b,w,h=ax.get_position()
+try: 
+    l,b,w,h = ax.get_position()
+except:
+    l,b,w,h = (ax.get_position()).bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -71,7 +77,10 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
-l,b,w,h=ax.get_position()
+try: 
+    l,b,w,h = ax.get_position()
+except:
+    l,b,w,h = (ax.get_position()).bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -96,7 +105,10 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
-l,b,w,h=ax.get_position()
+try: 
+    l,b,w,h = ax.get_position()
+except:
+    l,b,w,h = (ax.get_position()).bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -122,7 +134,10 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
-l,b,w,h=ax.get_position()
+try: 
+    l,b,w,h = ax.get_position()
+except:
+    l,b,w,h = (ax.get_position()).bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
