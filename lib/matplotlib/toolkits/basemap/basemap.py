@@ -658,7 +658,9 @@ class Basemap(object):
                     iprev = 0
                     ind.append(len(xd))
                     for i in ind:
-                        coastsegs.append(zip(x[iprev:i],y[iprev:i]))
+                        # don't add empty lists.
+                        if len(range(iprev,i)): 
+                            coastsegs.append(zip(x[iprev:i],y[iprev:i]))
                         iprev = i
                 else:
                     coastsegs.append(seg)
