@@ -212,7 +212,7 @@ _Basemap_init_doc = """
   on the north or south pole.  The longitude lon_0 is at 6-o'clock, and the
   latitude circle boundinglat is tangent to the edge of the map at lon_0.
  satellite_height - height of satellite (in m) above equator -
-  only relevant for geostationary projections ('geos').
+  only relevant for geostationary projections ('geos'). Default 35,786 km.
 
  Here are the most commonly used class methods (see the docstring
  for each for more details):
@@ -324,7 +324,7 @@ class Basemap(object):
                        lat_0=None, lon_0=None,
                        lon_1=None, lon_2=None,
                        suppress_ticks=True,
-                       satellite_height=None,
+                       satellite_height=35786000,
                        boundinglat=None,
                        anchor='C',
                        ax=None):
@@ -362,7 +362,7 @@ class Basemap(object):
         _insert_validated(projparams, lon_0, 'lon_0', -360, 720)
         _insert_validated(projparams, lon_1, 'lon_1', -360, 720)
         _insert_validated(projparams, lon_2, 'lon_2', -360, 720)
-        if satellite_height is not None:
+        if projection == 'geos':
             projparams['h'] = satellite_height
         # check for sane values of projection corners.
         using_corners = (None not in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat])
@@ -488,8 +488,8 @@ class Basemap(object):
             if npy.abs(lat_0) < 1.e-2: lat_0 = 1.e-2
             projparams['lat_0'] = lat_0
         elif projection == 'geos':
-            if lon_0 is None and satellite_height is None:
-                raise ValueError, 'must specify lon_0 and satellite_height for Geostationary basemap'
+            if lon_0 is None:
+                raise ValueError, 'must specify lon_0 for Geostationary basemap'
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % self.projection
             if not using_corners:

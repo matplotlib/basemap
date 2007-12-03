@@ -3,12 +3,10 @@ from pylab import title, show, arange, figure
 
 # create Basemap instance for Geostationary (satellite view) projection.
 lon_0 = float(raw_input('enter reference longitude (lon_0):'))
-#h = float(raw_input('enter satellite height above equator in meters (satellite_height):'))
-h = 35785831.0
 
 # map with land/sea mask plotted
 fig=figure()
-m = Basemap(projection='geos',lon_0=lon_0,satellite_height=h,rsphere=(6378137.00,6356752.3142),resolution=None)
+m = Basemap(projection='geos',lon_0=lon_0,rsphere=(6378137.00,6356752.3142),resolution=None)
 # plot land-sea mask.
 rgba_land = (0,255,0,255) # land green.
 rgba_ocean = (0,0,255,255) # ocean blue.
@@ -18,11 +16,11 @@ m.drawlsmask(rgba_land, rgba_ocean, lakes=True)
 m.drawparallels(arange(-90.,120.,30.))
 m.drawmeridians(arange(0.,420.,60.))
 m.drawmapboundary()
-title('Geostationary Map Centered on Lon=%s, Satellite Height=%s' % (lon_0,h))
+title('Geostationary Map Centered on Lon=%s' % (lon_0))
 
 # map with continents drawn and filled.
 fig = figure()
-m = Basemap(projection='geos',lon_0=lon_0,satellite_height=h,rsphere=(6378137.00,6356752.3142),resolution='l')
+m = Basemap(projection='geos',lon_0=lon_0,rsphere=(6378137.00,6356752.3142),resolution='l')
 m.drawcoastlines()
 m.drawmapboundary(fill_color='aqua')
 m.fillcontinents(color='coral',lake_color='aqua')
@@ -31,5 +29,5 @@ m.drawcountries()
 m.drawparallels(arange(-90.,120.,30.))
 m.drawmeridians(arange(0.,420.,60.))
 m.drawmapboundary()
-title('Geostationary Map Centered on Lon=%s, Satellite Height=%s' % (lon_0,h))
+title('Geostationary Map Centered on Lon=%s' % (lon_0))
 show()
