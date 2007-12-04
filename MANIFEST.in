@@ -68,6 +68,7 @@ include lib/matplotlib/toolkits/basemap/proj.py
 include lib/matplotlib/toolkits/basemap/pyproj.py
 include lib/matplotlib/toolkits/basemap/cm.py
 include lib/matplotlib/toolkits/basemap/pupynere.py
+include lib/matplotlib/toolkits/basemap/netcdftime.py
 include pyshapelib/README pyshapelib/COPYING pyshapelib/ChangeLog pyshapelib/NEWS
 include pyshapelib/*.i pyshapelib/*.c pyshapelib/*.py pyshapelib/*.h
 include pyshapelib/*.shp pyshapelib/*.shx pyshapelib/*.dbf
@@ -78,7 +79,6 @@ recursive-include lib/dap *
 recursive-include lib/httplib2 *
 recursive-include lib/dbflib *
 recursive-include lib/shapelib *
-recursive-include lib/netcdftime *
 include lib/matplotlib/toolkits/basemap/data/5minmask.bin
 include lib/matplotlib/toolkits/basemap/data/GL27
 include lib/matplotlib/toolkits/basemap/data/countries_c.dat

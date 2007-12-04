@@ -36,9 +36,6 @@ latitudes = data.variables['lat']
 longitudes = data.variables['lon']
 fcsttimes = data.variables['time']
 times = fcsttimes[0:6] # first 6 forecast times.
-# change 0.0 to 00 at end of time units string
-# (so strptime will understand it).
-timeunits = fcsttimes.units[:-2]+'0'
 ntimes = len(times)
 # put forecast times in YYYYMMDDHH format.
 verifdates = []
@@ -46,7 +43,7 @@ fcsthrs=[]
 for time in times:
     print time, times[0]
     fcsthrs.append(int((time-times[0])*24))
-    fdate = num2date(time,'days since 0001-01-01 00:00:00')
+    fdate = num2date(time,fcsttimes.units)
     verifdates.append(fdate.strftime('%Y%m%d%H'))
 print fcsthrs
 print verifdates
