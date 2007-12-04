@@ -446,7 +446,8 @@ def _dateparse(timestr):
     # parse the date string.
     n = timestr.find('since')+6
     year,month,day,hour,minute,second,utc_offset = _parse_date(timestr[n:])
-
+    if utc_offset:
+        raise ValueError("time zone offset not allowed")
     return units, datetime(year, month, day, hour, minute, second)
 
 class utime:
@@ -572,8 +573,9 @@ are:
  it is divisible by 400.
  - C{'noleap'} or C{'365_day'}:
  Gregorian calendar without leap years, i.e., all years are 365 days long. 
- all_leap or 366_day Gregorian calendar with every year being a leap year, 
- i.e., all years are 366 days long.
+ - C{all_leap} or C{'366_day'}:  
+ Gregorian calendar with every year being a leap year, i.e.,
+ all years are 366 days long.
  -C{'360_day'}:
  All years are 360 days divided into 30 day months. 
  -C{'julian'}:
@@ -773,19 +775,8 @@ def _parse_date(origin):
     m = p.match(origin.strip())
     if m:
         c = m.groupdict(0)
-        
-        # Instantiate timezone object.
+        # UTC offset.
         offset = int(c['ho'])*60 + int(c['mo'])
-        #tz = FixedOffset(offset, 'Unknown')
-
-        #return datetime(int(c['year']),
-        #                int(c['month']),
-        #                int(c['day']),
-        #                int(c['hour']),
-        #                int(c['min']),
-        #                int(c['sec']),
-        #                int(c['dsec']) * 100000,
-        #                tz)
         return int(c['year']),int(c['month']),int(c['day']),int(c['hour']),int(c['min']),int(c['sec']),offset
     
     raise Exception('Invalid date origin: %s' % origin)
