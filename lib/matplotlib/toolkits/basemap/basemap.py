@@ -2928,7 +2928,7 @@ def date2num(dates,units,calendar='standard'):
      (http://cf-pcmdi.llnl.gov/documents/cf-conventions/) are supported.
      Valid calendars 'standard', 'gregorian', 'proleptic_gregorian'
      'noleap', '365_day', '360_day', 'julian', 'all_leap', '366_day'.
-     Default is 'standard'.
+     Default is 'standard', which is a mixed Julian/Gregorian calendar.
 
     Returns a numeric time value, or an array of numeric time values.
 
