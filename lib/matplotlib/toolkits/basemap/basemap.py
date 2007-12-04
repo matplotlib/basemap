@@ -2862,7 +2862,12 @@ def num2date(times,units,calendar='standard'):
     """
     Return datetime objects given numeric time values. The units
     of the numeric time values are described by the units argument
-    and the calendar keyword.
+    and the calendar keyword. The time zone is assumed to be UTC.
+
+    Like the matplotlib num2date function, except that it allows
+    for different units and calendars.  Behaves the same if
+    units = 'days since 0001-01-01 00:00:00' and 
+    calendar = 'proleptic_gregorian'.
 
     Arguments:
 
@@ -2897,7 +2902,12 @@ def date2num(dates,units,calendar='standard'):
     """
     Return numeric time values given datetime objects. The units
     of the numeric time values are described by the units argument
-    and the calendar keyword.
+    and the calendar keyword. The time zone is assumed to UTC.
+
+    Like the matplotlib date2num function, except that it allows
+    for different units and calendars.  Behaves the same if
+    units = 'days since 0001-01-01 00:00:00' and 
+    calendar = 'proleptic_gregorian'.
 
     Arguments:
 
