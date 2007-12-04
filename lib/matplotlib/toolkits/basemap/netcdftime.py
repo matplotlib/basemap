@@ -434,7 +434,7 @@ Julian Day is a fractional day with a resolution of 1 second.
     
     return datetime(year,month,int(days),int(hours),int(minutes),int(seconds),-1, int(dayofyr))
 
-def _dateparse(timestr,format='%Y-%m-%d %H:%M:%S'):
+def _dateparse(timestr):
     """parse a string of the form time-units since yyyy-mm-dd hh:mm:ss
     return a tuple (units, datetimeinstance)"""
     timestr_split = timestr.split()
@@ -443,12 +443,10 @@ def _dateparse(timestr,format='%Y-%m-%d %H:%M:%S'):
         raise ValueError,"units must be one of 'seconds', 'minutes', 'hours' or 'days' (or singular version of these), got '%s'" % units
     if timestr_split[1].lower() != 'since':
         raise ValueError,"no 'since' in unit_string"
-    # use strptime to parse the date string.
+    # parse the date string.
     n = timestr.find('since')+6
-    #year,month,day,hour,minute,second,daywk,dayyr,tz = strptime(timestr[n:],format)
-    year,month,day,hour,minute,second = _parse_date(timestr[n:])
-    #if dayyr == -1: dayyr=1 # must have valid day of year for strftime to work
-    #return units, datetime(year, month, day, hour, minute, second, daywk, dayyr)
+    year,month,day,hour,minute,second,utc_offset = _parse_date(timestr[n:])
+
     return units, datetime(year, month, day, hour, minute, second)
 
 class utime:
@@ -456,17 +454,12 @@ class utime:
 Performs conversions of netCDF time coordinate
 data to/from datetime objects.
 
-To initialize: C{t = utime(unit_string,format='%Y-%m-%d %H:%M:%S',calendar='standard')}
+To initialize: C{t = utime(unit_string,calendar='standard')}
 
 where 
 
 B{C{unit_string}} is a string of the form
-C{'time-units since <format>'} defining the time units.
-
-B{C{format}} is a string describing a reference time. This string is converted 
-to a year,month,day,hour,minute,second tuple by strptime. The default 
-format is C{'%Y-%m-%d %H:%M:%S'}. See the C{time.strptime} docstring for other 
-valid formats.
+C{'time-units since <time-origin>'} defining the time units.
 
 Valid time-units are days, hours, minutes and seconds (the singular forms 
 are also accepted). An example unit_string would be C{'hours 
@@ -556,15 +549,11 @@ it should be noted that udunits treats 0 AD as identical to 1 AD."
 @ivar unit_string:  a string defining the the netCDF time variable.
 @ivar units:  the units part of C{unit_string} (i.e. 'days', 'hours', 'seconds').
     """
-    def __init__(self,unit_string,format='%Y-%m-%d %H:%M:%S',calendar='standard'):
+    def __init__(self,unit_string,calendar='standard'):
         """
 @param unit_string: a string of the form
-C{'time-units since <format>'} defining the time units.
+C{'time-units since <time-origin>'} defining the time units.
 
-@keyword format: a string describing a reference time. This string is converted 
-to a year,month,day,hour,minute,second tuple by strptime. The default 
-format is C{'%Y-%m-%d %H:%M:%S'}. See the C{time.strptime} docstring for other 
-valid formats.
 Valid time-units are days, hours, minutes and seconds (the singular forms 
 are also accepted). An example unit_string would be C{'hours 
 since 0001-01-01 00:00:00'}.
@@ -598,7 +587,7 @@ units to datetime objects.
             self.calendar = calendar
         else:
             raise ValueError, "calendar must be one of %s, got '%s'" % (str(_calendars),calendar)
-        units, self.origin = _dateparse(unit_string,format=format)
+        units, self.origin = _dateparse(unit_string)
         self.units = units
         self.unit_string = unit_string
         if self.calendar in ['noleap','365_day'] and self.origin.month == 2 and self.origin.day == 29:
@@ -736,7 +725,9 @@ world calendar.
             return numpy.reshape(numpy.array(date),shape)
 
 def _parse_date(origin):
-    """Parses a date string and returns a datetime object.
+    """Parses a date string and returns a tuple
+    (year,month,day,hour,minute,second,utc_offset).
+    utc_offset is in minutes.
 
     This function parses the 'origin' part of the time unit. It should be
     something like::
@@ -784,7 +775,7 @@ def _parse_date(origin):
         c = m.groupdict(0)
         
         # Instantiate timezone object.
-        #offset = int(c['ho'])*60 + int(c['mo'])
+        offset = int(c['ho'])*60 + int(c['mo'])
         #tz = FixedOffset(offset, 'Unknown')
 
         #return datetime(int(c['year']),
@@ -795,7 +786,7 @@ def _parse_date(origin):
         #                int(c['sec']),
         #                int(c['dsec']) * 100000,
         #                tz)
-        return int(c['year']),int(c['month']),int(c['day']),int(c['hour']),int(c['min']),int(c['sec'])
+        return int(c['year']),int(c['month']),int(c['day']),int(c['hour']),int(c['min']),int(c['sec']),offset
     
     raise Exception('Invalid date origin: %s' % origin)
 
