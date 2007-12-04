@@ -736,7 +736,7 @@ def _parse_date(origin):
 
     Lots of things are optional; just the date is mandatory.
 
-    by Roberto D'Almeida 
+    by Roberto De Almeida
 
     excerpted from coards.py - http://cheeseshop.python.org/pypi/coards/
     """
