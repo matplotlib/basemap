@@ -11,6 +11,10 @@ interp:  bilinear interpolation between rectilinear grids.
 shiftgrid:  shifts global lat/lon grids east or west.
 
 addcyclic: Add cyclic (wraparound) point in longitude.
+
+num2date: convert from a numeric time value to a datetime object.
+
+date2num: convert from a datetime object to a numeric time value.
 """
 from matplotlib import rcParams
 from matplotlib import __version__ as _matplotlib_version
