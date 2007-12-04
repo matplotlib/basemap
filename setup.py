@@ -114,6 +114,10 @@ except ImportError:
     packages = packages + ['httplib2']
     package_dirs['httlib2'] = os.path.join('lib','httplib2')
 
+# install netcdftime
+packages = packages + ['netcdftime']
+package_dirs['httlib2'] = os.path.join('lib','netcdftime')
+
 if 'setuptools' in sys.modules:
 # Are we running with setuptools?
 # if so, need to specify all the packages in heirarchy

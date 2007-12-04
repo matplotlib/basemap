@@ -28,7 +28,7 @@ import numpy as npy
 from numpy import linspace, squeeze, ma
 from matplotlib.cbook import is_scalar, dedent
 from shapelib import ShapeFile
-import _geos, pupynere
+import _geos, pupynere, netcdftime
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -2857,3 +2857,80 @@ def NetCDFFile(file, maskandscale=True):
         else:
             f = pupynere._LocalFile(file,maskandscale)
         return f
+
+def num2date(times,units,unit_format='%Y-%m-%d %H:%M:%S',calendar='standard'):
+    """
+    Return datetime objects given numeric time values. The units
+    of the numeric time values are described by the units argument
+    and the unit_format and calendar keywords.
+
+    Arguments:
+
+    times - numeric time values. Maximum resolution is 1 second.
+    units - a string of the form '<time-units> since <reference time>'
+     describing the time units. <time-units> can be days, hours, minutes
+     or seconds.  <reference-time> is the time origin, defined by the format
+     keyword (see below). For example, a valid choice would be
+     units='hours since 0001-01-01 00:00:00'.
+
+    Keyword Arguments:
+
+    format - a string describing a reference time. This string is converted 
+     to a year,month,day,hour,minute,second tuple by strptime. The default 
+     format is '%Y-%m-%d %H:%M:%S'. See the time.strptime docstring for other 
+     valid formats.
+
+    calendar - describes the calendar used in the time calculations. 
+     All the values currently defined in the CF metadata convention 
+     (http://cf-pcmdi.llnl.gov/documents/cf-conventions/) are supported.
+     Valid calendars 'standard', 'gregorian', 'proleptic_gregorian'
+     'noleap', '365_day', '360_day', 'julian'.  Default is 'standard'.
+
+    Returns a datetime instance, or an array of datetime instances.
+
+    The datetime instances returned are 'real' python datetime 
+    objects if the date falls in the Gregorian calendar (i.e. 
+    calendar='proleptic_gregorian', or calendar = 'standard' or 'gregorian'
+    and the date is after 1582-10-15). Otherwise, they are 'phony' datetime 
+    objects which support some but not all the methods of 'real' python
+    datetime objects.  This is because the python datetime module cannot
+    the weird dates in some calendars (such as '360_day' and 'all_leap'
+    which don't exist in any real world calendar.
+    """
+    cdftime = netcdftime.utime(units,calendar=calendar,format=unit_format)
+    return cdftime.num2date(times)
+
+def date2num(dates,units,unit_format='%Y-%m-%d %H:%M:%S',calendar='standard'):
+    """
+    Return numeric time values given datetime objects. The units
+    of the numeric time values are described by the units argument
+    and the unit_format and calendar keywords.
+
+    Arguments:
+
+    dates - A datetime object or a sequence of datetime objects.
+    units - a string of the form '<time-units> since <reference time>'
+     describing the time units. <time-units> can be days, hours, minutes
+     or seconds.  <reference-time> is the time origin, defined by the format
+     keyword (see below). For example, a valid choice would be
+     units='hours since 0001-01-01 00:00:00'.
+
+    Keyword Arguments:
+
+    format - a string describing a reference time. This string is converted 
+     to a year,month,day,hour,minute,second tuple by strptime. The default 
+     format is '%Y-%m-%d %H:%M:%S'. See the time.strptime docstring for other 
+     valid formats.
+
+    calendar - describes the calendar used in the time calculations. 
+     All the values currently defined in the CF metadata convention 
+     (http://cf-pcmdi.llnl.gov/documents/cf-conventions/) are supported.
+     Valid calendars 'standard', 'gregorian', 'proleptic_gregorian'
+     'noleap', '365_day', '360_day', 'julian'.  Default is 'standard'.
+
+    Returns a numeric time value, or an array of numeric time values.
+
+    The maximum resolution of the numeric time values is 1 second.
+    """
+    cdftime = netcdftime.utime(units,calendar=calendar,format=unit_format)
+    return cdftime.date2num(dates)

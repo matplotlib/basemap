@@ -1,3 +1,5 @@
+           * added num2date and date2num functions, which use 
+		     included netcdftime module.
 version 0.9.8 (svn revision 4526)
            * fixes for filling continents in orthographic projection.
            * added 'maskandscale' kwarg to NetCDFFile to
