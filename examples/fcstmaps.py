@@ -6,34 +6,8 @@ import numpy
 import sys
 from numpy import ma
 import datetime
-from matplotlib.toolkits.basemap import Basemap, NetCDFFile, addcyclic
+from matplotlib.toolkits.basemap import Basemap, NetCDFFile, addcyclic, num2date
 
-
-hrsgregstart = 13865688 # hrs from 00010101 to 15821015 in Julian calendar.
-# times in many datasets use mixed Gregorian/Julian calendar, datetime 
-# module uses a proleptic Gregorian calendar. So, I use datetime to compute
-# hours since start of Greg. calendar (15821015) and add this constant to
-# get hours since 1-Jan-0001 in the mixed Gregorian/Julian calendar.
-gregstart = datetime.datetime(1582,10,15) # datetime.datetime instance
-
-def dateto_hrs_since_day1CE(curdate):
-    """given datetime.datetime instance, compute hours since 1-Jan-0001"""
-    if curdate < gregstart:
-        msg = 'date must be after start of gregorian calendar (15821015)!'
-        raise ValueError, msg
-    difftime = curdate-gregstart
-    hrsdiff = 24*difftime.days + difftime.seconds/3600
-    return hrsdiff+hrsgregstart
-
-def hrs_since_day1CE_todate(hrs):
-    """return datetime.datetime instance given hours since 1-Jan-0001"""
-    if hrs < 0.0:
-        msg = "hrs must be positive!"
-        raise ValueError, msg
-    delta = datetime.timedelta(hours=1)
-    hrs_sincegreg = hrs - hrsgregstart
-    curdate = gregstart + hrs_sincegreg*delta
-    return curdate
 
 # today's date is default.
 if len(sys.argv) > 1:
@@ -62,14 +36,17 @@ latitudes = data.variables['lat']
 longitudes = data.variables['lon']
 fcsttimes = data.variables['time']
 times = fcsttimes[0:6] # first 6 forecast times.
+# change 0.0 to 00 at end of time units string
+# (so strptime will understand it).
+timeunits = fcsttimes.units[:-2]+'0'
 ntimes = len(times)
 # put forecast times in YYYYMMDDHH format.
 verifdates = []
 fcsthrs=[]
-print times
 for time in times:
+    print time, times[0]
     fcsthrs.append(int((time-times[0])*24))
-    fdate = hrs_since_day1CE_todate(int(time*24.0)) 
+    fdate = num2date(time,'days since 0001-01-01 00:00:00')
     verifdates.append(fdate.strftime('%Y%m%d%H'))
 print fcsthrs
 print verifdates
