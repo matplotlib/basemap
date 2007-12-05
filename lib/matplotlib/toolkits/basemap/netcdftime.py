@@ -571,7 +571,7 @@ are:
  it is divisible by 400.
  - C{'noleap'} or C{'365_day'}:
  Gregorian calendar without leap years, i.e., all years are 365 days long. 
- - C{all_leap} or C{'366_day'}:  
+ - C{'all_leap'} or C{'366_day'}:  
  Gregorian calendar with every year being a leap year, i.e.,
  all years are 366 days long.
  -C{'360_day'}:
@@ -690,8 +690,8 @@ C{calendar='proleptic_gregorian'}, or C{calendar = 'standard'/'gregorian'} and
 the date is after 1582-10-15). Otherwise, they are 'phony' datetime 
 objects which are actually instances of netcdftime.datetime.  This is 
 because the python datetime module cannot handle the weird dates in some 
-calendars (such as C{'360_day'} and C{'all_leap'}) which don't exist in any real 
-world calendar.
+calendars (such as C{'360_day'} and C{'all_leap'}) which 
+do not exist in any real world calendar.
         """
         isscalar = False
         try:
