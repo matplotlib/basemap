@@ -703,11 +703,11 @@ world calendar.
             shape = time_value.shape
         # convert to desired units, remove time zone offset.
         if self.units in ['second','seconds']:
-            jdelta = time_value/86400. - self.tzoffset*60
+            jdelta = time_value/86400. - self.tzoffset/1440.
         elif self.units in ['minute','minutes']:
-            jdelta = time_value/1440. - self.tzoffset
+            jdelta = time_value/1440. - self.tzoffset/1440.
         elif self.units in ['hours','hours']:
-            jdelta = time_value/24. - self.tzoffset/60.
+            jdelta = time_value/24. - self.tzoffset/1440.
         elif self.units in ['day','days']:
             jdelta = time_value - self.tzoffset/1440.
         jd = self._jd0 + jdelta
