@@ -446,9 +446,7 @@ def _dateparse(timestr):
     # parse the date string.
     n = timestr.find('since')+6
     year,month,day,hour,minute,second,utc_offset = _parse_date(timestr[n:])
-    if utc_offset:
-        raise ValueError("time zone offset not allowed")
-    return units, datetime(year, month, day, hour, minute, second)
+    return units, utc_offset, datetime(year, month, day, hour, minute, second)
 
 class utime:
     """
@@ -589,7 +587,8 @@ units to datetime objects.
             self.calendar = calendar
         else:
             raise ValueError, "calendar must be one of %s, got '%s'" % (str(_calendars),calendar)
-        units, self.origin = _dateparse(unit_string)
+        units, tzoffset, self.origin = _dateparse(unit_string)
+        self.tzoffset = tzoffset # time zone offset in minutes
         self.units = units
         self.unit_string = unit_string
         if self.calendar in ['noleap','365_day'] and self.origin.month == 2 and self.origin.day == 29:
@@ -609,6 +608,10 @@ units to datetime objects.
         """
 Returns C{time_value} in units described by L{unit_string}, using
 the specified L{calendar}, given a 'datetime-like' object.
+
+The datetime object must represent UTC with no time-zone offset.
+If there is a time-zone offset implied by L{unit_string}, it will
+be applied to the returned numeric values.
 
 Resolution is 1 second.
 
@@ -654,12 +657,15 @@ Returns a scalar if input is a scalar, else returns a numpy array.
                 jdelta = [_360DayFromDate(d)-self._jd0 for d in date.flat]
         if not isscalar:
             jdelta = numpy.array(jdelta)
+        # convert to desired units, add time zone offset.
         if self.units in ['second','seconds']:
-            jdelta = jdelta*86400.
+            jdelta = jdelta*86400. + self.tzoffset*60.
         elif self.units in ['minute','minutes']:
-            jdelta = jdelta*1440.
-        elif self.units in ['hours','hours']:
-            jdelta = jdelta*24.
+            jdelta = jdelta*1440. + self.tzoffset
+        elif self.units in ['hour','hours']:
+            jdelta = jdelta*24. + self.tzoffset/60.
+        elif self.units in ['day','days']:
+            jdelta = jdelta + self.tzoffset/1440.
         if isscalar:
             return jdelta
         else:
@@ -669,6 +675,9 @@ Returns a scalar if input is a scalar, else returns a numpy array.
         """
 Return a 'datetime-like' object given a C{time_value} in units
 described by L{unit_string}, using L{calendar}.
+
+dates are in UTC with no offset, even if L{unit_string} contains
+a time zone offset from UTC.
 
 Resolution is 1 second.
 
@@ -692,14 +701,15 @@ world calendar.
         if not isscalar:
             time_value = numpy.array(time_value)
             shape = time_value.shape
+        # convert to desired units, remove time zone offset.
         if self.units in ['second','seconds']:
-            jdelta = time_value/86400.
+            jdelta = time_value/86400. - self.tzoffset*60
         elif self.units in ['minute','minutes']:
-            jdelta = time_value/1440.
+            jdelta = time_value/1440. - self.tzoffset
         elif self.units in ['hours','hours']:
-            jdelta = time_value/24.
+            jdelta = time_value/24. - self.tzoffset/60.
         elif self.units in ['day','days']:
-            jdelta = time_value
+            jdelta = time_value - self.tzoffset/1440.
         jd = self._jd0 + jdelta
         if self.calendar in ['julian','standard','gregorian','proleptic_gregorian']:
             if not isscalar:

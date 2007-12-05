@@ -2866,7 +2866,9 @@ def num2date(times,units,calendar='standard'):
     """
     Return datetime objects given numeric time values. The units
     of the numeric time values are described by the units argument
-    and the calendar keyword. The time zone is assumed to be UTC.
+    and the calendar keyword. The datetime objects represent 
+    UTC with no time-zone offset, even if the specified 
+    units contain a time-zone offset.
 
     Like the matplotlib num2date function, except that it allows
     for different units and calendars.  Behaves the same if
@@ -2907,7 +2909,10 @@ def date2num(dates,units,calendar='standard'):
     """
     Return numeric time values given datetime objects. The units
     of the numeric time values are described by the units argument
-    and the calendar keyword. The time zone is assumed to UTC.
+    and the calendar keyword. The datetime objects must
+    be in UTC with no time-zone offset.  If there is a 
+    time-zone offset in units, it will be applied to the
+    returned numeric values.
 
     Like the matplotlib date2num function, except that it allows
     for different units and calendars.  Behaves the same if
