@@ -2866,13 +2866,13 @@ def num2date(times,units,calendar='standard'):
     """
     Return datetime objects given numeric time values. The units
     of the numeric time values are described by the units argument
-    and the calendar keyword. The datetime objects represent 
+    and the calendar keyword. The returned datetime objects represent 
     UTC with no time-zone offset, even if the specified 
     units contain a time-zone offset.
 
     Like the matplotlib num2date function, except that it allows
     for different units and calendars.  Behaves the same if
-    units = 'days since 0001-01-01 00:00:00' and 
+    units = 'days since 001-01-01 00:00:00' and 
     calendar = 'proleptic_gregorian'.
 
     Arguments:
@@ -2882,7 +2882,7 @@ def num2date(times,units,calendar='standard'):
     units - a string of the form '<time-units> since <reference time>'
      describing the time units. <time-units> can be days, hours, minutes
      or seconds.  <reference-time> is the time origin. A valid choice
-     would be units='hours since 0001-01-01 00:00:00'.
+     would be units='hours since 1800-01-01 00:00:00 -6:00'.
 
     calendar - describes the calendar used in the time calculations. 
      All the values currently defined in the CF metadata convention 
@@ -2900,7 +2900,9 @@ def num2date(times,units,calendar='standard'):
     objects which support some but not all the methods of 'real' python
     datetime objects.  This is because the python datetime module cannot
     the weird dates in some calendars (such as '360_day' and 'all_leap'
-    which don't exist in any real world calendar.
+    which don't exist in any real world calendar. The datetime instances
+    do not contain a time-zone offset, even if the specified units
+    contains one.
     """
     cdftime = netcdftime.utime(units,calendar=calendar)
     return cdftime.num2date(times)
@@ -2922,11 +2924,12 @@ def date2num(dates,units,calendar='standard'):
     Arguments:
 
     dates - A datetime object or a sequence of datetime objects.
+     The datetime objects should not include a time-zone offset.
 
     units - a string of the form '<time-units> since <reference time>'
      describing the time units. <time-units> can be days, hours, minutes
      or seconds.  <reference-time> is the time origin. A valid choice
-     would be units='hours since 0001-01-01 00:00:00'.
+     would be units='hours since 1800-01-01 00:00:00 -6:00'.
 
     calendar - describes the calendar used in the time calculations. 
      All the values currently defined in the CF metadata convention 
