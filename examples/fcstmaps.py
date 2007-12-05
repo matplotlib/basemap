@@ -37,14 +37,15 @@ longitudes = data.variables['lon']
 fcsttimes = data.variables['time']
 times = fcsttimes[0:6] # first 6 forecast times.
 ntimes = len(times)
-# put forecast times in YYYYMMDDHH format.
-verifdates = []
-fcsthrs=[]
-for time in times:
-    print time, times[0]
-    fcsthrs.append(int((time-times[0])*24))
-    fdate = num2date(time,fcsttimes.units)
-    verifdates.append(fdate.strftime('%Y%m%d%H'))
+# convert times for datetime instances.
+fdates = num2date(times,fcsttimes.units)
+# make a list of YYYYMMDDHH strings.
+verifdates = [fdate.strftime('%Y%m%d%H') for fdate in fdates]
+# convert times to forecast hours.
+fcsthrs = []
+for fdate in fdates:
+    fdiff = fdate-fdates[0]
+    fcsthrs.append(fdiff.days*24. + fdiff.seconds/3600.)
 print fcsthrs
 print verifdates
 lats = latitudes[:]
@@ -79,7 +80,7 @@ for nt,fcsthr in enumerate(fcsthrs):
     m.drawparallels(numpy.arange(-80,81,20))
     m.drawmeridians(numpy.arange(0,360,20))
     # panel title
-    title(repr(fcsthr)+'-h forecast valid '+verifdates[nt],fontsize=9)
+    title('%d-h forecast valid '%fcsthr+verifdates[nt],fontsize=9)
 # figure title
 figtext(0.5,0.95,u"2-m temp (\N{DEGREE SIGN}C) forecasts from %s"%verifdates[0],
         horizontalalignment='center',fontsize=14)
