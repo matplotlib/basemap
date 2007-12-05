@@ -168,7 +168,9 @@ target_vendor = @target_vendor@
 SUBDIRS = \
 	geom \
 	headers \
-	capi 
+	bigtest \
+	capi \
+	test
 
 EXTRA_DIST = Makefile.vc
 all: all-recursive
