@@ -16,7 +16,7 @@ num2date: convert from a numeric time value to a datetime object.
 
 date2num: convert from a datetime object to a numeric time value.
 """
-from matplotlib import rcParams
+from matplotlib import rcParams, is_interactive, _pylab_helpers
 from matplotlib import __version__ as _matplotlib_version
 # check to make sure matplotlib is not too old.
 _mpl_required_version = '0.90'
@@ -2112,6 +2112,10 @@ class Basemap(object):
         if self.noticks:
             ax.set_xticks([])
             ax.set_yticks([])
+        # force draw if in interactive mode.
+        if is_interactive():
+            figManager = _pylab_helpers.Gcf.get_active()
+            figManager.canvas.draw()
 
     def scatter(self, *args, **kwargs):
         """
