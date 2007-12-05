@@ -27,10 +27,8 @@ ax = fig.add_subplot(211)
 CS = mnh.contour(xnh,ynh,hgt,15,linewidths=0.5,colors='k')
 CS = mnh.contourf(xnh,ynh,hgt,15,cmap=P.cm.Spectral)
 # colorbar on bottom.
-try: 
-    l,b,w,h = ax.get_position()
-except:
-    l,b,w,h = (ax.get_position()).bounds
+pos = ax.get_position()
+l, b, w, h = getattr(pos, 'bounds', pos)
 cax = P.axes([l, b-0.05, w, 0.025]) # setup colorbar axes
 P.colorbar(cax=cax, orientation='horizontal',ticks=CS.levels[0::4]) # draw colorbar
 P.axes(ax)  # make the original axes current again
@@ -52,11 +50,8 @@ ax = fig.add_subplot(212)
 CS = msh.contour(xsh,ysh,hgt,15,linewidths=0.5,colors='k')
 CS = msh.contourf(xsh,ysh,hgt,15,cmap=P.cm.Spectral)
 # colorbar on bottom.
-ax.apply_aspect()
-try: 
-    l,b,w,h = ax.get_position()
-except:
-    l,b,w,h = (ax.get_position()).bounds
+pos = ax.get_position()
+l, b, w, h = getattr(pos, 'bounds', pos)
 cax = P.axes([l, b-0.05, w, 0.025]) # setup colorbar axes
 P.colorbar(cax=cax,orientation='horizontal',ticks=MultipleLocator(320)) # draw colorbar
 P.axes(ax)  # make the original axes current again
@@ -78,10 +73,8 @@ ax = fig.add_subplot(121)
 CS = mnh.contour(xnh,ynh,hgt,15,linewidths=0.5,colors='k')
 CS = mnh.contourf(xnh,ynh,hgt,15,cmap=P.cm.RdBu)
 # colorbar on right
-try: 
-    l,b,w,h = ax.get_position()
-except:
-    l,b,w,h = (ax.get_position()).bounds
+pos = ax.get_position()
+l, b, w, h = getattr(pos, 'bounds', pos)
 cax = P.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
 P.colorbar(cax=cax, ticks=MultipleLocator(160), format='%4i') # draw colorbar
 P.axes(ax)  # make the original axes current again
@@ -95,10 +88,8 @@ ax = fig.add_subplot(122)
 CS = msh.contour(xsh,ysh,hgt,15,linewidths=0.5,colors='k')
 CS = msh.contourf(xsh,ysh,hgt,15,cmap=P.cm.RdBu)
 # colorbar on right.
-try: 
-    l,b,w,h = ax.get_position()
-except:
-    l,b,w,h = (ax.get_position()).bounds
+pos = ax.get_position()
+l, b, w, h = getattr(pos, 'bounds', pos)
 cax = P.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
 P.colorbar(cax=cax, ticks=MultipleLocator(160), format='%4i') # draw colorbar
 P.axes(ax)  # make the original axes current again

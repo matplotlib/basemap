@@ -8,33 +8,7 @@ import numpy
 import pylab
 from numpy import ma
 import datetime, sys, time, subprocess
-from matplotlib.toolkits.basemap import Basemap, shiftgrid, NetCDFFile
-
-hrsgregstart = 13865688 # hrs from 00010101 to 15821015 in Julian calendar.
-# times in many datasets use mixed Gregorian/Julian calendar, datetime 
-# module uses a proleptic Gregorian calendar. So, I use datetime to compute
-# hours since start of Greg. calendar (15821015) and add this constant to
-# get hours since 1-Jan-0001 in the mixed Gregorian/Julian calendar.
-gregstart = datetime.datetime(1582,10,15) # datetime.datetime instance
-
-def dateto_hrs_since_day1CE(curdate):
-    """given datetime.datetime instance, compute hours since 1-Jan-0001"""
-    if curdate < gregstart:
-        msg = 'date must be after start of gregorian calendar (15821015)!'
-        raise ValueError, msg
-    difftime = curdate-gregstart
-    hrsdiff = 24*difftime.days + difftime.seconds/3600
-    return hrsdiff+hrsgregstart
-
-def hrs_since_day1CE_todate(hrs):
-    """return datetime.datetime instance given hours since 1-Jan-0001"""
-    if hrs < 0.0:
-        msg = "hrs must be positive!"
-        raise ValueError, msg
-    delta = datetime.timedelta(hours=1)
-    hrs_sincegreg = hrs - hrsgregstart
-    curdate = gregstart + hrs_sincegreg*delta
-    return curdate
+from matplotlib.toolkits.basemap import Basemap, shiftgrid, NetCDFFile, num2date
 
 # times for March 1993 'storm of the century'
 YYYYMMDDHH1 = '1993031000'
@@ -65,13 +39,11 @@ print datau.variables.keys()
 print datav.variables.keys()
 latitudes = data.variables['lat'][:]
 longitudes = data.variables['lon'][:].tolist()
-times = data.variables['time'][:]
+times = data.variables['time']
+# convert numeric time values to datetime objects.
+fdates = num2date(times[:],times.units)
 # put times in YYYYMMDDHH format.
-dates=[]
-for t in times:
-    t = t*24
-    fdate = hrs_since_day1CE_todate(int(t))
-    dates.append(fdate.strftime('%Y%m%d%H'))
+dates = [fdate.strftime('%Y%m%d%H') for fdate in fdates]
 if YYYYMMDDHH1 not in dates or YYYYMMDDHH2 not in dates:
     raise ValueError, 'date1 or date2 not a valid date (must be in form YYYYMMDDHH, where HH is 00,06,12 or 18)'
 # find indices bounding desired times.
@@ -126,10 +98,8 @@ parallels = numpy.arange(-80.,90,20.)
 meridians = numpy.arange(0.,360.,20.)
 # number of repeated frames at beginning and end is n1.
 nframe = 0; n1 = 10
-try: 
-    l,b,w,h = ax.get_position()
-except:
-    l,b,w,h = (ax.get_position()).bounds
+pos = ax.get_position()
+l, b, w, h = getattr(pos, 'bounds', pos)
 # loop over times, make contour plots, draw coastlines, 
 # parallels, meridians and title.
 for nt,date in enumerate(datelabels[1:]):
