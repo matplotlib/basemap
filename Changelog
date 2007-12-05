@@ -1,4 +1,7 @@
 version 0.9.9 (not yet released)
+           * now automatically draws figure if running in
+            interactive mode (so draw() does not need
+            to be called explicitly in ipython).
            * added num2date and date2num functions, which use 
              included netcdftime module.
 version 0.9.8 (svn revision 4526)
