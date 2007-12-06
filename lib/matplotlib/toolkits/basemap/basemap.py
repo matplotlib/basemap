@@ -1317,29 +1317,39 @@ class Basemap(object):
     def readshapefile(self,shapefile,name,drawbounds=True,zorder=None,
                       linewidth=0.5,color='k',antialiased=1,ax=None):
         """
-        read in shape file, draw boundaries on map.
+        read in shape file, optionally draw boundaries on map.
 
         Restrictions:
          - Assumes shapes are 2D
-         - vertices must be in geographic (lat/lon) coordinates.
+         - works for Point, MultiPoint, Polyline and Polygon shapes.
+         - vertices/points must be in geographic (lat/lon) coordinates.
+
+        Mandatory Arguments:
 
         shapefile - path to shapefile components.  Example:
          shapefile='/home/jeff/esri/world_borders' assumes that
          world_borders.shp, world_borders.shx and world_borders.dbf
          live in /home/jeff/esri.
         name - name for Basemap attribute to hold the shapefile
-         vertices in native map projection coordinates.
+         vertices or points in native map projection coordinates.
          Class attribute name+'_info' is a list of dictionaries, one
          for each shape, containing attributes of each shape from dbf file.
-         For example, if name='counties', self.counties
-         will be a list of vertices for each shape in map projection
+         For example, if name='counties', self.counties will be
+         a list of x,y vertices for each shape in map projection
          coordinates and self.counties_info will be a list of dictionaries
-         with shape attributes. Rings in individual shapes are split out
-         into separate polygons.  Additional keys
+         with shape attributes. Rings in individual Polygon shapes are split 
+         out into separate polygons, and. additional keys
          'RINGNUM' and 'SHAPENUM' are added to shape attribute dictionary.
-        drawbounds - draw boundaries of shapes (default True)
-        zorder = shape boundary zorder (if not specified, default for LineCollection
-        is used).
+
+        Optional Keyword Arguments (only relevant for Polyline
+         and Polygon shape types, for Point and MultiPoint shapes they
+         are ignored):
+
+        drawbounds - draw boundaries of shapes (default True).  Only
+         relevant for Polyline and Polygon shape types, for Point
+         and MultiPoint types no drawing is done.
+        zorder = shape boundary zorder (if not specified, 
+          default for LineCollection is used).
         linewidth - shape boundary line width (default 0.5)
         color - shape boundary line color (default black)
         antialiased - antialiasing switch for shape boundaries (default True).
@@ -1365,52 +1375,64 @@ class Basemap(object):
         info = shp.info()
         if info[1] not in [1,3,5,8]:
             raise ValueError, 'readshapefile can only handle 2D shape types'
-        shpsegs = []
-        shpinfo = []
-        for npoly in range(shp.info()[0]):
-            shp_object = shp.read_object(npoly)
-            verts = shp_object.vertices()
-            rings = len(verts)
-            for ring in range(rings):
-                lons, lats = zip(*verts[ring])
-                if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
-                    msg=dedent("""
-                        shapefile must have lat/lon vertices  - it looks like this one has vertices
-                        in map projection coordinates. You can convert the shapefile to geographic
-                        coordinates using the shpproj utility from the shapelib tools
-                        (http://shapelib.maptools.org/shapelib-tools.html)""")
-                    raise ValueError,msg
-                x, y = self(lons, lats)
-                shpsegs.append(zip(x,y))
-                if ring == 0:
-                    shapedict = dbf.read_record(npoly)
-                # add information about ring number to dictionary.
-                shapedict['RINGNUM'] = ring+1
-                shapedict['SHAPENUM'] = npoly+1
-                shpinfo.append(shapedict)
-        # draw shape boundaries using LineCollection.
-        if drawbounds:
-            # get current axes instance (if none specified).
-            if ax is None and self.ax is None:
-                try:
-                    ax = pylab.gca()
-                except:
-                    import pylab
-                    ax = pylab.gca()
-            elif ax is None and self.ax is not None:
-                ax = self.ax
-            # make LineCollections for each polygon.
-            lines = LineCollection(shpsegs,antialiaseds=(1,))
-            lines.set_color(color)
-            lines.set_linewidth(linewidth)
-            if zorder is not None:
-                lines.set_zorder(zorder)
-            ax.add_collection(lines)
-            # set axes limits to fit map region.
-            self.set_axes_limits(ax=ax)
-        # save segments/polygons and shape attribute dicts as class attributes.
-        self.__dict__[name]=shpsegs
-        self.__dict__[name+'_info']=shpinfo
+        msg=dedent("""
+        shapefile must have lat/lon vertices  - it looks like this one has vertices
+        in map projection coordinates. You can convert the shapefile to geographic
+        coordinates using the shpproj utility from the shapelib tools
+        (http://shapelib.maptools.org/shapelib-tools.html)""")
+        if info[1] in [1,8]: # a Point or Multi-Point file.
+            coords = [shp.read_object(i).vertices()[0]
+                      for i in range(shp.info()[0])]
+            attributes = [dbf.read_record(i)
+                          for i in range(shp.info()[0])]
+            lons, lats = zip(*coords)
+            if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
+                raise ValueError,msg
+            x,y = self(lons, lats)
+            self.__dict__[name]=zip(x,y)
+            self.__dict__[name+'_info']=attributes
+        else: # a Polyline or Polygon file.
+            shpsegs = []
+            shpinfo = []
+            for npoly in range(shp.info()[0]):
+                shp_object = shp.read_object(npoly)
+                verts = shp_object.vertices()
+                rings = len(verts)
+                for ring in range(rings):
+                    lons, lats = zip(*verts[ring])
+                    if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
+                        raise ValueError,msg
+                    x, y = self(lons, lats)
+                    shpsegs.append(zip(x,y))
+                    if ring == 0:
+                        shapedict = dbf.read_record(npoly)
+                    # add information about ring number to dictionary.
+                    shapedict['RINGNUM'] = ring+1
+                    shapedict['SHAPENUM'] = npoly+1
+                    shpinfo.append(shapedict)
+            # draw shape boundaries using LineCollection.
+            if drawbounds:
+                # get current axes instance (if none specified).
+                if ax is None and self.ax is None:
+                    try:
+                        ax = pylab.gca()
+                    except:
+                        import pylab
+                        ax = pylab.gca()
+                elif ax is None and self.ax is not None:
+                    ax = self.ax
+                # make LineCollections for each polygon.
+                lines = LineCollection(shpsegs,antialiaseds=(1,))
+                lines.set_color(color)
+                lines.set_linewidth(linewidth)
+                if zorder is not None:
+                    lines.set_zorder(zorder)
+                ax.add_collection(lines)
+                # set axes limits to fit map region.
+                self.set_axes_limits(ax=ax)
+            # save segments/polygons and shape attribute dicts as class attributes.
+            self.__dict__[name]=shpsegs
+            self.__dict__[name+'_info']=shpinfo
         shp.close()
         dbf.close()
         return info
