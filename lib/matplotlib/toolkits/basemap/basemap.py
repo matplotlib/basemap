@@ -1380,16 +1380,23 @@ class Basemap(object):
         in map projection coordinates. You can convert the shapefile to geographic
         coordinates using the shpproj utility from the shapelib tools
         (http://shapelib.maptools.org/shapelib-tools.html)""")
-        if info[1] in [1,8]: # a Point or Multi-Point file.
-            coords = [shp.read_object(i).vertices()[0]
-                      for i in range(shp.info()[0])]
-            attributes = [dbf.read_record(i)
-                          for i in range(shp.info()[0])]
-            lons, lats = zip(*coords)
-            if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
-                raise ValueError,msg
-            x,y = self(lons, lats)
-            self.__dict__[name]=zip(x,y)
+        if info[1] in [1,8]: # a Point or MultiPoint file.
+            coords = []
+            nelements = shp.info()[0]
+            for nelement in range(nelements):
+                shp_object = shp.read_object(nelement)
+                verts = shp_object.vertices()
+                lons, lats = zip(*verts)
+                if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
+                    raise ValueError,msg
+                if len(verts) > 1: # MultiPoint
+                    x,y = self(lons, lats)
+                    coords.append(zip(x,y))
+                else: # single Point
+                    x,y = self(lons[0], lats[0])
+                    coords.append((x,y))
+            attributes = [dbf.read_record(i) for i in range(nelements)]
+            self.__dict__[name]=coords
             self.__dict__[name+'_info']=attributes
         else: # a Polyline or Polygon file.
             shpsegs = []
