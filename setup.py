@@ -35,35 +35,44 @@ def check_geosversion(GEOS_dir):
     """check geos C-API header file (geos_c.h)"""
     try:
         f = open(os.path.join(GEOS_dir,'include/geos_c.h'))
-    except:
-        raise SystemExit("""
-Cannot find geos header file (geos_c.h) in %s/include.  Please check
-your geos installation and make sure the GEOS_DIR environment
-variable is set correctly.""" %GEOS_dir)
+    except IOError:
+        return None
     geos_version = None
     for line in f:
         if line.startswith('#define GEOS_VERSION'):
             geos_version = line.split()[2]
     return geos_version
 
-# get location of geos lib from environment variable.
-GEOS_dir = os.environ.get('GEOS_DIR')
+# get location of geos lib from environment variable if it is set.
+if os.environ.has_key('GEOS_DIR'):
+    GEOS_dir = os.environ.get('GEOS_DIR')
+else:
+# set GEOS_dir manually here if automatic detection fails.
+    GEOS_dir = None
+
 if GEOS_dir is None:
-    raise SystemExit("""
-please specify the location of geos library and headers with
-the GEOS_DIR environment variable. For example if libgeos_c
-is installed in /usr/local/lib, and geos_c.h is installed in
-/usr/local/include, set GEOS_DIR to /usr/local.""")
-# check that header geos_c.h is in GEOS_dir/include,
-# and that the version number in the header file is 2.2.3.
-geos_version = check_geosversion(GEOS_dir)
+    # if GEOS_dir not set, check a few standard locations.
+    GEOS_dirs = ['/usr/local','/sw','/opt',os.path.expanduser('~')]
+    for direc in GEOS_dirs:
+        geos_version = check_geosversion(direc)
+        print 'checking for GEOS lib in %s ....' % direc
+        if geos_version != '"2.2.3"':
+            continue
+        else:
+            print 'GEOS lib found in %s' % direc
+            GEOS_dir = direc
+            break
+else:
+    geos_version = check_geosversion(GEOS_dir)
 if geos_version != '"2.2.3"':
     raise SystemExit("""
-geos library version 2.2.3 is required, you have version %s
-installed in %s. Please change the GEOS_DIR environment variable
-to point to the location where geos 2.2.3 is installed, or
-install 2.2.3 from the source code included with basemap
-(see the README for details).""" % (geos_version, GEOS_dir))
+Can't find geos library version 2.2.3. Please set the
+environment variable GEOS_DIR to point to the location
+where geos 2.2.3 is installed (for example, if geos_c.h
+is in /usr/local/include, and libgeos_c is in /usr/local/lib,
+set GEOS_DIR to /usr/local), or edit the setup.py script
+manually and set the variable GEOS_dir (right after the line
+that says "set GEOS_dir manually here".""")
 else:
     geos_include_dirs=[os.path.join(GEOS_dir,'include'),numpy.get_include()]
     geos_library_dirs=[os.path.join(GEOS_dir,'lib')]
