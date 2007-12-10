@@ -826,7 +826,7 @@ class Basemap(object):
                             try:
                                 geoms = poly.intersection(boundarypolyll)
                             except:
-                                pass
+                                continue
                             # iterate over geometries in intersection.
                             for psub in geoms:
                                 # only coastlines are polygons,
@@ -880,7 +880,7 @@ class Basemap(object):
                         try:
                             geoms = poly.intersection(boundarypolyxy)
                         except:
-                            pass
+                            continue
                         # iterate over geometries in intersection.
                         for psub in geoms:
                             b = psub.boundary
