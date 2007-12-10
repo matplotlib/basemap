@@ -30,6 +30,7 @@ include examples/huralll020.shp
 include examples/huralll020.shx
 include examples/hurrtracks.py
 include examples/fcover.dat
+include examples/plotcities.py
 include examples/plotmap.py
 include examples/plotmap_oo.py
 include examples/plotmap_masked.py
@@ -54,6 +55,9 @@ include examples/setwh.py
 include examples/ccsm_popgrid.py
 include examples/ccsm_popgrid.nc
 include examples/plot_tissot.py
+include examples/cities.dbf
+include examples/cities.shp
+include examples/cities.shx
 include examples/tissot.dbf
 include examples/tissot.shp
 include examples/tissot.shx
