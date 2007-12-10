@@ -1,4 +1,9 @@
 version 0.9.9 (not yet released)
+           * setup.py now looks for GEOS library in a few standard
+             places (/usr/local, /opt, $HOME, /sw) if the GEOS_DIR
+             environment variable not set.  This is a workaround for a
+             new Leopard 'feature' (sudo does not inherit enviroment
+             variables).
            * added support for reading Point and MultiPoint shapes
              from ESRI shapefiles.
            * now automatically draws figure if running in
