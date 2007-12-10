@@ -2912,9 +2912,9 @@ def num2date(times,units,calendar='standard'):
 
     times - numeric time values. Maximum resolution is 1 second.
 
-    units - a string of the form '<time-units> since <reference time>'
-     describing the time units. <time-units> can be days, hours, minutes
-     or seconds.  <reference-time> is the time origin. A valid choice
+    units - a string of the form '<time units> since <reference time>'
+     describing the time units. <time units> can be days, hours, minutes
+     or seconds.  <reference time> is the time origin.  A valid choice
      would be units='hours since 1800-01-01 00:00:00 -6:00'.
 
     calendar - describes the calendar used in the time calculations. 
@@ -2922,7 +2922,8 @@ def num2date(times,units,calendar='standard'):
      (http://cf-pcmdi.llnl.gov/documents/cf-conventions/) are supported.
      Valid calendars 'standard', 'gregorian', 'proleptic_gregorian'
      'noleap', '365_day', '360_day', 'julian', 'all_leap', '366_day'.
-     Default is 'standard', which is a mixed Julian/Gregorian calendar.
+     Default is 'standard'/'gregorian', which is a mixed 
+     Julian/Gregorian calendar.
 
     Returns a datetime instance, or an array of datetime instances.
 
@@ -2931,11 +2932,8 @@ def num2date(times,units,calendar='standard'):
     calendar='proleptic_gregorian', or calendar = 'standard' or 'gregorian'
     and the date is after 1582-10-15). Otherwise, they are 'phony' datetime 
     objects which support some but not all the methods of 'real' python
-    datetime objects.  This is because the python datetime module cannot
-    the weird dates in some calendars (such as '360_day' and 'all_leap'
-    which don't exist in any real world calendar. The datetime instances
-    do not contain a time-zone offset, even if the specified units
-    contains one.
+    datetime objects.  The datetime instances do not contain
+    a time-zone offset, even if the specified units contains one.
     """
     cdftime = netcdftime.utime(units,calendar=calendar)
     return cdftime.num2date(times)
@@ -2959,9 +2957,9 @@ def date2num(dates,units,calendar='standard'):
     dates - A datetime object or a sequence of datetime objects.
      The datetime objects should not include a time-zone offset.
 
-    units - a string of the form '<time-units> since <reference time>'
-     describing the time units. <time-units> can be days, hours, minutes
-     or seconds.  <reference-time> is the time origin. A valid choice
+    units - a string of the form '<time units> since <reference time>'
+     describing the time units. <time units> can be days, hours, minutes
+     or seconds.  <reference time> is the time origin.  A valid choice
      would be units='hours since 1800-01-01 00:00:00 -6:00'.
 
     calendar - describes the calendar used in the time calculations. 
@@ -2969,7 +2967,8 @@ def date2num(dates,units,calendar='standard'):
      (http://cf-pcmdi.llnl.gov/documents/cf-conventions/) are supported.
      Valid calendars 'standard', 'gregorian', 'proleptic_gregorian'
      'noleap', '365_day', '360_day', 'julian', 'all_leap', '366_day'.
-     Default is 'standard', which is a mixed Julian/Gregorian calendar.
+     Default is 'standard'/'gregorian', which is a mixed 
+     Julian/Gregorian calendar.
 
     Returns a numeric time value, or an array of numeric time values.
 
