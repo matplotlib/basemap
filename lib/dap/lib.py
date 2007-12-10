@@ -8,7 +8,7 @@ These functions are mostly related to encoding data according to the DAP.
 from urllib import quote as _quote
 
 __author__ = 'Roberto De Almeida <rob@pydap.org>'
-__version__ = (2,2,6,1)  # module version
+__version__ = (2,2,6,2)  # module version
 __dap__ = (2,0)        # protocol version
 
 # Constants that used to live in __init__.py but had to be moved

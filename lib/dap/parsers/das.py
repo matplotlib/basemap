@@ -222,7 +222,7 @@ class DASParser(BaseParser):
 
             if type_.lower() in ['string', 'url']:
                 value = expr_eval(repr(value))
-                value = value[1:-1]  # strip ""
+                value = value.strip('"')
             elif type_.lower() == 'alias':
                 # Support for Alias is not documented in the DAP spec. I based
                 # this on the Java documentation from the OPeNDAP website at:
@@ -241,24 +241,15 @@ class DASParser(BaseParser):
                         break
                     else:
                         value = value.attributes
-            else:
-                dtype = {'float64': 'd',
-                         'float32': 'f',
-                         'int32'  : 'l',
-                         'int16'  : 'h',
-                         'uint32' : 'L',
-                         'uint16' : 'H',
-                         'byte'   : 'B',
-                        }[type_.lower()]
+            elif type_.lower() == 'float32':
                 # Convert to right precision; otherwise floats 
                 # are converted to Float64 automatically by 
                 # Python.
-                # B. Granger 5/17/07 - This line is giving a DeprecationWarning
-                # when dtype = 'l'.  It looks like it doesn't like getting a float
-                # when a long int is expected.  Because this is in a critical
-                # code path that I don't know well, and it seems to work OK for now
-                # I didn't change anything.  Should be looked into though.
-                value = array.array(dtype, [float(value)])[0]
+                value = array.array('f', [float(value)])[0]
+            elif type_.lower() == 'float64':
+                value = array.array('d', [float(value)])[0]
+            else:
+                value = int(value)
             values.append(value)
             
             if self._check(','): self._consume(',')
