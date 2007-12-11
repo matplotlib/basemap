@@ -1,4 +1,7 @@
 version 0.9.9 (not yet released)
+           * fixed exception handling bug in code that looks for
+             intersection between boundary feature and map projection
+             region.
            * setup.py now looks for GEOS library in a few standard
              places (/usr/local, /opt, $HOME, /sw) if the GEOS_DIR
              environment variable not set.  This is a workaround for a
