@@ -13,6 +13,9 @@ contour_demo.py demonstrates the use of filled contours with map projections.
 customticks.py shows how to create custom tick labels for a cylindrical
 projection.
 
+plotcities.py shows how to read and plot data from a shapefile containing
+Point data.
+
 plotmap.py is the example on the matplotlib 'screenshots' page (included
 in test.py) which shows the ETOPO topography as an image on a Lambert
 Conformal projection (using imshow).
@@ -51,6 +54,9 @@ by Scott Sinclair, requires PIL).
 
 fcstmaps.py is a sample multi-panel plot that accesses
 data over http using the dap module. An internet connection is required.
+
+plotsst.py also uses dap client to access the data, and also illustrates
+how the NetCDFFile function deals with missing values.
 
 wiki_example.py is the example from the MatplotlibCookbook scipy wiki page
 (http://www.scipy.org/wikis/topical_software/MatplotlibCookbook/wikipage_view).
