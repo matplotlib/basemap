@@ -96,9 +96,11 @@ def NetCDFFile(file, maskandscale=True):
  
 def _maskandscale(var,datout):
     if hasattr(var, 'missing_value') and (datout == var.missing_value).any():
-        datout = ma.masked_array(datout, mask = datout == var.missing_value, fill_value=var.missing_value)
+        datout = ma.masked_array(datout,mask=datout==var.missing_value,
+                                 fill_value=var.missing_value)
     elif hasattr(var, '_FillValue') and (datout == var._FillValue).any():
-        datout = ma.masked_array(datout, mask = datout == var._FillValue, fill_value=var._FillValue)
+        datout = ma.masked_array(datout,mask=datout==var._FillValue,
+                                 fill_value=var._FillValue)
     try:
         datout = var.scale_factor*datout + var.add_offset
     except:
