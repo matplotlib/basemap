@@ -112,11 +112,20 @@ extensions = extensions + \
 
 # install dap and httplib2, if not already available.
 # only a subset of dap is installed (the client, not the server)
+__dapversion__ = None
 try:
-    from dap import client
+    from dap.lib import __version__ as __dapversion__
 except ImportError:
     packages = packages + ['dap','dap.util','dap.parsers']
     package_dirs['dap'] = os.path.join('lib','dap')
+# install dap client anyway if installed version is older than
+# version provided here.
+if __dapversion__ is not None:
+    __dapversion__ = [repr(v)+'.' for v in __dapversion__]
+    __dapversion__ = ''.join(__dapversion__)[:-1]
+    if __dapversion__ < '2.2.6.2':
+        packages = packages + ['dap','dap.util','dap.parsers']
+        package_dirs['dap'] = os.path.join('lib','dap')
 try:
     import httplib2
 except ImportError:
