@@ -16,13 +16,17 @@ num2date: convert from a numeric time value to a datetime object.
 
 date2num: convert from a datetime object to a numeric time value.
 """
-from matplotlib import rcParams, is_interactive, _pylab_helpers
 from matplotlib import __version__ as _matplotlib_version
+from matplotlib.cbook import is_scalar, dedent
 # check to make sure matplotlib is not too old.
 _mpl_required_version = '0.90'
 if _matplotlib_version < _mpl_required_version:
-    raise ImportError('your matplotlib is too old - basemap '
-    'requires version %s or higher'% _matplotlib_version)
+    msg = dedent("""
+    your matplotlib is too old - basemap requires version %s or 
+    higher, you have version %s""" % 
+    (_mpl_required_version,_matplotlib_version))
+    raise ImportError(msg)
+from matplotlib import rcParams, is_interactive, _pylab_helpers
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Ellipse, Circle, Polygon
 from matplotlib.lines import Line2D
@@ -30,7 +34,6 @@ import pyproj, sys, os, math, dbflib
 from proj import Proj
 import numpy as npy
 from numpy import linspace, squeeze, ma
-from matplotlib.cbook import is_scalar, dedent
 from shapelib import ShapeFile
 import _geos, pupynere, netcdftime
 
