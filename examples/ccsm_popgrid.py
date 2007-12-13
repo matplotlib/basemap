@@ -45,7 +45,7 @@ tlat = N.concatenate((tlat,tlat),1)
 temp = MA.concatenate((temp,temp),1)
 tlon = tlon-360.
 
-pl.figure(figsize=(8.5,11))
+pl.figure(figsize=(6,8))
 pl.subplot(2,1,1)
 # subplot 1 just shows POP grid cells.
 map = Basemap(projection='merc', lat_ts=20, llcrnrlon=-180, \
