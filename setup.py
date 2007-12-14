@@ -1,4 +1,5 @@
 import sys, glob, os
+from distutils.core import setup
 major, minor1, minor2, s, tmp = sys.version_info
 if major==2 and minor1<=3:
     # setuptools monkeypatches distutils.core.Distribution to support
@@ -132,16 +133,6 @@ except ImportError:
     packages = packages + ['httplib2']
     package_dirs['httlib2'] = os.path.join('lib','httplib2')
 
-if 'setuptools' in sys.modules:
-# Are we running with setuptools?
-# if so, need to specify all the packages in heirarchy
-    additional_params = {'namespace_packages' : ['matplotlib.toolkits']}    
-    packages.extend(['matplotlib', 'matplotlib.toolkits'])
-    setup = setuptools.setup
-else:
-    additional_params = {}
-    from distutils.core import setup
-
 # Specify all the required mpl data
 pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world']
 boundaryfiles = []
@@ -175,6 +166,5 @@ setup(
   packages          = packages,
   package_dir       = package_dirs,
   ext_modules       = extensions,
-  package_data = package_data,
-  **additional_params
+  package_data = package_data
   )
