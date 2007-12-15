@@ -82,9 +82,14 @@ the source code included with basemap by following these steps:
  > make; make install
 
 3) cd back to the top level basemap directory (basemap-X.Y.Z) and
-run the usual 'python setup.py install'.
+run the usual 'python setup.py install'. 
 
-4) if you want the full-resolution coastlines, download 
+4) To test, cd to the examples directory and run 'python simpletest.py'.
+On linux, if you get an import error (with a message about not
+finding libgeos.so) you may need to set the LD_LIBRARY_PATH environment
+to include $GEOS_DIR/lib.
+
+5) if you want the full-resolution coastlines, download 
 basemap-data-fullres-X.Y.Z.tar.gz (about 70 mb), untar
 it, cd into basemap-data-fullres-X.Y.Z and
 run 'python setup-data.py install'.
