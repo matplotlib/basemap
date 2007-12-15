@@ -1,13 +1,4 @@
 import sys, glob, os
-if 'setuptools' in sys.modules:
-# Are we running with setuptools?
-# if so, need to specify all the packages in heirarchy
-    additional_params = {'namespace_packages' : ['matplotlib.toolkits']}    
-    packages.extend(['matplotlib', 'matplotlib.toolkits'])
-    setup = setuptools.setup
-else:
-    additional_params = {}
-    from distutils.core import setup
 packages          = ['matplotlib.toolkits.basemap.data']
 package_dirs       = {'':'lib'}
 boundaryfiles = glob.glob("lib/matplotlib/toolkits/basemap/data/*_f.dat")
