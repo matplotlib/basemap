@@ -9,4 +9,7 @@ formats.
 For more information about the protocol, please check http://opendap.org.
 """
 
-__import__('pkg_resources').declare_namespace(__name__)
+#try:
+#    __import__('pkg_resources').declare_namespace(__name__)
+#except ImportError:
+#    pass # must not have setuptools
