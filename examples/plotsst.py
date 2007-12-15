@@ -3,7 +3,8 @@ import pylab, numpy
 # read in sea-surface temperature and ice data
 # can be a local file, a URL for a remote opendap dataset,
 # or (if PyNIO is installed) a GRIB or HDF file.
-ncfile = NetCDFFile('http://nomads.ncdc.noaa.gov:8085/thredds/dodsC/oisst/2007/AVHRR/sst4-navy-eot.20071213.nc')
+date = '20071214'
+ncfile = NetCDFFile('http://nomads.ncdc.noaa.gov:8085/thredds/dodsC/oisst/'+date[0:4]+'/AVHRR/sst4-navy-eot.'+date+'.nc')
 # read sst.  Will automatically create a masked array using
 # missing_value variable attribute.
 sst = ncfile.variables['sst'][:]
@@ -25,6 +26,7 @@ lats = numpy.array(lats,numpy.float64)
 # create Basemap instance for mollweide projection.
 # coastlines not used, so resolution set to None to skip
 # continent processing (this speeds things up a bit)
+#m = Basemap(projection='ortho',lon_0=-110,lat_0=20,resolution=None)
 m = Basemap(projection='moll',lon_0=lons.mean(),lat_0=0,resolution=None)
 # compute map projection coordinates of grid.
 x, y = m(*numpy.meshgrid(lons, lats))
@@ -40,5 +42,6 @@ m.drawparallels(numpy.arange(-90.,120.,30.))
 m.drawmeridians(numpy.arange(0.,420.,60.))
 # draw horizontal colorbar.
 pylab.colorbar(im1,orientation='horizontal')
-# display the plot.
+# display the plot with a title.
+pylab.title('SST and ICE analysis for %s'%date)
 pylab.show()
