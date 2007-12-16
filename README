@@ -87,12 +87,16 @@ run the usual 'python setup.py install'.
 4) To test, cd to the examples directory and run 'python simpletest.py'.
 On linux, if you get an import error (with a message about not
 finding libgeos.so) you may need to set the LD_LIBRARY_PATH environment
-to include $GEOS_DIR/lib.
+to include $GEOS_DIR/lib. To run all the examples (except those that
+have extra dependenices or require an internet connection), execute
+'python run_all.py'.
 
 5) if you want the full-resolution coastlines, download 
 basemap-data-fullres-X.Y.Z.tar.gz (about 70 mb), untar
 it, cd into basemap-data-fullres-X.Y.Z and
-run 'python setup-data.py install'.
+run 'python setup-data.py install'.  The fullres dataset does not
+change with every basemap release, so you may need to look back
+a couple of releases on the download page to find it.
 
 **Contact**
 
