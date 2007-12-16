@@ -66,7 +66,6 @@ include examples/show_colormaps.py
 include examples/plotprecip.py
 include examples/nws_precip_conus_20061222.nc
 include examples/README
-include lib/matplotlib/toolkits/__init__.py
 include lib/matplotlib/toolkits/basemap/__init__.py
 include lib/matplotlib/toolkits/basemap/basemap.py
 include lib/matplotlib/toolkits/basemap/proj.py
