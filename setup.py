@@ -1,5 +1,16 @@
 import sys, glob, os
 from distutils.core import setup
+major, minor1, minor2, s, tmp = sys.version_info
+if major==2 and minor1<=3:
+    # setuptools monkeypatches distutils.core.Distribution to support
+    # package_data
+    try: import setuptools
+    except ImportError:
+        raise SystemExit("""
+matplotlib requires setuptools for installation.  Please download
+http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
+you are doing a system wide install) to install the proper version of
+setuptools for your system""")
 from distutils.core import Extension
 from distutils.util import convert_path
 import numpy
