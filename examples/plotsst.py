@@ -1,10 +1,16 @@
 from matplotlib.toolkits.basemap import Basemap, NetCDFFile
-import pylab, numpy
+import pylab, numpy, sys
 # read in sea-surface temperature and ice data
 # can be a local file, a URL for a remote opendap dataset,
 # or (if PyNIO is installed) a GRIB or HDF file.
-date = '20071214'
-ncfile = NetCDFFile('http://nomads.ncdc.noaa.gov:8085/thredds/dodsC/oisst/'+date[0:4]+'/AVHRR/sst4-navy-eot.'+date+'.nc')
+if len(sys.argv) == 1:
+    date = '20071215'
+else:
+    date = sys.argv[1]
+if date[4] > '2005':
+    ncfile = NetCDFFile('http://nomads.ncdc.noaa.gov:8085/thredds/dodsC/oisst/'+date[0:4]+'/AVHRR/sst4-navy-eot.'+date+'.nc')
+else:
+    ncfile = NetCDFFile('http://nomads.ncdc.noaa.gov:8085/thredds/dodsC/oisst/'+date[0:4]+'/AVHRR/sst4-path-eot.'+date+'.nc')
 # read sst.  Will automatically create a masked array using
 # missing_value variable attribute.
 sst = ncfile.variables['sst'][:]
