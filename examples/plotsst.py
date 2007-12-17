@@ -7,7 +7,7 @@ if len(sys.argv) == 1:
     date = '20071215'
 else:
     date = sys.argv[1]
-if date[4] > '2005':
+if date[0:4] > '2005':
     ncfile = NetCDFFile('http://nomads.ncdc.noaa.gov:8085/thredds/dodsC/oisst/'+date[0:4]+'/AVHRR/sst4-navy-eot.'+date+'.nc')
 else:
     ncfile = NetCDFFile('http://nomads.ncdc.noaa.gov:8085/thredds/dodsC/oisst/'+date[0:4]+'/AVHRR/sst4-path-eot.'+date+'.nc')
