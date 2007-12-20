@@ -706,7 +706,7 @@ do not exist in any real world calendar.
             jdelta = time_value/86400. - self.tzoffset/1440.
         elif self.units in ['minute','minutes']:
             jdelta = time_value/1440. - self.tzoffset/1440.
-        elif self.units in ['hours','hours']:
+        elif self.units in ['hour','hours']:
             jdelta = time_value/24. - self.tzoffset/1440.
         elif self.units in ['day','days']:
             jdelta = time_value - self.tzoffset/1440.
@@ -764,8 +764,10 @@ def _parse_date(origin):
                             (?P<hour>\d{1,2})       #   hh or h
                             :                       #
                             (?P<min>\d{1,2})        #   mm or m
-                            :                       #
-                            (?P<sec>\d{1,2})        #   ss or s
+                            (?:
+                            \:
+                            (?P<sec>\d{1,2})        #   ss or s (optional)
+                            )?
                                                     #
                             (?:                     #   [optional decisecond]
                                 \.                  #       .
