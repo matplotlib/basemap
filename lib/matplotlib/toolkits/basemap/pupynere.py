@@ -31,7 +31,8 @@ import struct
 import itertools
 import mmap
 
-from numpy import ndarray, empty, array, ma, squeeze
+from numpy import ndarray, empty, array, ma, squeeze, zeros 
+import numpy
 
 from dap.client import open as open_remote
 from dap.dtypes import ArrayType, GridType, typemap
@@ -55,6 +56,19 @@ NC_VARIABLE  = '\x00\x00\x00\x0b'
 NC_ATTRIBUTE = '\x00\x00\x00\x0c'
 
 _typecodes = dict([[_v,_k] for _k,_v in typemap.items()])
+# default _FillValue for netcdf types (apply also to corresponding
+# DAP types).
+_default_fillvals = {'c':'\0',
+                     'S':"",
+                     'b':-127,
+                     'B':-127,
+                     'h':-32767,
+                     'H':65535,
+                     'i':-2147483647L,
+                     'L':4294967295L,
+                     'q':-2147483647L,
+                     'f':9.9692099683868690e+36,
+                     'd':9.9692099683868690e+36}
 
 def NetCDFFile(file, maskandscale=True):
     """NetCDF File reader.  API is the same as Scientific.IO.NetCDF.
@@ -95,12 +109,21 @@ def NetCDFFile(file, maskandscale=True):
         return f
  
 def _maskandscale(var,datout):
+    totalmask = zeros(datout.shape,numpy.bool)
+    fillval = None
     if hasattr(var, 'missing_value') and (datout == var.missing_value).any():
-        datout = ma.masked_array(datout,mask=datout==var.missing_value,
-                                 fill_value=var.missing_value)
-    elif hasattr(var, '_FillValue') and (datout == var._FillValue).any():
-        datout = ma.masked_array(datout,mask=datout==var._FillValue,
-                                 fill_value=var._FillValue)
+        fillval = var.missing_value
+        totalmask = totalmask + datout==fillval
+    if hasattr(var, '_FillValue') and (datout == var._FillValue).any():
+        if fillval is None:
+            fillval = var._FillValue
+        totalmask = totalmask + datout==var._FillValue
+    elif (datout == _default_fillvals[var.typecode()]).any():
+        if fillval is None:
+            fillval = _default_fillvals[var.typecode()]
+        totalmask = totalmask + datout==_default_fillvals[var.dtype]
+    if fillval is not None:
+        datout = ma.masked_array(datout,mask=totalmask,fill_value=fillval)
     try:
         datout = var.scale_factor*datout + var.add_offset
     except:
