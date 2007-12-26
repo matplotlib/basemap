@@ -1,4 +1,5 @@
 version 0.9.9 (not yet released)
+           * removed hidden dependency on setuptools (in dap module).
            * fixed exception handling bug in code that looks for
              intersection between boundary feature and map projection
              region.
