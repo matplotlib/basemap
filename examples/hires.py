@@ -42,5 +42,5 @@ m.drawparallels(circles,labels=[1,1,0,0])
 # draw meridians
 meridians = arange(-12,13,2)
 m.drawmeridians(meridians,labels=[0,0,1,1])
-title("High-Res British Isles",y=1.075)
+title("High-Res British Isles",y=1.04)
 show()
