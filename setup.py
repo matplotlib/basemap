@@ -65,18 +65,18 @@ if GEOS_dir is None:
             break
 else:
     geos_version = check_geosversion(GEOS_dir)
-if geos_version != '"2.2.3"':
-    raise SystemExit("""
-Can't find geos library version 2.2.3. Please set the
-environment variable GEOS_DIR to point to the location
-where geos 2.2.3 is installed (for example, if geos_c.h
-is in /usr/local/include, and libgeos_c is in /usr/local/lib,
-set GEOS_DIR to /usr/local), or edit the setup.py script
-manually and set the variable GEOS_dir (right after the line
-that says "set GEOS_dir manually here".""")
-else:
-    geos_include_dirs=[os.path.join(GEOS_dir,'include'),numpy.get_include()]
-    geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
+#if geos_version != '"2.2.3"':
+#    raise SystemExit("""
+#Can't find geos library version 2.2.3. Please set the
+#environment variable GEOS_DIR to point to the location
+#where geos 2.2.3 is installed (for example, if geos_c.h
+#is in /usr/local/include, and libgeos_c is in /usr/local/lib,
+#set GEOS_DIR to /usr/local), or edit the setup.py script
+#manually and set the variable GEOS_dir (right after the line
+#that says "set GEOS_dir manually here".""")
+#else:
+geos_include_dirs=[os.path.join(GEOS_dir,'include'),numpy.get_include()]
+geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
 
 # proj4 and geos extensions.
 deps = glob.glob('src/*.c')
@@ -90,7 +90,11 @@ extensions = [Extension("matplotlib.toolkits.basemap._proj",deps+['src/_proj.c']
 extensions.append(Extension("matplotlib.toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
 # for some reason, pickling won't work if this extension is installed
 # as "matplotlib.toolkits.basemap._geos"
-extensions.append(Extension("_geos",['src/_geos.c'],library_dirs=geos_library_dirs,include_dirs=geos_include_dirs,libraries=['geos_c','geos']))
+extensions.append(Extension("_geos",['src/_geos.c'],
+                            library_dirs=geos_library_dirs,
+                            runtime_library_dirs=geos_library_dirs,
+                            include_dirs=geos_include_dirs,
+                            libraries=['geos_c','geos']))
 
 # install shapelib and dbflib.
 packages = packages + ['shapelib','dbflib']
