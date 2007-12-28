@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: pj_gridinfo.c,v 1.8 2006/11/17 22:16:30 mloskot Exp $
+ * $Id: pj_gridinfo.c,v 1.7 2005/07/07 00:16:03 fwarmerdam Exp $
  *
  * Project:  PROJ.4
  * Purpose:  Functions for handling individual PJ_GRIDINFO's.  Includes
@@ -29,9 +29,6 @@
  ******************************************************************************
  *
  * $Log: pj_gridinfo.c,v $
- * Revision 1.8  2006/11/17 22:16:30  mloskot
- * Uploaded PROJ.4 port for Windows CE.
- *
  * Revision 1.7  2005/07/07 00:16:03  fwarmerdam
  * Fixed debug fprintf syntax per:
  * http://bugzilla.remotesensing.org/show_bug.cgi?id=886
@@ -62,16 +59,7 @@
 #include <string.h>
 #include <math.h>
 #include <errno.h>
-
-#ifdef _WIN32_WCE
-/* assert.h includes all Windows API headers and causes 'LP' name clash.
- * Here assert we disable assert() for Windows CE.
- * TODO - mloskot: re-implement porting friendly assert
- */
-# define assert(exp)	((void)0)
-#else
-# include <assert.h>
-#endif /* _WIN32_WCE */
+#include <assert.h>
 
 /************************************************************************/
 /*                             swap_words()                             */

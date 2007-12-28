@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: PJ_krovak.c,v 1.9 2007/03/07 17:32:32 fwarmerdam Exp $
+ * $Id: PJ_krovak.c,v 1.6 2006/09/14 13:10:50 fwarmerdam Exp $
  *
  * Project:  PROJ.4
  * Purpose:  Implementation of the krovak (Krovak) projection.
@@ -30,15 +30,6 @@
  ******************************************************************************
  *
  * $Log: PJ_krovak.c,v $
- * Revision 1.9  2007/03/07 17:32:32  fwarmerdam
- * remove orphan semicolon.
- *
- * Revision 1.8  2007/03/07 17:28:08  fwarmerdam
- * Make it reasonably clear that this is ellipsoidal in the code.
- *
- * Revision 1.7  2007/03/07 17:25:34  fwarmerdam
- * report krovak as ellipsoidal, not spherical
- *
  * Revision 1.6  2006/09/14 13:10:50  fwarmerdam
  * Add +czech flag to control reversal of signs (bug 1133,147)
  *
@@ -64,9 +55,9 @@
 #include <string.h>
 #include <stdio.h>
 
-PJ_CVSID("$Id: PJ_krovak.c,v 1.9 2007/03/07 17:32:32 fwarmerdam Exp $");	
+PJ_CVSID("$Id: PJ_krovak.c,v 1.6 2006/09/14 13:10:50 fwarmerdam Exp $");	
 
-PROJ_HEAD(krovak, "Krovak") "\n\tPCyl., Ellps.";
+PROJ_HEAD(krovak, "Krovak") "\n\tPCyl., Sph.";
 
 /**
    NOTES: According to EPSG the full Krovak projection method should have
@@ -93,7 +84,7 @@ PROJ_HEAD(krovak, "Krovak") "\n\tPCyl., Ellps.";
 
 
 
-FORWARD(e_forward); /* ellipsoid */
+FORWARD(s_forward); /* spheroid */
 /* calculate xy from lat/lon */
 
 	char errmess[255];
@@ -162,7 +153,7 @@ FORWARD(e_forward); /* ellipsoid */
 
 
 
-INVERSE(e_inverse); /* ellipsoid */
+INVERSE(s_inverse); /* spheroid */
 	/* calculate lat/lon from xy */
 
 /* Constants, identisch wie in der Umkehrfunktion */
@@ -267,14 +258,15 @@ ENTRY0(krovak)
         /* as input and output, instead of lat/long relative to Ferro */
 	if (!pj_param(P->params, "tlon_0").i)
             P->lam0 = 0.7417649320975901 - 0.308341501185665;
+; 
 
         /* if scale not set default to 0.9999 */
 	if (!pj_param(P->params, "tk").i)
             P->k0 = 0.9999;
 
 	/* always the same */
-        P->inv = e_inverse; 
-	P->fwd = e_forward;
+        P->inv = s_inverse; 
+	P->fwd = s_forward;
 
 ENDENTRY(P)
 

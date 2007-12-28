@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: pj_transform.c,v 1.24 2007/12/03 15:48:20 fwarmerdam Exp $
+ * $Id: pj_transform.c,v 1.20 2006/10/12 21:04:39 fwarmerdam Exp $
  *
  * Project:  PROJ.4
  * Purpose:  Perform overall coordinate system to coordinate system 
@@ -30,24 +30,6 @@
  ******************************************************************************
  *
  * $Log: pj_transform.c,v $
- * Revision 1.24  2007/12/03 15:48:20  fwarmerdam
- * Improve WGS84 ES precision to avoid unnecesary transformation (#1531)
- *
- * Revision 1.23  2007/11/26 00:21:59  fwarmerdam
- * Modified PJ structure to hold a_orig, es_orig, ellipsoid definition before
- * adjustment for spherical projections.
- * Modified pj_datum_transform() to use the original ellipsoid parameters,
- * not the ones adjusted for spherical projections.
- * Modified pj_datum_transform() to not attempt any datum shift via
- * geocentric coordinates if the source *or* destination are raw ellipsoids
- * (ie. PJD_UNKNOWN).  All per PROJ bug #1602, GDAL bug #2025.
- *
- * Revision 1.22  2007/09/11 20:32:25  fwarmerdam
- * mark the transient error array const
- *
- * Revision 1.21  2007/09/11 20:19:36  fwarmerdam
- * avoid use of static variables to make reentrant
- *
  * Revision 1.20  2006/10/12 21:04:39  fwarmerdam
  * Added experimental +lon_wrap argument to set a "center point" for
  * longitude wrapping of longitude values coming out of pj_transform().
@@ -128,14 +110,14 @@
 #include <math.h>
 #include "geocent.h"
 
-PJ_CVSID("$Id: pj_transform.c,v 1.24 2007/12/03 15:48:20 fwarmerdam Exp $");
+PJ_CVSID("$Id: pj_transform.c,v 1.20 2006/10/12 21:04:39 fwarmerdam Exp $");
 
 #ifndef SRS_WGS84_SEMIMAJOR
 #define SRS_WGS84_SEMIMAJOR 6378137.0
 #endif
 
 #ifndef SRS_WGS84_ESQUARED
-#define SRS_WGS84_ESQUARED 0.0066943799901413165
+#define SRS_WGS84_ESQUARED 0.006694379990
 #endif
 
 #define Dx_BF (defn->datum_params[0])
@@ -157,7 +139,7 @@ PJ_CVSID("$Id: pj_transform.c,v 1.24 2007/12/03 15:48:20 fwarmerdam Exp $");
 ** list or something, but while experimenting with it this should be fine. 
 */
 
-static const int transient_error[45] = {
+static int transient_error[45] = {
     /*             0  1  2  3  4  5  6  7  8  9   */
     /* 0 to 9 */   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     /* 10 to 19 */ 0, 0, 0, 0, 1, 1, 0, 1, 1, 1,  
@@ -209,7 +191,7 @@ int pj_transform( PJ *srcdefn, PJ *dstdefn, long point_count, int point_offset,
             }
         }
 
-        if( pj_geocentric_to_geodetic( srcdefn->a_orig, srcdefn->es_orig,
+        if( pj_geocentric_to_geodetic( srcdefn->a, srcdefn->es,
                                        point_count, point_offset, 
                                        x, y, z ) != 0) 
             return pj_errno;
@@ -306,7 +288,7 @@ int pj_transform( PJ *srcdefn, PJ *dstdefn, long point_count, int point_offset,
             return PJD_ERR_GEOCENTRIC;
         }
 
-        pj_geodetic_to_geocentric( dstdefn->a_orig, dstdefn->es_orig,
+        pj_geodetic_to_geocentric( dstdefn->a, dstdefn->es,
                                    point_count, point_offset, x, y, z );
 
         if( dstdefn->fr_meter != 1.0 )
@@ -390,7 +372,6 @@ int pj_geodetic_to_geocentric( double a, double es,
 {
     double b;
     int    i;
-    GeocentricInfo gi;
 
     pj_errno = 0;
 
@@ -399,7 +380,7 @@ int pj_geodetic_to_geocentric( double a, double es,
     else
         b = a * sqrt(1-es);
 
-    if( pj_Set_Geocentric_Parameters( &gi, a, b ) != 0 )
+    if( pj_Set_Geocentric_Parameters( a, b ) != 0 )
     {
         pj_errno = PJD_ERR_GEOCENTRIC;
         return pj_errno;
@@ -412,7 +393,7 @@ int pj_geodetic_to_geocentric( double a, double es,
         if( x[io] == HUGE_VAL  )
             continue;
 
-        if( pj_Convert_Geodetic_To_Geocentric( &gi, y[io], x[io], z[io], 
+        if( pj_Convert_Geodetic_To_Geocentric( y[io], x[io], z[io], 
                                                x+io, y+io, z+io ) != 0 )
         {
             pj_errno = -14;
@@ -435,14 +416,13 @@ int pj_geocentric_to_geodetic( double a, double es,
 {
     double b;
     int    i;
-    GeocentricInfo gi;
 
     if( es == 0.0 )
         b = a;
     else
         b = a * sqrt(1-es);
 
-    if( pj_Set_Geocentric_Parameters( &gi, a, b ) != 0 )
+    if( pj_Set_Geocentric_Parameters( a, b ) != 0 )
     {
         pj_errno = PJD_ERR_GEOCENTRIC;
         return pj_errno;
@@ -455,8 +435,8 @@ int pj_geocentric_to_geodetic( double a, double es,
         if( x[io] == HUGE_VAL )
             continue;
 
-        pj_Convert_Geocentric_To_Geodetic( &gi, x[io], y[io], z[io], 
-                                           y+io, x+io, z+io );
+        pj_Convert_Geocentric_To_Geodetic( x[io], y[io], z[io], 
+                                        y+io, x+io, z+io );
     }
 
     return 0;
@@ -476,8 +456,8 @@ int pj_compare_datums( PJ *srcdefn, PJ *dstdefn )
     {
         return 0;
     }
-    else if( srcdefn->a_orig != dstdefn->a_orig 
-             || ABS(srcdefn->es_orig - dstdefn->es_orig) > 0.000000000050 )
+    else if( srcdefn->a != dstdefn->a 
+             || ABS(srcdefn->es - dstdefn->es) > 0.000000000050 )
     {
         /* the tolerence for es is to ensure that GRS80 and WGS84 are
            considered identical */
@@ -610,10 +590,6 @@ int pj_geocentric_from_wgs84( PJ *defn,
 
 /************************************************************************/
 /*                         pj_datum_transform()                         */
-/*                                                                      */
-/*      The input should be long/lat/z coordinates in radians in the    */
-/*      source datum, and the output should be long/lat/z               */
-/*      coordinates in radians in the destination datum.                */
 /************************************************************************/
 
 int pj_datum_transform( PJ *srcdefn, PJ *dstdefn, 
@@ -627,26 +603,16 @@ int pj_datum_transform( PJ *srcdefn, PJ *dstdefn,
     pj_errno = 0;
 
 /* -------------------------------------------------------------------- */
-/*      We cannot do any meaningful datum transformation if either      */
-/*      the source or destination are of an unknown datum type          */
-/*      (ie. only a +ellps declaration, no +datum).  This is new        */
-/*      behavior for PROJ 4.6.0.                                        */
-/* -------------------------------------------------------------------- */
-    if( srcdefn->datum_type == PJD_UNKNOWN
-        || dstdefn->datum_type == PJD_UNKNOWN )
-        return 0;
-
-/* -------------------------------------------------------------------- */
 /*      Short cut if the datums are identical.                          */
 /* -------------------------------------------------------------------- */
     if( pj_compare_datums( srcdefn, dstdefn ) )
         return 0;
 
-    src_a = srcdefn->a_orig;
-    src_es = srcdefn->es_orig;
+    src_a = srcdefn->a;
+    src_es = srcdefn->es;
 
-    dst_a = dstdefn->a_orig;
-    dst_es = dstdefn->es_orig;
+    dst_a = dstdefn->a;
+    dst_es = dstdefn->es;
 
 /* -------------------------------------------------------------------- */
 /*      Create a temporary Z array if one is not provided.              */
