@@ -1,4 +1,4 @@
-version 0.9.9.1 (svn revision 4805)
+version 0.9.9.1 (svn revision 4808)
            * require python 2.4 (really only needed for building).
              Once namespace packages are re-enabled in matplotlib,
              python 2.3 should work again.
