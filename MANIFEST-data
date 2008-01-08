@@ -2,7 +2,6 @@ MANIFEST-data
 LICENSE_data
 README
 setup-data.py
-setupegg-data.py
 lib/matplotlib/toolkits/basemap/data/__init__.py
 lib/matplotlib/toolkits/basemap/data/countries_f.dat
 lib/matplotlib/toolkits/basemap/data/countriesmeta_f.dat
