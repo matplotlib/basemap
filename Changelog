@@ -1,3 +1,7 @@
+version 0.9.9.1 (svn revision 4805)
+           * require python 2.4 (really only needed for building).
+             Once namespace packages are re-enabled in matplotlib,
+             python 2.3 should work again.
 version 0.9.9 (svn revision 4799)
            * updated proj4 sources to version 4.6.0.
            * removed hidden dependency on setuptools (in dap module).

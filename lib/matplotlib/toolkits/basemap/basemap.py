@@ -40,7 +40,7 @@ import _geos, pupynere, netcdftime
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
-__version__ = '0.9.9'
+__version__ = '0.9.9.1'
 
 # supported map projections.
 _projnames = {'cyl'      : 'Cylindrical Equidistant',
