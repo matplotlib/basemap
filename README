@@ -5,9 +5,9 @@ using matplotlib.
 
 **Requirements**
 
-python 2.4 (or higher)
+python 2.3 (or higher)
 
-matplotlib 0.90 (or higher)
+matplotlib 0.98 (or higher)
 
 numpy 1.0 (or higher)
 

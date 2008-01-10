@@ -1,10 +1,11 @@
-version 0.9.9.2
+version 0.99
            * Now lives in mpl_toolkits.basemap.  Instead
              of 'from matplotlib.toolkits.basemap import Basemap',
              use 'from mpl_toolkits.basemap import Basemap'.
              All examples changed.  Uses matplotlib mpl_toolkits
              namespace package, so basemap can now be installed
-             if matplotlib is installed as an egg.
+             if matplotlib is installed as an egg. Python 2.3
+             support re-enabled.
 version 0.9.9.1 (svn revision 4808)
            * require python 2.4 (really only needed for building).
              Once namespace packages are re-enabled in matplotlib,
