@@ -19,7 +19,7 @@ date2num: convert from a datetime object to a numeric time value.
 from matplotlib import __version__ as _matplotlib_version
 from matplotlib.cbook import is_scalar, dedent
 # check to make sure matplotlib is not too old.
-_mpl_required_version = '0.90'
+_mpl_required_version = '0.98'
 if _matplotlib_version < _mpl_required_version:
     msg = dedent("""
     your matplotlib is too old - basemap requires version %s or 
@@ -40,7 +40,7 @@ import _geos, pupynere, netcdftime
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
-__version__ = '0.9.9.1'
+__version__ = '0.99'
 
 # supported map projections.
 _projnames = {'cyl'      : 'Cylindrical Equidistant',
@@ -297,7 +297,7 @@ class Basemap(object):
 
     Example Usage:
 
-    >>> from matplotlib.toolkits.basemap import Basemap
+    >>> from mpl_toolkits.basemap import Basemap
     >>> from pylab import load, meshgrid, title, arange, show
     >>> # read in topo data (on a regular lat/lon grid)
     >>> etopo = load('etopo20data.gz')

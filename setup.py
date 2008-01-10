@@ -3,14 +3,13 @@ major, minor1, minor2, s, tmp = sys.version_info
 if major==2 and minor1<=3:
     # setuptools monkeypatches distutils.core.Distribution to support
     # package_data
-    #try: import setuptools
-    #except ImportError:
-    #    raise SystemExit("""
-#matplotlib requires setuptools for installation.  Please download
-#http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
-#you are doing a system wide install) to install the proper version of
-#setuptools for your system""")
-    raise SystemExit("""The basemap toolkit requires python 2.4.""")
+    try: import setuptools
+    except ImportError:
+        raise SystemExit("""
+matplotlib requires setuptools for installation.  Please download
+http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
+you are doing a system wide install) to install the proper version of
+setuptools for your system""")
 from distutils.core import setup
 from distutils.core import Extension
 from distutils.util import convert_path
@@ -84,10 +83,10 @@ deps.remove(os.path.join('src','_proj.c'))
 deps.remove(os.path.join('src','_geod.c'))
 deps.remove(os.path.join('src','_geos.c'))
 
-packages          = ['matplotlib.toolkits.basemap']
+packages          = ['mpl_toolkits','mpl_toolkits.basemap']
 package_dirs       = {'':'lib'}
-extensions = [Extension("matplotlib.toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
-extensions.append(Extension("matplotlib.toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
+extensions = [Extension("mpl_toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
+extensions.append(Extension("mpl_toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
 # for some reason, pickling won't work if this extension is installed
 # as "matplotlib.toolkits.basemap._geos"
 extensions.append(Extension("_geos",['src/_geos.c'],
@@ -141,13 +140,13 @@ except ImportError:
 pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world']
 boundaryfiles = []
 for resolution in ['c','l','i','h','f']:
-    boundaryfiles = boundaryfiles + glob.glob("lib/matplotlib/toolkits/basemap/data/*_"+resolution+".dat")
+    boundaryfiles = boundaryfiles + glob.glob("lib/mpl_toolkits/basemap/data/*_"+resolution+".dat")
 boundaryfiles = [os.path.join('data',os.path.basename(bfile)) for bfile in boundaryfiles]
 basemap_datafiles = boundaryfiles + ['data/5minmask.bin']
-package_data = {'matplotlib.toolkits.basemap':pyproj_datafiles+basemap_datafiles}
+package_data = {'mpl_toolkits.basemap':pyproj_datafiles+basemap_datafiles}
 setup(
   name              = "basemap",
-  version           = "0.9.9.1",
+  version           = "0.99",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data

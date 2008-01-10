@@ -1,3 +1,5 @@
+version 0.99: now must be imported as mpl_toolkits.basemap instead
+              of matplotlib.toolkits.basemap.
 version 0.9.8: remove linestyle kwarg from drawparallels and drawmeridians.
                add fill_color kwarg to drawmapboundary.
 version 0.9.7: added lake_color kwarg to fillcontinents.
