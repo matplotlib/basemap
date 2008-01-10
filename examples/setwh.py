@@ -1,7 +1,7 @@
 # examples of using the 'width' and 'height' keywords
 # to the Basemap constructor.
 
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 from pylab import arange, show, title, figure
 
 # setup projection parameters

@@ -1,4 +1,4 @@
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 import numpy
 from pylab import show, title, arange, meshgrid, cm, figure, \
                   colorbar, axes, gca, reshape, quiverkey

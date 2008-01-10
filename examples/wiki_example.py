@@ -1,4 +1,4 @@
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 import pylab as p
 # set up orthographic map projection with
 # perspective of satellite looking down at 50N, 100W.

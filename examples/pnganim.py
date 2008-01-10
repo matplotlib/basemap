@@ -8,7 +8,7 @@ import numpy
 import pylab
 from numpy import ma
 import datetime, sys, time, subprocess
-from matplotlib.toolkits.basemap import Basemap, shiftgrid, NetCDFFile, num2date
+from mpl_toolkits.basemap import Basemap, shiftgrid, NetCDFFile, num2date
 
 # times for March 1993 'storm of the century'
 YYYYMMDDHH1 = '1993031000'

@@ -1,4 +1,4 @@
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 from matplotlib import rcParams
 from matplotlib.ticker import MultipleLocator
 import pylab as P

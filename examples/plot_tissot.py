@@ -1,5 +1,5 @@
 import pylab as p
-from matplotlib.toolkits.basemap import Basemap as Basemap
+from mpl_toolkits.basemap import Basemap as Basemap
 from matplotlib.patches import Polygon
 
 # Tissot's Indicatrix (http://en.wikipedia.org/wiki/Tissot's_Indicatrix). 

@@ -1,4 +1,4 @@
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 from pylab import show, title, arange, figure, clf
 import cPickle, time
 

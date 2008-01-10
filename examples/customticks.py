@@ -1,4 +1,4 @@
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 import pylab, numpy
 from matplotlib.ticker import FuncFormatter
 

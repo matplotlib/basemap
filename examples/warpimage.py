@@ -1,6 +1,6 @@
 import pylab as P
 import numpy
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 from numpy import ma
 from matplotlib.image import pil_to_array
 from PIL import Image

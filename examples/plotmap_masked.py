@@ -5,7 +5,7 @@
 # demonstrates use of masked arrays to mask out certain regions
 # (in this case the oceans)
 
-from matplotlib.toolkits.basemap import Basemap, shiftgrid
+from mpl_toolkits.basemap import Basemap, shiftgrid
 from pylab import title, colorbar, show, axes, cm, load, arange, figure, \
                   text, where
 from numpy import ma

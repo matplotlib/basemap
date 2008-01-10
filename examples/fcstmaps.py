@@ -6,7 +6,7 @@ import numpy
 import sys
 from numpy import ma
 import datetime
-from matplotlib.toolkits.basemap import Basemap, NetCDFFile, addcyclic, num2date
+from mpl_toolkits.basemap import Basemap, NetCDFFile, addcyclic, num2date
 
 
 # today's date is default.

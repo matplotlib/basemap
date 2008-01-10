@@ -1,4 +1,4 @@
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 from pylab import title, show, arange, figure
 
 # create Basemap instance for Orthographic (satellite view) projection.

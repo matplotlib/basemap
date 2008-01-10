@@ -5,7 +5,7 @@
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 from matplotlib.figure import Figure
 import numpy
 import matplotlib.cm as cm

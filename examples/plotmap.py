@@ -4,7 +4,7 @@
 
 # the data is interpolated to the native projection grid.
 
-from matplotlib.toolkits.basemap import Basemap, shiftgrid
+from mpl_toolkits.basemap import Basemap, shiftgrid
 from pylab import title, colorbar, show, axes, cm, load, arange, figure, \
                   text
 

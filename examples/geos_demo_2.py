@@ -9,7 +9,7 @@ Dependencies: Matplotlib, Basemap toolkit, Python Imaging Library
 
 """
 from PIL import Image
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 from pylab import figure, cm, arange, colorbar, text, savefig, gcf, clim, title, show
 from matplotlib.image import pil_to_array
 

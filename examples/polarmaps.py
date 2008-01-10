@@ -5,7 +5,7 @@
 
 # illustrates special-case polar-centric projections.
 
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 from pylab import title, colorbar, show, axes, cm, load, arange, \
                   figure, ravel, meshgrid
 

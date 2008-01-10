@@ -1,4 +1,4 @@
-from matplotlib.toolkits.basemap import Basemap, shiftgrid
+from mpl_toolkits.basemap import Basemap, shiftgrid
 from pylab import load, show, colorbar, axes, gca,\
                   figure, title, meshgrid, cm, arange
 

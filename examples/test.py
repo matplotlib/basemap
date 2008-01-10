@@ -3,7 +3,7 @@
 # country boundaries, filling continents and drawing
 # parallels/meridians
 
-from matplotlib.toolkits.basemap import Basemap, shiftgrid
+from mpl_toolkits.basemap import Basemap, shiftgrid
 from pylab import show,arange,draw,figure,load,ravel,cm,axes,\
                   colorbar,title,gca,pi,meshgrid
 import matplotlib.colors as colors

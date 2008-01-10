@@ -4,7 +4,7 @@ part of the track for which storm is cat 4 or 5 is shown red.
 ESRI shapefile data from http://www.nationalatlas.gov/atlasftp.html
 """
 import pylab as p
-from matplotlib.toolkits.basemap import Basemap as Basemap
+from mpl_toolkits.basemap import Basemap as Basemap
 # Lambert Conformal Conic map.
 m = Basemap(llcrnrlon=-100.,llcrnrlat=0.,urcrnrlon=-20.,urcrnrlat=57.,
             projection='lcc',lat_1=20.,lat_2=40.,lon_0=-60.,

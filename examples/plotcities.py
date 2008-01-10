@@ -1,7 +1,7 @@
 import pylab as p
 from matplotlib.mlab import prctile_rank
 import numpy
-from matplotlib.toolkits.basemap import Basemap as Basemap
+from mpl_toolkits.basemap import Basemap as Basemap
 
 # cities colored by population rank.
 

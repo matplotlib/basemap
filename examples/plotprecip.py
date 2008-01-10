@@ -1,4 +1,4 @@
-from matplotlib.toolkits.basemap import Basemap, cm, NetCDFFile
+from mpl_toolkits.basemap import Basemap, cm, NetCDFFile
 import pylab, copy
 from matplotlib import rcParams
 

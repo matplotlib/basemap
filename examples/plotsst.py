@@ -1,4 +1,4 @@
-from matplotlib.toolkits.basemap import Basemap, NetCDFFile
+from mpl_toolkits.basemap import Basemap, NetCDFFile
 import pylab, numpy, sys
 # read in sea-surface temperature and ice data
 # can be a local file, a URL for a remote opendap dataset,

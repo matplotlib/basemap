@@ -12,7 +12,7 @@ import matplotlib
 matplotlib.use('Agg')
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.toolkits.basemap import Basemap, shiftgrid
+from mpl_toolkits.basemap import Basemap, shiftgrid
 from matplotlib.figure import Figure
 import numpy
 import matplotlib.cm as cm

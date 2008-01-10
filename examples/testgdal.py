@@ -7,7 +7,7 @@ http://edcftp.cr.usgs.gov/pub/data/DEM/250/D/denver-w.gz
 http://edcftp.cr.usgs.gov/pub/data/nationalatlas/countyp020.tar.gz
 """
 import gdal
-from matplotlib.toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap
 from gdalconst import *
 import pylab as p
 

@@ -1,5 +1,5 @@
 import numpy, pylab
-from matplotlib.toolkits.basemap import cm
+from mpl_toolkits.basemap import cm
 a=numpy.outer(numpy.arange(0,1,0.01),numpy.ones(10))
 pylab.figure(figsize=(10,7))
 pylab.subplots_adjust(top=0.8,bottom=0.05,left=0.01,right=0.99)
