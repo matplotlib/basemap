@@ -3,21 +3,21 @@ major, minor1, minor2, s, tmp = sys.version_info
 if major==2 and minor1<=3:
     # setuptools monkeypatches distutils.core.Distribution to support
     # package_data
-    #try: import setuptools
-    #except ImportError:
-    #    raise SystemExit("""
-#matplotlib requires setuptools for installation.  Please download
-#http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
-#you are doing a system wide install) to install the proper version of
-#setuptools for your system""")
+    try: import setuptools
+    except ImportError:
+        raise SystemExit("""
+matplotlib requires setuptools for installation.  Please download
+http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
+you are doing a system wide install) to install the proper version of
+setuptools for your system""")
     raise SystemExit("""The basemap toolkit requires python 2.4.""")
 from distutils.core import setup
 
-packages          = ['matplotlib.toolkits.basemap.data']
+packages          = ['mpl_toolkits.basemap.data']
 package_dirs       = {'':'lib'}
 boundaryfiles = glob.glob("lib/matplotlib/toolkits/basemap/data/*_f.dat")
 basemap_datafiles = [os.path.basename(bfile) for bfile in boundaryfiles]
-package_data = {'matplotlib.toolkits.basemap.data':basemap_datafiles}
+package_data = {'mpl_toolkits.basemap.data':basemap_datafiles}
 setup(
   name              = "basemap-data-fullres",
   version           = "0.9.7",
