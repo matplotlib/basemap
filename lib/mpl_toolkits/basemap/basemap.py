@@ -930,7 +930,7 @@ class Basemap(object):
             boundaryxy = _geos.Polygon(b)
             # compute proj instance for full disk, if necessary.
             if not self._fulldisk:
-                projparms = self.projparams
+                projparms = self.projparams.copy()
                 del projparms['x_0']
                 del projparms['y_0']
                 if self.projection == 'ortho':
