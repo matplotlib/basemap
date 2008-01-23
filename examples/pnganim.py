@@ -99,7 +99,7 @@ meridians = numpy.arange(0.,360.,20.)
 # number of repeated frames at beginning and end is n1.
 nframe = 0; n1 = 10
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 # loop over times, make contour plots, draw coastlines, 
 # parallels, meridians and title.
 for nt,date in enumerate(datelabels[1:]):

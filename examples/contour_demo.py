@@ -22,11 +22,8 @@ x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 # setup colorbar axes instance.
-# for matplotlib 0.91 and earlier, could do l,b,w,h = ax.get_position()
-# for post 0.91, pos = ax.get_position(); l,b,w,h = pos.bounds
-# this works for both.
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -52,7 +49,7 @@ x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -78,7 +75,7 @@ x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -104,7 +101,7 @@ x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -131,7 +128,7 @@ x, y = m(lons, lats)
 CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS = m.contourf(x,y,hgt,15,cmap=cm.jet)
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
 colorbar(drawedges=True, cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again

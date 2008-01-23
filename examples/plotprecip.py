@@ -52,7 +52,7 @@ clevs = [0,1,2.5,5,7.5,10,15,20,30,40,50,70,100,150,200,250,300,400,500,600,750]
 cs = m.contourf(x,y,data,clevs,cmap=cm.s3pcpn)
 # new axis for colorbar.
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = pylab.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
 # draw colorbar.
 pylab.colorbar(cs, cax, format='%g', ticks=clevs, drawedges=False) 
@@ -78,7 +78,7 @@ im2 = copy.copy(im)
 im2.set_cmap(cm.s3pcpn_l)
 # new axis for colorbar.
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = pylab.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
 # using im2, not im (hack to prevent colors from being
 # too compressed at the low end on the colorbar - results

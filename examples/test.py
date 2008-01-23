@@ -30,11 +30,8 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topoin,cm.jet)
 # get axes position, add colorbar axes to right of this.
-# for matplotlib 0.91 and earlier, could do l,b,w,h = ax.get_position()
-# for post 0.91, pos = ax.get_position(); l,b,w,h = pos.bounds
-# this works for both.
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -114,7 +111,7 @@ im = m.imshow(topodat,cm.jet)
 # get current axis instance.
 ax = gca()
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -146,7 +143,7 @@ im = m.imshow(topodat,cm.jet)
 # get current axis instance.
 ax = gca()
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -179,7 +176,7 @@ im = m.imshow(topodat,cm.jet)
 # get current axis instance.
 ax = gca()
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -211,7 +208,7 @@ im = m.imshow(topodat,cm.jet)
 # get current axis instance.
 ax = gca()
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -245,7 +242,7 @@ im = m.imshow(topodat,cm.jet)
 # get current axis instance.
 ax = gca()
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -276,7 +273,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -309,7 +306,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -344,7 +341,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 im = m.imshow(topodat,cm.jet)
 im.set_clim(-4000.,3000.) # adjust range of colors.
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -379,7 +376,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -410,7 +407,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -442,7 +439,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,cm.jet)
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -483,7 +480,7 @@ palette.set_bad(ax.get_axis_bgcolor(), 0.0)
 #  - see contour_demo.py)
 im = m.imshow(topo,palette,norm=colors.normalize(clip=False))
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -524,7 +521,7 @@ palette.set_bad(ax.get_axis_bgcolor(), 0.0)
 #  - see contour_demo.py)
 im = m.imshow(topo,palette,norm=colors.normalize(clip=False))
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -552,7 +549,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x,y = m(*meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -579,7 +576,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x,y = m(*meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again
@@ -606,7 +603,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x,y = m(*meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
 colorbar(cax=cax) # draw colorbar
 axes(ax)  # make the original axes current again

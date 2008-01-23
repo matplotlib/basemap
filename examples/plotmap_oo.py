@@ -45,11 +45,8 @@ topodat,x,y = m.transform_scalar(topoin,lons,lats,nx,ny,returnxy=True)
 # plot image over map with imshow.
 im = m.imshow(topodat,cm.jet)
 # setup colorbar axes instance.
-# for matplotlib 0.91 and earlier, could do l,b,w,h = ax.get_position()
-# for post 0.91, pos = ax.get_position(); l,b,w,h = pos.bounds
-# this works for both.
 pos = ax.get_position()
-l, b, w, h = getattr(pos, 'bounds', pos)
+l, b, w, h = pos.bounds
 cax = fig.add_axes([l+w+0.075, b, 0.05, h],frameon=False) # setup colorbar axes
 fig.colorbar(im, cax=cax) # draw colorbar
 # plot blue dot on boulder, colorado and label it as such.
