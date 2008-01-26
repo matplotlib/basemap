@@ -30,6 +30,7 @@ from matplotlib import rcParams, is_interactive, _pylab_helpers
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Ellipse, Circle, Polygon
 from matplotlib.lines import Line2D
+from matplotlib.transforms import Bbox
 import pyproj, sys, os, math, dbflib
 from proj import Proj
 import numpy as npy
@@ -94,8 +95,8 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'spstere'  : 'bounding_lat,lon_0,lat_0,no corners or width/height',
              'cass'     : 'lon_0,lat_0',
              'poly'     : 'lon_0,lat_0',
-             'ortho'    : 'lon_0,lat_0',
-             'geos'     : 'lon_0,lat_0,satellite_height',
+             'ortho'    : 'lon_0,lat_0,llcrnrx,llcrnry,urcrnrx,urcrnry,no width/height',
+             'geos'     : 'lon_0,satellite_height,llcrnrx,llcrnry,urcrnrx,urcrnry,no width/height',
              'sinu'     : 'lon_0,lat_0,no corners or width/height',
              'moll'     : 'lon_0,lat_0,no corners or width/height',
              'robin'    : 'lon_0,lat_0,no corners or width/height',
@@ -143,7 +144,9 @@ _Basemap_init_doc = """
  projections except 'ortho' and 'geos', either the lat/lon values of the
  corners or width and height must be specified by the user.
  For 'ortho' and 'geos', the lat/lon values of the corners may be specified,
- but if they are not, the entire globe is plotted.
+ or the x/y values of the corners (llcrnrx,llcrnry,urcrnrx,urcrnry) in the 
+ coordinate system of the global projection.  If the corners are not
+ specified, the entire globe is plotted.
 
  resolution - resolution of boundary database to use. Can be 'c' (crude),
   'l' (low), 'i' (intermediate), 'h' (high), 'f' (full) or None.
@@ -323,6 +326,8 @@ class Basemap(object):
 
     def __init__(self, llcrnrlon=None, llcrnrlat=None,
                        urcrnrlon=None, urcrnrlat=None,
+                       llcrnrx=None, llcrnry=None,
+                       urcrnrx=None, urcrnry=None,
                        width=None, height=None,
                        projection='cyl', resolution='c',
                        area_thresh=None, rsphere=6370997.0,
@@ -605,11 +610,18 @@ class Basemap(object):
             self.aspect = (self.urcrnrlat-self.llcrnrlat)/(self.urcrnrlon-self.llcrnrlon)
         else:
             self.aspect = (proj.ymax-proj.ymin)/(proj.xmax-proj.xmin)
-        self.llcrnrx = proj.llcrnrx
-        self.llcrnry = proj.llcrnry
-        self.urcrnrx = proj.urcrnrx
-        self.urcrnry = proj.urcrnry
-
+        if projection in ['geos','ortho'] and \
+           None not in [llcrnrx,llcrnry,urcrnrx,urcrnry]:
+            self.llcrnrx = llcrnrx
+            self.llcrnry = llcrnry
+            self.urcrnrx = urcrnrx
+            self.urcrnry = urcrnry
+            self._fulldisk = False
+        else:
+            self.llcrnrx = proj.llcrnrx
+            self.llcrnry = proj.llcrnry
+            self.urcrnrx = proj.urcrnrx
+            self.urcrnry = proj.urcrnry
         # set min/max lats for projection domain.
         if projection in ['mill','cyl','merc']:
             self.latmin = self.llcrnrlat
@@ -1049,34 +1061,23 @@ class Basemap(object):
                 ax = pylab.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
-        if self.projection == 'ortho' and self._fulldisk: # circular region.
-            # define a circle patch, add it to axes instance.
-            circle = Circle((self.rmajor,self.rmajor),self.rmajor)
-            ax.add_patch(circle)
+        if self.projection == 'ortho':
+            limb = Circle((self.rmajor,self.rmajor),self.rmajor)
+        elif self.projection == 'geos':
+            limb = Ellipse((self._width,self._height),2.*self._width,2.*self._height)
+        if self.projection in ['ortho','geos'] and self._fulldisk:
+            # elliptical region.
+            ax.add_patch(limb)
             if fill_color is None:
-                circle.set_fill(False)
+                limb.set_fill(False)
             else:
-                circle.set_facecolor(fill_color)
-                circle.set_zorder(0)
-            circle.set_edgecolor(color)
-            circle.set_linewidth(linewidth)
-            circle.set_clip_on(False)
+                limb.set_facecolor(fill_color)
+                limb.set_zorder(0)
+            limb.set_edgecolor(color)
+            limb.set_linewidth(linewidth)
+            limb.set_clip_on(False)
             if zorder is not None:
-                circle.set_zorder(zorder)
-        elif self.projection == 'geos' and self._fulldisk: # elliptical region
-            # define an Ellipse patch, add it to axes instance.
-            ellps = Ellipse((self._width,self._height),2.*self._width,2.*self._height)
-            ax.add_patch(ellps)
-            if fill_color is None:
-                ellps.set_fill(False)
-            else:
-                ellps.set_facecolor(fill_color)
-                ellps.set_zorder(0)
-            ellps.set_edgecolor(color)
-            ellps.set_linewidth(linewidth)
-            ellps.set_clip_on(False)
-            if zorder is not None:
-                ellps.set_zorder(0)
+                limb.set_zorder(zorder)
         elif self.projection in ['moll','robin','sinu']:  # elliptical region.
             nx = 100; ny = 100
             # quasi-elliptical region.
@@ -1109,15 +1110,37 @@ class Basemap(object):
                 poly.set_zorder(zorder)
         else: # all other projections are rectangular.
             ax.axesPatch.set_linewidth(linewidth)
-            if fill_color is None:
+            if self.projection not in ['geos','ortho']:
+                if fill_color is None:
+                    ax.axesPatch.set_facecolor(ax.get_axis_bgcolor())
+                else:
+                    ax.axesPatch.set_facecolor(fill_color)
+                    ax.axesPatch.set_zorder(0)
                 ax.axesPatch.set_facecolor(ax.get_axis_bgcolor())
+                ax.axesPatch.set_edgecolor(color)
+                ax.set_frame_on(True)
+                if zorder is not None:
+                    ax.axesPatch.set_zorder(zorder)
             else:
-                ax.axesPatch.set_facecolor(fill_color)
-                ax.axesPatch.set_zorder(0)
-            ax.axesPatch.set_edgecolor(color)
-            ax.set_frame_on(True)
-            if zorder is not None:
-                ax.axesPatch.set_zorder(zorder)
+                ax.axesPatch.set_facecolor(ax.get_axis_bgcolor())
+                ax.axesPatch.set_edgecolor(color)
+                ax.set_frame_on(True)
+                if zorder is not None:
+                    ax.axesPatch.set_zorder(zorder)
+                # for geos or ortho projections, also
+                # draw and fill map projection limb, clipped
+                # to rectangular region.
+                ax.add_patch(limb)
+                if fill_color is None:
+                    limb.set_fill(False)
+                else:
+                    limb.set_facecolor(fill_color)
+                    limb.set_zorder(0)
+                limb.set_edgecolor(color)
+                limb.set_linewidth(linewidth)
+                if zorder is not None:
+                    limb.set_zorder(zorder)
+                limb.set_clip_on(True)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
 
