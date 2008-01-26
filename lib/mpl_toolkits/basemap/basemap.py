@@ -145,8 +145,9 @@ _Basemap_init_doc = """
  corners or width and height must be specified by the user.
  For 'ortho' and 'geos', the lat/lon values of the corners may be specified,
  or the x/y values of the corners (llcrnrx,llcrnry,urcrnrx,urcrnry) in the 
- coordinate system of the global projection.  If the corners are not
- specified, the entire globe is plotted.
+ coordinate system of the global projection (with x=0,y=0 at the center
+ of the global projection).  If the corners are not specified,
+ the entire globe is plotted.
 
  resolution - resolution of boundary database to use. Can be 'c' (crude),
   'l' (low), 'i' (intermediate), 'h' (high), 'f' (full) or None.
@@ -612,10 +613,10 @@ class Basemap(object):
             self.aspect = (proj.ymax-proj.ymin)/(proj.xmax-proj.xmin)
         if projection in ['geos','ortho'] and \
            None not in [llcrnrx,llcrnry,urcrnrx,urcrnry]:
-            self.llcrnrx = llcrnrx
-            self.llcrnry = llcrnry
-            self.urcrnrx = urcrnrx
-            self.urcrnry = urcrnry
+            self.llcrnrx = llcrnrx+0.5*proj.xmax
+            self.llcrnry = llcrnry+0.5*proj.ymax
+            self.urcrnrx = urcrnrx+0.5*proj.xmax
+            self.urcrnry = urcrnry+0.5*proj.ymax
             self._fulldisk = False
         else:
             self.llcrnrx = proj.llcrnrx

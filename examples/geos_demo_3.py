@@ -7,7 +7,7 @@ lon_0=57
 m1 = Basemap(projection='geos',lon_0=lon_0,rsphere=(6378137.00,6356752.3142),resolution=None)
 ax = fig.add_axes([0.1,0.1,0.8,0.8],axisbg='k')
 # plot just upper right quadrant.
-m = Basemap(projection='geos',lon_0=lon_0,rsphere=(6378137.00,6356752.3142),resolution='l',llcrnrx=m1.urcrnrx/2.,llcrnry=m1.urcrnry/2.,urcrnrx=m1.urcrnrx,urcrnry=m1.urcrnry)
+m = Basemap(projection='geos',lon_0=lon_0,rsphere=(6378137.00,6356752.3142),resolution='l',llcrnrx=0.,llcrnry=0.,urcrnrx=m1.urcrnrx/2.,urcrnry=m1.urcrnry/2.)
 print m.projparams
 m.drawcoastlines()
 m.drawmapboundary(fill_color='aqua')
@@ -23,7 +23,7 @@ fig = figure()
 m1 = Basemap(projection='ortho',lon_0=lon_0,lat_0=10,resolution=None)
 ax = fig.add_axes([0.1,0.1,0.8,0.8],axisbg='k')
 # plot just upper right quadrant.
-m = Basemap(projection='ortho',lon_0=lon_0,lat_0=10,resolution='l',llcrnrx=m1.urcrnrx/2.,llcrnry=m1.urcrnry/2.,urcrnrx=m1.urcrnrx,urcrnry=m1.urcrnry)
+m = Basemap(projection='ortho',lon_0=lon_0,lat_0=10,resolution='l',llcrnrx=0.,llcrnry=0.,urcrnrx=m1.urcrnrx/2.,urcrnry=m1.urcrnry/2.)
 print m.projparams
 m.drawcoastlines()
 m.drawmapboundary(fill_color='aqua')
