@@ -36,7 +36,7 @@ from proj import Proj
 import numpy as npy
 from numpy import linspace, squeeze, ma
 from shapelib import ShapeFile
-import _geos, pupynere, netcdftime
+import _geoslib, pupynere, netcdftime
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -79,7 +79,7 @@ supported_projections = ''.join(supported_projections)
 projection_params = {'cyl'      : 'corners only (no width/height)',
              'merc'     : 'corners plus lat_ts (no width/height)',
              'tmerc'    : 'lon_0,lat_0',
-             'omerc'    : 'lon_0,lat_0,lat_1,lat_2,lon_1,lon_2,no width/height',
+             'omerc'    : 'lat_0,lat_1,lat_2,lon_1,lon_2',
              'mill'     : 'corners only (no width/height)',
              'lcc'      : 'lon_0,lat_0,lat_1,lat_2',
              'laea'     : 'lon_0,lat_0',
@@ -527,14 +527,23 @@ class Basemap(object):
             self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
             self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'omerc':
-            if lat_1 is None or lon_1 is None or lat_2 is None or lon_2 is None:
-                raise ValueError, 'must specify lat_1,lon_1 and lat_2,lon_2 for Oblique Mercator basemap'
+            if lat_1 is None or lon_1 is None or lat_2 is None or lon_2 is None or lat_0 is None:
+                raise ValueError, 'must specify lat_0 and lat_1,lon_1 and lat_2,lon_2 for Oblique Mercator basemap'
             projparams['lat_1'] = lat_1
             projparams['lon_1'] = lon_1
             projparams['lat_2'] = lat_2
             projparams['lon_2'] = lon_2
+            projparams['lat_0'] = lat_0
+            #if not using_corners:
+            #    raise ValueError, 'cannot specify map region with width and height keywords for this projection, please specify lat/lon values of corners'
             if not using_corners:
-                raise ValueError, 'cannot specify map region with width and height keywords for this projection, please specify lat/lon values of corners'
+                if width is None or height is None:
+                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                if lon_0 is None or lat_0 is None:
+                    raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'aeqd':
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Azimuthal Equidistant basemap'
@@ -736,12 +745,12 @@ class Basemap(object):
         polygon_types = []
         # coastlines are polygons, other boundaries are line segments.
         if name == 'gshhs':
-            Shape = _geos.Polygon
+            Shape = _geoslib.Polygon
         else:
-            Shape = _geos.LineString
+            Shape = _geoslib.LineString
         # see if map projection region polygon contains a pole.
-        NPole = _geos.Point(self(0.,90.))
-        SPole = _geos.Point(self(0.,-90.))
+        NPole = _geoslib.Point(self(0.,90.))
+        SPole = _geoslib.Point(self(0.,-90.))
         boundarypolyxy = self._boundarypolyxy
         boundarypolyll = self._boundarypolyll
         hasNP = NPole.within(boundarypolyxy)
@@ -749,7 +758,8 @@ class Basemap(object):
         containsPole = hasNP or hasSP
         # these projections cannot cross pole.
         if containsPole and\
-           self.projection in ['tmerc','cass','omerc','merc','mill','cyl','robin','moll','sinu','geos']:
+            self.projection in ['merc','mill','cyl','robin','moll','sinu','geos']:
+            #self.projection in ['tmerc','omerc','cass','merc','mill','cyl','robin','moll','sinu','geos']:
             raise ValueError('%s projection cannot cross pole'%(self.projection))
         # make sure orthographic projection has containsPole=True
         # we will compute the intersections in stereographic
@@ -770,7 +780,7 @@ class Basemap(object):
             b = self._boundarypolyll.boundary
             blons = b[:,0]; blats = b[:,1]
             b[:,0], b[:,1] = maptran(blons, blats)
-            boundarypolyxy = _geos.Polygon(b)
+            boundarypolyxy = _geoslib.Polygon(b)
         for line in bdatmetafile:
             linesplit = line.split()
             area = float(linesplit[1])
@@ -817,7 +827,7 @@ class Basemap(object):
                         lats.append(-90.)
                         b = npy.empty((len(lons),2),npy.float64)
                         b[:,0] = lons; b[:,1] = lats
-                        poly = _geos.Polygon(b)
+                        poly = _geoslib.Polygon(b)
                         antart = True
                     else:
                         poly = Shape(b)
@@ -940,7 +950,7 @@ class Basemap(object):
             y = rminor*npy.sin(thetas) + rminor
             b = npy.empty((len(x),2),npy.float64)
             b[:,0]=x; b[:,1]=y
-            boundaryxy = _geos.Polygon(b)
+            boundaryxy = _geoslib.Polygon(b)
             # compute proj instance for full disk, if necessary.
             if not self._fulldisk:
                 projparms = self.projparams.copy()
@@ -979,7 +989,7 @@ class Basemap(object):
             x, y = maptran(lons,lats)
             b = npy.empty((len(x),2),npy.float64)
             b[:,0]=x; b[:,1]=y
-            boundaryxy = _geos.Polygon(b)
+            boundaryxy = _geoslib.Polygon(b)
         else: # all other projections are rectangular.
             # left side (x = xmin, ymin <= y <= ymax)
             yy = linspace(self.ymin, self.ymax, ny)[:-1]
@@ -1000,7 +1010,7 @@ class Basemap(object):
             b = npy.empty((4,2),npy.float64)
             b[:,0]=[self.xmin,self.xmin,self.xmax,self.xmax]
             b[:,1]=[self.ymin,self.ymax,self.ymax,self.ymin]
-            boundaryxy = _geos.Polygon(b)
+            boundaryxy = _geoslib.Polygon(b)
         if self.projection in ['mill','merc','cyl']:
             # make sure map boundary doesn't quite include pole.
             if self.urcrnrlat > 89.9999:
@@ -1016,7 +1026,7 @@ class Basemap(object):
             x, y = self(lons, lats)
             b = npy.empty((len(x),2),npy.float64)
             b[:,0]=x; b[:,1]=y
-            boundaryxy = _geos.Polygon(b)
+            boundaryxy = _geoslib.Polygon(b)
         else:
             if self.projection not in ['moll','robin','sinu']:
                 lons, lats = maptran(x,y,inverse=True)
@@ -1034,7 +1044,7 @@ class Basemap(object):
                     n = n + 1
         b = npy.empty((len(lons),2),npy.float64)
         b[:,0]=lons; b[:,1]=lats
-        boundaryll = _geos.Polygon(b)
+        boundaryll = _geoslib.Polygon(b)
         return boundaryll, boundaryxy
 
 

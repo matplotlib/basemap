@@ -196,10 +196,9 @@ print m.srs
 # create new figure
 fig=figure()
 # setup oblique mercator basemap.
-m = Basemap(llcrnrlon=-130.,llcrnrlat=39,urcrnrlon=-124.,urcrnrlat=60.,\
+m = Basemap(height=16700000,width=12000000,
             resolution='l',area_thresh=1000.,projection='omerc',\
-            lon_2=-140,lat_2=55,lon_1=-120,lat_1=40)
-fig.add_axes([0.125,0.2,0.6,0.6])
+            lon_0=-100,lat_0=15,lon_2=-120,lat_2=65,lon_1=-50,lat_1=-55)
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/20000.)+1; ny = int((m.ymax-m.ymin)/20000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
@@ -216,13 +215,9 @@ m.drawcoastlines()
 m.drawcountries()
 m.drawstates()
 # draw parallels
-delat = 3.
-circles = arange(40,60,delat)
-m.drawparallels(circles,labels=[1,0,0,0],fontsize=10)
+m.drawparallels(arange(-80,81,20),labels=[1,0,0,0],fontsize=10)
 # draw meridians
-delon = 3.
-meridians = arange(-140,-120,delon)
-m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
+m.drawmeridians(arange(-180,181,30),labels=[0,0,0,1],fontsize=10)
 title('Oblique Mercator Projection')
 print 'plotting Oblique Mercator example ...'
 print m.srs

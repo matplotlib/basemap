@@ -6,6 +6,9 @@ version 0.99
              namespace package, so basemap can now be installed
              if matplotlib is installed as an egg. Python 2.3
              support re-enabled.
+           * changed _geos to _geoslib, so as not to conflict with
+             the python module bundled with the GEOS library.
+           * some fixes/enhancements for omerc projection.
 version 0.9.9.1 (svn revision 4808)
            * require python 2.4 (really only needed for building).
              Once namespace packages are re-enabled in matplotlib,

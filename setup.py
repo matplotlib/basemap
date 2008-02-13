@@ -31,7 +31,7 @@ def dbf_macros():
     else:
         return [("HAVE_UPDATE_HEADER", "0")]
 
-def check_geosversion(GEOS_dir):
+def checkversion(GEOS_dir):
     """check geos C-API header file (geos_c.h)"""
     try:
         f = open(os.path.join(GEOS_dir,'include/geos_c.h'))
@@ -54,7 +54,7 @@ if GEOS_dir is None:
     # if GEOS_dir not set, check a few standard locations.
     GEOS_dirs = ['/usr/local','/sw','/opt','/opt/local',os.path.expanduser('~')]
     for direc in GEOS_dirs:
-        geos_version = check_geosversion(direc)
+        geos_version = checkversion(direc)
         print 'checking for GEOS lib in %s ....' % direc
         if geos_version != '"2.2.3"':
             continue
@@ -63,7 +63,7 @@ if GEOS_dir is None:
             GEOS_dir = direc
             break
 else:
-    geos_version = check_geosversion(GEOS_dir)
+    geos_version = checkversion(GEOS_dir)
 #if geos_version != '"2.2.3"':
 #    raise SystemExit("""
 #Can't find geos library version 2.2.3. Please set the
@@ -81,15 +81,15 @@ geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
 deps = glob.glob('src/*.c')
 deps.remove(os.path.join('src','_proj.c'))
 deps.remove(os.path.join('src','_geod.c'))
-deps.remove(os.path.join('src','_geos.c'))
+deps.remove(os.path.join('src','_geoslib.c'))
 
 packages          = ['mpl_toolkits','mpl_toolkits.basemap']
 package_dirs       = {'':'lib'}
 extensions = [Extension("mpl_toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
 extensions.append(Extension("mpl_toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
 # for some reason, pickling won't work if this extension is installed
-# as "matplotlib.toolkits.basemap._geos"
-extensions.append(Extension("_geos",['src/_geos.c'],
+# as "matplotlib.toolkits.basemap._geoslib"
+extensions.append(Extension("_geoslib",['src/_geoslib.c'],
                             library_dirs=geos_library_dirs,
                             runtime_library_dirs=geos_library_dirs,
                             include_dirs=geos_include_dirs,
