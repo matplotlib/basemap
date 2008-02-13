@@ -79,7 +79,7 @@ supported_projections = ''.join(supported_projections)
 projection_params = {'cyl'      : 'corners only (no width/height)',
              'merc'     : 'corners plus lat_ts (no width/height)',
              'tmerc'    : 'lon_0,lat_0',
-             'omerc'    : 'lat_0,lat_1,lat_2,lon_1,lon_2',
+             'omerc'    : 'lon_0,lat_0,lat_1,lat_2,lon_1,lon_2,no_rot',
              'mill'     : 'corners only (no width/height)',
              'lcc'      : 'lon_0,lat_0,lat_1,lat_2',
              'laea'     : 'lon_0,lat_0',
@@ -215,6 +215,9 @@ _Basemap_init_doc = """
   for oblique mercator.
  lon_2 - longitude of one of the two points on the projection centerline
   for oblique mercator.
+ no_rot - only used by oblique mercator.  If set to True, the map projection
+  coordinates will not be rotated to true North.  Default is False (projection
+  coordinates are automatically rotated).
  lat_0 - central latitude (y-axis origin) - used by all projections,
   Must be equator for mercator projection.
  lon_0 - central meridian (x-axis origin) - used by all projections,
@@ -336,6 +339,7 @@ class Basemap(object):
                        lat_1=None, lat_2=None,
                        lat_0=None, lon_0=None,
                        lon_1=None, lon_2=None,
+                       no_rot=False,
                        suppress_ticks=True,
                        satellite_height=35786000,
                        boundinglat=None,
@@ -527,13 +531,15 @@ class Basemap(object):
             self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
             self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'omerc':
-            if lat_1 is None or lon_1 is None or lat_2 is None or lon_2 is None or lat_0 is None:
-                raise ValueError, 'must specify lat_0 and lat_1,lon_1 and lat_2,lon_2 for Oblique Mercator basemap'
+            if lat_1 is None or lon_1 is None or lat_2 is None or lon_2 is None:
+                raise ValueError, 'must specify lat_1,lon_1 and lat_2,lon_2 for Oblique Mercator basemap'
             projparams['lat_1'] = lat_1
             projparams['lon_1'] = lon_1
             projparams['lat_2'] = lat_2
             projparams['lon_2'] = lon_2
             projparams['lat_0'] = lat_0
+            if no_rot:
+                projparams['no_rot']=''
             #if not using_corners:
             #    raise ValueError, 'cannot specify map region with width and height keywords for this projection, please specify lat/lon values of corners'
             if not using_corners:
