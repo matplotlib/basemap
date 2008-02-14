@@ -1133,7 +1133,6 @@ class Basemap(object):
                 else:
                     ax.axesPatch.set_facecolor(fill_color)
                     ax.axesPatch.set_zorder(0)
-                ax.axesPatch.set_facecolor(ax.get_axis_bgcolor())
                 ax.axesPatch.set_edgecolor(color)
                 ax.set_frame_on(True)
                 if zorder is not None:
