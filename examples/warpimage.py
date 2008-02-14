@@ -2,13 +2,16 @@ import pylab as P
 import numpy
 from mpl_toolkits.basemap import Basemap as Basemap1 
 from numpy import ma
-from matplotlib.image import pil_to_array
-from PIL import Image
 
 class Basemap(Basemap1):
     # subclass Basemap and add bluemarble method.
     def bluemarble(self,masked=False):
         """display 'blue marble next generation' image from http://visibleearth.nasa.gov/"""
+        try:
+            from PIL import Image
+        except ImportError:
+            raise ImportError('bluemarble method requires PIL (http://www.pythonware.com/products/pil/)')
+        from matplotlib.image import pil_to_array
         
         # read in jpeg image to rgba array of normalized floats.
         pilImage = Image.open('bmng.jpg')
