@@ -6,10 +6,10 @@ from matplotlib.image import pil_to_array
 from PIL import Image
 
 # shows how to warp an image from one map projection to another.
-# image from http://visibleearth.nasa.gov/
+# 'blue marble next generation' image from http://visibleearth.nasa.gov/
 
 # read in jpeg image to rgba array of normalized floats.
-pilImage = Image.open('land_shallow_topo_2048.jpg')
+pilImage = Image.open('bmng.jpg')
 rgba = pil_to_array(pilImage)
 rgba = rgba.astype(numpy.float32)/255. # convert to normalized floats.
 
@@ -84,4 +84,30 @@ meridians = numpy.arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,1,0,1],color='0.5')
 P.title("Blue Marble image warped from 'cyl' to 'lcc' projection",fontsize=12)
 print 'warp to lambert conformal map ...'
+
+# create new figure
+fig=P.figure()
+# define oblique mercator map.
+m = Basemap(height=24000000,width=12000000,
+            resolution=None,projection='omerc',\
+            lon_0=-100,lat_0=15,lon_2=-120,lat_2=65,lon_1=-50,lat_1=-55)
+# transform to nx x ny regularly spaced native projection grid
+# nx and ny chosen to have roughly the same horizontal res as original image.
+dx = 2.*numpy.pi*m.rmajor/float(nlons)
+nx = int((m.xmax-m.xmin)/dx)+1; ny = int((m.ymax-m.ymin)/dx)+1
+rgba_warped = ma.zeros((ny,nx,4),numpy.float64)
+# interpolate rgba values from proj='cyl' (geographic coords) to 'lcc'
+# values outside of projection limb will be masked.
+for k in range(4):
+    rgba_warped[:,:,k] = m.transform_scalar(rgba[:,:,k],lons,lats,nx,ny,masked=False)
+# make points outside projection limb transparent.
+rgba_warped = rgba_warped.filled(0.)
+# plot warped rgba image.
+im = m.imshow(rgba_warped)
+# draw lat/lon grid lines every 20 degrees.
+m.drawmeridians(numpy.arange(0,360,20),color='0.5')
+m.drawparallels(numpy.arange(-80,81,20),color='0.5')
+P.title("Blue Marble image warped from 'cyl' to 'omerc' projection",fontsize=12)
+print 'warp to oblique mercator map ...'
+
 P.show()
