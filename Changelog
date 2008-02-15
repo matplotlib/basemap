@@ -10,6 +10,8 @@ version 0.99
              the python module bundled with the GEOS library.
            * some fixes/enhancements for omerc projection (added 'no_rot'
              flag).
+           * added warpimage method for displaying an image background.
+             Default is NASA's blue marble image, which is included.
 version 0.9.9.1 (svn revision 4808)
            * require python 2.4 (really only needed for building).
              Once namespace packages are re-enabled in matplotlib,
