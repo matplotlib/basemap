@@ -2686,7 +2686,7 @@ class Basemap(object):
         try:
             from PIL import Image
         except ImportError:
-            raise ImportError('bluemarble method requires PIL (http://www.pythonware.com/products/pil/)')
+            raise ImportError('warpimage method requires PIL (http://www.pythonware.com/products/pil)')
         from matplotlib.image import pil_to_array
         if not kwargs.has_key('ax') and self.ax is None:
             try:
