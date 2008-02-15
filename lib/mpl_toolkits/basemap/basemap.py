@@ -2674,7 +2674,17 @@ class Basemap(object):
         im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
         return im
 
-    def warpimage(self,file=None,**kwargs):
+    def bluemarble(self,ax=None):
+        """
+        display blue marble image (from http://visibleearth.nasa.gov)
+        as map background.
+        """
+        if ax is not None:
+            self.warpimage(image='bluemarble',ax=ax)
+        else:
+            self.warpimage(image='bluemarble')
+
+    def warpimage(self,image="bluemarble",**kwargs):
         """
         display an image (given by file keyword) as a background.
         Default (if file not specified) is to display 
@@ -2700,25 +2710,31 @@ class Basemap(object):
             ax = kwargs.pop('ax')
         # default image file is blue marble next generation
         # from NASA (http://visibleearth.nasa.gov).
-        if file is None:
+        if image == "bluemarble":
             file = os.path.join(basemap_datadir,'bmng.jpg')
-            newfile = False
         else:
+            file = image
+        # if image is same as previous invocation, used cached data.
+        # if not, regenerate rgba data.
+        if not hasattr(self,'_bm_file') or self._bm_file != file:
             newfile = True
+        else:
+            newfile = False
+        self._bm_file = file
         # read in jpeg image to rgba array of normalized floats.
-        if not hasattr(self,'bm_rgba') or newfile:
-            pilImage = Image.open(file)
-            self.bm_rgba = pil_to_array(pilImage)
+        if not hasattr(self,'_bm_rgba') or newfile:
+            pilImage = Image.open(self._bm_file)
+            self._bm_rgba = pil_to_array(pilImage)
             # convert to normalized floats.
-            self.bm_rgba = self.bm_rgba.astype(npy.float32)/255.
+            self._bm_rgba = self._bm_rgba.astype(npy.float32)/255.
             # define lat/lon grid that image spans.
-            nlons = self.bm_rgba.shape[1]; nlats = self.bm_rgba.shape[0]
+            nlons = self._bm_rgba.shape[1]; nlats = self._bm_rgba.shape[0]
             delta = 360./float(nlons)
-            self.bm_lons = npy.arange(-180.+0.5*delta,180.,delta)
-            self.bm_lats = npy.arange(-90.+0.5*delta,90.,delta)
+            self._bm_lons = npy.arange(-180.+0.5*delta,180.,delta)
+            self._bm_lats = npy.arange(-90.+0.5*delta,90.,delta)
 
         if self.projection != 'cyl':
-            if newfile or not hasattr(self,'bm_rgba_warped'):
+            if newfile or not hasattr(self,'_bm_rgba_warped'):
                 # transform to nx x ny regularly spaced native
                 # projection grid.
                 # nx and ny chosen to have roughly the 
@@ -2726,15 +2742,15 @@ class Basemap(object):
                 dx = 2.*npy.pi*self.rmajor/float(nlons)
                 nx = int((self.xmax-self.xmin)/dx)+1
                 ny = int((self.ymax-self.ymin)/dx)+1
-                self.bm_rgba_warped = npy.zeros((ny,nx,4),npy.float64)
+                self._bm_rgba_warped = npy.zeros((ny,nx,4),npy.float64)
                 # interpolate rgba values from geographic coords (proj='cyl')
                 # to map projection coords.
                 # if masked=True, values outside of
                 # projection limb will be masked.
                 for k in range(4):
-                    self.bm_rgba_warped[:,:,k],x,y = \
-                    self.transform_scalar(self.bm_rgba[:,:,k],\
-                    self.bm_lons,self.bm_lats,nx,ny,returnxy=True)
+                    self._bm_rgba_warped[:,:,k],x,y = \
+                    self.transform_scalar(self._bm_rgba[:,:,k],\
+                    self._bm_lons,self._bm_lats,nx,ny,returnxy=True)
                 # for ortho,geos mask pixels outside projection limb.
                 if self.projection in ['geos','ortho']:
                     lonsr,latsr = self(x,y,inverse=True)
@@ -2742,14 +2758,14 @@ class Basemap(object):
                     mask[:,:,0] = npy.logical_or(lonsr>1.e20,latsr>1.e30)
                     for k in range(1,4):
                         mask[:,:,k] = mask[:,:,0]
-                    self.bm_rgba_warped = \
-                    ma.masked_array(self.bm_rgba_warped,mask=mask)
+                    self._bm_rgba_warped = \
+                    ma.masked_array(self._bm_rgba_warped,mask=mask)
                     # make points outside projection limb transparent.
-                    self.bm_rgba_warped = self.bm_rgba_warped.filled(0.)
+                    self._bm_rgba_warped = self._bm_rgba_warped.filled(0.)
             # plot warped rgba image.
-            im = self.imshow(self.bm_rgba_warped,ax=ax)
+            im = self.imshow(self._bm_rgba_warped,ax=ax)
         else:
-            im = self.imshow(self.bm_rgba,ax=ax)
+            im = self.imshow(self._bm_rgba,ax=ax)
         return im
 
 ### End of Basemap class

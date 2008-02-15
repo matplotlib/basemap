@@ -80,9 +80,8 @@ polarmaps.py illustrates the use of the special-case versions of the
 stereographic, lambert azimuthal equal area, azimuthal equidistant 
 projections (prefixed by 'np' and 'sp').
 
-warpimage.py shows how to interpolate (warp) an image from one
-map projection to another using the 'warpimage' Basemap method.
-Requires PIL.
+warpimage.py shows how to use an image as a map background with the
+'warpimage' and 'bluemarble' Basemap methods. Requires PIL.
 
 garp.py makes a 'World According to Garp' map - an azimuthal equidistant
 projection centered on a specified location.  Straight lines from that

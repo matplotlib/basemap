@@ -11,7 +11,7 @@ fig=P.figure()
 # define orthographic projection centered on North America.
 m = Basemap(projection='ortho',lat_0=40,lon_0=-100,resolution='l')
 # display a non-default image.
-m.warpimage(file='earth_lights_lrg.jpg')
+m.warpimage(image='earth_lights_lrg.jpg')
 # draw coastlines.
 m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw lat/lon grid lines every 30 degrees.
@@ -20,16 +20,16 @@ m.drawparallels(numpy.arange(-90,90,30),color='0.5')
 P.title("Lights at Night image warped from 'cyl' to 'ortho' projection",fontsize=12)
 print 'warp to orthographic map ...'
 
-# redisplay should be fast.
+# redisplay (same image specified) should be fast since data is cached.
 fig = P.figure()
-m.warpimage()
+m.warpimage(image='earth_lights_lrg.jpg')
 
 # create new figure
 fig=P.figure()
 # define cylindrical equidistant projection.
 m = Basemap(projection='cyl',llcrnrlon=-180,llcrnrlat=-90,urcrnrlon=180,urcrnrlat=90,resolution='l')
 # plot (unwarped) rgba image.
-im = m.warpimage()
+im = m.bluemarble()
 # draw coastlines.
 m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw lat/lon grid lines.
@@ -43,7 +43,7 @@ fig=P.figure()
 # define orthographic projection centered on Europe.
 m = Basemap(projection='ortho',lat_0=40,lon_0=40,resolution='l')
 # plot warped rgba image.
-im = m.warpimage(masked=True)
+im = m.bluemarble()
 # draw coastlines.
 m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw lat/lon grid lines every 30 degrees.
@@ -58,7 +58,7 @@ fig=P.figure()
 m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
             rsphere=(6378137.00,6356752.3142),lat_1=50.,lon_0=-107.,\
             resolution='i',area_thresh=1000.,projection='lcc')
-im = m.warpimage()
+im = m.bluemarble()
 # draw coastlines.
 m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw parallels and meridians.
@@ -77,7 +77,7 @@ m = Basemap(height=24000000,width=12000000,
             resolution=None,projection='omerc',\
             lon_0=-100,lat_0=15,lon_2=-120,lat_2=65,lon_1=-50,lat_1=-55)
 # plot warped rgba image.
-im = m.warpimage()
+im = m.bluemarble()
 # draw lat/lon grid lines every 20 degrees.
 m.drawmeridians(numpy.arange(0,360,20),color='0.5')
 m.drawparallels(numpy.arange(-80,81,20),color='0.5')
