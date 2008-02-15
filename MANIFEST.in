@@ -49,7 +49,7 @@ include examples/fillstates.py
 include examples/run_all.py
 include examples/polarmaps.py
 include examples/warpimage.py
-include examples/bmng.jpg
+include examples/earth_lights_lrg.jpg
 include examples/pnganim.py
 include examples/garp.py
 include examples/setwh.py

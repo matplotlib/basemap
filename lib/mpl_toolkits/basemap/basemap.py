@@ -2674,6 +2674,84 @@ class Basemap(object):
         im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
         return im
 
+    def warpimage(self,file=None,**kwargs):
+        """
+        display an image (given by file keyword) as a background.
+        Default (if file not specified) is to display 
+        'blue marble next generation' image from http://visibleearth.nasa.gov/.
+        Specified image must have pixels covering the whole globe in a regular
+        lat/lon grid, starting and -180W and the South Pole.
+        extra keyword 'ax' can be used to override the default axis instance.
+        """
+        try:
+            from PIL import Image
+        except ImportError:
+            raise ImportError('bluemarble method requires PIL (http://www.pythonware.com/products/pil/)')
+        from matplotlib.image import pil_to_array
+        if not kwargs.has_key('ax') and self.ax is None:
+            try:
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
+        else:
+            ax = kwargs.pop('ax')
+        # default image file is blue marble next generation
+        # from NASA (http://visibleearth.nasa.gov).
+        if file is None:
+            file = os.path.join(basemap_datadir,'bmng.jpg')
+            newfile = False
+        else:
+            newfile = True
+        # read in jpeg image to rgba array of normalized floats.
+        if not hasattr(self,'bm_rgba') or newfile:
+            pilImage = Image.open(file)
+            self.bm_rgba = pil_to_array(pilImage)
+            # convert to normalized floats.
+            self.bm_rgba = self.bm_rgba.astype(npy.float32)/255.
+            # define lat/lon grid that image spans.
+            nlons = self.bm_rgba.shape[1]; nlats = self.bm_rgba.shape[0]
+            delta = 360./float(nlons)
+            self.bm_lons = npy.arange(-180.+0.5*delta,180.,delta)
+            self.bm_lats = npy.arange(-90.+0.5*delta,90.,delta)
+
+        if self.projection != 'cyl':
+            if newfile or not hasattr(self,'bm_rgba_warped'):
+                # transform to nx x ny regularly spaced native
+                # projection grid.
+                # nx and ny chosen to have roughly the 
+                # same horizontal res as original image.
+                dx = 2.*npy.pi*self.rmajor/float(nlons)
+                nx = int((self.xmax-self.xmin)/dx)+1
+                ny = int((self.ymax-self.ymin)/dx)+1
+                self.bm_rgba_warped = npy.zeros((ny,nx,4),npy.float64)
+                # interpolate rgba values from geographic coords (proj='cyl')
+                # to map projection coords.
+                # if masked=True, values outside of
+                # projection limb will be masked.
+                for k in range(4):
+                    self.bm_rgba_warped[:,:,k],x,y = \
+                    self.transform_scalar(self.bm_rgba[:,:,k],\
+                    self.bm_lons,self.bm_lats,nx,ny,returnxy=True)
+                # for ortho,geos mask pixels outside projection limb.
+                if self.projection in ['geos','ortho']:
+                    lonsr,latsr = self(x,y,inverse=True)
+                    mask = ma.zeros((nx,ny,4),npy.int8)
+                    mask[:,:,0] = npy.logical_or(lonsr>1.e20,latsr>1.e30)
+                    for k in range(1,4):
+                        mask[:,:,k] = mask[:,:,0]
+                    self.bm_rgba_warped = \
+                    ma.masked_array(self.bm_rgba_warped,mask=mask)
+                    # make points outside projection limb transparent.
+                    self.bm_rgba_warped = self.bm_rgba_warped.filled(0.)
+            # plot warped rgba image.
+            im = self.imshow(self.bm_rgba_warped,ax=ax)
+        else:
+            im = self.imshow(self.bm_rgba,ax=ax)
+        return im
+
 ### End of Basemap class
 
 def _searchlist(a,x):
