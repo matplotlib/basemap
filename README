@@ -17,7 +17,7 @@ Source code is included in the geos-2.2.3 directory.
 setuptools (only if your are using python 2.3)
 
 PIL (http://pythonware.com/products/pil) is optional (only
-needed for Basemap warpimage method).
+needed for Basemap warpimage and bluemarble methods).
 
 **Copyright**
 
