@@ -2768,6 +2768,176 @@ class Basemap(object):
             im = self.imshow(self._bm_rgba,ax=ax)
         return im
 
+    def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\
+                     units='km',fontsize=9,yoffset=None,labelstyle='simple',\
+                     fontcolor='k',fillcolor1='w',fillcolor2='k',ax=None):
+        """
+        draw a map scale at lon,lat representing distance in the map
+        projection coordinates at lon0,lat0. The length of the scale
+        is specified by the length argument, with units given by the units
+        keyword (default 'km').  Two styles of scale bar are available
+        (specified by the labelstyle keyword) - 'simple' and 'fancy', which
+        correspond roughly to the corresponding styles provided by 
+        the Generic Mapping Tools software. Default is 'simple'.
+
+        The fontsize and color of the map scale annotations can be specified
+        with the fontsize (default 9) and fontcolor (default black) keywords.
+
+        labelstyle='simple' results in basic annotation (the units on top
+        of the scalebar and the distance below).  This is the default.
+        If labelstyle='fancy' the map scale factor (ratio between
+        the actual distance and map projection distance at lon0,lat0) and
+        the value of lon0,lat0 are also printed on top of the scale bar.
+
+        yoffset controls how tall the scale bar is, and how far the annotations
+        are offset from the scale bar.  Default is 0.02 times the height of the map
+        (0.02*(self.ymax-self.ymin)).
+
+        fillcolor1 and fillcolor2 are only relevant for the 'fancy' scale bar.
+        They are the colors of the alternating filled regions (default white
+        and black).
+        """
+        # get current axes instance (if none specified).
+        if ax is None and self.ax is None:
+            try:
+                ax = pylab.gca()
+            except:
+                import pylab
+                ax = pylab.gca()
+        elif ax is None and self.ax is not None:
+            ax = self.ax
+        # not valid for cylindrical projection
+        if self.projection == 'cyl':
+            raise ValueError("cannot draw map scale for projection='cyl'")
+        # convert length to meters
+        if units == 'km':
+            lenlab = length
+            length = length*1000 
+        elif units == 'mi':
+            lenlab = length
+            length = length*1609.344
+        elif units == 'nmi':
+            lenlab = length
+            length = length*1852
+        else:
+            msg = "units must be 'km' (kilometers), "\
+            "'mi' (miles) or 'nmi' (nautical miles)"
+            raise KeyError(msg)
+        # reference point and center of scale.
+        x0,y0 = self(lon0,lat0)
+        xc,yc = self(lon,lat)
+        # make sure lon_0 between -180 and 180
+        lon_0 = ((lon0+360) % 360) - 360
+        if lat0>0:
+            if lon>0:
+                lonlatstr = u'%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
+            elif lon<0:
+                lonlatstr = u'%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+            else:
+                lonlatstr = u'%g\N{DEGREE SIGN}, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+        else:
+            if lon>0:
+                lonlatstr = u'%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
+            elif lon<0:
+                lonlatstr = u'%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+            else:
+                lonlatstr = u'%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}' % (lat0,lon_0)
+        # left edge of scale
+        lon1,lat1 = self(x0-length/2,y0,inverse=True)
+        x1,y1 = self(lon1,lat1)
+        # right edge of scale
+        lon4,lat4 = self(x0+length/2,y0,inverse=True)
+        x4,y4 = self(lon4,lat4)
+        x1 = x1-x0+xc; y1 = y1-y0+yc
+        x4 = x4-x0+xc; y4 = y4-y0+yc
+        if x1 > 1.e20 or x4 > 1.e20 or y1 > 1.e20 or y4 > 1.e20:
+            raise ValueError("scale bar positioned outside projection limb")
+        # scale factor for true distance
+        gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
+        az12,az21,dist = gc.inv(lon1,lat1,lon4,lat4)
+        scalefact = dist/length
+        # label to put on top of scale bar.
+        if labelstyle=='simple':
+            labelstr = units
+        elif labelstyle == 'fancy':
+            labelstr = units+" (scale factor %4.2f at %s)"%(scalefact,lonlatstr)
+        else:
+            raise KeyError("labelstyle must be 'simple' or 'fancy'")
+        # default y offset is 2 percent of map height.
+        if yoffset is None: yoffset = 0.02*(self.ymax-self.ymin)
+        # 'fancy' style
+        if barstyle == 'fancy':
+            #we need 5 sets of x coordinates (in map units)
+            #quarter scale
+            lon2,lat2 = self(x0-length/4,y0,inverse=True)
+            x2,y2 = self(lon2,lat2)
+            x2 = x2-x0+xc; y2 = y2-y0+yc
+            #three quarter scale
+            lon3,lat3 = self(x0+length/4,y0,inverse=True)
+            x3,y3 = self(lon3,lat3)
+            x3 = x3-x0+xc; y3 = y3-y0+yc
+            #plot top line
+            ytop = yc+yoffset/2
+            ybottom = yc-yoffset/2
+            ytick = ybottom - yoffset/2
+            ytext = ytick - yoffset/2
+            self.plot([x1,x4],[ytop,ytop],color=fontcolor)
+            #plot bottom line
+            self.plot([x1,x4],[ybottom,ybottom],color=fontcolor)
+            #plot left edge
+            self.plot([x1,x1],[ybottom,ytop],color=fontcolor)
+            #plot right edge
+            self.plot([x4,x4],[ybottom,ytop],color=fontcolor)
+            #make a filled black box from left edge to 1/4 way across
+            ax.fill([x1,x2,x2,x1,x1],[ytop,ytop,ybottom,ybottom,ytop],\
+                    ec=fontcolor,fc=fillcolor1)
+            #make a filled white box from 1/4 way across to 1/2 way across
+            ax.fill([x2,xc,xc,x2,x2],[ytop,ytop,ybottom,ybottom,ytop],\
+                    ec=fontcolor,fc=fillcolor2)
+            #make a filled white box from 1/2 way across to 3/4 way across
+            ax.fill([xc,x3,x3,xc,xc],[ytop,ytop,ybottom,ybottom,ytop],\
+                    ec=fontcolor,fc=fillcolor1)
+            #make a filled white box from 3/4 way across to end
+            ax.fill([x3,x4,x4,x3,x3],[ytop,ytop,ybottom,ybottom,ytop],\
+                    ec=fontcolor,fc=fillcolor2)
+            #plot 3 tick marks at left edge, center, and right edge
+            self.plot([x1,x1],[ytick,ybottom],color=fontcolor)
+            self.plot([xc,xc],[ytick,ybottom],color=fontcolor)
+            self.plot([x4,x4],[ytick,ybottom],color=fontcolor)
+            #label 3 tick marks
+            ax.text(x1,ytext,'%d' % (0),\
+            horizontalalignment='center',\
+            verticalalignment='top',\
+            fontsize=fontsize,color=fontcolor)
+            ax.text(xc,ytext,'%d' % (0.5*lenlab),\
+            horizontalalignment='center',\
+            verticalalignment='top',\
+            fontsize=fontsize,color=fontcolor)
+            ax.text(x4,ytext,'%d' % (lenlab),\
+            horizontalalignment='center',\
+            verticalalignment='top',\
+            fontsize=fontsize,color=fontcolor)
+            #put units, scale factor on top
+            ax.text(xc,ytop+yoffset/2,labelstr,\
+            horizontalalignment='center',\
+            verticalalignment='bottom',\
+            fontsize=fontsize,color=fontcolor)
+        # 'simple' style
+        elif barstyle == 'simple':
+            self.plot([x1,x4],[yc,yc],color=fontcolor)
+            self.plot([x1,x1],[yc-yoffset,yc+yoffset],color=fontcolor)
+            self.plot([x4,x4],[yc-yoffset,yc+yoffset],color=fontcolor)
+            ax.text(xc,yc-yoffset,'%d' % lenlab,\
+            verticalalignment='top',horizontalalignment='center',\
+            fontsize=fontsize,color=fontcolor)
+            #put units, scale factor on top
+            ax.text(xc,yc+yoffset,labelstr,\
+            horizontalalignment='center',\
+            verticalalignment='bottom',\
+            fontsize=fontsize,color=fontcolor)
+        else:
+            raise KeyError("barstyle must be 'simple' or 'fancy'")
+
 ### End of Basemap class
 
 def _searchlist(a,x):
