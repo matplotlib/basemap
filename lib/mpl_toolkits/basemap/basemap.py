@@ -2796,6 +2796,8 @@ class Basemap(object):
         fillcolor1 and fillcolor2 are only relevant for the 'fancy' scale bar.
         They are the colors of the alternating filled regions (default white
         and black).
+
+        extra keyword 'ax' can be used to override the default axis instance.
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
