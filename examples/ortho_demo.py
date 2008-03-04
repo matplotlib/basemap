@@ -29,5 +29,11 @@ m.drawcountries()
 m.drawparallels(arange(-90.,120.,30.))
 m.drawmeridians(arange(0.,420.,60.))
 m.drawmapboundary(fill_color='aqua')
+# add a map scale.
+length = 5000 
+x1,y1 = 0.2*m.xmax, 0.2*m.ymax
+lon1,lat1 = m(x1,y1,inverse=True)
+m.drawmapscale(lon1,lat1,lon_0,lat_0,length,fontsize=8,barstyle='fancy',\
+               labelstyle='fancy',units='km')
 title('Orthographic Map Centered on Lon=%s, Lat=%s' % (lon_0,lat_0))
 show()
