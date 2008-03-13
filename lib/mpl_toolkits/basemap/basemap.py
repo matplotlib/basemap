@@ -1068,6 +1068,7 @@ class Basemap(object):
          (default 0).
         ax - axes instance to use (default None, use default axes 
          instance).
+        returns PatchCollection representing map boundary.
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -1078,6 +1079,7 @@ class Basemap(object):
                 ax = pylab.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
+        limb = None
         if self.projection == 'ortho':
             limb = Circle((self.rmajor,self.rmajor),self.rmajor)
         elif self.projection == 'geos':
@@ -1115,16 +1117,16 @@ class Basemap(object):
             lats = npy.array(lats1+lats2+lats3+lats4,npy.float64)
             x, y = self(lons,lats)
             xy = zip(x,y)
-            poly = Polygon(xy,edgecolor=color,linewidth=linewidth)
-            ax.add_patch(poly)
+            limb = Polygon(xy,edgecolor=color,linewidth=linewidth)
+            ax.add_patch(limb)
             if fill_color is None:
-                poly.set_fill(False)
+                limb.set_fill(False)
             else:
-                poly.set_facecolor(fill_color)
-                poly.set_zorder(0)
-            poly.set_clip_on(False)
+                limb.set_facecolor(fill_color)
+                limb.set_zorder(0)
+            limb.set_clip_on(False)
             if zorder is not None:
-                poly.set_zorder(zorder)
+                limb.set_zorder(zorder)
         else: # all other projections are rectangular.
             ax.axesPatch.set_linewidth(linewidth)
             if self.projection not in ['geos','ortho']:
@@ -1159,6 +1161,7 @@ class Basemap(object):
                 limb.set_clip_on(True)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        return limb
 
     def fillcontinents(self,color='0.8',lake_color=None,ax=None,zorder=None):
         """
@@ -1172,6 +1175,8 @@ class Basemap(object):
         over the filled continents).
 
         After filling continents, lakes are re-filled with axis background color.
+
+        returns Polygon object.
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
@@ -1219,6 +1224,7 @@ class Basemap(object):
             np = np + 1
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        return poly
 
     def drawcoastlines(self,linewidth=1.,color='k',antialiased=1,ax=None,zorder=None):
         """
@@ -1230,6 +1236,7 @@ class Basemap(object):
         ax - axes instance (overrides default axes instance)
         zorder - sets the zorder for the coastlines (if not specified,
         uses default zorder for LineCollections).
+        returns a LineCollection.
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
@@ -1245,11 +1252,13 @@ class Basemap(object):
         coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
+        coastlines.set_label('_nolabel_')
         if zorder is not None:
             coastlines.set_zorder(zorder)
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        return coastlines
 
     def drawcountries(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
         """
@@ -1261,6 +1270,7 @@ class Basemap(object):
         ax - axes instance (overrides default axes instance)
         zorder - sets the zorder for the country boundaries (if not specified,
         uses default zorder for LineCollections).
+        returns a LineCollection.
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
@@ -1277,14 +1287,16 @@ class Basemap(object):
                 ax = pylab.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
-        coastlines = LineCollection(self.cntrysegs,antialiaseds=(antialiased,))
-        coastlines.set_color(color)
-        coastlines.set_linewidth(linewidth)
+        countries = LineCollection(self.cntrysegs,antialiaseds=(antialiased,))
+        countries.set_color(color)
+        countries.set_linewidth(linewidth)
+        countries.set_label('_nolabel_')
         if zorder is not None:
-            coastlines.set_zorder(zorder)
-        ax.add_collection(coastlines)
+            countries.set_zorder(zorder)
+        ax.add_collection(countries)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        return countries
 
     def drawstates(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
         """
@@ -1296,6 +1308,7 @@ class Basemap(object):
         ax - axes instance (overrides default axes instance)
         zorder - sets the zorder for the state boundaries (if not specified,
         uses default zorder for LineCollections).
+        returns a LineCollection.
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
@@ -1312,14 +1325,16 @@ class Basemap(object):
                 ax = pylab.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
-        coastlines = LineCollection(self.statesegs,antialiaseds=(antialiased,))
-        coastlines.set_color(color)
-        coastlines.set_linewidth(linewidth)
+        states = LineCollection(self.statesegs,antialiaseds=(antialiased,))
+        states.set_color(color)
+        states.set_linewidth(linewidth)
+        states.set_label('_nolabel_')
         if zorder is not None:
-            coastlines.set_zorder(zorder)
-        ax.add_collection(coastlines)
+            states.set_zorder(zorder)
+        ax.add_collection(states)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        return states
 
     def drawrivers(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
         """
@@ -1331,6 +1346,7 @@ class Basemap(object):
         ax - axes instance (overrides default axes instance)
         zorder - sets the zorder for the rivers (if not specified,
         uses default zorder for LineCollections).
+        returns a LineCollection
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
@@ -1347,14 +1363,16 @@ class Basemap(object):
                 ax = pylab.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
-        coastlines = LineCollection(self.riversegs,antialiaseds=(antialiased,))
-        coastlines.set_color(color)
-        coastlines.set_linewidth(linewidth)
+        rivers = LineCollection(self.riversegs,antialiaseds=(antialiased,))
+        rivers.set_color(color)
+        rivers.set_linewidth(linewidth)
+        rivers.set_label('_nolabel_')
         if zorder is not None:
-            coastlines.set_zorder(zorder)
-        ax.add_collection(coastlines)
+            rivers.set_zorder(zorder)
+        ax.add_collection(rivers)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        return rivers
 
     def readshapefile(self,shapefile,name,drawbounds=True,zorder=None,
                       linewidth=0.5,color='k',antialiased=1,ax=None):
@@ -1474,6 +1492,7 @@ class Basemap(object):
                 lines = LineCollection(shpsegs,antialiaseds=(1,))
                 lines.set_color(color)
                 lines.set_linewidth(linewidth)
+                lines.set_label('_nolabel_')
                 if zorder is not None:
                     lines.set_zorder(zorder)
                 ax.add_collection(lines)
@@ -1517,6 +1536,10 @@ class Basemap(object):
 
         additional keyword arguments control text properties for labels (see
          pylab.text documentation)
+
+        returns a dictionary whose keys are the parallels, and
+        whose values are tuples containing lists of the Line2D and Text instances
+        associated with each parallel.
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -1559,6 +1582,7 @@ class Basemap(object):
                 circlesl.append(-latmax)
         xdelta = 0.01*(self.xmax-self.xmin)
         ydelta = 0.01*(self.ymax-self.ymin)
+        linecolls = {}
         for circ in circlesl:
             lats = circ*npy.ones(len(lons),npy.float32)
             x,y = self(lons,lats)
@@ -1569,6 +1593,7 @@ class Basemap(object):
             testy = npy.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
             x = npy.compress(testy, x)
             y = npy.compress(testy, y)
+            lines = []
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
                 # (not necessary for mercator or cylindrical or miller).
@@ -1596,9 +1621,12 @@ class Basemap(object):
                         l = Line2D(x,y,linewidth=linewidth)
                         l.set_color(color)
                         l.set_dashes(dashes)
+                        l.set_label('_nolabel_')
                         if zorder is not None:
                             l.set_zorder(zorder)
                         ax.add_line(l)
+                        lines.append(l)
+            linecolls[circ] = (lines,[])
         # draw labels for parallels
         # parallels not labelled for fulldisk orthographic or geostationary
         if self.projection in ['ortho','geos'] and max(labels):
@@ -1688,27 +1716,33 @@ class Basemap(object):
                     # don't bother if close to the first label.
                     if i and abs(nr-nl) < 100: continue
                     if n >= 0:
+                        t = None
                         if side == 'l':
                             if self.projection in ['moll','robin','sinu']:
                                 xlab,ylab = self(lon_0-179.9,lat)
                             else:
                                 xlab = self.llcrnrx
                             xlab = xlab-xoffset
-                            ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**kwargs)
+                            t = ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**kwargs)
                         elif side == 'r':
                             if self.projection in ['moll','robin','sinu']:
                                 xlab,ylab = self(lon_0+179.9,lat)
                             else:
                                 xlab = self.urcrnrx
                             xlab = xlab+xoffset
-                            ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',**kwargs)
+                            t = ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',**kwargs)
                         elif side == 'b':
-                            ax.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',**kwargs)
+                            t = ax.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',**kwargs)
                         else:
-                            ax.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
+                            t = ax.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
+                        if t is not None: linecolls[lat][1].append(t)
 
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        keys = linecolls.keys(); vals = linecolls.values()
+        for k,v in zip(keys,vals):
+            if v == ([], []): del linecolls[k]
+        return linecolls
 
     def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
@@ -1741,6 +1775,10 @@ class Basemap(object):
 
         additional keyword arguments control text properties for labels (see
          pylab.text documentation)
+
+        returns a dictionary whose keys are the meridians, and
+        whose values are tuples containing lists of the Line2D and Text instances
+        associated with each meridian.
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
@@ -1769,6 +1807,7 @@ class Basemap(object):
             lats = npy.arange(-90,90.01,0.01)
         xdelta = 0.01*(self.xmax-self.xmin)
         ydelta = 0.01*(self.ymax-self.ymin)
+        linecolls = {}
         for merid in meridians:
             lons = merid*npy.ones(len(lats),npy.float32)
             x,y = self(lons,lats)
@@ -1779,6 +1818,7 @@ class Basemap(object):
             testy = npy.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
             x = npy.compress(testy, x)
             y = npy.compress(testy, y)
+            lines = []
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
                 # (not necessary for mercator or cylindrical or miller).
@@ -1806,9 +1846,12 @@ class Basemap(object):
                         l = Line2D(x,y,linewidth=linewidth)
                         l.set_color(color)
                         l.set_dashes(dashes)
+                        l.set_label('_nolabel_')
                         if zorder is not None:
                             l.set_zorder(zorder)
                         ax.add_line(l)
+                        lines.append(l)
+            linecolls[merid] = (lines,[])
         # draw labels for meridians.
         # meridians not labelled for sinusoidal, mollweide, or
         # or full-disk orthographic/geostationary.
@@ -1906,19 +1949,26 @@ class Basemap(object):
                     # don't bother if close to the first label.
                     if i and abs(nr-nl) < 100: continue
                     if n >= 0:
+                        t = None
                         if side == 'l':
-                            ax.text(self.llcrnrx-xoffset,yy[n],lonlab,horizontalalignment='right',verticalalignment='center',**kwargs)
+                            t = ax.text(self.llcrnrx-xoffset,yy[n],lonlab,horizontalalignment='right',verticalalignment='center',**kwargs)
                         elif side == 'r':
-                            ax.text(self.urcrnrx+xoffset,yy[n],lonlab,horizontalalignment='left',verticalalignment='center',**kwargs)
+                            t = ax.text(self.urcrnrx+xoffset,yy[n],lonlab,horizontalalignment='left',verticalalignment='center',**kwargs)
                         elif side == 'b':
                             if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
-                                ax.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',**kwargs)
+                                t = ax.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',**kwargs)
                         else:
                             if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
-                                ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
+                                t = ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
 
+                        if t is not None: linecolls[lon][1].append(t)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # remove empty values from linecolls dictionary
+        keys = linecolls.keys(); vals = linecolls.values()
+        for k,v in zip(keys,vals):
+            if v == ([], []): del linecolls[k]
+        return linecolls
 
     def gcpoints(self,lon1,lat1,lon2,lat2,npoints):
         """
@@ -1948,6 +1998,8 @@ class Basemap(object):
 
         Note:  cannot handle situations in which the great circle intersects
         the edge of the map projection domain, and then re-enters the domain.
+
+        Returns a Line2D object.
         """
         # use great circle formula for a perfect sphere.
         gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
@@ -1960,7 +2012,7 @@ class Basemap(object):
             lats.append(lat)
         lons.append(lon2); lats.append(lat2)
         x, y = self(lons, lats)
-        self.plot(x,y,**kwargs)
+        return self.plot(x,y,**kwargs)
 
     def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1,masked=False):
         """

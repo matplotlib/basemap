@@ -1,4 +1,11 @@
 version 0.99
+           * drawparallels and drawmeridians return a dictionary containing
+             the Line2D and Text instances associated with each lat or lon.
+           * drawcoastlines, drawcountries and friends now have
+             PatchCollection return values.
+           * make sure '_nolabel_' set on coastlines, countries, states,
+             rivers, parallels and meridians so they are not included in 
+             a legend.
            * added drawmapscale method to create a map scale bar similar
              to that available with the GMT's psbasemap.
            * Now lives in mpl_toolkits.basemap.  Instead
