@@ -1587,10 +1587,13 @@ class Basemap(object):
             lats = circ*npy.ones(len(lons),npy.float32)
             x,y = self(lons,lats)
             # remove points outside domain.
-            testx = npy.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
+            # leave a little slop around edges (3*xdelta)
+            # don't really know why, but this appears to be needed to 
+            # or lines sometimes don't reach edge of plot.
+            testx = npy.logical_and(x>=self.xmin-3*xdelta,x<=self.xmax+3*xdelta)
             x = npy.compress(testx, x)
             y = npy.compress(testx, y)
-            testy = npy.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
+            testy = npy.logical_and(y>=self.ymin-3*ydelta,y<=self.ymax+3*ydelta)
             x = npy.compress(testy, x)
             y = npy.compress(testy, y)
             lines = []
@@ -1812,10 +1815,13 @@ class Basemap(object):
             lons = merid*npy.ones(len(lats),npy.float32)
             x,y = self(lons,lats)
             # remove points outside domain.
-            testx = npy.logical_and(x>=self.xmin-xdelta,x<=self.xmax+xdelta)
+            # leave a little slop around edges (3*xdelta)
+            # don't really know why, but this appears to be needed to 
+            # or lines sometimes don't reach edge of plot.
+            testx = npy.logical_and(x>=self.xmin-3*xdelta,x<=self.xmax+3*xdelta)
             x = npy.compress(testx, x)
             y = npy.compress(testx, y)
-            testy = npy.logical_and(y>=self.ymin-ydelta,y<=self.ymax+ydelta)
+            testy = npy.logical_and(y>=self.ymin-3*ydelta,y<=self.ymax+3*ydelta)
             x = npy.compress(testy, x)
             y = npy.compress(testy, y)
             lines = []
