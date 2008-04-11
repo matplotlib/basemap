@@ -1,4 +1,6 @@
 version 0.99
+           * fixed bug in NetCDFFile creating masked arrays when both
+             _FillValue and missing_value exist.
            * drawparallels and drawmeridians return a dictionary containing
              the Line2D and Text instances associated with each lat or lon.
            * drawcoastlines, drawcountries and friends now have
