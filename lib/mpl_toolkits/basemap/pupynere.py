@@ -31,7 +31,7 @@ import struct
 import itertools
 import mmap
 
-from numpy import ndarray, empty, array, ma, squeeze, zeros 
+from numpy import ndarray, empty, array, ma, squeeze, zeros
 import numpy
 
 from dap.client import open as open_remote
@@ -113,15 +113,15 @@ def _maskandscale(var,datout):
     fillval = None
     if hasattr(var, 'missing_value') and (datout == var.missing_value).any():
         fillval = var.missing_value
-        totalmask = totalmask + datout==fillval
+        totalmask += datout==fillval
     if hasattr(var, '_FillValue') and (datout == var._FillValue).any():
         if fillval is None:
             fillval = var._FillValue
-        totalmask = totalmask + datout==var._FillValue
+        totalmask += datout==var._FillValue
     elif (datout == _default_fillvals[var.typecode()]).any():
         if fillval is None:
             fillval = _default_fillvals[var.typecode()]
-        totalmask = totalmask + datout==_default_fillvals[var.dtype]
+        totalmask += datout==_default_fillvals[var.dtype]
     if fillval is not None:
         datout = ma.masked_array(datout,mask=totalmask,fill_value=fillval)
     try:
