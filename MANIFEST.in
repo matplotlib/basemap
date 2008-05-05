@@ -8,6 +8,7 @@ include API_CHANGES
 include KNOWN_BUGS
 include Changelog
 include setup.py
+include setup.cfg
 include setupegg.py
 include src/*
 include examples/simpletest.py

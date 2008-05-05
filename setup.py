@@ -1,3 +1,5 @@
+# basemap build options can be modified with the setup.cfg file. See
+# setup.cfg for more information.
 import sys, glob, os, numpy
 major, minor1, minor2, s, tmp = sys.version_info
 if major==2 and minor1<=3:
@@ -114,27 +116,68 @@ extensions = extensions + \
                     include_dirs = ["pyshapelib/shapelib"],
                     define_macros = dbf_macros()) ]
 
-# install dap and httplib2, if not already available.
-# only a subset of dap is installed (the client, not the server)
-__dapversion__ = None
-try:
-    from dap.lib import __version__ as __dapversion__
-except ImportError:
-    packages = packages + ['dap','dap.util','dap.parsers']
-    package_dirs['dap'] = os.path.join('lib','dap')
-# install dap client anyway if installed version is older than
-# version provided here.
-if __dapversion__ is not None:
-    __dapversion__ = [repr(v)+'.' for v in __dapversion__]
-    __dapversion__ = ''.join(__dapversion__)[:-1]
-    if __dapversion__ < '2.2.6.2':
+# check setup.cfg file to see how to install auxilliary packages.
+options = {}
+if os.path.exists("setup.cfg"):
+    import ConfigParser
+    config = ConfigParser.SafeConfigParser()
+    config.read("setup.cfg")
+    try: options['provide_pydap'] = config.getboolean("provide_packages", "pydap")
+    except: options['provide_pydap'] = 'auto'
+    try: options['provide_httplib2'] = config.getboolean("provide_packages", "httplib2")
+    except: options['provide_httplib2'] = 'auto'
+else:
+    options['provide_pydap'] = 'auto'
+    options['provide_httplib2'] = 'auto'
+
+provide_pydap = options['provide_pydap']
+if provide_pydap == 'auto': # install pydap stuff if not already available.
+   # only the client is installed (not the server).
+    __dapversion__ = None
+    print 'checking to see if required version of pydap installed ..'
+    try:
+        from dap.lib import __version__ as __dapversion__
+    except ImportError:
+        print 'pydap not installed, client will be installed'
         packages = packages + ['dap','dap.util','dap.parsers']
         package_dirs['dap'] = os.path.join('lib','dap')
-try:
-    import httplib2
-except ImportError:
+    else:
+        print 'pydap installed, checking version ...'
+    # install dap client anyway if installed version is older than
+    # version provided here.
+    if __dapversion__ is not None:
+        __dapversion__ = [repr(v)+'.' for v in __dapversion__]
+        __dapversion__ = ''.join(__dapversion__)[:-1]
+        if __dapversion__ < '2.2.6.2':
+            print 'required version of pydap not installed, client will be installed'
+            packages = packages + ['dap','dap.util','dap.parsers']
+            package_dirs['dap'] = os.path.join('lib','dap')
+        else:
+            print 'pydap version OK, will not be installed'
+elif provide_pydap: # force install of pydap stuff.
+    print 'forcing install of included pydap client'
+    packages = packages + ['dap','dap.util','dap.parsers']
+    package_dirs['dap'] = os.path.join('lib','dap')
+else:
+    print 'will not install pydap'
+
+provide_httplib2 = options['provide_httplib2']
+if provide_httplib2  == 'auto':
+    print 'checking to see if httplib2 installed ..'
+    try:
+        import httplib2
+    except ImportError:
+        print 'httplib2 not installed, will be installed'
+        packages = packages + ['httplib2']
+        package_dirs['httlib2'] = os.path.join('lib','httplib2')
+    else:
+        print 'httplib2 installed'
+elif provide_httplib2: # force install of httplib2
+    print 'forcing install of included httplib2'
     packages = packages + ['httplib2']
     package_dirs['httlib2'] = os.path.join('lib','httplib2')
+else:
+    print 'will not install httplib2'
 
 # Specify all the required mpl data
 pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world','data/bmng.jpg']
