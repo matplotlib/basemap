@@ -305,23 +305,25 @@ class Basemap(object):
     Example Usage:
 
     >>> from mpl_toolkits.basemap import Basemap
-    >>> from pylab import load, meshgrid, title, arange, show
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+    >>> import matplotlib.mlab as mlab
     >>> # read in topo data (on a regular lat/lon grid)
-    >>> etopo = load('etopo20data.gz')
-    >>> lons  = load('etopo20lons.gz')
-    >>> lats  = load('etopo20lats.gz')
+    >>> etopo = mlab.load('etopo20data.gz')
+    >>> lons  = mlab.load('etopo20lons.gz')
+    >>> lats  = mlab.load('etopo20lats.gz')
     >>> # create Basemap instance for Robinson projection.
     >>> m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]))
     >>> # compute native map projection coordinates for lat/lon grid.
-    >>> x, y = m(*meshgrid(lons,lats))
+    >>> x, y = m(*np.meshgrid(lons,lats))
     >>> # make filled contour plot.
-    >>> cs = m.contourf(x,y,etopo,30,cmap=cm.jet)
+    >>> cs = m.contourf(x,y,etopo,30,cmap=plt.cm.jet)
     >>> m.drawcoastlines() # draw coastlines
     >>> m.drawmapboundary() # draw a line around the map region
-    >>> m.drawparallels(arange(-90.,120.,30.),labels=[1,0,0,0]) # draw parallels
-    >>> m.drawmeridians(arange(0.,420.,60.),labels=[0,0,0,1]) # draw meridians
-    >>> title('Robinson Projection') # add a title
-    >>> show()
+    >>> m.drawparallels(np.arange(-90.,120.,30.),labels=[1,0,0,0]) # draw parallels
+    >>> m.drawmeridians(np.arange(0.,420.,60.),labels=[0,0,0,1]) # draw meridians
+    >>> plt.title('Robinson Projection') # add a title
+    >>> plt.show()
 
     [this example (simpletest.py) plus many others can be found in the
      examples directory of source distribution.  The "OO" version of this
