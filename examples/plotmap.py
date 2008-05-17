@@ -5,14 +5,15 @@
 # the data is interpolated to the native projection grid.
 
 from mpl_toolkits.basemap import Basemap, shiftgrid
-from pylab import title, colorbar, show, axes, cm, load, arange, figure, \
-                  text
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-topoin = load('etopo20data.gz')
-lons = load('etopo20lons.gz')
-lats = load('etopo20lats.gz')
+topoin = mlab.load('etopo20data.gz')
+lons = mlab.load('etopo20lons.gz')
+lats = mlab.load('etopo20lats.gz')
 # shift data so lons go from -180 to 180 instead of 20 to 380.
 topoin,lons = shiftgrid(180.,topoin,lons,start=False)
 
@@ -26,31 +27,32 @@ m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat,x,y = m.transform_scalar(topoin,lons,lats,nx,ny,returnxy=True)
 # create the figure.
-fig=figure(figsize=(8,8))
+fig=plt.figure(figsize=(8,8))
 # add an axes, leaving room for colorbar on the right.
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with imshow.
-im = m.imshow(topodat,cm.jet)
+im = m.imshow(topodat,plt.cm.jet)
 # setup colorbar axes instance.
 pos = ax.get_position()
 l, b, w, h = pos.bounds
-cax = axes([l+w+0.075, b, 0.05, h])
-colorbar(cax=cax) # draw colorbar
-axes(ax)  # make the original axes current again
+cax = plt.axes([l+w+0.075, b, 0.05, h])
+plt.colorbar(cax=cax) # draw colorbar
+plt.axes(ax)  # make the original axes current again
 # plot blue dot on boulder, colorado and label it as such.
 xpt,ypt = m(-104.237,40.125) 
 m.plot([xpt],[ypt],'bo') 
-text(xpt+100000,ypt+100000,'Boulder')
+plt.text(xpt+100000,ypt+100000,'Boulder')
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 m.drawcountries()
 m.drawstates()
 # draw parallels and meridians.
 # label on left, right and bottom of map.
-parallels = arange(0.,80,20.)
+parallels = np.arange(0.,80,20.)
 m.drawparallels(parallels,labels=[1,1,0,1])
-meridians = arange(10.,360.,30.)
+meridians = np.arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,1,0,1])
 # set title.
-title('ETOPO Topography - Lambert Conformal Conic')
-show()
+plt.title('ETOPO Topography - Lambert Conformal Conic')
+#plt.savefig('plotmap.pdf')
+plt.show()

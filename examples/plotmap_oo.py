@@ -5,7 +5,7 @@
 # the data is interpolated to the native projection grid.
 
 ##################################
-# pylab-free version of plotmap.py
+# pyplot/pylab-free version of plotmap.py
 ##################################
 # set backend to Agg.
 import matplotlib
