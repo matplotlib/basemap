@@ -1,6 +1,5 @@
-import pylab as p
 from matplotlib.mlab import prctile_rank
-import numpy
+import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap as Basemap
 
 # cities colored by population rank.
@@ -16,9 +15,9 @@ for item in m.cities_info:
 popranks = prctile_rank(pop,100)
 colors = []
 for rank in popranks:
-    colors.append(p.cm.jet(float(rank)/100.))
+    colors.append(plt.cm.jet(float(rank)/100.))
 m.drawcoastlines()
 m.fillcontinents()
 m.scatter(x,y,25,colors,marker='o',faceted=False,zorder=10)
-p.title('City Locations colored by Population Rank')
-p.show()
+plt.title('City Locations colored by Population Rank')
+plt.show()

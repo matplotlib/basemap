@@ -1,16 +1,17 @@
 from mpl_toolkits.basemap import Basemap
-from pylab import show, title, arange, figure, clf
+import numpy as np
+import matplotlib.pyplot as plt
 import cPickle, time
 
 # create figure with aqua background (will be oceans)
-fig = figure()
+fig = plt.figure()
 
 # create Basemap instance. Use 'high' resolution coastlines.
 t1 = time.clock()
 #m = Basemap(llcrnrlon=-10.5,llcrnrlat=49.5,urcrnrlon=3.5,urcrnrlat=59.5,
 #            resolution='h',projection='tmerc',lon_0=-4,lat_0=0)
 m = Basemap(width=920000,height=1100000,
-            resolution='h',projection='tmerc',lon_0=-4.2,lat_0=54.6)
+            resolution='f',projection='tmerc',lon_0=-4.2,lat_0=54.6)
 # make sure countries and rivers are loaded
 m.drawcountries()
 m.drawrivers()
@@ -20,7 +21,7 @@ print time.clock()-t1,' secs to create original Basemap instance'
 cPickle.dump(m,open('map.pickle','wb'),-1)
 
 # clear the figure
-clf()
+plt.clf()
 # read cPickle back in and plot it again (should be much faster).
 t1 = time.clock()
 m2 = cPickle.load(open('map.pickle','rb'))
@@ -37,10 +38,10 @@ m.drawmapboundary(fill_color='aqua')
 m.drawrivers(color='b')
 print time.clock()-t1,' secs to plot using using a pickled Basemap instance'
 # draw parallels
-circles = arange(48,65,2).tolist()
+circles = np.arange(48,65,2).tolist()
 m.drawparallels(circles,labels=[1,1,0,0])
 # draw meridians
-meridians = arange(-12,13,2)
+meridians = np.arange(-12,13,2)
 m.drawmeridians(meridians,labels=[0,0,1,1])
-title("High-Res British Isles",y=1.04)
-show()
+plt.title("High-Res British Isles",y=1.04)
+plt.show()

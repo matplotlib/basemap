@@ -1,37 +1,38 @@
 from mpl_toolkits.basemap import Basemap
-import pylab, numpy
+import numpy as np
+import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 
 # example showing how to create custom tick labels for a cylindrical
 # projection.
 
 def lat2str(deg):
-    min = 60 * (deg - numpy.floor(deg))
-    deg = numpy.floor(deg)
+    min = 60 * (deg - np.floor(deg))
+    deg = np.floor(deg)
     dir = 'N'
     if deg < 0:
         if min != 0.0:
             deg += 1.0
             min -= 60.0
         dir = 'S'
-    return (u"%d\N{DEGREE SIGN} %g' %s") % (numpy.abs(deg),numpy.abs(min),dir)
+    return (u"%d\N{DEGREE SIGN} %g' %s") % (np.abs(deg),np.abs(min),dir)
 
 def lon2str(deg):
-    min = 60 * (deg - numpy.floor(deg))
-    deg = numpy.floor(deg)
+    min = 60 * (deg - np.floor(deg))
+    deg = np.floor(deg)
     dir = 'E'
     if deg < 0:
         if min != 0.0:
             deg += 1.0
             min -= 60.0
         dir = 'W'
-    return (u"%d\N{DEGREE SIGN} %g' %s") % (numpy.abs(deg),numpy.abs(min),dir)
+    return (u"%d\N{DEGREE SIGN} %g' %s") % (np.abs(deg),np.abs(min),dir)
 
 # (1) use matplotlib custom tick formatter
 #     instead of Basemap labelling methods.
 
 # create figure.
-fig=pylab.figure()
+fig=plt.figure()
 # create Basemap instance (regular lat/lon projection).
 # suppress_ticks=False allows custom axes ticks to be used
 # Ticks are suppressed by default, so Basemap methods
@@ -44,7 +45,7 @@ m.fillcontinents(color='coral',lake_color='aqua')
 # background color will be used for oceans.
 m.drawmapboundary(fill_color='aqua')
 # get axes instance.
-ax = pylab.gca()
+ax = plt.gca()
 # add custom ticks.
 # This only works for projection='cyl'.
 def xformat(x, pos=None): return lon2str(x)
@@ -62,7 +63,7 @@ ax.set_title('Hawaii')
 #     custom formatting function with the 'fmt' keyword.
 
 # create figure.
-fig = pylab.figure()
+fig = plt.figure()
 # create Basemap instance.
 m = Basemap(llcrnrlon=-156.5,llcrnrlat=18.75,urcrnrlon=-154.5,urcrnrlat=20.5,
             resolution='h',projection='cyl')
@@ -73,8 +74,8 @@ m.fillcontinents(color='coral',lake_color='aqua')
 m.drawmapboundary(fill_color='aqua')
 # label meridians and parallels, passing string formatting function
 # with 'fmt' keyword.
-m.drawparallels(numpy.linspace(18,21,7),labels=[1,0,0,0],fmt=lat2str,dashes=[2,2])
-m.drawmeridians(numpy.linspace(-157,-154,7),labels=[0,0,0,1],fmt=lon2str,dashes=[2,2])
-pylab.title('Hawaii')
+m.drawparallels(np.linspace(18,21,7),labels=[1,0,0,0],fmt=lat2str,dashes=[2,2])
+m.drawmeridians(np.linspace(-157,-154,7),labels=[0,0,0,1],fmt=lon2str,dashes=[2,2])
+plt.title('Hawaii')
 
-pylab.show()
+plt.show()

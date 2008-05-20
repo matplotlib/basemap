@@ -1,8 +1,7 @@
 # this example reads today's numerical weather forecasts 
 # from the NOAA OpenDAP servers and makes a multi-panel plot.
-from pylab import title, show, figure, cm,  figtext, \
-                  meshgrid, axes, colorbar
-import numpy
+import numpy as np
+import matplotlib.pyplot as plt
 import sys
 from numpy import ma
 import datetime
@@ -57,7 +56,7 @@ nlons = len(lons1)
 
 t2mvar = data.variables['tmp2m']
 t2min = t2mvar[0:ntimes,:,:]
-t2m = numpy.zeros((ntimes,nlats,nlons+1),t2min.dtype)
+t2m = np.zeros((ntimes,nlats,nlons+1),t2min.dtype)
 # create Basemap instance for Orthographic projection.
 m = Basemap(lon_0=-90,lat_0=60,projection='ortho')
 # add wrap-around point in longitude.
@@ -66,25 +65,26 @@ for nt in range(ntimes):
 # convert to celsius.
 t2m = t2m-273.15
 # contour levels
-clevs = numpy.arange(-30,30.1,2.)
-lons, lats = meshgrid(lons, lats)
+clevs = np.arange(-30,30.1,2.)
+lons, lats = np.meshgrid(lons, lats)
 x, y = m(lons, lats)
 # create figure.
-fig=figure(figsize=(6,8))
+fig=plt.figure(figsize=(6,8))
 # make subplots.
 for nt,fcsthr in enumerate(fcsthrs):
     ax = fig.add_subplot(321+nt)
-    cs = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=cm.jet,extend='both')
+    cs = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=plt.cm.jet,extend='both')
     m.drawcoastlines(linewidth=0.5)
     m.drawcountries()
-    m.drawparallels(numpy.arange(-80,81,20))
-    m.drawmeridians(numpy.arange(0,360,20))
+    m.drawparallels(np.arange(-80,81,20))
+    m.drawmeridians(np.arange(0,360,20))
     # panel title
-    title('%d-h forecast valid '%fcsthr+verifdates[nt],fontsize=9)
+    plt.title('%d-h forecast valid '%fcsthr+verifdates[nt],fontsize=9)
 # figure title
-figtext(0.5,0.95,u"2-m temp (\N{DEGREE SIGN}C) forecasts from %s"%verifdates[0],
-        horizontalalignment='center',fontsize=14)
+plt.figtext(0.5,0.95,
+            u"2-m temp (\N{DEGREE SIGN}C) forecasts from %s"%verifdates[0],
+            horizontalalignment='center',fontsize=14)
 # a single colorbar.
-cax = axes([0.1, 0.03, 0.8, 0.025])
-colorbar(cax=cax, orientation='horizontal')
-show()
+cax = plt.axes([0.1, 0.03, 0.8, 0.025])
+plt.colorbar(cax=cax, orientation='horizontal')
+plt.show()

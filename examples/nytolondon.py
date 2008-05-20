@@ -1,10 +1,11 @@
 # example demonstrating how to draw a great circle on a map.
 from mpl_toolkits.basemap import Basemap
-from pylab import title, arange, show, figure
+import numpy as np
+import matplotlib.pyplot as plt
 
 # setup lambert azimuthal map projection.
 # create new figure
-fig=figure()
+fig=plt.figure()
 m = Basemap(llcrnrlon=-100.,llcrnrlat=20.,urcrnrlon=20.,urcrnrlat=60.,\
             rsphere=(6378137.00,6356752.3142),\
             resolution='c',area_thresh=10000.,projection='merc',\
@@ -24,16 +25,16 @@ m.drawgreatcircle(nylon,nylat,lonlon,lonlat,linewidth=2,color='b')
 m.drawcoastlines()
 m.fillcontinents()
 # draw parallels
-circles = arange(10,90,20)
+circles = np.arange(10,90,20)
 m.drawparallels(circles,labels=[1,1,0,1])
 # draw meridians
-meridians = arange(-180,180,30)
+meridians = np.arange(-180,180,30)
 m.drawmeridians(meridians,labels=[1,1,0,1])
-title('Great Circle from New York to London (Mercator)')
+plt.title('Great Circle from New York to London (Mercator)')
 print 'plotting Great Circle from New York to London (Mercator)'
 
 # create new figure
-fig=figure()
+fig=plt.figure()
 # setup a gnomonic projection.
 m = Basemap(llcrnrlon=-100.,llcrnrlat=20.,urcrnrlon=20.,urcrnrlat=60.,\
             resolution='c',area_thresh=10000.,projection='gnom',\
@@ -53,11 +54,11 @@ m.drawgreatcircle(nylon,nylat,lonlon,lonlat,linewidth=2,color='b')
 m.drawcoastlines()
 m.fillcontinents()
 # draw parallels
-circles = arange(10,90,20)
+circles = np.arange(10,90,20)
 m.drawparallels(circles,labels=[0,1,0,0])
 # draw meridians
-meridians = arange(-180,180,30)
+meridians = np.arange(-180,180,30)
 m.drawmeridians(meridians,labels=[1,1,0,1])
-title('Great Circle from New York to London (Gnomonic)')
+plt.title('Great Circle from New York to London (Gnomonic)')
 print 'plotting Great Circle from New York to London (Gnomonic)'
-show()
+plt.show()

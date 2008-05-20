@@ -1,7 +1,8 @@
 from mpl_toolkits.basemap import Basemap
-from pylab import title, show, arange, figure
+import numpy as np
+import matplotlib.pyplot as plt
 
-fig = figure()
+fig = plt.figure()
 lon_0=57
 # global geos map
 m1 = Basemap(projection='geos',lon_0=lon_0,rsphere=(6378137.00,6356752.3142),resolution=None)
@@ -13,12 +14,12 @@ m.drawmapboundary(fill_color='aqua')
 m.fillcontinents(color='coral',lake_color='aqua')
 m.drawcountries()
 # draw parallels and meridians.
-m.drawparallels(arange(-90.,120.,30.))
-m.drawmeridians(arange(0.,420.,60.))
+m.drawparallels(np.arange(-90.,120.,30.))
+m.drawmeridians(np.arange(0.,420.,60.))
 m.drawmapboundary()
-title('Geostationary Map Centered on Lon=%s' % lon_0)
+plt.title('Geostationary Map Centered on Lon=%s' % lon_0)
 
-fig = figure()
+fig = plt.figure()
 # global ortho map
 lat_0=10.
 m1 = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0,resolution=None)
@@ -30,9 +31,9 @@ m.drawmapboundary(fill_color='aqua')
 m.fillcontinents(color='coral',lake_color='aqua')
 m.drawcountries()
 # draw parallels and meridians.
-m.drawparallels(arange(-90.,120.,30.))
-m.drawmeridians(arange(0.,420.,60.))
+m.drawparallels(np.arange(-90.,120.,30.))
+m.drawmeridians(np.arange(0.,420.,60.))
 m.drawmapboundary()
-title('Orthographic Map Centered on Lon=%s, Lat=%s' % (lon_0,lat_0))
+plt.title('Orthographic Map Centered on Lon=%s, Lat=%s' % (lon_0,lat_0))
 
-show()
+plt.show()

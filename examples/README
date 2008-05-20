@@ -52,6 +52,9 @@ geos_demo_2.py demonstrates how to read in a geostationary satellite image
 from a jpeg file, then plot only a portion of the full earth (contributed
 by Scott Sinclair, requires PIL).
 
+geos_demo_3.py shows how to make a regional geostationary or orthographic 
+plot, where part of the region is outside the projection limb.
+
 fcstmaps.py is a sample multi-panel plot that accesses
 data over http using the dap module. An internet connection is required.
 
