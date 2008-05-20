@@ -7,15 +7,16 @@ matplotlib.use('Agg')
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from mpl_toolkits.basemap import Basemap
 from matplotlib.figure import Figure
-import numpy
+import numpy as np
+import matplotlib.mlab as mlab
 import matplotlib.cm as cm
 from matplotlib.mlab import load
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-etopo = load('etopo20data.gz')
-lons = load('etopo20lons.gz')
-lats = load('etopo20lats.gz')
+etopo = mlab.load('etopo20data.gz')
+lons = mlab.load('etopo20lons.gz')
+lats = mlab.load('etopo20lats.gz')
 # create figure.
 fig = Figure()
 canvas = FigureCanvas(fig)
@@ -25,15 +26,15 @@ ax = fig.add_axes([0.125,0.175,0.75,0.75])
 # set 'ax' keyword so pylab won't be imported.
 m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]),ax=ax)
 # make filled contour plot.
-x, y = m(*numpy.meshgrid(lons, lats))
+x, y = m(*np.meshgrid(lons, lats))
 cs = m.contourf(x,y,etopo,30,cmap=cm.jet)
 # draw coastlines.
 m.drawcoastlines()
 # draw a line around the map region.
 m.drawmapboundary()
 # draw parallels and meridians.
-m.drawparallels(numpy.arange(-60.,90.,30.),labels=[1,0,0,0],fontsize=10)
-m.drawmeridians(numpy.arange(0.,420.,60.),labels=[0,0,0,1],fontsize=10)
+m.drawparallels(np.arange(-60.,90.,30.),labels=[1,0,0,0],fontsize=10)
+m.drawmeridians(np.arange(0.,420.,60.),labels=[0,0,0,1],fontsize=10)
 # add a title.
 ax.set_title('Robinson Projection')
 # add a colorbar.
