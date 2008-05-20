@@ -2,7 +2,8 @@
 # to the Basemap constructor.
 
 from mpl_toolkits.basemap import Basemap
-from pylab import arange, show, title, figure
+import numpy as np
+import matplotlib.pyplot as plt
 
 # setup projection parameters
 lat_0 = 40.
@@ -10,14 +11,14 @@ lon_0 = -100.
 width = 6000000.
 height = 2.*width/3.
 delat = 25.
-circles = arange(0.,90.+delat,delat).tolist()+\
-          arange(-delat,-90.-delat,-delat).tolist()
+circles = np.arange(0.,90.+delat,delat).tolist()+\
+          np.arange(-delat,-90.-delat,-delat).tolist()
 delon = 30.
-meridians = arange(10.,360.,delon)
+meridians = np.arange(10.,360.,delon)
 npanel = 0
 # plots of the US.
 projs = ['lcc','aeqd','aea','laea','eqdc','stere']
-fig = figure(figsize=(7,7))
+fig = plt.figure(figsize=(7,7))
 for proj in projs:
     m = Basemap(width=width,height=height,
                 resolution='c',projection=proj,\
@@ -30,6 +31,6 @@ for proj in projs:
     m.drawstates()
     m.drawparallels(circles)
     m.drawmeridians(meridians)
-    title('proj = '+proj+' centered on %sW, %sN' % (lon_0,lat_0),fontsize=10)
+    plt.title('proj = '+proj+' centered on %sW, %sN' % (lon_0,lat_0),fontsize=10)
 
-show()
+plt.show()

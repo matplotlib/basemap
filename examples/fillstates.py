@@ -1,5 +1,5 @@
-import pylab as p
-import numpy
+import numpy as np
+import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap as Basemap
 from matplotlib.colors import rgb2hex
 from matplotlib.patches import Polygon
@@ -68,7 +68,7 @@ print shp_info
 # choose a color for each state based on population density.
 colors={}
 statenames=[]
-cmap = p.cm.hot # use 'hot' colormap
+cmap = plt.cm.hot # use 'hot' colormap
 vmin = 0; vmax = 450 # set range.
 print m.states_info[0].keys()
 for shapedict in m.states_info:
@@ -79,10 +79,10 @@ for shapedict in m.states_info:
         # calling colormap with value between 0 and 1 returns
         # rgba value.  Invert color range (hot colors are high
         # population), take sqrt root to spread out colors more.
-        colors[statename] = cmap(1.-p.sqrt((pop-vmin)/(vmax-vmin)))[:3]
+        colors[statename] = cmap(1.-np.sqrt((pop-vmin)/(vmax-vmin)))[:3]
     statenames.append(statename)
 # cycle through state names, color each one.
-ax = p.gca() # get current axes instance
+ax = plt.gca() # get current axes instance
 for nshape,seg in enumerate(m.states):
     # skip DC and Puerto Rico.
     if statenames[nshape] not in ['District of Columbia','Puerto Rico']:
@@ -90,7 +90,7 @@ for nshape,seg in enumerate(m.states):
         poly = Polygon(seg,facecolor=color,edgecolor=color)
         ax.add_patch(poly)
 # draw meridians and parallels.
-m.drawparallels(numpy.arange(25,65,20),labels=[1,0,0,0])
-m.drawmeridians(numpy.arange(-120,-40,20),labels=[0,0,0,1])
-p.title('Filling State Polygons by Population Density')
-p.show()
+m.drawparallels(np.arange(25,65,20),labels=[1,0,0,0])
+m.drawmeridians(np.arange(-120,-40,20),labels=[0,0,0,1])
+plt.title('Filling State Polygons by Population Density')
+plt.show()

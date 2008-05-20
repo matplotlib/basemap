@@ -20,10 +20,10 @@ locally orthogonal to each other.
 
 POP grids are used extensively locally in oceanographic and ice models.
 """
-import pylab as pl
 from matplotlib import rcParams
-from numpy import ma as MA
-import numpy as N
+from numpy import ma 
+import numpy as np
+import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap, NetCDFFile
 
 # read in data from netCDF file.
@@ -36,17 +36,17 @@ temp      = fpin.variables['TEMP'][:]
 fpin.close()
 
 # make longitudes monotonically increasing.
-tlon = N.where(N.greater_equal(tlon,min(tlon[:,0])),tlon-360,tlon)
+tlon = np.where(np.greater_equal(tlon,min(tlon[:,0])),tlon-360,tlon)
 
 # stack grids side-by-side (in longitiudinal direction), so
 # any range of longitudes may be plotted on a world map.
-tlon = N.concatenate((tlon,tlon+360),1)
-tlat = N.concatenate((tlat,tlat),1)
-temp = MA.concatenate((temp,temp),1)
+tlon = np.concatenate((tlon,tlon+360),1)
+tlat = np.concatenate((tlat,tlat),1)
+temp = ma.concatenate((temp,temp),1)
 tlon = tlon-360.
 
-pl.figure(figsize=(6,8))
-pl.subplot(2,1,1)
+plt.figure(figsize=(6,8))
+plt.subplot(2,1,1)
 # subplot 1 just shows POP grid cells.
 map = Basemap(projection='merc', lat_ts=20, llcrnrlon=-180, \
       urcrnrlon=180, llcrnrlat=-84, urcrnrlat=84, resolution='c')
@@ -55,22 +55,22 @@ map.drawcoastlines()
 map.fillcontinents(color='white')
 
 x, y = map(tlon,tlat)
-im = map.pcolor(x,y,MA.masked_array(N.zeros(temp.shape,'f'), temp.mask),\
-                shading='faceted',cmap=pl.cm.cool,vmin=0,vmax=0)
+im = map.pcolor(x,y,ma.masked_array(np.zeros(temp.shape,'f'), temp.mask),\
+                shading='faceted',cmap=plt.cm.cool,vmin=0,vmax=0)
 # disclaimer:  these are not really the grid cells because of the
 # way pcolor interprets the x and y args.
-pl.title('(A) CCSM POP Grid Cells')
+plt.title('(A) CCSM POP Grid Cells')
 
 # subplot 2 is a contour plot of surface temperature from the
 # CCSM ocean model.
-pl.subplot(2,1,2)
+plt.subplot(2,1,2)
 map.drawcoastlines()
 map.fillcontinents(color='white')
 
 CS1 = map.contourf(x,y,temp,15)
 CS2 = map.contour(x,y,temp,15,colors='black',linewidths=0.5)
-pl.title('(B) Surface Temp contours on POP Grid')
+plt.title('(B) Surface Temp contours on POP Grid')
 
-pl.show()
-#pl.savefig('ccsm_popgrid.ps')
+plt.show()
+#plt.savefig('ccsm_popgrid.ps')
 

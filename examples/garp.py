@@ -1,5 +1,6 @@
 from mpl_toolkits.basemap import Basemap
-from pylab import title, show, arange, pi
+import numpy as np
+import matplotlib.pyplot as plt
 
 # the shortest route from the center of the map
 # to any other point is a straight line in the azimuthal
@@ -30,11 +31,11 @@ m.drawmapboundary(fill_color='aqua')
 m.drawcoastlines(linewidth=0.5)
 m.fillcontinents(color='coral',lake_color='aqua')
 # 20 degree graticule.
-m.drawparallels(arange(-80,81,20))
-m.drawmeridians(arange(-180,180,20))
+m.drawparallels(np.arange(-80,81,20))
+m.drawmeridians(np.arange(-180,180,20))
 # draw a black dot at the center.
 xpt, ypt = m(lon_0, lat_0)
 m.plot([xpt],[ypt],'ko') 
 # draw the title.
-title('The World According to Garp in '+location)
-show()
+plt.title('The World According to Garp in '+location)
+plt.show()

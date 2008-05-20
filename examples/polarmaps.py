@@ -6,17 +6,18 @@
 # illustrates special-case polar-centric projections.
 
 from mpl_toolkits.basemap import Basemap
-from pylab import title, colorbar, show, axes, cm, load, arange, \
-                  figure, ravel, meshgrid
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-etopo = load('etopo20data.gz')
-lons = load('etopo20lons.gz')
-lats = load('etopo20lats.gz')
+etopo = mlab.load('etopo20data.gz')
+lons = mlab.load('etopo20lons.gz')
+lats = mlab.load('etopo20lats.gz')
 
 print 'min/max etopo20 data:'
-print min(ravel(etopo)),max(ravel(etopo))
+print etopo.min(),etopo.max()
 
 # these are the 4 polar projections
 projs = ['laea','stere','aeqd','ortho'] # short names
@@ -36,7 +37,7 @@ for hem in ['North','South']:
         lat_0 = 90.
         bounding_lat = 20.
     # loop over projections, one for each panel of the figure.
-    fig = figure(figsize=(8,8))
+    fig = plt.figure(figsize=(8,8))
     npanel = 0
     for proj,projname in zip(projs,projnames):
         npanel = npanel + 1
@@ -53,18 +54,18 @@ for hem in ['North','South']:
            m = Basemap(boundinglat=bounding_lat,lon_0=lon_0,\
                        resolution='c',area_thresh=10000.,projection=projection)
         # compute native map projection coordinates for lat/lon grid.
-        x,y = m(*meshgrid(lons,lats))
+        x,y = m(*np.meshgrid(lons,lats))
         ax = fig.add_subplot(2,2,npanel)
         # make filled contour plot.
-        cs = m.contourf(x,y,etopo,20,cmap=cm.jet)
+        cs = m.contourf(x,y,etopo,20,cmap=plt.cm.jet)
         # draw coastlines.
         m.drawcoastlines()
         # draw parallels and meridians.
-        m.drawparallels(arange(-80.,90,20.))
-        m.drawmeridians(arange(0.,360.,60.))
+        m.drawparallels(np.arange(-80.,90,20.))
+        m.drawmeridians(np.arange(0.,360.,60.))
         # draw boundary around map region.
         m.drawmapboundary()
         # draw title.
-        title(hem+' Polar '+projname,y=1.05,fontsize=12)
+        plt.title(hem+' Polar '+projname,y=1.05,fontsize=12)
         print 'plotting '+hem+' Polar '+projname+' basemap ...'
-show()
+plt.show()

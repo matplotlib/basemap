@@ -1,5 +1,7 @@
 from mpl_toolkits.basemap import Basemap, cm, NetCDFFile
-import pylab, copy
+import numpy as np
+import matplotlib.pyplot as plt
+import copy
 from matplotlib import rcParams
 
 # make tick labels smaller
@@ -29,20 +31,20 @@ m = Basemap(projection='stere',lon_0=lon_0,lat_0=90.,lat_ts=lat_0,\
             llcrnrlon=loncorners[0],urcrnrlon=loncorners[2],\
             rsphere=6371200.,resolution='l',area_thresh=10000)
 # create figure
-fig = pylab.figure(figsize=(6,8.5))
-pylab.subplot(211)
-ax = pylab.gca()
+fig = plt.figure(figsize=(6,8.5))
+plt.subplot(211)
+ax = plt.gca()
 # draw coastlines, state and country boundaries, edge of map.
 m.drawcoastlines()
 m.drawstates()
 m.drawcountries()
 # draw parallels.
 delat = 10.0
-parallels = pylab.arange(0.,90,delat)
+parallels = np.arange(0.,90,delat)
 m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
 # draw meridians
 delon = 10.
-meridians = pylab.arange(180.,360.,delon)
+meridians = np.arange(180.,360.,delon)
 m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
 ny = data.shape[0]; nx = data.shape[1]
 lons, lats = m.makegrid(nx, ny) # get lat/lons of ny by nx evenly space grid.
@@ -53,15 +55,15 @@ cs = m.contourf(x,y,data,clevs,cmap=cm.s3pcpn)
 # new axis for colorbar.
 pos = ax.get_position()
 l, b, w, h = pos.bounds
-cax = pylab.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
+cax = plt.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
 # draw colorbar.
-pylab.colorbar(cs, cax, format='%g', ticks=clevs, drawedges=False) 
-pylab.axes(ax)  # make the original axes current again
+plt.colorbar(cs, cax, format='%g', ticks=clevs, drawedges=False) 
+plt.axes(ax)  # make the original axes current again
 # plot title
-pylab.title(plottitle+'- contourf',fontsize=10)
+plt.title(plottitle+'- contourf',fontsize=10)
 
-pylab.subplot(212)
-ax = pylab.gca()
+plt.subplot(212)
+ax = plt.gca()
 # draw coastlines, state and country boundaries, edge of map.
 m.drawcoastlines()
 m.drawstates()
@@ -79,15 +81,15 @@ im2.set_cmap(cm.s3pcpn_l)
 # new axis for colorbar.
 pos = ax.get_position()
 l, b, w, h = pos.bounds
-cax = pylab.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
+cax = plt.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
 # using im2, not im (hack to prevent colors from being
 # too compressed at the low end on the colorbar - results
 # from highly nonuniform colormap)
-pylab.colorbar(im2, cax, format='%d') # draw colorbar
-pylab.axes(ax)  # make the original axes current again
+plt.colorbar(im2, cax, format='%d') # draw colorbar
+plt.axes(ax)  # make the original axes current again
 # reset colorbar tick labels (hack to get
-cax.set_yticks(pylab.linspace(0,1,len(clevs)))
+cax.set_yticks(np.linspace(0,1,len(clevs)))
 cax.set_yticklabels(['%g' % clev for clev in clevs])
 # plot title
-pylab.title(plottitle+' - imshow',fontsize=10)
-pylab.show() # display onscreen.
+plt.title(plottitle+' - imshow',fontsize=10)
+plt.show() # display onscreen.
