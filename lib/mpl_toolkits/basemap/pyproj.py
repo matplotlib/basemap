@@ -53,7 +53,7 @@ from _proj import set_datapath
 from array import array
 from types import TupleType, ListType, NoneType
 import os
-import numpy as npy
+import numpy as np
 
 pyproj_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 set_datapath(pyproj_datadir)
@@ -159,8 +159,8 @@ class Proj(_Proj):
         radians = kw.get('radians', False)
         errcheck = kw.get('errcheck', False)
         if len(args) == 1:
-            latlon = npy.array(args[0], copy=True,
-                                order='C', dtype=float, ndmin=2)
+            latlon = np.array(args[0], copy=True,
+                              order='C', dtype=float, ndmin=2)
             if inverse:
                 _Proj._invn(self, latlon, radians=radians, errcheck=errcheck)
             else:
