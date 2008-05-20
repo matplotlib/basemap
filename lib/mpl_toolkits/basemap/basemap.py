@@ -33,8 +33,8 @@ from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox
 import pyproj, sys, os, math, dbflib
 from proj import Proj
-import numpy as npy
-from numpy import linspace, squeeze, ma
+import numpy as np
+from numpy import ma
 from shapelib import ShapeFile
 import _geoslib, pupynere, netcdftime
 
@@ -504,7 +504,7 @@ class Basemap(object):
             self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
             self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
             # FIXME: won't work for points exactly on equator??
-            if npy.abs(lat_0) < 1.e-2: lat_0 = 1.e-2
+            if np.abs(lat_0) < 1.e-2: lat_0 = 1.e-2
             projparams['lat_0'] = lat_0
         elif projection == 'geos':
             if lon_0 is None:
@@ -652,7 +652,7 @@ class Basemap(object):
             self.latmin = lats.min()
             self.latmax = lats.max()
 
-        # if ax == None, pylab.gca may be used.
+        # if ax == None, pyplot.gca may be used.
         self.ax = ax
         self.lsmask = None
 
@@ -685,13 +685,13 @@ class Basemap(object):
             for seg in self.coastsegs:
                 x, y = zip(*seg)
                 self.coastpolygons.append((x,y))
-                x = npy.array(x,npy.float64); y = npy.array(y,npy.float64)
+                x = np.array(x,np.float64); y = np.array(y,np.float64)
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
-                dist = npy.sqrt(xd+yd)
+                dist = np.sqrt(xd+yd)
                 split = dist > 5000000.
-                if npy.sum(split) and self.projection not in ['merc','cyl','mill']:
-                    ind = (npy.compress(split,squeeze(split*npy.indices(xd.shape)))+1).tolist()
+                if np.sum(split) and self.projection not in ['merc','cyl','mill']:
+                    ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                     iprev = 0
                     ind.append(len(xd))
                     for i in ind:
@@ -779,9 +779,9 @@ class Basemap(object):
             re = self.projparams['R']
             # center of stereographic projection restricted to be 
             # nearest one of 6 points on the sphere (every 90 deg lat/lon).
-            lon0 = 90.*(npy.around(lon_0/90.))
-            lat0 = 90.*(npy.around(lat_0/90.))
-            if npy.abs(int(lat0)) == 90: lon0=0.
+            lon0 = 90.*(np.around(lon_0/90.))
+            lat0 = 90.*(np.around(lat_0/90.))
+            if np.abs(int(lat0)) == 90: lon0=0.
             maptran = pyproj.Proj(proj='stere',lon_0=lon0,lat_0=lat0,R=re)
             # boundary polygon for orthographic projection
             # in stereographic coorindates.
@@ -806,7 +806,7 @@ class Basemap(object):
                 # numpy array (first column is lons, second is lats).
                 polystring = bdatfile.read(bytecount)
                 # binary data is little endian.
-                b = npy.array(npy.fromstring(polystring,dtype='<f4'),'f8')
+                b = np.array(np.fromstring(polystring,dtype='<f4'),'f8')
                 b.shape = (npts,2)
                 b2 = b.copy()
                 # if map boundary polygon is a valid one in lat/lon
@@ -833,7 +833,7 @@ class Basemap(object):
                         lats.insert(0,-90.)
                         lons.append(lonend)
                         lats.append(-90.)
-                        b = npy.empty((len(lons),2),npy.float64)
+                        b = np.empty((len(lons),2),np.float64)
                         b[:,0] = lons; b[:,1] = lats
                         poly = _geoslib.Polygon(b)
                         antart = True
@@ -887,16 +887,16 @@ class Basemap(object):
                         b[:,0], b[:,1] = maptran(b[:,0], b[:,1])
                     else:
                         b[:,0], b[:,1] = self(b[:,0], b[:,1])
-                    goodmask = npy.logical_and(b[:,0]<1.e20,b[:,1]<1.e20)
+                    goodmask = np.logical_and(b[:,0]<1.e20,b[:,1]<1.e20)
                     # if less than two points are valid in
                     # map proj coords, skip this geometry.
-                    if npy.sum(goodmask) <= 1: continue
+                    if np.sum(goodmask) <= 1: continue
                     if name != 'gshhs':
                         # if not a polygon,
                         # just remove parts of geometry that are undefined
                         # in this map projection.
-                        bx = npy.compress(goodmask, b[:,0])
-                        by = npy.compress(goodmask, b[:,1])
+                        bx = np.compress(goodmask, b[:,0])
+                        by = np.compress(goodmask, b[:,1])
                         # for orthographic projection, all points
                         # outside map projection region are eliminated
                         # with the above step, so we're done.
@@ -947,16 +947,16 @@ class Basemap(object):
         maptran = self
         if self.projection in ['ortho','geos']:
             # circular region.
-            thetas = linspace(0.,2.*npy.pi,2*nx*ny)[:-1]
+            thetas = np.linspace(0.,2.*np.pi,2*nx*ny)[:-1]
             if self.projection == 'ortho':
                 rminor = self.rmajor
                 rmajor = self.rmajor
             else:
                 rminor = self._height
                 rmajor = self._width
-            x = rmajor*npy.cos(thetas) + rmajor
-            y = rminor*npy.sin(thetas) + rminor
-            b = npy.empty((len(x),2),npy.float64)
+            x = rmajor*np.cos(thetas) + rmajor
+            y = rminor*np.sin(thetas) + rminor
+            b = np.empty((len(x),2),np.float64)
             b[:,0]=x; b[:,1]=y
             boundaryxy = _geoslib.Polygon(b)
             # compute proj instance for full disk, if necessary.
@@ -981,41 +981,41 @@ class Basemap(object):
             # quasi-elliptical region.
             lon_0 = self.projparams['lon_0']
             # left side
-            lats1 = linspace(-89.9,89.9,ny).tolist()
+            lats1 = np.linspace(-89.9,89.9,ny).tolist()
             lons1 = len(lats1)*[lon_0-179.9]
             # top.
-            lons2 = linspace(lon_0-179.9,lon_0+179.9,nx).tolist()
+            lons2 = np.linspace(lon_0-179.9,lon_0+179.9,nx).tolist()
             lats2 = len(lons2)*[89.9]
             # right side
-            lats3 = linspace(89.9,-89.9,ny).tolist()
+            lats3 = np.linspace(89.9,-89.9,ny).tolist()
             lons3 = len(lats3)*[lon_0+179.9]
             # bottom.
-            lons4 = linspace(lon_0+179.9,lon_0-179.9,nx).tolist()
+            lons4 = np.linspace(lon_0+179.9,lon_0-179.9,nx).tolist()
             lats4 = len(lons4)*[-89.9]
-            lons = npy.array(lons1+lons2+lons3+lons4,npy.float64)
-            lats = npy.array(lats1+lats2+lats3+lats4,npy.float64)
+            lons = np.array(lons1+lons2+lons3+lons4,np.float64)
+            lats = np.array(lats1+lats2+lats3+lats4,np.float64)
             x, y = maptran(lons,lats)
-            b = npy.empty((len(x),2),npy.float64)
+            b = np.empty((len(x),2),np.float64)
             b[:,0]=x; b[:,1]=y
             boundaryxy = _geoslib.Polygon(b)
         else: # all other projections are rectangular.
             # left side (x = xmin, ymin <= y <= ymax)
-            yy = linspace(self.ymin, self.ymax, ny)[:-1]
+            yy = np.linspace(self.ymin, self.ymax, ny)[:-1]
             x = len(yy)*[self.xmin]; y = yy.tolist()
             # top (y = ymax, xmin <= x <= xmax)
-            xx = npy.linspace(self.xmin, self.xmax, nx)[:-1]
+            xx = np.np.linspace(self.xmin, self.xmax, nx)[:-1]
             x = x + xx.tolist()
             y = y + len(xx)*[self.ymax]
             # right side (x = xmax, ymin <= y <= ymax)
-            yy = linspace(self.ymax, self.ymin, ny)[:-1]
+            yy = np.linspace(self.ymax, self.ymin, ny)[:-1]
             x = x + len(yy)*[self.xmax]; y = y + yy.tolist()
             # bottom (y = ymin, xmin <= x <= xmax)
-            xx = linspace(self.xmax, self.xmin, nx)[:-1]
+            xx = np.linspace(self.xmax, self.xmin, nx)[:-1]
             x = x + xx.tolist()
             y = y + len(xx)*[self.ymin]
-            x = npy.array(x,npy.float64)
-            y = npy.array(y,npy.float64)
-            b = npy.empty((4,2),npy.float64)
+            x = np.array(x,np.float64)
+            y = np.array(y,np.float64)
+            b = np.empty((4,2),np.float64)
             b[:,0]=[self.xmin,self.xmin,self.xmax,self.xmax]
             b[:,1]=[self.ymin,self.ymax,self.ymax,self.ymin]
             boundaryxy = _geoslib.Polygon(b)
@@ -1032,7 +1032,7 @@ class Basemap(object):
             lons = [self.llcrnrlon, self.llcrnrlon, self.urcrnrlon, self.urcrnrlon]
             lats = [llcrnrlat, urcrnrlat, urcrnrlat, llcrnrlat]
             x, y = self(lons, lats)
-            b = npy.empty((len(x),2),npy.float64)
+            b = np.empty((len(x),2),np.float64)
             b[:,0]=x; b[:,1]=y
             boundaryxy = _geoslib.Polygon(b)
         else:
@@ -1042,7 +1042,7 @@ class Basemap(object):
                 n = 1
                 lonprev = lons[0]
                 for lon,lat in zip(lons[1:],lats[1:]):
-                    if npy.abs(lon-lonprev) > 90.:
+                    if np.abs(lon-lonprev) > 90.:
                         if lonprev < 0:
                             lon = lon - 360.
                         else:
@@ -1050,7 +1050,7 @@ class Basemap(object):
                         lons[n] = lon
                     lonprev = lon
                     n = n + 1
-        b = npy.empty((len(lons),2),npy.float64)
+        b = np.empty((len(lons),2),np.float64)
         b[:,0]=lons; b[:,1]=lats
         boundaryll = _geoslib.Polygon(b)
         return boundaryll, boundaryxy
@@ -1075,10 +1075,10 @@ class Basemap(object):
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
         limb = None
@@ -1104,19 +1104,19 @@ class Basemap(object):
             # quasi-elliptical region.
             lon_0 = self.projparams['lon_0']
             # left side
-            lats1 = linspace(-89.9,89.9,ny).tolist()
+            lats1 = np.linspace(-89.9,89.9,ny).tolist()
             lons1 = len(lats1)*[lon_0-179.9]
             # top.
-            lons2 = linspace(lon_0-179.9,lon_0+179.9,nx).tolist()
+            lons2 = np.linspace(lon_0-179.9,lon_0+179.9,nx).tolist()
             lats2 = len(lons2)*[89.9]
             # right side
-            lats3 = linspace(89.9,-89.9,ny).tolist()
+            lats3 = np.linspace(89.9,-89.9,ny).tolist()
             lons3 = len(lats3)*[lon_0+179.9]
             # bottom.
-            lons4 = linspace(lon_0+179.9,lon_0-179.9,nx).tolist()
+            lons4 = np.linspace(lon_0+179.9,lon_0-179.9,nx).tolist()
             lats4 = len(lons4)*[-89.9]
-            lons = npy.array(lons1+lons2+lons3+lons4,npy.float64)
-            lats = npy.array(lats1+lats2+lats3+lats4,npy.float64)
+            lons = np.array(lons1+lons2+lons3+lons4,np.float64)
+            lats = np.array(lats1+lats2+lats3+lats4,np.float64)
             x, y = self(lons,lats)
             xy = zip(x,y)
             limb = Polygon(xy,edgecolor=color,linewidth=linewidth)
@@ -1185,32 +1185,32 @@ class Basemap(object):
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
         # get axis background color.
         axisbgc = ax.get_axis_bgcolor()
         np = 0
         for x,y in self.coastpolygons:
-            xa = npy.array(x,npy.float32)
-            ya = npy.array(y,npy.float32)
+            xa = np.array(x,np.float32)
+            ya = np.array(y,np.float32)
         # check to see if all four corners of domain in polygon (if so,
         # don't draw since it will just fill in the whole map).
             delx = 10; dely = 10
             if self.projection in ['cyl']:
                 delx = 0.1
                 dely = 0.1
-            test1 = npy.fabs(xa-self.urcrnrx) < delx
-            test2 = npy.fabs(xa-self.llcrnrx) < delx
-            test3 = npy.fabs(ya-self.urcrnry) < dely
-            test4 = npy.fabs(ya-self.llcrnry) < dely
-            hasp1 = npy.sum(test1*test3)
-            hasp2 = npy.sum(test2*test3)
-            hasp4 = npy.sum(test2*test4)
-            hasp3 = npy.sum(test1*test4)
+            test1 = np.fabs(xa-self.urcrnrx) < delx
+            test2 = np.fabs(xa-self.llcrnrx) < delx
+            test3 = np.fabs(ya-self.urcrnry) < dely
+            test4 = np.fabs(ya-self.llcrnry) < dely
+            hasp1 = np.sum(test1*test3)
+            hasp2 = np.sum(test2*test3)
+            hasp4 = np.sum(test2*test4)
+            hasp3 = np.sum(test1*test4)
             if not hasp1 or not hasp2 or not hasp3 or not hasp4:
                 xy = zip(xa.tolist(),ya.tolist())
                 if self.coastpolygontypes[np] not in [2,4]:
@@ -1245,10 +1245,10 @@ class Basemap(object):
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
         coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
@@ -1283,10 +1283,10 @@ class Basemap(object):
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
         countries = LineCollection(self.cntrysegs,antialiaseds=(antialiased,))
@@ -1321,10 +1321,10 @@ class Basemap(object):
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
         states = LineCollection(self.statesegs,antialiaseds=(antialiased,))
@@ -1359,10 +1359,10 @@ class Basemap(object):
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
         rivers = LineCollection(self.riversegs,antialiaseds=(antialiased,))
@@ -1484,10 +1484,10 @@ class Basemap(object):
                 # get current axes instance (if none specified).
                 if ax is None and self.ax is None:
                     try:
-                        ax = pylab.gca()
+                        ax = plt.gca()
                     except:
-                        import pylab
-                        ax = pylab.gca()
+                        import matplotlib.pyplot as plt
+                        ax = plt.gca()
                 elif ax is None and self.ax is not None:
                     ax = self.ax
                 # make LineCollections for each polygon.
@@ -1537,7 +1537,7 @@ class Basemap(object):
         ax - axes instance (overrides default axes instance)
 
         additional keyword arguments control text properties for labels (see
-         pylab.text documentation)
+         plt.text documentation)
 
         returns a dictionary whose keys are the parallels, and
         whose values are tuples containing lists of the Line2D and Text instances
@@ -1546,10 +1546,10 @@ class Basemap(object):
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
         # don't draw meridians past latmax, always draw parallel at latmax.
@@ -1565,13 +1565,13 @@ class Basemap(object):
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection in ['merc','cyl','mill','moll','robin','sinu']:
-            lons = npy.arange(self.llcrnrlon,self.urcrnrlon+0.01,0.01)
+            lons = np.arange(self.llcrnrlon,self.urcrnrlon+0.01,0.01)
         elif self.projection in ['tmerc']:
             lon_0 = self.projparams['lon_0']
             # tmerc only defined within +/- 90 degrees of lon_0
-            lons = npy.arange(lon_0-90,lon_0+90.01,0.01)
+            lons = np.arange(lon_0-90,lon_0+90.01,0.01)
         else:
-            lons = npy.arange(0,360.01,0.01)
+            lons = np.arange(0,360.01,0.01)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = circles.tolist()
@@ -1586,28 +1586,28 @@ class Basemap(object):
         ydelta = 0.01*(self.ymax-self.ymin)
         linecolls = {}
         for circ in circlesl:
-            lats = circ*npy.ones(len(lons),npy.float32)
+            lats = circ*np.ones(len(lons),np.float32)
             x,y = self(lons,lats)
             # remove points outside domain.
             # leave a little slop around edges (3*xdelta)
             # don't really know why, but this appears to be needed to 
             # or lines sometimes don't reach edge of plot.
-            testx = npy.logical_and(x>=self.xmin-3*xdelta,x<=self.xmax+3*xdelta)
-            x = npy.compress(testx, x)
-            y = npy.compress(testx, y)
-            testy = npy.logical_and(y>=self.ymin-3*ydelta,y<=self.ymax+3*ydelta)
-            x = npy.compress(testy, x)
-            y = npy.compress(testy, y)
+            testx = np.logical_and(x>=self.xmin-3*xdelta,x<=self.xmax+3*xdelta)
+            x = np.compress(testx, x)
+            y = np.compress(testx, y)
+            testy = np.logical_and(y>=self.ymin-3*ydelta,y<=self.ymax+3*ydelta)
+            x = np.compress(testy, x)
+            y = np.compress(testy, y)
             lines = []
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
                 # (not necessary for mercator or cylindrical or miller).
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
-                dist = npy.sqrt(xd+yd)
+                dist = np.sqrt(xd+yd)
                 split = dist > 500000.
-                if npy.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
-                    ind = (npy.compress(split,squeeze(split*npy.indices(xd.shape)))+1).tolist()
+                if np.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
+                    ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                     xl = []
                     yl = []
                     iprev = 0
@@ -1650,15 +1650,15 @@ class Basemap(object):
             if self.projection in ['cyl','merc','mill','moll','robin','sinu'] and side in ['t','b']: continue
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
-                yy = linspace(self.llcrnry,self.urcrnry,nmax)
+                yy = np.linspace(self.llcrnry,self.urcrnry,nmax)
                 # mollweide inverse transform undefined at South Pole
                 if self.projection == 'moll' and yy[0] < 1.e-4:
                     yy[0] = 1.e-4
                 if side == 'l':
-                    lons,lats = self(self.llcrnrx*npy.ones(yy.shape,npy.float32),yy,inverse=True)
+                    lons,lats = self(self.llcrnrx*np.ones(yy.shape,np.float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(self.urcrnrx*npy.ones(yy.shape,npy.float32),yy,inverse=True)
+                    lons,lats = self(self.urcrnrx*np.ones(yy.shape,np.float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
@@ -1666,12 +1666,12 @@ class Basemap(object):
                 lons = [(lon+360) % 360 for lon in lons]
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
-                xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
+                xx = np.linspace(self.llcrnrx,self.urcrnrx,nmax)
                 if side == 'b':
-                    lons,lats = self(xx,self.llcrnry*npy.ones(xx.shape,npy.float32),inverse=True)
+                    lons,lats = self(xx,self.llcrnry*np.ones(xx.shape,np.float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(xx,self.urcrnry*npy.ones(xx.shape,npy.float32),inverse=True)
+                    lons,lats = self(xx,self.urcrnry*np.ones(xx.shape,np.float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
@@ -1697,7 +1697,7 @@ class Basemap(object):
                                 latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
                             else:
                                 latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
-                        latlab = latlabstr%npy.fabs(lat)
+                        latlab = latlabstr%np.fabs(lat)
                     elif lat>0:
                         if rcParams['text.usetex']:
                             if labelstyle=='+/-':
@@ -1779,7 +1779,7 @@ class Basemap(object):
         ax - axes instance (overrides default axes instance)
 
         additional keyword arguments control text properties for labels (see
-         pylab.text documentation)
+         plt.text documentation)
 
         returns a dictionary whose keys are the meridians, and
         whose values are tuples containing lists of the Line2D and Text instances
@@ -1788,10 +1788,10 @@ class Basemap(object):
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
         # don't draw meridians past latmax, always draw parallel at latmax.
@@ -1807,35 +1807,35 @@ class Basemap(object):
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
-            lats = npy.arange(-latmax,latmax+0.01,0.01)
+            lats = np.arange(-latmax,latmax+0.01,0.01)
         else:
-            lats = npy.arange(-90,90.01,0.01)
+            lats = np.arange(-90,90.01,0.01)
         xdelta = 0.01*(self.xmax-self.xmin)
         ydelta = 0.01*(self.ymax-self.ymin)
         linecolls = {}
         for merid in meridians:
-            lons = merid*npy.ones(len(lats),npy.float32)
+            lons = merid*np.ones(len(lats),np.float32)
             x,y = self(lons,lats)
             # remove points outside domain.
             # leave a little slop around edges (3*xdelta)
             # don't really know why, but this appears to be needed to 
             # or lines sometimes don't reach edge of plot.
-            testx = npy.logical_and(x>=self.xmin-3*xdelta,x<=self.xmax+3*xdelta)
-            x = npy.compress(testx, x)
-            y = npy.compress(testx, y)
-            testy = npy.logical_and(y>=self.ymin-3*ydelta,y<=self.ymax+3*ydelta)
-            x = npy.compress(testy, x)
-            y = npy.compress(testy, y)
+            testx = np.logical_and(x>=self.xmin-3*xdelta,x<=self.xmax+3*xdelta)
+            x = np.compress(testx, x)
+            y = np.compress(testx, y)
+            testy = np.logical_and(y>=self.ymin-3*ydelta,y<=self.ymax+3*ydelta)
+            x = np.compress(testy, x)
+            y = np.compress(testy, y)
             lines = []
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
                 # (not necessary for mercator or cylindrical or miller).
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
-                dist = npy.sqrt(xd+yd)
+                dist = np.sqrt(xd+yd)
                 split = dist > 500000.
-                if npy.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
-                    ind = (npy.compress(split,squeeze(split*npy.indices(xd.shape)))+1).tolist()
+                if np.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
+                    ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                     xl = []
                     yl = []
                     iprev = 0
@@ -1884,12 +1884,12 @@ class Basemap(object):
             if self.projection in ['cyl','merc','mill','sinu','robin','moll'] and side in ['l','r']: continue
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
-                yy = linspace(self.llcrnry,self.urcrnry,nmax)
+                yy = np.linspace(self.llcrnry,self.urcrnry,nmax)
                 if side == 'l':
-                    lons,lats = self(self.llcrnrx*npy.ones(yy.shape,npy.float32),yy,inverse=True)
+                    lons,lats = self(self.llcrnrx*np.ones(yy.shape,np.float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(self.urcrnrx*npy.ones(yy.shape,npy.float32),yy,inverse=True)
+                    lons,lats = self(self.urcrnrx*np.ones(yy.shape,np.float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
@@ -1897,12 +1897,12 @@ class Basemap(object):
                 lons = [(lon+360) % 360 for lon in lons]
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
-                xx = linspace(self.llcrnrx,self.urcrnrx,nmax)
+                xx = np.linspace(self.llcrnrx,self.urcrnrx,nmax)
                 if side == 'b':
-                    lons,lats = self(xx,self.llcrnry*npy.ones(xx.shape,npy.float32),inverse=True)
+                    lons,lats = self(xx,self.llcrnry*np.ones(xx.shape,np.float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(xx,self.urcrnry*npy.ones(xx.shape,npy.float32),inverse=True)
+                    lons,lats = self(xx,self.urcrnry*np.ones(xx.shape,np.float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
@@ -1930,7 +1930,7 @@ class Basemap(object):
                                 lonlabstr = u'-%s\N{DEGREE SIGN}'%fmt
                             else:
                                 lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
-                        lonlab = lonlabstr%npy.fabs(lon2-360)
+                        lonlab = lonlabstr%np.fabs(lon2-360)
                     elif lon2<180 and lon2 != 0:
                         if rcParams['text.usetex']:
                             if labelstyle=='+/-':
@@ -2002,7 +2002,7 @@ class Basemap(object):
         del_s - points on great circle computed every delta kilometers (default 100).
 
         Other keyword arguments (**kwargs) control plotting of great circle line,
-        see pylab.plot documentation for details.
+        see plt.plot documentation for details.
 
         Note:  cannot handle situations in which the great circle intersects
         the edge of the map projection domain, and then re-enters the domain.
@@ -2055,8 +2055,8 @@ class Basemap(object):
             raise ValueError, 'lons and lats must be increasing!'
         # check that lons in -180,180 for non-cylindrical projections.
         if self.projection not in ['cyl','merc','mill']:
-            lonsa = npy.array(lons)
-            count = npy.sum(lonsa < -180.00001) + npy.sum(lonsa > 180.00001)
+            lonsa = np.array(lons)
+            count = np.sum(lonsa < -180.00001) + np.sum(lonsa > 180.00001)
             if count > 1:
                 raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
             # allow for wraparound point to be outside.
@@ -2109,8 +2109,8 @@ class Basemap(object):
             raise ValueError, 'lons and lats must be increasing!'
         # check that lons in -180,180 for non-cylindrical projections.
         if self.projection not in ['cyl','merc','mill']:
-            lonsa = npy.array(lons)
-            count = npy.sum(lonsa < -180.00001) + npy.sum(lonsa > 180.00001)
+            lonsa = np.array(lons)
+            count = np.sum(lonsa < -180.00001) + np.sum(lonsa > 180.00001)
             if count > 1:
                 raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
             # allow for wraparound point to be outside.
@@ -2127,10 +2127,10 @@ class Basemap(object):
             vin = vin.filled(1)
             masked = True  # override kwarg with reality
         uvc = uin + 1j*vin
-        uvmag = npy.abs(uvc)
+        uvmag = np.abs(uvc)
         delta = 0.1 # increment in longitude
         dlon = delta*uin/uvmag
-        dlat = delta*(vin/uvmag)*npy.cos(latsout*npy.pi/180.0)
+        dlat = delta*(vin/uvmag)*np.cos(latsout*np.pi/180.0)
         farnorth = latsout+dlat >= 90.0
         somenorth = farnorth.any()
         if somenorth:
@@ -2139,10 +2139,10 @@ class Basemap(object):
         lon1 = lonsout + dlon
         lat1 = latsout + dlat
         xn, yn = self(lon1, lat1)
-        vecangle = npy.arctan2(yn-y, xn-x)
+        vecangle = np.arctan2(yn-y, xn-x)
         if somenorth:
-            vecangle[farnorth] += npy.pi
-        uvcout = uvmag * npy.exp(1j*vecangle)
+            vecangle[farnorth] += np.pi
+        uvcout = uvmag * np.exp(1j*vecangle)
         uout = uvcout.real
         vout = uvcout.imag
         if masked:
@@ -2184,10 +2184,10 @@ class Basemap(object):
         else:
             masked = False
         uvc = uin + 1j*vin
-        uvmag = npy.abs(uvc)
+        uvmag = np.abs(uvc)
         delta = 0.1 # increment in longitude
         dlon = delta*uin/uvmag
-        dlat = delta*(vin/uvmag)*npy.cos(lats*npy.pi/180.0)
+        dlat = delta*(vin/uvmag)*np.cos(lats*np.pi/180.0)
         farnorth = lats+dlat >= 90.0
         somenorth = farnorth.any()
         if somenorth:
@@ -2196,10 +2196,10 @@ class Basemap(object):
         lon1 = lons + dlon
         lat1 = lats + dlat
         xn, yn = self(lon1, lat1)
-        vecangle = npy.arctan2(yn-y, xn-x)
+        vecangle = np.arctan2(yn-y, xn-x)
         if somenorth:
-            vecangle[farnorth] += npy.pi
-        uvcout = uvmag * npy.exp(1j*vecangle)
+            vecangle[farnorth] += np.pi
+        uvcout = uvmag * np.exp(1j*vecangle)
         uout = uvcout.real
         vout = uvcout.imag
         if masked:
@@ -2218,10 +2218,10 @@ class Basemap(object):
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
         # update data limits for map domain.
@@ -2250,15 +2250,15 @@ class Basemap(object):
 
     def scatter(self, *args, **kwargs):
         """
-        Plot points with markers on the map (see pylab.scatter documentation).
+        Plot points with markers on the map (see plt.scatter documentation).
         extra keyword 'ax' can be used to override the default axes instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
@@ -2271,7 +2271,7 @@ class Basemap(object):
         try:
             ret =  ax.scatter(*args, **kwargs)
             try:
-                pylab.draw_if_interactive()
+                plt.draw_if_interactive()
             except:
                 pass
         except:
@@ -2284,15 +2284,15 @@ class Basemap(object):
 
     def plot(self, *args, **kwargs):
         """
-        Draw lines and/or markers on the map (see pylab.plot documentation).
+        Draw lines and/or markers on the map (see plt.plot documentation).
         extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
@@ -2305,7 +2305,7 @@ class Basemap(object):
         try:
             ret =  ax.plot(*args, **kwargs)
             try:
-                pylab.draw_if_interactive()
+                plt.draw_if_interactive()
             except:
                 pass
         except:
@@ -2318,17 +2318,17 @@ class Basemap(object):
 
     def imshow(self, *args, **kwargs):
         """
-        Display an image over the map (see pylab.imshow documentation).
+        Display an image over the map (see plt.imshow documentation).
         extent and origin keywords set automatically so image will be drawn
         over map region.
         extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
@@ -2345,16 +2345,16 @@ class Basemap(object):
         try:
             ret =  ax.imshow(*args, **kwargs)
             try:
-                pylab.draw_if_interactive()
+                plt.draw_if_interactive()
             except:
                 pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
-        # reset current active image (only if pylab is imported).
+        # reset current active image (only if pyplot is imported).
         try:
-            pylab.gci._current = ret
+            plt.gci._current = ret
         except:
             pass
         # set axes limits to fit map region.
@@ -2364,7 +2364,7 @@ class Basemap(object):
     def pcolor(self,x,y,data,**kwargs):
         """
         Make a pseudo-color plot over the map.
-        see pylab.pcolor documentation for definition of **kwargs
+        see plt.pcolor documentation for definition of **kwargs
         If x or y are outside projection limb (i.e. they have values > 1.e20)
         they will be convert to masked arrays with those values masked.
         As a result, those values will not be plotted.
@@ -2372,18 +2372,18 @@ class Basemap(object):
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
             ax = kwargs.pop('ax')
         # make x,y masked arrays
         # (masked where data is outside of projection limb)
-        x = ma.masked_values(npy.where(x > 1.e20,1.e20,x), 1.e20)
-        y = ma.masked_values(npy.where(y > 1.e20,1.e20,y), 1.e20)
+        x = ma.masked_values(np.where(x > 1.e20,1.e20,x), 1.e20)
+        y = ma.masked_values(np.where(y > 1.e20,1.e20,y), 1.e20)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -2392,16 +2392,16 @@ class Basemap(object):
         try:
             ret =  ax.pcolor(x,y,data,**kwargs)
             try:
-                pylab.draw_if_interactive()
+                plt.draw_if_interactive()
             except:
                 pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
-        # reset current active image (only if pylab is imported).
+        # reset current active image (only if pyplot is imported).
         try:
-            pylab.gci._current = ret
+            plt.gci._current = ret
         except:
             pass
         # set axes limits to fit map region.
@@ -2411,15 +2411,15 @@ class Basemap(object):
     def pcolormesh(self,x,y,data,**kwargs):
         """
         Make a pseudo-color plot over the map.
-        see pylab.pcolormesh documentation for definition of **kwargs
+        see plt.pcolormesh documentation for definition of **kwargs
         extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
@@ -2432,16 +2432,16 @@ class Basemap(object):
         try:
             ret =  ax.pcolormesh(x,y,data,**kwargs)
             try:
-                pylab.draw_if_interactive()
+                plt.draw_if_interactive()
             except:
                 pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
-        # reset current active image (only if pylab is imported).
+        # reset current active image (only if pyplot is imported).
         try:
-            pylab.gci._current = ret
+            plt.gci._current = ret
         except:
             pass
         # set axes limits to fit map region.
@@ -2450,15 +2450,15 @@ class Basemap(object):
 
     def contour(self,x,y,data,*args,**kwargs):
         """
-        Make a contour plot over the map (see pylab.contour documentation).
+        Make a contour plot over the map (see plt.contour documentation).
         extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
@@ -2482,10 +2482,10 @@ class Basemap(object):
                      function to adjust the data to be consistent with the map projection
                      region (see examples/contour_demo.py).""")
         # mask for points outside projection limb.
-        xymask = npy.logical_or(npy.greater(x,1.e20),npy.greater(y,1.e20))
+        xymask = np.logical_or(np.greater(x,1.e20),np.greater(y,1.e20))
         data = ma.asarray(data)
         # combine with data mask.
-        mask = npy.logical_or(ma.getmaskarray(data),xymask)
+        mask = np.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -2495,7 +2495,7 @@ class Basemap(object):
         try:
             CS = ax.contour(x,y,data,*args,**kwargs)
             try:
-                pylab.draw_if_interactive()
+                plt.draw_if_interactive()
             except:
                 pass
         except:
@@ -2504,29 +2504,29 @@ class Basemap(object):
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # reset current active image (only if pylab is imported).
+        # reset current active image (only if pyplot is imported).
         try:
             try: # new contour.
-                if CS._A is not None: pylab.gci._current = CS
+                if CS._A is not None: plt.gci._current = CS
             except: # old contour.
-                if CS[1].mappable is not None: pylab.gci._current = CS[1].mappable
+                if CS[1].mappable is not None: plt.gci._current = CS[1].mappable
         except:
             pass
         return CS
 
     def contourf(self,x,y,data,*args,**kwargs):
         """
-        Make a filled contour plot over the map (see pylab.contourf documentation).
+        Make a filled contour plot over the map (see plt.contourf documentation).
         If x or y are outside projection limb (i.e. they have values > 1.e20),
         the corresponing data elements will be masked.
         Extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
@@ -2550,10 +2550,10 @@ class Basemap(object):
                      function to adjust the data to be consistent with the map projection
                      region (see examples/contour_demo.py).""")
         # mask for points outside projection limb.
-        xymask = npy.logical_or(npy.greater(x,1.e20),npy.greater(y,1.e20))
+        xymask = np.logical_or(np.greater(x,1.e20),np.greater(y,1.e20))
         data = ma.asarray(data)
         # combine with data mask.
-        mask = npy.logical_or(ma.getmaskarray(data),xymask)
+        mask = np.logical_or(ma.getmaskarray(data),xymask)
         data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -2563,7 +2563,7 @@ class Basemap(object):
         try:
             CS = ax.contourf(x,y,data,*args,**kwargs)
             try:
-                pylab.draw_if_interactive()
+                plt.draw_if_interactive()
             except:
                 pass
         except:
@@ -2572,12 +2572,12 @@ class Basemap(object):
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # reset current active image (only if pylab is imported).
+        # reset current active image (only if pyplot is imported).
         try:
             try: # new contour.
-                if CS._A is not None: pylab.gci._current = CS
+                if CS._A is not None: plt.gci._current = CS
             except: # old contour.
-                if CS[1].mappable is not None: pylab.gci._current = CS[1].mappable
+                if CS[1].mappable is not None: plt.gci._current = CS[1].mappable
         except:
             pass
         return CS
@@ -2587,15 +2587,15 @@ class Basemap(object):
         Make a vector plot (u, v) with arrows on the map.
 
         Extra arguments (*args and **kwargs) passed to quiver Axes method (see
-        pylab.quiver documentation for details).
+        plt.quiver documentation for details).
         extra keyword 'ax' can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
@@ -2608,7 +2608,7 @@ class Basemap(object):
         try:
             ret =  ax.quiver(x,y,u,v,*args,**kwargs)
             try:
-                pylab.draw_if_interactive()
+                plt.draw_if_interactive()
             except:
                 pass
         except:
@@ -2656,13 +2656,13 @@ class Basemap(object):
         extra keyword 'ax' can be used to override the default axis instance.
         """
         # look for axes instance (as keyword, an instance variable
-        # or from pylab.gca().
+        # or from plt.gca().
         if not kwargs.has_key('ax') and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
@@ -2677,9 +2677,9 @@ class Basemap(object):
                 lsmaskf = open(os.path.join(basemap_datadir,'5minmask.bin'),'rb')
                 nlons = 4320; nlats = nlons/2
                 delta = 360./float(nlons)
-                lsmask_lons = npy.arange(-180+0.5*delta,180.,delta)
-                lsmask_lats = npy.arange(-90.+0.5*delta,90.,delta)
-                lsmask = npy.reshape(npy.fromstring(lsmaskf.read(),npy.uint8),(nlats,nlons))
+                lsmask_lons = np.arange(-180+0.5*delta,180.,delta)
+                lsmask_lats = np.arange(-90.+0.5*delta,90.,delta)
+                lsmask = np.reshape(np.fromstring(lsmaskf.read(),np.uint8),(nlats,nlons))
                 lsmaskf.close()
         # instance variable lsmask is set on first invocation,
         # it contains the land-sea mask interpolated to the native
@@ -2708,28 +2708,28 @@ class Basemap(object):
                 lons, lats = self(x, y, inverse=True)
                 lon_0 = self.projparams['lon_0']
                 lats = lats[:,nx/2]
-                lons1 = (lon_0+180.)*npy.ones(lons.shape[0],npy.float64)
-                lons2 = (lon_0-180.)*npy.ones(lons.shape[0],npy.float64)
+                lons1 = (lon_0+180.)*np.ones(lons.shape[0],np.float64)
+                lons2 = (lon_0-180.)*np.ones(lons.shape[0],np.float64)
                 xmax,ytmp = self(lons1,lats)
                 xmin,ytmp = self(lons2,lats)
                 for j in range(lats.shape[0]):
                     xx = x[j,:]
-                    mask[j,:]=npy.where(npy.logical_or(xx<xmin[j],xx>xmax[j]),\
+                    mask[j,:]=np.where(np.logical_or(xx<xmin[j],xx>xmax[j]),\
                                         255,mask[j,:])
             self.lsmask = mask
         # optionally, set lakes to ocean color.
         if lakes:
-            mask = npy.where(self.lsmask==2,0,self.lsmask)
+            mask = np.where(self.lsmask==2,0,self.lsmask)
         else:
             mask = self.lsmask
         ny, nx = mask.shape
-        rgba = npy.ones((ny,nx,4),npy.uint8)
-        rgba_land = npy.array(rgba_land,npy.uint8)
-        rgba_ocean = npy.array(rgba_ocean,npy.uint8)
+        rgba = np.ones((ny,nx,4),np.uint8)
+        rgba_land = np.array(rgba_land,np.uint8)
+        rgba_ocean = np.array(rgba_ocean,np.uint8)
         for k in range(4):
-            rgba[:,:,k] = npy.where(mask,rgba_land[k],rgba_ocean[k])
+            rgba[:,:,k] = np.where(mask,rgba_land[k],rgba_ocean[k])
         # make points outside projection limb transparent.
-        rgba[:,:,3] = npy.where(mask==255,0,rgba[:,:,3])
+        rgba[:,:,3] = np.where(mask==255,0,rgba[:,:,3])
         # plot mask as rgba image.
         im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
         return im
@@ -2760,10 +2760,10 @@ class Basemap(object):
         from matplotlib.image import pil_to_array
         if not kwargs.has_key('ax') and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif not kwargs.has_key('ax') and self.ax is not None:
             ax = self.ax
         else:
@@ -2786,12 +2786,12 @@ class Basemap(object):
             pilImage = Image.open(self._bm_file)
             self._bm_rgba = pil_to_array(pilImage)
             # convert to normalized floats.
-            self._bm_rgba = self._bm_rgba.astype(npy.float32)/255.
+            self._bm_rgba = self._bm_rgba.astype(np.float32)/255.
             # define lat/lon grid that image spans.
             nlons = self._bm_rgba.shape[1]; nlats = self._bm_rgba.shape[0]
             delta = 360./float(nlons)
-            self._bm_lons = npy.arange(-180.+0.5*delta,180.,delta)
-            self._bm_lats = npy.arange(-90.+0.5*delta,90.,delta)
+            self._bm_lons = np.arange(-180.+0.5*delta,180.,delta)
+            self._bm_lats = np.arange(-90.+0.5*delta,90.,delta)
 
         if self.projection != 'cyl':
             if newfile or not hasattr(self,'_bm_rgba_warped'):
@@ -2799,10 +2799,10 @@ class Basemap(object):
                 # projection grid.
                 # nx and ny chosen to have roughly the 
                 # same horizontal res as original image.
-                dx = 2.*npy.pi*self.rmajor/float(nlons)
+                dx = 2.*np.pi*self.rmajor/float(nlons)
                 nx = int((self.xmax-self.xmin)/dx)+1
                 ny = int((self.ymax-self.ymin)/dx)+1
-                self._bm_rgba_warped = npy.zeros((ny,nx,4),npy.float64)
+                self._bm_rgba_warped = np.zeros((ny,nx,4),np.float64)
                 # interpolate rgba values from geographic coords (proj='cyl')
                 # to map projection coords.
                 # if masked=True, values outside of
@@ -2814,8 +2814,8 @@ class Basemap(object):
                 # for ortho,geos mask pixels outside projection limb.
                 if self.projection in ['geos','ortho']:
                     lonsr,latsr = self(x,y,inverse=True)
-                    mask = ma.zeros((nx,ny,4),npy.int8)
-                    mask[:,:,0] = npy.logical_or(lonsr>1.e20,latsr>1.e30)
+                    mask = ma.zeros((nx,ny,4),np.int8)
+                    mask[:,:,0] = np.logical_or(lonsr>1.e20,latsr>1.e30)
                     for k in range(1,4):
                         mask[:,:,k] = mask[:,:,0]
                     self._bm_rgba_warped = \
@@ -2862,10 +2862,10 @@ class Basemap(object):
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
             try:
-                ax = pylab.gca()
+                ax = plt.gca()
             except:
-                import pylab
-                ax = pylab.gca()
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
         elif ax is None and self.ax is not None:
             ax = self.ax
         # not valid for cylindrical projection
@@ -3091,8 +3091,8 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     else:
         # irregular (but still rectilinear) input grid.
         xoutflat = xout.flatten(); youtflat = yout.flatten()
-        ix = (npy.searchsorted(xin,xoutflat)-1).tolist()
-        iy = (npy.searchsorted(yin,youtflat)-1).tolist()
+        ix = (np.searchsorted(xin,xoutflat)-1).tolist()
+        iy = (np.searchsorted(yin,youtflat)-1).tolist()
         xoutflat = xoutflat.tolist(); xin = xin.tolist()
         youtflat = youtflat.tolist(); yin = yin.tolist()
         xcoords = []; ycoords = []
@@ -3110,33 +3110,33 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
                 ycoords.append(len(yin)) # outside range on upper end
             else:
                 ycoords.append(float(j)+(youtflat[m]-yin[j])/(yin[j+1]-yin[j]))
-        xcoords = npy.reshape(xcoords,xout.shape)
-        ycoords = npy.reshape(ycoords,yout.shape)
+        xcoords = np.reshape(xcoords,xout.shape)
+        ycoords = np.reshape(ycoords,yout.shape)
     # data outside range xin,yin will be clipped to
     # values on boundary.
     if masked:
-        xmask = npy.logical_or(npy.less(xcoords,0),npy.greater(xcoords,len(xin)-1))
-        ymask = npy.logical_or(npy.less(ycoords,0),npy.greater(ycoords,len(yin)-1))
-        xymask = npy.logical_or(xmask,ymask)
-    xcoords = npy.clip(xcoords,0,len(xin)-1)
-    ycoords = npy.clip(ycoords,0,len(yin)-1)
+        xmask = np.logical_or(np.less(xcoords,0),np.greater(xcoords,len(xin)-1))
+        ymask = np.logical_or(np.less(ycoords,0),np.greater(ycoords,len(yin)-1))
+        xymask = np.logical_or(xmask,ymask)
+    xcoords = np.clip(xcoords,0,len(xin)-1)
+    ycoords = np.clip(ycoords,0,len(yin)-1)
     # interpolate to output grid using bilinear interpolation.
     if order == 1:
-        xi = xcoords.astype(npy.int32)
-        yi = ycoords.astype(npy.int32)
+        xi = xcoords.astype(np.int32)
+        yi = ycoords.astype(np.int32)
         xip1 = xi+1
         yip1 = yi+1
-        xip1 = npy.clip(xip1,0,len(xin)-1)
-        yip1 = npy.clip(yip1,0,len(yin)-1)
-        delx = xcoords-xi.astype(npy.float32)
-        dely = ycoords-yi.astype(npy.float32)
+        xip1 = np.clip(xip1,0,len(xin)-1)
+        yip1 = np.clip(yip1,0,len(yin)-1)
+        delx = xcoords-xi.astype(np.float32)
+        dely = ycoords-yi.astype(np.float32)
         dataout = (1.-delx)*(1.-dely)*datain[yi,xi] + \
                   delx*dely*datain[yip1,xip1] + \
                   (1.-delx)*dely*datain[yip1,xi] + \
                   delx*(1.-dely)*datain[yi,xip1]
     elif order == 0:
-        xcoordsi = npy.around(xcoords).astype(npy.int32)
-        ycoordsi = npy.around(ycoords).astype(npy.int32)
+        xcoordsi = np.around(xcoords).astype(np.int32)
+        ycoordsi = np.around(ycoords).astype(np.int32)
         dataout = datain[ycoordsi,xcoordsi]
     else:
         raise ValueError,'order keyword must be 0 or 1'
@@ -3145,7 +3145,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         newmask = ma.mask_or(ma.getmask(dataout), xymask)
         dataout = ma.masked_array(dataout,mask=newmask)
     elif masked and is_scalar(masked):
-        dataout = npy.where(xymask,masked,dataout)
+        dataout = np.where(xymask,masked,dataout)
     return dataout
 
 def shiftgrid(lon0,datain,lonsin,start=True):
@@ -3163,13 +3163,13 @@ def shiftgrid(lon0,datain,lonsin,start=True):
 
     returns dataout,lonsout (data and longitudes on shifted grid).
     """
-    if npy.fabs(lonsin[-1]-lonsin[0]-360.) > 1.e-4:
+    if np.fabs(lonsin[-1]-lonsin[0]-360.) > 1.e-4:
         raise ValueError, 'cyclic point not included'
     if lon0 < lonsin[0] or lon0 > lonsin[-1]:
         raise ValueError, 'lon0 outside of range of lonsin'
-    i0 = npy.argmin(npy.fabs(lonsin-lon0))
-    dataout = npy.zeros(datain.shape,datain.dtype)
-    lonsout = npy.zeros(lonsin.shape,lonsin.dtype)
+    i0 = np.argmin(np.fabs(lonsin-lon0))
+    dataout = np.zeros(datain.shape,datain.dtype)
+    lonsout = np.zeros(lonsin.shape,lonsin.dtype)
     if start:
         lonsout[0:len(lonsin)-i0] = lonsin[i0:]
     else:
@@ -3193,13 +3193,13 @@ def addcyclic(arrin,lonsin):
     if hasattr(arrin,'mask'):
         arrout  = ma.zeros((nlats,nlons+1),arrin.dtype)
     else:
-        arrout  = npy.zeros((nlats,nlons+1),arrin.dtype)
+        arrout  = np.zeros((nlats,nlons+1),arrin.dtype)
     arrout[:,0:nlons] = arrin[:,:]
     arrout[:,nlons] = arrin[:,0]
     if hasattr(lonsin,'mask'):
         lonsout = ma.zeros(nlons+1,lonsin.dtype)
     else:
-        lonsout = npy.zeros(nlons+1,lonsin.dtype)
+        lonsout = np.zeros(nlons+1,lonsin.dtype)
     lonsout[0:nlons] = lonsin[:]
     lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
     return arrout,lonsout
