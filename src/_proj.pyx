@@ -2,7 +2,6 @@
 
 include "_pyproj.pxi"
 cimport c_numpy
-import numpy
 c_numpy.import_array()
 
 def set_datapath(datapath):
