@@ -12,8 +12,9 @@ matplotlib requires setuptools for installation.  Please download
 http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
 you are doing a system wide install) to install the proper version of
 setuptools for your system""")
-from distutils.core import setup
-from distutils.core import Extension
+#from distutils.core import setup
+#from distutils.core import Extension
+from numpy.distutils.core  import setup, Extension
 from distutils.util import convert_path
 
 def dbf_macros():
