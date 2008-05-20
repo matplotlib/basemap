@@ -1003,7 +1003,7 @@ class Basemap(object):
             yy = np.linspace(self.ymin, self.ymax, ny)[:-1]
             x = len(yy)*[self.xmin]; y = yy.tolist()
             # top (y = ymax, xmin <= x <= xmax)
-            xx = np.np.linspace(self.xmin, self.xmax, nx)[:-1]
+            xx = np.linspace(self.xmin, self.xmax, nx)[:-1]
             x = x + xx.tolist()
             y = y + len(xx)*[self.ymax]
             # right side (x = xmax, ymin <= y <= ymax)
@@ -1193,7 +1193,7 @@ class Basemap(object):
             ax = self.ax
         # get axis background color.
         axisbgc = ax.get_axis_bgcolor()
-        np = 0
+        npt = 0
         for x,y in self.coastpolygons:
             xa = np.array(x,np.float32)
             ya = np.array(y,np.float32)
@@ -1213,7 +1213,7 @@ class Basemap(object):
             hasp3 = np.sum(test1*test4)
             if not hasp1 or not hasp2 or not hasp3 or not hasp4:
                 xy = zip(xa.tolist(),ya.tolist())
-                if self.coastpolygontypes[np] not in [2,4]:
+                if self.coastpolygontypes[npt] not in [2,4]:
                     poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0)
                 else: # lakes filled with background color by default
                     if lake_color is None:
@@ -1223,7 +1223,7 @@ class Basemap(object):
                 if zorder is not None:
                     poly.set_zorder(zorder)
                 ax.add_patch(poly)
-            np = np + 1
+            npt = npt + 1
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return poly
