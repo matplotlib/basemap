@@ -66,7 +66,8 @@ class Proj(_Proj):
 
     A Proj class instance is initialized with proj map projection
     control parameter key/value pairs. The key/value pairs can
-    either be passed in a dictionary, or as keyword arguments. See
+    either be passed in a dictionary, or as keyword arguments,
+    or as a proj4 string (compatible with the proj command). See
     http://www.remotesensing.org/geotiff/proj_list for examples of
     key/value pairs defining different map projections.
 
@@ -97,7 +98,7 @@ class Proj(_Proj):
         Example usage:
 
         >>> from pyproj import Proj
-        >>> p = Proj(proj='utm',zone=10,ellps='WGS84')
+        >>> p = Proj(proj='utm',zone=10,ellps='WGS84') # use kwargs
         >>> x,y = p(-120.108, 34.36116666)
         >>> print 'x=%9.3f y=%11.3f' % (x,y)
         x=765975.641 y=3805993.134
@@ -116,20 +117,35 @@ class Proj(_Proj):
         lons: -119.720 -118.400 -122.380
         >>> print 'lats: %8.3f %8.3f %8.3f' % lats
         lats:   36.770   33.930   37.620
+        >>> p2 = Proj('+proj=utm +zone=10 +ellps=WGS84') # use proj4 string
+        >>> x,y = p2(-120.108, 34.36116666)
+        >>> print 'x=%9.3f y=%11.3f' % (x,y)
+        x=765975.641 y=3805993.134
         """
         # if projparams is None, use kwargs.
         if projparams is None:
             if len(kwargs) == 0:
                 raise RuntimeError('no projection control parameters specified')
             else:
-                projparams = kwargs
-        # set units to meters.
-        if not projparams.has_key('units'):
-            projparams['units']='m'
-        elif projparams['units'] != 'm':
-            print 'resetting units to meters ...'
-            projparams['units']='m'
-        return _Proj.__new__(self, projparams)
+                projstring = _dict2string(kwargs)
+        elif type(projparams) == str:
+            # if projparams is a string, interpret as a proj4 init string.
+            projstring = projparams
+        else: # projparams a dict
+            projstring = _dict2string(projparams)
+        # make sure units are meters.
+        if not  projstring.count('+units='):
+            projstring = '+units=m '+projstring
+        else:
+            kvpairs = []
+            for kvpair in projstring.split():
+                if kvpair.startswith('+units'):
+                    k,v = kvpair.split('=')
+                    kvpairs.append(k+'=m ')
+                else:
+                    kvpairs.append(kvpair+' ')
+            projstring = ''.join(kvpairs)
+        return _Proj.__new__(self, projstring)
 
     def __call__(self, *args, **kw):
     #,lon,lat,inverse=False,radians=False,errcheck=False):
@@ -330,6 +346,13 @@ def _convertback(isfloat,islist,istuple,inx):
         return tuple(inx)
     else:
         return inx
+
+def _dict2string(projparams):
+    # convert a dict to a proj4 string.
+    pjargs = []
+    for key,value in projparams.iteritems():
+        pjargs.append('+'+key+"="+str(value)+' ')
+    return ''.join(pjargs)
 
 class Geod(_Geod):
     """

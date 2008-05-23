@@ -11,18 +11,13 @@ def set_datapath(datapath):
     
 cdef class Proj:
     cdef projPJ projpj
-    cdef public object projparams
     cdef public object proj_version
     cdef char *pjinitstring
     cdef public object srs
 
-    def __new__(self, projparams):
-        self.projparams = projparams
+    def __new__(self, projstring):
         # setup proj initialization string.
-        pjargs = []
-        for key,value in projparams.iteritems():
-            pjargs.append('+'+key+"="+str(value)+' ')
-        self.srs = ''.join(pjargs)
+        self.srs = projstring
         self.pjinitstring = PyString_AsString(self.srs)
         # initialize projection
         self.projpj = pj_init_plus(self.pjinitstring)
@@ -36,7 +31,7 @@ cdef class Proj:
 
     def __reduce__(self):
         """special method that allows pyproj.Proj instance to be pickled"""
-        return (self.__class__,(self.projparams,))
+        return (self.__class__,(self.srs,))
 
     def _fwd(self, object lons, object lats, radians=False, errcheck=False):
         """
@@ -152,7 +147,7 @@ cdef class Proj:
                 projlonlatin.u = _dg2rad*llptr[i].u
                 projlonlatin.v = _dg2rad*llptr[i].v
             projxyout = pj_fwd(projlonlatin,self.projpj)
-
+ 
             if errcheck and pj_errno != 0:
                 raise RuntimeError(pj_strerrno(pj_errno))
             # since HUGE_VAL can be 'inf',
@@ -165,7 +160,7 @@ cdef class Proj:
                 llptr[i].u = 1.e30
             else:
                 llptr[i].v = projxyout.v
-
+ 
     def _invn(self, c_numpy.ndarray xy, radians=False, errcheck=False):
         """
  inverse transformation - x,y to lons,lats (done in place).
@@ -180,7 +175,7 @@ cdef class Proj:
         cdef Py_ssize_t npts, i
         npts = c_numpy.PyArray_SIZE(xy)//2
         llptr = <projUV *>xy.data
-
+ 
         for i from 0 <= i < npts:
             projxyin = llptr[i]
             projlonlatout = pj_inv(projxyin, self.projpj)
@@ -200,7 +195,7 @@ cdef class Proj:
                 llptr[i].v = projlonlatout.v
             else:
                 llptr[i].v = _rad2dg*projlonlatout.v
- 
+
     def is_latlong(self):
         # returns True if projection in geographic (lon/lat) coordinates
         cdef int i
