@@ -1,4 +1,5 @@
 version 0.99
+           * updated pyproj to 1.8.5.
            * fixed bug in NetCDFFile creating masked arrays when both
              _FillValue and missing_value exist.
            * drawparallels and drawmeridians return a dictionary containing
