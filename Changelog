@@ -1,4 +1,4 @@
-version 0.99
+version 0.99 (svn revision 5316)
            * updated pyproj to 1.8.5.
            * fixed bug in NetCDFFile creating masked arrays when both
              _FillValue and missing_value exist.
