@@ -43,6 +43,7 @@ include examples/nytolondon.py
 include examples/ortho_demo.py
 include examples/geos_demo.py
 include examples/geos_demo_2.py
+include examples/geos_demo_3.py
 include examples/200706041200-msg-ch01-SAfrica.jpg
 include examples/fcstmaps.py
 include examples/plotsst.py
