@@ -2802,12 +2802,12 @@ class Basemap(object):
                 dx = 2.*np.pi*self.rmajor/float(nlons)
                 nx = int((self.xmax-self.xmin)/dx)+1
                 ny = int((self.ymax-self.ymin)/dx)+1
-                self._bm_rgba_warped = np.zeros((ny,nx,4),np.float64)
+                self._bm_rgba_warped = np.ones((ny,nx,4),np.float64)
                 # interpolate rgba values from geographic coords (proj='cyl')
                 # to map projection coords.
                 # if masked=True, values outside of
                 # projection limb will be masked.
-                for k in range(4):
+                for k in range(3):
                     self._bm_rgba_warped[:,:,k],x,y = \
                     self.transform_scalar(self._bm_rgba[:,:,k],\
                     self._bm_lons,self._bm_lats,nx,ny,returnxy=True)
