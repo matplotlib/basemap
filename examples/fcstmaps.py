@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
-from numpy import ma
+import numpy.ma as ma
 import datetime
 from mpl_toolkits.basemap import Basemap, NetCDFFile, addcyclic, num2date
 

@@ -6,7 +6,7 @@
 # (in this case the oceans)
 
 from mpl_toolkits.basemap import Basemap, shiftgrid
-from numpy import ma
+import numpy.ma as ma
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab

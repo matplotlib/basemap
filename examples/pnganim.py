@@ -7,7 +7,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
-from numpy import ma
+import numpy.ma as ma
 import datetime, sys, time, subprocess
 from mpl_toolkits.basemap import Basemap, shiftgrid, NetCDFFile, num2date
 

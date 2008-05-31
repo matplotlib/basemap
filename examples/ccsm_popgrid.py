@@ -21,7 +21,7 @@ locally orthogonal to each other.
 POP grids are used extensively locally in oceanographic and ice models.
 """
 from matplotlib import rcParams
-from numpy import ma 
+import numpy.ma as ma
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap, NetCDFFile
