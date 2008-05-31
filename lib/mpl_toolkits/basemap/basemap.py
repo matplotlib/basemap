@@ -34,7 +34,7 @@ from matplotlib.transforms import Bbox
 import pyproj, sys, os, math, dbflib
 from proj import Proj
 import numpy as np
-from numpy import ma
+import numpy.ma as ma
 from shapelib import ShapeFile
 import _geoslib, pupynere, netcdftime
 
