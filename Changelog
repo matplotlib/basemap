@@ -1,4 +1,5 @@
-version 0.99 (svn revision 5339)
+version 0.99 (svn revision 5344)
+           * fix to warpimage method for API change in matplotlib 0.98.0.
            * updated pyproj to 1.8.6.
            * fixed bug in NetCDFFile creating masked arrays when both
              _FillValue and missing_value exist.
