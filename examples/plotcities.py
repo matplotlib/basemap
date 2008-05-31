@@ -18,6 +18,6 @@ for rank in popranks:
     colors.append(plt.cm.jet(float(rank)/100.))
 m.drawcoastlines()
 m.fillcontinents()
-m.scatter(x,y,25,colors,marker='o',faceted=False,zorder=10)
+m.scatter(x,y,25,colors,marker='o',edgecolors='none',zorder=10)
 plt.title('City Locations colored by Population Rank')
 plt.show()

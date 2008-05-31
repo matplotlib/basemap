@@ -28,7 +28,7 @@ fig=plt.figure()
 # draw colored markers.
 # use zorder=10 to make sure markers are drawn last.
 # (otherwise they are covered up when continents are filled)
-#m.scatter(x,y,25,z,cmap=plt.cm.jet,marker='o',faceted=False,zorder=10) 
+#m.scatter(x,y,25,z,cmap=plt.cm.jet,marker='o',edgecolors='none',zorder=10) 
 # create a list of strings containing z values
 # or, plot actual numbers as color-coded text strings.
 zn = [ '%2i' % zz for zz in z ]
