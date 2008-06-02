@@ -2,18 +2,8 @@
 # setup.cfg for more information.
 import sys, glob, os, numpy
 major, minor1, minor2, s, tmp = sys.version_info
-if major==2 and minor1<=3:
-    # setuptools monkeypatches distutils.core.Distribution to support
-    # package_data
-    try: import setuptools
-    except ImportError:
-        raise SystemExit("""
-matplotlib requires setuptools for installation.  Please download
-http://peak.telecommunity.com/dist/ez_setup.py and run it (as su if
-you are doing a system wide install) to install the proper version of
-setuptools for your system""")
-#from distutils.core import setup
-#from distutils.core import Extension
+if major==2 and minor1<4 or major<2:
+    raise SystemExit("""matplotlib and the basemap toolkit require Python 2.4 or later.""")
 from numpy.distutils.core  import setup, Extension
 from distutils.util import convert_path
 
