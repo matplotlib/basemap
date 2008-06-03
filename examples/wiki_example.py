@@ -42,6 +42,8 @@ fig = plt.figure()
 map.drawmapboundary()
 map.drawmeridians(np.arange(0,360,30))
 map.drawparallels(np.arange(-90,90,30))
+# plot filled circles at the locations of the cities.
+map.plot(xc,yc,'wo')
 # plot the names of five cities.
 for name,xpt,ypt in zip(cities,xc,yc):
     plt.text(xpt+50000,ypt+50000,name,fontsize=9,color='w')
