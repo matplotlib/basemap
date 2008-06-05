@@ -37,7 +37,7 @@ fcsttimes = data.variables['time']
 times = fcsttimes[0:6] # first 6 forecast times.
 ntimes = len(times)
 # convert times for datetime instances.
-fdates = num2date(times,fcsttimes.units)
+fdates = num2date(times,units=fcsttimes.units,calendar='standard')
 # make a list of YYYYMMDDHH strings.
 verifdates = [fdate.strftime('%Y%m%d%H') for fdate in fdates]
 # convert times to forecast hours.

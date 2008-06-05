@@ -42,7 +42,7 @@ latitudes = data.variables['lat'][:]
 longitudes = data.variables['lon'][:].tolist()
 times = data.variables['time']
 # convert numeric time values to datetime objects.
-fdates = num2date(times[:],times.units)
+fdates = num2date(times[:],units=times.units,calendar='standard')
 # put times in YYYYMMDDHH format.
 dates = [fdate.strftime('%Y%m%d%H') for fdate in fdates]
 if YYYYMMDDHH1 not in dates or YYYYMMDDHH2 not in dates:
