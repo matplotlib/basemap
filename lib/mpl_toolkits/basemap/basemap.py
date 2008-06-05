@@ -3263,7 +3263,7 @@ def NetCDFFile(file, maskandscale=True):
             f = pupynere._LocalFile(file,maskandscale)
         return f
 
-def num2date(times,units,calendar='standard'):
+def num2date(times,units='days since 0001-01-01 00:00:00',calendar='proleptic_gregorian'):
     """
     Return datetime objects given numeric time values. The units
     of the numeric time values are described by the units argument
@@ -3271,10 +3271,9 @@ def num2date(times,units,calendar='standard'):
     UTC with no time-zone offset, even if the specified 
     units contain a time-zone offset.
 
-    Like the matplotlib num2date function, except that it allows
-    for different units and calendars.  Behaves the same if
-    units = 'days since 001-01-01 00:00:00' and 
-    calendar = 'proleptic_gregorian'.
+    Default behavior is the same as the matplotlib num2date function
+    but the reference time and calendar can be changed via the
+    'units' and 'calendar' keywords.
 
     Arguments:
 
@@ -3282,8 +3281,8 @@ def num2date(times,units,calendar='standard'):
 
     units - a string of the form '<time units> since <reference time>'
      describing the time units. <time units> can be days, hours, minutes
-     or seconds.  <reference time> is the time origin.  A valid choice
-     would be units='hours since 1800-01-01 00:00:00 -6:00'.
+     or seconds.  <reference time> is the time origin.  
+     Default is 'days since 0001-01-01 00:00:00'.
 
     calendar - describes the calendar used in the time calculations. 
      All the values currently defined in the CF metadata convention 
@@ -3291,7 +3290,7 @@ def num2date(times,units,calendar='standard'):
      Valid calendars 'standard', 'gregorian', 'proleptic_gregorian'
      'noleap', '365_day', '360_day', 'julian', 'all_leap', '366_day'.
      Default is 'standard'/'gregorian', which is a mixed 
-     Julian/Gregorian calendar.
+     Julian/Gregorian calendar. Defalut 'proleptic_gregorian'.
 
     Returns a datetime instance, or an array of datetime instances.
 
@@ -3306,7 +3305,7 @@ def num2date(times,units,calendar='standard'):
     cdftime = netcdftime.utime(units,calendar=calendar)
     return cdftime.num2date(times)
 
-def date2num(dates,units,calendar='standard'):
+def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gregorian'):
     """
     Return numeric time values given datetime objects. The units
     of the numeric time values are described by the units argument
@@ -3315,10 +3314,9 @@ def date2num(dates,units,calendar='standard'):
     time-zone offset in units, it will be applied to the
     returned numeric values.
 
-    Like the matplotlib date2num function, except that it allows
-    for different units and calendars.  Behaves the same if
-    units = 'days since 0001-01-01 00:00:00' and 
-    calendar = 'proleptic_gregorian'.
+    Default behavior is the same as the matplotlib date2num function
+    but the reference time and calendar can be changed via the
+    'units' and 'calendar' keywords.
 
     Arguments:
 
@@ -3327,8 +3325,8 @@ def date2num(dates,units,calendar='standard'):
 
     units - a string of the form '<time units> since <reference time>'
      describing the time units. <time units> can be days, hours, minutes
-     or seconds.  <reference time> is the time origin.  A valid choice
-     would be units='hours since 1800-01-01 00:00:00 -6:00'.
+     or seconds.  <reference time> is the time origin.  
+     Default is 'days since 0001-01-01 00:00:00'.
 
     calendar - describes the calendar used in the time calculations. 
      All the values currently defined in the CF metadata convention 
@@ -3336,7 +3334,7 @@ def date2num(dates,units,calendar='standard'):
      Valid calendars 'standard', 'gregorian', 'proleptic_gregorian'
      'noleap', '365_day', '360_day', 'julian', 'all_leap', '366_day'.
      Default is 'standard'/'gregorian', which is a mixed 
-     Julian/Gregorian calendar.
+     Julian/Gregorian calendar. Default 'proleptic_gregorian'.
 
     Returns a numeric time value, or an array of numeric time values.
 

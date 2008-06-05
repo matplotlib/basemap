@@ -1,3 +1,5 @@
+           * change default behaviour of num2date and date2num to be
+             the same as matplotlib counterparts.
 version 0.99 (svn revision 5344)
            * fix to warpimage method for API change in matplotlib 0.98.0.
            * updated pyproj to 1.8.6.
