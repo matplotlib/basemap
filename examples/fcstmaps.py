@@ -12,8 +12,7 @@ from mpl_toolkits.basemap import Basemap, NetCDFFile, addcyclic, num2date
 if len(sys.argv) > 1:
     YYYYMMDD = sys.argv[1]
 else:
-   YYYYMMDD = datetime.datetime.today().strftime('%Y%m%d')
-YYYYMM = YYYYMMDD[0:6]
+    YYYYMMDD = datetime.datetime.today().strftime('%Y%m%d')
 
 # set OpenDAP server URL.
 URLbase="http://nomad3.ncep.noaa.gov:9090/dods/mrf/mrf"
@@ -24,7 +23,7 @@ try:
 except:
     msg = """
 opendap server not providing the requested data.
-Try another date by providing YYYYMM on command line."""
+Try another date by providing YYYYMMDD on command line."""
     raise IOError, msg
 
 
