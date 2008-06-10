@@ -8,3 +8,5 @@
 :Date: |today|
 
 .. toctree::
+
+    intro.rst
