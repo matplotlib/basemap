@@ -12,7 +12,8 @@ the `IDL mapping facilities <http://www.msi.umn.edu/software/idl/tutorial/idl-ma
 are other libraries that provide similar capabilities in Python.
 
 Basemap does not do any plotting on it's own, but provides the facilities to transform coordinates to one of 19 different map projections (using the 
-`PROJ.4 <http://trac.osgeo.org/proj/>`_ C library).  Matplotlib is then
+`PROJ.4 <http://trac.osgeo.org/proj/>`_ C library).  `Matplotlib
+<http://matplotlib.sourceforge.net>`_ is then
 used to plot contours, images, vectors, lines or points
 in the transformed coordinates.
 Shoreline, river and political boundary
