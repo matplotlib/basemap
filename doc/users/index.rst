@@ -10,3 +10,4 @@
 .. toctree::
 
     intro.rst
+    mapsetup.rst
