@@ -112,11 +112,11 @@ _Basemap_init_doc = """
  and creates the coastline data structures in native map projection
  coordinates.
 
- The desired projection is set with the projection keyword. Default is 'cyl'.
- Supported projections are:
+ The desired projection is set with the projection keyword. Default is ``cyl``.
+ Supported values for the projection keyword are:
 
  ==============   ====================================================
- Key Value        Description
+ Value            Description
  ==============   ====================================================
 %(supported_projections)s
  ==============   ====================================================
@@ -150,18 +150,18 @@ _Basemap_init_doc = """
  lat_0            center of desired map domain (in degrees).
  ==============   ====================================================
 
- For 'sinu', 'moll', 'npstere', 'spstere', 'nplaea', 'splaea', 'nplaea',
- 'splaea', 'npaeqd', 'spaeqd' or 'robin', the values of
- llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat,width and height are ignored
+ For ``sinu``, ``moll``, ``npstere``, ``spstere``, ``nplaea``, ``splaea``, 
+ ``npaeqd``, ``spaeqd`` or ``robin``, the values of
+ llcrnrlon, llcrnrlat, urcrnrlon, urcrnrlat, width and height are ignored
  (because either they are computed internally, or entire globe is
  always plotted). 
  
- For the cylindrical projections('cyl','merc' and 'mill'), the default is to use
+ For the cylindrical projections(``cyl``, ``merc`` and ``mill``), the default is to use
  llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other
- projections except 'ortho' and 'geos', either the lat/lon values of the
+ projections except ``ortho`` and ``geos``, either the lat/lon values of the
  corners or width and height must be specified by the user.
 
- For 'ortho' and 'geos', the lat/lon values of the corners may be specified,
+ For ``ortho`` and ``geos``, the lat/lon values of the corners may be specified,
  or the x/y values of the corners (llcrnrx,llcrnry,urcrnrx,urcrnry) in the 
  coordinate system of the global projection (with x=0,y=0 at the center
  of the global projection).  If the corners are not specified,
@@ -172,31 +172,31 @@ _Basemap_init_doc = """
  ==============   ====================================================
  Keyword          Description
  ==============   ====================================================
- resolution       resolution of boundary database to use. Can be 'c'
-                  (crude), 'l' (low), 'i' (intermediate), 'h' (high), 
-                  'f' (full) or None.
+ resolution       resolution of boundary database to use. Can be ``c``
+                  (crude), ``l`` (low), ``i`` (intermediate), ``h``  
+                  (high), ``f`` (full) or None.
                   If None, no boundary data will be read in (and
                   class methods such as drawcoastlines will raise an
                   if invoked).
                   Resolution drops off by roughly 80%% between datasets.
                   Higher res datasets are much slower to draw.
-                  Default 'c'. Coastline data is from the GSHHS
+                  Default ``c``. Coastline data is from the GSHHS
                   (http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html).
                   State, country and river datasets from the Generic
                   Mapping Tools (http://gmt.soest.hawaii.edu).
  area_thresh      coastline or lake with an area smaller than 
                   area_thresh in km^2 will not be plotted. 
                   Default 10000,1000,100,10,1 for resolution
-                  'c','l','i','h','f'.
+                  ``c``,``l``,``i``,``h``,``f``.
  rsphere          radius of the sphere used to define map projection
                   (default 6370997 meters, close to the arithmetic mean
                   radius of the earth). If given as a sequence, the 
                   first two elements are interpreted as the radii
                   of the major and minor axes of an ellipsoid. 
                   Note: sometimes an ellipsoid is specified by the 
-                  major axis and an 'inverse flattening parameter (if).
-                  The minor axis (b) can be computed from the major axis
-                  (a) and the inverse flattening parameter using the
+                  major axis and an inverse flattening parameter (if).
+                  The minor axis (b) can be computed from the major
+                  axis (a) and the inverse flattening parameter using 
                   the formula if = a/(a-b).
  suppress_ticks   suppress automatic drawing of axis ticks and labels
                   in map projection coordinates.  Default False, 
@@ -210,93 +210,107 @@ _Basemap_init_doc = """
                   the axes in meters using native map projection
                   coordinates.
  anchor           determines how map is placed in axes rectangle
-                  (passed to axes.set_aspect). Default is 'C', 
+                  (passed to axes.set_aspect). Default is ``C``, 
                   which means map is centered.
                   Allowed values are 
-                  ['C', 'SW', 'S', 'SE', 'E', 'NE', 'N', 'NW', 'W'].
+                  ``C``, ``SW``, ``S``, ``SE``, ``E``, ``NE``, 
+                  ``N``, ``NW``, and ``W``.
  ax               set default axes instance 
-                  (default None - pylab.gca() may be used
+                  (default None - matplotlib.pyplot.gca() may be used
                   to get the current axes instance).
-                  If you don't want pylab to be imported,
+                  If you don``t want matplotlib.pyplot to be imported,
                   you can either set this to a pre-defined axes
-                  instance, or use the 'ax' keyword in each Basemap
+                  instance, or use the ``ax`` keyword in each Basemap
                   method call that does drawing. In the first case,
                   all Basemap method calls will draw to the same axes
                   instance.  In the second case, you can draw to 
                   different axes with the same Basemap instance.
-                  You can also use the 'ax' keyword in individual
+                  You can also use the ``ax`` keyword in individual
                   method calls to selectively override the default 
                   axes instance.
  ==============   ====================================================
 
- The following parameters are map projection parameters which all default to
+ The following keywords are map projection parameters which all default to
  None.  Not all parameters are used by all projections, some are ignored.
- The module variable 'projection_params' is a dictionary which
+ The module variable ``projection_params`` is a dictionary which
  lists which parameters apply to which projections.
 
- lat_ts - latitude of true scale for mercator projection, optional
-  for stereographic projection.
-
- lat_1 - first standard parallel for lambert conformal, albers
-  equal area projection and equidistant conic projections. Latitude of one
-  of the two points on the projection centerline for oblique mercator.
-  If lat_1 is not given, but lat_0 is, lat_1 is set to lat_0 for
-  lambert conformal, albers equal area and equidistant conic.
-
- lat_2 - second standard parallel for lambert conformal, albers
-  equal area projection and equidistant conic projections. Latitude of one
-  of the two points on the projection centerline for oblique mercator.
-  If lat_2 is not given, it is set to lat_1 for
-  lambert conformal, albers equal area and equidistant conic.
-
- lon_1 - longitude of one of the two points on the projection centerline
-  for oblique mercator.
-
- lon_2 - longitude of one of the two points on the projection centerline
-  for oblique mercator.
-
- no_rot - only used by oblique mercator.  If set to True, the map projection
-  coordinates will not be rotated to true North.  Default is False (projection
-  coordinates are automatically rotated).
-
- lat_0 - central latitude (y-axis origin) - used by all projections,
-  Must be equator for mercator projection.
-
- lon_0 - central meridian (x-axis origin) - used by all projections,
-
- boundinglat - bounding latitude for pole-centered projections (npstere,spstere,
-  nplaea,splaea,npaeqd,spaeqd).  These projections are square regions centered
-  on the north or south pole.  The longitude lon_0 is at 6-o'clock, and the
-  latitude circle boundinglat is tangent to the edge of the map at lon_0.
-
- satellite_height - height of satellite (in m) above equator -
-  only relevant for geostationary projections ('geos'). Default 35,786 km.
+ ================ ====================================================
+ Keyword          Description
+ ================ ====================================================
+ lat_ts           latitude of true scale for mercator projection,
+                  optional for stereographic projection.
+ lat_1            first standard parallel for lambert conformal, 
+                  albers equal area and equidistant conic.
+                  Latitude of one of the two points on the projection 
+                  for oblique mercator. If lat_1 is not given, but 
+                  lat_0 is, lat_1 is set to lat_0 for lambert 
+                  conformal, albers equal area and equidistant conic.
+ lat_2            second standard parallel for lambert conformal, 
+                  albers equal area and equidistant conic.
+                  Latitude of one of the two points on the projection
+                  centerline for oblique mercator. If lat_2 is not 
+                  given it is set to lat_1 for lambert conformal, 
+                  albers equal area and equidistant conic.
+ lon_1            longitude of one of the two points on the projection
+                  centerline for oblique mercator.
+ lon_2            longitude of one of the two points on the projection
+                  centerline for oblique mercator.
+ no_rot           only used by oblique mercator.
+                  If set to True, the map projection coordinates will 
+                  not be rotated to true North.  Default is False
+                  (projection coordinates are automatically rotated).
+ lat_0            central latitude (y-axis origin) - used by all 
+                  projections, Must be equator for mercator projection.
+ lon_0            central meridian (x-axis origin) - used by all
+                  projections.
+ boundinglat      bounding latitude for pole-centered projections
+                  (npstere,spstere,nplaea,splaea,npaeqd,spaeqd). 
+                  These projections are square regions centered
+                  on the north or south pole.
+                  The longitude lon_0 is at 6-o'clock, and the
+                  latitude circle boundinglat is tangent to the edge  
+                  of the map at lon_0.
+ satellite_height height of satellite (in m) above equator -
+                  only relevant for geostationary projections
+                  (``geos``). Default 35,786 km.
+ ================ ====================================================
 
  Useful instance variables:
 
- projection - map projection. Print the module variable
-  "supported_projections" to see a list.
-
- aspect - map aspect ratio (size of y dimension / size of x dimension).
-
- llcrnrlon - longitude of lower left hand corner of the desired map domain.
-
- llcrnrlon - latitude of lower left hand corner of the desired map domain.
-
- urcrnrlon - longitude of upper right hand corner of the desired map domain.
-
- urcrnrlon - latitude of upper right hand corner of the desired map domain.
-
- llcrnrx,llcrnry,urcrnrx,urcrnry - corners of map domain in projection coordinates.
-
- rmajor,rminor - equatorial and polar radii of ellipsoid used (in meters).
-
- resolution - resolution of boundary dataset being used ('c' for crude,
-  'l' for low, etc.). If None, no boundary dataset is associated with the
-   Basemap instance.
-
- srs - a string representing the 'spatial reference system' for the map
-   projection as defined by PROJ.4.
+ ================ ====================================================
+ Variable Name    Description
+ ================ ====================================================
+ projection       map projection. Print the module variable
+                  "supported_projections" to see a list of allowed
+                  values.
+ aspect           map aspect ratio 
+                  (size of y dimension / size of x dimension).
+ llcrnrlon        longitude of lower left hand corner of the
+                  selected map domain.
+ llcrnrlon        latitude of lower left hand corner of the 
+                  selected map domain.
+ urcrnrlon        longitude of upper right hand corner of the
+                  selected map domain.
+ urcrnrlon        latitude of upper right hand corner of the
+                  selected map domain.
+ llcrnrx          x value of lower left hand corner of the
+                  selected map domain in map projection coordinates.
+ llcrnry          y value of lower left hand corner of the 
+                  selected map domain in map projection coordinates.
+ urcrnrx          x value of upper right hand corner of the
+                  selected map domain in map projection coordinates.
+ urcrnry          y value of upper right hand corner of the
+                  selected map domain in map projection coordinates.
+ rmajor           equatorial radius of ellipsoid used (in meters).
+ rminor           polar radius of ellipsoid used (in meters).
+ resolution       resolution of boundary dataset being used (``c`` 
+                  for crude, ``l`` for low, etc.). 
+                  If None, no boundary dataset is associated with the
+                  Basemap instance.
+ srs              a string representing the 'spatial reference system'
+                  for the map projection as defined by PROJ.4.
+ ================ ====================================================
 
  Example Usage:
 
@@ -322,8 +336,8 @@ _Basemap_init_doc = """
  >>> plt.show()
 
  [this example (simpletest.py) plus many others can be found in the
-  examples directory of source distribution.  The "OO" version of this
-  example (which does not use pylab) is called "simpletest_oo.py".]
+ examples directory of source distribution.  The "OO" version of this
+ example (which does not use matplotlib.pyplot) is called "simpletest_oo.py".]
 """ % locals()
 
 # unsupported projection error message.
