@@ -1,20 +1,20 @@
 """
 Module for plotting data on maps with matplotlib.
 
-Contains the Basemap class (which does most of the 
+Contains the :class:`Basemap` class (which does most of the 
 heavy lifting), and the following functions:
 
-NetCDFFile: Read local and remote NetCDF datasets.
+:func:`NetCDFFile`: Read local and remote NetCDF datasets.
 
-interp:  bilinear interpolation between rectilinear grids.
+:func:`interp`:  bilinear interpolation between rectilinear grids.
 
-shiftgrid:  shifts global lat/lon grids east or west.
+:func:`shiftgrid`:  shifts global lat/lon grids east or west.
 
-addcyclic: Add cyclic (wraparound) point in longitude.
+:func:`addcyclic`: Add cyclic (wraparound) point in longitude.
 
-num2date: convert from a numeric time value to a datetime object.
+:func:`num2date`: convert from a numeric time value to a datetime object.
 
-date2num: convert from a datetime object to a numeric time value.
+:func:`date2num`: convert from a datetime object to a numeric time value.
 """
 from matplotlib import __version__ as _matplotlib_version
 from matplotlib.cbook import is_scalar, dedent
@@ -738,16 +738,16 @@ class Basemap(object):
         """
         Calling a Basemap class instance with the arguments lon, lat will
         convert lon/lat (in degrees) to x/y native map projection
-        coordinates (in meters).  If optional keyword 'inverse' is
-        True (default is False), the inverse transformation from x/y
+        coordinates (in meters).  If optional keyword ``inverse`` is
+        ``True11 (default is ``False``), the inverse transformation from x/y
         to lon/lat is performed.
 
-        For cylindrical equidistant projection ('cyl'), this
+        For cylindrical equidistant projection (``cyl``), this
         does nothing (i.e. x,y == lon,lat).
 
         For non-cylindrical projections, the inverse transformation
         always returns longitudes between -180 and 180 degrees. For
-        cylindrical projections (self.projection == 'cyl','mill' or 'merc')
+        cylindrical projections (self.projection == ``cyl``,``mill`` or ``merc``)
         the inverse transformation will return longitudes between
         self.llcrnrlon and self.llcrnrlat.
 
@@ -760,7 +760,7 @@ class Basemap(object):
         return arrays of shape (ny,nx) containing lon,lat coordinates of
         an equally spaced native projection grid.
 
-        if returnxy = True, the x,y values of the grid are returned also.
+        if ``returnxy = True``, the x,y values of the grid are returned also.
         """
         return self.projtran.makegrid(nx,ny,returnxy=returnxy)
 
@@ -1092,20 +1092,21 @@ class Basemap(object):
         draw boundary around map projection region, optionally
         filling interior of region.
 
-        linewidth - line width for boundary (default 1.)
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        linewidth        line width for boundary (default 1.)
+        color            color of boundary line (default black)
+        fill_color       fill the map region background with this
+                         color (default is no fill or fill with axis 
+                         background color).
+        zorder           sets the zorder for filling map background
+                         (default 0).
+        ax               axes instance to use
+                         (default None, use default axes instance).
+        ==============   ====================================================
 
-        color - color of boundary line (default black)
-
-        fill_color - fill the map region background with this
-        color (default is no fill or fill with axis background color).
-
-        zorder - sets the zorder for filling map background
-         (default 0).
-
-        ax - axes instance to use (default None, use default axes 
-        instance).
-
-        returns PatchCollection representing map boundary.
+        returns matplotlib.collections.PatchCollection representing map boundary.
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
