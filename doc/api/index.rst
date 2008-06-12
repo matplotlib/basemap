@@ -8,3 +8,5 @@
 :Date: |today|
 
 .. toctree::
+
+    basemap_api.rst
