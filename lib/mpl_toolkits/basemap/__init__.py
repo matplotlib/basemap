@@ -112,6 +112,11 @@ _Basemap_init_doc = """
  and creates the coastline data structures in native map projection
  coordinates.
 
+ Calling a Basemap class instance with the arguments lon, lat will
+ convert lon/lat (in degrees) to x/y native map projection coordinates
+ (in meters). The inverse transformation is done if the optional keyword
+ ``inverse`` is set to True.
+
  The desired projection is set with the projection keyword. Default is ``cyl``.
  Supported values for the projection keyword are:
 
@@ -1296,18 +1301,19 @@ class Basemap(object):
         """
         Draw coastlines.
 
-        linewidth - coastline width (default 1.)
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        linewidth        coastline width (default 1.)
+        color            coastline color (default black)
+        antialiased      antialiasing switch for coastlines (default True).
+        ax               axes instance (overrides default axes instance)
+        zorder           sets the zorder for the coastlines (if not specified,
+                         uses default zorder for 
+                         matplotlib.patches.LineCollections).
+        ==============   ====================================================
 
-        color - coastline color (default black)
-
-        antialiased - antialiasing switch for coastlines (default True).
-
-        ax - axes instance (overrides default axes instance)
-
-        zorder - sets the zorder for the coastlines (if not specified,
-        uses default zorder for LineCollections).
-
-        returns a LineCollection.
+        returns a matplotlib.patches.LineCollection object.
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
@@ -1335,18 +1341,20 @@ class Basemap(object):
         """
         Draw country boundaries.
 
-        linewidth - country boundary line width (default 0.5)
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        linewidth        country boundary line width (default 0.5)
+        color            country boundary line color (default black)
+        antialiased      antialiasing switch for country boundaries (default 
+                         True).
+        ax               axes instance (overrides default axes instance)
+        zorder           sets the zorder for the country boundaries (if not
+                         specified uses default zorder for 
+                         matplotlib.patches.LineCollections).
+        ==============   ====================================================
 
-        color - country boundary line color (default black)
-
-        antialiased - antialiasing switch for country boundaries (default True).
-
-        ax - axes instance (overrides default axes instance)
-
-        zorder - sets the zorder for the country boundaries (if not specified,
-        uses default zorder for LineCollections).
-
-        returns a LineCollection.
+        returns a matplotlib.patches.LineCollection object.
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
@@ -1378,18 +1386,20 @@ class Basemap(object):
         """
         Draw state boundaries in Americas.
 
-        linewidth - state boundary line width (default 0.5)
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        linewidth        state boundary line width (default 0.5)
+        color            state boundary line color (default black)
+        antialiased      antialiasing switch for state boundaries
+                         (default True).
+        ax               axes instance (overrides default axes instance)
+        zorder           sets the zorder for the state boundaries (if not 
+                         specified, uses default zorder for
+                         matplotlib.patches.LineCollections).
+        ==============   ====================================================
 
-        color - state boundary line color (default black)
-         
-        antialiased - antialiasing switch for state boundaries (default True).
-
-        ax - axes instance (overrides default axes instance)
-
-        zorder - sets the zorder for the state boundaries (if not specified,
-        uses default zorder for LineCollections).
-
-        returns a LineCollection.
+        returns a matplotlib.patches.LineCollection object.
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
@@ -1421,18 +1431,20 @@ class Basemap(object):
         """
         Draw major rivers.
 
-        linewidth - river boundary line width (default 0.5)
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        linewidth        river boundary line width (default 0.5)
+        color            river boundary line color (default black)
+        antialiased      antialiasing switch for river boundaries (default 
+                         True).
+        ax               axes instance (overrides default axes instance)
+        zorder           sets the zorder for the rivers (if not 
+                         specified uses default zorder for
+                         matplotlib.patches.LineCollections).
+        ==============   ====================================================
 
-        color - river boundary line color (default black)
-
-        antialiased - antialiasing switch for river boundaries (default True).
-
-        ax - axes instance (overrides default axes instance)
-
-        zorder - sets the zorder for the rivers (if not specified,
-        uses default zorder for LineCollections).
-
-        returns a LineCollection
+        returns a matplotlib.patches.LineCollection object.
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
