@@ -312,7 +312,27 @@ _Basemap_init_doc = """
                   for the map projection as defined by PROJ.4.
  ================ ====================================================
 
- Example Usage:
+ **Converting from Geographic (lon/lat) to Map Projection (x/y) Coordinates**
+
+ Calling a Basemap class instance with the arguments lon, lat will
+ convert lon/lat (in degrees) to x/y native map projection
+ coordinates (in meters).  If optional keyword ``inverse`` is
+ True (default is False), the inverse transformation from x/y
+ to lon/lat is performed.
+
+ For cylindrical equidistant projection (``cyl``), this
+ does nothing (i.e. x,y == lon,lat).
+
+ For non-cylindrical projections, the inverse transformation
+ always returns longitudes between -180 and 180 degrees. For
+ cylindrical projections (self.projection == ``cyl``, ``mill`` or ``merc``)
+ The inverse transformation will return longitudes between
+ self.llcrnrlon and self.llcrnrlat.
+
+ Input arguments lon, lat can be either scalar floats, sequences
+ or numpy arrays.  
+
+ **Example Usage:**
 
  >>> from mpl_toolkits.basemap import Basemap
  >>> import numpy as np
@@ -739,7 +759,7 @@ class Basemap(object):
         Calling a Basemap class instance with the arguments lon, lat will
         convert lon/lat (in degrees) to x/y native map projection
         coordinates (in meters).  If optional keyword ``inverse`` is
-        ``True11 (default is ``False``), the inverse transformation from x/y
+        True (default is False), the inverse transformation from x/y
         to lon/lat is performed.
 
         For cylindrical equidistant projection (``cyl``), this
@@ -747,11 +767,13 @@ class Basemap(object):
 
         For non-cylindrical projections, the inverse transformation
         always returns longitudes between -180 and 180 degrees. For
-        cylindrical projections (self.projection == ``cyl``,``mill`` or ``merc``)
-        the inverse transformation will return longitudes between
+        cylindrical projections (self.projection == ``cyl``,
+        ``mill`` or ``merc``)
+        The inverse transformation will return longitudes between
         self.llcrnrlon and self.llcrnrlat.
 
-        input arguments lon, lat can be either scalar floats or N arrays.
+        Input arguments lon, lat can be either scalar floats,
+        sequences, or numpy arrays.
         """
         return self.projtran(x,y,inverse=inverse)
 
@@ -760,7 +782,7 @@ class Basemap(object):
         return arrays of shape (ny,nx) containing lon,lat coordinates of
         an equally spaced native projection grid.
 
-        if ``returnxy = True``, the x,y values of the grid are returned also.
+        If ``returnxy = True``, the x,y values of the grid are returned also.
         """
         return self.projtran.makegrid(nx,ny,returnxy=returnxy)
 
@@ -1205,19 +1227,22 @@ class Basemap(object):
         """
         Fill continents.
 
-        color - color to fill continents (default gray).
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        color            color to fill continents (default gray).
+        lake_color       color to fill inland lakes (default axes background).
+        ax               axes instance (overrides default axes instance).
+        zorder           sets the zorder for the continent polygons (if not
+                         specified, uses default zorder for a Polygon patch).
+                         Set to zero if you want to paint over the filled
+                         continents).
+        ==============   ====================================================
 
-        lake_color - color to fill inland lakes (default axes background).
+        After filling continents, lakes are re-filled with
+        axis background color.
 
-        ax - axes instance (overrides default axes instance).
-
-        zorder - sets the zorder for the continent polygons (if not specified,
-        uses default zorder for a Polygon patch). Set to zero if you want to paint
-        over the filled continents).
-
-        After filling continents, lakes are re-filled with axis background color.
-
-        returns Polygon object.
+        returns matplotlib.patches.Polygon object.
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
