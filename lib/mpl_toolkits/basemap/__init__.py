@@ -2787,7 +2787,7 @@ class Basemap(object):
         rgba_ocean (default is lakes=False).
 
         Default land-sea mask is from
-        http://www.ngdc.noaa.gov/seg/cdroms/graham/graham/graham.htm
+        http://www.ngdc.noaa.gov/ecosys/cdroms/graham/graham/graham.htm
         and has 5-minute resolution.
 
         To specify your own global land-sea mask, set the
