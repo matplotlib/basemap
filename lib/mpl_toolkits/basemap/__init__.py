@@ -192,7 +192,7 @@ _Basemap_init_doc = """
  area_thresh      coastline or lake with an area smaller than 
                   area_thresh in km^2 will not be plotted. 
                   Default 10000,1000,100,10,1 for resolution
-                  ``c``,``l``,``i``,``h``,``f``.
+                  ``c``, ``l``, ``i``, ``h``, ``f``.
  rsphere          radius of the sphere used to define map projection
                   (default 6370997 meters, close to the arithmetic mean
                   radius of the earth). If given as a sequence, the 
@@ -1613,46 +1613,49 @@ class Basemap(object):
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None, \
                       fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
-        draw parallels (latitude lines).
+        Draw and label parallels (latitude lines).
 
-        circles - list containing latitude values to draw (in degrees).
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        circles          sequence containing latitude values to draw (in
+                         degrees).
+        color            color to draw parallels (default black).
+        linewidth        line width for parallels (default 1.)
+        zorder           sets the zorder for parallels (if not specified,
+                         uses default zorder for matplotlib.lines.Line2D
+                         objects).
+        dashes           dash pattern for parallels (default [1,1], i.e.
+                         1 pixel on, 1 pixel off).
+        labels           list of 4 values (default [0,0,0,0]) that control
+                         whether parallels are labelled where they intersect
+                         the left, right, top or bottom of the plot. For
+                         example labels=[1,0,0,1] will cause parallels
+                         to be labelled where they intersect the left and
+                         and bottom of the plot, but not the right and top.
+        labelstyle       if set to "+/-", north and south latitudes are
+                         labelled with "+" and "-", otherwise they are
+                         labelled with "N" and "S".
+        fmt              a format string to format the parallel labels
+                         (default '%g') **or** a function that takes a
+                         latitude value in degrees as it's only argument 
+                         and returns a formatted string.
+        xoffset          label offset from edge of map in x-direction
+                         (default is 0.01 times width of map in map
+                         projection coordinates).
+        yoffset          label offset from edge of map in y-direction
+                         (default is 0.01 times height of map in map
+                         projection coordinates).
+        ax               axes instance (overrides default axes instance)
+        \**kwargs        additional keyword arguments controlling text
+                         for labels that are passed on to 
+                         the text method of the axes instance (see
+                         matplotlib.pyplot.text documentation).
+        ==============   ====================================================
 
-        color - color to draw parallels (default black).
-
-        linewidth - line width for parallels (default 1.)
-
-        zorder - sets the zorder for parallels (if not specified,
-        uses default zorder for Line2D class).
-
-        dashes - dash pattern for parallels (default [1,1], i.e. 1 pixel on,
-         1 pixel off).
-
-        labels - list of 4 values (default [0,0,0,0]) that control whether
-         parallels are labelled where they intersect the left, right, top or
-         bottom of the plot. For example labels=[1,0,0,1] will cause parallels
-         to be labelled where they intersect the left and bottom of the plot,
-         but not the right and top.
-
-        labelstyle - if set to "+/-", north and south latitudes are labelled
-         with "+" and "-", otherwise they are labelled with "N" and "S".
-
-        fmt can be is a format string to format the parallel labels
-         (default '%g') or a function that takes a latitude value 
-         in degrees as it's only argument and returns a formatted string.
-
-        xoffset - label offset from edge of map in x-direction
-         (default is 0.01 times width of map in map projection coordinates).
-
-        yoffset - label offset from edge of map in y-direction
-         (default is 0.01 times height of map in map projection coordinates).
-
-        ax - axes instance (overrides default axes instance)
-
-        additional keyword arguments control text properties for labels (see
-         matplotlib.pyplot.text documentation)
-
-        returns a dictionary whose keys are the parallels, and
-        whose values are tuples containing lists of the Line2D and Text instances
+        returns a dictionary whose keys are the parallel values, and
+        whose values are tuples containing lists of the 
+        matplotlib.lines.Line2D and matplotlib.text.Text instances
         associated with each parallel.
         """
         # get current axes instance (if none specified).
@@ -1865,46 +1868,49 @@ class Basemap(object):
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
                       fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
-        draw meridians (longitude lines).
+        Draw and label meridians (longitude lines).
 
-        meridians - list containing longitude values to draw (in degrees).
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        meridians        sequence containing longitude values to draw (in
+                         degrees).
+        color            color to draw meridians (default black).
+        linewidth        line width for meridians (default 1.)
+        zorder           sets the zorder for meridians (if not specified,
+                         uses default zorder for matplotlib.lines.Line2D
+                         objects).
+        dashes           dash pattern for meridians (default [1,1], i.e.
+                         1 pixel on, 1 pixel off).
+        labels           list of 4 values (default [0,0,0,0]) that control
+                         whether meridians are labelled where they intersect
+                         the left, right, top or bottom of the plot. For
+                         example labels=[1,0,0,1] will cause meridians
+                         to be labelled where they intersect the left and
+                         and bottom of the plot, but not the right and top.
+        labelstyle       if set to "+/-", east and west longitudes are
+                         labelled with "+" and "-", otherwise they are
+                         labelled with "E" and "W".
+        fmt              a format string to format the meridian labels
+                         (default '%g') **or** a function that takes a
+                         longitude value in degrees as it's only argument 
+                         and returns a formatted string.
+        xoffset          label offset from edge of map in x-direction
+                         (default is 0.01 times width of map in map
+                         projection coordinates).
+        yoffset          label offset from edge of map in y-direction
+                         (default is 0.01 times height of map in map
+                         projection coordinates).
+        ax               axes instance (overrides default axes instance)
+        \**kwargs        additional keyword arguments controlling text
+                         for labels that are passed on to 
+                         the text method of the axes instance (see
+                         matplotlib.pyplot.text documentation).
+        ==============   ====================================================
 
-        color - color to draw meridians (default black).
-
-        linewidth - line width for meridians (default 1.)
-
-        zorder - sets the zorder for meridians (if not specified,
-         uses default zorder for Line2D class).
-
-        dashes - dash pattern for meridians (default [1,1], i.e. 1 pixel on,
-         1 pixel off).
-
-        labels - list of 4 values (default [0,0,0,0]) that control whether
-         meridians are labelled where they intersect the left, right, top or
-         bottom of the plot. For example labels=[1,0,0,1] will cause meridians
-         to be labelled where they intersect the left and bottom of the plot,
-         but not the right and top.
-
-        labelstyle - if set to "+/-", east and west longitudes are labelled
-         with "+" and "-", otherwise they are labelled with "E" and "W".
-
-        fmt can be is a format string to format the meridian labels
-         (default '%g') or a function that takes a longitude value
-         in degrees as it's only argument and returns a formatted string.
-
-        xoffset - label offset from edge of map in x-direction
-         (default is 0.01 times width of map in map projection coordinates).
-
-        yoffset - label offset from edge of map in y-direction
-         (default is 0.01 times height of map in map projection coordinates).
-
-        ax - axes instance (overrides default axes instance)
-
-        additional keyword arguments control text properties for labels (see
-         matplotlib.pyplot.text documentation)
-
-        returns a dictionary whose keys are the meridians, and
-        whose values are tuples containing lists of the Line2D and Text instances
+        returns a dictionary whose keys are the meridian values, and
+        whose values are tuples containing lists of the 
+        matplotlib.lines.Line2D and matplotlib.text.Text instances
         associated with each meridian.
         """
         # get current axes instance (if none specified).
@@ -2102,8 +2108,8 @@ class Basemap(object):
 
     def gcpoints(self,lon1,lat1,lon2,lat2,npoints):
         """
-        compute npoints points along a great circle with endpoints
-        (lon1,lat1) and (lon2,lat2).
+        compute ``points`` points along a great circle with endpoints
+        ``(lon1,lat1)`` and ``(lon2,lat2)``.
 
         Returns arrays x,y with map projection coordinates.
         """
@@ -2118,21 +2124,25 @@ class Basemap(object):
 
     def drawgreatcircle(self,lon1,lat1,lon2,lat2,del_s=100.,**kwargs):
         """
-        draw a great circle on the map.
+        Draw a great circle on the map.
 
-        lon1,lat1 - longitude,latitude of one endpoint of the great circle.
+        ==============   =======================================================
+        Keyword          Description
+        ==============   =======================================================
+        lon1,lat1        longitude,latitude of one endpoint of the great circle.
+        lon2,lat2        longitude,latitude of the other endpoint of the great
+                         circle.
+        del_s            points on great circle computed every del_s kilometers
+                         (default 100).
+        \**kwargs        other keyword arguments are passed on to :meth:`plot`
+                         method of Basemap instance.
+        ==============   =======================================================
 
-        lon2,lat2 - longitude,latitude of the other endpoint of the great circle.
+        .. note::
+         Cannot handle situations in which the great circle intersects
+         the edge of the map projection domain, and then re-enters the domain.
 
-        del_s - points on great circle computed every delta kilometers (default 100).
-
-        Other keyword arguments (\**kwargs) control plotting of great circle line,
-        see matplotlib.pyplot.plot documentation for details.
-
-        Cannot handle situations in which the great circle intersects
-        the edge of the map projection domain, and then re-enters the domain.
-
-        Returns a Line2D object.
+        Returns a matplotlib.lines.Line2D object.
         """
         # use great circle formula for a perfect sphere.
         gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
