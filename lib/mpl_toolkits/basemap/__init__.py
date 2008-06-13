@@ -1475,51 +1475,57 @@ class Basemap(object):
     def readshapefile(self,shapefile,name,drawbounds=True,zorder=None,
                       linewidth=0.5,color='k',antialiased=1,ax=None):
         """
-        read in shape file, optionally draw boundaries on map.
+        Read in shape file, optionally draw boundaries on map.
 
-        Restrictions:
-         - Assumes shapes are 2D
-         - works for Point, MultiPoint, Polyline and Polygon shapes.
-         - vertices/points must be in geographic (lat/lon) coordinates.
+        .. note::
+          - Assumes shapes are 2D
+          - only works for Point, MultiPoint, Polyline and Polygon shapes.
+          - vertices/points must be in geographic (lat/lon) coordinates.
 
         Mandatory Arguments:
 
-        shapefile - path to shapefile components.  Example:
-         shapefile='/home/jeff/esri/world_borders' assumes that
-         world_borders.shp, world_borders.shx and world_borders.dbf
-         live in /home/jeff/esri.
+        ==============   ====================================================
+        Argument         Description
+        ==============   ====================================================
+        shapefile        path to shapefile components.  Example:
+                         shapefile='/home/jeff/esri/world_borders' assumes 
+                         that world_borders.shp, world_borders.shx and 
+                         world_borders.dbf live in /home/jeff/esri.
+        name             name for Basemap attribute to hold the shapefile
+                         vertices or points in native map projection 
+                         coordinates. Class attribute name+'_info' is a list 
+                         of dictionaries, one for each shape, containing 
+                         attributes of each shape from dbf file, For
+                         example, if name='counties', self.counties
+                         will be a list of x,y vertices for each shape in 
+                         map projection  coordinates and self.counties_info
+                         will be a list of dictionaries with shape
+                         attributes.  Rings in individual Polygon 
+                         shapes are split out into separate polygons, and
+                         additional keys 'RINGNUM' and 'SHAPENUM' are added
+                         to the shape attribute dictionary.
+        ==============   ====================================================
 
-        name - name for Basemap attribute to hold the shapefile
-         vertices or points in native map projection coordinates.
-         Class attribute name+'_info' is a list of dictionaries, one
-         for each shape, containing attributes of each shape from dbf file.
-         For example, if name='counties', self.counties will be
-         a list of x,y vertices for each shape in map projection
-         coordinates and self.counties_info will be a list of dictionaries
-         with shape attributes. Rings in individual Polygon shapes are split 
-         out into separate polygons, and. additional keys
-         'RINGNUM' and 'SHAPENUM' are added to shape attribute dictionary.
+        The following optional keyword arguments are only relevant for Polyline 
+        and Polygon shape types, for Point and MultiPoint shapes they are
+        ignored.
 
-        Optional Keyword Arguments (only relevant for Polyline
-         and Polygon shape types, for Point and MultiPoint shapes they
-         are ignored):
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        drawbounds       draw boundaries of shapes (default True).  
+        zorder           shape boundary zorder (if not specified, 
+                         default for mathplotlib.lines.LineCollection 
+                         is used).
+        linewidth        shape boundary line width (default 0.5)
+        color            shape boundary line color (default black)
+        antialiased      antialiasing switch for shape boundaries 
+                         (default True).
+        ax               axes instance (overrides default axes instance)
+        ==============   ====================================================
 
-        drawbounds - draw boundaries of shapes (default True).  Only
-         relevant for Polyline and Polygon shape types, for Point
-         and MultiPoint types no drawing is done.
-
-        zorder = shape boundary zorder (if not specified, 
-          default for LineCollection is used).
-
-        linewidth - shape boundary line width (default 0.5)
-
-        color - shape boundary line color (default black)
-
-        antialiased - antialiasing switch for shape boundaries (default True).
-
-        ax - axes instance (overrides default axes instance)
-
-        returns a tuple (num_shapes, type, min, max) containing shape file info.
+        A tuple (num_shapes, type, min, max) containing shape file info
+        is returned.
         num_shapes is the number of shapes, type is the type code (one of
         the SHPT* constants defined in the shapelib module, see
         http://shapelib.maptools.org/shp_api.html) and min and
