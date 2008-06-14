@@ -109,11 +109,11 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
 _Basemap_init_doc = """
 
  Sets up a basemap with specified map projection.
- and creates the coastline data structures in native map projection
+ and creates the coastline data structures in map projection
  coordinates.
 
  Calling a Basemap class instance with the arguments lon, lat will
- convert lon/lat (in degrees) to x/y native map projection coordinates
+ convert lon/lat (in degrees) to x/y map projection coordinates
  (in meters). The inverse transformation is done if the optional keyword
  ``inverse`` is set to True.
 
@@ -212,7 +212,7 @@ _Basemap_init_doc = """
                   suppress_ticks=False.  suppress_ticks=False
                   is useful if you want to use your own custom tick
                   formatter, or  if you want to let matplotlib label 
-                  the axes in meters using native map projection
+                  the axes in meters using map projection
                   coordinates.
  anchor           determines how map is placed in axes rectangle
                   (passed to axes.set_aspect). Default is ``C``, 
@@ -320,7 +320,7 @@ _Basemap_init_doc = """
  **Converting from Geographic (lon/lat) to Map Projection (x/y) Coordinates**
 
  Calling a Basemap class instance with the arguments lon, lat will
- convert lon/lat (in degrees) to x/y native map projection
+ convert lon/lat (in degrees) to x/y map projection
  coordinates (in meters).  If optional keyword ``inverse`` is
  True (default is False), the inverse transformation from x/y
  to lon/lat is performed.
@@ -349,7 +349,7 @@ _Basemap_init_doc = """
  >>> lats  = mlab.load('etopo20lats.gz')
  >>> # create Basemap instance for Robinson projection.
  >>> m = Basemap(projection='robin',lon_0=0.5*(lons[0]+lons[-1]))
- >>> # compute native map projection coordinates for lat/lon grid.
+ >>> # compute map projection coordinates for lat/lon grid.
  >>> x, y = m(*np.meshgrid(lons,lats))
  >>> # make filled contour plot.
  >>> cs = m.contourf(x,y,etopo,30,cmap=plt.cm.jet)
@@ -762,7 +762,7 @@ class Basemap(object):
     def __call__(self,x,y,inverse=False):
         """
         Calling a Basemap class instance with the arguments lon, lat will
-        convert lon/lat (in degrees) to x/y native map projection
+        convert lon/lat (in degrees) to x/y map projection
         coordinates (in meters).  If optional keyword ``inverse`` is
         True (default is False), the inverse transformation from x/y
         to lon/lat is performed.
@@ -1492,7 +1492,7 @@ class Basemap(object):
                          that world_borders.shp, world_borders.shx and 
                          world_borders.dbf live in /home/jeff/esri.
         name             name for Basemap attribute to hold the shapefile
-                         vertices or points in native map projection 
+                         vertices or points in map projection 
                          coordinates. Class attribute name+'_info' is a list 
                          of dictionaries, one for each shape, containing 
                          attributes of each shape from dbf file, For
@@ -2167,7 +2167,7 @@ class Basemap(object):
         """
         Interpolate a scalar field (``datin``) from a lat/lon grid with
         longitudes = ``lons`` and latitudes = ``lats`` to a ``ny`` by ``nx``
-        native map projection grid.  Typically used to transform data to
+        map projection grid.  Typically used to transform data to
         map projection coordinates for plotting on a map with 
         the :meth:`imshow`.
 
@@ -2180,7 +2180,7 @@ class Basemap(object):
                          For non-cylindrical projections (those other than
                          ``cyl``, ``merc`` and ``mill``) lons must fit 
                          within range -180 to 180.
-        returnxy         If True, the x and y values of the native map
+        returnxy         If True, the x and y values of the map
                          projection grid are also returned (Default False).
         checkbounds      If True, values of lons and lats are checked to see
                          that they lie within the map projection region.
@@ -2224,7 +2224,7 @@ class Basemap(object):
         """
         Rotate and interpolate a vector field (``uin,vin``) from a
         lat/lon grid with longitudes = ``lons`` and latitudes = ``lats``
-        to a ``ny`` by ``nx`` native map projection grid.
+        to a ``ny`` by ``nx`` map projection grid.
 
         The input vector field is defined in spherical coordinates (it
         has eastward and northward components) while the output
@@ -2240,7 +2240,7 @@ class Basemap(object):
                          For non-cylindrical projections (those other than
                          ``cyl``, ``merc`` and ``mill``) lons must fit 
                          within range -180 to 180.
-        returnxy         If True, the x and y values of the native map
+        returnxy         If True, the x and y values of the map
                          projection grid are also returned (Default False).
         checkbounds      If True, values of lons and lats are checked to see
                          that they lie within the map projection region.
@@ -2279,12 +2279,12 @@ class Basemap(object):
 
     def rotate_vector(self,uin,vin,lons,lats,returnxy=False):
         """
-        Rotate a vector field (``uin,vin``) on a rectilinear lat/lon grid
+        Rotate a vector field (``uin,vin``) on a rectilinear grid
         with longitudes = ``lons`` and latitudes = ``lats`` from 
         geographical (lat/lon) into map projection (x/y) coordinates.
 
         Differs from transform_vector in that no interpolation is done.
-        The vector is returned on the same lat/lon grid, but rotated into
+        The vector is returned on the same grid, but rotated into
         x,y coordinates.
 
         The input vector field is defined in spherical coordinates (it
@@ -2301,11 +2301,11 @@ class Basemap(object):
                          For non-cylindrical projections (those other than
                          ``cyl``, ``merc`` and ``mill``) lons must fit 
                          within range -180 to 180.
-        returnxy         If True, the x and y values of the native map
+        returnxy         If True, the x and y values of the map
                          projection grid are also returned (Default False).
         ==============   ====================================================
 
-        Returns ``uout, vout`` (rotated vector field on map projection grid).
+        Returns ``uout, vout`` (rotated vector field).
         If returnxy=True, returns ``uout,vout,x,y``.
         """
         if lons.ndim == 1 and lats.ndim == 1:
