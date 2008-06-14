@@ -2165,30 +2165,36 @@ class Basemap(object):
 
     def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1,masked=False):
         """
-        interpolate a scalar field (datin) from a lat/lon grid with longitudes =
-        lons and latitudes = lats to a (ny,nx) native map projection grid.
-        Typically used to transform data to map projection coordinates
-        so it can be plotted on the map with imshow.
+        Interpolate a scalar field (``datin``) from a lat/lon grid with
+        longitudes = ``lons`` and latitudes = ``lats`` to a ``ny`` by ``nx``
+        native map projection grid.  Typically used to transform data to
+        map projection coordinates for plotting on a map with 
+        the :meth:`imshow`.
 
-        lons, lats must be rank-1 arrays containing longitudes and latitudes
-         (in degrees) of datin grid in increasing order
-         (i.e. from dateline eastward, and South Pole northward).
-         For non-cylindrical projections (those other than
-         cylindrical equidistant, mercator and miller)
-         lons must fit within range -180 to 180.
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        datin            input data on a lat/lon grid.
+        lons, lats       rank-1 arrays containing longitudes and latitudes
+                         (in degrees) of input data in increasing order.
+                         For non-cylindrical projections (those other than
+                         ``cyl``, ``merc`` and ``mill``) lons must fit 
+                         within range -180 to 180.
+        returnxy         If True, the x and y values of the native map
+                         projection grid are also returned (Default False).
+        checkbounds      If True, values of lons and lats are checked to see
+                         that they lie within the map projection region.
+                         Default is False, and data outside map projection
+                         region is clipped to values on boundary.
+        masked           If True, interpolated data is returned as a masked
+                         array with values outside map projection region
+                         masked (Default False).
+        order            0 for nearest-neighbor interpolation, 1 for
+                         bilinear (Default 1).
+        ==============   ====================================================
 
-        if returnxy=True, the x and y values of the native map projection grid
-         are also returned.
-
-        If checkbounds=True, values of lons and lats are checked to see that
-         they lie within the map projection region.  Default is False.
-
-        If checkbounds=False, points outside map projection region will
-         be clipped to values on the boundary if masked=False. If masked=True,
-         the return value will be a masked array with those points masked.
-
-        The order keyword can be 0 for nearest-neighbor interpolation,
-         or 1 for bilinear interpolation (default 1).
+        Returns ``datout`` (data on map projection grid).
+        If returnxy=True, returns ``data,x,y``.
         """
         # check that lons, lats increasing
         delon = lons[1:]-lons[0:-1]
@@ -2216,34 +2222,39 @@ class Basemap(object):
 
     def transform_vector(self,uin,vin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1,masked=False):
         """
-        rotate and interpolate a vector field (uin,vin) from a lat/lon grid
-        with longitudes = lons and latitudes = lats to a
-        (ny,nx) native map projection grid.
-
-        lons, lats must be rank-1 arrays containing longitudes and latitudes
-         (in degrees) of datin grid in increasing order
-         (i.e. from dateline eastward, and South Pole northward).
-         For non-cylindrical projections (those other than
-         cylindrical equidistant, mercator and miller)
-         lons must fit within range -180 to 180.
+        Rotate and interpolate a vector field (``uin,vin``) from a
+        lat/lon grid with longitudes = ``lons`` and latitudes = ``lats``
+        to a ``ny`` by ``nx`` native map projection grid.
 
         The input vector field is defined in spherical coordinates (it
-         has eastward and northward components) while the output
-         vector field is rotated to map projection coordinates (relative
-         to x and y). The magnitude of the vector is preserved.
+        has eastward and northward components) while the output
+        vector field is rotated to map projection coordinates (relative
+        to x and y). The magnitude of the vector is preserved.
 
-        if returnxy=True, the x and y values of the native map projection grid
-         are also returned (default False).
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        uin, vin         input vector field on a lat/lon grid.
+        lons, lats       rank-1 arrays containing longitudes and latitudes
+                         (in degrees) of input data in increasing order.
+                         For non-cylindrical projections (those other than
+                         ``cyl``, ``merc`` and ``mill``) lons must fit 
+                         within range -180 to 180.
+        returnxy         If True, the x and y values of the native map
+                         projection grid are also returned (Default False).
+        checkbounds      If True, values of lons and lats are checked to see
+                         that they lie within the map projection region.
+                         Default is False, and data outside map projection
+                         region is clipped to values on boundary.
+        masked           If True, interpolated data is returned as a masked
+                         array with values outside map projection region
+                         masked (Default False).
+        order            0 for nearest-neighbor interpolation, 1 for
+                         bilinear (Default 1).
+        ==============   ====================================================
 
-        If checkbounds=True, values of lons and lats are checked to see that
-         they lie within the map projection region.  Default is False.
-        
-        If checkbounds=False, points outside map projection region will
-         be clipped to values on the boundary if masked=False. If masked=True,
-         the return value will be a masked array with those points masked.
-
-        The order keyword can be 0 for nearest-neighbor interpolation,
-         or 1 for bilinear interpolation (default 1).
+        Returns ``uout, vout`` (vector field on map projection grid).
+        If returnxy=True, returns ``uout,vout,x,y``.
         """
         # check that lons, lats increasing
         delon = lons[1:]-lons[0:-1]
@@ -2264,59 +2275,41 @@ class Basemap(object):
         uin = interp(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
         vin = interp(vin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
         # rotate from geographic to map coordinates.
-        if ma.isMaskedArray(uin):
-            mask = ma.getmaskarray(uin)
-            uin = uin.filled(1)
-            vin = vin.filled(1)
-            masked = True  # override kwarg with reality
-        uvc = uin + 1j*vin
-        uvmag = np.abs(uvc)
-        delta = 0.1 # increment in longitude
-        dlon = delta*uin/uvmag
-        dlat = delta*(vin/uvmag)*np.cos(latsout*np.pi/180.0)
-        farnorth = latsout+dlat >= 90.0
-        somenorth = farnorth.any()
-        if somenorth:
-            dlon[farnorth] *= -1.0
-            dlat[farnorth] *= -1.0
-        lon1 = lonsout + dlon
-        lat1 = latsout + dlat
-        xn, yn = self(lon1, lat1)
-        vecangle = np.arctan2(yn-y, xn-x)
-        if somenorth:
-            vecangle[farnorth] += np.pi
-        uvcout = uvmag * np.exp(1j*vecangle)
-        uout = uvcout.real
-        vout = uvcout.imag
-        if masked:
-            uout = ma.array(uout, mask=mask)
-            vout = ma.array(vout, mask=mask)
-        if returnxy:
-            return uout,vout,x,y
-        else:
-            return uout,vout
+        return self.rotate_vector(uin,vin,lonsout,latsout,returnxy=returnxy)
 
     def rotate_vector(self,uin,vin,lons,lats,returnxy=False):
         """
-        rotate a vector field (uin,vin) on a rectilinear lat/lon grid
-        with longitudes = lons and latitudes = lats from geographical into map
-        projection coordinates.
+        Rotate a vector field (``uin,vin``) on a rectilinear lat/lon grid
+        with longitudes = ``lons`` and latitudes = ``lats`` from 
+        geographical (lat/lon) into map projection (x/y) coordinates.
 
-        Differs from transform_vector in that no interpolation is done,
-        the vector is returned on the same lat/lon grid, but rotated into
+        Differs from transform_vector in that no interpolation is done.
+        The vector is returned on the same lat/lon grid, but rotated into
         x,y coordinates.
-
-        lons, lats must be rank-2 arrays containing longitudes and latitudes
-        (in degrees) of grid.
-
-        if returnxy=True, the x and y values of the lat/lon grid
-        are also returned (default False).
 
         The input vector field is defined in spherical coordinates (it
         has eastward and northward components) while the output
         vector field is rotated to map projection coordinates (relative
         to x and y). The magnitude of the vector is preserved.
+
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        uin, vin         input vector field on a lat/lon grid.
+        lons, lats       Arrays containing longitudes and latitudes
+                         (in degrees) of input data in increasing order.
+                         For non-cylindrical projections (those other than
+                         ``cyl``, ``merc`` and ``mill``) lons must fit 
+                         within range -180 to 180.
+        returnxy         If True, the x and y values of the native map
+                         projection grid are also returned (Default False).
+        ==============   ====================================================
+
+        Returns ``uout, vout`` (rotated vector field on map projection grid).
+        If returnxy=True, returns ``uout,vout,x,y``.
         """
+        if lons.ndim == 1 and lats.ndim == 1:
+            lons, lats = np.meshgrid(lons, lats) 
         x, y = self(lons, lats)
         # rotate from geographic to map coordinates.
         if ma.isMaskedArray(uin):
@@ -2393,9 +2386,10 @@ class Basemap(object):
 
     def scatter(self, *args, **kwargs):
         """
-        Plot points with markers on the map (see matplotlib.pyplot.scatter documentation).
+        Plot points with markers on the map
+        (see matplotlib.pyplot.scatter documentation).
 
-        extra keyword 'ax' can be used to override the default axes instance.
+        Extra keyword ``ax`` can be used to override the default axes instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2428,9 +2422,10 @@ class Basemap(object):
 
     def plot(self, *args, **kwargs):
         """
-        Draw lines and/or markers on the map (see matplotlib.pyplot.plot documentation).
+        Draw lines and/or markers on the map 
+        (see matplotlib.pyplot.plot documentation).
 
-        extra keyword 'ax' can be used to override the default axis instance.
+        Extra keyword ``ax`` can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2463,11 +2458,13 @@ class Basemap(object):
 
     def imshow(self, *args, **kwargs):
         """
-        Display an image over the map (see matplotlib.pyplot.imshow documentation).
-        extent and origin keywords set automatically so image will be drawn
-        over map region.
+        Display an image over the map 
+        (see matplotlib.pyplot.imshow documentation).
 
-        extra keyword 'ax' can be used to override the default axis instance.
+        ``extent`` and ``origin`` keywords set automatically so image
+        will be drawn over map region.
+
+        Extra keyword ``ax`` can be used to override the default axis instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
