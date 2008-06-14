@@ -1,3 +1,5 @@
+           * don't try to use PyNIO in NetCDFFile (it was causing
+             too many suprises).
            * improved documentation using Sphinx/docutils.
            * change default behaviour of num2date and date2num to be
              the same as matplotlib counterparts.

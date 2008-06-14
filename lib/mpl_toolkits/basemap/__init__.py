@@ -161,7 +161,8 @@ _Basemap_init_doc = """
  (because either they are computed internally, or entire globe is
  always plotted). 
  
- For the cylindrical projections(``cyl``, ``merc`` and ``mill``), the default is to use
+ For the cylindrical projections (``cyl``, ``merc`` and ``mill``),
+ the default is to use
  llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other
  projections except ``ortho`` and ``geos``, either the lat/lon values of the
  corners or width and height must be specified by the user.
@@ -3192,42 +3193,51 @@ def _searchlist(a,x):
 
 def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     """
-    dataout = interp(datain,xin,yin,xout,yout,order=1)
+    Interpolate data (``datain``) on a rectilinear grid (with x = ``xin``
+    y = ``yin``) to a grid with x = ``xout``, y= ``yout``.
 
-    interpolate data (datain) on a rectilinear grid (with x=xin
-    y=yin) to a grid with x=xout, y=yout.
+    ==============   ====================================================
+    Arguments         Description
+    ==============   ====================================================
+    datain           a rank-2 array with 1st dimension corresponding to 
+                     y, 2nd dimension x.
+    xin, yin         rank-1 arrays containing x and y of
+                     datain grid in increasing order.
+    xout, yout       rank-2 arrays containing x and y of desired output
+                     grid.
+    ==============   ====================================================
 
-    datain is a rank-2 array with 1st dimension corresponding to y,
-    2nd dimension x.
+    ==============   ====================================================
+    Keywords          Description
+    ==============   ====================================================
+    checkbounds      If True, values of xout and yout are checked to see
+                     that they lie within the range specified by xin
+                     and xin.  
+                     If False, and xout,yout are outside xin,yin, 
+                     interpolated values will be clipped to values on
+                     boundary of input grid (xin,yin)
+                     Default is False.
+    masked           If True, points outside the range of xin and yin
+                     are masked (in a masked array). 
+                     If masked is set to a number, then
+                     points outside the range of xin and yin will be 
+                     set to that number. Default False.
+    order            0 for nearest-neighbor interpolation, 1 for
+                     bilinear interpolation (default 1).
+    ==============   ====================================================
 
-    xin, yin are rank-1 arrays containing x and y of
-    datain grid in increasing order.
+    .. note::
+     If datain is a masked array and order=1 (bilinear interpolation) is
+     used, elements of dataout will be masked if any of the four surrounding
+     points in datain are masked.  To avoid this, do the interpolation in two
+     passes, first with order=1 (producing dataout1), then with order=0
+     (producing dataout2).  Then replace all the masked values in dataout1
+     with the corresponding elements in dataout2 (using numpy.where).
+     This effectively uses nearest neighbor interpolation if any of the
+     four surrounding points in datain are masked, and bilinear interpolation
+     otherwise.
 
-    xout, yout are rank-2 arrays containing x and y of desired output grid.
-
-    If checkbounds=True, values of xout and yout are checked to see that
-    they lie within the range specified by xin and xin.  Default is False.
-
-    If checkbounds=False, and xout,yout are outside xin,yin, interpolated
-    values will be clipped to values on boundary of input grid (xin,yin)
-    if masked=False. 
-
-    If masked=True, the return value will be a masked
-    array with those points masked. If masked is set to a number, then
-    points outside the range of xin and yin will be set to that number.
-
-    The order keyword can be 0 for nearest-neighbor interpolation,
-    or 1 for bilinear interpolation (default 1).
-
-    If datain is a masked array and order=1 (bilinear interpolation) is
-    used, elements of dataout will be masked if any of the four surrounding
-    points in datain are masked.  To avoid this, do the interpolation in two
-    passes, first with order=1 (producing dataout1), then with order=0
-    (producing dataout2).  Then replace all the masked values in dataout1
-    with the corresponding elements in dataout2 (using numpy.where).
-    This effectively uses nearest neighbor interpolation if any of the
-    four surrounding points in datain are masked, and bilinear interpolation
-    otherwise.
+    Returns ``dataout``, the interpolated data on the grid ``xout, yout``.
     """
     # xin and yin must be monotonically increasing.
     if xin[-1]-xin[0] < 0 or yin[-1]-yin[0] < 0:
@@ -3311,21 +3321,28 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
 
 def shiftgrid(lon0,datain,lonsin,start=True):
     """
-    shift global lat/lon grid east or west.
+    Shift global lat/lon grid east or west.
     assumes wraparound (or cyclic point) is included.
 
-    lon0:  starting longitude for shifted grid
-           (ending longitude if start=False). lon0 must be on
-           input grid (within the range of lonsin).
+    ==============   ====================================================
+    Arguments         Description
+    ==============   ====================================================
+    lon0             starting longitude for shifted grid
+                     (ending longitude if start=False). lon0 must be on
+                     input grid (within the range of lonsin).
+    datain           original data.
+    lonsin           original longitudes.
+    ==============   ====================================================
 
-    datain:  original data.
+    ==============   ====================================================
+    Keywords          Description
+    ==============   ====================================================
+    start            if True, lon0 represents the starting longitude
+                     of the new grid. if False, lon0 is the ending
+                     longitude. Default True.
+    ==============   ====================================================
 
-    lonsin:  original longitudes.
-
-    start[True]: if True, lon0 represents the starting longitude
-    of the new grid. if False, lon0 is the ending longitude.
-
-    returns dataout,lonsout (data and longitudes on shifted grid).
+    returns ``dataout,lonsout`` (data and longitudes on shifted grid).
     """
     if np.fabs(lonsin[-1]-lonsin[0]-360.) > 1.e-4:
         raise ValueError, 'cyclic point not included'
@@ -3348,9 +3365,8 @@ def shiftgrid(lon0,datain,lonsin,start=True):
 
 def addcyclic(arrin,lonsin):
     """
-    arrout, lonsout = addcyclic(arrin, lonsin)
-
-    Add cyclic (wraparound) point in longitude.
+    ``arrout, lonsout = addcyclic(arrin, lonsin)``
+    adds cyclic (wraparound) point in longitude to ``arrin`` and ``lonsin``.
     """
     nlats = arrin.shape[0]
     nlons = arrin.shape[1]
@@ -3383,85 +3399,71 @@ def _choosecorners(width,height,**kwargs):
     else:
         return corners
 
-has_pynio = True
-try:
-    from PyNGL import nio
-except ImportError:
-    has_pynio = False
-
 def NetCDFFile(file, maskandscale=True):
     """NetCDF File reader.  API is the same as Scientific.IO.NetCDF.
-    If 'file' is a URL that starts with 'http', it is assumed
+    If ``file`` is a URL that starts with `http`, it is assumed
     to be a remote OPenDAP dataset, and the python dap client is used
     to retrieve the data. Only the OPenDAP Array and Grid data
-    types are recognized.  If file does not start with 'http', it
-    is assumed to be a local file.  If possible, the file will be read 
-    with a pure python NetCDF reader, otherwise PyNIO 
-    (http://www.pyngl.ucar.edu/Nio.shtml) will be used (if it is installed).
-    PyNIO supports NetCDF version 4, GRIB1, GRIB2, HDF4 and HDFEOS2 files.
-    Data read from OPenDAP and NetCDF version 3 datasets will 
+    types are recognized.  If file does not start with `http`, it
+    is assumed to be a local netCDF file. Data will
     automatically be converted to masked arrays if the variable has either
-    a 'missing_value' or '_FillValue' attribute, and some data points
+    a ``missing_value`` or ``_FillValue`` attribute, and some data points
     are equal to the value specified by that attribute.  In addition,
-    variables stored as integers that have the 'scale_factor' and
-    'add_offset' attribute will automatically be rescaled to floats when
-    read. If PyNIO is used, neither of the automatic conversions will
-    be performed.  To suppress these automatic conversions, set the
-    maskandscale keyword to False. 
+    variables stored as integers that have the ``scale_factor`` and
+    ``add_offset`` attribute will automatically be rescaled to floats when
+    read.  To suppress these automatic conversions, set the
+    ``maskandscale`` keyword to False. 
     """
     if file.startswith('http'):
         return pupynere._RemoteFile(file,maskandscale)
     else:
-        # use pynio if it is installed and the file cannot
-        # be read with the pure python netCDF reader.  This allows
-        # netCDF version 4, GRIB1, GRIB2, HDF4 and HDFEOS files
-        # to be read.
-        if has_pynio:
-            try:
-                f = pupynere._LocalFile(file,maskandscale)
-            except:
-                f = nio.open_file(file)
-        # otherwise, use the pupynere netCDF 3 pure python reader.
-        # (will fail if file is not a netCDF version 3 file).
-        else:
-            f = pupynere._LocalFile(file,maskandscale)
-        return f
+        return pupynere._LocalFile(file,maskandscale)
 
 def num2date(times,units='days since 0001-01-01 00:00:00',calendar='proleptic_gregorian'):
     """
     Return datetime objects given numeric time values. The units
-    of the numeric time values are described by the units argument
-    and the calendar keyword. The returned datetime objects represent 
+    of the numeric time values are described by the ``units`` argument
+    and the ``calendar`` keyword. The returned datetime objects represent 
     UTC with no time-zone offset, even if the specified 
     units contain a time-zone offset.
 
-    Default behavior is the same as the matplotlib num2date function
+    Default behavior is the same as the matplotlib.dates.num2date function
     but the reference time and calendar can be changed via the
-    'units' and 'calendar' keywords.
+    ``units`` and ``calendar`` keywords.
 
-    Arguments:
+    ==============   ====================================================
+    Arguments        Description
+    ==============   ====================================================
+    times            numeric time values. Maximum resolution is 1 second.
+    ==============   ====================================================
 
-    times - numeric time values. Maximum resolution is 1 second.
-
-    units - a string of the form '<time units> since <reference time>'
-     describing the time units. <time units> can be days, hours, minutes
-     or seconds.  <reference time> is the time origin.  
-     Default is 'days since 0001-01-01 00:00:00'.
-
-    calendar - describes the calendar used in the time calculations. 
-     All the values currently defined in the CF metadata convention 
-     (http://cf-pcmdi.llnl.gov/documents/cf-conventions/) are supported.
-     Valid calendars 'standard', 'gregorian', 'proleptic_gregorian'
-     'noleap', '365_day', '360_day', 'julian', 'all_leap', '366_day'.
-     Default is 'standard'/'gregorian', which is a mixed 
-     Julian/Gregorian calendar. Defalut 'proleptic_gregorian'.
+    ==============   ====================================================
+    Keywords          Description
+    ==============   ====================================================
+    units            a string of the form '<time units> since 
+                     <reference time>' describing the units and
+                     origin of the time coordinate.
+                     <time units> can be days, hours, minutes
+                     or seconds.  <reference time> is the time origin.  
+                     Default is 'days since 0001-01-01 00:00:00'.
+    calendar         describes the calendar used in the time
+                     calculations.  All the values currently defined in 
+                     the CF metadata convention
+                     (http://cf-pcmdi.llnl.gov/documents/cf-conventions/)
+                     are supported.
+                     Valid calendars ``standard``, ``gregorian``,
+                     ``proleptic_gregorian``, ``noleap``, ``365_day``,
+                     ``julian``, ``all_leap``, ``366_day``.
+                     Default is ``proleptic_gregorian``.
+    ==============   ====================================================
 
     Returns a datetime instance, or an array of datetime instances.
 
     The datetime instances returned are 'real' python datetime 
     objects if the date falls in the Gregorian calendar (i.e. 
-    calendar='proleptic_gregorian', or calendar = 'standard' or 'gregorian'
-    and the date is after 1582-10-15). Otherwise, they are 'phony' datetime 
+    calendar=``proleptic_gregorian``, or calendar = ``standard``
+    or ``gregorian`` and the date is after 1582-10-15).
+    Otherwise, they are 'phony' datetime 
     objects which support some but not all the methods of 'real' python
     datetime objects.  The datetime instances do not contain
     a time-zone offset, even if the specified units contains one.
@@ -3472,33 +3474,43 @@ def num2date(times,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
 def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gregorian'):
     """
     Return numeric time values given datetime objects. The units
-    of the numeric time values are described by the units argument
-    and the calendar keyword. The datetime objects must
+    of the numeric time values are described by the ``units`` argument
+    and the ``calendar`` keyword. The datetime objects must
     be in UTC with no time-zone offset.  If there is a 
     time-zone offset in units, it will be applied to the
     returned numeric values.
 
-    Default behavior is the same as the matplotlib date2num function
+    Default behavior is the same as the matplotlib.dates.date2num function
     but the reference time and calendar can be changed via the
-    'units' and 'calendar' keywords.
+    ``units`` and ``calendar`` keywords.
 
-    Arguments:
+    ==============   ====================================================
+    Arguments        Description
+    ==============   ====================================================
+    dates            A datetime object or a sequence of datetime objects.
+                     The datetime objects should not include a
+                     time-zone offset.
+    ==============   ====================================================
 
-    dates - A datetime object or a sequence of datetime objects.
-     The datetime objects should not include a time-zone offset.
-
-    units - a string of the form '<time units> since <reference time>'
-     describing the time units. <time units> can be days, hours, minutes
-     or seconds.  <reference time> is the time origin.  
-     Default is 'days since 0001-01-01 00:00:00'.
-
-    calendar - describes the calendar used in the time calculations. 
-     All the values currently defined in the CF metadata convention 
-     (http://cf-pcmdi.llnl.gov/documents/cf-conventions/) are supported.
-     Valid calendars 'standard', 'gregorian', 'proleptic_gregorian'
-     'noleap', '365_day', '360_day', 'julian', 'all_leap', '366_day'.
-     Default is 'standard'/'gregorian', which is a mixed 
-     Julian/Gregorian calendar. Default 'proleptic_gregorian'.
+    ==============   ====================================================
+    Keywords          Description
+    ==============   ====================================================
+    units            a string of the form '<time units> since 
+                     <reference time>' describing the units and
+                     origin of the time coordinate.
+                     <time units> can be days, hours, minutes
+                     or seconds.  <reference time> is the time origin.  
+                     Default is 'days since 0001-01-01 00:00:00'.
+    calendar         describes the calendar used in the time
+                     calculations.  All the values currently defined in 
+                     the CF metadata convention
+                     (http://cf-pcmdi.llnl.gov/documents/cf-conventions/)
+                     are supported.
+                     Valid calendars ``standard``, ``gregorian``,
+                     ``proleptic_gregorian``, ``noleap``, ``365_day``,
+                     ``julian``, ``all_leap``, ``366_day``.
+                     Default is ``proleptic_gregorian``.
+    ==============   ====================================================
 
     Returns a numeric time value, or an array of numeric time values.
 

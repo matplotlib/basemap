@@ -37,12 +37,6 @@ import numpy
 from dap.client import open as open_remote
 from dap.dtypes import ArrayType, GridType, typemap
 
-has_pynio = True
-try:
-    from PyNGL import nio
-except ImportError:
-    has_pynio = False
-
 ABSENT       = '\x00' * 8
 ZERO         = '\x00' * 4
 NC_BYTE      = '\x00\x00\x00\x01' 
@@ -76,37 +70,19 @@ def NetCDFFile(file, maskandscale=True):
     to be a remote OPenDAP dataset, and the python dap client is used
     to retrieve the data. Only the OPenDAP Array and Grid data
     types are recognized.  If file does not start with 'http', it
-    is assumed to be a local file.  If possible, the file will be read 
-    with a pure python NetCDF reader, otherwise PyNIO 
-    (http://www.pyngl.ucar.edu/Nio.shtml) will be used (if it is installed).
-    PyNIO supports NetCDF version 4, GRIB1, GRIB2, HDF4 and HDFEOS2 files.
-    Data read from OPenDAP and NetCDF version 3 datasets will 
+    is assumed to be a local netCDF file. Data will
     automatically be converted to masked arrays if the variable has either
     a 'missing_value' or '_FillValue' attribute, and some data points
     are equal to the value specified by that attribute.  In addition,
     variables stored as integers that have the 'scale_factor' and
     'add_offset' attribute will automatically be rescaled to floats when
-    read. If PyNIO is used, neither of the automatic conversions will
-    be performed.  To suppress these automatic conversions, set the
+    read.  To suppress these automatic conversions, set the
     maskandscale keyword to False. 
     """
     if file.startswith('http'):
         return _RemoteFile(file,maskandscale)
     else:
-        # use pynio if it is installed and the file cannot
-        # be read with the pure python netCDF reader.  This allows
-        # netCDF version 4, GRIB1, GRIB2, HDF4 and HDFEOS files
-        # to be read.
-        if has_pynio:
-            try:
-                f = _LocalFile(file,maskandscale)
-            except:
-                f = nio.open_file(file)
-        # otherwise, use the pupynere netCDF 3 pure python reader.
-        # (will fail if file is not a netCDF version 3 file).
-        else:
-            f = _LocalFile(file,maskandscale)
-        return f
+        return _LocalFile(file,maskandscale)
  
 def _maskandscale(var,datout):
     totalmask = zeros(datout.shape,numpy.bool)
