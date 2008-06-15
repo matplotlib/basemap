@@ -2391,6 +2391,8 @@ class Basemap(object):
         (see matplotlib.pyplot.scatter documentation).
 
         Extra keyword ``ax`` can be used to override the default axes instance.
+
+        Other \**kwargs passed on to matplotlib.pyplot.scatter.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2427,6 +2429,8 @@ class Basemap(object):
         (see matplotlib.pyplot.plot documentation).
 
         Extra keyword ``ax`` can be used to override the default axis instance.
+
+        Other \**kwargs passed on to matplotlib.pyplot.plot.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2466,6 +2470,8 @@ class Basemap(object):
         will be drawn over map region.
 
         Extra keyword ``ax`` can be used to override the default axis instance.
+
+        Other \**kwargs passed on to matplotlib.pyplot.plot.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2507,15 +2513,16 @@ class Basemap(object):
 
     def pcolor(self,x,y,data,**kwargs):
         """
-        Make a pseudo-color plot over the map.
-
-        see matplotlib.pyplot.pcolor documentation for definition of \**kwargs
+        Make a pseudo-color plot over the map
+        (see matplotlib.pyplot.pcolor documentation).
 
         If x or y are outside projection limb (i.e. they have values > 1.e20)
         they will be convert to masked arrays with those values masked.
         As a result, those values will not be plotted.
 
-        extra keyword 'ax' can be used to override the default axis instance.
+        Extra keyword ``ax`` can be used to override the default axis instance.
+
+        Other \**kwargs passed on to matplotlib.pyplot.pcolor.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2557,11 +2564,12 @@ class Basemap(object):
 
     def pcolormesh(self,x,y,data,**kwargs):
         """
-        Make a pseudo-color plot over the map.
+        Make a pseudo-color plot over the map
+        (see matplotlib.pyplot.pcolormesh documentation).
 
-        see matplotlib.pyplot.pcolormesh documentation for definition of \**kwargs
+        Extra keyword ``ax`` can be used to override the default axis instance.
 
-        extra keyword 'ax' can be used to override the default axis instance.
+        Other \**kwargs passed on to matplotlib.pyplot.pcolormesh.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2599,9 +2607,12 @@ class Basemap(object):
 
     def contour(self,x,y,data,*args,**kwargs):
         """
-        Make a contour plot over the map (see matplotlib.pyplot.contour documentation).
+        Make a contour plot over the map 
+        (see matplotlib.pyplot.contour documentation).
 
-        extra keyword 'ax' can be used to override the default axis instance.
+        Extra keyword ``ax`` can be used to override the default axis instance.
+
+        Other \*args and \**kwargs passed on to matplotlib.pyplot.contour.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2666,11 +2677,15 @@ class Basemap(object):
 
     def contourf(self,x,y,data,*args,**kwargs):
         """
-        Make a filled contour plot over the map (see matplotlib.pyplot.contourf documentation).
+        Make a filled contour plot over the map
+        (see matplotlib.pyplot.contourf documentation).
+
         If x or y are outside projection limb (i.e. they have values > 1.e20),
         the corresponing data elements will be masked.
 
         Extra keyword 'ax' can be used to override the default axis instance.
+
+        Other \*args and \**kwargs passed on to matplotlib.pyplot.scatter.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2736,11 +2751,11 @@ class Basemap(object):
     def quiver(self, x, y, u, v, *args, **kwargs):
         """
         Make a vector plot (u, v) with arrows on the map.
+        (see matplotlib.pyplot.quiver documentation).
 
-        Extra arguments (\*args and \**kwargs) passed to quiver Axes method (see
-        matplotlib.pyplot.quiver documentation for details).
+        Extra keyword ``ax`` can be used to override the default axis instance.
 
-        extra keyword 'ax' can be used to override the default axis instance.
+        Other \*args and \**kwargs passed on to matplotlib.pyplot.quiver.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -2774,38 +2789,53 @@ class Basemap(object):
     def drawlsmask(self,rgba_land,rgba_ocean,lsmask=None,
                    lsmask_lons=None,lsmask_lats=None,lakes=False,**kwargs):
         """
-        draw land-sea mask image.
+        Draw land-sea mask image.
 
-        *Note*  the land-sea mask image cannot be overlaid on top
-        of other images, due to limitations in matplotlib image handling.
+        .. note::
+         The land-sea mask image cannot be overlaid on top
+         of other images, due to limitations in matplotlib image handling
+         (you can't specify the zorder of an image).
 
-        land is colored with rgba integer tuple rgba_land.
-        ocean is colored with rgba integer tuple rgba_ocean.
+        ==============   ====================================================
+        Arguments        Description
+        ==============   ====================================================
+        rgba_land        rgba integer tuple that describes desired
+                         land color. For example, for green (non-transparent)
+                         land areas, use rgba_land  = (0,255,0,255).
+        rgba_ocean       rgba integer tuple that describes desired
+                         ocean color. For example, for blue (non-transparent)
+                         ocean areas, use (0,0,255,255). To make transparent
+                         blue oceans (useful if you just want to mask land
+                         regions over another image), use 
+                         rgba_ocean = (0,0,255,0).
+        ==============   ====================================================
 
-        For example, to color oceans blue and land green, use
-        rgba_ocean = (0,0,255,255) and rgba_land  = (0,255,0,255).
-        To make oceans transparent (useful if you just want to mask land
-        regions over another image), use rgba_ocean = (0,0,255,0).
+        ==============   ====================================================
+        Keywords         Description
+        ==============   ====================================================
+        lakes            If True, inland lakes are also colored with
+                         rgba_ocean (default is lakes=False).
+        lsmask           An array of 0's for ocean pixels, 1's for
+                         land pixels and optionally 2's for inland
+                         lake pixels defining a global land-sea mask.
+                         Default is None, and default
+                         5-minute resolution land-sea mask is used.
+        lsmask_lons      1d array of longitudes for lsmask (ignored
+                         if lsmask is None). Longitudes must be ordered
+                         from -180 W eastward.
+        lsmask_lats      1d array of latitudes for lsmask (ignored
+                         if lsmask is None). Latitudes must be ordered
+                         from -90 S northward.
+        \**kwargs        extra keyword arguments passed on to 
+                         :meth:`imshow`
+        ==============   ====================================================
 
-        If lakes=True, inland lakes are also colored with
-        rgba_ocean (default is lakes=False).
-
-        Default land-sea mask is from
-        http://www.ngdc.noaa.gov/ecosys/cdroms/graham/graham/graham.htm
-        and has 5-minute resolution.
-
-        To specify your own global land-sea mask, set the
-        lsmask keyword to a (nlats, nlons) array
-        with 0's for ocean pixels, 1's for land pixels and
-        optionally 2's for inland lake pixels.
-        The lsmask_lons keyword should be a 1-d array
-        with the longitudes of the mask, lsmask_lats should be
-        a 1-d array with the latitudes.  Longitudes should be ordered
-        from -180 W eastward, latitudes from -90 S northward.
         If any of the lsmask, lsmask_lons or lsmask_lats keywords are not
-        set, the default land-sea mask is used.
+        set, the default land-sea mask from
+        http://www.ngdc.noaa.gov/ecosys/cdroms/graham/graham/graham.htm.
+        is used.
 
-        extra keyword 'ax' can be used to override the default axis instance.
+        Extra keyword ``ax`` can be used to override the default axis instance.
         """
         # look for axes instance (as keyword, an instance variable
         # or from plt.gca().
@@ -2898,15 +2928,17 @@ class Basemap(object):
 
     def warpimage(self,image="bluemarble",**kwargs):
         """
-        display an image (given by file keyword) as a background.
+        Display an image (given by ``image`` keyword) as a map background.
 
-        Default (if file not specified) is to display 
+        Default (if ``image`` not specified) is to display 
         'blue marble next generation' image from http://visibleearth.nasa.gov/.
 
         Specified image must have pixels covering the whole globe in a regular
         lat/lon grid, starting and -180W and the South Pole.
 
-        extra keyword 'ax' can be used to override the default axis instance.
+        Extra keyword ``ax`` can be used to override the default axis instance.
+
+        \**kwargs passed on to :meth:`imshow`.
         """
         try:
             from PIL import Image
@@ -2987,36 +3019,36 @@ class Basemap(object):
                      units='km',fontsize=9,yoffset=None,labelstyle='simple',\
                      fontcolor='k',fillcolor1='w',fillcolor2='k',ax=None):
         """
-        draw a map scale at lon,lat representing distance in the map
-        projection coordinates at lon0,lat0.
+        Draw a map scale at ``lon,lat`` of length ``length`` 
+        representing distance in the map
+        projection coordinates at ``lon0,lat0``. 
 
-        The length of the scale
-        is specified by the length argument, with units given by the units
-        keyword (default 'km'). 
+        ==============   ====================================================
+        Keywords         Description
+        ==============   ====================================================
+        units            the units of the length argument (Default km).
+        barstyle         ``simple`` or ``fancy`` (roughly corresponding
+                         to the styles provided by Generic Mapping Tools).
+                         Default ``simple``. 
+        fontsize         for map scale annotations, default 9.
+        color            for map scale annotations, default black.
+        labelstype       ``simple`` (default) or ``fancy``.  For
+                         ``fancy`` the map scale factor (ratio betwee
+                         the actual distance and map projection distance
+                         at lon0,lat0) and the value of lon0,lat0 are also 
+                         displayed on the top of the scale bar. For 
+                         ``simple``, just the units are display on top
+                         and the distance below the scale bar.
+        yoffset          yoffset controls how tall the scale bar is,
+                         and how far the annotations are offset from the
+                         scale bar.  Default is 0.02 times the height of 
+                         the map (0.02*(self.ymax-self.ymin)).
+        fillcolor1(2)    colors of the alternating filled regions
+                         (default white and black).  Only relevant for 
+                         'fancy' barstyle.
+        ==============   ====================================================
 
-        Two styles of scale bar are available
-        (specified by the labelstyle keyword) - 'simple' and 'fancy', which
-        correspond roughly to the corresponding styles provided by 
-        the Generic Mapping Tools software. Default is 'simple'.
-
-        The fontsize and color of the map scale annotations can be specified
-        with the fontsize (default 9) and fontcolor (default black) keywords.
-
-        labelstyle='simple' results in basic annotation (the units on top
-        of the scalebar and the distance below).  This is the default.
-        If labelstyle='fancy' the map scale factor (ratio between
-        the actual distance and map projection distance at lon0,lat0) and
-        the value of lon0,lat0 are also printed on top of the scale bar.
-
-        yoffset controls how tall the scale bar is, and how far the annotations
-        are offset from the scale bar.  Default is 0.02 times the height of the map
-        (0.02*(self.ymax-self.ymin)).
-
-        fillcolor1 and fillcolor2 are only relevant for the 'fancy' scale bar.
-        They are the colors of the alternating filled regions (default white
-        and black).
-
-        extra keyword 'ax' can be used to override the default axis instance.
+        Extra keyword ``ax`` can be used to override the default axis instance.
         """
         # get current axes instance (if none specified).
         if ax is None and self.ax is None:
