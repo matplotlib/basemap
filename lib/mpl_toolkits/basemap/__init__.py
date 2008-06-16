@@ -129,6 +129,8 @@ _Basemap_init_doc = """
  For most map projections, the map projection region can either be
  specified by setting these keywords:
 
+ .. tabularcolumns:: |l|L|
+
  ==============   ====================================================
  Keyword          Description
  ==============   ====================================================
@@ -143,6 +145,8 @@ _Basemap_init_doc = """
  ==============   ====================================================
 
  or these
+
+ .. tabularcolumns:: |l|L|
 
  ==============   ====================================================
  Keyword          Description
@@ -174,6 +178,8 @@ _Basemap_init_doc = """
  the entire globe is plotted.
 
  Other keyword arguments:
+
+ .. tabularcolumns:: |l|L|
 
  ==============   ====================================================
  Keyword          Description
@@ -241,6 +247,8 @@ _Basemap_init_doc = """
  The module variable ``projection_params`` is a dictionary which
  lists which parameters apply to which projections.
 
+ .. tabularcolumns:: |l|L|
+
  ================ ====================================================
  Keyword          Description
  ================ ====================================================
@@ -283,6 +291,8 @@ _Basemap_init_doc = """
  ================ ====================================================
 
  Useful instance variables:
+
+ .. tabularcolumns:: |l|L|
 
  ================ ====================================================
  Variable Name    Description
@@ -1125,6 +1135,8 @@ class Basemap(object):
         draw boundary around map projection region, optionally
         filling interior of region.
 
+        .. tabularcolumns:: |l|L|
+
         ==============   ====================================================
         Keyword          Description
         ==============   ====================================================
@@ -1238,6 +1250,8 @@ class Basemap(object):
         """
         Fill continents.
 
+        .. tabularcolumns:: |l|L|
+
         ==============   ====================================================
         Keyword          Description
         ==============   ====================================================
@@ -1307,6 +1321,8 @@ class Basemap(object):
         """
         Draw coastlines.
 
+        .. tabularcolumns:: |l|L|
+
         ==============   ====================================================
         Keyword          Description
         ==============   ====================================================
@@ -1346,6 +1362,8 @@ class Basemap(object):
     def drawcountries(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
         """
         Draw country boundaries.
+
+        .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
         Keyword          Description
@@ -1392,6 +1410,8 @@ class Basemap(object):
         """
         Draw state boundaries in Americas.
 
+        .. tabularcolumns:: |l|L|
+
         ==============   ====================================================
         Keyword          Description
         ==============   ====================================================
@@ -1436,6 +1456,8 @@ class Basemap(object):
     def drawrivers(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
         """
         Draw major rivers.
+
+        .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
         Keyword          Description
@@ -1490,6 +1512,8 @@ class Basemap(object):
 
         Mandatory Arguments:
 
+        .. tabularcolumns:: |l|L|
+
         ==============   ====================================================
         Argument         Description
         ==============   ====================================================
@@ -1515,6 +1539,8 @@ class Basemap(object):
         The following optional keyword arguments are only relevant for Polyline 
         and Polygon shape types, for Point and MultiPoint shapes they are
         ignored.
+
+        .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
         Keyword          Description
@@ -1625,13 +1651,14 @@ class Basemap(object):
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None, \
                       fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
-        Draw and label parallels (latitude lines).
+        Draw and label parallels (latitude lines) for values (in degrees)  
+        given in the sequence ``circles``.
+
+        .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
         Keyword          Description
         ==============   ====================================================
-        circles          sequence containing latitude values to draw (in
-                         degrees).
         color            color to draw parallels (default black).
         linewidth        line width for parallels (default 1.)
         zorder           sets the zorder for parallels (if not specified,
@@ -1880,13 +1907,14 @@ class Basemap(object):
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
                       fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
         """
-        Draw and label meridians (longitude lines).
+        Draw and label meridians (longitude lines) for values (in degrees)
+        given in the sequence ``meridians``.
+
+        .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
         Keyword          Description
         ==============   ====================================================
-        meridians        sequence containing longitude values to draw (in
-                         degrees).
         color            color to draw meridians (default black).
         linewidth        line width for meridians (default 1.)
         zorder           sets the zorder for meridians (if not specified,
@@ -2138,6 +2166,8 @@ class Basemap(object):
         """
         Draw a great circle on the map.
 
+        .. tabularcolumns:: |l|L|
+
         ==============   =======================================================
         Keyword          Description
         ==============   =======================================================
@@ -2176,6 +2206,8 @@ class Basemap(object):
         map projection grid.  Typically used to transform data to
         map projection coordinates for plotting on a map with 
         the :meth:`imshow`.
+
+        .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
         Keyword          Description
@@ -2237,6 +2269,8 @@ class Basemap(object):
         vector field is rotated to map projection coordinates (relative
         to x and y). The magnitude of the vector is preserved.
 
+        .. tabularcolumns:: |l|L|
+
         ==============   ====================================================
         Keyword          Description
         ==============   ====================================================
@@ -2297,6 +2331,8 @@ class Basemap(object):
         has eastward and northward components) while the output
         vector field is rotated to map projection coordinates (relative
         to x and y). The magnitude of the vector is preserved.
+
+        .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
         Keyword          Description
@@ -2801,6 +2837,8 @@ class Basemap(object):
          of other images, due to limitations in matplotlib image handling
          (you can't specify the zorder of an image).
 
+        .. tabularcolumns:: |l|L|
+
         ==============   ====================================================
         Arguments        Description
         ==============   ====================================================
@@ -2814,6 +2852,8 @@ class Basemap(object):
                          regions over another image), use 
                          rgba_ocean = (0,0,255,0).
         ==============   ====================================================
+
+        .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
         Keywords         Description
@@ -3028,6 +3068,8 @@ class Basemap(object):
         representing distance in the map
         projection coordinates at ``lon0,lat0``. 
 
+        .. tabularcolumns:: |l|L|
+
         ==============   ====================================================
         Keywords         Description
         ==============   ====================================================
@@ -3233,6 +3275,8 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     Interpolate data (``datain``) on a rectilinear grid (with x = ``xin``
     y = ``yin``) to a grid with x = ``xout``, y= ``yout``.
 
+    .. tabularcolumns:: |l|L|
+
     ==============   ====================================================
     Arguments         Description
     ==============   ====================================================
@@ -3243,6 +3287,8 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     xout, yout       rank-2 arrays containing x and y of desired output
                      grid.
     ==============   ====================================================
+
+    .. tabularcolumns:: |l|L|
 
     ==============   ====================================================
     Keywords          Description
@@ -3361,6 +3407,8 @@ def shiftgrid(lon0,datain,lonsin,start=True):
     Shift global lat/lon grid east or west.
     assumes wraparound (or cyclic point) is included.
 
+    .. tabularcolumns:: |l|L|
+
     ==============   ====================================================
     Arguments         Description
     ==============   ====================================================
@@ -3370,6 +3418,8 @@ def shiftgrid(lon0,datain,lonsin,start=True):
     datain           original data.
     lonsin           original longitudes.
     ==============   ====================================================
+
+    .. tabularcolumns:: |l|L|
 
     ==============   ====================================================
     Keywords          Description
@@ -3468,11 +3518,15 @@ def num2date(times,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     but the reference time and calendar can be changed via the
     ``units`` and ``calendar`` keywords.
 
+    .. tabularcolumns:: |l|L|
+
     ==============   ====================================================
     Arguments        Description
     ==============   ====================================================
     times            numeric time values. Maximum resolution is 1 second.
     ==============   ====================================================
+
+    .. tabularcolumns:: |l|L|
 
     ==============   ====================================================
     Keywords          Description
@@ -3521,6 +3575,8 @@ def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     but the reference time and calendar can be changed via the
     ``units`` and ``calendar`` keywords.
 
+    .. tabularcolumns:: |l|L|
+
     ==============   ====================================================
     Arguments        Description
     ==============   ====================================================
@@ -3528,6 +3584,8 @@ def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
                      The datetime objects should not include a
                      time-zone offset.
     ==============   ====================================================
+
+    .. tabularcolumns:: |l|L|
 
     ==============   ====================================================
     Keywords          Description
