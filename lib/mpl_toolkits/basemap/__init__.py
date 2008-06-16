@@ -531,6 +531,8 @@ class Basemap(object):
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % self.projection
         elif projection in ['tmerc','gnom','cass','poly'] :
+            if projection == 'gnom' and not projparams.has_key('R'):
+                raise ValueError, 'gnomonic projection only works for perfect spheres - not ellipsoids'
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldnerr Polyconic basemap'
             if not using_corners:
@@ -827,10 +829,10 @@ class Basemap(object):
             self.projection in ['merc','mill','cyl','robin','moll','sinu','geos']:
             #self.projection in ['tmerc','omerc','cass','merc','mill','cyl','robin','moll','sinu','geos']:
             raise ValueError('%s projection cannot cross pole'%(self.projection))
-        # make sure orthographic projection has containsPole=True
+        # make sure orthographic or gnomonic projection has containsPole=True
         # we will compute the intersections in stereographic
         # coordinates, then transform to orthographic.
-        if self.projection == 'ortho' and name == 'gshhs':
+        if self.projection in ['ortho','gnom'] and name == 'gshhs':
             containsPole = True
             lon_0=self.projparams['lon_0']
             lat_0=self.projparams['lat_0']
@@ -841,7 +843,7 @@ class Basemap(object):
             lat0 = 90.*(np.around(lat_0/90.))
             if np.abs(int(lat0)) == 90: lon0=0.
             maptran = pyproj.Proj(proj='stere',lon_0=lon0,lat_0=lat0,R=re)
-            # boundary polygon for orthographic projection
+            # boundary polygon for ortho/gnom projection
             # in stereographic coorindates.
             b = self._boundarypolyll.boundary
             blons = b[:,0]; blats = b[:,1]
@@ -939,9 +941,9 @@ class Basemap(object):
                 else:
                     # transform coordinates from lat/lon
                     # to map projection coordinates.
-                    # special case for ortho, compute coastline polygon
+                    # special case for ortho/gnom, compute coastline polygon
                     # vertices in stereographic coords.
-                    if name == 'gshhs' and self.projection == 'ortho':
+                    if name == 'gshhs' and self.projection in ['ortho','gnom']:
                         b[:,0], b[:,1] = maptran(b[:,0], b[:,1])
                     else:
                         b[:,0], b[:,1] = self(b[:,0], b[:,1])
@@ -955,10 +957,10 @@ class Basemap(object):
                         # in this map projection.
                         bx = np.compress(goodmask, b[:,0])
                         by = np.compress(goodmask, b[:,1])
-                        # for orthographic projection, all points
+                        # for ortho/gnom projection, all points
                         # outside map projection region are eliminated
                         # with the above step, so we're done.
-                        if self.projection == 'ortho':
+                        if self.projection in ['ortho','gnom']:
                             polygons.append(zip(bx,by))
                             polygon_types.append(type)
                             continue
@@ -976,21 +978,22 @@ class Basemap(object):
                         # iterate over geometries in intersection.
                         for psub in geoms:
                             b = psub.boundary
-                            # if projection == 'ortho',
+                            # if projection in ['ortho','gnom'],
                             # transform polygon from stereographic
-                            # to orthographic coordinates.
-                            if self.projection == 'ortho':
+                            # to ortho/gnom coordinates.
+                            if self.projection in ['ortho','gnom']:
                                 # if coastline polygon covers more than 99%
                                 # of map region for fulldisk projection,
                                 # it's probably bogus, so skip it.
                                 areafrac = psub.area()/boundarypolyxy.area()
-                                if name == 'gshhs' and\
-                                   self._fulldisk and\
-                                   areafrac > 0.99: continue
+                                if self.projection == 'ortho':
+                                    if name == 'gshhs' and\
+                                       self._fulldisk and\
+                                       areafrac > 0.99: continue
                                 # inverse transform from stereographic
                                 # to lat/lon.
                                 b[:,0], b[:,1] = maptran(b[:,0], b[:,1], inverse=True)
-                                # orthographic.
+                                # orthographic/gnomonic.
                                 b[:,0], b[:,1]= self(b[:,0], b[:,1])
                             polygons.append(zip(b[:,0],b[:,1]))
                             polygon_types.append(type)
