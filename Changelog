@@ -1,3 +1,4 @@
+           * fixed processing of coastlines for gnomonic projection.
            * don't try to use PyNIO in NetCDFFile (it was causing
              too many suprises).
            * improved documentation using Sphinx/docutils.
