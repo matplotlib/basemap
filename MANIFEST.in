@@ -71,7 +71,6 @@ include examples/nws_precip_conus_20061222.nc
 include examples/README
 include lib/mpl_toolkits/__init__.py
 include lib/mpl_toolkits/basemap/__init__.py
-include lib/mpl_toolkits/basemap/basemap.py
 include lib/mpl_toolkits/basemap/proj.py
 include lib/mpl_toolkits/basemap/pyproj.py
 include lib/mpl_toolkits/basemap/cm.py
@@ -82,6 +81,14 @@ include pyshapelib/*.i pyshapelib/*.c pyshapelib/*.py pyshapelib/*.h
 include pyshapelib/*.shp pyshapelib/*.shx pyshapelib/*.dbf
 include pyshapelib/shapelib/*.c pyshapelib/shapelib/*.h
 include MANIFEST.in 
+include doc/users/figures/*py
+include doc/users/figures/*png
+include doc/users/*rst
+include doc/api/*rst
+include doc/README.txt
+include doc/make.py
+include doc/conf.py
+include doc/index.rst
 recursive-include geos-2.2.3 *
 recursive-include lib/dap *
 recursive-include lib/httplib2 *
