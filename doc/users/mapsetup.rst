@@ -29,4 +29,5 @@ illustrate how to set up each of the supported projections.
 .. toctree::
 
     azeqd.rst
+    gnomon.rst
     ortho.rst
