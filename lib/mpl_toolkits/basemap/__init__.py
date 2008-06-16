@@ -831,7 +831,9 @@ class Basemap(object):
             raise ValueError('%s projection cannot cross pole'%(self.projection))
         # make sure orthographic or gnomonic projection has containsPole=True
         # we will compute the intersections in stereographic
-        # coordinates, then transform to orthographic.
+        # coordinates, then transform to orthographic. This is 
+        # because these projections are only defined on a hemisphere, and
+        # some boundary features (like Eurasia) would be undefined otherwise.
         if self.projection in ['ortho','gnom'] and name == 'gshhs':
             containsPole = True
             lon_0=self.projparams['lon_0']
