@@ -15,8 +15,7 @@ def check_build():
             pass
 
 def figs():
-    #os.system('cd users/figures/ && python make.py')
-    os.system('cd users/figures')
+    os.system('cd users/figures/ && python make.py')
 
 def html():
     check_build()
