@@ -2164,16 +2164,14 @@ class Basemap(object):
 
     def drawgreatcircle(self,lon1,lat1,lon2,lat2,del_s=100.,**kwargs):
         """
-        Draw a great circle on the map.
+        Draw a great circle on the map from the longitude-latitude
+        pair ``lon1,lat1`` to ``lon2,lat2``
 
         .. tabularcolumns:: |l|L|
 
         ==============   =======================================================
         Keyword          Description
         ==============   =======================================================
-        lon1,lat1        longitude,latitude of one endpoint of the great circle.
-        lon2,lat2        longitude,latitude of the other endpoint of the great
-                         circle.
         del_s            points on great circle computed every del_s kilometers
                          (default 100).
         \**kwargs        other keyword arguments are passed on to :meth:`plot`
@@ -2210,7 +2208,7 @@ class Basemap(object):
         .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
-        Keyword          Description
+        Argument         Description
         ==============   ====================================================
         datin            input data on a lat/lon grid.
         lons, lats       rank-1 arrays containing longitudes and latitudes
@@ -2218,6 +2216,15 @@ class Basemap(object):
                          For non-cylindrical projections (those other than
                          ``cyl``, ``merc`` and ``mill``) lons must fit 
                          within range -180 to 180.
+        nx, ny           The size of the output regular grid in map
+                         projection coordinates
+        ==============   ====================================================
+
+        .. tabularcolumns:: |l|L|
+
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
         returnxy         If True, the x and y values of the map
                          projection grid are also returned (Default False).
         checkbounds      If True, values of lons and lats are checked to see
@@ -2272,7 +2279,7 @@ class Basemap(object):
         .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
-        Keyword          Description
+        Arguments        Description
         ==============   ====================================================
         uin, vin         input vector field on a lat/lon grid.
         lons, lats       rank-1 arrays containing longitudes and latitudes
@@ -2280,6 +2287,15 @@ class Basemap(object):
                          For non-cylindrical projections (those other than
                          ``cyl``, ``merc`` and ``mill``) lons must fit 
                          within range -180 to 180.
+        nx, ny           The size of the output regular grid in map
+                         projection coordinates
+        ==============   ====================================================
+           
+        .. tabularcolumns:: |l|L|
+
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
         returnxy         If True, the x and y values of the map
                          projection grid are also returned (Default False).
         checkbounds      If True, values of lons and lats are checked to see
@@ -2335,7 +2351,7 @@ class Basemap(object):
         .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
-        Keyword          Description
+        Arguments        Description
         ==============   ====================================================
         uin, vin         input vector field on a lat/lon grid.
         lons, lats       Arrays containing longitudes and latitudes
@@ -2343,12 +2359,13 @@ class Basemap(object):
                          For non-cylindrical projections (those other than
                          ``cyl``, ``merc`` and ``mill``) lons must fit 
                          within range -180 to 180.
-        returnxy         If True, the x and y values of the map
-                         projection grid are also returned (Default False).
         ==============   ====================================================
 
         Returns ``uout, vout`` (rotated vector field).
-        If returnxy=True, returns ``uout,vout,x,y``.
+        If the optional keyword argument 
+        ``returnxy`` is True (default is False), 
+        returns ``uout,vout,x,y`` (where ``x,y`` are the map projection
+        coordinates of the grid defined by ``lons,lats``).
         """
         if lons.ndim == 1 and lats.ndim == 1:
             lons, lats = np.meshgrid(lons, lats) 
