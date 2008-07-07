@@ -31,3 +31,4 @@ illustrate how to set up each of the supported projections.
     azeqd.rst
     gnomon.rst
     ortho.rst
+    moll.rst
