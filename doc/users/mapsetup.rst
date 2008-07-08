@@ -32,3 +32,5 @@ illustrate how to set up each of the supported projections.
     gnomon.rst
     ortho.rst
     moll.rst
+    robin.rst
+    sinu.rst
