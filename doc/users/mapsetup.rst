@@ -24,7 +24,11 @@ a projection when creating a ``Basemap`` class instance), and the values
 are longer, more descriptive names.  The class variable ``projection_params``
 is a dictionary that provides a list of parameters that can be used to
 define the properties of each projection.  Following are examples that 
-illustrate how to set up each of the supported projections.
+illustrate how to set up each of the supported projections. Note that
+many map projection possess one of two desirable properties - they can be
+equal-area (the area of features is preserved) or conformal (the shape of
+features is preserved).  Since no map projection can have both at the same
+time, many compromise between the two.
 
 .. toctree::
 
@@ -34,3 +38,6 @@ illustrate how to set up each of the supported projections.
     moll.rst
     robin.rst
     sinu.rst
+    cyl.rst
+    merc.rst
+    mill.rst
