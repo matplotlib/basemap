@@ -39,5 +39,7 @@ time, many compromise between the two.
     robin.rst
     sinu.rst
     cyl.rst
+    cass.rst
     merc.rst
+    tmerc.rst
     mill.rst
