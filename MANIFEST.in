@@ -62,9 +62,6 @@ include examples/plot_tissot.py
 include examples/cities.dbf
 include examples/cities.shp
 include examples/cities.shx
-include examples/tissot.dbf
-include examples/tissot.shp
-include examples/tissot.shx
 include examples/show_colormaps.py
 include examples/plotprecip.py
 include examples/nws_precip_conus_20061222.nc
