@@ -2153,7 +2153,7 @@ class Basemap(object):
         an ellipse with radius of ``radius_deg`` degrees of latitude along
         longitude ``lon_0``.
         The ellipse represents a Tissot's indicatrix
-        (http://en.wikipedia.org/wiki/Tissot%27s_Indicatrix),
+        (http://en.wikipedia.org/wiki/Tissot's_Indicatrix),
         which when drawn on a map shows the distortion
         inherent in the map projection."""
         g = pyproj.Geod(a=self.rmajor,b=self.rminor)
