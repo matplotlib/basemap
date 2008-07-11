@@ -1,3 +1,5 @@
+           * added "tissot" method for generating Tissot's indicatrix
+             (see example plot_tissot.py).
            * fixed processing of coastlines for gnomonic projection.
            * don't try to use PyNIO in NetCDFFile (it was causing
              too many suprises).

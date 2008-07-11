@@ -2146,6 +2146,34 @@ class Basemap(object):
             if v == ([], []): del linecolls[k]
         return linecolls
 
+    def tissot(self,lon_0,lat_0,radius_deg,npts):
+        """
+        create list of ``npts`` x,y pairs that are equidistant on the
+        surface of the earth from central point ``lon_0,lat_0`` and form
+        an ellipse with radius of ``radius_deg`` degrees of latitude along
+        longitude ``lon_0``.
+        The ellipse represents a Tissot's indicatrix
+        (http://en.wikipedia.org/wiki/Tissot%27s_Indicatrix),
+        which when drawn on a map shows the distortion
+        inherent in the map projection."""
+        g = pyproj.Geod(a=self.rmajor,b=self.rminor)
+        az12,az21,dist = g.inv(lon_0,lat_0,lon_0,lat_0+radius_deg)
+        seg = [self(lon_0,lat_0+radius_deg)]
+        delaz = 360./npts
+        az = az12
+        for n in range(npts):
+            az = az+delaz
+            # skip segments along equator (Geod can't handel equatorial arcs)
+            if np.allclose(0.,lat_0) and (np.allclose(90.,az) or np.allclose(270.,az)):
+                continue
+            else:
+                lon, lat, az21 = g.fwd(lon_0, lat_0, az, dist)
+            x,y = self(lon,lat)
+            # add segment if it is in the map projection region.
+            if x < 1.e20 and y < 1.e20:
+                seg.append((x,y))
+        return seg
+
     def gcpoints(self,lon1,lat1,lon2,lat2,npoints):
         """
         compute ``points`` points along a great circle with endpoints
