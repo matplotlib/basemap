@@ -97,7 +97,7 @@ More examples of using the 'width' and 'height' keywords (instead of
 'llcrnrlat','llcrnrlon','urcrnrlat','urcrnrlon') are given in setwh.py.
 
 plot_tissot.py - tissot's indicatrix, shows the distorting effects of
-different map projections. Exercises the shapefile methods.
+different map projections.
 
 pnganim.py shows how to make an animation.
 
