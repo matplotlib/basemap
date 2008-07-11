@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap 
+from mpl_toolkits.basemap import __version__ as basemap_version
 from matplotlib.patches import Polygon
 
 # Tissot's Indicatrix (http://en.wikipedia.org/wiki/Tissot's_Indicatrix). 
@@ -10,6 +11,10 @@ from matplotlib.patches import Polygon
 # projections, where area proportions between objects are conserved, the 
 # Tissot's indicatrix have all unit area, although their shapes and 
 # orientations vary with location.
+
+# requires Basemap version 0.99.1
+if basemap_version < '0.99.1':
+    raise SystemExit("this example requires Basemap version 0.99.1 or higher")
 
 # create Basemap instances with several different projections
 m1 = Basemap(llcrnrlon=-180,llcrnrlat=-80,urcrnrlon=180,urcrnrlat=80,
