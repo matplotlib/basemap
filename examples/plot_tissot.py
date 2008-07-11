@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap 
-from mpl_toolkits.basemap import pyproj 
 from matplotlib.patches import Polygon
 
 # Tissot's Indicatrix (http://en.wikipedia.org/wiki/Tissot's_Indicatrix). 
@@ -16,6 +15,7 @@ from matplotlib.patches import Polygon
 m1 = Basemap(llcrnrlon=-180,llcrnrlat=-80,urcrnrlon=180,urcrnrlat=80,
               projection='cyl')
 m2 = Basemap(lon_0=-60,lat_0=45,projection='ortho')
+# use WGS84 ellipsoid in this one.
 m3 = Basemap(llcrnrlon=-180,llcrnrlat=-70,urcrnrlon=180,urcrnrlat=70,
               projection='merc',lat_ts=20,rsphere=(6378137.0,6356752.3142))
 m4 = Basemap(lon_0=270,lat_0=90,boundinglat=10,projection='npstere')
