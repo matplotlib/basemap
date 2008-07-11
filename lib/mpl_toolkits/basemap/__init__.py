@@ -2163,7 +2163,7 @@ class Basemap(object):
         az = az12
         for n in range(npts):
             az = az+delaz
-            # skip segments along equator (Geod can't handel equatorial arcs)
+            # skip segments along equator (Geod can't handle equatorial arcs)
             if np.allclose(0.,lat_0) and (np.allclose(90.,az) or np.allclose(270.,az)):
                 continue
             else:
