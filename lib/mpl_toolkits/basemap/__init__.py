@@ -257,7 +257,7 @@ _Basemap_init_doc = """
  lat_1            first standard parallel for lambert conformal, 
                   albers equal area and equidistant conic.
                   Latitude of one of the two points on the projection 
-                  for oblique mercator. If lat_1 is not given, but 
+                  centerline for oblique mercator. If lat_1 is not given, but 
                   lat_0 is, lat_1 is set to lat_0 for lambert 
                   conformal, albers equal area and equidistant conic.
  lat_2            second standard parallel for lambert conformal, 
@@ -266,9 +266,9 @@ _Basemap_init_doc = """
                   centerline for oblique mercator. If lat_2 is not 
                   given it is set to lat_1 for lambert conformal, 
                   albers equal area and equidistant conic.
- lon_1            longitude of one of the two points on the projection
+ lon_1            Longitude of one of the two points on the projection
                   centerline for oblique mercator.
- lon_2            longitude of one of the two points on the projection
+ lon_2            Longitude of one of the two points on the projection
                   centerline for oblique mercator.
  no_rot           only used by oblique mercator.
                   If set to True, the map projection coordinates will 
