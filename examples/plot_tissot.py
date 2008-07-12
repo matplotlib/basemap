@@ -41,7 +41,8 @@ for m in [m1,m2,m3,m4,m5]:
     m.drawmeridians(np.arange(-180,180,60))
     # draw coastlines, fill continents, plot title.
     m.drawcoastlines()
-    m.fillcontinents()
+    m.drawmapboundary(fill_color='aqua') 
+    m.fillcontinents(color='coral',lake_color='aqua')
     title = 'Tissot Diagram: projection = %s' % m.projection
     print title
     plt.title(title)
