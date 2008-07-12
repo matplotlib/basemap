@@ -42,4 +42,5 @@ time, many compromise between the two.
     cass.rst
     merc.rst
     tmerc.rst
+    omerc.rst
     mill.rst
