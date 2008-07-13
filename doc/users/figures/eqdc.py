@@ -1,6 +1,7 @@
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon
 # setup equidistant conic basemap.
 # lat_1 is first standard parallel.
 # lat_2 is second standard parallel.
@@ -15,5 +16,12 @@ m.fillcontinents(color='coral',lake_color='aqua')
 m.drawparallels(np.arange(-80.,81.,20.))
 m.drawmeridians(np.arange(-180.,181.,20.))
 m.drawmapboundary(fill_color='aqua') 
+ax = plt.gca()
+for y in np.linspace(m.ymax/20,19*m.ymax/20,9):
+    for x in np.linspace(m.xmax/20,19*m.xmax/20,12):
+        lon, lat = m(x,y,inverse=True)
+        seg = m.tissot(lon,lat,1.5,100)
+        poly = Polygon(seg,facecolor='green',zorder=10,alpha=0.5)
+        ax.add_patch(poly)
 plt.title("Equidistant Conic Projection")
 plt.savefig('eqdc.png')
