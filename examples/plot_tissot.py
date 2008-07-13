@@ -34,7 +34,7 @@ for m in [m1,m2,m3,m4,m5]:
     for parallel in range(-60,61,30):
         for meridian in range(-165,166,30):
             seg = m.tissot(meridian,parallel,6,100)
-            poly = Polygon(seg,facecolor='green',zorder=10)
+            poly = Polygon(seg,facecolor='green',zorder=10,alpha=0.5)
             ax.add_patch(poly)
     # draw meridians and parallels.
     m.drawparallels(np.arange(-60,61,30))
