@@ -1,12 +1,12 @@
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
-# setup lccconic basemap 
+# setup polyconic basemap 
 # by specifying lat/lon corners and central point.
 # area_thresh=1000 means don't plot coastline features less
 # than 1000 km^2 in area.
 m = Basemap(llcrnrlon=-35.,llcrnrlat=-30,urcrnrlon=80.,urcrnrlat=50.,\
-            resolution='l',area_thresh=1000.,projection='lcc',\
+            resolution='l',area_thresh=1000.,projection='poly',\
             lat_0=0.,lon_0=20.)
 m.drawcoastlines()
 m.fillcontinents(color='coral',lake_color='aqua')
