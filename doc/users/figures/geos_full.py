@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 # lon_0 is the central longitude of the projection.
 # resolution = 'l' means use low resolution coastlines.
+# optional parameter 'satellite_height' may be used to
+# specify height of orbit above earth (default 35,786 km).
 m = Basemap(projection='geos',lon_0=-105,resolution='l')
 m.drawcoastlines()
 m.fillcontinents(color='coral',lake_color='aqua')
