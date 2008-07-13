@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap 
 from mpl_toolkits.basemap import __version__ as basemap_version
-from matplotlib.patches import Polygon
 
 # Tissot's Indicatrix (http://en.wikipedia.org/wiki/Tissot's_Indicatrix). 
 # These diagrams illustrate the distortion inherent in all map projections.
@@ -29,13 +28,10 @@ m5 = Basemap(lon_0=270,lat_0=90,boundinglat=10,projection='nplaea')
 for m in [m1,m2,m3,m4,m5]:
     # make a new figure.
     fig = plt.figure()
-    ax = plt.gca()
     # draw "circles" at specified longitudes and latitudes.
     for parallel in range(-60,61,30):
         for meridian in range(-165,166,30):
-            seg = m.tissot(meridian,parallel,6,100)
-            poly = Polygon(seg,facecolor='green',zorder=10,alpha=0.5)
-            ax.add_patch(poly)
+            poly = m.tissot(meridian,parallel,6,100,facecolor='green',zorder=10,alpha=0.5)
     # draw meridians and parallels.
     m.drawparallels(np.arange(-60,61,30))
     m.drawmeridians(np.arange(-180,180,60))

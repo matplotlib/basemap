@@ -2146,16 +2146,30 @@ class Basemap(object):
             if v == ([], []): del linecolls[k]
         return linecolls
 
-    def tissot(self,lon_0,lat_0,radius_deg,npts):
+    def tissot(self,lon_0,lat_0,radius_deg,npts,ax=None,**kwargs):
         """
-        create list of ``npts`` x,y pairs that are equidistant on the
-        surface of the earth from central point ``lon_0,lat_0`` and form
-        an ellipse with radius of ``radius_deg`` degrees of latitude along
-        longitude ``lon_0``.
-        The ellipse represents a Tissot's indicatrix
+        Draw a polygon centered at ``lon_0,lat_0``.  The polygon
+        approximates a circle on the surface of the earth with radius
+        ``radius_deg`` degrees latitude along longitude ``lon_0``,
+        made up of ``npts`` vertices.  
+        The polygon represents a Tissot's indicatrix
         (http://en.wikipedia.org/wiki/Tissot's_Indicatrix),
         which when drawn on a map shows the distortion
-        inherent in the map projection."""
+        inherent in the map projection.
+
+        Extra keyword ``ax`` can be used to override the default axis instance.
+
+        Other \**kwargs passed on to matplotlib.patches.Polygon."""
+        if not kwargs.has_key('ax') and self.ax is None:
+            try:
+                ax = plt.gca()
+            except:
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
+        else:
+            ax = kwargs.pop('ax')
         g = pyproj.Geod(a=self.rmajor,b=self.rminor)
         az12,az21,dist = g.inv(lon_0,lat_0,lon_0,lat_0+radius_deg)
         seg = [self(lon_0,lat_0+radius_deg)]
@@ -2172,7 +2186,11 @@ class Basemap(object):
             # add segment if it is in the map projection region.
             if x < 1.e20 and y < 1.e20:
                 seg.append((x,y))
-        return seg
+        poly = Polygon(seg,**kwargs)
+        ax.add_patch(poly)
+        # set axes limits to fit map region.
+        self.set_axes_limits(ax=ax)
+        return poly
 
     def gcpoints(self,lon1,lat1,lon2,lat2,npoints):
         """
