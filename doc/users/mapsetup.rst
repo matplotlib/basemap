@@ -35,6 +35,7 @@ time, many compromise between the two.
     azeqd.rst
     gnomon.rst
     ortho.rst
+    geos.rst
     moll.rst
     robin.rst
     sinu.rst
@@ -43,4 +44,10 @@ time, many compromise between the two.
     merc.rst
     tmerc.rst
     omerc.rst
+    poly.rst
     mill.rst
+    lcc.rst
+    laea.rst
+    stere.rst
+    eqdc.rst
+    aea.rst
