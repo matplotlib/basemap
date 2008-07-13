@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 # the projection centerline.
 # Map projection coordinates are automatically rotated to true north.
 # To avoid this, set no_rot=True.
+# area_thresh=1000 means don't plot coastline features less
+# than 1000 km^2 in area.
 m = Basemap(height=16700000,width=12000000,
             resolution='l',area_thresh=1000.,projection='omerc',\
             lon_0=-100,lat_0=15,lon_2=-120,lat_2=65,lon_1=-50,lat_1=-55)
