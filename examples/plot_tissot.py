@@ -19,13 +19,14 @@ if basemap_version < '0.99.1':
 m1 = Basemap(llcrnrlon=-180,llcrnrlat=-80,urcrnrlon=180,urcrnrlat=80,
               projection='cyl')
 m2 = Basemap(lon_0=-60,lat_0=45,projection='ortho')
-# use WGS84 ellipsoid in this one.
 m3 = Basemap(llcrnrlon=-180,llcrnrlat=-70,urcrnrlon=180,urcrnrlat=70,
-              projection='merc',lat_ts=20,rsphere=(6378137.0,6356752.3142))
+             projection='merc',lat_ts=20)
 m4 = Basemap(lon_0=270,lat_0=90,boundinglat=10,projection='npstere')
 m5 = Basemap(lon_0=270,lat_0=90,boundinglat=10,projection='nplaea')
+m6 = Basemap(lon_0=0,projection='moll')
+m7 = Basemap(lon_0=0,projection='robin')
 
-for m in [m1,m2,m3,m4,m5]:
+for m in [m1,m2,m3,m4,m5,m6,m7]:
     # make a new figure.
     fig = plt.figure()
     # draw "circles" at specified longitudes and latitudes.
