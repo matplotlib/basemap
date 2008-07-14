@@ -1,4 +1,4 @@
-.. _azeqd:
+.. _aeqd:
 
 Azimuthal Equidistant Projection
 ================================
@@ -10,6 +10,6 @@ So, for the specified point, all points that lie on a circle around
 this point are equidistant on the surface of the earth on this projection.
 The specified point ``lon_0, lat_0`` shows up as a black dot in the center of the map.
 
-.. literalinclude:: figures/azeqd.py
+.. literalinclude:: figures/aeqd.py
 
-.. image:: figures/azeqd.png
+.. image:: figures/aeqd.png

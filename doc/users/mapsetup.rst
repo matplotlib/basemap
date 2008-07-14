@@ -32,7 +32,7 @@ time, many compromise between the two.
 
 .. toctree::
 
-    azeqd.rst
+    aeqd.rst
     gnomon.rst
     ortho.rst
     geos.rst
@@ -51,3 +51,6 @@ time, many compromise between the two.
     stere.rst
     eqdc.rst
     aea.rst
+    pstere.rst
+    plaea.rst
+    paeqd.rst
