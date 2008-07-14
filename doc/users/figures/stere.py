@@ -19,8 +19,7 @@ ax = plt.gca()
 for y in np.linspace(m.ymax/20,19*m.ymax/20,9):
     for x in np.linspace(m.xmax/20,19*m.xmax/20,12):
         lon, lat = m(x,y,inverse=True)
-        seg = m.tissot(lon,lat,1.5,100)
-        poly = Polygon(seg,facecolor='green',zorder=10,alpha=0.5)
-        ax.add_patch(poly)
+        poly = m.tissot(lon,lat,1.5,100,\
+                        facecolor='green',zorder=10,alpha=0.5)
 plt.title("Stereographic Projection")
 plt.savefig('stere.png')

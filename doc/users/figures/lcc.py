@@ -1,7 +1,6 @@
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon
 # setup lambert conformal basemap.
 # lat_1 is first standard parallel.
 # lat_2 is second standard parallel (defaults to lat_1).
@@ -24,8 +23,7 @@ ax = plt.gca()
 for y in np.linspace(m.ymax/20,19*m.ymax/20,9):
     for x in np.linspace(m.xmax/20,19*m.xmax/20,12):
         lon, lat = m(x,y,inverse=True)
-        seg = m.tissot(lon,lat,1.5,100)
-        poly = Polygon(seg,facecolor='green',zorder=10,alpha=0.5)
-        ax.add_patch(poly)
+        poly = m.tissot(lon,lat,1.5,100,\
+                        facecolor='green',zorder=10,alpha=0.5)
 plt.title("Lambert Conformal Projection")
 plt.savefig('lcc.png')
