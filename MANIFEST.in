@@ -39,6 +39,7 @@ include examples/plotmap_masked.py
 include examples/contour_demo.py
 include examples/customticks.py
 include examples/quiver_demo.py
+include examples/barbs_demo.py
 include examples/nytolondon.py
 include examples/ortho_demo.py
 include examples/geos_demo.py

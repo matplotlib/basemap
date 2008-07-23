@@ -2890,6 +2890,44 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
+    def barbs(self, x, y, u, v, *args, **kwargs):
+        """
+        Make a wind barb plot (u, v) with on the map.
+        (see matplotlib.pyplot.barbs documentation).
+
+        Extra keyword ``ax`` can be used to override the default axis instance.
+
+        Other \*args and \**kwargs passed on to matplotlib.pyplot.barbs
+        """
+        if not kwargs.has_key('ax') and self.ax is None:
+            try:
+                ax = plt.gca()
+            except:
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
+        elif not kwargs.has_key('ax') and self.ax is not None:
+            ax = self.ax
+        else:
+            ax = kwargs.pop('ax')
+        # allow callers to override the hold state by passing hold=True|False
+        b = ax.ishold()
+        h = kwargs.pop('hold',None)
+        if h is not None:
+            ax.hold(h)
+        try:
+            ret =  ax.barbs(x,y,u,v,*args,**kwargs)
+            try:
+                plt.draw_if_interactive()
+            except:
+                pass
+        except:
+            ax.hold(b)
+            raise
+        ax.hold(b)
+        # set axes limits to fit map region.
+        self.set_axes_limits(ax=ax)
+        return ret
+
     def drawlsmask(self,rgba_land,rgba_ocean,lsmask=None,
                    lsmask_lons=None,lsmask_lats=None,lakes=False,**kwargs):
         """

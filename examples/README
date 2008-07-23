@@ -36,6 +36,8 @@ many times in different scripts).
 
 quiver_demo.py shows how to plot wind vectors on a map.
 
+barbs_demo.py shows how to plot wind barbs on a map.
+
 randompoints.py demonstrates the use of scatter to plot randomly distributed
 points on the earth.
 
