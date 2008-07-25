@@ -53,6 +53,8 @@ m.drawmeridians(np.arange(-180,0,20),labels=[0,0,0,1])
 plt.title('Surface Wind Barbs and Pressure (NH)')
 
 # stereogrpaphic projection (SH).
+# 'flip_barb' flag is automatically set for SH data, so that
+# barbs point toward lower pressure (in both Hemisphere).
 m = Basemap(width=10000000,height=10000000,lon_0=-90,lat_0=-45.,lat_ts=-45,
             resolution='l',projection='stere')
 x,y = m(lons,lats)
@@ -68,7 +70,8 @@ levs = np.arange(960,1051,4)
 cs1 = m.contour(x,y,p,levs,colors='k',linewidths=0.5)
 cs2 = m.contourf(x,y,p,levs)
 # plot barbs.
-m.barbs(xv,yv,udat,vdat,length=6,barbcolor='k',flagcolor='r',linewidth=0.5)
+nh,sh=m.barbs(xv,yv,udat,vdat,length=6,barbcolor='k',flagcolor='r',linewidth=0.5)
+print dir(nh)
 # plot colorbar for pressure
 cax = plt.axes([0.875, 0.1, 0.05, 0.8]) # setup colorbar axes.
 plt.colorbar(cax=cax) # draw colorbar
