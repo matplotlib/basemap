@@ -32,8 +32,8 @@ x,y = m(lons,lats)
 nxv = 25; nyv = 25
 udat, vdat, xv, yv = m.transform_vector(u,v,lons1,lats1,nxv,nyv,returnxy=True)
 # create a figure, add an axes.
-fig=plt.figure(figsize=(8,8))
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
+fig=plt.figure(figsize=(8,6))
+ax = fig.add_axes([0.1,0.1,0.8,0.8])
 # plot color-filled contours over map
 levs = np.arange(960,1051,4)
 cs1 = m.contour(x,y,p,levs,colors='k',linewidths=0.5)
@@ -41,7 +41,7 @@ cs2 = m.contourf(x,y,p,levs)
 # plot barbs.
 m.barbs(xv,yv,udat,vdat,length=6,barbcolor='k',flagcolor='r',linewidth=0.5)
 # plot colorbar for pressure
-cax = plt.axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
+cax = plt.axes([0.875, 0.1, 0.05, 0.8]) # setup colorbar axes.
 plt.colorbar(cax=cax) # draw colorbar
 plt.axes(ax)  # make the original axes current again
 # draw coastlines
@@ -50,6 +50,34 @@ m.drawcoastlines()
 m.drawparallels(np.arange(0,81,20),labels=[1,1,0,0])
 # draw meridians
 m.drawmeridians(np.arange(-180,0,20),labels=[0,0,0,1])
-plt.title('Surface Wind Barbs and Pressure')
-plt.show()
+plt.title('Surface Wind Barbs and Pressure (NH)')
 
+# stereogrpaphic projection (SH).
+m = Basemap(width=10000000,height=10000000,lon_0=-90,lat_0=-45.,lat_ts=-45,
+            resolution='l',projection='stere')
+x,y = m(lons,lats)
+# transform from spherical to map projection coordinates (rotation
+# and interpolation).
+nxv = 25; nyv = 25
+udat, vdat, xv, yv = m.transform_vector(u,v,lons1,lats1,nxv,nyv,returnxy=True)
+# create a figure, add an axes.
+fig=plt.figure(figsize=(8,6))
+ax = fig.add_axes([0.1,0.1,0.8,0.8])
+# plot color-filled contours over map
+levs = np.arange(960,1051,4)
+cs1 = m.contour(x,y,p,levs,colors='k',linewidths=0.5)
+cs2 = m.contourf(x,y,p,levs)
+# plot barbs.
+m.barbs(xv,yv,udat,vdat,length=6,barbcolor='k',flagcolor='r',linewidth=0.5)
+# plot colorbar for pressure
+cax = plt.axes([0.875, 0.1, 0.05, 0.8]) # setup colorbar axes.
+plt.colorbar(cax=cax) # draw colorbar
+plt.axes(ax)  # make the original axes current again
+# draw coastlines
+m.drawcoastlines()
+# draw parallels
+m.drawparallels(np.arange(-80,-19,20),labels=[1,1,0,0])
+# draw meridians
+m.drawmeridians(np.arange(-180,0,20),labels=[0,0,1,0])
+plt.title('Surface Wind Barbs and Pressure (SH)',y=1.04)
+plt.show()
