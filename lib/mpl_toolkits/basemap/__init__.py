@@ -2914,8 +2914,15 @@ class Basemap(object):
         h = kwargs.pop('hold',None)
         if h is not None:
             ax.hold(h)
+        lons, lats = self(x, y, inverse=True)
+        unh = ma.masked_where(lats <= 0, u)
+        vnh = ma.masked_where(lats <= 0, v)
+        ush = ma.masked_where(lats > 0, u)
+        vsh = ma.masked_where(lats > 0, v)
         try:
-            ret =  ax.barbs(x,y,u,v,*args,**kwargs)
+            retnh =  ax.barbs(x,y,unh,vnh,*args,**kwargs)
+            kwargs['flip_barb']=True
+            retsh =  ax.barbs(x,y,ush,vsh,*args,**kwargs)
             try:
                 plt.draw_if_interactive()
             except:
@@ -2926,7 +2933,7 @@ class Basemap(object):
         ax.hold(b)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        return ret
+        return retnh,retsh
 
     def drawlsmask(self,rgba_land,rgba_ocean,lsmask=None,
                    lsmask_lons=None,lsmask_lats=None,lakes=False,**kwargs):
