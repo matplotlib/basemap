@@ -70,8 +70,7 @@ levs = np.arange(960,1051,4)
 cs1 = m.contour(x,y,p,levs,colors='k',linewidths=0.5)
 cs2 = m.contourf(x,y,p,levs)
 # plot barbs.
-nh,sh=m.barbs(xv,yv,udat,vdat,length=6,barbcolor='k',flagcolor='r',linewidth=0.5)
-print dir(nh)
+m.barbs(xv,yv,udat,vdat,length=6,barbcolor='k',flagcolor='r',linewidth=0.5)
 # plot colorbar for pressure
 cax = plt.axes([0.875, 0.1, 0.05, 0.8]) # setup colorbar axes.
 plt.colorbar(cax=cax) # draw colorbar
