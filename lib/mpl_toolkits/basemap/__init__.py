@@ -2898,6 +2898,9 @@ class Basemap(object):
         Extra keyword ``ax`` can be used to override the default axis instance.
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.barbs
+
+        Returns two matplotlib.axes.Barbs instances, one for the Northern 
+        Hemisphere and one for the Southern Hemisphere.  
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
