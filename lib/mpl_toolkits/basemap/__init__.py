@@ -1211,23 +1211,28 @@ class Basemap(object):
             if zorder is not None:
                 limb.set_zorder(zorder)
         else: # all other projections are rectangular.
-            ax.axesPatch.set_linewidth(linewidth)
+            # use axesPatch for fill_color, frame for border line props.
+            ax.frame.set_linewidth(linewidth)
             if self.projection not in ['geos','ortho']:
                 if fill_color is None:
                     ax.axesPatch.set_facecolor(ax.get_axis_bgcolor())
                 else:
                     ax.axesPatch.set_facecolor(fill_color)
                     ax.axesPatch.set_zorder(0)
-                ax.axesPatch.set_edgecolor(color)
+                    ax.frame.set_zorder(0)
+                ax.frame.set_edgecolor(color)
                 ax.set_frame_on(True)
                 if zorder is not None:
                     ax.axesPatch.set_zorder(zorder)
+                    ax.frame.set_zorder(zorder)
             else:
-                ax.axesPatch.set_facecolor(ax.get_axis_bgcolor())
+                # use axesPatch for fill_color, frame for border line props.
                 ax.axesPatch.set_edgecolor(color)
+                ax.frame.set_edgecolor(color)
                 ax.set_frame_on(True)
                 if zorder is not None:
                     ax.axesPatch.set_zorder(zorder)
+                    ax.frame.set_zorder(zorder)
                 # for geos or ortho projections, also
                 # draw and fill map projection limb, clipped
                 # to rectangular region.
