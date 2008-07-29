@@ -1,4 +1,5 @@
 version 0.99.1 (not yet released)
+           * geos-2.2.3 patched for compatibility with gcc 4.3.
            * added "barbs" method to draw wind barbs on the map.
            * added "tissot" method for generating Tissot's indicatrix
              (see example plot_tissot.py).

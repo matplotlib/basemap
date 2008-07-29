@@ -36,6 +36,8 @@
 
 
 #include <geos/io.h>
+#include <cstring>
+
 
 namespace geos {
 

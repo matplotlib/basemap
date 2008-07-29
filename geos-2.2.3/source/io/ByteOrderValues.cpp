@@ -16,6 +16,7 @@
 
 #include <geos/io.h>
 #include <geos/util.h>
+#include <cstring>
 
 namespace geos {
 
