@@ -298,7 +298,7 @@ _Basemap_init_doc = """
  Variable Name    Description
  ================ ====================================================
  projection       map projection. Print the module variable
-                  "supported_projections" to see a list of allowed
+                  ``supported_projections`` to see a list of allowed
                   values.
  aspect           map aspect ratio 
                   (size of y dimension / size of x dimension).
