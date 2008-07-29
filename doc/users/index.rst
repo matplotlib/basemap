@@ -11,4 +11,5 @@
 
     intro.rst
     mapsetup.rst
+    geography.rst
     graticule.rst
