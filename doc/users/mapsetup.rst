@@ -8,7 +8,8 @@ map, a map projection is needed. Since this cannot be done without
 distortion, there are many map projections, each with it's own advantages
 and disadvantages. Basemap provides 19 different map projections.
 Some are global, some can only represent a portion of the globe. When
-a Basemap class instance is created, the desired map projection must
+a :class:`~mpl_toolkits.basemap.Basemap` class instance is
+created, the desired map projection must
 be specified, along with information about the portion of the earth's
 surface that the map projection will describe. There are two basic
 ways of doing this. One is to provide the latitude and longitude values
