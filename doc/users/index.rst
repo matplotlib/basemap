@@ -11,3 +11,4 @@
 
     intro.rst
     mapsetup.rst
+    graticule.rst
