@@ -6,7 +6,9 @@ version 0.99.1 (not yet released)
            * fixed processing of coastlines for gnomonic projection.
            * don't try to use PyNIO in NetCDFFile (it was causing
              too many suprises).
-           * improved documentation using Sphinx/docutils.
+           * start of improved documentation using Sphinx/docutils.
+             Can be viewed at
+             http://matplotlib.sf.net/basemap/doc/html
            * change default behaviour of num2date and date2num to be
              the same as matplotlib counterparts.
 version 0.99 (svn revision 5344)
