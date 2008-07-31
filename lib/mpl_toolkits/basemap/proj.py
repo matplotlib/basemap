@@ -1,4 +1,4 @@
-import numpy as npy
+import numpy as np
 import pyproj
 import math
 
@@ -92,15 +92,15 @@ class Proj(object):
             self._proj4 = pyproj.Proj(projparams)
             # find major and minor axes of ellipse defining map proj region.
             delta = 0.01
-            lats = npy.arange(0,90,delta)
+            lats = np.arange(0,90,delta)
             lon_0 = projparams['lon_0']
-            lons = lon_0*npy.ones(len(lats),'d')
+            lons = lon_0*np.ones(len(lats),'d')
             x, y = self._proj4(lons, lats)
             yi = (y > 1.e20).tolist()
             ny = yi.index(1)-1
             height = y[ny]
-            lons = npy.arange(lon_0,lon_0+90,delta)
-            lats = npy.zeros(len(lons),'d')
+            lons = np.arange(lon_0,lon_0+90,delta)
+            lats = np.zeros(len(lons),'d')
             x, y = self(lons, lats)
             xi = (x > 1.e20).tolist()
             nx = xi.index(1)-1
@@ -264,8 +264,8 @@ class Proj(object):
         """
         dx = (self.urcrnrx-self.llcrnrx)/(nx-1)
         dy = (self.urcrnry-self.llcrnry)/(ny-1)
-        x = self.llcrnrx+dx*npy.indices((ny,nx),npy.float32)[1,:,:]
-        y = self.llcrnry+dy*npy.indices((ny,nx),npy.float32)[0,:,:]
+        x = self.llcrnrx+dx*np.indices((ny,nx),np.float32)[1,:,:]
+        y = self.llcrnry+dy*np.indices((ny,nx),np.float32)[0,:,:]
         lons, lats = self(x, y, inverse=True)
         if returnxy:
             return lons, lats, x, y
@@ -280,9 +280,9 @@ class Proj(object):
         """
         dx = (self.urcrnrx-self.llcrnrx)/(nx-1)
         dy = (self.urcrnry-self.llcrnry)/(ny-1)
-        xy = npy.empty((ny,nx,2), npy.float64)
-        xy[...,0] = self.llcrnrx+dx*npy.indices((ny,nx),npy.float32)[1,:,:]
-        xy[...,1] = self.llcrnry+dy*npy.indices((ny,nx),npy.float32)[0,:,:]
+        xy = np.empty((ny,nx,2), np.float64)
+        xy[...,0] = self.llcrnrx+dx*np.indices((ny,nx),np.float32)[1,:,:]
+        xy[...,1] = self.llcrnry+dy*np.indices((ny,nx),np.float32)[0,:,:]
         lonlat = self(xy, inverse=True)
         if returnxy:
             return lonlat, xy
@@ -329,9 +329,9 @@ if __name__ == "__main__":
     t2 = time.clock()
     print 'compute lats/lons for all points on AWIPS 221 grid (%sx%s)' %(nx,ny)
     print 'max/min lons'
-    print min(npy.ravel(lons)),max(npy.ravel(lons))
+    print min(np.ravel(lons)),max(np.ravel(lons))
     print 'max/min lats'
-    print min(npy.ravel(lats)),max(npy.ravel(lats))
+    print min(np.ravel(lats)),max(np.ravel(lats))
     print 'took',t2-t1,'secs'
     print 'Same thing but with a single 3-D array'
     t1 = time.clock()

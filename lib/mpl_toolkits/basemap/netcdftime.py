@@ -1,7 +1,8 @@
 """
 Performs conversions of netCDF time coordinate data to/from datetime objects.
 """
-import math, numpy, re, time
+import math, re, time
+import numpy as np
 from datetime import datetime as real_datetime
 
 _units = ['days','hours','minutes','seconds','day','hour','minute','second']
@@ -629,7 +630,7 @@ Returns a scalar if input is a scalar, else returns a numpy array.
         except:
             isscalar = True
         if not isscalar:
-            date = numpy.array(date)
+            date = np.array(date)
             shape = date.shape
         if self.calendar in ['julian','standard','gregorian','proleptic_gregorian']:
             if isscalar:
@@ -656,7 +657,7 @@ Returns a scalar if input is a scalar, else returns a numpy array.
             else:
                 jdelta = [_360DayFromDate(d)-self._jd0 for d in date.flat]
         if not isscalar:
-            jdelta = numpy.array(jdelta)
+            jdelta = np.array(jdelta)
         # convert to desired units, add time zone offset.
         if self.units in ['second','seconds']:
             jdelta = jdelta*86400. + self.tzoffset*60.
@@ -669,7 +670,7 @@ Returns a scalar if input is a scalar, else returns a numpy array.
         if isscalar:
             return jdelta
         else:
-            return numpy.reshape(jdelta,shape)
+            return np.reshape(jdelta,shape)
 
     def num2date(self,time_value):
         """
@@ -681,8 +682,8 @@ a time zone offset from UTC.
 
 Resolution is 1 second.
 
-Works for scalars, sequences and numpy arrays.
-Returns a scalar if input is a scalar, else returns a numpy array.
+Works for scalars, sequences and np arrays.
+Returns a scalar if input is a scalar, else returns a np array.
 
 The datetime instances returned by C{num2date} are 'real' python datetime 
 objects if the date falls in the Gregorian calendar (i.e. 
@@ -699,7 +700,7 @@ do not exist in any real world calendar.
         except:
             isscalar = True
         if not isscalar:
-            time_value = numpy.array(time_value)
+            time_value = np.array(time_value)
             shape = time_value.shape
         # convert to desired units, remove time zone offset.
         if self.units in ['second','seconds']:
@@ -734,7 +735,7 @@ do not exist in any real world calendar.
         if isscalar:
             return date
         else:
-            return numpy.reshape(numpy.array(date),shape)
+            return np.reshape(np.array(date),shape)
 
 def _parse_date(origin):
     """Parses a date string and returns a tuple
