@@ -33,4 +33,22 @@ used as a map background.  Basemap provides several options for this:
   world in lat/lon coordinates from the international dateline eastward
   and the South Pole northward.
 
-.. toctree::
+Here are examples of the three different ways to draw a map background.
+
+1. Draw coastlines, filling ocean and land areas.
+
+.. literalinclude:: figures/background1.py
+
+.. image:: figures/background1.png
+
+2. Draw a land-sea mask as an image.
+
+.. literalinclude:: figures/background2.py
+
+.. image:: figures/background2.png
+
+3. Draw the NASA 'Blue Marble' image.
+
+.. literalinclude:: figures/background3.py
+
+.. image:: figures/background3.png
