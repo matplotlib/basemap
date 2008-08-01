@@ -1,6 +1,5 @@
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
-plt.figure(figsize=(6,5))
 # setup Lambert Conformal basemap.
 m = Basemap(width=12000000,height=9000000,projection='lcc',
             resolution='c',lat_1=45.,lat_2=55,lat_0=50,lon_0=-107.)

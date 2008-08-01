@@ -1,6 +1,5 @@
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
-plt.figure(figsize=(6,5))
 # setup Lambert Conformal basemap.
 # set resolution=None to skip processing of boundary datasets.
 m = Basemap(width=12000000,height=9000000,projection='lcc',
