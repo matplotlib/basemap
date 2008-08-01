@@ -13,7 +13,7 @@ m = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0,resolution=None)
 rgba_land = (0,255,0,255) # land green.
 rgba_ocean = (0,0,255,255) # ocean blue.
 # lakes=True means plot inland lakes with ocean color.
-m.drawlsmask(rgba_land, rgba_ocean, lakes=True)
+m.drawlsmask('red','blue', lakes=True)
 # draw parallels and meridians.
 m.drawparallels(np.arange(-90.,120.,30.))
 m.drawmeridians(np.arange(0.,420.,60.))
@@ -32,9 +32,9 @@ m.drawmeridians(np.arange(0.,420.,60.))
 m.drawmapboundary(fill_color='aqua')
 # add a map scale.
 length = 5000 
-x1,y1 = 0.2*m.xmax, 0.2*m.ymax
+x1,y1 = 0.3*m.xmax, 0.25*m.ymax
 lon1,lat1 = m(x1,y1,inverse=True)
-m.drawmapscale(lon1,lat1,lon_0,lat_0,length,fontsize=8,barstyle='fancy',\
+m.drawmapscale(lon1,lat1,lon1,lat1,length,fontsize=8,barstyle='fancy',\
                labelstyle='fancy',units='km')
 plt.title('Orthographic Map Centered on Lon=%s, Lat=%s' % (lon_0,lat_0))
 plt.show()

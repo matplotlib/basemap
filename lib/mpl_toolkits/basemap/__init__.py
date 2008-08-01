@@ -2940,7 +2940,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return retnh,retsh
 
-    def drawlsmask(self,rgba_land,rgba_ocean,lsmask=None,
+    def drawlsmask(self,land_color,ocean_color,lsmask=None,
                    lsmask_lons=None,lsmask_lats=None,lakes=False,**kwargs):
         """
         Draw land-sea mask image.
@@ -2955,15 +2955,8 @@ class Basemap(object):
         ==============   ====================================================
         Arguments        Description
         ==============   ====================================================
-        rgba_land        rgba integer tuple that describes desired
-                         land color. For example, for green (non-transparent)
-                         land areas, use rgba_land  = (0,255,0,255).
-        rgba_ocean       rgba integer tuple that describes desired
-                         ocean color. For example, for blue (non-transparent)
-                         ocean areas, use (0,0,255,255). To make transparent
-                         blue oceans (useful if you just want to mask land
-                         regions over another image), use 
-                         rgba_ocean = (0,0,255,0).
+        land_color       desired land color (color name or rgba tuple). 
+        rgba_ocean       desired ocean color (color name or rgba tuple).
         ==============   ====================================================
 
         .. tabularcolumns:: |l|L|
@@ -2995,6 +2988,22 @@ class Basemap(object):
 
         Extra keyword ``ax`` can be used to override the default axis instance.
         """
+        # convert land and ocean colors to integer rgba tuples with
+        # values between 0 and 255.
+        from matplotlib.colors import ColorConverter
+        c = ColorConverter()
+        # if conversion fails, assume it's because the color
+        # given is already an rgba tuple with values between 0 and 255.
+        try:
+            cl = c.to_rgba(land_color)
+            rgba_land = tuple([int(255*x) for x in cl])
+        except:
+            rgba_land = land_color
+        try:
+            co = c.to_rgba(ocean_color)
+            rgba_ocean = tuple([int(255*x) for x in co])
+        except:
+            rgba_ocean = ocean_color
         # look for axes instance (as keyword, an instance variable
         # or from plt.gca().
         if not kwargs.has_key('ax') and self.ax is None:
