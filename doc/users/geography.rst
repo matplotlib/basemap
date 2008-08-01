@@ -30,7 +30,7 @@ used as a map background.  Basemap provides several options for this:
   image as a map background.
 * :func:`~mpl_toolkits.basemap.Basemap.warpimage`: use an abitrary
   image as a map background.  The image must be global, covering the
-  world in lat/lon cooridinates from dateline to dateline and South
-  Pole to North Pole.
+  world in lat/lon coordinates from the international dateline eastward
+  and the South Pole northward.
 
 .. toctree::
