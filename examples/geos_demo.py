@@ -9,10 +9,9 @@ lon_0 = float(raw_input('enter reference longitude (lon_0):'))
 fig=plt.figure()
 m = Basemap(projection='geos',lon_0=lon_0,rsphere=(6378137.00,6356752.3142),resolution=None)
 # plot land-sea mask.
-rgba_land = (0,255,0,255) # land green.
-rgba_ocean = (0,0,255,255) # ocean blue.
+# land red, oceans blue.
 # lakes=True means plot inland lakes with ocean color.
-m.drawlsmask(rgba_land, rgba_ocean, lakes=True)
+m.drawlsmask('red','blue',lakes=True)
 # draw parallels and meridians.
 m.drawparallels(np.arange(-90.,120.,30.))
 m.drawmeridians(np.arange(0.,420.,60.))
