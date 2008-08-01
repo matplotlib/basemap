@@ -9,9 +9,7 @@ lat_0 = float(raw_input('enter reference latitude (lat_0):'))
 # map with land/sea mask plotted
 fig = plt.figure()
 m = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0,resolution=None)
-# plot land-sea mask.
-rgba_land = (0,255,0,255) # land green.
-rgba_ocean = (0,0,255,255) # ocean blue.
+# land red, oceans blue.
 # lakes=True means plot inland lakes with ocean color.
 m.drawlsmask('red','blue', lakes=True)
 # draw parallels and meridians.
