@@ -11,7 +11,7 @@ m = Basemap(projection='geos',lon_0=lon_0,rsphere=(6378137.00,6356752.3142),reso
 # plot land-sea mask.
 # land red, oceans blue.
 # lakes=True means plot inland lakes with ocean color.
-m.drawlsmask('red','blue',lakes=True)
+m.drawlsmask(land_color='red',ocean_color='blue',lakes=True)
 # draw parallels and meridians.
 m.drawparallels(np.arange(-90.,120.,30.))
 m.drawmeridians(np.arange(0.,420.,60.))

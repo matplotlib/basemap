@@ -2940,7 +2940,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return retnh,retsh
 
-    def drawlsmask(self,land_color,ocean_color,lsmask=None,
+    def drawlsmask(self,land_color="0.8",ocean_color="w",lsmask=None,
                    lsmask_lons=None,lsmask_lats=None,lakes=False,**kwargs):
         """
         Draw land-sea mask image.
@@ -2953,17 +2953,12 @@ class Basemap(object):
         .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
-        Arguments        Description
-        ==============   ====================================================
-        land_color       desired land color (color name or rgba tuple). 
-        ocean_color      desired ocean color (color name or rgba tuple).
-        ==============   ====================================================
-
-        .. tabularcolumns:: |l|L|
-
-        ==============   ====================================================
         Keywords         Description
         ==============   ====================================================
+        land_color       desired land color (color name or rgba tuple). 
+                         Default gray ("0.8").
+        ocean_color      desired ocean color (color name or rgba tuple).
+                         Default white.
         lakes            If True, inland lakes are also colored with
                          ocean_color (default is lakes=False).
         lsmask           An array of 0's for ocean pixels, 1's for
