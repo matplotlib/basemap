@@ -2956,7 +2956,7 @@ class Basemap(object):
         Arguments        Description
         ==============   ====================================================
         land_color       desired land color (color name or rgba tuple). 
-        rgba_ocean       desired ocean color (color name or rgba tuple).
+        ocean_color      desired ocean color (color name or rgba tuple).
         ==============   ====================================================
 
         .. tabularcolumns:: |l|L|
@@ -2965,7 +2965,7 @@ class Basemap(object):
         Keywords         Description
         ==============   ====================================================
         lakes            If True, inland lakes are also colored with
-                         rgba_ocean (default is lakes=False).
+                         ocean_color (default is lakes=False).
         lsmask           An array of 0's for ocean pixels, 1's for
                          land pixels and optionally 2's for inland
                          lake pixels defining a global land-sea mask.
