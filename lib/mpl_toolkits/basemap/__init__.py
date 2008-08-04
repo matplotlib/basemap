@@ -2423,6 +2423,9 @@ class Basemap(object):
            uin.shape[1] == vin.shape[1] == lons.shape[0] and\
            uin.shape[0] == vin.shape[0] == lats.shape[0]:
             lons, lats = np.meshgrid(lons, lats) 
+        else:
+            if not lons.shape == lats.shape == uin.shape == vin.shape:
+                raise TypeError("shapes of lons,lats and uin,vin don't match")
         x, y = self(lons, lats)
         # rotate from geographic to map coordinates.
         if ma.isMaskedArray(uin):
