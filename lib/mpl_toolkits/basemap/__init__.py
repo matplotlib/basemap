@@ -2415,7 +2415,13 @@ class Basemap(object):
         returns ``uout,vout,x,y`` (where ``x,y`` are the map projection
         coordinates of the grid defined by ``lons,lats``).
         """
-        if lons.ndim == 1 and lats.ndim == 1:
+        # if lons,lats are 1d and uin,vin are 2d, and
+        # lats describes 1st dim of uin,vin, and
+        # lons describes 2nd dim of uin,vin, make lons,lats 2d
+        # with meshgrid.
+        if lons.ndim == lats.ndim == 1 and uin.ndim == vin.ndim == 2 and\
+           uin.shape[1] == vin.shape[1] == lons.shape[0] and\
+           uin.shape[0] == vin.shape[0] == lats.shape[0]:
             lons, lats = np.meshgrid(lons, lats) 
         x, y = self(lons, lats)
         # rotate from geographic to map coordinates.
