@@ -4,7 +4,6 @@ include MANIFEST.in
 include LICENSE_proj4
 include LICENSE_pyshapelib
 include LICENSE_data
-include basemap_workbook.pdf
 include API_CHANGES
 include KNOWN_BUGS
 include Changelog
@@ -78,7 +77,6 @@ include pyshapelib/README pyshapelib/COPYING pyshapelib/ChangeLog pyshapelib/NEW
 include pyshapelib/*.i pyshapelib/*.c pyshapelib/*.py pyshapelib/*.h
 include pyshapelib/*.shp pyshapelib/*.shx pyshapelib/*.dbf
 include pyshapelib/shapelib/*.c pyshapelib/shapelib/*.h
-include MANIFEST.in 
 include doc/users/figures/*py
 include doc/users/*rst
 include doc/api/*rst
