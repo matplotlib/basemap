@@ -2913,6 +2913,11 @@ class Basemap(object):
         Returns two matplotlib.axes.Barbs instances, one for the Northern 
         Hemisphere and one for the Southern Hemisphere.  
         """
+        if _matplotlib_version < '0.98.3':
+            msg = dedent("""
+            barb method requires matplotlib 0.98.3 or higher,
+            you have %s""" % _matplotlib_version)
+            raise NotImplementedError(msg)
         if not kwargs.has_key('ax') and self.ax is None:
             try:
                 ax = plt.gca()
