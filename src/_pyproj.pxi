@@ -53,9 +53,6 @@ cdef extern from "proj_api.h":
     cdef enum:
         PJ_VERSION
 
-#cdef extern from "pycompat.h":
-#    ctypedef int Py_ssize_t
-
 cdef extern from "Python.h":
     int PyObject_AsWriteBuffer(object, void **rbuf, Py_ssize_t *len)
     char *PyString_AsString(object)
