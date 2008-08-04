@@ -80,7 +80,6 @@ include pyshapelib/*.shp pyshapelib/*.shx pyshapelib/*.dbf
 include pyshapelib/shapelib/*.c pyshapelib/shapelib/*.h
 include MANIFEST.in 
 include doc/users/figures/*py
-include doc/users/figures/*png
 include doc/users/*rst
 include doc/api/*rst
 include doc/README.txt
