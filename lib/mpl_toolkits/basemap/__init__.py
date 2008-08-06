@@ -3104,13 +3104,17 @@ class Basemap(object):
 
     def warpimage(self,image="bluemarble",**kwargs):
         """
-        Display an image (given by ``image`` keyword) as a map background.
+        Display an image (filename given by ``image`` keyword) as a map background.
+        If image is a URL (starts with 'http'), it is downloaded to a temp
+        file using urllib.urlretrieve.
 
         Default (if ``image`` not specified) is to display 
         'blue marble next generation' image from http://visibleearth.nasa.gov/.
 
         Specified image must have pixels covering the whole globe in a regular
         lat/lon grid, starting and -180W and the South Pole.
+        Works with the global images from 
+        http://earthobservatory.nasa.gov/Newsroom/BlueMarble/BlueMarble_monthlies.html.
 
         Extra keyword ``ax`` can be used to override the default axis instance.
 
@@ -3143,11 +3147,22 @@ class Basemap(object):
             newfile = True
         else:
             newfile = False
-        self._bm_file = file
+        if file.startswith('http'):
+            from urllib import urlretrieve
+            self._bm_file, headers = urlretrieve(file)
+        else:
+            self._bm_file = file
         # read in jpeg image to rgba array of normalized floats.
         if not hasattr(self,'_bm_rgba') or newfile:
             pilImage = Image.open(self._bm_file)
             self._bm_rgba = pil_to_array(pilImage)
+            # if pil_to_array returns a 2D array, it's a grayscale image.
+            # create an RGB image, with R==G==B.
+            if self._bm_rgba.ndim == 2:
+                tmp = np.empty(self._bm_rgba.shape+(3,),np.uint8)
+                for k in range(3):
+                    tmp[:,:,k] = self._bm_rgba
+                self._bm_rgba = tmp
             # convert to normalized floats.
             self._bm_rgba = self._bm_rgba.astype(np.float32)/255.
             # define lat/lon grid that image spans.
