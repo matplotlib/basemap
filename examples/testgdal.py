@@ -39,7 +39,23 @@ m.drawmeridians(np.linspace(llcrnrlon+0.1,urcrnrlon-0.1,5),labels=[0,0,0,1],fmt=
 m.drawparallels(np.linspace(llcrnrlat+0.1,urcrnrlat-0.1,5),labels=[1,0,0,0],fmt='%4.2f')
 # plot county boundaries from
 # http://edcftp.cr.usgs.gov/pub/data/nationalatlas/countyp020.tar.gz
-shp_info = m.readshapefile('countyp020','counties',drawbounds=True,linewidth=1.0)
+g = ogr.Open ("countyp020.shp")
+L = g.GetLayer(0)
+for feat in L:
+	field_count = L.GetLayerDefn().GetFieldCount()
+	geo = feat.GetGeometryRef()
+	if geo.GetGeometryCount()<2:
+		g1 = geo.GetGeometryRef( 0 ) 
+		x =[g1.GetX(i) for i in range(g1.GetPointCount()) ]
+		y =[g1.GetY(i) for i in range(g1.GetPointCount()) ]
+		m.plot(x,y,'k')
+	for count in range( geo.GetGeometryCount()):
+		geom = geo.GetGeometryRef ( count )
+		for cnt in range( geom.GetGeometryCount()):
+			g1 = geom.GetGeometryRef( cnt )
+			x =[g1.GetX(i) for i in range(g1.GetPointCount()) ]
+			y =[g1.GetY(i) for i in range(g1.GetPointCount()) ]
+			m.plot(x,y,'k')
 # plot some cities.
 lons = [-105.22,-105.513,-105.316,-105.47]; lats = [39.76,39.801,39.633,39.41]
 names =  ['Golden','Central City','Evergreen','Bailey']
