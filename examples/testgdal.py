@@ -1,67 +1,58 @@
 """
-example showing how to plot a USGS DEM file using 
+example showing how to plot data from a DEM file and an ESRI shape file using 
 gdal (http://pypi.python.org/pypi/GDAL).
-
-Data files must be downloaded manually from USGS:
-http://edcftp.cr.usgs.gov/pub/data/DEM/250/D/denver-w.gz
-http://edcftp.cr.usgs.gov/pub/data/nationalatlas/countyp020.tar.gz
 """
 from osgeo import gdal, ogr
-from mpl_toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap, cm
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy import ma
 
-# download from 
-# http://edcftp.cr.usgs.gov/pub/data/DEM/250/D/denver-w.gz
-gd = gdal.Open('denver-w')
+# read DEM file using gdal.
+gd = gdal.Open('us_25m.dem')
 # get data from DEM file
 array = gd.ReadAsArray()
 # get lat/lon coordinates from DEM file.
 coords = gd.GetGeoTransform()
-llcrnrlon = coords[0]
-urcrnrlon = llcrnrlon+(array.shape[1]-1)*coords[1]
-urcrnrlat = coords[3]
-llcrnrlat = urcrnrlat+(array.shape[0]-1)*coords[5]
-# create Basemap instance.
-m = Basemap(llcrnrlon=llcrnrlon,llcrnrlat=llcrnrlat,urcrnrlon=urcrnrlon,urcrnrlat=urcrnrlat,projection='cyl')
-# create a figure, add an axes
-# (leaving room for a colorbar).
-fig = plt.figure()
-ax = fig.add_axes([0.1,0.1,0.75,0.75])
-# plot image from DEM over map.
-im = m.imshow(array,origin='upper')
-# make a colorbar.
-cax = plt.axes([0.875, 0.1, 0.05, 0.75]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+nlons = array.shape[1]
+nlats = array.shape[0]
+delon = coords[1]
+delat = coords[5]
+lons = coords[0] + delon*np.arange(nlons)
+lats = coords[3] + delat*np.arange(nlats)[::-1]
+# setup basemap instance.
+m = Basemap(llcrnrlon=-119,llcrnrlat=22,urcrnrlon=-64,urcrnrlat=49,
+            projection='lcc',lat_1=33,lat_2=45,lon_0=-95)
+# transform to nx x ny regularly spaced (4 km) native projection grid
+nx = int((m.xmax-m.xmin)/4000.)+1; ny = int((m.ymax-m.ymin)/4000.)+1
+topoin = ma.masked_values(array[::-1,:],-999.)
+topodat = m.transform_scalar(topoin,lons,lats,nx,ny,masked=True)
+im = m.imshow(topodat,cmap=cm.GMT_haxby_r)
 # draw meridians and parallels.
-m.drawmeridians(np.linspace(llcrnrlon+0.1,urcrnrlon-0.1,5),labels=[0,0,0,1],fmt='%4.2f')
-m.drawparallels(np.linspace(llcrnrlat+0.1,urcrnrlat-0.1,5),labels=[1,0,0,0],fmt='%4.2f')
-# plot county boundaries from
-# http://edcftp.cr.usgs.gov/pub/data/nationalatlas/countyp020.tar.gz
-g = ogr.Open ("countyp020.shp")
-L = g.GetLayer(0)
-for feat in L:
-	field_count = L.GetLayerDefn().GetFieldCount()
-	geo = feat.GetGeometryRef()
-	if geo.GetGeometryCount()<2:
-		g1 = geo.GetGeometryRef( 0 ) 
-		x =[g1.GetX(i) for i in range(g1.GetPointCount()) ]
-		y =[g1.GetY(i) for i in range(g1.GetPointCount()) ]
-		m.plot(x,y,'k')
-	for count in range( geo.GetGeometryCount()):
-		geom = geo.GetGeometryRef ( count )
-		for cnt in range( geom.GetGeometryCount()):
-			g1 = geom.GetGeometryRef( cnt )
-			x =[g1.GetX(i) for i in range(g1.GetPointCount()) ]
-			y =[g1.GetY(i) for i in range(g1.GetPointCount()) ]
-			m.plot(x,y,'k')
-# plot some cities.
-lons = [-105.22,-105.513,-105.316,-105.47]; lats = [39.76,39.801,39.633,39.41]
-names =  ['Golden','Central City','Evergreen','Bailey']
-x,y = m(lons,lats)
-m.plot(x,y,'ko')
-for name,xx,yy in zip(names,x,y):
-    plt.text(xx+0.01,yy+0.01,name)
-plt.title(gd.GetDescription()+' USGS DEM with county boundaries')
+m.drawparallels(np.arange(25,65,20),labels=[1,0,0,0])
+m.drawmeridians(np.arange(-120,-40,20),labels=[0,0,0,1])
+# plot state boundaries from shapefile using ogr.
+g = ogr.Open ("st99_d00.shp")
+L = g.GetLayer(0) # data is in 1st layer.
+for feat in L: # iterate over features in layer
+    geo = feat.GetGeometryRef()
+    # iterate over geometries. 
+    for count in range(geo.GetGeometryCount()):
+        geom = geo.GetGeometryRef(count)
+        if not geom.GetGeometryCount(): # just on geometry.
+            # get lon,lat points
+            lons = [geom.GetX(i) for i in range(geom.GetPointCount())]
+            lats = [geom.GetY(i) for i in range(geom.GetPointCount())]
+            # convert to map projection coords.
+            x, y = m(lons,lats)
+            # plot on map.
+            m.plot(x,y,'k')
+        else: # iterate over nested geometries.
+            for cnt in range( geom.GetGeometryCount()):
+                g1 = geom.GetGeometryRef( cnt )
+                lons = [g1.GetX(i) for i in range(g1.GetPointCount())]
+                lats = [g1.GetY(i) for i in range(g1.GetPointCount())]
+                x, y = m(lons,lats)
+                m.plot(x,y,'k')
+plt.title(gd.GetDescription()+' with state boundaries from '+g.GetName())
 plt.show()
