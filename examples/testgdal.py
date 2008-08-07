@@ -43,7 +43,7 @@ for feat in L: # iterate over features in layer
     # iterate over geometries. 
     for count in range(geo.GetGeometryCount()):
         geom = geo.GetGeometryRef(count)
-        if not geom.GetGeometryCount(): # just on geometry.
+        if not geom.GetGeometryCount(): # just one geometry.
             # get lon,lat points
             lons = [geom.GetX(i) for i in range(geom.GetPointCount())]
             lats = [geom.GetY(i) for i in range(geom.GetPointCount())]
@@ -53,9 +53,9 @@ for feat in L: # iterate over features in layer
             m.plot(x,y,'k')
         else: # iterate over nested geometries.
             for cnt in range( geom.GetGeometryCount()):
-                g1 = geom.GetGeometryRef( cnt )
-                lons = [g1.GetX(i) for i in range(g1.GetPointCount())]
-                lats = [g1.GetY(i) for i in range(g1.GetPointCount())]
+                g = geom.GetGeometryRef( cnt )
+                lons = [g.GetX(i) for i in range(g.GetPointCount())]
+                lats = [g.GetY(i) for i in range(g.GetPointCount())]
                 x, y = m(lons,lats)
                 m.plot(x,y,'k')
 # new axis for colorbar.
