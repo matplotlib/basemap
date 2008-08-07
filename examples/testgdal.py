@@ -8,9 +8,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from numpy import ma
 
-# read DEM file using gdal.
+# read 2.5 minute U.S. DEM file using gdal.
 gd = gdal.Open('us_25m.dem')
-# get data from DEM file
 array = gd.ReadAsArray()
 # get lat/lon coordinates from DEM file.
 coords = gd.GetGeoTransform()
@@ -19,14 +18,18 @@ nlats = array.shape[0]
 delon = coords[1]
 delat = coords[5]
 lons = coords[0] + delon*np.arange(nlons)
-lats = coords[3] + delat*np.arange(nlats)[::-1]
+lats = coords[3] + delat*np.arange(nlats)[::-1] # reverse lats
 # setup basemap instance.
 m = Basemap(llcrnrlon=-119,llcrnrlat=22,urcrnrlon=-64,urcrnrlat=49,
             projection='lcc',lat_1=33,lat_2=45,lon_0=-95)
-# transform to nx x ny regularly spaced (4 km) native projection grid
-nx = int((m.xmax-m.xmin)/4000.)+1; ny = int((m.ymax-m.ymin)/4000.)+1
+# create masked array, reversing data in latitude direction
+# (so that data is oriented in increasing latitude, as transform_scalar
 topoin = ma.masked_values(array[::-1,:],-999.)
+# requires).
+# transform DEM dadta to a 4 km native projection grid
+nx = int((m.xmax-m.xmin)/4000.)+1; ny = int((m.ymax-m.ymin)/4000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny,masked=True)
+# plot DEM image on map.
 im = m.imshow(topodat,cmap=cm.GMT_haxby_r)
 # draw meridians and parallels.
 m.drawparallels(np.arange(25,65,20),labels=[1,0,0,0])
