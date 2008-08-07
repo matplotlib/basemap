@@ -324,8 +324,8 @@ _Basemap_init_doc = """
                   for crude, ``l`` for low, etc.). 
                   If None, no boundary dataset is associated with the
                   Basemap instance.
- srs              a string representing the 'spatial reference system'
-                  for the map projection as defined by PROJ.4.
+ proj4string      the string describing the map projection that is
+                  used by PROJ.4.
  ================ ====================================================
 
  **Converting from Geographic (lon/lat) to Map Projection (x/y) Coordinates**
@@ -673,7 +673,8 @@ class Basemap(object):
         # spatial reference string (useful for georeferencing output
         # images with gdal_translate).
         if hasattr(self,'_proj4'):
-            self.srs = proj._proj4.srs
+            #self.srs = proj._proj4.srs
+            self.srs = proj._proj4.pjinitstring
         else:
             pjargs = []
             for key,value in self.projparams.iteritems():
@@ -686,6 +687,7 @@ class Basemap(object):
                     continue
                 pjargs.append('+'+key+"="+str(value)+' ')
             self.srs = ''.join(pjargs)
+        self.proj4string = self.srs
         # set instance variables defining map region.
         self.xmin = proj.xmin
         self.xmax = proj.xmax
