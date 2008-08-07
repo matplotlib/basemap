@@ -1,7 +1,7 @@
            * warpimage method can now handle gray-scale images, and 
              images specifed as URLs (for example, the Blue Marble images from
              http://earthobservatory.nasa.gov/Newsroom/BlueMarble/BlueMarble_monthlies.html).
-version 0.99.1 (not yet released)
+version 0.99.1 (svn revision 5961)
            * geos-2.2.3 patched for compatibility with gcc 4.3.
            * added "barbs" method to draw wind barbs on the map.
            * added "tissot" method for generating Tissot's indicatrix
