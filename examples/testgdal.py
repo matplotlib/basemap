@@ -9,31 +9,32 @@ import matplotlib.pyplot as plt
 from numpy import ma
 
 # read 2.5 minute U.S. DEM file using gdal.
+# (http://www.prism.oregonstate.edu/docs/meta/dem_25m.htm)
 gd = gdal.Open('us_25m.dem')
 array = gd.ReadAsArray()
 # get lat/lon coordinates from DEM file.
 coords = gd.GetGeoTransform()
-nlons = array.shape[1]
-nlats = array.shape[0]
+nlons = array.shape[1]; nlats = array.shape[0]
 delon = coords[1]
 delat = coords[5]
 lons = coords[0] + delon*np.arange(nlons)
 lats = coords[3] + delat*np.arange(nlats)[::-1] # reverse lats
+# setup figure.
+fig = plt.figure(figsize=(11,6))
 # setup basemap instance.
 m = Basemap(llcrnrlon=-119,llcrnrlat=22,urcrnrlon=-64,urcrnrlat=49,
             projection='lcc',lat_1=33,lat_2=45,lon_0=-95)
 # create masked array, reversing data in latitude direction
-# (so that data is oriented in increasing latitude, as transform_scalar
+# (so that data is oriented in increasing latitude, as transform_scalar requires).
 topoin = ma.masked_values(array[::-1,:],-999.)
-# requires).
-# transform DEM dadta to a 4 km native projection grid
+# transform DEM data to a 4 km native projection grid
 nx = int((m.xmax-m.xmin)/4000.)+1; ny = int((m.ymax-m.ymin)/4000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny,masked=True)
 # plot DEM image on map.
 im = m.imshow(topodat,cmap=cm.GMT_haxby_r)
 # draw meridians and parallels.
-m.drawparallels(np.arange(25,65,20),labels=[1,0,0,0])
-m.drawmeridians(np.arange(-120,-40,20),labels=[0,0,0,1])
+m.drawparallels(np.arange(20,71,10),labels=[1,0,1,0])
+m.drawmeridians(np.arange(-120,-40,10),labels=[0,1,0,1])
 # plot state boundaries from shapefile using ogr.
 g = ogr.Open ("st99_d00.shp")
 L = g.GetLayer(0) # data is in 1st layer.
@@ -57,5 +58,13 @@ for feat in L: # iterate over features in layer
                 lats = [g1.GetY(i) for i in range(g1.GetPointCount())]
                 x, y = m(lons,lats)
                 m.plot(x,y,'k')
-plt.title(gd.GetDescription()+' with state boundaries from '+g.GetName())
+# new axis for colorbar.
+ax = plt.gca()
+pos = ax.get_position()
+l, b, w, h = pos.bounds
+cax = plt.axes([l+w+0.05, b, 0.025, h]) # setup colorbar axes
+# draw colorbar.
+plt.colorbar(im, cax=cax)
+plt.axes(ax)  # make the original axes current again
+plt.title(gd.GetDescription()+' with state boundaries from '+g.GetName(),y=1.05)
 plt.show()
