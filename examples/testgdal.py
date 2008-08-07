@@ -1,14 +1,13 @@
 """
 example showing how to plot a USGS DEM file using 
-gdal (http://gdal.maptools.org).
+gdal (http://pypi.python.org/pypi/GDAL).
 
 Data files must be downloaded manually from USGS:
-http://edcftplt.cr.usgs.gov/pub/data/DEM/250/D/denver-w.gz
-http://edcftplt.cr.usgs.gov/pub/data/nationalatlas/countyp020.tar.gz
+http://edcftp.cr.usgs.gov/pub/data/DEM/250/D/denver-w.gz
+http://edcftp.cr.usgs.gov/pub/data/nationalatlas/countyp020.tar.gz
 """
-import gdal
+from osgeo import gdal, ogr
 from mpl_toolkits.basemap import Basemap
-from gdalconst import *
 import numpy as np
 import matplotlib.pyplot as plt
 
