@@ -49,7 +49,7 @@ if GEOS_dir is None:
     for direc in GEOS_dirs:
         geos_version = checkversion(direc)
         print 'checking for GEOS lib in %s ....' % direc
-        if geos_version != '"2.2.3"':
+        if geos_version < '"2.2.3"':
             continue
         else:
             print 'GEOS lib found in %s' % direc
@@ -58,11 +58,11 @@ if GEOS_dir is None:
 else:
     geos_version = checkversion(GEOS_dir)
 
-if geos_version != '"2.2.3"' or GEOS_dir is None:
+if GEOS_dir is None:
     raise SystemExit("""
-Can't find geos library version 2.2.3. Please set the
+Can't find geos library . Please set the
 environment variable GEOS_DIR to point to the location
-where geos 2.2.3 is installed (for example, if geos_c.h
+where geos is installed (for example, if geos_c.h
 is in /usr/local/include, and libgeos_c is in /usr/local/lib,
 set GEOS_DIR to /usr/local), or edit the setup.py script
 manually and set the variable GEOS_dir (right after the line
