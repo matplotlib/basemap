@@ -980,6 +980,10 @@ class Basemap(object):
                             continue
                     # create a GEOS geometry object.
                     poly = Shape(b)
+                    # this is a workaround to avoid
+                    # GEOS_ERROR: TopologyException: found non-noded intersection between ...
+                    # with geos 3.0.0
+                    poly = poly.simplify(1.e-10)[0]
                     # if geometry instersects map projection
                     # region, and doesn't have any invalid points, process it.
                     if goodmask.all() and poly.intersects(boundarypolyxy):
