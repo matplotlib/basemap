@@ -121,8 +121,10 @@ cdef void error_h(char *fmt, char*msg):
 cdef geos_version():
     return PyString_FromString(GEOSversion())
 __geos_version__ = geos_version() # module variable.
+__geos_major_version__ = GEOS_VERSION_MAJOR
 #if __geos_version__ != "2.2.3-CAPI-1.1.1":
 #     raise ValueError('version 2.2.3 of the geos library is required')
+
 # intialize GEOS (parameters are notice and error function callbacks).
 initGEOS(notice_h, error_h)
 
