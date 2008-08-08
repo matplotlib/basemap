@@ -1,5 +1,6 @@
 version 0.99.2 (not yet released)
            * now works with geos version 3.
+           * added "proj4string" Basemap instance variable.
            * testgdal example now uses gdal to read topo data from a raster
              DEM file and ogr to read state boundaries from a shape file.
            * warpimage method can now handle gray-scale images, and 
