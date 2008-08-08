@@ -52,7 +52,7 @@ if GEOS_dir is None:
         if geos_version < '"2.2.3"':
             continue
         else:
-            print 'GEOS lib found in %s' % direc
+            print 'GEOS lib (version %s) found in %s' % (geos_version[1:-1],direc)
             GEOS_dir = direc
             break
 else:

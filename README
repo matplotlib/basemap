@@ -11,7 +11,7 @@ matplotlib 0.98 (or higher)
 
 numpy 1.1 (or higher)
 
-The GEOS (Geometry Engine - Open Source) library (version 2.2.3).
+The GEOS (Geometry Engine - Open Source) library (version 2.2.3 or higher).
 Source code is included in the geos-2.2.3 directory.
 
 setuptools (only if your are using python 2.3)
