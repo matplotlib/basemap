@@ -36,7 +36,7 @@ from proj import Proj
 import numpy as np
 import numpy.ma as ma
 from shapelib import ShapeFile
-import _geoslib, pupynere, netcdftime
+import _geoslib, netcdf, netcdftime
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -3640,7 +3640,7 @@ def _choosecorners(width,height,**kwargs):
     else:
         return corners
 
-def NetCDFFile(file, maskandscale=True):
+def NetCDFFile(file, mode='r', maskandscale=True):
     """NetCDF File reader.  API is the same as Scientific.IO.NetCDF.
     If ``file`` is a URL that starts with `http`, it is assumed
     to be a remote OPenDAP dataset, and the python dap client is used
@@ -3656,9 +3656,9 @@ def NetCDFFile(file, maskandscale=True):
     ``maskandscale`` keyword to False. 
     """
     if file.startswith('http'):
-        return pupynere._RemoteFile(file,maskandscale)
+        return netcdf._RemoteFile(file,maskandscale=maskandscale)
     else:
-        return pupynere._LocalFile(file,maskandscale)
+        return netcdf.netcdf_file(file,mode=mode,maskandscale=maskandscale)
 
 def num2date(times,units='days since 0001-01-01 00:00:00',calendar='proleptic_gregorian'):
     """
