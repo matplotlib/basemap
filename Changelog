@@ -1,4 +1,6 @@
 version 0.99.2 (not yet released)
+           * updated NetCDFFile to use pupynere 1.0.1 (now can write as well
+             as read!).
            * now works with geos version 3.
            * added "proj4string" Basemap instance variable.
            * testgdal example now uses gdal to read topo data from a raster
