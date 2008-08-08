@@ -46,6 +46,7 @@ cdef extern from "geos_c.h":
         GEOS_MULTILINESTRING
         GEOS_MULTIPOLYGON
         GEOS_GEOMETRYCOLLECTION
+        GEOS_VERSION_MAJOR
     ctypedef struct GEOSGeom:
         pass
     ctypedef struct GEOSCoordSeq:
@@ -156,9 +157,12 @@ cdef class BaseGeometry:
         cdef GEOSGeom *g1, *g3, *gout
         cdef double tolerance
         cdef int numgeoms, i, typeid
-        tolerance = tol
         g1 = self._geom
-        g3 = GEOSSimplify(g1, tolerance)
+        if GEOS_VERSION_MAJOR > 2:
+            tolerance = tol
+            g3 = GEOSSimplify(g1, tolerance)
+        else:
+            g3 = g1
         typeid = GEOSGeomTypeId(g3)
         if typeid == GEOS_POLYGON:
             b = _get_coords(g3)
