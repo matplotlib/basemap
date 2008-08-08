@@ -72,6 +72,7 @@ include lib/mpl_toolkits/basemap/__init__.py
 include lib/mpl_toolkits/basemap/proj.py
 include lib/mpl_toolkits/basemap/pyproj.py
 include lib/mpl_toolkits/basemap/cm.py
+include lib/mpl_toolkits/basemap/netcdf.py
 include lib/mpl_toolkits/basemap/pupynere.py
 include lib/mpl_toolkits/basemap/netcdftime.py
 include pyshapelib/README pyshapelib/COPYING pyshapelib/ChangeLog pyshapelib/NEWS
