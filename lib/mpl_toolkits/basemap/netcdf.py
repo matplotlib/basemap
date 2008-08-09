@@ -1,5 +1,5 @@
 from numpy import ma, squeeze
-from pupynere import netcdf_file, _maskandscale
+from pupynere import netcdf_file, _unmaskandscale
 from dap.client import open as open_remote
 from dap.dtypes import ArrayType, GridType, typemap
 
@@ -68,7 +68,7 @@ class _RemoteVariable(object):
         # - create a masked array using missing_value or _FillValue attribute
         # - apply scale_factor and add_offset to packed integer data
         if self._maskandscale:
-            return _maskandscale(self,datout)
+            return _unmaskandscale(self,datout)
         else:
             return datout
 

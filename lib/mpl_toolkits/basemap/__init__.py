@@ -3641,19 +3641,25 @@ def _choosecorners(width,height,**kwargs):
         return corners
 
 def NetCDFFile(file, mode='r', maskandscale=True):
-    """NetCDF File reader.  API is the same as Scientific.IO.NetCDF.
+    """NetCDF File reader/writer.  API is the same as Scientific.IO.NetCDF.
+
     If ``file`` is a URL that starts with `http`, it is assumed
-    to be a remote OPenDAP dataset, and the python dap client is used
+    to be a remote OPenDAP dataset, and pydap is used
     to retrieve the data. Only the OPenDAP Array and Grid data
     types are recognized.  If file does not start with `http`, it
-    is assumed to be a local netCDF file. Data will
-    automatically be converted to masked arrays if the variable has either
-    a ``missing_value`` or ``_FillValue`` attribute, and some data points
-    are equal to the value specified by that attribute.  In addition,
-    variables stored as integers that have the ``scale_factor`` and
-    ``add_offset`` attribute will automatically be rescaled to floats when
-    read.  To suppress these automatic conversions, set the
-    ``maskandscale`` keyword to False. 
+    is assumed to be a local netCDF file and is read
+    with scipy.io.netcdf. Both pydap and scipy.io.netcdf are written
+    by Roberto De Almeida.
+
+    Data will
+    automatically be converted to and from masked arrays if the variable
+    has either a ``missing_value`` or ``_FillValue`` attribute, and
+    some data points are equal to the value specified by that attribute.
+    In addition, variables that have the ``scale_factor`` and ``add_offset``
+    attribute will automatically be converted to and from short integers.
+    To suppress these automatic conversions, set the ``maskandscale``
+    keyword to False. 
+
     """
     if file.startswith('http'):
         return netcdf._RemoteFile(file,maskandscale=maskandscale)

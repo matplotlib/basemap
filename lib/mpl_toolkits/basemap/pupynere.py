@@ -128,9 +128,7 @@ class netcdf_file(object):
 
     """
     def __init__(self, filename, mode='r', maskandscale=False):
-
         self._maskandscale = maskandscale
-
         self.filename = filename
 
         assert mode in 'rw', "Mode must be either 'r' or 'w'."
@@ -181,7 +179,7 @@ class netcdf_file(object):
         if size > 1: dtype_ += str(size)
 
         data = empty(shape_, dtype=dtype_)
-        self.variables[name] = netcdf_variable(data, typecode, shape, dimensions)
+        self.variables[name] = netcdf_variable(data, typecode, shape, dimensions, maskandscale=self._maskandscale)
         return self.variables[name]
 
     def flush(self):
@@ -204,7 +202,7 @@ class netcdf_file(object):
     def _write_numrecs(self):
         # Get highest record count from all record variables.
         for var in self.variables.values():
-            if not var.shape[0] and len(var.data) > self._recs:
+            if not var._shape[0] and len(var.data) > self._recs:
                 self.__dict__['_recs'] = len(var.data)
         self._pack_int(self._recs)
 
@@ -238,7 +236,7 @@ class netcdf_file(object):
 
             # Sort variables non-recs first, then recs.
             variables = self.variables.items()
-            variables.sort(key=lambda (k, v): v.shape and v.shape[0] is not None)
+            variables.sort(key=lambda (k, v): v._shape and v._shape[0] is not None)
             variables.reverse()
             variables = [k for (k, v) in variables]
 
@@ -249,7 +247,7 @@ class netcdf_file(object):
             # each record variable, so we can calculate recsize.
             self.__dict__['_recsize'] = sum([
                     var._vsize for var in self.variables.values()
-                    if var.shape[0] is None])
+                    if var._shape[0] is None])
             # Set the data for all variables.
             for name in variables:
                 self._write_var_data(name)
@@ -270,13 +268,13 @@ class netcdf_file(object):
         nc_type = REVERSE[var.typecode()]
         self.fp.write(nc_type)
 
-        if var.shape[0]:
+        if var._shape[0]:
             vsize = var.data.size * var.data.itemsize
             vsize += -vsize % 4
         else:  # record variable
             vsize = var.data[0].size * var.data.itemsize
             rec_vars = len([var for var in self.variables.values()
-                    if var.shape[0] is None])
+                    if var._shape[0] is None])
             if rec_vars > 1:
                 vsize += -vsize % 4
         self.variables[name].__dict__['_vsize'] = vsize
@@ -296,7 +294,7 @@ class netcdf_file(object):
         self.fp.seek(the_beguine)
 
         # Write data.
-        if var.shape[0]:
+        if var._shape[0]:
             self.fp.write(var.data.tostring())    
             count = var.data.size * var.data.itemsize
             self.fp.write('0' * (var._vsize - count))
@@ -413,7 +411,7 @@ class netcdf_file(object):
 
             # Add variable.
             self.variables[name] = netcdf_variable(
-                    data, typecode, shape, dimensions, attributes)
+                    data, typecode, shape, dimensions, attributes, maskandscale=self._maskandscale)
 
         if rec_vars:
             # Remove padding when only one record variable.
@@ -527,7 +525,7 @@ class netcdf_variable(object):
     attribute of the ``netcdf_variable`` object.
 
     """
-    def __init__(self, data, typecode, shape, dimensions, attributes=None, maskandscale=True):
+    def __init__(self, data, typecode, shape, dimensions, attributes=None, maskandscale=False):
         self.data = data
         self._typecode = typecode
         self._shape = shape
@@ -561,13 +559,15 @@ class netcdf_variable(object):
         return self._typecode
 
     def __getitem__(self, index):
-        datout = squeeze(self.data[index])
+        data = squeeze(self.data[index])
         if self._maskandscale:
-            return _maskandscale(self,datout)
+            return _unmaskandscale(self,data)
         else:
-            return datout
+            return data
 
     def __setitem__(self, index, data):
+        if self._maskandscale:
+            data = _maskandscale(self,data)
         # Expand data for record vars?
         if not self._shape[0]:
             if isinstance(index, tuple):
@@ -600,24 +600,55 @@ _default_fillvals = {'c':'\0',
                      'q':-2147483647L,
                      'f':9.9692099683868690e+36,
                      'd':9.9692099683868690e+36}
-def _maskandscale(var,datout):
-    totalmask = zeros(datout.shape,bool)
-    fillval = None
-    if hasattr(var, 'missing_value') and (datout == var.missing_value).any():
-        fillval = var.missing_value
-        totalmask += datout==fillval
-    if hasattr(var, '_FillValue') and (datout == var._FillValue).any():
-        if fillval is None:
+def _unmaskandscale(var,data):
+    # if _maskandscale mode set to True, perform
+    # automatic unpacking using scale_factor/add_offset
+    # and automatic conversion to masked array using
+    # missing_value/_Fill_Value.
+    totalmask = zeros(data.shape, bool)
+    fill_value = None
+    if hasattr(var, 'missing_value') and (data == var.missing_value).any():
+        mask=data==var.missing_value
+        fill_value = var.missing_value
+        totalmask += mask
+    if hasattr(var, '_FillValue') and (data == var._FillValue).any():
+        mask=data==var._FillValue
+        if fill_value is None:
+            fill_value = var._FillValue
+        totalmask += mask
+    else:
+        fillval = _default_fillvals[var.typecode()]
+        if (data == fillval).any():
+            mask=data==fillval
+            if fill_value is None:
+                fill_value = fillval
+            totalmask += mask
+    # all values where data == missing_value or _FillValue are
+    # masked.  fill_value set to missing_value if it exists,
+    # otherwise _FillValue.
+    if fill_value is not None:
+        data = ma.masked_array(data,mask=totalmask,fill_value=fill_value)
+    # if variable has scale_factor and add_offset attributes, rescale.
+    if hasattr(var, 'scale_factor') and hasattr(var, 'add_offset'):
+        data = var.scale_factor*data + var.add_offset
+    return data
+
+def _maskandscale(var,data):
+    # if _maskandscale mode set to True, perform
+    # automatic packing using scale_factor/add_offset
+    # and automatic filling of masked arrays using
+    # missing_value/_Fill_Value.
+    # use missing_value as fill value.
+    # if no missing value set, use _FillValue.
+    if hasattr(data,'mask'):
+        if hasattr(var, 'missing_value'):
+            fillval = var.missing_value
+        elif hasattr(var, '_FillValue'):
             fillval = var._FillValue
-        totalmask += datout==var._FillValue
-    elif (datout == _default_fillvals[var.typecode()]).any():
-        if fillval is None:
+        else:
             fillval = _default_fillvals[var.typecode()]
-        totalmask += datout==_default_fillvals[var.dtype]
-    if fillval is not None:
-        datout = ma.masked_array(datout,mask=totalmask,fill_value=fillval)
-    try:
-        datout = var.scale_factor*datout + var.add_offset
-    except:
-        pass
-    return datout
+        data = data.filled(fill_value=fillval)
+    # pack using scale_factor and add_offset.
+    if hasattr(var, 'scale_factor') and hasattr(var, 'add_offset'):
+        data = (data - var.add_offset)/var.scale_factor
+    return data
