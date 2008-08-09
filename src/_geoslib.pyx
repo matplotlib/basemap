@@ -160,41 +160,31 @@ cdef class BaseGeometry:
         cdef double tolerance
         cdef int numgeoms, i, typeid
         g1 = self._geom
-        if GEOS_VERSION_MAJOR > 2:
-            tolerance = tol
-            g3 = GEOSSimplify(g1, tolerance)
-        else:
-            g3 = g1
+        tolerance = tol
+        g3 = GEOSSimplify(g1,tolerance)
         typeid = GEOSGeomTypeId(g3)
         if typeid == GEOS_POLYGON:
             b = _get_coords(g3)
             p = Polygon(b)
-            pout = [p]
         elif typeid == GEOS_LINESTRING:
             b = _get_coords(g3)
             p = LineString(b)
-            pout = [p]
+        # for multi-geom structures, just return first one.
         elif typeid == GEOS_MULTIPOLYGON:
             numgeoms = GEOSGetNumGeometries(g3)
-            pout = []
-            for i from 0 <= i < numgeoms:
-                gout = GEOSGetGeometryN(g3, i)
-                b = _get_coords(gout)
-                p = Polygon(b)
-                pout.append(p)
+            gout = GEOSGetGeometryN(g3, 0)
+            b = _get_coords(gout)
+            p = Polygon(b)
         elif typeid == GEOS_MULTILINESTRING:
             numgeoms = GEOSGetNumGeometries(g3)
-            pout = []
-            for i from 0 <= i < numgeoms:
-                gout = GEOSGetGeometryN(g3, i)
-                b = _get_coords(gout)
-                p = LineString(b)
-                pout.append(p)
+            gout = GEOSGetGeometryN(g3, 0)
+            b = _get_coords(gout)
+            p = LineString(b)
         else:
             type = PyString_FromString(GEOSGeomType(g3))
             raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
         GEOSGeom_destroy(g3)
-        return pout
+        return p
 
     def intersects(self, BaseGeometry geom):
         cdef GEOSGeom *g1, *g2

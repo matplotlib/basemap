@@ -985,7 +985,7 @@ class Basemap(object):
                     # found non-noded intersection between ..."
                     # with geos 3.0.0
                     if _geoslib.__geos_major_version__ > 2:
-                        poly = poly.simplify(1.e-10)[0]
+                        poly = poly.simplify(1.e-10)
                     # if geometry instersects map projection
                     # region, and doesn't have any invalid points, process it.
                     if goodmask.all() and poly.intersects(boundarypolyxy):
