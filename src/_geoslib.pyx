@@ -159,32 +159,33 @@ cdef class BaseGeometry:
         cdef GEOSGeom *g1, *g3, *gout
         cdef double tolerance
         cdef int numgeoms, i, typeid
-        g1 = self._geom
-        tolerance = tol
-        g3 = GEOSSimplify(g1,tolerance)
-        typeid = GEOSGeomTypeId(g3)
-        if typeid == GEOS_POLYGON:
-            b = _get_coords(g3)
-            p = Polygon(b)
-        elif typeid == GEOS_LINESTRING:
-            b = _get_coords(g3)
-            p = LineString(b)
-        # for multi-geom structures, just return first one.
-        elif typeid == GEOS_MULTIPOLYGON:
-            numgeoms = GEOSGetNumGeometries(g3)
-            gout = GEOSGetGeometryN(g3, 0)
-            b = _get_coords(gout)
-            p = Polygon(b)
-        elif typeid == GEOS_MULTILINESTRING:
-            numgeoms = GEOSGetNumGeometries(g3)
-            gout = GEOSGetGeometryN(g3, 0)
-            b = _get_coords(gout)
-            p = LineString(b)
-        else:
-            type = PyString_FromString(GEOSGeomType(g3))
-            raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
-        GEOSGeom_destroy(g3)
-        return p
+        if GEOS_VERSION_MAJOR > 2:
+            g1 = self._geom
+            tolerance = tol
+            g3 = GEOSSimplify(g1,tolerance)
+            typeid = GEOSGeomTypeId(g3)
+            if typeid == GEOS_POLYGON:
+                b = _get_coords(g3)
+                p = Polygon(b)
+            elif typeid == GEOS_LINESTRING:
+                b = _get_coords(g3)
+                p = LineString(b)
+            # for multi-geom structures, just return first one.
+            elif typeid == GEOS_MULTIPOLYGON:
+                numgeoms = GEOSGetNumGeometries(g3)
+                gout = GEOSGetGeometryN(g3, 0)
+                b = _get_coords(gout)
+                p = Polygon(b)
+            elif typeid == GEOS_MULTILINESTRING:
+                numgeoms = GEOSGetNumGeometries(g3)
+                gout = GEOSGetGeometryN(g3, 0)
+                b = _get_coords(gout)
+                p = LineString(b)
+            else:
+                type = PyString_FromString(GEOSGeomType(g3))
+                raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
+            GEOSGeom_destroy(g3)
+            return p
 
     def intersects(self, BaseGeometry geom):
         cdef GEOSGeom *g1, *g2
