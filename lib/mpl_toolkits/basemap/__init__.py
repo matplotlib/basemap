@@ -913,6 +913,12 @@ class Basemap(object):
                         antart = True
                     else:
                         poly = Shape(b)
+                        # this is a workaround to avoid
+                        # "GEOS_ERROR: TopologyException: 
+                        # found non-noded intersection between ..."
+                        # with geos 3.0.0
+                        if _geoslib.__geos_major_version__ > 2:
+                            poly = poly.simplify(1.e-10)
                         antart = False
                     # create duplicate polygons shifted by -360 and +360
                     # (so as to properly treat polygons that cross
