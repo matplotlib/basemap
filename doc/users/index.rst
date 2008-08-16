@@ -10,6 +10,7 @@
 .. toctree::
 
     intro.rst
+    installing.rst
     mapsetup.rst
     geography.rst
     graticule.rst

@@ -14,8 +14,6 @@ numpy 1.1 (or higher)
 The GEOS (Geometry Engine - Open Source) library (version 2.2.3 or higher).
 Source code is included in the geos-2.2.3 directory.
 
-setuptools (only if your are using python 2.3)
-
 PIL (http://pythonware.com/products/pil) is optional (only
 needed for Basemap warpimage and bluemarble methods).
 
@@ -71,11 +69,8 @@ you have problems or questions.
 
 0) Install pre-requisite python modules numpy and matplotlib.
 
-1) Then download basemap-X.Y.Z.tar.gz (approx 32 mb) from
+1) Then download basemap-X.Y.Z.tar.gz (approx 100 mb) from
 the sourceforge download site, unpack and cd to basemap-X.Y.Z.
-If you want the full-resolution coastline dataset (useful if you
-will be making maps of very small regions), get 
-basemap-fullresdata-X.Y.Z.tar.gz (approx. 100 mb).
 
 2) Install the GEOS library.  If you already have it on your
 system, just set the environment variable GEOS_DIR to point to the location 
