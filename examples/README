@@ -111,6 +111,9 @@ show_colormaps.py plots the extra colormaps included with basemap.
 plotprecip.py use nonlinear precip colormap included with basemap
 to make a rainfall plot.
 
+cubed_sphere.py - plot a "cubed globe" suitable for cutting and folding,
+a la http://www.progonos.com/furuti/MapProj/Normal/ProjPoly/Foldout/Cube/cube.html.
+
 run_all.py is a driver script that runs all the examples except fcstmaps.py,
 testgdal.py, geos_demo_2.py, warpimage.py, and pnganim.py (which
 rely on external dependencies and/or an internet connection).
