@@ -23,10 +23,10 @@ for lat_0 in [90,0,-90]:
                         rsphere=rsphere)
             m.bluemarble()
             m.drawparallels(np.arange(-90,91,10),color='0.5')
-            m.drawmeridians(np.arange(0,360,10),color='0.5')
+            m.drawmeridians(np.arange(5,365,10),color='0.5')
             #m.drawlsmask(ocean_color='aqua',land_color='coral')
             #m.drawparallels(np.arange(-90,91,10))
-            #m.drawmeridians(np.arange(0,360,10))
+            #m.drawmeridians(np.arange(5,365,10))
 fig.text    (0.625,0.75,\
             'World Map on a Cube\n Gnomonic Projection',\
             fontsize=14)
