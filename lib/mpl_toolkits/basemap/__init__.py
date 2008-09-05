@@ -3646,7 +3646,8 @@ def _choosecorners(width,height,**kwargs):
     else:
         return corners
 
-def NetCDFFile(file, mode='r', maskandscale=True, username=None, password=None):
+def NetCDFFile(file, mode='r', maskandscale=True, cache=None,\
+               username=None, password=None, verbose=False):
     """NetCDF File reader/writer.  API is the same as Scientific.IO.NetCDF.
 
     If ``file`` is a URL that starts with `http`, it is assumed
@@ -3666,9 +3667,17 @@ def NetCDFFile(file, mode='r', maskandscale=True, username=None, password=None):
     To suppress these automatic conversions, set the ``maskandscale``
     keyword to False. 
 
+    The keywords ``cache``, ``username``, ``password`` and ``verbose`` are only
+    valid for remote OPenDAP datasets.  ``username`` and ``password`` are used 
+    to access OPenDAP datasets that require authentication.  ``verbose=True``
+    will make the pydap client print out the URLs being accessed.
+    ``cache`` is a location (a directory) for caching data, so that repeated
+    accesses to the same URL avoid the network. 
+
     """
     if file.startswith('http'):
-        return netcdf._RemoteFile(file,maskandscale=maskandscale,username=username,password=password)
+        return netcdf._RemoteFile(file,maskandscale=maskandscale,\
+        cache=cache,username=username,password=password,verbose=verbose)
     else:
         return netcdf.netcdf_file(file,mode=mode,maskandscale=maskandscale)
 
