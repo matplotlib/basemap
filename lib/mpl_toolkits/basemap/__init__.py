@@ -3646,7 +3646,7 @@ def _choosecorners(width,height,**kwargs):
     else:
         return corners
 
-def NetCDFFile(file, mode='r', maskandscale=True):
+def NetCDFFile(file, mode='r', maskandscale=True, username=None, password=None):
     """NetCDF File reader/writer.  API is the same as Scientific.IO.NetCDF.
 
     If ``file`` is a URL that starts with `http`, it is assumed
@@ -3668,7 +3668,7 @@ def NetCDFFile(file, mode='r', maskandscale=True):
 
     """
     if file.startswith('http'):
-        return netcdf._RemoteFile(file,maskandscale=maskandscale)
+        return netcdf._RemoteFile(file,maskandscale=maskandscale,username=username,password=password)
     else:
         return netcdf.netcdf_file(file,mode=mode,maskandscale=maskandscale)
 

@@ -8,8 +8,8 @@ _typecodes = dict([[_v,_k] for _k,_v in typemap.items()])
 class _RemoteFile(object):
     """A NetCDF file reader. API is the same as Scientific.IO.NetCDF."""
 
-    def __init__(self, file, maskandscale=False):
-        self._buffer = open_remote(file)
+    def __init__(self, file, maskandscale=False, username=None, password=None):
+        self._buffer = open_remote(file,username=username,password=password)
         self._maskandscale = maskandscale
         self._parse()
 
