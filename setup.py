@@ -81,17 +81,15 @@ packages          = ['mpl_toolkits','mpl_toolkits.basemap']
 package_dirs       = {'':'lib'}
 extensions = [Extension("mpl_toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
 extensions.append(Extension("mpl_toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
-# for some reason, pickling won't work if this extension is installed
-# as "matplotlib.toolkits.basemap._geoslib"
 if sys.platform == 'win32': 
 # don't use runtime_library_dirs on windows (workaround
 # for a distutils bug - http://bugs.python.org/issue2437).
-    extensions.append(Extension("_geoslib",['src/_geoslib.c'],
+    extensions.append(Extension("mpl_toolkits.basemap._geoslib",['src/_geoslib.c'],
                                 library_dirs=geos_library_dirs,
                                 include_dirs=geos_include_dirs,
                                 libraries=['geos_c','geos']))
 else:
-    extensions.append(Extension("_geoslib",['src/_geoslib.c'],
+    extensions.append(Extension("mpl_toolkits.basemap._geoslib",['src/_geoslib.c'],
                                 library_dirs=geos_library_dirs,
                                 runtime_library_dirs=geos_library_dirs,
                                 include_dirs=geos_include_dirs,
