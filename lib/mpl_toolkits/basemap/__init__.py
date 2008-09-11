@@ -2548,6 +2548,11 @@ class Basemap(object):
             ax.hold(b)
             raise
         ax.hold(b)
+        # reset current active image (only if pyplot is imported).
+        try:
+            plt.gci._current = ret
+        except:
+            pass
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
