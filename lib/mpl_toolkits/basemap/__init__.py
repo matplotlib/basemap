@@ -2449,25 +2449,41 @@ class Basemap(object):
             vin = vin.filled(1)
         else:
             masked = False
+        
+        # Map the (lon, lat) vector in the complex plane.
         uvc = uin + 1j*vin
         uvmag = np.abs(uvc)
-        delta = 0.1 # increment in longitude
-        dlon = delta*uin/uvmag
-        dlat = delta*(vin/uvmag)*np.cos(lats*np.pi/180.0)
-        farnorth = lats+dlat >= 90.0
+        theta = np.angle(uvc)
+        
+        # Define a displacement (dlon, dlat) that moves all 
+        # positions (lons, lats) a small distance in the 
+        # direction of the original vector. 
+        dc = 1E-5 * np.exp(theta*1j)
+        dlat = dc.imag * np.cos(np.radians(lats))
+        dlon = dc.real 
+        
+        # Deal with displacements that overshoot the North or South Pole.
+        farnorth = np.abs(lats+dlat) >= 90.0
         somenorth = farnorth.any()
         if somenorth:
             dlon[farnorth] *= -1.0
             dlat[farnorth] *= -1.0
+        
+        # Add displacement to original location and find the native coordinates.
         lon1 = lons + dlon
         lat1 = lats + dlat
         xn, yn = self(lon1, lat1)
+        
+        # Determine the angle of the displacement in the native coordinates. 
         vecangle = np.arctan2(yn-y, xn-x)
         if somenorth:
             vecangle[farnorth] += np.pi
+            
+        # Compute the x-y components of the original vector.
         uvcout = uvmag * np.exp(1j*vecangle)
         uout = uvcout.real
         vout = uvcout.imag
+        
         if masked:
             uout = ma.array(uout, mask=mask)
             vout = ma.array(vout, mask=mask)
@@ -3793,3 +3809,54 @@ def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     """
     cdftime = netcdftime.utime(units,calendar=calendar)
     return cdftime.date2num(dates)
+
+
+
+# beginnings of a test suite.
+
+from numpy.testing import NumpyTestCase,assert_almost_equal
+class TestRotateVector(NumpyTestCase):
+    def make_array(self):
+        lat = np.array([0, 45, 75, 90])
+        lon = np.array([0,90,180,270])
+        u = np.ones((len(lat), len(lon)))
+        v = np.zeros((len(lat), len(lon)))
+        return u,v,lat,lon
+        
+    def test_cylindrical(self):
+        # Cylindrical case
+        B = Basemap()
+        u,v,lat,lon=self.make_array()
+        ru, rv = B.rotate_vector(u,v, lon, lat)
+    
+        # Check that the vectors are identical.
+        assert_almost_equal(ru, u)
+        assert_almost_equal(rv, v)
+        
+    def test_nan(self):
+        B = Basemap()
+        u,v,lat,lon=self.make_array()
+        # Set one element to 0, so that the vector magnitude is 0. 
+        u[1,1] = 0.
+        ru, rv = B.rotate_vector(u,v, lon, lat)
+        assert not np.isnan(ru).any()
+        assert_almost_equal(u, ru)
+        assert_almost_equal(v, rv)
+        
+    def test_npstere(self):
+        # NP Stereographic case
+        B=Basemap(projection='npstere', boundinglat=50., lon_0=0.)
+        u,v,lat,lon=self.make_array()
+        v = np.ones((len(lat), len(lon)))    
+        
+        ru, rv = B.rotate_vector(u,v, lon, lat)
+        
+        assert_almost_equal(ru[2, :],[1,-1,-1,1], 6)
+        assert_almost_equal(rv[2, :],[1,1,-1,-1], 6)
+
+def test():
+    import unittest
+    suite = unittest.makeSuite(TestRotateVector,'test')
+    runner = unittest.TextTestRunner()
+    runner.run(suite)
+
