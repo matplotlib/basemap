@@ -28,16 +28,18 @@ fig=plt.figure()
 # draw colored markers.
 # use zorder=10 to make sure markers are drawn last.
 # (otherwise they are covered up when continents are filled)
-#m.scatter(x,y,25,z,cmap=plt.cm.jet,marker='o',edgecolors='none',zorder=10) 
+m.scatter(x,y,25,z,cmap=plt.cm.jet,marker='o',edgecolors='none',zorder=10) 
+# plot colorbar for markers.
+plt.colorbar()
 # create a list of strings containing z values
 # or, plot actual numbers as color-coded text strings.
-zn = [ '%2i' % zz for zz in z ]
-# plot numbers on map, colored by value.
-for numstr,zval,xpt,ypt in zip(zn,z,x,y):
-    # only plot values inside map region.
-    if xpt > m.xmin and xpt < m.xmax and ypt > m.ymin and ypt < m.ymax:
-        hexcolor = rgb2hex(plt.cm.jet(zval/100.)[:3])
-        plt.text(xpt,ypt,numstr,fontsize=9,weight='bold',color=hexcolor)
+#zn = [ '%2i' % zz for zz in z ]
+## plot numbers on map, colored by value.
+#for numstr,zval,xpt,ypt in zip(zn,z,x,y):
+#    # only plot values inside map region.
+#    if xpt > m.xmin and xpt < m.xmax and ypt > m.ymin and ypt < m.ymax:
+#        hexcolor = rgb2hex(plt.cm.jet(zval/100.)[:3])
+#        plt.text(xpt,ypt,numstr,fontsize=9,weight='bold',color=hexcolor)
 # draw coasts and fill continents/lakes.
 m.drawcoastlines(linewidth=0.5)
 m.fillcontinents(color='coral',lake_color='aqua')
@@ -50,6 +52,6 @@ circles = np.arange(0.,90.,delat).tolist()+\
 m.drawparallels(circles)
 delon = 45.
 meridians = np.arange(0,360,delon)
-m.drawmeridians(meridians,labels=[1,1,1,1])
-plt.title('Random Points',y=1.075)
+m.drawmeridians(meridians,labels=[1,0,1,1])
+plt.title('Random Points',y=1.05)
 plt.show()
