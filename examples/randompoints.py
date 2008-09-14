@@ -10,16 +10,16 @@ from numpy.random import uniform
 m = Basemap(lon_0=-105,boundinglat=30.,
             resolution='l',area_thresh=10000.,projection='npstere')
 # number of points to plot.
-npts = 750
+npts = 500
 # generate random points on a sphere,
 # so that every small area on the sphere is expected
 # to have the same number of points.
 # http://mathworld.wolfram.com/SpherePointPicking.html
 u = uniform(0.,1.,size=npts)
 v = uniform(0.,1.,size=npts)
-z = uniform(0,100,size=npts)
 lons = 360.*u
 lats = (180./np.pi)*np.arccos(2*v-1) - 90.
+z = uniform(0,100,size=npts) # this field controls color of dots.
 # transform lons and lats to map coordinates.
 x,y = m(lons,lats)
 # plot them as filled circles on the map.
