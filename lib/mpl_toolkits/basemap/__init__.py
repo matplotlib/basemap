@@ -926,8 +926,12 @@ class Basemap(object):
                     if not antart:
                         b2[:,0] = b[:,0]-360
                         poly1 = Shape(b2)
+                        if _geoslib.__geos_major_version__ > 2:
+                            poly1 = poly1.simplify(1.e-10)
                         b2[:,0] = b[:,0]+360
                         poly2 = Shape(b2)
+                        if _geoslib.__geos_major_version__ > 2:
+                            poly2 = poly2.simplify(1.e-10)
                         polys = [poly1,poly,poly2]
                     else: # Antartica already extends from -360 to +720.
                         polys = [poly]
