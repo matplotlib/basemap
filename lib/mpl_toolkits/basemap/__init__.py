@@ -3191,10 +3191,24 @@ class Basemap(object):
             self._bm_file, headers = urlretrieve(file)
         else:
             self._bm_file = file
+        # bmproj is True if map projection region is same as
+        # image region.
+        bmproj = self.projection == 'cyl' and \
+                 self.llcrnrlon == -180 and self.urcrnrlon == 180
         # read in jpeg image to rgba array of normalized floats.
         if not hasattr(self,'_bm_rgba') or newfile:
             pilImage = Image.open(self._bm_file)
             self._bm_rgba = pil_to_array(pilImage)
+            # define lat/lon grid that image spans.
+            nlons = self._bm_rgba.shape[1]; nlats = self._bm_rgba.shape[0]
+            delta = 360./float(nlons)
+            self._bm_lons = np.arange(-180.+0.5*delta,180.,delta)
+            self._bm_lats = np.arange(-90.+0.5*delta,90.,delta)
+            # is it a cylindrical projection whose limits lie 
+            # outside the limits of the image?
+            cylproj =  self.projection in ['mill','cyl','merc'] and \
+                      (self.urcrnrlon > self._bm_lons[-1] or \
+                       self.llcrnrlon < self._bm_lons[0])
             # if pil_to_array returns a 2D array, it's a grayscale image.
             # create an RGB image, with R==G==B.
             if self._bm_rgba.ndim == 2:
@@ -3202,16 +3216,15 @@ class Basemap(object):
                 for k in range(3):
                     tmp[:,:,k] = self._bm_rgba
                 self._bm_rgba = tmp
+            if cylproj:
+            # stack grids side-by-side (in longitiudinal direction), so
+            # any range of longitudes may be plotted on a world map.
+                self._bm_lons = \
+                np.concatenate((self._bm_lons,self._bm_lons+360),1)
+                self._bm_rgba = \
+                np.concatenate((self._bm_rgba,self._bm_rgba),1)
             # convert to normalized floats.
             self._bm_rgba = self._bm_rgba.astype(np.float32)/255.
-            # define lat/lon grid that image spans.
-            nlons = self._bm_rgba.shape[1]; nlats = self._bm_rgba.shape[0]
-            delta = 360./float(nlons)
-            self._bm_lons = np.arange(-180.+0.5*delta,180.,delta)
-            self._bm_lats = np.arange(-90.+0.5*delta,90.,delta)
-
-        bmproj = self.projection == 'cyl' and \
-                 self.llcrnrlon == -180 and self.urcrnrlon == 180
         if not bmproj:
             if newfile or not hasattr(self,'_bm_rgba_warped'):
                 # transform to nx x ny regularly spaced native
