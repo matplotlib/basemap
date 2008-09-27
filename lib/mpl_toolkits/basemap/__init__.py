@@ -3210,15 +3210,22 @@ class Basemap(object):
             self._bm_lons = np.arange(-180.+0.5*delta,180.,delta)
             self._bm_lats = np.arange(-90.+0.5*delta,90.,delta)
 
-        if self.projection != 'cyl':
+        bmproj = self.projection == 'cyl' and \
+                 self.llcrnrlon == -180 and self.urcrnrlon == 180
+        if not bmproj:
             if newfile or not hasattr(self,'_bm_rgba_warped'):
                 # transform to nx x ny regularly spaced native
                 # projection grid.
                 # nx and ny chosen to have roughly the 
                 # same horizontal res as original image.
-                dx = 2.*np.pi*self.rmajor/float(nlons)
-                nx = int((self.xmax-self.xmin)/dx)+1
-                ny = int((self.ymax-self.ymin)/dx)+1
+                if self.projection != 'cyl':
+                    dx = 2.*np.pi*self.rmajor/float(nlons)
+                    nx = int((self.xmax-self.xmin)/dx)+1
+                    ny = int((self.ymax-self.ymin)/dx)+1
+                else: 
+                    dx = 360./float(nlons)
+                    nx = int((self.urcrnrlon-self.llcrnrlon)/dx)+1
+                    ny = int((self.urcrnrlat-self.llcrnrlat)/dx)+1
                 self._bm_rgba_warped = np.ones((ny,nx,4),np.float64)
                 # interpolate rgba values from geographic coords (proj='cyl')
                 # to map projection coords.
@@ -3231,8 +3238,30 @@ class Basemap(object):
                 # for ortho,geos mask pixels outside projection limb.
                 if self.projection in ['geos','ortho']:
                     lonsr,latsr = self(x,y,inverse=True)
-                    mask = ma.zeros((nx,ny,4),np.int8)
+                    mask = ma.zeros((ny,nx,4),np.int8)
                     mask[:,:,0] = np.logical_or(lonsr>1.e20,latsr>1.e30)
+                    for k in range(1,4):
+                        mask[:,:,k] = mask[:,:,0]
+                    self._bm_rgba_warped = \
+                    ma.masked_array(self._bm_rgba_warped,mask=mask)
+                    # make points outside projection limb transparent.
+                    self._bm_rgba_warped = self._bm_rgba_warped.filled(0.)
+                # treat mollweide, robinson and sinusoidal.
+                elif self.projection in ['moll','robin','sinu']:
+                    lonsr,latsr = self(x,y,inverse=True)
+                    mask = ma.zeros((ny,nx,4),np.int8)
+                    lon_0 = self.projparams['lon_0']
+                    lonright = lon_0+180.
+                    lonleft = lon_0-180.
+                    x1 = np.array(ny*[0.5*(self.xmax + self.xmin)],np.float)
+                    y1 = np.linspace(self.ymin, self.ymax, ny)
+                    lons1, lats1 = self(x1,y1,inverse=True)
+                    lats1 = np.where(lats1 < -89.999999, -89.999999, lats1)
+                    lats1 = np.where(lats1 > 89.999999, 89.999999, lats1)
+                    for j,lat in enumerate(lats1):
+                        xmax,ymax = self(lonright,lat)
+                        xmin,ymin = self(lonleft,lat)
+                        mask[j,:,0] = np.logical_or(x[j,:]>xmax,x[j,:]<xmin)
                     for k in range(1,4):
                         mask[:,:,k] = mask[:,:,0]
                     self._bm_rgba_warped = \

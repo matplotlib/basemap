@@ -1,4 +1,6 @@
 version 0.99.2 (not yet released)
+           * fix warpimage and bluemarble methods for projection = 'cyl',
+             'robin', 'moll' and 'sinu'.
            * bugfix patch for rotate_vector from David Huard.  David
              also contributed the beginnings of a test suite.
            * _geoslib.so now installed in mpl_toolkits.basemap.	    
