@@ -3194,7 +3194,8 @@ class Basemap(object):
         # bmproj is True if map projection region is same as
         # image region.
         bmproj = self.projection == 'cyl' and \
-                 self.llcrnrlon == -180 and self.urcrnrlon == 180
+                 self.llcrnrlon == -180 and self.urcrnrlon == 180 and \
+                 self.llcrnrlat == -90 and self.urcrnrlat == 90
         # read in jpeg image to rgba array of normalized floats.
         if not hasattr(self,'_bm_rgba') or newfile:
             pilImage = Image.open(self._bm_file)
@@ -3216,7 +3217,7 @@ class Basemap(object):
                 for k in range(3):
                     tmp[:,:,k] = self._bm_rgba
                 self._bm_rgba = tmp
-            if cylproj:
+            if cylproj and not bmproj:
             # stack grids side-by-side (in longitiudinal direction), so
             # any range of longitudes may be plotted on a world map.
                 self._bm_lons = \
