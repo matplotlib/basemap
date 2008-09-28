@@ -60,8 +60,6 @@ m.drawmeridians(np.arange(0,360,60),labels=[0,0,0,1],color='0.5')
 m.drawparallels(np.arange(-90,90,30),labels=[1,0,0,0],color='0.5')
 plt.title("Blue Marble image - non-native 'cyl' projection",fontsize=12)
 print 'plot non-native cylindrical map (warping needed) ...'
-plt.show()
-raise SystemExit
 
 # create new figure
 fig=plt.figure()
