@@ -20,9 +20,18 @@ m.drawparallels(np.arange(-90,90,30),color='0.5')
 plt.title("Lights at Night image warped from 'cyl' to 'ortho' projection",fontsize=12)
 print 'warp to orthographic map ...'
 
-# redisplay (same image specified) should be fast since data is cached.
-fig = plt.figure()
-m.warpimage(image='earth_lights_lrg.jpg')
+# create new figure
+fig=plt.figure()
+# define orthographic projection centered on North America.
+m = Basemap(projection='robin',lon_0=-100,resolution='l')
+m.bluemarble()
+# draw coastlines.
+m.drawcoastlines(linewidth=0.5,color='0.5')
+# draw lat/lon grid lines every 30 degrees.
+m.drawmeridians(np.arange(0,360,60),color='0.5')
+m.drawparallels(np.arange(-90,90,30),color='0.5')
+plt.title("Blue Marble image warped from 'cyl' to 'robinso' projection",fontsize=12)
+print 'warp to robinson map ...'
 
 # create new figure
 fig=plt.figure()
@@ -36,7 +45,21 @@ m.drawcoastlines(linewidth=0.5,color='0.5')
 m.drawmeridians(np.arange(-180,180,60),labels=[0,0,0,1],color='0.5')
 m.drawparallels(np.arange(-90,90,30),labels=[1,0,0,0],color='0.5')
 plt.title("Blue Marble image - native 'cyl' projection",fontsize=12)
-print 'plot cylindrical map (no warping needed) ...'
+print 'plot native cylindrical map (no warping needed) ...'
+
+# create new figure
+fig=plt.figure()
+# define cylindrical equidistant projection.
+m = Basemap(projection='cyl',llcrnrlon=0,llcrnrlat=-60,urcrnrlon=360,urcrnrlat=60,resolution='l')
+# plot (unwarped) rgba image.
+im = m.bluemarble()
+# draw coastlines.
+m.drawcoastlines(linewidth=0.5,color='0.5')
+# draw lat/lon grid lines.
+m.drawmeridians(np.arange(-180,180,60),labels=[0,0,0,1],color='0.5')
+m.drawparallels(np.arange(-90,90,30),labels=[1,0,0,0],color='0.5')
+plt.title("Blue Marble image - non-native 'cyl' projection",fontsize=12)
+print 'plot non-native cylindrical map (warping needed) ...'
 
 # create new figure
 fig=plt.figure()
