@@ -30,7 +30,7 @@ m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw lat/lon grid lines every 30 degrees.
 m.drawmeridians(np.arange(0,360,60),color='0.5')
 m.drawparallels(np.arange(-90,90,30),color='0.5')
-plt.title("Blue Marble image warped from 'cyl' to 'robinso' projection",fontsize=12)
+plt.title("Blue Marble image warped from 'cyl' to 'robinson' projection",fontsize=12)
 print 'warp to robinson map ...'
 
 # create new figure
