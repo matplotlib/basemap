@@ -662,7 +662,42 @@ m.drawmapboundary()
 plt.title('McBryde-Thomas Flat Polar Quartic')
 print 'plotting McBryde-Thomas Flat Polar Quartic example ...'
 print m.proj4string
-plt.show()
 
+# create new figure
+fig=plt.figure()
+# create Basemap instance for van der Grinten projection.
+m = Basemap(projection='vandg',lon_0=0.5*(lonsin[0]+lonsin[-1]))
+# add poles to data.
+tmpdat = np.empty((len(latsin)+2,len(lonsin)),topodatin.dtype)
+tmpdat[1:-1,:] = topodatin
+tmpdat[0,:] = topodatin[1,:].mean()
+tmpdat[-1,:] = topodatin[-1,:].mean()
+lats2 = np.empty(len(latsin)+2,latsin.dtype)
+lats2[1:-1] = latsin
+lats2[0] = -90; latsin[-1] = 90
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# plot image over map with pcolormesh.
+x,y = m(*np.meshgrid(lonsin,lats2))
+p = m.pcolormesh(x,y,tmpdat,shading='flat')
+pos = ax.get_position()
+l, b, w, h = pos.bounds
+cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
+plt.colorbar(cax=cax) # draw colorbar
+plt.axes(ax)  # make the original axes current again
+# draw coastlines and political boundaries.
+m.drawcoastlines()
+# draw parallels and meridians
+parallels = np.arange(-80.,90,20.)
+m.drawparallels(parallels)
+meridians = np.arange(0.,360.,60.)
+m.drawmeridians(meridians)
+# draw boundary around map region.
+m.drawmapboundary()
+# add a title.
+plt.title('van der Grinten')
+print 'plotting van der Grinten example ...'
+print m.proj4string
+
+plt.show()
 
 print 'done'

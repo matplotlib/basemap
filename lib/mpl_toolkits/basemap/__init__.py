@@ -69,7 +69,8 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'sinu'     : 'Sinusoidal',
              'moll'     : 'Mollweide',
              'robin'    : 'Robinson',
-             'mbtfpq'  : 'McBryde-Thomas Flat-Polar Quartic',
+             'vandg'    : 'van der Grinten',
+             'mbtfpq'   : 'McBryde-Thomas Flat-Polar Quartic',
              'gnom'     : 'Gnomonic',
              }
 supported_projections = []
@@ -78,7 +79,7 @@ for _items in _projnames.iteritems():
 supported_projections = ''.join(supported_projections)
 
 _cylproj = ['cyl','merc','mill','gall']
-_pseudocyl = ['moll','robin','sinu','mbtfpq']
+_pseudocyl = ['moll','robin','sinu','mbtfpq','vandg']
 
 # projection specific parameters.
 projection_params = {'cyl'      : 'corners only (no width/height)',
@@ -106,6 +107,7 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'sinu'     : 'lon_0,lat_0,no corners or width/height',
              'moll'     : 'lon_0,lat_0,no corners or width/height',
              'robin'    : 'lon_0,lat_0,no corners or width/height',
+             'vandg'    : 'lon_0,lat_0,no corners or width/height',
              'mbtfpq'   : 'lon_0,lat_0,no corners or width/height',
              'gnom'     : 'lon_0,lat_0',
              }
@@ -546,7 +548,7 @@ class Basemap(object):
             self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
             self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
+                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
         elif projection in ['tmerc','gnom','cass','poly'] :
             if projection == 'gnom' and not projparams.has_key('R'):
                 raise ValueError, 'gnomonic projection only works for perfect spheres - not ellipsoids'
@@ -566,7 +568,7 @@ class Basemap(object):
             if lat_0 is None or lon_0 is None:
                 raise ValueError, 'must specify lat_0 and lon_0 for Orthographic basemap'
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
+                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
             if not using_corners:
                 llcrnrlon = -180.
                 llcrnrlat = -90.
@@ -584,7 +586,7 @@ class Basemap(object):
             if lon_0 is None:
                 raise ValueError, 'must specify lon_0 for Geostationary basemap'
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
+                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
             if not using_corners:
                 llcrnrlon = -180.
                 llcrnrlat = -90.
@@ -597,9 +599,9 @@ class Basemap(object):
             self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection in _pseudocyl:
             if lon_0 is None:
-                raise ValueError, 'must specify lon_0 for Robinson, Mollweide, or Sinusoidal basemap'
+                raise ValueError, 'must specify lon_0 for %s projection' % _projnames[self.projection]
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
+                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
             llcrnrlon = -180.
             llcrnrlat = -90.
             urcrnrlon = 180
@@ -646,7 +648,7 @@ class Basemap(object):
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
+                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
         elif projection == 'cyl':
             if not using_corners:
                 llcrnrlon = -180.
@@ -656,7 +658,7 @@ class Basemap(object):
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % self.projection
+                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
         else:
             raise ValueError(_unsupported_projection % projection)
 
@@ -1039,13 +1041,14 @@ class Basemap(object):
         """
         create map boundary polygon (in lat/lon and x/y coordinates)
         """
-        nx = 100
-        ny = 100
+        nx = 100; ny = 100
+        if self.projection == 'vandg':
+            nx = 10*nx; ny = 10*ny
         maptran = self
         if self.projection in ['ortho','geos']:
             # circular region.
             thetas = np.linspace(0.,2.*np.pi,2*nx*ny)[:-1]
-            if self.projection == 'ortho':
+            if self.projection ==  'ortho':
                 rminor = self.rmajor
                 rmajor = self.rmajor
             else:
@@ -1078,17 +1081,17 @@ class Basemap(object):
             # quasi-elliptical region.
             lon_0 = self.projparams['lon_0']
             # left side
-            lats1 = np.linspace(-89.9,89.9,ny).tolist()
+            lats1 = np.linspace(-89.9999,89.9999,ny).tolist()
             lons1 = len(lats1)*[lon_0-179.9]
             # top.
             lons2 = np.linspace(lon_0-179.9,lon_0+179.9,nx).tolist()
-            lats2 = len(lons2)*[89.9]
+            lats2 = len(lons2)*[89.9999]
             # right side
-            lats3 = np.linspace(89.9,-89.9,ny).tolist()
+            lats3 = np.linspace(89.9999,-89.9999,ny).tolist()
             lons3 = len(lats3)*[lon_0+179.9]
             # bottom.
             lons4 = np.linspace(lon_0+179.9,lon_0-179.9,nx).tolist()
-            lats4 = len(lons4)*[-89.9]
+            lats4 = len(lons4)*[-89.9999]
             lons = np.array(lons1+lons2+lons3+lons4,np.float64)
             lats = np.array(lats1+lats2+lats3+lats4,np.float64)
             x, y = maptran(lons,lats)
@@ -1206,20 +1209,22 @@ class Basemap(object):
                 limb.set_zorder(zorder)
         elif self.projection in _pseudocyl:  # elliptical region.
             nx = 100; ny = 100
+            if self.projection == 'vandg':
+                nx = 10*nx; ny = 10*ny
             # quasi-elliptical region.
             lon_0 = self.projparams['lon_0']
             # left side
-            lats1 = np.linspace(-89.9,89.9,ny).tolist()
+            lats1 = np.linspace(-89.9999,89.99999,ny).tolist()
             lons1 = len(lats1)*[lon_0-179.9]
             # top.
-            lons2 = np.linspace(lon_0-179.9,lon_0+179.9,nx).tolist()
-            lats2 = len(lons2)*[89.9]
+            lons2 = np.linspace(lon_0-179.9999,lon_0+179.9999,nx).tolist()
+            lats2 = len(lons2)*[89.9999]
             # right side
-            lats3 = np.linspace(89.9,-89.9,ny).tolist()
-            lons3 = len(lats3)*[lon_0+179.9]
+            lats3 = np.linspace(89.9999,-89.9999,ny).tolist()
+            lons3 = len(lats3)*[lon_0+179.9999]
             # bottom.
-            lons4 = np.linspace(lon_0+179.9,lon_0-179.9,nx).tolist()
-            lats4 = len(lons4)*[-89.9]
+            lons4 = np.linspace(lon_0+179.9999,lon_0-179.9999,nx).tolist()
+            lats4 = len(lons4)*[-89.9999]
             lons = np.array(lons1+lons2+lons3+lons4,np.float64)
             lats = np.array(lats1+lats2+lats3+lats4,np.float64)
             x, y = self(lons,lats)
@@ -1781,12 +1786,13 @@ class Basemap(object):
             lines = []
             if len(x) > 1 and len(y) > 1:
                 # split into separate line segments if necessary.
-                # (not necessary for mercator or cylindrical or miller).
+                # (not necessary for cylindrical or pseudocylindricl projections)
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
                 dist = np.sqrt(xd+yd)
                 split = dist > 500000.
-                if np.sum(split) and self.projection not in _cylproj + _pseudocyl:
+                if np.sum(split) and self.projection not in \
+                   ['cyl', 'merc', 'mill', 'gall', 'moll', 'robin', 'sinu', 'mbtfpq']:
                     ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                     xl = []
                     yl = []
@@ -1814,9 +1820,9 @@ class Basemap(object):
             linecolls[circ] = (lines,[])
         # draw labels for parallels
         # parallels not labelled for fulldisk orthographic or geostationary
-        if self.projection in ['ortho','geos'] and max(labels):
-            if self._fulldisk:
-                print 'Warning: Cannot label parallels on full-disk Orthographic or Geostationary basemap'
+        if self.projection in ['ortho','geos','vandg'] and max(labels):
+            if self.projection == 'vandg' or self._fulldisk:
+                print 'Warning: Cannot label parallels on %s basemap' % _projnames[self.projection]
                 labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
@@ -2057,8 +2063,8 @@ class Basemap(object):
         # draw labels for meridians.
         # meridians not labelled for sinusoidal, mollweide, or
         # or full-disk orthographic/geostationary.
-        if self.projection in ['sinu','moll'] and max(labels):
-            print 'Warning: Cannot label meridians on Sinusoidal or Mollweide basemap'
+        if self.projection in ['sinu','moll','vandg'] and max(labels):
+            print 'Warning: Cannot label meridians on %s basemap' % _projnames[self.projection]
             labels = [0,0,0,0]
         if self.projection in ['ortho','geos'] and max(labels):
             if self._fulldisk:
