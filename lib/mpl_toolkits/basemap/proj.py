@@ -6,6 +6,9 @@ __version__ = '1.2.2'
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 
+_cylproj = ['cyl','merc','mill','gall']
+_pseudocyl = ['moll','robin','sinu','mbtfpq']
+
 _upper_right_out_of_bounds = (
     'the upper right corner of the plot is not in the map projection region')
 
@@ -67,7 +70,7 @@ class Proj(object):
         self.esq = (self.rmajor**2 - self.rminor**2)/self.rmajor**2
         self.llcrnrlon = llcrnrlon
         self.llcrnrlat = llcrnrlat
-        if self.projection not in ['cyl','ortho','geos','moll','robin','sinu']:
+        if self.projection not in ['ortho','geos','cyl'] + _pseudocyl:
             self._proj4 = pyproj.Proj(projparams)
             llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
         elif self.projection == 'cyl':
@@ -119,7 +122,7 @@ class Proj(object):
                 llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
                 if llcrnrx > 1.e20 or llcrnry > 1.e20:
                     raise ValueError(_lower_left_out_of_bounds)
-        elif self.projection in ['moll','robin','sinu']:
+        elif self.projection in _pseudocyl:
             self._proj4 = pyproj.Proj(projparams)
             xtmp,urcrnry = self(projparams['lon_0'],90.)
             urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
@@ -140,7 +143,7 @@ class Proj(object):
         if urcrnrislatlon:
             self.urcrnrlon = urcrnrlon
             self.urcrnrlat = urcrnrlat
-            if self.projection not in ['ortho','geos','moll','robin','sinu']:
+            if self.projection not in ['ortho','geos'] + _pseudocyl:
                 urcrnrx,urcrnry = self(urcrnrlon,urcrnrlat)
             elif self.projection == 'ortho':
                 if self._fulldisk:
@@ -158,7 +161,7 @@ class Proj(object):
                     urcrnrx,urcrnry = self(urcrnrlon,urcrnrlat)
                     if urcrnrx > 1.e20 or urcrnry > 1.e20:
                         raise ValueError(_upper_right_out_of_bounds)
-            elif self.projection in ['moll','robin','sinu']:
+            elif self.projection in _pseudocyl:
                 xtmp,urcrnry = self(projparams['lon_0'],90.)
                 urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
         else:
@@ -216,7 +219,7 @@ class Proj(object):
         else:
             outx,outy = self._proj4(x, y, inverse=inverse)
         if inverse:
-            if self.projection in ['merc','mill']:
+            if self.projection in ['merc','mill','gall']:
                 if self.projection == 'merc':
                     coslat = math.cos(math.radians(self.projparams['lat_ts']))
                     sinlat = math.sin(math.radians(self.projparams['lat_ts']))
@@ -234,7 +237,7 @@ class Proj(object):
                     except: # x a sequence
                         outx = [_rad2dg*(xi/rcurv) + self.llcrnrlon for xi in x]
         else:
-            if self.projection in ['merc','mill']:
+            if self.projection in ['merc','mill','gall']:
                 if self.projection == 'merc':
                     coslat = math.cos(math.radians(self.projparams['lat_ts']))
                     sinlat = math.sin(math.radians(self.projparams['lat_ts']))

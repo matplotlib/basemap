@@ -75,6 +75,26 @@ print m.proj4string
 
 # create new figure
 fig=plt.figure()
+# setup gall stereographic cylindrical map projection.
+m = Basemap(llcrnrlon=-180.,llcrnrlat=-90,urcrnrlon=180.,urcrnrlat=90.,\
+            resolution='c',area_thresh=10000.,projection='gall')
+# transform to nx x ny regularly spaced native projection grid
+nx = len(lons); ny = len(lats)
+topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
+fig.add_axes([0.1,0.1,0.75,0.75])
+# plot image over map.
+im = m.imshow(topodat,plt.cm.jet)
+m.drawcoastlines()
+# draw parallels
+m.drawparallels(circles,labels=[1,1,1,1])
+# draw meridians
+m.drawmeridians(meridians,labels=[1,1,1,1])
+plt.title('Gall Stereographic Cylindrical',y=1.1)
+print 'plotting Gall Stereographic Cylindrical example ...'
+print m.proj4string
+
+# create new figure
+fig=plt.figure()
 # setup mercator map projection (-80 to +80).
 m = Basemap(llcrnrlon=-180.,llcrnrlat=-80,urcrnrlon=180.,urcrnrlat=80.,\
             resolution='c',area_thresh=10000.,projection='merc',\
@@ -614,6 +634,33 @@ m.drawmeridians(meridians,labels=[0,0,0,1])
 m.drawmapboundary()
 plt.title('Robinson')
 print 'plotting Robinson example ...'
+print m.proj4string
+
+# create new figure
+fig=plt.figure()
+# setup of basemap ('mbtfpq' = McBryde-Thomas Flat Polar Quartic projection)
+m = Basemap(projection='mbtfpq',
+            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# plot image over map with pcolormesh.
+x,y = m(*np.meshgrid(lonsin,latsin))
+p = m.pcolormesh(x,y,topodatin,shading='flat')
+pos = ax.get_position()
+l, b, w, h = pos.bounds
+cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
+plt.colorbar(cax=cax) # draw colorbar
+plt.axes(ax)  # make the original axes current again
+# draw coastlines and political boundaries.
+m.drawcoastlines()
+# draw parallels and meridians
+parallels = np.arange(-60.,90,30.)
+m.drawparallels(parallels,labels=[1,0,0,0])
+meridians = np.arange(0.,360.,60.)
+m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=8)
+# draw boundary around map region.
+m.drawmapboundary()
+plt.title('McBryde-Thomas Flat Polar Quartic')
+print 'plotting McBryde-Thomas Flat Polar Quartic example ...'
 print m.proj4string
 plt.show()
 

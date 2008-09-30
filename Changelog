@@ -1,4 +1,7 @@
 version 0.99.2 (not yet released)
+           * Added McBryde-Thomas Flat Polar Quartic (projection =
+             'mbtfpq') and Gall Stereographic Cylindrical (projection =
+             'gall').
            * fix warpimage and bluemarble methods for projection = 'cyl',
              'robin', 'moll' and 'sinu'.
            * bugfix patch for rotate_vector from David Huard.  David

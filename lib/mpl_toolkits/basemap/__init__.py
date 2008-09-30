@@ -49,6 +49,7 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'tmerc'    : 'Transverse Mercator',
              'omerc'    : 'Oblique Mercator',
              'mill'     : 'Miller Cylindrical',
+             'gall'     : 'Gall Stereographic Cylindrical',
              'lcc'      : 'Lambert Conformal',
              'laea'     : 'Lambert Azimuthal Equal Area',
              'nplaea'   : 'North-Polar Lambert Azimuthal',
@@ -68,6 +69,7 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'sinu'     : 'Sinusoidal',
              'moll'     : 'Mollweide',
              'robin'    : 'Robinson',
+             'mbtfpq'  : 'McBryde-Thomas Flat-Polar Quartic',
              'gnom'     : 'Gnomonic',
              }
 supported_projections = []
@@ -75,12 +77,16 @@ for _items in _projnames.iteritems():
     supported_projections.append(" %-17s%-40s\n" % (_items))
 supported_projections = ''.join(supported_projections)
 
+_cylproj = ['cyl','merc','mill','gall']
+_pseudocyl = ['moll','robin','sinu','mbtfpq']
+
 # projection specific parameters.
 projection_params = {'cyl'      : 'corners only (no width/height)',
              'merc'     : 'corners plus lat_ts (no width/height)',
              'tmerc'    : 'lon_0,lat_0',
              'omerc'    : 'lon_0,lat_0,lat_1,lat_2,lon_1,lon_2,no_rot',
              'mill'     : 'corners only (no width/height)',
+             'gall'     : 'corners only (no width/height)',
              'lcc'      : 'lon_0,lat_0,lat_1,lat_2',
              'laea'     : 'lon_0,lat_0',
              'nplaea'   : 'bounding_lat,lon_0,lat_0,no corners or width/height',
@@ -100,6 +106,7 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'sinu'     : 'lon_0,lat_0,no corners or width/height',
              'moll'     : 'lon_0,lat_0,no corners or width/height',
              'robin'    : 'lon_0,lat_0,no corners or width/height',
+             'mbtfpq'   : 'lon_0,lat_0,no corners or width/height',
              'gnom'     : 'lon_0,lat_0',
              }
 
@@ -160,7 +167,7 @@ _Basemap_init_doc = """
  ==============   ====================================================
 
  For ``sinu``, ``moll``, ``npstere``, ``spstere``, ``nplaea``, ``splaea``, 
- ``npaeqd``, ``spaeqd`` or ``robin``, the values of
+ ``npaeqd``, ``spaeqd``, ``robin`` or ``mbtfpq``, the values of
  llcrnrlon, llcrnrlat, urcrnrlon, urcrnrlat, width and height are ignored
  (because either they are computed internally, or entire globe is
  always plotted). 
@@ -588,7 +595,7 @@ class Basemap(object):
                 self._fulldisk = False
             self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
             self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
-        elif projection in ['moll','robin','sinu']:
+        elif projection in _pseudocyl:
             if lon_0 is None:
                 raise ValueError, 'must specify lon_0 for Robinson, Mollweide, or Sinusoidal basemap'
             if width is not None or height is not None:
@@ -630,7 +637,7 @@ class Basemap(object):
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
-        elif projection == 'mill':
+        elif projection in ['mill','gall']:
             if not using_corners:
                 llcrnrlon = -180.
                 llcrnrlat = -90.
@@ -710,10 +717,10 @@ class Basemap(object):
             self.urcrnrx = proj.urcrnrx
             self.urcrnry = proj.urcrnry
         # set min/max lats for projection domain.
-        if projection in ['mill','cyl','merc']:
+        if projection in _cylproj:
             self.latmin = self.llcrnrlat
             self.latmax = self.urcrnrlat
-        elif projection in ['ortho','geos','moll','robin','sinu']:
+        elif projection in ['ortho','geos'] + _pseudocyl:
             self.latmin = -90.
             self.latmax = 90.
         else:
@@ -759,7 +766,7 @@ class Basemap(object):
                 yd = (y[1:]-y[0:-1])**2
                 dist = np.sqrt(xd+yd)
                 split = dist > 5000000.
-                if np.sum(split) and self.projection not in ['merc','cyl','mill']:
+                if np.sum(split) and self.projection not in _cylproj:
                     ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                     iprev = 0
                     ind.append(len(xd))
@@ -838,8 +845,7 @@ class Basemap(object):
         containsPole = hasNP or hasSP
         # these projections cannot cross pole.
         if containsPole and\
-            self.projection in ['merc','mill','cyl','robin','moll','sinu','geos']:
-            #self.projection in ['tmerc','omerc','cass','merc','mill','cyl','robin','moll','sinu','geos']:
+            self.projection in _cylproj + _pseudocyl + ['geos']:
             raise ValueError('%s projection cannot cross pole'%(self.projection))
         # make sure orthographic or gnomonic projection has containsPole=True
         # we will compute the intersections in stereographic
@@ -1068,7 +1074,7 @@ class Basemap(object):
                 projparms['x_0']=-llcrnrx
                 projparms['y_0']=-llcrnry
                 maptran = pyproj.Proj(projparms)
-        elif self.projection in ['moll','robin','sinu']:
+        elif self.projection in _pseudocyl:
             # quasi-elliptical region.
             lon_0 = self.projparams['lon_0']
             # left side
@@ -1110,7 +1116,7 @@ class Basemap(object):
             b[:,0]=[self.xmin,self.xmin,self.xmax,self.xmax]
             b[:,1]=[self.ymin,self.ymax,self.ymax,self.ymin]
             boundaryxy = _geoslib.Polygon(b)
-        if self.projection in ['mill','merc','cyl']:
+        if self.projection in _cylproj:
             # make sure map boundary doesn't quite include pole.
             if self.urcrnrlat > 89.9999:
                 urcrnrlat = 89.9999
@@ -1127,7 +1133,7 @@ class Basemap(object):
             b[:,0]=x; b[:,1]=y
             boundaryxy = _geoslib.Polygon(b)
         else:
-            if self.projection not in ['moll','robin','sinu']:
+            if self.projection not in _pseudocyl:
                 lons, lats = maptran(x,y,inverse=True)
                 # fix lons so there are no jumps.
                 n = 1
@@ -1198,7 +1204,7 @@ class Basemap(object):
             limb.set_clip_on(False)
             if zorder is not None:
                 limb.set_zorder(zorder)
-        elif self.projection in ['moll','robin','sinu']:  # elliptical region.
+        elif self.projection in _pseudocyl:  # elliptical region.
             nx = 100; ny = 100
             # quasi-elliptical region.
             lon_0 = self.projparams['lon_0']
@@ -1738,7 +1744,7 @@ class Basemap(object):
         if xoffset is None:
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
-        if self.projection in ['merc','cyl','mill','moll','robin','sinu']:
+        if self.projection in _cylproj + _pseudocyl:
             lons = np.arange(self.llcrnrlon,self.urcrnrlon+0.01,0.01)
         elif self.projection in ['tmerc']:
             lon_0 = self.projparams['lon_0']
@@ -1751,7 +1757,7 @@ class Basemap(object):
             circlesl = circles.tolist()
         except:
             circlesl = circles
-        if self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
+        if self.projection not in _cylproj + _pseudocyl:
             if max(circlesl) > 0 and latmax not in circlesl:
                 circlesl.append(latmax)
             if min(circlesl) < 0 and -latmax not in circlesl:
@@ -1780,7 +1786,7 @@ class Basemap(object):
                 yd = (y[1:]-y[0:-1])**2
                 dist = np.sqrt(xd+yd)
                 split = dist > 500000.
-                if np.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
+                if np.sum(split) and self.projection not in _cylproj + _pseudocyl:
                     ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                     xl = []
                     yl = []
@@ -1816,12 +1822,12 @@ class Basemap(object):
         # if so, find x,y location of intersection and draw a label there.
         dx = (self.xmax-self.xmin)/1000.
         dy = (self.ymax-self.ymin)/1000.
-        if self.projection in ['moll','robin','sinu']:
+        if self.projection in _pseudocyl:
             lon_0 = self.projparams['lon_0']
         for dolab,side in zip(labels,['l','r','t','b']):
             if not dolab: continue
             # for cylindrical projections, don't draw parallels on top or bottom.
-            if self.projection in ['cyl','merc','mill','moll','robin','sinu'] and side in ['t','b']: continue
+            if self.projection in _cylproj + _pseudocyl and side in ['t','b']: continue
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
                 yy = np.linspace(self.llcrnry,self.urcrnry,nmax)
@@ -1897,14 +1903,14 @@ class Basemap(object):
                     if n >= 0:
                         t = None
                         if side == 'l':
-                            if self.projection in ['moll','robin','sinu']:
+                            if self.projection in _pseudocyl:
                                 xlab,ylab = self(lon_0-179.9,lat)
                             else:
                                 xlab = self.llcrnrx
                             xlab = xlab-xoffset
                             t = ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**kwargs)
                         elif side == 'r':
-                            if self.projection in ['moll','robin','sinu']:
+                            if self.projection in _pseudocyl:
                                 xlab,ylab = self(lon_0+179.9,lat)
                             else:
                                 xlab = self.urcrnrx
@@ -1994,7 +2000,7 @@ class Basemap(object):
         if xoffset is None:
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
-        if self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
+        if self.projection not in _cylproj + _pseudocyl:
             lats = np.arange(-latmax,latmax+0.01,0.01)
         else:
             lats = np.arange(-90,90.01,0.01)
@@ -2022,7 +2028,7 @@ class Basemap(object):
                 yd = (y[1:]-y[0:-1])**2
                 dist = np.sqrt(xd+yd)
                 split = dist > 500000.
-                if np.sum(split) and self.projection not in ['merc','cyl','mill','moll','robin','sinu']:
+                if np.sum(split) and self.projection not in _cylproj + _pseudocyl:
                     ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                     xl = []
                     yl = []
@@ -2062,14 +2068,14 @@ class Basemap(object):
         # if so, find x,y location of intersection and draw a label there.
         dx = (self.xmax-self.xmin)/1000.
         dy = (self.ymax-self.ymin)/1000.
-        if self.projection in ['moll','sinu','robin']:
+        if self.projection in _pseudocyl:
             lon_0 = self.projparams['lon_0']
             xmin,ymin = self(lon_0-179.9,-90)
             xmax,ymax = self(lon_0+179.9,90)
         for dolab,side in zip(labels,['l','r','t','b']):
             if not dolab: continue
             # for cylindrical projections, don't draw meridians on left or right.
-            if self.projection in ['cyl','merc','mill','sinu','robin','moll'] and side in ['l','r']: continue
+            if self.projection in _cylproj + _pseudocyl and side in ['l','r']: continue
             if side in ['l','r']:
                 nmax = int((self.ymax-self.ymin)/dy+1)
                 yy = np.linspace(self.llcrnry,self.urcrnry,nmax)
@@ -2085,7 +2091,10 @@ class Basemap(object):
                 lons = [(lon+360) % 360 for lon in lons]
             else:
                 nmax = int((self.xmax-self.xmin)/dx+1)
-                xx = np.linspace(self.llcrnrx,self.urcrnrx,nmax)
+                if self.projection in _pseudocyl:
+                    xx = np.linspace(xmin,xmax,nmax)
+                else:
+                    xx = np.linspace(self.llcrnrx,self.urcrnrx,nmax)
                 if side == 'b':
                     lons,lats = self(xx,self.llcrnry*np.ones(xx.shape,np.float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
@@ -2141,7 +2150,7 @@ class Basemap(object):
                 for i,n in enumerate([nl,nr]):
                     lat = lats[n]/100.
                     # no meridians > latmax for projections other than merc,cyl,miller.
-                    if self.projection not in ['merc','cyl','mill'] and lat > latmax: continue
+                    if self.projection not in _cylproj and lat > latmax: continue
                     # don't bother if close to the first label.
                     if i and abs(nr-nl) < 100: continue
                     if n >= 0:
@@ -2151,11 +2160,9 @@ class Basemap(object):
                         elif side == 'r':
                             t = ax.text(self.urcrnrx+xoffset,yy[n],lonlab,horizontalalignment='left',verticalalignment='center',**kwargs)
                         elif side == 'b':
-                            if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
-                                t = ax.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',**kwargs)
+                            t = ax.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',**kwargs)
                         else:
-                            if self.projection != 'robin' or (xx[n] > xmin and xx[n] < xmax):
-                                t = ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
+                            t = ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
 
                         if t is not None: linecolls[lon][1].append(t)
         # set axes limits to fit map region.
@@ -2313,7 +2320,7 @@ class Basemap(object):
         if min(delon) < 0. or min(delat) < 0.:
             raise ValueError, 'lons and lats must be increasing!'
         # check that lons in -180,180 for non-cylindrical projections.
-        if self.projection not in ['cyl','merc','mill']:
+        if self.projection not in _cylproj:
             lonsa = np.array(lons)
             count = np.sum(lonsa < -180.00001) + np.sum(lonsa > 180.00001)
             if count > 1:
@@ -2384,7 +2391,7 @@ class Basemap(object):
         if min(delon) < 0. or min(delat) < 0.:
             raise ValueError, 'lons and lats must be increasing!'
         # check that lons in -180,180 for non-cylindrical projections.
-        if self.projection not in ['cyl','merc','mill']:
+        if self.projection not in _cylproj:
             lonsa = np.array(lons)
             count = np.sum(lonsa < -180.00001) + np.sum(lonsa > 180.00001)
             if count > 1:
@@ -2516,7 +2523,7 @@ class Basemap(object):
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
         ax.set_ylim((self.llcrnry, self.urcrnry))
         # turn off axes frame for non-rectangular projections.
-        if self.projection in ['moll','robin','sinu']:
+        if self.projection in _pseudocyl:
             ax.set_frame_on(False)
         if self.projection in ['ortho','geos'] and self._fulldisk:
             ax.set_frame_on(False)
@@ -2782,7 +2789,7 @@ class Basemap(object):
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
         # only do this check for global projections.
-        if self.projection in ['merc','cyl','mill','moll','robin','sinu']:
+        if self.projection in _cylproj + _pseudocyl:
             xx = x[x.shape[0]/2,:]
             condition = (xx >= self.xmin) & (xx <= self.xmax)
             xl = xx.compress(condition).tolist()
@@ -2855,7 +2862,7 @@ class Basemap(object):
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
         # only do this check for global projections.
-        if self.projection in ['merc','cyl','mill','moll','robin','sinu']:
+        if self.projection in _cylproj + _pseudocyl:
             xx = x[x.shape[0]/2,:]
             condition = (xx >= self.xmin) & (xx <= self.xmax)
             xl = xx.compress(condition).tolist()
@@ -3101,7 +3108,7 @@ class Basemap(object):
                        lsmask_lats,nx,ny,returnxy=True,order=0,masked=255)
             # for these projections, points outside the projection
             # limb have to be set to transparent manually.
-            if self.projection in ['moll','robin','sinu']:
+            if self.projection in _pseudocyl:
                 lons, lats = self(x, y, inverse=True)
                 lon_0 = self.projparams['lon_0']
                 lats = lats[:,nx/2]
@@ -3207,7 +3214,7 @@ class Basemap(object):
             self._bm_lats = np.arange(-90.+0.5*delta,90.,delta)
             # is it a cylindrical projection whose limits lie 
             # outside the limits of the image?
-            cylproj =  self.projection in ['mill','cyl','merc'] and \
+            cylproj =  self.projection in _cylproj and \
                       (self.urcrnrlon > self._bm_lons[-1] or \
                        self.llcrnrlon < self._bm_lons[0])
             # if pil_to_array returns a 2D array, it's a grayscale image.
@@ -3260,8 +3267,8 @@ class Basemap(object):
                     ma.masked_array(self._bm_rgba_warped,mask=mask)
                     # make points outside projection limb transparent.
                     self._bm_rgba_warped = self._bm_rgba_warped.filled(0.)
-                # treat mollweide, robinson and sinusoidal.
-                elif self.projection in ['moll','robin','sinu']:
+                # treat pseudo-cyl projections such as mollweide, robinson and sinusoidal.
+                elif self.projection in _pseudocyl:
                     lonsr,latsr = self(x,y,inverse=True)
                     mask = ma.zeros((ny,nx,4),np.int8)
                     lon_0 = self.projparams['lon_0']

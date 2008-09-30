@@ -25,8 +25,9 @@ m4 = Basemap(lon_0=270,lat_0=90,boundinglat=10,projection='npstere')
 m5 = Basemap(lon_0=270,lat_0=90,boundinglat=10,projection='nplaea')
 m6 = Basemap(lon_0=0,projection='moll')
 m7 = Basemap(lon_0=0,projection='robin')
+m8 = Basemap(lon_0=0,projection='mbtfpq')
 
-for m in [m1,m2,m3,m4,m5,m6,m7]:
+for m in [m1,m2,m3,m4,m5,m6,m7,m8]:
     # make a new figure.
     fig = plt.figure()
     # draw "circles" at specified longitudes and latitudes.
