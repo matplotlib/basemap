@@ -667,18 +667,10 @@ print m.proj4string
 fig=plt.figure()
 # create Basemap instance for van der Grinten projection.
 m = Basemap(projection='vandg',lon_0=0.5*(lonsin[0]+lonsin[-1]))
-# add poles to data.
-tmpdat = np.empty((len(latsin)+2,len(lonsin)),topodatin.dtype)
-tmpdat[1:-1,:] = topodatin
-tmpdat[0,:] = topodatin[1,:].mean()
-tmpdat[-1,:] = topodatin[-1,:].mean()
-lats2 = np.empty(len(latsin)+2,latsin.dtype)
-lats2[1:-1] = latsin
-lats2[0] = -90; latsin[-1] = 90
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with pcolormesh.
-x,y = m(*np.meshgrid(lonsin,lats2))
-p = m.pcolormesh(x,y,tmpdat,shading='flat')
+x,y = m(*np.meshgrid(lonsin,latsin))
+p = m.pcolormesh(x,y,topodatin,shading='flat')
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
