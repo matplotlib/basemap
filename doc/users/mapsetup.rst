@@ -6,7 +6,7 @@ Setting up the map
 In order to represent the curved surface of the earth on a two-dimensional
 map, a map projection is needed. Since this cannot be done without
 distortion, there are many map projections, each with it's own advantages
-and disadvantages. Basemap provides 19 different map projections.
+and disadvantages. Basemap provides 22 different map projections.
 Some are global, some can only represent a portion of the globe. When
 a :class:`~mpl_toolkits.basemap.Basemap` class instance is
 created, the desired map projection must
@@ -47,6 +47,7 @@ time, many compromise between the two.
     omerc.rst
     poly.rst
     mill.rst
+    gall.rst
     lcc.rst
     laea.rst
     stere.rst
@@ -55,3 +56,5 @@ time, many compromise between the two.
     pstere.rst
     plaea.rst
     paeqd.rst
+    mbtfpq.rst
+    vandg.rst
