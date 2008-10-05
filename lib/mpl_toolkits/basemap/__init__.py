@@ -174,7 +174,7 @@ _Basemap_init_doc = """
  (because either they are computed internally, or entire globe is
  always plotted). 
  
- For the cylindrical projections (``cyl``, ``merc`` and ``mill``),
+ For the cylindrical projections (``cyl``, ``merc``,``mill`` and ``gall``),
  the default is to use
  llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other
  projections except ``ortho`` and ``geos``, either the lat/lon values of the
@@ -350,8 +350,9 @@ _Basemap_init_doc = """
 
  For non-cylindrical projections, the inverse transformation
  always returns longitudes between -180 and 180 degrees. For
- cylindrical projections (self.projection == ``cyl``, ``mill`` or ``merc``)
- The inverse transformation will return longitudes between
+ cylindrical projections (self.projection == ``cyl``, ``mill``,
+ ``gall`` or ``merc``)
+ the inverse transformation will return longitudes between
  self.llcrnrlon and self.llcrnrlat.
 
  Input arguments lon, lat can be either scalar floats, sequences
@@ -797,8 +798,8 @@ class Basemap(object):
         For non-cylindrical projections, the inverse transformation
         always returns longitudes between -180 and 180 degrees. For
         cylindrical projections (self.projection == ``cyl``,
-        ``mill`` or ``merc``)
-        The inverse transformation will return longitudes between
+        ``mill``,``gall`` or ``merc``)
+        the inverse transformation will return longitudes between
         self.llcrnrlon and self.llcrnrlat.
 
         Input arguments lon, lat can be either scalar floats,
@@ -2293,8 +2294,8 @@ class Basemap(object):
         lons, lats       rank-1 arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc`` and ``mill``) lons must fit 
-                         within range -180 to 180.
+                         ``cyl``, ``merc``,``gall`` and ``mill``) lons must  
+                         fit within range -180 to 180.
         nx, ny           The size of the output regular grid in map
                          projection coordinates
         ==============   ====================================================
@@ -2364,8 +2365,8 @@ class Basemap(object):
         lons, lats       rank-1 arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc`` and ``mill``) lons must fit 
-                         within range -180 to 180.
+                         ``cyl``, ``merc``,``gall`` and ``mill``) lons must  
+                         fit within range -180 to 180.
         nx, ny           The size of the output regular grid in map
                          projection coordinates
         ==============   ====================================================
@@ -2436,8 +2437,8 @@ class Basemap(object):
         lons, lats       Arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc`` and ``mill``) lons must fit 
-                         within range -180 to 180.
+                         ``cyl``, ``merc``,``gall`` and ``mill``) lons must 
+                         fit within range -180 to 180.
         ==============   ====================================================
 
         Returns ``uout, vout`` (rotated vector field).
@@ -3231,15 +3232,15 @@ class Basemap(object):
                     tmp[:,:,k] = self._bm_rgba
                 self._bm_rgba = tmp
             if cylproj and not bmproj:
-            # stack grids side-by-side (in longitiudinal direction), so
-            # any range of longitudes may be plotted on a world map.
+                # stack grids side-by-side (in longitiudinal direction), so
+                # any range of longitudes may be plotted on a world map.
                 self._bm_lons = \
                 np.concatenate((self._bm_lons,self._bm_lons+360),1)
                 self._bm_rgba = \
                 np.concatenate((self._bm_rgba,self._bm_rgba),1)
             # convert to normalized floats.
             self._bm_rgba = self._bm_rgba.astype(np.float32)/255.
-        if not bmproj:
+        if not bmproj: # interpolation necessary.
             if newfile or not hasattr(self,'_bm_rgba_warped'):
                 # transform to nx x ny regularly spaced native
                 # projection grid.
@@ -3298,6 +3299,7 @@ class Basemap(object):
             # plot warped rgba image.
             im = self.imshow(self._bm_rgba_warped,ax=ax)
         else:
+            # bmproj True, no interpolation necessary.
             im = self.imshow(self._bm_rgba,ax=ax)
         return im
 
