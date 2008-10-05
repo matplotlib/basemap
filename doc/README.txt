@@ -15,4 +15,4 @@ To build docs ....
 
 * to update on sf site:
   cd build
-  rsync -avz html jswhit@matplotlib.sf.net:/home/groups/m/ma/matplotlib/htdocs/basemap/doc/ -essh
+  rsync -avz html jswhit,matplotlib@web.sf.net:/home/groups/m/ma/matplotlib/htdocs/basemap/doc/ -essh
