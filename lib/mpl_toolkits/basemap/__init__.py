@@ -3917,6 +3917,9 @@ class TestRotateVector(NumpyTestCase):
         assert_almost_equal(rv[2, :],[1,1,-1,-1], 6)
 
 def test():
+    """
+    Run some tests.
+    """
     import unittest
     suite = unittest.makeSuite(TestRotateVector,'test')
     runner = unittest.TextTestRunner()
