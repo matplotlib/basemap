@@ -174,7 +174,7 @@ _Basemap_init_doc = """
  (because either they are computed internally, or entire globe is
  always plotted). 
  
- For the cylindrical projections (``cyl``, ``merc``,``mill`` and ``gall``),
+ For the cylindrical projections (``cyl``, ``merc``, ``mill`` and ``gall``),
  the default is to use
  llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other
  projections except ``ortho`` and ``geos``, either the lat/lon values of the
@@ -798,7 +798,7 @@ class Basemap(object):
         For non-cylindrical projections, the inverse transformation
         always returns longitudes between -180 and 180 degrees. For
         cylindrical projections (self.projection == ``cyl``,
-        ``mill``,``gall`` or ``merc``)
+        ``mill``, ``gall`` or ``merc``)
         the inverse transformation will return longitudes between
         self.llcrnrlon and self.llcrnrlat.
 
@@ -2294,7 +2294,7 @@ class Basemap(object):
         lons, lats       rank-1 arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc``,``gall`` and ``mill``) lons must  
+                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must  
                          fit within range -180 to 180.
         nx, ny           The size of the output regular grid in map
                          projection coordinates
@@ -2365,7 +2365,7 @@ class Basemap(object):
         lons, lats       rank-1 arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc``,``gall`` and ``mill``) lons must  
+                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must  
                          fit within range -180 to 180.
         nx, ny           The size of the output regular grid in map
                          projection coordinates
@@ -2437,7 +2437,7 @@ class Basemap(object):
         lons, lats       Arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc``,``gall`` and ``mill``) lons must 
+                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must 
                          fit within range -180 to 180.
         ==============   ====================================================
 
