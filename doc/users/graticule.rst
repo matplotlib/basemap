@@ -10,11 +10,13 @@ latitude and longitude lines. Basemap does this with the
 The longitude and latitude lines can be labelled where they
 the map projection boundary.  There are four exceptions:  meridians
 and parallels cannot be labelled on maps with 
-``proj`` set to ``ortho`` (orthographic projection),
+``proj`` set to ``ortho`` (orthographic) or
+``vandg`` (van der Grinten),
 and meridians cannot be labelled on maps with 
-``proj`` set to ``robin`` (robinson), ``moll`` (mollweide) or ``sinu``
+``proj`` set to ``robin`` (robinson), ``mbtfpq``
+(McBryde-Thomas Flat Polar Quartic), ``moll`` (mollweide) or ``sinu``
 (sinusoidal).  This is because the lines can be very close 
 together where they intersect the boundary on these maps, so that
-they really need to be labelled on the interior of the plot.
+they really need to be labelled manually on the interior of the plot.
 
 .. toctree::
