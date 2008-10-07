@@ -15,7 +15,8 @@ else:
     YYYYMMDD = datetime.datetime.today().strftime('%Y%m%d')
 
 # set OpenDAP server URL.
-URLbase="http://nomad3.ncep.noaa.gov:9090/dods/mrf/mrf"
+#URLbase="http://nomad3.ncep.noaa.gov:9090/dods/mrf/mrf"
+URLbase="http://nomad5.ncep.noaa.gov:9090/dods/nomad1-raid2/mrf/mrf"
 URL=URLbase+YYYYMMDD+'/mrf'+YYYYMMDD
 print URL+'\n'
 try:
