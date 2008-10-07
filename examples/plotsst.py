@@ -10,9 +10,9 @@ if len(sys.argv) == 1:
 else:
     date = sys.argv[1]
 if date[0:4] > '2005':
-    ncfile = NetCDFFile('http://nomads.ncdc.noaa.gov:8085/thredds/dodsC/oisst/'+date[0:4]+'/AVHRR/sst4-navy-eot.'+date+'.nc')
+    ncfile = NetCDFFile('http://nomads.ncdc.noaa.gov/thredds/dodsC/oisst/'+date[0:4]+'/AVHRR/sst4-navy-eot.'+date+'.nc')
 else:
-    ncfile = NetCDFFile('http://nomads.ncdc.noaa.gov:8085/thredds/dodsC/oisst/'+date[0:4]+'/AVHRR/sst4-path-eot.'+date+'.nc')
+    ncfile = NetCDFFile('http://nomads.ncdc.noaa.gov/thredds/dodsC/oisst/'+date[0:4]+'/AVHRR/sst4-path-eot.'+date+'.nc')
 # read sst.  Will automatically create a masked array using
 # missing_value variable attribute.
 sst = ncfile.variables['sst'][:]
