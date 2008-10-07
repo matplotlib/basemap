@@ -5,6 +5,7 @@ test_files.remove('fcstmaps.py')
 test_files.remove('testgdal.py')
 test_files.remove('pnganim.py')
 test_files.remove('geos_demo_2.py')
+test_files.remove('plotsst.py')
 print test_files
 py_path = os.environ.get('PYTHONPATH')
 if py_path is None:
