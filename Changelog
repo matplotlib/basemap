@@ -5,7 +5,6 @@ version 0.99.2 (not yet released)
            * fix bugs in warpimage and bluemarble methods for several projections.
            * bugfix patch for rotate_vector from David Huard.  David
              also contributed the beginnings of a test suite.
-           * _geoslib.so now installed in mpl_toolkits.basemap.	    
            * make sure scatter method sets pyplot color mappable.
            * added cubed_sphere example.
            * updated NetCDFFile to use pupynere 1.0.2 (now can write as well
