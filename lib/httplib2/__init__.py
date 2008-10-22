@@ -26,7 +26,10 @@ __version__ = "$Rev: 259 $"
 
 import re 
 import sys 
-import md5
+try:
+    from hashlib import md5
+except ImportError:
+    import md5
 import email
 import email.Utils
 import email.Message
@@ -41,7 +44,10 @@ import copy
 import calendar
 import time
 import random
-import sha
+try:
+    from hashlib import sha1 as sha
+except ImportError:
+    import sha
 import hmac
 from gettext import gettext as _
 import socket
