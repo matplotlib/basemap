@@ -36,7 +36,7 @@ from proj import Proj
 import numpy as np
 import numpy.ma as ma
 from shapelib import ShapeFile
-import _geoslib, netcdf, netcdftime
+import _geoslib, netcdftime
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
@@ -3758,6 +3758,7 @@ def NetCDFFile(file, mode='r', maskandscale=True, cache=None,\
     accesses to the same URL avoid the network. 
 
     """
+    import netcdf
     if file.startswith('http'):
         return netcdf._RemoteFile(file,maskandscale=maskandscale,\
         cache=cache,username=username,password=password,verbose=verbose)
