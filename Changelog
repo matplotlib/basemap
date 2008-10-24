@@ -1,4 +1,6 @@
 version 0.99.2 (not yet released)
+           * defer import of netcdf stuff till it is needed (in NetCDFFile
+             function).
            * Added McBryde-Thomas Flat Polar Quartic (projection =
              'mbtfpq'), Gall Stereographic Cylindrical (projection =
              'gall') and van der Grinten (projection = 'vandg').
