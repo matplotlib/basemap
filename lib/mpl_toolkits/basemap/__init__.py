@@ -3679,8 +3679,14 @@ def shiftgrid(lon0,datain,lonsin,start=True):
     if lon0 < lonsin[0] or lon0 > lonsin[-1]:
         raise ValueError, 'lon0 outside of range of lonsin'
     i0 = np.argmin(np.fabs(lonsin-lon0))
-    dataout = np.zeros(datain.shape,datain.dtype)
-    lonsout = np.zeros(lonsin.shape,lonsin.dtype)
+    if hasattr(datain,'mask'):
+        datout  = ma.zeros((nlats,nlons+1),datain.dtype)
+    else:
+        datout  = np.zeros((nlats,nlons+1),datain.dtype)
+    if hasattr(lonsin,'mask'):
+        lonsout = ma.zeros(nlons+1,lonsin.dtype)
+    else:
+        lonsout = np.zeros(nlons+1,lonsin.dtype)
     if start:
         lonsout[0:len(lonsin)-i0] = lonsin[i0:]
     else:
