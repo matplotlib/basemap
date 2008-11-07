@@ -1,4 +1,6 @@
 version 0.99.2 (not yet released)
+           * Added masked array support to shiftgrid function
+             (thanks to Jesper Larsen).
            * defer import of netcdf stuff till it is needed (in NetCDFFile
              function).
            * Added McBryde-Thomas Flat Polar Quartic (projection =
