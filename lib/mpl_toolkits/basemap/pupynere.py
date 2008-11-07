@@ -127,9 +127,10 @@ class netcdf_file(object):
     attribute of the ``netcdf_file`` object.
 
     """
-    def __init__(self, filename, mode='r', maskandscale=False):
-        self._maskandscale = maskandscale
+    def __init__(self, filename, mode='r', mmap=True, maskandscale=False):
         self.filename = filename
+        self.use_mmap = mmap
+        self._maskandscale = maskandscale
 
         assert mode in 'rw', "Mode must be either 'r' or 'w'."
         self.mode = mode
@@ -202,7 +203,7 @@ class netcdf_file(object):
     def _write_numrecs(self):
         # Get highest record count from all record variables.
         for var in self.variables.values():
-            if not var._shape[0] and len(var.data) > self._recs:
+            if var.isrec and len(var.data) > self._recs:
                 self.__dict__['_recs'] = len(var.data)
         self._pack_int(self._recs)
 
@@ -210,8 +211,9 @@ class netcdf_file(object):
         if self.dimensions:
             self.fp.write(NC_DIMENSION)
             self._pack_int(len(self.dimensions))
-            for name, length in self.dimensions.items():
+            for name in self._dims:
                 self._pack_string(name)
+                length = self.dimensions[name]
                 self._pack_int(length or 0)  # replace None with 0 for record dimension
         else:
             self.fp.write(ABSENT)
@@ -236,7 +238,7 @@ class netcdf_file(object):
 
             # Sort variables non-recs first, then recs.
             variables = self.variables.items()
-            variables.sort(key=lambda (k, v): v._shape and v._shape[0] is not None)
+            variables.sort(key=lambda (k, v): v._shape and not v.isrec)
             variables.reverse()
             variables = [k for (k, v) in variables]
 
@@ -247,7 +249,7 @@ class netcdf_file(object):
             # each record variable, so we can calculate recsize.
             self.__dict__['_recsize'] = sum([
                     var._vsize for var in self.variables.values()
-                    if var._shape[0] is None])
+                    if var.isrec])
             # Set the data for all variables.
             for name in variables:
                 self._write_var_data(name)
@@ -268,13 +270,16 @@ class netcdf_file(object):
         nc_type = REVERSE[var.typecode()]
         self.fp.write(nc_type)
 
-        if var._shape[0]:
+        if not var.isrec:
             vsize = var.data.size * var.data.itemsize
             vsize += -vsize % 4
         else:  # record variable
-            vsize = var.data[0].size * var.data.itemsize
+            try:
+                vsize = var.data[0].size * var.data.itemsize
+            except IndexError:
+                vsize = 0
             rec_vars = len([var for var in self.variables.values()
-                    if var._shape[0] is None])
+                    if var.isrec])
             if rec_vars > 1:
                 vsize += -vsize % 4
         self.variables[name].__dict__['_vsize'] = vsize
@@ -294,7 +299,7 @@ class netcdf_file(object):
         self.fp.seek(the_beguine)
 
         # Write data.
-        if var._shape[0]:
+        if not var.isrec:
             self.fp.write(var.data.tostring())    
             count = var.data.size * var.data.itemsize
             self.fp.write('0' * (var._vsize - count))
@@ -405,9 +410,16 @@ class netcdf_file(object):
                 # Data will be set later.
                 data = None
             else:
-                mm = mmap(self.fp.fileno(), begin_+vsize, access=ACCESS_READ)
-                data = ndarray.__new__(ndarray, shape, dtype=dtype_,
-                        buffer=mm, offset=begin_, order=0)
+                if self.use_mmap:
+                    mm = mmap(self.fp.fileno(), begin_+vsize, access=ACCESS_READ)
+                    data = ndarray.__new__(ndarray, shape, dtype=dtype_,
+                            buffer=mm, offset=begin_, order=0)
+                else:
+                    pos = self.fp.tell()
+                    self.fp.seek(begin_)
+                    data = fromstring(self.fp.read(vsize), dtype=dtype_)
+                    data.shape = shape
+                    self.fp.seek(pos)
 
             # Add variable.
             self.variables[name] = netcdf_variable(
@@ -420,9 +432,16 @@ class netcdf_file(object):
                 dtypes['formats'] = dtypes['formats'][:1]
 
             # Build rec array.
-            mm = mmap(self.fp.fileno(), begin+self._recs*self._recsize, access=ACCESS_READ)
-            rec_array = ndarray.__new__(ndarray, (self._recs,), dtype=dtypes,
-                    buffer=mm, offset=begin, order=0)
+            if self.use_mmap:
+                mm = mmap(self.fp.fileno(), begin+self._recs*self._recsize, access=ACCESS_READ)
+                rec_array = ndarray.__new__(ndarray, (self._recs,), dtype=dtypes,
+                        buffer=mm, offset=begin, order=0)
+            else:
+                pos = self.fp.tell()
+                self.fp.seek(begin)
+                rec_array = fromstring(self.fp.read(self._recs*self._recsize), dtype=dtypes)
+                rec_array.shape = (self._recs,)
+                self.fp.seek(pos)
 
             for var in rec_vars:
                 self.variables[var].__dict__['data'] = rec_array[var]
@@ -546,6 +565,10 @@ class netcdf_variable(object):
         self.__dict__[attr] = value
 
     @property
+    def isrec(self):
+        return self.data.shape and not self._shape[0]
+
+    @property
     def shape(self):
         return self.data.shape
 
@@ -569,7 +592,7 @@ class netcdf_variable(object):
         if self._maskandscale:
             data = _maskandscale(self,data)
         # Expand data for record vars?
-        if not self._shape[0]:
+        if self.isrec:
             if isinstance(index, tuple):
                 rec_index = index[0]
             else:
