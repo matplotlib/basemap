@@ -3763,6 +3763,9 @@ def NetCDFFile(file, mode='r', maskandscale=True, cache=None, mmap=True,\
     ``cache`` is a location (a directory) for caching data, so that repeated
     accesses to the same URL avoid the network. 
 
+    The keyword ``mmap`` is only valid for local netCDF files.  When 
+    ``mmap=True`` (default), the mmap module is used to access the data.
+    This may be slow for very large netCDF variables.
     """
     import netcdf
     if file.startswith('http'):
