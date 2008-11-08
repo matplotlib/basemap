@@ -3735,7 +3735,7 @@ def _choosecorners(width,height,**kwargs):
     else:
         return corners
 
-def NetCDFFile(file, mode='r', maskandscale=True, cache=None,\
+def NetCDFFile(file, mode='r', maskandscale=True, cache=None, mmap=True,\
                username=None, password=None, verbose=False):
     """NetCDF File reader/writer.  API is the same as Scientific.IO.NetCDF.
 
@@ -3769,7 +3769,7 @@ def NetCDFFile(file, mode='r', maskandscale=True, cache=None,\
         return netcdf._RemoteFile(file,maskandscale=maskandscale,\
         cache=cache,username=username,password=password,verbose=verbose)
     else:
-        return netcdf.netcdf_file(file,mode=mode,maskandscale=maskandscale)
+        return netcdf.netcdf_file(file,mode=mode,mmap=mmap,maskandscale=maskandscale)
 
 def num2date(times,units='days since 0001-01-01 00:00:00',calendar='proleptic_gregorian'):
     """
