@@ -25,6 +25,8 @@ fig1.savefig('figure1.png', dpi=100)
 # generate the second figure, re-using the background
 # from figure 1.
 fig2 = plt.figure(2,frameon=False,**figprops)
+# make sure frame is off, or everything in existing background
+# will be obliterated.
 ax2 = fig2.add_subplot(111,frameon=False)
 # restore previous background.
 fig2.canvas.restore_region(background)
