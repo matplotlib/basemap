@@ -19,18 +19,19 @@ map.drawmapboundary(fill_color='aqua')
 map.fillcontinents(color='coral',lake_color='aqua')
 fig1.canvas.draw()
 background = fig1.canvas.copy_from_bbox(fig1.bbox)
+# save figure 1.
 fig1.savefig('figure1.png', dpi=100)
-
 
 # generate the second figure, re-using the background
 # from figure 1.
 fig2 = plt.figure(2,frameon=False,**figprops)
-ax2 = fig2.add_subplot(111, frameon=False, xticks=[], yticks=[])
+ax2 = fig2.add_subplot(111,frameon=False)
 # restore previous background.
 fig2.canvas.restore_region(background)
 # draw parallels and meridians on existing background.
 map.drawparallels(range(-90,90,30))
 map.drawmeridians(range(-180,180,60))
+# save figure 2.
 fig2.savefig('figure2.png', dpi=100)
 
 print 'images saved in figure1.png and figure2.png'
