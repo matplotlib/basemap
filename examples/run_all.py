@@ -6,6 +6,7 @@ test_files.remove('testgdal.py')
 test_files.remove('pnganim.py')
 test_files.remove('geos_demo_2.py')
 test_files.remove('plotsst.py')
+test_files.remove('embedding_map_in_wx.py')
 print test_files
 py_path = os.environ.get('PYTHONPATH')
 if py_path is None:

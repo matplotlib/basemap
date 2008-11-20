@@ -117,3 +117,6 @@ a la http://www.progonos.com/furuti/MapProj/Normal/ProjPoly/Foldout/Cube/cube.ht
 run_all.py is a driver script that runs all the examples except fcstmaps.py,
 testgdal.py, geos_demo_2.py, warpimage.py, and pnganim.py (which
 rely on external dependencies and/or an internet connection).
+
+embedding_map_in_wx.py is an example of how to embed Basemap using wx or wxagg
+in a GUI application.

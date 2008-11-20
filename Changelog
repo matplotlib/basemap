@@ -1,4 +1,6 @@
 version 0.99.2 (not yet released)
+           * Added embedding_map_in_wx.py example (courtesy of
+             Mauro Cavalcanti).
            * Added masked array support to shiftgrid function
              (thanks to Jesper Larsen).
            * defer import of netcdf stuff till it is needed (in NetCDFFile
