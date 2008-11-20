@@ -11,6 +11,7 @@ include setup.py
 include setup.cfg
 include setupegg.py
 include src/*
+include examples/save_background.py
 include examples/embedding_map_in_wx.py
 include examples/cubed_sphere.py
 include examples/simpletest.py

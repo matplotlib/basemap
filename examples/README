@@ -120,3 +120,6 @@ rely on external dependencies and/or an internet connection).
 
 embedding_map_in_wx.py is an example of how to embed Basemap using wx or wxagg
 in a GUI application.
+
+save_background.py shows how to save a map background and reuse it in another
+figure (without having to redraw coastlines).
