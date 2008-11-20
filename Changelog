@@ -1,4 +1,6 @@
 version 0.99.2 (not yet released)
+           * Added save_background.py example, showing how to re-use
+             a map background without redrawing coastlines.
            * Added embedding_map_in_wx.py example (courtesy of
              Mauro Cavalcanti).
            * Added masked array support to shiftgrid function
