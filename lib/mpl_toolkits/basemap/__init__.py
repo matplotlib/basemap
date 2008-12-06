@@ -3167,7 +3167,7 @@ class Basemap(object):
         Specified image must have pixels covering the whole globe in a regular
         lat/lon grid, starting and -180W and the South Pole.
         Works with the global images from 
-        http://earthobservatory.nasa.gov/Newsroom/BlueMarble/BlueMarble_monthlies.html.
+        http://earthobservatory.nasa.gov/Features/BlueMarble/BlueMarble_monthlies.php.
 
         Extra keyword ``ax`` can be used to override the default axis instance.
 
