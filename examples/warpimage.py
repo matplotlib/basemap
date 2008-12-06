@@ -66,7 +66,7 @@ fig=plt.figure()
 # define orthographic projection centered on Europe.
 m = Basemap(projection='ortho',lat_0=40,lon_0=40,resolution='l')
 # plot a gray-scale image specified from a URL.
-im = m.warpimage("http://earthobservatory.nasa.gov/Newsroom/BlueMarble/Images/gebco_bathy.5400x2700.jpg")
+im = m.warpimage("http://earthobservatory.nasa.gov/Features/BlueMarble/Images/gebco_bathy.5400x2700.jpg")
 # draw coastlines.
 m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw lat/lon grid lines every 30 degrees.
