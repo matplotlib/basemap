@@ -24,7 +24,7 @@ print 'warp to orthographic map ...'
 fig=plt.figure()
 # define projection centered on North America.
 m = Basemap(projection='mbtfpq',lon_0=-100,resolution='l')
-m.bluemarble()
+m.bluemarble(resolution='low')
 # draw coastlines.
 m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw lat/lon grid lines every 30 degrees.
@@ -38,7 +38,7 @@ fig=plt.figure()
 # define cylindrical equidistant projection.
 m = Basemap(projection='cyl',llcrnrlon=-180,llcrnrlat=-90,urcrnrlon=180,urcrnrlat=90,resolution='l')
 # plot (unwarped) rgba image.
-im = m.bluemarble()
+im = m.bluemarble(resolution='low')
 # draw coastlines.
 m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw lat/lon grid lines.
@@ -52,7 +52,7 @@ fig=plt.figure()
 # define cylindrical equidistant projection.
 m = Basemap(projection='cyl',llcrnrlon=0,llcrnrlat=-60,urcrnrlon=360,urcrnrlat=60,resolution='l')
 # plot (unwarped) rgba image.
-im = m.bluemarble()
+im = m.bluemarble(resolution='low')
 # draw coastlines.
 m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw lat/lon grid lines.
@@ -81,7 +81,7 @@ fig=plt.figure()
 m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
             rsphere=(6378137.00,6356752.3142),lat_1=50.,lon_0=-107.,\
             resolution='i',area_thresh=1000.,projection='lcc')
-im = m.bluemarble()
+im = m.bluemarble(resolution='low')
 # draw coastlines.
 m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw parallels and meridians.
@@ -100,7 +100,7 @@ m = Basemap(height=24000000,width=12000000,
             resolution=None,projection='omerc',\
             lon_0=-100,lat_0=15,lon_2=-120,lat_2=65,lon_1=-50,lat_1=-55)
 # plot warped rgba image.
-im = m.bluemarble()
+im = m.bluemarble(resolution='low')
 # draw lat/lon grid lines every 20 degrees.
 m.drawmeridians(np.arange(0,360,20),color='0.5')
 m.drawparallels(np.arange(-80,81,20),color='0.5')
