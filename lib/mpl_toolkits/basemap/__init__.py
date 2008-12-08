@@ -3135,17 +3135,20 @@ class Basemap(object):
         im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
         return im
 
-    def bluemarble(self,ax=None,resolution='high'):
+    def bluemarble(self,ax=None,scale=None):
         """
         display blue marble image (from http://visibleearth.nasa.gov)
         as map background.
+        Default image size is 5400x2700, which can be quite slow and
+        use quite a bit of memory.  The ``scale`` keyword can be used
+        to downsample the image (``scale=0.5`` downsamples to 2700x1350).
         """
         if ax is not None:
-            self.warpimage(image='bluemarble',ax=ax,resolution=resolution)
+            self.warpimage(image='bluemarble',ax=ax,scale=scale)
         else:
-            self.warpimage(image='bluemarble',resolution=resolution)
+            self.warpimage(image='bluemarble',scale=scale)
 
-    def warpimage(self,image="bluemarble",resolution='high',**kwargs):
+    def warpimage(self,image="bluemarble",scale=None,**kwargs):
         """
         Display an image (filename given by ``image`` keyword) as a map background.
         If image is a URL (starts with 'http'), it is downloaded to a temp
@@ -3158,6 +3161,10 @@ class Basemap(object):
         lat/lon grid, starting and -180W and the South Pole.
         Works with the global images from 
         http://earthobservatory.nasa.gov/Features/BlueMarble/BlueMarble_monthlies.php.
+
+        The ``scale`` keyword can be used to downsample (rescale) the image.
+        Values less than 1.0 will speed things up at the expense of image
+        resolution.
 
         Extra keyword ``ax`` can be used to override the default axis instance.
 
@@ -3181,10 +3188,7 @@ class Basemap(object):
         # default image file is blue marble next generation
         # from NASA (http://visibleearth.nasa.gov).
         if image == "bluemarble":
-            if resolution == 'low':
-                file = os.path.join(basemap_datadir,'bmng_low.jpg')
-            else:
-                file = os.path.join(basemap_datadir,'bmng.jpg')
+            file = os.path.join(basemap_datadir,'bmng.jpg')
         else:
             file = image
         # if image is same as previous invocation, used cached data.
@@ -3206,6 +3210,11 @@ class Basemap(object):
         # read in jpeg image to rgba array of normalized floats.
         if not hasattr(self,'_bm_rgba') or newfile:
             pilImage = Image.open(self._bm_file)
+            if scale is not None:
+                w, h = pilImage.size
+                width = int(np.round(w*scale))
+                height = int(np.round(h*scale))
+                pilImage = pilImage.resize((width,height),Image.ANTIALIAS)
             self._bm_rgba = pil_to_array(pilImage)
             # define lat/lon grid that image spans.
             nlons = self._bm_rgba.shape[1]; nlats = self._bm_rgba.shape[0]
