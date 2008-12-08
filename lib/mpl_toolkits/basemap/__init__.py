@@ -261,8 +261,9 @@ _Basemap_init_doc = """
  ================ ====================================================
  Keyword          Description
  ================ ====================================================
- lat_ts           latitude of true scale for mercator projection,
+ lat_ts           latitude of true scale.
                   optional for stereographic projection.
+                  mandatory for mercator projection.
  lat_1            first standard parallel for lambert conformal, 
                   albers equal area and equidistant conic.
                   Latitude of one of the two points on the projection 
@@ -532,24 +533,6 @@ class Basemap(object):
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
-        elif projection == 'merc':
-            if lat_ts is None:
-                raise ValueError, 'must specify lat_ts for Mercator basemap'
-            # clip plot region to be within -89.99S to 89.99N
-            # (mercator is singular at poles)
-            if not using_corners:
-                llcrnrlon = -180.
-                llcrnrlat = -90.
-                urcrnrlon = 180
-                urcrnrlat = 90.
-            if llcrnrlat < -89.99: llcrnrlat = -89.99
-            if llcrnrlat > 89.99: llcrnrlat = 89.99
-            if urcrnrlat < -89.99: urcrnrlat = -89.99
-            if urcrnrlat > 89.99: urcrnrlat = 89.99
-            self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
-            self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
-            if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
         elif projection in ['tmerc','gnom','cass','poly'] :
             if projection == 'gnom' and not projparams.has_key('R'):
                 raise ValueError, 'gnomonic projection only works for perfect spheres - not ellipsoids'
@@ -640,22 +623,25 @@ class Basemap(object):
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
-        elif projection in ['mill','gall']:
+        elif projection in _cylproj:
             if not using_corners:
-                llcrnrlon = -180.
                 llcrnrlat = -90.
-                urcrnrlon = 180
                 urcrnrlat = 90.
-                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
-                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
-            if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
-        elif projection == 'cyl':
-            if not using_corners:
-                llcrnrlon = -180.
-                llcrnrlat = -90.
-                urcrnrlon = 180
-                urcrnrlat = 90.
+                if lon_0 is not None:
+                    llcrnrlon = lon_0-180.
+                    urcrnrlon = lon_0+180.
+                else:
+                    llcrnrlon = -180.
+                    urcrnrlon = 180
+                if projection == 'merc':
+                    if lat_ts is None:
+                        raise ValueError, 'must specify lat_ts for Mercator basemap'
+                    # clip plot region to be within -89.99S to 89.99N
+                    # (mercator is singular at poles)
+                    if llcrnrlat < -89.99: llcrnrlat = -89.99
+                    if llcrnrlat > 89.99: llcrnrlat = 89.99
+                    if urcrnrlat < -89.99: urcrnrlat = -89.99
+                    if urcrnrlat > 89.99: urcrnrlat = 89.99
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
             if width is not None or height is not None:
