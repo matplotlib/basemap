@@ -1,4 +1,6 @@
 version 0.99.2 (not yet released)
+           * fix drawlsmask method so that it works for cylindrical
+             projections with limits outside (-180,180).
            * added 'scale' keyword to bluemarble and warpimage methods to
              downsample image background.
            * Made lat_ts default to 0 for mercator.

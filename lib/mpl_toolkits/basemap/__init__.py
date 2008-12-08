@@ -3082,11 +3082,24 @@ class Basemap(object):
                 lsmask_lats = np.arange(-90.+0.5*delta,90.,delta)
                 lsmask = np.reshape(np.fromstring(lsmaskf.read(),np.uint8),(nlats,nlons))
                 lsmaskf.close()
-        # instance variable lsmask is set on first invocation,
-        # it contains the land-sea mask interpolated to the native
-        # projection grid.  Further calls to drawlsmask will not
-        # redo the interpolation (unless a new land-sea mask is passed
-        # in via the lsmask, lsmask_lons, lsmask_lats keywords).
+            # instance variable lsmask is set on first invocation,
+            # it contains the land-sea mask interpolated to the native
+            # projection grid.  Further calls to drawlsmask will not
+            # redo the interpolation (unless a new land-sea mask is passed
+            # in via the lsmask, lsmask_lons, lsmask_lats keywords).
+
+            # is it a cylindrical projection whose limits lie 
+            # outside the limits of the image?
+            cylproj =  self.projection in _cylproj and \
+                      (self.urcrnrlon > lsmask_lons[-1] or \
+                       self.llcrnrlon < lsmask_lons[0])
+            if cylproj:
+                # stack grids side-by-side (in longitiudinal direction), so
+                # any range of longitudes may be plotted on a world map.
+                lsmask_lons = \
+                np.concatenate((lsmask_lons,lsmask_lons+360),1)
+                lsmask = \
+                np.concatenate((lsmask,lsmask),1)
 
         # transform mask to nx x ny regularly spaced native projection grid
         # nx and ny chosen to have roughly the same horizontal
@@ -3097,7 +3110,7 @@ class Basemap(object):
             if self.projection == 'cyl':
                 dx = lsmask_lons[1]-lsmask_lons[0]
             else:
-                dx = 2.*math.pi*self.rmajor/float(nlons)
+                dx = (np.pi/180.)*(lsmask_lons[1]-lsmask_lons[0])*self.rmajor
             nx = int((self.xmax-self.xmin)/dx)+1; ny = int((self.ymax-self.ymin)/dx)+1
         # interpolate rgba values from proj='cyl' (geographic coords)
         # to a rectangular map projection grid.
