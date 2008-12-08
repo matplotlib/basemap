@@ -1,4 +1,5 @@
 version 0.99.2 (not yet released)
+           * Made lat_ts default to 0 for mercator.
            * Now can specify just lon_0 for all cylindrical projections
              (to produce global map centered on lon_0).
            * Added save_background.py example, showing how to re-use

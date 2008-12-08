@@ -261,9 +261,10 @@ _Basemap_init_doc = """
  ================ ====================================================
  Keyword          Description
  ================ ====================================================
- lat_ts           latitude of true scale.
-                  optional for stereographic projection.
-                  mandatory for mercator projection.
+ lat_ts           latitude of true scale. Optional for stereographic
+                  and mercator projections.
+                  default is lat_0 for stereographic projection.
+                  default is 0 for mercator projection.
  lat_1            first standard parallel for lambert conformal, 
                   albers equal area and equidistant conic.
                   Latitude of one of the two points on the projection 
@@ -285,7 +286,7 @@ _Basemap_init_doc = """
                   not be rotated to true North.  Default is False
                   (projection coordinates are automatically rotated).
  lat_0            central latitude (y-axis origin) - used by all 
-                  projections, Must be equator for mercator projection.
+                  projections. 
  lon_0            central meridian (x-axis origin) - used by all
                   projections.
  boundinglat      bounding latitude for pole-centered projections
@@ -624,6 +625,10 @@ class Basemap(object):
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection in _cylproj:
+            if projection == 'merc':
+                if lat_ts is None: 
+                    lat_ts = 0.
+                    projparams['lat_ts']=lat_ts
             if not using_corners:
                 llcrnrlat = -90.
                 urcrnrlat = 90.
@@ -634,8 +639,7 @@ class Basemap(object):
                     llcrnrlon = -180.
                     urcrnrlon = 180
                 if projection == 'merc':
-                    if lat_ts is None:
-                        raise ValueError, 'must specify lat_ts for Mercator basemap'
+                    if lat_ts is None: lat_ts = 0.
                     # clip plot region to be within -89.99S to 89.99N
                     # (mercator is singular at poles)
                     if llcrnrlat < -89.99: llcrnrlat = -89.99
