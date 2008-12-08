@@ -3135,17 +3135,17 @@ class Basemap(object):
         im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
         return im
 
-    def bluemarble(self,ax=None):
+    def bluemarble(self,ax=None,resolution='high'):
         """
         display blue marble image (from http://visibleearth.nasa.gov)
         as map background.
         """
         if ax is not None:
-            self.warpimage(image='bluemarble',ax=ax)
+            self.warpimage(image='bluemarble',ax=ax,resolution=resolution)
         else:
-            self.warpimage(image='bluemarble')
+            self.warpimage(image='bluemarble',resolution=resolution)
 
-    def warpimage(self,image="bluemarble",**kwargs):
+    def warpimage(self,image="bluemarble",resolution='high',**kwargs):
         """
         Display an image (filename given by ``image`` keyword) as a map background.
         If image is a URL (starts with 'http'), it is downloaded to a temp
@@ -3181,7 +3181,10 @@ class Basemap(object):
         # default image file is blue marble next generation
         # from NASA (http://visibleearth.nasa.gov).
         if image == "bluemarble":
-            file = os.path.join(basemap_datadir,'bmng.jpg')
+            if resolution == 'low':
+                file = os.path.join(basemap_datadir,'bmng_low.jpg')
+            else:
+                file = os.path.join(basemap_datadir,'bmng.jpg')
         else:
             file = image
         # if image is same as previous invocation, used cached data.
