@@ -1,4 +1,4 @@
-version 0.99.2 (not yet released)
+version 0.99.2 (svn revision 6541)
            * fix drawlsmask method so that it works for cylindrical
              projections with limits outside (-180,180).
            * added 'scale' keyword to bluemarble and warpimage methods to
