@@ -21,7 +21,7 @@ for lat_0 in [90,0,-90]:
             m = Basemap(width=width,height=height,resolution=None,\
                         projection='gnom',lon_0=lon_0,lat_0=lat_0,\
                         rsphere=rsphere)
-            m.bluemarble()
+            m.bluemarble(scale=0.5)
             m.drawparallels(np.arange(-90,91,10),color='0.5')
             m.drawmeridians(np.arange(5,365,10),color='0.5')
             #m.drawlsmask(ocean_color='aqua',land_color='coral')
