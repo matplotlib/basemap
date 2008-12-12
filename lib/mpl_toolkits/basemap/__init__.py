@@ -41,7 +41,7 @@ import _geoslib, netcdftime
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
-__version__ = '0.99.2'
+__version__ = '0.99.3'
 
 # supported map projections.
 _projnames = {'cyl'      : 'Cylindrical Equidistant',
@@ -3148,7 +3148,7 @@ class Basemap(object):
         im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
         return im
 
-    def bluemarble(self,ax=None,scale=None):
+    def bluemarble(self,ax=None,scale=None,**kwargs):
         """
         display blue marble image (from http://visibleearth.nasa.gov)
         as map background.
@@ -3157,9 +3157,9 @@ class Basemap(object):
         to downsample the image (``scale=0.5`` downsamples to 2700x1350).
         """
         if ax is not None:
-            self.warpimage(image='bluemarble',ax=ax,scale=scale)
+            return self.warpimage(image='bluemarble',ax=ax,scale=scale,**kwargs)
         else:
-            self.warpimage(image='bluemarble',scale=scale)
+            return self.warpimage(image='bluemarble',scale=scale,**kwargs)
 
     def warpimage(self,image="bluemarble",scale=None,**kwargs):
         """
@@ -3312,10 +3312,10 @@ class Basemap(object):
                     # make points outside projection limb transparent.
                     self._bm_rgba_warped = self._bm_rgba_warped.filled(0.)
             # plot warped rgba image.
-            im = self.imshow(self._bm_rgba_warped,ax=ax)
+            im = self.imshow(self._bm_rgba_warped,ax=ax,**kwargs)
         else:
             # bmproj True, no interpolation necessary.
-            im = self.imshow(self._bm_rgba,ax=ax)
+            im = self.imshow(self._bm_rgba,ax=ax,**kwargs)
         return im
 
     def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\

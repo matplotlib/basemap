@@ -182,7 +182,7 @@ else:
     print 'will not install httplib2'
 
 # Specify all the required mpl data
-pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world','data/bmng.jpg']
+pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world','data/bmng.jpg','data/bmng_low.jpg']
 boundaryfiles = []
 for resolution in ['c','l','i','h','f']:
     boundaryfiles = boundaryfiles + glob.glob("lib/mpl_toolkits/basemap/data/*_"+resolution+".dat")
@@ -191,7 +191,7 @@ basemap_datafiles = boundaryfiles + ['data/5minmask.bin']
 package_data = {'mpl_toolkits.basemap':pyproj_datafiles+basemap_datafiles}
 setup(
   name              = "basemap",
-  version           = "0.99.2",
+  version           = "0.99.3",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data

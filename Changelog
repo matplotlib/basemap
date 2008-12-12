@@ -1,3 +1,5 @@
+version 0.99.3 (not yet released)
+           * bluemarble:  pass kwargs to imshow, return Image instance.
 version 0.99.2 (svn revision 6541)
            * fix drawlsmask method so that it works for cylindrical
              projections with limits outside (-180,180).
