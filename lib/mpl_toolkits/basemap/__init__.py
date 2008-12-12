@@ -3155,6 +3155,8 @@ class Basemap(object):
         Default image size is 5400x2700, which can be quite slow and
         use quite a bit of memory.  The ``scale`` keyword can be used
         to downsample the image (``scale=0.5`` downsamples to 2700x1350).
+
+        \**kwargs passed on to :meth:`imshow`.
         """
         if ax is not None:
             return self.warpimage(image='bluemarble',ax=ax,scale=scale,**kwargs)
