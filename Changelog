@@ -1,4 +1,6 @@
 version 0.99.3 (not yet released)
+           * make sure drawmapscale method returns a list of objects that
+             can be iterated over to remove them from the plot.
            * fillcontinents was returning just last Polygon instance.
              Now returns a list of all Polygon instances.  
            * bluemarble:  pass kwargs to imshow, return Image instance.

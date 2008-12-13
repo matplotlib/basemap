@@ -3043,6 +3043,8 @@ class Basemap(object):
         is used.
 
         Extra keyword ``ax`` can be used to override the default axis instance.
+
+        returns a matplotlib.image.AxesImage instance.
         """
         # convert land and ocean colors to integer rgba tuples with
         # values between 0 and 255.
@@ -3162,7 +3164,7 @@ class Basemap(object):
 
         \**kwargs passed on to :meth:`imshow`.
 
-        returns an matplotlib.image.AxesImage instance.
+        returns a matplotlib.image.AxesImage instance.
         """
         if ax is not None:
             return self.warpimage(image='bluemarble',ax=ax,scale=scale,**kwargs)
@@ -3191,7 +3193,7 @@ class Basemap(object):
 
         \**kwargs passed on to :meth:`imshow`.
 
-        returns an matplotlib.image.AxesImage instance.
+        returns a matplotlib.image.AxesImage instance.
         """
         try:
             from PIL import Image
@@ -3433,6 +3435,7 @@ class Basemap(object):
             raise KeyError("labelstyle must be 'simple' or 'fancy'")
         # default y offset is 2 percent of map height.
         if yoffset is None: yoffset = 0.02*(self.ymax-self.ymin)
+        rets = [] # will hold all plot objects generated.
         # 'fancy' style
         if barstyle == 'fancy':
             #we need 5 sets of x coordinates (in map units)
@@ -3449,62 +3452,63 @@ class Basemap(object):
             ybottom = yc-yoffset/2
             ytick = ybottom - yoffset/2
             ytext = ytick - yoffset/2
-            self.plot([x1,x4],[ytop,ytop],color=fontcolor)
+            rets.append(self.plot([x1,x4],[ytop,ytop],color=fontcolor)[0])
             #plot bottom line
-            self.plot([x1,x4],[ybottom,ybottom],color=fontcolor)
+            rets.append(self.plot([x1,x4],[ybottom,ybottom],color=fontcolor)[0])
             #plot left edge
-            self.plot([x1,x1],[ybottom,ytop],color=fontcolor)
+            rets.append(self.plot([x1,x1],[ybottom,ytop],color=fontcolor)[0])
             #plot right edge
-            self.plot([x4,x4],[ybottom,ytop],color=fontcolor)
+            rets.append(self.plot([x4,x4],[ybottom,ytop],color=fontcolor)[0])
             #make a filled black box from left edge to 1/4 way across
-            ax.fill([x1,x2,x2,x1,x1],[ytop,ytop,ybottom,ybottom,ytop],\
-                    ec=fontcolor,fc=fillcolor1)
+            rets.append(ax.fill([x1,x2,x2,x1,x1],[ytop,ytop,ybottom,ybottom,ytop],\
+                        ec=fontcolor,fc=fillcolor1)[0])
             #make a filled white box from 1/4 way across to 1/2 way across
-            ax.fill([x2,xc,xc,x2,x2],[ytop,ytop,ybottom,ybottom,ytop],\
-                    ec=fontcolor,fc=fillcolor2)
+            rets.append(ax.fill([x2,xc,xc,x2,x2],[ytop,ytop,ybottom,ybottom,ytop],\
+                        ec=fontcolor,fc=fillcolor2)[0])
             #make a filled white box from 1/2 way across to 3/4 way across
-            ax.fill([xc,x3,x3,xc,xc],[ytop,ytop,ybottom,ybottom,ytop],\
-                    ec=fontcolor,fc=fillcolor1)
+            rets.append(ax.fill([xc,x3,x3,xc,xc],[ytop,ytop,ybottom,ybottom,ytop],\
+                        ec=fontcolor,fc=fillcolor1)[0])
             #make a filled white box from 3/4 way across to end
-            ax.fill([x3,x4,x4,x3,x3],[ytop,ytop,ybottom,ybottom,ytop],\
-                    ec=fontcolor,fc=fillcolor2)
+            rets.append(ax.fill([x3,x4,x4,x3,x3],[ytop,ytop,ybottom,ybottom,ytop],\
+                        ec=fontcolor,fc=fillcolor2)[0])
             #plot 3 tick marks at left edge, center, and right edge
-            self.plot([x1,x1],[ytick,ybottom],color=fontcolor)
-            self.plot([xc,xc],[ytick,ybottom],color=fontcolor)
-            self.plot([x4,x4],[ytick,ybottom],color=fontcolor)
+            rets.append(self.plot([x1,x1],[ytick,ybottom],color=fontcolor)[0])
+            rets.append(self.plot([xc,xc],[ytick,ybottom],color=fontcolor)[0])
+            rets.append(self.plot([x4,x4],[ytick,ybottom],color=fontcolor)[0])
             #label 3 tick marks
-            ax.text(x1,ytext,'%d' % (0),\
+            rets.append(ax.text(x1,ytext,'%d' % (0),\
             horizontalalignment='center',\
             verticalalignment='top',\
-            fontsize=fontsize,color=fontcolor)
-            ax.text(xc,ytext,'%d' % (0.5*lenlab),\
+            fontsize=fontsize,color=fontcolor))
+            rets.append(ax.text(xc,ytext,'%d' % (0.5*lenlab),\
             horizontalalignment='center',\
             verticalalignment='top',\
-            fontsize=fontsize,color=fontcolor)
-            ax.text(x4,ytext,'%d' % (lenlab),\
+            fontsize=fontsize,color=fontcolor))
+            rets.append(ax.text(x4,ytext,'%d' % (lenlab),\
             horizontalalignment='center',\
             verticalalignment='top',\
-            fontsize=fontsize,color=fontcolor)
+            fontsize=fontsize,color=fontcolor))
             #put units, scale factor on top
-            ax.text(xc,ytop+yoffset/2,labelstr,\
+            rets.append(ax.text(xc,ytop+yoffset/2,labelstr,\
             horizontalalignment='center',\
             verticalalignment='bottom',\
-            fontsize=fontsize,color=fontcolor)
+            fontsize=fontsize,color=fontcolor))
         # 'simple' style
         elif barstyle == 'simple':
-            self.plot([x1,x4],[yc,yc],color=fontcolor)
-            self.plot([x1,x1],[yc-yoffset,yc+yoffset],color=fontcolor)
-            self.plot([x4,x4],[yc-yoffset,yc+yoffset],color=fontcolor)
-            ax.text(xc,yc-yoffset,'%d' % lenlab,\
+            rets.append(self.plot([x1,x4],[yc,yc],color=fontcolor)[0])
+            rets.append(self.plot([x1,x1],[yc-yoffset,yc+yoffset],color=fontcolor)[0])
+            rets.append(self.plot([x4,x4],[yc-yoffset,yc+yoffset],color=fontcolor)[0])
+            rets.append(ax.text(xc,yc-yoffset,'%d' % lenlab,\
             verticalalignment='top',horizontalalignment='center',\
-            fontsize=fontsize,color=fontcolor)
+            fontsize=fontsize,color=fontcolor))
             #put units, scale factor on top
-            ax.text(xc,yc+yoffset,labelstr,\
+            rets.append(ax.text(xc,yc+yoffset,labelstr,\
             horizontalalignment='center',\
             verticalalignment='bottom',\
-            fontsize=fontsize,color=fontcolor)
+            fontsize=fontsize,color=fontcolor))
         else:
             raise KeyError("barstyle must be 'simple' or 'fancy'")
+        return rets
 
 ### End of Basemap class
 
