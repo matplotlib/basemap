@@ -5,7 +5,8 @@ version 0.99.3 (not yet released)
              can be iterated over to remove them from the plot.
            * fillcontinents was returning just last Polygon instance.
              Now returns a list of all Polygon instances.  
-           * bluemarble:  pass kwargs to imshow, return Image instance.
+           * bluemarble/warpimage:  pass kwargs to imshow, 
+             return Image instance.
 version 0.99.2 (svn revision 6541)
            * fix drawlsmask method so that it works for cylindrical
              projections with limits outside (-180,180).
