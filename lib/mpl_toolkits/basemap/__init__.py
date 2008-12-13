@@ -2185,7 +2185,9 @@ class Basemap(object):
 
         Extra keyword ``ax`` can be used to override the default axis instance.
 
-        Other \**kwargs passed on to matplotlib.patches.Polygon."""
+        Other \**kwargs passed on to matplotlib.patches.Polygon.
+
+        returns a matplotlib.patches.Polygon object."""
         if not kwargs.has_key('ax') and self.ax is None:
             try:
                 ax = plt.gca()
