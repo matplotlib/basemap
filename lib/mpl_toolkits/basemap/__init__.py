@@ -1289,7 +1289,7 @@ class Basemap(object):
         After filling continents, lakes are re-filled with
         axis background color.
 
-        returns matplotlib.patches.Polygon object.
+        returns a list of matplotlib.patches.Polygon objects.
         """
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
@@ -2632,6 +2632,8 @@ class Basemap(object):
         Extra keyword ``ax`` can be used to override the default axis instance.
 
         Other \**kwargs passed on to matplotlib.pyplot.plot.
+
+        returns an matplotlib.image.AxesImage instance.
         """
         if not kwargs.has_key('ax') and self.ax is None:
             try:
@@ -3159,6 +3161,8 @@ class Basemap(object):
         to downsample the image (``scale=0.5`` downsamples to 2700x1350).
 
         \**kwargs passed on to :meth:`imshow`.
+
+        returns an matplotlib.image.AxesImage instance.
         """
         if ax is not None:
             return self.warpimage(image='bluemarble',ax=ax,scale=scale,**kwargs)
@@ -3186,6 +3190,8 @@ class Basemap(object):
         Extra keyword ``ax`` can be used to override the default axis instance.
 
         \**kwargs passed on to :meth:`imshow`.
+
+        returns an matplotlib.image.AxesImage instance.
         """
         try:
             from PIL import Image
