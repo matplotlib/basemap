@@ -1,4 +1,6 @@
 version 0.99.3 (not yet released)
+           * if readshapefile is called with drawbounds=True, a
+             LineCollection object is appended to the returned tuple.
            * make sure drawmapscale method returns a list of objects that
              can be iterated over to remove them from the plot.
            * fillcontinents was returning just last Polygon instance.

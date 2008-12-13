@@ -1586,7 +1586,8 @@ class Basemap(object):
         the SHPT* constants defined in the shapelib module, see
         http://shapelib.maptools.org/shp_api.html) and min and
         max are 4-element lists with the minimum and maximum values of the
-        vertices.
+        vertices. If ``drawbounds=True`` a 
+        matplotlib.patches.LineCollection object is appended to the tuple.
         """
         # open shapefile, read vertices for each object, convert
         # to map projection coordinates (only works for 2D shape types).
@@ -1664,6 +1665,7 @@ class Basemap(object):
                 ax.add_collection(lines)
                 # set axes limits to fit map region.
                 self.set_axes_limits(ax=ax)
+                info = info + (lines,)
             # save segments/polygons and shape attribute dicts as class attributes.
             self.__dict__[name]=shpsegs
             self.__dict__[name+'_info']=shpinfo
