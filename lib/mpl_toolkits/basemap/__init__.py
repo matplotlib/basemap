@@ -1305,6 +1305,7 @@ class Basemap(object):
         # get axis background color.
         axisbgc = ax.get_axis_bgcolor()
         npoly = 0
+        polys = []
         for x,y in self.coastpolygons:
             xa = np.array(x,np.float32)
             ya = np.array(y,np.float32)
@@ -1334,10 +1335,11 @@ class Basemap(object):
                 if zorder is not None:
                     poly.set_zorder(zorder)
                 ax.add_patch(poly)
+                polys.append(poly)
             npoly = npoly + 1
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        return poly
+        return polys
 
     def drawcoastlines(self,linewidth=1.,color='k',antialiased=1,ax=None,zorder=None):
         """
