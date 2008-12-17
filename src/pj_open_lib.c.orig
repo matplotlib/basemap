@@ -60,8 +60,8 @@ static const char *(*pj_finder)(const char *) = NULL;
 static int path_count = 0;
 static char **search_path = NULL;
 static char * proj_lib_name =
-#ifdef BASEMAPDATA
-BASEMAPDATA;
+#ifdef PROJ_LIB
+PROJ_LIB;
 #else
 0;
 #endif
@@ -153,8 +153,8 @@ pj_open_lib(char *name, char *mode) {
     else if( pj_finder != NULL && pj_finder( name ) != NULL )
         sysname = pj_finder( name );
 
-    /* or is environment BASEMAPDATA defined */
-    else if ((sysname = getenv("BASEMAPDATA")) || (sysname = proj_lib_name)) {
+    /* or is environment PROJ_LIB defined */
+    else if ((sysname = getenv("PROJ_LIB")) || (sysname = proj_lib_name)) {
         (void)strcpy(fname, sysname);
         fname[n = strlen(fname)] = DIR_CHAR;
         fname[++n] = '\0';

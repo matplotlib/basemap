@@ -1,4 +1,7 @@
 version 0.99.3 (not yet released)
+           * Basemap will now look for it's data in BASEMAPDATA.
+             If that env var not set, it will fall back to it's 
+             default location.
            * if readshapefile is called with drawbounds=True, a
              LineCollection object is appended to the returned tuple.
            * make sure drawmapscale method returns a list of objects that

@@ -39,7 +39,14 @@ from shapelib import ShapeFile
 import _geoslib, netcdftime
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
-basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
+# check to see if environment variable BASEMAPDATA set to a directory,
+# and if so look for the data there.
+if 'BASEMAPDATA' in os.environ:
+    basemap_datadir = os.environ['BASEMAPDATA']
+    if not os.path.isdir(basemap_datadir):
+        raise RuntimeError('Path in environment BASEMAPDATA not a directory')
+else:
+    basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
 __version__ = '0.99.3'
 
