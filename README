@@ -71,6 +71,15 @@ you have problems or questions.
 
 1) Then download basemap-X.Y.Z.tar.gz (approx 100 mb) from
 the sourceforge download site, unpack and cd to basemap-X.Y.Z.
+Note that most of that size consists of coastline data, which 
+does not change with every release.  When it does change, it is
+noted in the Changelog.  If you already have the latest data installed, 
+you can download basemap-nodata-X.Y.Z.tar.gz instead, which is
+*much* smaller.
+
+By default the data is installed in the same directory as the toolkit. 
+You may move it if you wish, and set the environment variable
+BASEMAPDATA to point to the new location.
 
 2) Install the GEOS library.  If you already have it on your
 system, just set the environment variable GEOS_DIR to point to the location 
