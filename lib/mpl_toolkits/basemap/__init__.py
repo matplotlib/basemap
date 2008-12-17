@@ -322,11 +322,11 @@ _Basemap_init_doc = """
                   (size of y dimension / size of x dimension).
  llcrnrlon        longitude of lower left hand corner of the
                   selected map domain.
- llcrnrlon        latitude of lower left hand corner of the 
+ llcrnrlat        latitude of lower left hand corner of the 
                   selected map domain.
  urcrnrlon        longitude of upper right hand corner of the
                   selected map domain.
- urcrnrlon        latitude of upper right hand corner of the
+ urcrnrlat        latitude of upper right hand corner of the
                   selected map domain.
  llcrnrx          x value of lower left hand corner of the
                   selected map domain in map projection coordinates.
