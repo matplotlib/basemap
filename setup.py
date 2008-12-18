@@ -99,25 +99,6 @@ else:
                                 include_dirs=geos_include_dirs,
                                 libraries=['geos_c','geos']))
 
-# install shapelib and dbflib.
-packages = packages + ['shapelib','dbflib']
-package_dirs['shapelib'] = os.path.join('lib','shapelib')
-package_dirs['dbflib'] = os.path.join('lib','dbflib')
-extensions = extensions + \
-         [Extension("shapelibc",
-                    ["pyshapelib/shapelib_wrap.c",
-                     "pyshapelib/shapelib/shpopen.c",
-                     "pyshapelib/shapelib/shptree.c"],
-                    include_dirs = ["pyshapelib/shapelib"]),
-          Extension("shptree",
-                    ["pyshapelib/shptreemodule.c"],
-                    include_dirs = ["pyshapelib/shapelib"]),
-          Extension("dbflibc",
-                    ["pyshapelib/dbflib_wrap.c",
-                     "pyshapelib/shapelib/dbfopen.c"],
-                    include_dirs = ["pyshapelib/shapelib"],
-                    define_macros = dbf_macros()) ]
-
 # check setup.cfg file to see how to install auxilliary packages.
 options = {}
 if os.path.exists("setup.cfg"):
@@ -128,9 +109,13 @@ if os.path.exists("setup.cfg"):
     except: options['provide_pydap'] = 'auto'
     try: options['provide_httplib2'] = config.getboolean("provide_packages", "httplib2")
     except: options['provide_httplib2'] = 'auto'
+    try: options['provide_pyshapelib'] = config.getboolean("provide_packages", "pyshapelib")
+    except: options['provide_pyshapelib'] = 'auto'
 else:
     options['provide_pydap'] = 'auto'
     options['provide_httplib2'] = 'auto'
+    options['provide_pyshapelib'] = 'auto'
+
 
 provide_pydap = options['provide_pydap']
 if provide_pydap == 'auto': # install pydap stuff if not already available.
@@ -171,15 +156,64 @@ if provide_httplib2  == 'auto':
     except ImportError:
         print 'httplib2 not installed, will be installed'
         packages = packages + ['httplib2']
-        package_dirs['httlib2'] = os.path.join('lib','httplib2')
+        package_dirs['httplib2'] = os.path.join('lib','httplib2')
     else:
         print 'httplib2 installed'
 elif provide_httplib2: # force install of httplib2
     print 'forcing install of included httplib2'
     packages = packages + ['httplib2']
-    package_dirs['httlib2'] = os.path.join('lib','httplib2')
+    package_dirs['httplib2'] = os.path.join('lib','httplib2')
 else:
     print 'will not install httplib2'
+
+provide_pyshapelib = options['provide_pyshapelib']
+if provide_pyshapelib  == 'auto':
+    print 'checking to see if pyshapelib installed ..'
+    try:
+        import shapelib
+        import dbflib
+    except ImportError:
+        print 'shapelib/dbflib not installed, will be installed'
+        packages = packages + ['shapelib','dbflib']
+        package_dirs['shapelib'] = os.path.join('lib','shapelib')
+        package_dirs['dbflib'] = os.path.join('lib','dbflib')
+        extensions = extensions + \
+                 [Extension("shapelibc",
+                            ["pyshapelib/shapelib_wrap.c",
+                             "pyshapelib/shapelib/shpopen.c",
+                             "pyshapelib/shapelib/shptree.c"],
+                            include_dirs = ["pyshapelib/shapelib"]),
+                  Extension("shptree",
+                            ["pyshapelib/shptreemodule.c"],
+                            include_dirs = ["pyshapelib/shapelib"]),
+                  Extension("dbflibc",
+                            ["pyshapelib/dbflib_wrap.c",
+                             "pyshapelib/shapelib/dbfopen.c"],
+                            include_dirs = ["pyshapelib/shapelib"],
+                            define_macros = dbf_macros()) ]
+    else:
+        print 'pyshapelib installed'
+elif provide_pyshapelib: # force install of shapelib
+    print 'forcing install of included pyshapelib'
+    packages = packages + ['shapelib','dbflib']
+    package_dirs['shapelib'] = os.path.join('lib','shapelib')
+    package_dirs['dbflib'] = os.path.join('lib','dbflib')
+    extensions = extensions + \
+             [Extension("shapelibc",
+                        ["pyshapelib/shapelib_wrap.c",
+                         "pyshapelib/shapelib/shpopen.c",
+                         "pyshapelib/shapelib/shptree.c"],
+                        include_dirs = ["pyshapelib/shapelib"]),
+              Extension("shptree",
+                        ["pyshapelib/shptreemodule.c"],
+                        include_dirs = ["pyshapelib/shapelib"]),
+              Extension("dbflibc",
+                        ["pyshapelib/dbflib_wrap.c",
+                         "pyshapelib/shapelib/dbfopen.c"],
+                        include_dirs = ["pyshapelib/shapelib"],
+                        define_macros = dbf_macros()) ]
+else:
+    print 'will not install pyshapelib'
 
 # Specify all the required mpl data
 pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world','data/bmng.jpg','data/bmng_low.jpg']

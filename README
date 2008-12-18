@@ -100,11 +100,11 @@ run the usual 'python setup.py install'.  Check your installation
 by running "from mpl_toolkits.basemap import Basemap" at the python
 prompt.
 
-Basemap includes two auxilliary packages, pydap (http://pydap.org, just 
-the client is included) and httplib2.  By default, setup.py checks to 
+Basemap includes three auxilliary packages, pydap (http://pydap.org, just 
+the client is included), httplib2 and pyshapelib.  By default, setup.py checks to 
 see if these are already installed, and if so does not try to overwrite 
 them. If you get import errors related to either of these two packages, 
-edit setup.cfg and set pydap and/or httplib2 to True to force 
+edit setup.cfg and set pydap, httplib2 and/or pyshapelib to True to force 
 installation of the included versions.
 
 4) To test, cd to the examples directory and run 'python simpletest.py'.
