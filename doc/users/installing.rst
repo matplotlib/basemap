@@ -33,12 +33,12 @@ numpy 1.1 (or later)
     Patched version automatically built into basemap.
 
 `pyshapelib <http://intevation.de/pipermail/thuban-devel/2004-May/000184.html>`__
-    C library with python interface for reading ESRI shapefiles (automatically
-    built and installed with basemap).
+    C library with python interface for reading ESRI shapefiles.
+    If not present, will be installed with basemap.
 
 `pupnyere <http://pypi.python.org/pypi/pupynere/>`__ 
     Pure python `netCDF <http://www.unidata.ucar.edu/software/netcdf/>`__
-    interface automatically installed with basemap.
+    patched version automatically installed with basemap.
 
 `pydap <http://code.google.com/p/pydap>`__ 
     Pure python `OPeNDAP <http://opendap.org>`__ implementation.
@@ -87,11 +87,11 @@ For other platforms, download the source release and follow these steps:
   by running ``from mpl_toolkits.basemap import Basemap`` at the python
   prompt.
 
-  Basemap includes two auxilliary packages, pydap and httplib2.
+  Basemap includes three auxilliary packages, pydap, pyshapelib httplib2.
   By default, setup.py checks to 
   see if these are already installed, and if so does not try to overwrite 
-  them. If you get import errors related to either of these two packages, 
-  edit setup.cfg and set pydap and/or httplib2 to True to force 
+  them. If you get import errors related to any of these packages, 
+  edit setup.cfg and set the appropriate entry to True to force 
   installation of the included versions.
 
 * To test, cd to the examples directory and run ``python simpletest.py``.
