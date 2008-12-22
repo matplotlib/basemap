@@ -38,7 +38,7 @@ numpy 1.1 (or later)
 
 `pupnyere <http://pypi.python.org/pypi/pupynere/>`__ 
     Pure python `netCDF <http://www.unidata.ucar.edu/software/netcdf/>`__
-    patched version automatically installed with basemap.
+    netCDF reader. Patched version automatically installed with basemap.
 
 `pydap <http://code.google.com/p/pydap>`__ 
     Pure python `OPeNDAP <http://opendap.org>`__ implementation.
