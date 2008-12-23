@@ -36,7 +36,7 @@ numpy 1.1 (or later)
     C library with python interface for reading ESRI shapefiles.
     If not present, will be installed with basemap.
 
-`pupnyere <http://pypi.python.org/pypi/pupynere/>`__ 
+`pupynere <http://pypi.python.org/pypi/pupynere/>`__ 
     Pure python `netCDF <http://www.unidata.ucar.edu/software/netcdf/>`__
     reader. Patched version automatically installed with basemap.
 
