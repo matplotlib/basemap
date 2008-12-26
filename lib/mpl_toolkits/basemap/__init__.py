@@ -594,9 +594,9 @@ class Basemap(object):
                 raise ValueError, 'must specify lon_0 for %s projection' % _projnames[self.projection]
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
-            llcrnrlon = -180.
+            llcrnrlon = lon_0-180.
             llcrnrlat = -90.
-            urcrnrlon = 180
+            urcrnrlon = lon_0+180
             urcrnrlat = 90.
             self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
             self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
