@@ -94,20 +94,21 @@ class Proj(object):
         elif self.projection == 'geos':
             self._proj4 = pyproj.Proj(projparams)
             # find major and minor axes of ellipse defining map proj region.
-            delta = 0.01
-            lats = np.arange(0,90,delta)
-            lon_0 = projparams['lon_0']
-            lons = lon_0*np.ones(len(lats),'d')
-            x, y = self._proj4(lons, lats)
-            yi = (y > 1.e20).tolist()
-            ny = yi.index(1)-1
-            height = y[ny]
-            lons = np.arange(lon_0,lon_0+90,delta)
-            lats = np.zeros(len(lons),'d')
-            x, y = self(lons, lats)
-            xi = (x > 1.e20).tolist()
-            nx = xi.index(1)-1
-            width = x[nx]
+            # h is measured from surface of earth at equator.
+            h = projparams['h'] + self.rmajor
+            # latitude of horizon on central meridian
+            lonmax = 90.-(180./np.pi)*np.arcsin(self.rmajor/h)
+            # longitude of horizon on equator
+            latmax = 90.-(180./np.pi)*np.arcsin(self.rminor/h)
+            # truncate to nearest hundredth of a degree (to make sure
+            # they aren't slightly over the horizon)
+            latmax = int(100*latmax)/100. 
+            lonmax = int(100*lonmax)/100. 
+            # width and height of visible projection
+            P = pyproj.Proj(proj='geos',a=self.rmajor,\
+                            b=self.rminor,lat_0=0,lon_0=0,h=projparams['h'])
+            x1,y1 = P(0.,latmax); x2,y2 = P(lonmax,0.)
+            width = x2; height = y1
             self._height = height
             self._width = width
             if (llcrnrlon == -180 and llcrnrlat == -90 and
