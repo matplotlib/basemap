@@ -101,8 +101,8 @@ class Proj(object):
                 full disk (whole world) Azimuthal Equidistant projection can
                 only be drawn for a perfect sphere""")
                 raise ValueError(msg)
-            llcrnrx = -0.5*(self.rmajor+self.rminor)
-            llcrnry = -0.5*(self.rmajor+self.rminor)
+            llcrnrx = -np.pi*self.rminor
+            llcrnry = -np.pi*self.rminor
             self._width = -llcrnrx
             self._height = -llcrnry
             urcrnrx = -llcrnrx
