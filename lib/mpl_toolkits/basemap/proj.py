@@ -1,6 +1,7 @@
 import numpy as np
 import pyproj
 import math
+from matplotlib.cbook import dedent
 
 __version__ = '1.2.2'
 _dg2rad = math.radians(1.)
@@ -70,19 +71,18 @@ class Proj(object):
         self.esq = (self.rmajor**2 - self.rminor**2)/self.rmajor**2
         self.llcrnrlon = llcrnrlon
         self.llcrnrlat = llcrnrlat
-        if self.projection not in ['ortho','geos','cyl'] + _pseudocyl:
-            self._proj4 = pyproj.Proj(projparams)
-            llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
-        elif self.projection == 'cyl':
+        if self.projection == 'cyl':
             llcrnrx = llcrnrlon
             llcrnry = llcrnrlat
-        elif self.projection == 'ortho':
+        elif self.projection in 'ortho':
             if (llcrnrlon == -180 and llcrnrlat == -90 and
                 urcrnrlon == 180 and urcrnrlat == 90):
                 self._fulldisk = True
                 self._proj4 = pyproj.Proj(projparams)
                 llcrnrx = -self.rmajor
                 llcrnry = -self.rmajor
+                self._width = 0.5*(self.rmajor+self.rminor)
+                self._height = 0.5*(self.rmajor+self.rminor)
                 urcrnrx = -llcrnrx
                 urcrnry = -llcrnry
             else:
@@ -91,6 +91,22 @@ class Proj(object):
                 llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
                 if llcrnrx > 1.e20 or llcrnry > 1.e20:
                     raise ValueError(_lower_left_out_of_bounds)
+        elif self.projection == 'aeqd' and\
+             (llcrnrlon == -180 and llcrnrlat == -90  and urcrnrlon == 180 and\
+             urcrnrlat == 90):
+            self._fulldisk = True
+            self._proj4 = pyproj.Proj(projparams)
+            if self.ellipsoid:
+                msg = dedent("""
+                full disk (whole world) Azimuthal Equidistant projection can
+                only be drawn for a perfect sphere""")
+                raise ValueError(msg)
+            llcrnrx = -0.5*(self.rmajor+self.rminor)
+            llcrnry = -0.5*(self.rmajor+self.rminor)
+            self._width = -llcrnrx
+            self._height = -llcrnry
+            urcrnrx = -llcrnrx
+            urcrnry = -llcrnry
         elif self.projection == 'geos':
             self._proj4 = pyproj.Proj(projparams)
             # find major and minor axes of ellipse defining map proj region.
@@ -129,6 +145,10 @@ class Proj(object):
             urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
             llcrnrx = -urcrnrx
             llcrnry = -urcrnry
+        else:
+            self._proj4 = pyproj.Proj(projparams)
+            llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
+            if self.projection == 'aeqd': self._fulldisk=False
         # compute x_0, y_0 so ll corner of domain is x=0,y=0.
         # note that for 'cyl' x,y == lon,lat
         self.projparams['x_0']=-llcrnrx
@@ -144,17 +164,9 @@ class Proj(object):
         if urcrnrislatlon:
             self.urcrnrlon = urcrnrlon
             self.urcrnrlat = urcrnrlat
-            if self.projection not in ['ortho','geos'] + _pseudocyl:
+            if self.projection not in ['ortho','geos','aeqd'] + _pseudocyl:
                 urcrnrx,urcrnry = self(urcrnrlon,urcrnrlat)
-            elif self.projection == 'ortho':
-                if self._fulldisk:
-                    urcrnrx = 2.*self.rmajor
-                    urcrnry = 2.*self.rmajor
-                else:
-                    urcrnrx,urcrnry = self(urcrnrlon,urcrnrlat)
-                    if urcrnrx > 1.e20 or urcrnry > 1.e20:
-                        raise ValueError(_upper_right_out_of_bounds)
-            elif self.projection == 'geos':
+            elif self.projection in ['ortho','geos','aeqd']:
                 if self._fulldisk:
                     urcrnrx = 2.*self._width
                     urcrnry = 2.*self._height

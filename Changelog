@@ -1,4 +1,7 @@
 version 0.99.3 (not yet released)
+           * if upper right/lower left corners nor width/height given for
+             azimuthal equidistant ('aeqd') the whole world is drawn in 
+             a circle (only works for perfect spheres, not ellipsoids).
            * have setup.py check for already installed pyshapelib (just
              like it does for httplib2 and pydap).
            * Basemap will now look for it's data in BASEMAPDATA.

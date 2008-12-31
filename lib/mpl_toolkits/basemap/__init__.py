@@ -625,10 +625,17 @@ class Basemap(object):
                 raise ValueError, 'must specify lat_0 and lon_0 for Azimuthal Equidistant basemap'
             if not using_corners:
                 if width is None or height is None:
-                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                    self._fulldisk = True
+                    llcrnrlon = -180.
+                    llcrnrlat = -90.
+                    urcrnrlon = 180
+                    urcrnrlat = 90.
+                else:
+                    self._fulldisk = False
                 if lon_0 is None or lat_0 is None:
                     raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
-                llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                if not self._fulldisk:
+                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection in _cylproj:
@@ -1046,12 +1053,8 @@ class Basemap(object):
         if self.projection in ['ortho','geos']:
             # circular region.
             thetas = np.linspace(0.,2.*np.pi,2*nx*ny)[:-1]
-            if self.projection ==  'ortho':
-                rminor = self.rmajor
-                rmajor = self.rmajor
-            else:
-                rminor = self._height
-                rmajor = self._width
+            rminor = self._height
+            rmajor = self._width
             x = rmajor*np.cos(thetas) + rmajor
             y = rminor*np.sin(thetas) + rminor
             b = np.empty((len(x),2),np.float64)
@@ -1075,6 +1078,16 @@ class Basemap(object):
                 projparms['x_0']=-llcrnrx
                 projparms['y_0']=-llcrnry
                 maptran = pyproj.Proj(projparms)
+        elif self.projection == 'aeqd' and self._fulldisk:
+            # circular region.
+            thetas = np.linspace(0.,2.*np.pi,2*nx*ny)[:-1]
+            rminor = self._height
+            rmajor = self._width
+            x = rmajor*np.cos(thetas) + rmajor
+            y = rminor*np.sin(thetas) + rminor
+            b = np.empty((len(x),2),np.float64)
+            b[:,0]=x; b[:,1]=y
+            boundaryxy = _geoslib.Polygon(b)
         elif self.projection in _pseudocyl:
             # quasi-elliptical region.
             lon_0 = self.projparams['lon_0']
@@ -1188,11 +1201,10 @@ class Basemap(object):
         elif ax is None and self.ax is not None:
             ax = self.ax
         limb = None
-        if self.projection == 'ortho':
-            limb = Circle((self.rmajor,self.rmajor),self.rmajor)
-        elif self.projection == 'geos':
+        if self.projection in ['ortho','geos'] or (self.projection=='aeqd' and\
+           self._fulldisk):
             limb = Ellipse((self._width,self._height),2.*self._width,2.*self._height)
-        if self.projection in ['ortho','geos'] and self._fulldisk:
+        if self.projection in ['ortho','geos','aeqd'] and self._fulldisk:
             # elliptical region.
             ax.add_patch(limb)
             if fill_color is None:
@@ -1822,7 +1834,7 @@ class Basemap(object):
             linecolls[circ] = (lines,[])
         # draw labels for parallels
         # parallels not labelled for fulldisk orthographic or geostationary
-        if self.projection in ['ortho','geos','vandg'] and max(labels):
+        if self.projection in ['ortho','geos','vandg','aeqd'] and max(labels):
             if self.projection == 'vandg' or self._fulldisk:
                 print 'Warning: Cannot label parallels on %s basemap' % _projnames[self.projection]
                 labels = [0,0,0,0]
@@ -2068,9 +2080,12 @@ class Basemap(object):
         if self.projection in ['sinu','moll','vandg'] and max(labels):
             print 'Warning: Cannot label meridians on %s basemap' % _projnames[self.projection]
             labels = [0,0,0,0]
-        if self.projection in ['ortho','geos'] and max(labels):
+        if self.projection in ['ortho','geos','aeqd'] and max(labels):
             if self._fulldisk:
-                print 'Warning: Cannot label meridians on full-disk Geostationary or Orthographic basemap'
+                print dedent(
+                """'Warning: Cannot label meridians on full-disk
+                Geostationary, Orthographic or Azimuthal equidistant basemap
+                """)
                 labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
@@ -2535,7 +2550,7 @@ class Basemap(object):
         # turn off axes frame for non-rectangular projections.
         if self.projection in _pseudocyl:
             ax.set_frame_on(False)
-        if self.projection in ['ortho','geos'] and self._fulldisk:
+        if self.projection in ['ortho','geos','aeqd'] and self._fulldisk:
             ax.set_frame_on(False)
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
