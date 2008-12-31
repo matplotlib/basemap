@@ -99,7 +99,11 @@ class Proj(object):
             # raise an exception for ellipsoids - there appears to be a bug
             # in proj4 that causes the inverse transform to fail for points
             # more than 90 degrees of arc away from center point for ellipsoids
-            # (works fine for spheres)
+            # (works fine for spheres) - below is an example
+            #from pyproj import Proj
+            #p1 = Proj(proj='aeqd',a=6378137.00,b=6356752.3142,lat_0=0,lon_0=0)
+            #x,y= p1(91,0)
+            #lon,lat = p1(x,y,inverse=True) # lon is 89 instead of 91
             if self.ellipsoid:
                 msg = dedent("""
                 full disk (whole world) Azimuthal Equidistant projection can
