@@ -96,13 +96,17 @@ class Proj(object):
              urcrnrlat == 90):
             self._fulldisk = True
             self._proj4 = pyproj.Proj(projparams)
+            # raise an exception for ellipsoids - there appears to be a bug
+            # in proj4 that causes the inverse transform to fail for points
+            # more than 90 degrees of arc away from center point for ellipsoids
+            # (works fine for spheres)
             if self.ellipsoid:
                 msg = dedent("""
                 full disk (whole world) Azimuthal Equidistant projection can
                 only be drawn for a perfect sphere""")
                 raise ValueError(msg)
-            llcrnrx = -np.pi*self.rminor
-            llcrnry = -np.pi*self.rminor
+            llcrnrx = -np.pi*self.rmajor
+            llcrnry = -np.pi*self.rmajor
             self._width = -llcrnrx
             self._height = -llcrnry
             urcrnrx = -llcrnrx
