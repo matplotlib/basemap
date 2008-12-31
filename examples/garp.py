@@ -16,6 +16,8 @@ lon_0 = float(raw_input('input reference lon (degrees):'))
 lat_0 = float(raw_input('input reference lat (degrees):'))
 location = raw_input('name of location:')
 
+# no width/height or lat/lon corners specified, so whole world
+# is plotted in a circle.
 m = Basemap(resolution='c',projection='aeqd',lat_0=lat_0,lon_0=lon_0)
 
 # draw coastlines and fill continents.
@@ -27,8 +29,8 @@ m = Basemap(resolution='c',projection='aeqd',lat_0=lat_0,lon_0=lon_0)
 #m.drawmapboundary(fill_color='white')
 #m.drawcoastlines(linewidth=0.5)
 #m.fillcontinents(color='black',lake_color='white')
-#m.drawparallels(np.arange(-80,81,20))
-#m.drawmeridians(np.arange(-180,180,20))
+#m.drawparallels(np.arange(-80,81,20),color='0.7')
+#m.drawmeridians(np.arange(-180,180,20),color='0.7')
 
 # draw lsmask instead of drawing continents (slower, but more robust).
 
