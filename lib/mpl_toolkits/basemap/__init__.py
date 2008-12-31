@@ -3110,9 +3110,16 @@ class Basemap(object):
                 lsmaskf = open(os.path.join(basemap_datadir,'5minmask.bin'),'rb')
                 nlons = 4320; nlats = nlons/2
                 delta = 360./float(nlons)
-                lsmask_lons = np.arange(-180+0.5*delta,180.,delta)
-                lsmask_lats = np.arange(-90.+0.5*delta,90.,delta)
                 lsmask = np.reshape(np.fromstring(lsmaskf.read(),np.uint8),(nlats,nlons))
+                lsmask_lons = np.arange(-180,180.,delta)
+                lsmask_lats = np.arange(-90.,90+0.5*delta,delta)
+                # add cyclic point in longitude
+                lsmask, lsmask_lons = addcyclic(lsmask, lsmask_lons)
+                nlons = nlons + 1; nlats = nlats + 1
+                # add North Pole point (assumed water)
+                tmparr = np.zeros((nlats,nlons),lsmask.dtype)
+                tmparr[0:nlats-1,0:nlons] = lsmask
+                lsmask = tmparr
                 lsmaskf.close()
             # instance variable lsmask is set on first invocation,
             # it contains the land-sea mask interpolated to the native
