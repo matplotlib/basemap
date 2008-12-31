@@ -33,8 +33,8 @@ m = Basemap(resolution='c',projection='aeqd',lat_0=lat_0,lon_0=lon_0)
 # draw lsmask instead of drawing continents (slower, but more robust).
 
 m.drawlsmask(land_color='black',ocean_color='white',lakes=True)
-m.drawparallels(np.arange(-80,81,20))
-m.drawmeridians(np.arange(-180,180,20))
+m.drawparallels(np.arange(-80,81,20),color='0.7')
+m.drawmeridians(np.arange(-180,180,20),color='0.7')
 m.drawmapboundary()
 
 # blue marble background (pretty, but slow).
