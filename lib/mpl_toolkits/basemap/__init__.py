@@ -3317,7 +3317,8 @@ class Basemap(object):
                     self.transform_scalar(self._bm_rgba[:,:,k],\
                     self._bm_lons,self._bm_lats,nx,ny,returnxy=True)
                 # for ortho,geos mask pixels outside projection limb.
-                if self.projection in ['geos','ortho']:
+                if self.projection in ['geos','ortho'] or \
+                   (self.projection == 'aeqd' and self._fulldisk):
                     lonsr,latsr = self(x,y,inverse=True)
                     mask = ma.zeros((ny,nx,4),np.int8)
                     mask[:,:,0] = np.logical_or(lonsr>1.e20,latsr>1.e30)
