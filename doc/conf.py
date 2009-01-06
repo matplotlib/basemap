@@ -46,7 +46,7 @@ copyright = '2008, Jeffrey Whitaker'
 # other places throughout the built documents.
 #
 # The short X.Y version.
-version = '0.99.2'
+version = '0.99.3'
 # The full version, including alpha/beta/rc tags.
 release = '0.99.2'
 
