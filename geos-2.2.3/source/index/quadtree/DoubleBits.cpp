@@ -15,6 +15,7 @@
 
 #include <geos/indexQuadtree.h>
 #include <geos/util.h>
+#include <string>
 #include <cstring>
 
 namespace geos {
