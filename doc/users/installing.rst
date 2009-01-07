@@ -87,7 +87,7 @@ For other platforms, download the source release and follow these steps:
   by running ``from mpl_toolkits.basemap import Basemap`` at the python
   prompt.
 
-  Basemap includes three auxilliary packages, pydap, pyshapelib httplib2.
+  Basemap includes three auxilliary packages, pydap, pyshapelib and httplib2.
   By default, setup.py checks to 
   see if these are already installed, and if so does not try to overwrite 
   them. If you get import errors related to any of these packages, 
