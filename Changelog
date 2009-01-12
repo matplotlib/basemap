@@ -1,4 +1,4 @@
-version 0.99.3 (not yet released)
+version 0.99.3 (svn revision 6780)
            * if upper right/lower left corners nor width/height given for
              azimuthal equidistant ('aeqd') the whole world is drawn in 
              a circle (only works for perfect spheres, not ellipsoids).
