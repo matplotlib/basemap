@@ -1,3 +1,6 @@
+version 0.99.4 (not yet released)
+           * added more informative error message in readshapefile when
+             one of the shapefile components can't be found.
 version 0.99.3 (svn revision 6780)
            * if upper right/lower left corners nor width/height given for
              azimuthal equidistant ('aeqd') the whole world is drawn in 
