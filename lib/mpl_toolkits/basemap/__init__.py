@@ -1608,6 +1608,12 @@ class Basemap(object):
         vertices. If ``drawbounds=True`` a 
         matplotlib.patches.LineCollection object is appended to the tuple.
         """
+        if not os.path.exists('%s.shp'%shapefile):
+            raise IOError('cannot locate %s.shp'%shapefile)
+        if not os.path.exists('%s.shx'%shapefile):
+            raise IOError('cannot locate %s.shx'%shapefile)
+        if not os.path.exists('%s.dbf'%shapefile):
+            raise IOError('cannot locate %s.dbf'%shapefile)
         # open shapefile, read vertices for each object, convert
         # to map projection coordinates (only works for 2D shape types).
         try:
