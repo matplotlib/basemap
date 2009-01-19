@@ -77,7 +77,8 @@ __all__ = ['netcdf_file', 'netcdf_variable']
 from operator import mul
 from mmap import mmap, ACCESS_READ
 
-from numpy import fromstring, ndarray, dtype, empty, array, asarray, squeeze, zeros, ma
+from numpy import fromstring, ndarray, dtype, empty, array, asarray, squeeze,\
+                  zeros, ma
 from numpy import little_endian as LITTLE_ENDIAN
 
 
@@ -127,9 +128,11 @@ class netcdf_file(object):
     attribute of the ``netcdf_file`` object.
 
     """
-    def __init__(self, filename, mode='r', mmap=True, maskandscale=False):
+    def __init__(self, filename, mode='r', mmap=True, version=1,\
+                 maskandscale=False):
         self.filename = filename
         self.use_mmap = mmap
+        self.version_byte = version
         self._maskandscale = maskandscale
 
         assert mode in 'rw', "Mode must be either 'r' or 'w'."
@@ -180,7 +183,8 @@ class netcdf_file(object):
         if size > 1: dtype_ += str(size)
 
         data = empty(shape_, dtype=dtype_)
-        self.variables[name] = netcdf_variable(data, typecode, shape, dimensions, maskandscale=self._maskandscale)
+        self.variables[name] = netcdf_variable(data, typecode, shape,\
+                dimensions, maskandscale=self._maskandscale)
         return self.variables[name]
 
     def flush(self):
@@ -190,9 +194,7 @@ class netcdf_file(object):
 
     def _write(self):
         self.fp.write('CDF')
-
-        self.__dict__['version_byte'] = 1
-        self.fp.write(array(1, '>b').tostring())
+        self.fp.write(array(self.version_byte, '>b').tostring())
 
         # Write headers and data.
         self._write_numrecs()
@@ -347,7 +349,8 @@ class netcdf_file(object):
 
     def _read(self):
         # Check magic bytes and version
-        assert self.fp.read(3) == 'CDF', "Error: %s is not a valid NetCDF 3 file" % self.filename
+        magic = self.fp.read(3)
+        assert magic == 'CDF', "Error: %s is not a valid NetCDF 3 file" % self.filename
         self.__dict__['version_byte'] = fromstring(self.fp.read(1), '>b')[0]
 
         # Read file headers and set data.
@@ -360,7 +363,8 @@ class netcdf_file(object):
         self.__dict__['_recs'] = self._unpack_int()
 
     def _read_dim_array(self):
-        assert self.fp.read(4) in [ZERO, NC_DIMENSION]
+        header = self.fp.read(4)
+        assert header in [ZERO, NC_DIMENSION]
         count = self._unpack_int()
 
         for dim in range(count):
@@ -374,7 +378,8 @@ class netcdf_file(object):
             self.__setattr__(k, v)
 
     def _read_att_array(self):
-        assert self.fp.read(4) in [ZERO, NC_ATTRIBUTE]
+        header = self.fp.read(4)
+        assert header in [ZERO, NC_ATTRIBUTE]
         count = self._unpack_int()
 
         attributes = {}
@@ -384,7 +389,8 @@ class netcdf_file(object):
         return attributes
 
     def _read_var_array(self):
-        assert self.fp.read(4) in [ZERO, NC_VARIABLE]
+        header = self.fp.read(4)
+        assert header in [ZERO, NC_VARIABLE]
 
         begin = 0
         dtypes = {'names': [], 'formats': []}
@@ -423,7 +429,8 @@ class netcdf_file(object):
 
             # Add variable.
             self.variables[name] = netcdf_variable(
-                    data, typecode, shape, dimensions, attributes, maskandscale=self._maskandscale)
+                    data, typecode, shape, dimensions, attributes,
+                    maskandscale=self._maskandscale)
 
         if rec_vars:
             # Remove padding when only one record variable.
@@ -544,7 +551,8 @@ class netcdf_variable(object):
     attribute of the ``netcdf_variable`` object.
 
     """
-    def __init__(self, data, typecode, shape, dimensions, attributes=None, maskandscale=False):
+    def __init__(self, data, typecode, shape, dimensions, attributes=None,\
+                 maskandscale=False):
         self.data = data
         self._typecode = typecode
         self._shape = shape
