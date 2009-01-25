@@ -8,6 +8,8 @@ heavy lifting), and the following functions:
 
 :func:`interp`:  bilinear interpolation between rectilinear grids.
 
+:func:`maskoceans`:  mask 'wet' points of an input array.
+
 :func:`shiftgrid`:  shifts global lat/lon grids east or west.
 
 :func:`addcyclic`: Add cyclic (wraparound) point in longitude.
@@ -3113,20 +3115,8 @@ class Basemap(object):
             # read in.
             if self.lsmask is None:
                 # read in land/sea mask.
-                lsmaskf = open(os.path.join(basemap_datadir,'5minmask.bin'),'rb')
-                nlons = 4320; nlats = nlons/2
-                delta = 360./float(nlons)
-                lsmask = np.reshape(np.fromstring(lsmaskf.read(),np.uint8),(nlats,nlons))
-                lsmask_lons = np.arange(-180,180.,delta)
-                lsmask_lats = np.arange(-90.,90+0.5*delta,delta)
-                # add cyclic point in longitude
-                lsmask, lsmask_lons = addcyclic(lsmask, lsmask_lons)
-                nlons = nlons + 1; nlats = nlats + 1
-                # add North Pole point (assumed water)
-                tmparr = np.zeros((nlats,nlons),lsmask.dtype)
-                tmparr[0:nlats-1,0:nlons] = lsmask
-                lsmask = tmparr
-                lsmaskf.close()
+                lsmask_lons, lsmask_lats, lsmask = _readlsmask()
+
             # instance variable lsmask is set on first invocation,
             # it contains the land-sea mask interpolated to the native
             # projection grid.  Further calls to drawlsmask will not
@@ -3950,3 +3940,53 @@ def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     """
     cdftime = netcdftime.utime(units,calendar=calendar)
     return cdftime.date2num(dates)
+
+def maskoceans(lonsin,latsin,datain,inlands=False):
+    """
+    mask data (``datain``), defined on a grid with latitudes ``latsin``
+    longitudes ``lonsin`` so that points over water will not be plotted.
+
+    .. tabularcolumns:: |l|L|
+
+    ==============   ====================================================
+    Arguments         Description
+    ==============   ====================================================
+    lonsin, latsin   rank-2 arrays containing longitudes and latitudes of
+                     grid.
+    datain           rank-2 input array on grid defined by ``lonsin`` and
+                     ``latsin``.
+    inlands          if False, mask only ocean points.  If True, mask
+                     ocean points and points over inland water bodies.
+                     Default False.
+    ==============   ====================================================
+
+    returns a masked array the same shape as datain with "wet" points masked.
+    """
+    # read in land/sea mask.
+    lsmask_lons, lsmask_lats, lsmask = _readlsmask()
+    # nearest-neighbor interpolation to output grid.
+    lsmasko = interp(lsmask,lsmask_lons,lsmask_lats,lonsin,latsin,masked=True,order=0)
+    # mask input data.
+    if inlands: # mask inland water bodies.
+        mask = np.logical_or(lsmasko==0,lsmasko==2)
+    else: # mask just marine areas.
+        mask = lsmasko == 0
+    return ma.masked_array(datain,mask=mask)
+
+def _readlsmask():
+    # read in land/sea mask.
+    lsmaskf = open(os.path.join(basemap_datadir,'5minmask.bin'),'rb')
+    nlons = 4320; nlats = nlons/2
+    delta = 360./float(nlons)
+    lsmask = np.reshape(np.fromstring(lsmaskf.read(),np.uint8),(nlats,nlons))
+    lsmask_lons = np.arange(-180,180.,delta)
+    lsmask_lats = np.arange(-90.,90+0.5*delta,delta)
+    # add cyclic point in longitude
+    lsmask, lsmask_lons = addcyclic(lsmask, lsmask_lons)
+    nlons = nlons + 1; nlats = nlats + 1
+    # add North Pole point (assumed water)
+    tmparr = np.zeros((nlats,nlons),lsmask.dtype)
+    tmparr[0:nlats-1,0:nlons] = lsmask
+    lsmask = tmparr
+    lsmaskf.close()
+    return lsmask_lons, lsmask_lats, lsmask

@@ -70,6 +70,7 @@ include examples/show_colormaps.py
 include examples/plotprecip.py
 include examples/nws_precip_conus_20061222.nc
 include examples/NetCDFFile_tst.py
+include examples/maskoceans.py
 include examples/README
 include lib/mpl_toolkits/__init__.py
 include lib/mpl_toolkits/basemap/__init__.py

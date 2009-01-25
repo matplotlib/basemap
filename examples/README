@@ -123,3 +123,5 @@ in a GUI application.
 
 save_background.py shows how to save a map background and reuse it in another
 figure (without having to redraw coastlines).
+
+maskoceans.py shows how to mask 'wet' areas on a plot.

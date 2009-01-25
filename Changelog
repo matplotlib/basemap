@@ -1,4 +1,5 @@
 version 0.99.4 (not yet released)
+           * added 'maskoceans' function.
            * update pupynere to version 1.0.8 (supports writing large files).
            * added more informative error message in readshapefile when
              one of the shapefile components can't be found.
