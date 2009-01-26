@@ -1,14 +1,13 @@
 """
 Performs conversions of netCDF time coordinate data to/from datetime objects.
 """
-import math, re, time
-import numpy as np
+import math, numpy, re, time
 from datetime import datetime as real_datetime
 
 _units = ['days','hours','minutes','seconds','day','hour','minute','second']
 _calendars = ['standard','gregorian','proleptic_gregorian','noleap','julian','all_leap','365_day','366_day','360_day']
 
-__version__ = '0.6'
+__version__ = '0.7'
 
 class datetime:
     """
@@ -467,8 +466,8 @@ since 0001-01-01 00:00:00'}.
 
 The B{C{calendar}} keyword describes the calendar used in the time calculations. 
 All the values currently defined in the U{CF metadata convention 
-<http://www.cgd.ucar.edu/cms/eaton/cf-metadata/CF-1.0.html#time>} are 
-accepted. The default is C{'standard'}, which corresponds to the mixed 
+<http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.1/cf-conventions.html#time-coordinate>}  
+are accepted. The default is C{'standard'}, which corresponds to the mixed 
 Gregorian/Julian calendar used by the C{udunits library}. Valid calendars 
 are:
 
@@ -534,8 +533,7 @@ Warning:  Dates between 1582-10-5 and 1582-10-15 do not exist in the
 C{'standard'} or C{'gregorian'} calendars.  An exception will be raised if you pass 
 a 'datetime-like' object in that range to the C{L{date2num}} class method.
 
-Words of Wisdom from the British MetOffice concerning reference dates 
-U{http://www.metoffice.com/research/hadleycentre/models/GDT/ch26.html}:
+Words of Wisdom from the British MetOffice concerning reference dates:
 
 "udunits implements the mixed Gregorian/Julian calendar system, as 
 followed in England, in which dates prior to 1582-10-15 are assumed to use 
@@ -560,8 +558,8 @@ since 0001-01-01 00:00:00'}.
 
 @keyword calendar: describes the calendar used in the time calculations. 
 All the values currently defined in the U{CF metadata convention 
-<http://www.cgd.ucar.edu/cms/eaton/cf-metadata/CF-1.0.html#time>} are 
-accepted. The default is C{'standard'}, which corresponds to the mixed 
+<http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.1/cf-conventions.html#time-coordinate>}
+are accepted. The default is C{'standard'}, which corresponds to the mixed 
 Gregorian/Julian calendar used by the C{udunits library}. Valid calendars 
 are:
  - C{'gregorian'} or C{'standard'} (default):
@@ -630,7 +628,7 @@ Returns a scalar if input is a scalar, else returns a numpy array.
         except:
             isscalar = True
         if not isscalar:
-            date = np.array(date)
+            date = numpy.array(date)
             shape = date.shape
         if self.calendar in ['julian','standard','gregorian','proleptic_gregorian']:
             if isscalar:
@@ -657,7 +655,7 @@ Returns a scalar if input is a scalar, else returns a numpy array.
             else:
                 jdelta = [_360DayFromDate(d)-self._jd0 for d in date.flat]
         if not isscalar:
-            jdelta = np.array(jdelta)
+            jdelta = numpy.array(jdelta)
         # convert to desired units, add time zone offset.
         if self.units in ['second','seconds']:
             jdelta = jdelta*86400. + self.tzoffset*60.
@@ -670,7 +668,7 @@ Returns a scalar if input is a scalar, else returns a numpy array.
         if isscalar:
             return jdelta
         else:
-            return np.reshape(jdelta,shape)
+            return numpy.reshape(jdelta,shape)
 
     def num2date(self,time_value):
         """
@@ -682,8 +680,8 @@ a time zone offset from UTC.
 
 Resolution is 1 second.
 
-Works for scalars, sequences and np arrays.
-Returns a scalar if input is a scalar, else returns a np array.
+Works for scalars, sequences and numpy arrays.
+Returns a scalar if input is a scalar, else returns a numpy array.
 
 The datetime instances returned by C{num2date} are 'real' python datetime 
 objects if the date falls in the Gregorian calendar (i.e. 
@@ -700,7 +698,7 @@ do not exist in any real world calendar.
         except:
             isscalar = True
         if not isscalar:
-            time_value = np.array(time_value)
+            time_value = numpy.array(time_value, dtype='d')
             shape = time_value.shape
         # convert to desired units, remove time zone offset.
         if self.units in ['second','seconds']:
@@ -735,7 +733,7 @@ do not exist in any real world calendar.
         if isscalar:
             return date
         else:
-            return np.reshape(np.array(date),shape)
+            return numpy.reshape(numpy.array(date),shape)
 
 def _parse_date(origin):
     """Parses a date string and returns a tuple
@@ -852,3 +850,147 @@ def _strftime(dt, fmt):
     for site in sites:
         s = s[:site] + syear + s[site+4:]
     return s
+
+def date2num(dates,units,calendar='standard'):
+    """
+date2num(dates,units,calendar='standard')
+
+Return numeric time values given datetime objects. The units
+of the numeric time values are described by the L{units} argument
+and the L{calendar} keyword. The datetime objects must
+be in UTC with no time-zone offset.  If there is a 
+time-zone offset in C{units}, it will be applied to the
+returned numeric values.
+
+Like the matplotlib C{date2num} function, except that it allows
+for different units and calendars.  Behaves the same if
+C{units = 'days since 0001-01-01 00:00:00'} and 
+C{calendar = 'proleptic_gregorian'}.
+
+@param dates: A datetime object or a sequence of datetime objects.
+ The datetime objects should not include a time-zone offset.
+
+@param units: a string of the form C{'B{time units} since B{reference time}}'
+ describing the time units. B{C{time units}} can be days, hours, minutes
+ or seconds.  B{C{reference time}} is the time origin. A valid choice
+ would be units=C{'hours since 1800-01-01 00:00:00 -6:00'}.
+
+@param calendar: describes the calendar used in the time calculations. 
+ All the values currently defined in the U{CF metadata convention 
+ <http://cf-pcmdi.llnl.gov/documents/cf-conventions/>} are supported.
+ Valid calendars C{'standard', 'gregorian', 'proleptic_gregorian'
+ 'noleap', '365_day', '360_day', 'julian', 'all_leap', '366_day'}.
+ Default is C{'standard'}, which is a mixed Julian/Gregorian calendar.
+
+@return: a numeric time value, or an array of numeric time values.
+
+The maximum resolution of the numeric time values is 1 second.
+    """
+    cdftime = utime(units,calendar=calendar)
+    return cdftime.date2num(dates)
+
+def num2date(times,units,calendar='standard'):
+    """
+num2date(times,units,calendar='standard')
+
+Return datetime objects given numeric time values. The units
+of the numeric time values are described by the C{units} argument
+and the C{calendar} keyword. The returned datetime objects represent 
+UTC with no time-zone offset, even if the specified 
+C{units} contain a time-zone offset.
+
+Like the matplotlib C{num2date} function, except that it allows
+for different units and calendars.  Behaves the same if
+C{units = 'days since 001-01-01 00:00:00'} and 
+C{calendar = 'proleptic_gregorian'}.
+
+@param times: numeric time values. Maximum resolution is 1 second.
+
+@param units: a string of the form C{'B{time units} since B{reference time}}'
+describing the time units. B{C{time units}} can be days, hours, minutes
+or seconds.  B{C{reference time}} is the time origin. A valid choice
+would be units=C{'hours since 1800-01-01 00:00:00 -6:00'}.
+
+@param calendar: describes the calendar used in the time calculations. 
+All the values currently defined in the U{CF metadata convention 
+<http://cf-pcmdi.llnl.gov/documents/cf-conventions/>} are supported.
+Valid calendars C{'standard', 'gregorian', 'proleptic_gregorian'
+'noleap', '365_day', '360_day', 'julian', 'all_leap', '366_day'}.
+Default is C{'standard'}, which is a mixed Julian/Gregorian calendar.
+
+@return: a datetime instance, or an array of datetime instances.
+
+The datetime instances returned are 'real' python datetime 
+objects if the date falls in the Gregorian calendar (i.e. 
+C{calendar='proleptic_gregorian'}, or C{calendar = 'standard'} or C{'gregorian'}
+and the date is after 1582-10-15). Otherwise, they are 'phony' datetime 
+objects which support some but not all the methods of 'real' python
+datetime objects.  This is because the python datetime module cannot
+the uses the C{'proleptic_gregorian'} calendar, even before the switch
+occured from the Julian calendar in 1582. The datetime instances
+do not contain a time-zone offset, even if the specified C{units}
+contains one.
+    """
+    cdftime = utime(units,calendar=calendar)
+    return cdftime.num2date(times)
+
+
+def _check_index(indices, dates, nctime, calendar):
+    """Assert that the time indices given correspond to the given dates."""
+    t = nctime[indices]
+    assert numpy.all( num2date(t, nctime.units, calendar) == dates)
+
+
+def date2index(dates, nctime, calendar=None):
+    """
+    date2index(dates, nctime, calendar=None)
+    
+    Return indices of a netCDF time variable corresponding to the given dates.
+    
+    @param dates: A datetime object or a sequence of datetime objects.
+    The datetime objects should not include a time-zone offset.
+    
+    @param nctime: A netCDF time variable object. The nctime object must have a
+    C{units} attribute.
+    
+    @param calendar: Describes the calendar used in the time calculation.
+    Valid calendars C{'standard', 'gregorian', 'proleptic_gregorian'
+    'noleap', '365_day', '360_day', 'julian', 'all_leap', '366_day'}.
+    Default is C{'standard'}, which is a mixed Julian/Gregorian calendar
+    If C{calendar} is None, its value is given by C{nctime.calendar} or
+    C{standard} if no such attribute exists.
+    """
+    # Setting the calendar.
+    if calendar is None:
+        calendar = getattr(nctime, 'calendar', 'standard')
+
+    num = numpy.atleast_1d(date2num(dates, nctime.units, calendar))
+
+    index = numpy.empty(numpy.alen(dates), int)
+
+    # Trying to infer the correct index from the starting time and the stride.
+    try:
+        t0, t1 = nctime[:2]
+        dt = t1 - t0
+        index[:] = (num-t0)/dt
+
+        # convert numpy scalars or single element arrays to python ints.
+        if not len(index.shape) or index.shape == (1,):
+            index = index.item()
+
+        # Checking that the index really corresponds to the given date.
+        _check_index(index, dates, nctime, calendar)
+
+    except AssertionError:
+        # If check fails, use brute force method.
+        index[:] = numpy.digitize(num, nctime[:]) - 1
+
+        # convert numpy scalars or single element arrays to python ints.
+        if not len(index.shape) or index.shape == (1,):
+            index = index.item()
+
+        # Perform check again.
+        _check_index(index, dates, nctime, calendar)
+
+    return index
+

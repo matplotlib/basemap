@@ -17,6 +17,8 @@ heavy lifting), and the following functions:
 :func:`num2date`: convert from a numeric time value to a datetime object.
 
 :func:`date2num`: convert from a datetime object to a numeric time value.
+
+:func:`date2index`: compute a time variable index corresponding to a date.
 """
 from matplotlib import __version__ as _matplotlib_version
 from matplotlib.cbook import is_scalar, dedent
@@ -3940,6 +3942,42 @@ def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     """
     cdftime = netcdftime.utime(units,calendar=calendar)
     return cdftime.date2num(dates)
+
+def date2index(dates, nctime, calendar=None):
+    """
+    Return indices of a netCDF time variable corresponding to the given dates.
+
+    .. tabularcolumns:: |l|L|
+
+    ==============   ====================================================
+    Arguments        Description
+    ==============   ====================================================
+    dates            A datetime object or a sequence of datetime objects.
+                     The datetime objects should not include a
+                     time-zone offset.
+    nctime           A netCDF time variable object.  The nctime object
+                     must have a ``units`` attribute.
+    ==============   ====================================================
+
+    .. tabularcolumns:: |l|L|
+
+    ==============   ====================================================
+    Keywords          Description
+    ==============   ====================================================
+    calendar         describes the calendar used in the time
+                     calculations.  All the values currently defined in 
+                     the CF metadata convention
+                     (http://cf-pcmdi.llnl.gov/documents/cf-conventions/)
+                     are supported.
+                     Valid calendars ``standard``, ``gregorian``,
+                     ``proleptic_gregorian``, ``noleap``, ``365_day``,
+                     ``julian``, ``all_leap``, ``366_day``.
+                     Default is ``proleptic_gregorian``.
+    ==============   ====================================================
+
+    Returns an index or a sequence of indices.
+    """
+    return netcdftime.date2index(dates, nctime, calendar=None)
 
 def maskoceans(lonsin,latsin,datain,inlands=False):
     """
