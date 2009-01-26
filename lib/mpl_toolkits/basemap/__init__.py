@@ -3943,7 +3943,7 @@ def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     cdftime = netcdftime.utime(units,calendar=calendar)
     return cdftime.date2num(dates)
 
-def date2index(dates, nctime, calendar=None):
+def date2index(dates, nctime, calendar='proleptic_gregorian'):
     """
     Return indices of a netCDF time variable corresponding to the given dates.
 
