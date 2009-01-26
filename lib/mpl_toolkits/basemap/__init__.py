@@ -3973,6 +3973,9 @@ def date2index(dates, nctime, calendar='proleptic_gregorian'):
                      ``proleptic_gregorian``, ``noleap``, ``365_day``,
                      ``julian``, ``all_leap``, ``366_day``.
                      Default is ``proleptic_gregorian``.
+                     If ``calendar=None``, will use ``calendar`` attribute
+                     of ``nctime`` object, and if that attribute does 
+                     not exist calendar is set to ``standard``. 
     ==============   ====================================================
 
     Returns an index or a sequence of indices.
