@@ -9,15 +9,13 @@ import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 import numpy.ma as ma
 import datetime, sys, time, subprocess
-from mpl_toolkits.basemap import Basemap, shiftgrid, NetCDFFile, num2date
+from mpl_toolkits.basemap import Basemap, shiftgrid, NetCDFFile, date2index, num2date
 
 # times for March 1993 'storm of the century'
-YYYYMMDDHH1 = '1993031000'
-YYYYMMDDHH2 = '1993031700'
+date1 = datetime.datetime(1993,3,10,0)
+date2 = datetime.datetime(1993,3,17,0)
+print date1, date2
 
-YYYY = YYYYMMDDHH1[0:4]
-if YYYY != YYYYMMDDHH2[0:4]:
-    raise ValueError,'dates must be in same year'
 
 # set OpenDAP server URL.
 URL="http://nomad1.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-2/6hr/pgb/pgb"
@@ -32,18 +30,10 @@ print data.variables.keys()
 latitudes = data.variables['lat'][:]
 longitudes = data.variables['lon'][:].tolist()
 times = data.variables['time']
-# convert numeric time values to datetime objects.
-fdates = num2date(times[:],units=times.units,calendar='standard')
-# put times in YYYYMMDDHH format.
-dates = [fdate.strftime('%Y%m%d%H') for fdate in fdates]
-if YYYYMMDDHH1 not in dates or YYYYMMDDHH2 not in dates:
-    raise ValueError, 'date1 or date2 not a valid date (must be in form YYYYMMDDHH, where HH is 00,06,12 or 18)'
-# find indices bounding desired times.
-ntime1 = dates.index(YYYYMMDDHH1)
-ntime2 = dates.index(YYYYMMDDHH2)
+ntime1 = date2index(date1,times,calendar='standard')
+ntime2 = date2index(date2,times,calendar='standard')
 print 'ntime1,ntime2:',ntime1,ntime2
-if ntime1 >= ntime2:
-    raise ValueError,'date2 must be greater than date1'
+print num2date(times[ntime1],times.units,calendar='standard'), num2date(times[ntime2],times.units,calendar='standard')
 # get sea level pressure and 10-m wind data.
 slpdata = data.variables['presmsl']
 udata = data.variables['ugrdprs']
@@ -52,7 +42,7 @@ vdata = data.variables['vgrdprs']
 slpin = 0.01*slpdata[ntime1:ntime2+1,:,:]
 uin = udata[ntime1:ntime2+1,0,:,:] 
 vin = vdata[ntime1:ntime2+1,0,:,:] 
-datelabels = dates[ntime1:ntime2+1]
+dates = num2date(times[ntime1:ntime2+1], times.units, calendar='standard')
 # add cyclic points
 slp = np.zeros((slpin.shape[0],slpin.shape[1],slpin.shape[2]+1),np.float64)
 slp[:,:,0:-1] = slpin; slp[:,:,-1] = slpin[:,:,0]
@@ -68,13 +58,12 @@ print slp.min(), slp.max()
 print uin.min(), uin.max()
 print vin.min(), vin.max()
 print 'dates'
-print datelabels
+print dates
 # make orthographic basemaplt.
 m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
 plt.ion() # interactive mode on.
 uin = udata[ntime1:ntime2+1,0,:,:] 
 vin = vdata[ntime1:ntime2+1,0,:,:] 
-datelabels = dates[ntime1:ntime2+1]
 # make orthographic basemaplt.
 m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
 plt.ion() # interactive mode on.
@@ -94,7 +83,7 @@ pos = ax.get_position()
 l, b, w, h = pos.bounds
 # loop over times, make contour plots, draw coastlines, 
 # parallels, meridians and title.
-for nt,date in enumerate(datelabels[1:]):
+for nt,date in enumerate(dates):
     CS = m.contour(x,y,slp[nt,:,:],clevs,linewidths=0.5,colors='k',animated=True)
     CS = m.contourf(x,y,slp[nt,:,:],clevs,cmap=plt.cm.RdBu_r,animated=True)
     # plot wind vectors on lat/lon grid.
@@ -117,7 +106,7 @@ for nt,date in enumerate(datelabels[1:]):
     m.drawcoastlines(linewidth=1.5)
     m.drawparallels(parallels)
     m.drawmeridians(meridians)
-    plt.title('SLP and Wind Vectors '+date)
+    plt.title('SLP and Wind Vectors '+str(date))
     if nt == 0: # plot colorbar on a separate axes (only for first frame)
         cax = plt.axes([l+w-0.05, b, 0.03, h]) # setup colorbar axes
         fig.colorbar(CS,drawedges=True, cax=cax) # draw colorbar

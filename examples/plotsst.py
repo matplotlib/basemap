@@ -15,8 +15,8 @@ print date
 dataset = NetCDFFile('http://nomads.ncdc.noaa.gov/thredds/dodsC/oisst/totalAagg')
 # find index of desired time.
 time = dataset.variables['time']
-nt = date2index(date, time)
-print num2date(time[nt],time.units)
+nt = date2index(date, time, calendar='standard')
+print num2date(time[nt],time.units, calendar='standard')
 # read sst.  Will automatically create a masked array using
 # missing_value variable attribute.
 sst = dataset.variables['sst'][nt]
