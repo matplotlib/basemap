@@ -20,24 +20,15 @@ if YYYY != YYYYMMDDHH2[0:4]:
     raise ValueError,'dates must be in same year'
 
 # set OpenDAP server URL.
-URLbase="http://nomad3.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-2/6hr/pgb/"
-URL=URLbase+'pres'
-URLu=URLbase+'wind'
-URLv=URLbase+'wind'
+URL="http://nomad1.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-2/6hr/pgb/pgb"
 print URL
-print URLu
-print URLv
 try:
     data = NetCDFFile(URL)
-    datau = NetCDFFile(URLu)
-    datav = NetCDFFile(URLv)
 except:
     raise IOError, 'opendap server not providing the requested data'
 
 # read lats,lons,times.
 print data.variables.keys()
-print datau.variables.keys()
-print datav.variables.keys()
 latitudes = data.variables['lat'][:]
 longitudes = data.variables['lon'][:].tolist()
 times = data.variables['time']
@@ -55,8 +46,8 @@ if ntime1 >= ntime2:
     raise ValueError,'date2 must be greater than date1'
 # get sea level pressure and 10-m wind data.
 slpdata = data.variables['presmsl']
-udata = datau.variables['ugrdprs']
-vdata = datau.variables['vgrdprs']
+udata = data.variables['ugrdprs']
+vdata = data.variables['vgrdprs']
 # mult slp by 0.01 to put in units of millibars.
 slpin = 0.01*slpdata[ntime1:ntime2+1,:,:]
 uin = udata[ntime1:ntime2+1,0,:,:] 
