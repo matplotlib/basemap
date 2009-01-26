@@ -3582,7 +3582,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     .. tabularcolumns:: |l|L|
 
     ==============   ====================================================
-    Arguments         Description
+    Arguments        Description
     ==============   ====================================================
     datain           a rank-2 array with 1st dimension corresponding to 
                      y, 2nd dimension x.
@@ -3595,7 +3595,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     .. tabularcolumns:: |l|L|
 
     ==============   ====================================================
-    Keywords          Description
+    Keywords         Description
     ==============   ====================================================
     checkbounds      If True, values of xout and yout are checked to see
                      that they lie within the range specified by xin
@@ -3714,7 +3714,7 @@ def shiftgrid(lon0,datain,lonsin,start=True):
     .. tabularcolumns:: |l|L|
 
     ==============   ====================================================
-    Arguments         Description
+    Arguments        Description
     ==============   ====================================================
     lon0             starting longitude for shifted grid
                      (ending longitude if start=False). lon0 must be on
@@ -3726,7 +3726,7 @@ def shiftgrid(lon0,datain,lonsin,start=True):
     .. tabularcolumns:: |l|L|
 
     ==============   ====================================================
-    Keywords          Description
+    Keywords         Description
     ==============   ====================================================
     start            if True, lon0 represents the starting longitude
                      of the new grid. if False, lon0 is the ending
@@ -3858,7 +3858,7 @@ def num2date(times,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     .. tabularcolumns:: |l|L|
 
     ==============   ====================================================
-    Keywords          Description
+    Keywords         Description
     ==============   ====================================================
     units            a string of the form '<time units> since 
                      <reference time>' describing the units and
@@ -3917,7 +3917,7 @@ def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     .. tabularcolumns:: |l|L|
 
     ==============   ====================================================
-    Keywords          Description
+    Keywords         Description
     ==============   ====================================================
     units            a string of the form '<time units> since 
                      <reference time>' describing the units and
@@ -3962,7 +3962,7 @@ def date2index(dates, nctime, calendar='proleptic_gregorian'):
     .. tabularcolumns:: |l|L|
 
     ==============   ====================================================
-    Keywords          Description
+    Keywords         Description
     ==============   ====================================================
     calendar         describes the calendar used in the time
                      calculations.  All the values currently defined in 
@@ -3990,7 +3990,7 @@ def maskoceans(lonsin,latsin,datain,inlands=False):
     .. tabularcolumns:: |l|L|
 
     ==============   ====================================================
-    Arguments         Description
+    Arguments        Description
     ==============   ====================================================
     lonsin, latsin   rank-2 arrays containing longitudes and latitudes of
                      grid.
