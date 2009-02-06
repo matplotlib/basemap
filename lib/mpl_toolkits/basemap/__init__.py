@@ -41,6 +41,7 @@ import numpy as np
 import numpy.ma as ma
 from shapelib import ShapeFile
 import _geoslib, netcdftime
+import cm
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 # check to see if environment variable BASEMAPDATA set to a directory,
