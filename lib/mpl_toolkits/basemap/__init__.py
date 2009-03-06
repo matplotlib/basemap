@@ -242,6 +242,8 @@ _Basemap_init_doc = """
                   formatter, or  if you want to let matplotlib label 
                   the axes in meters using map projection
                   coordinates.
+ fix_aspect       fix aspect ratio of plot to match aspect ratio
+                  of map projection region (default True).
  anchor           determines how map is placed in axes rectangle
                   (passed to axes.set_aspect). Default is ``C``, 
                   which means map is centered.
@@ -434,10 +436,14 @@ class Basemap(object):
                        suppress_ticks=True,
                        satellite_height=35786000,
                        boundinglat=None,
+                       fix_aspect=True,
                        anchor='C',
                        ax=None):
         # docstring is added after __init__ method definition
 
+        # fix aspect to ratio to match aspect ratio of map projection
+        # region
+        self.fix_aspect = fix_aspect
         # where to put plot in figure (default is 'C' or center)
         self.anchor = anchor
         # map projection.
@@ -2566,7 +2572,10 @@ class Basemap(object):
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
         # (anchor instance var determines where plot is placed)
-        ax.set_aspect('equal',adjustable='box',anchor=self.anchor)
+        if self.fix_aspect:
+            ax.set_aspect('equal',adjustable='box',anchor=self.anchor)
+        else:
+            ax.set_aspect('auto',adjustable='box',anchor=self.anchor)
         ax.apply_aspect()
         # make sure axis ticks are turned off.
         if self.noticks:

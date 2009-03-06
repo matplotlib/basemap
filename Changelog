@@ -1,4 +1,8 @@
 version 0.99.4 (not yet released)
+           * add fix_aspect kwarg to Basemap.__init__, when true
+	     axes.set_aspect is set to 'auto' instead of default 'equal'.
+	     Can be used to make plot fill whole plot region, even if the 
+	     plot region doesn't match the aspect ratio of the map region.
            * added date2index function, updated netcdftime to 0.7.1.
            * added maskoceans function.
            * update pupynere to version 1.0.8 (supports writing large files).
