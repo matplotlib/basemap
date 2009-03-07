@@ -1,5 +1,6 @@
 """
 plot H's and L's on a sea-level pressure map
+(uses scipy.ndimage.filters)
 """
 import numpy as np
 import matplotlib.pyplot as plt
