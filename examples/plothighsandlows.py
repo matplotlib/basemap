@@ -27,7 +27,10 @@ if len(sys.argv) < 2:
 YYYYMMDDHH = sys.argv[1]
 
 # open OpenDAP dataset.
-data=NetCDFFile("http://nomad1.ncep.noaa.gov:9090/dods/gdas/rotating/gdas"+YYYYMMDDHH)
+try:
+    data=NetCDFFile("http://nomad1.ncep.noaa.gov:9090/dods/gdas/rotating/gdas"+YYYYMMDDHH)
+except:
+    data=NetCDFFile("http://nomad1.ncep.noaa.gov:9090/dods/gdas/rotating/"+YYYYMMDDHH[0:6]+"/gdas"+YYYYMMDDHH)
 
 # read lats,lons.
 lats = data.variables['lat'][:]
