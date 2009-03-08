@@ -9,15 +9,14 @@ from mpl_toolkits.basemap import Basemap, NetCDFFile, addcyclic
 from scipy.ndimage.filters import minimum_filter, maximum_filter
 
 def extrema(mat,mode='wrap',window=10):
+    """find the indices of local extrema (min and max)
+    in the input array."""
     mn = minimum_filter(mat, size=window, mode=mode)
     mx = maximum_filter(mat, size=window, mode=mode)
     # (mat == mx) true if pixel is equal to the local max
-    # The next computation suppresses responses where
-    # the function is flat.
-    local_maxima = ((mat == mx) & (mat != mn)) 
-    local_minima = ((mat == mn) & (mat != mx)) 
-    # Get the indices of the maxima, minima
-    return np.nonzero(local_minima), np.nonzero(local_maxima)
+    # (mat == mn) true if pixel is equal to the local in
+    # Return the indices of the maxima, minima
+    return np.nonzero(mat == mn), np.nonzero(mat == mx)
 
 if len(sys.argv) < 2:
     print 'enter date to plot (YYYYMMDDHH) on command line'
@@ -65,8 +64,8 @@ lowvals = prmsl[local_min]; highvals = prmsl[local_max]
 # plot lows as blue L's, with min pressure value underneath.
 xyplotted = []
 # don't plot if there is already a L or H within dmin meters.
-dmin = 500000
 yoffset = 0.022*(m.ymax-m.ymin)
+dmin = yoffset
 for x,y,p in zip(xlows, ylows, lowvals):
     if x < m.xmax and x > m.xmin and y < m.ymax and y > m.ymin:
         dist = [np.sqrt((x-x0)**2+(y-y0)**2) for x0,y0 in xyplotted]
