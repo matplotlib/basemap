@@ -72,11 +72,10 @@ for x,y,p in zip(xlows, ylows, lowvals):
         dist = [np.sqrt((x-x0)**2+(y-y0)**2) for x0,y0 in xyplotted]
         if not dist or min(dist) > dmin:
             plt.text(x,y,'L',fontsize=14,fontweight='bold',
-                     horizontalalignment='center',
-                     verticalalignment='center',color='blue')
+                    ha='center',va='center',color='b')
             plt.text(x,y-yoffset,repr(int(p)),fontsize=9,
-                     horizontalalignment='center',
-                     verticalalignment='top',color='blue')
+                    ha='center',va='top',color='b',
+                    bbox = dict(boxstyle="square",ec='None',fc=(1,1,1,0.5)))
             xyplotted.append((x,y))
 # plot highs as red H's, with max pressure value underneath.
 xyplotted = []
@@ -85,11 +84,10 @@ for x,y,p in zip(xhighs, yhighs, highvals):
         dist = [np.sqrt((x-x0)**2+(y-y0)**2) for x0,y0 in xyplotted]
         if not dist or min(dist) > dmin:
             plt.text(x,y,'H',fontsize=14,fontweight='bold',
-                     horizontalalignment='center',
-                     verticalalignment='center',color='red')
+                    ha='center',va='center',color='r')
             plt.text(x,y-yoffset,repr(int(p)),fontsize=9,
-                     horizontalalignment='center',
-                     verticalalignment='top',color='red')
+                    ha='center',va='top',color='r',
+                    bbox = dict(boxstyle="square",ec='None',fc=(1,1,1,0.5)))
             xyplotted.append((x,y))
 plt.title('Mean Sea-Level Pressure (with Highs and Lows) %s' % YYYYMMDDHH)
 plt.show()
