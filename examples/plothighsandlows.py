@@ -43,7 +43,8 @@ prmsl = 0.01*data.variables['prmslmsl'][0]
 # (higher value, fewer highs and lows)
 local_min, local_max = extrema(prmsl, mode='wrap', window=25)
 # create Basemap instance.
-m = Basemap(llcrnrlon=0,llcrnrlat=-65,urcrnrlon=360,urcrnrlat=65,projection='merc')
+m =\
+Basemap(llcrnrlon=0,llcrnrlat=-80,urcrnrlon=360,urcrnrlat=80,projection='mill')
 # add wrap-around point in longitude.
 prmsl, lons = addcyclic(prmsl, lons1)
 # contour levels
@@ -56,8 +57,8 @@ fig=plt.figure(figsize=(12,6))
 cs = m.contour(x,y,prmsl,clevs,colors='k',linewidths=1.)
 m.drawcoastlines(linewidth=1.25)
 m.fillcontinents(color='0.8')
-m.drawparallels(np.arange(-80,81,20))
-m.drawmeridians(np.arange(0,360,60))
+m.drawparallels(np.arange(-80,81,20),labels=[1,1,0,0])
+m.drawmeridians(np.arange(0,360,60),labels=[0,0,0,1])
 xlows = x[local_min]; xhighs = x[local_max]
 ylows = y[local_min]; yhighs = y[local_max]
 lowvals = prmsl[local_min]; highvals = prmsl[local_max]
@@ -65,6 +66,7 @@ lowvals = prmsl[local_min]; highvals = prmsl[local_max]
 xyplotted = []
 # don't plot if there is already a L or H within dmin meters.
 dmin = 500000
+yoffset = 0.022*(m.ymax-m.ymin)
 for x,y,p in zip(xlows, ylows, lowvals):
     if x < m.xmax and x > m.xmin and y < m.ymax and y > m.ymin:
         dist = [np.sqrt((x-x0)**2+(y-y0)**2) for x0,y0 in xyplotted]
@@ -72,7 +74,7 @@ for x,y,p in zip(xlows, ylows, lowvals):
             plt.text(x,y,'L',fontsize=14,fontweight='bold',
                      horizontalalignment='center',
                      verticalalignment='center',color='blue')
-            plt.text(x,y-400000,repr(int(p)),fontsize=9,
+            plt.text(x,y-yoffset,repr(int(p)),fontsize=9,
                      horizontalalignment='center',
                      verticalalignment='top',color='blue')
             xyplotted.append((x,y))
@@ -85,7 +87,7 @@ for x,y,p in zip(xhighs, yhighs, highvals):
             plt.text(x,y,'H',fontsize=14,fontweight='bold',
                      horizontalalignment='center',
                      verticalalignment='center',color='red')
-            plt.text(x,y-400000,repr(int(p)),fontsize=9,
+            plt.text(x,y-yoffset,repr(int(p)),fontsize=9,
                      horizontalalignment='center',
                      verticalalignment='top',color='red')
             xyplotted.append((x,y))
