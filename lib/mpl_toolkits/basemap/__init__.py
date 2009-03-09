@@ -3598,8 +3598,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
                      y, 2nd dimension x.
     xin, yin         rank-1 arrays containing x and y of
                      datain grid in increasing order.
-    xout, yout       rank-2 arrays containing x and y of desired output
-                     grid.
+    xout, yout       arrays containing x and y of desired output grid.
     ==============   ====================================================
 
     .. tabularcolumns:: |l|L|
