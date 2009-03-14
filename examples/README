@@ -20,6 +20,9 @@ plotmap.py is the example on the matplotlib 'screenshots' page (included
 in test.py) which shows the ETOPO topography as an image on a Lambert
 Conformal projection (using imshow).
 
+plotmap_shaded.py shows how to make a 'shaded relief' plot by specifying
+the location of a lightsource.
+
 plotmap_oo.py is a version of plotmap.py that does not import pylab - it uses
 the matplotlib OO interface instead.
 

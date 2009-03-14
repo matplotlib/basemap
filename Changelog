@@ -1,4 +1,5 @@
 version 0.99.4 (not yet released)
+           * added new example "plotmap_shaded.py" (shaded relief plot).
            * added new example "plothighsandlows.py".
            * add fix_aspect kwarg to Basemap.__init__, when False
              axes.set_aspect is set to 'auto' instead of default 'equal'.
