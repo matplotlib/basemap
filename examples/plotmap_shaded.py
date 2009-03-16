@@ -26,12 +26,15 @@ m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat,x,y = m.transform_scalar(topoin,lons,lats,nx,ny,returnxy=True)
+# create light source object.
 ls = lightsource(azdeg = 90, altdeg = 20)
-print topodat.shape
+# convert data to rgb array including shading from light source.
+# (must specify color map)
 rgb = ls.shade(topodat, plt.cm.jet)
 # create the figure.
 fig=plt.figure(figsize=(8,8))
-# plot image over map with imshow.
+# plot image over map with imshow (pass rgb values 
+# that include light shading).
 im = m.imshow(rgb)
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -44,5 +47,4 @@ meridians = np.arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,1,0,1])
 # set title.
 plt.title('ETOPO Shaded Relief - Lambert Conformal Conic')
-#plt.savefig('plotmap.pdf')
 plt.show()
