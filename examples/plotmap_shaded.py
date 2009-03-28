@@ -7,7 +7,7 @@ from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
-from matplotlib.colors import lightsource
+from matplotlib.colors import LightSource
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
@@ -27,7 +27,7 @@ m = Basemap(llcrnrlon=-145.5,llcrnrlat=1.,urcrnrlon=-2.566,urcrnrlat=46.352,\
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat,x,y = m.transform_scalar(topoin,lons,lats,nx,ny,returnxy=True)
 # create light source object.
-ls = lightsource(azdeg = 90, altdeg = 20)
+ls = LightSource(azdeg = 90, altdeg = 20)
 # convert data to rgb array including shading from light source.
 # (must specify color map)
 rgb = ls.shade(topodat, plt.cm.jet)
