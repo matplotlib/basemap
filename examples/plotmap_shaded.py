@@ -7,7 +7,11 @@ from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
-from matplotlib.colors import LightSource
+try:
+    from matplotlib.colors import LightSource
+except ImportError:
+    raise ImportError("Need a more recent version of matplotlib to run this example")
+
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
