@@ -1711,7 +1711,8 @@ class Basemap(object):
 
     def drawparallels(self,circles,color='k',linewidth=1.,zorder=None, \
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None, \
-                      fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
+                      fmt='%g',xoffset=None,yoffset=None,ax=None,latmax=None,
+                      **kwargs):
         """
         Draw and label parallels (latitude lines) for values (in degrees)  
         given in the sequence ``circles``.
@@ -1748,6 +1749,8 @@ class Basemap(object):
                          (default is 0.01 times height of map in map
                          projection coordinates).
         ax               axes instance (overrides default axes instance)
+        latmax           absolute value of latitude to which meridians are drawn
+                         (default is 80).
         \**kwargs        additional keyword arguments controlling text
                          for labels that are passed on to 
                          the text method of the axes instance (see
@@ -1769,7 +1772,7 @@ class Basemap(object):
         elif ax is None and self.ax is not None:
             ax = self.ax
         # don't draw meridians past latmax, always draw parallel at latmax.
-        latmax = 80.
+        if latmax is None: latmax = 80.
         # offset for labels.
         if yoffset is None:
             yoffset = (self.urcrnry-self.llcrnry)/100.
@@ -1968,7 +1971,8 @@ class Basemap(object):
 
     def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
-                      fmt='%g',xoffset=None,yoffset=None,ax=None,**kwargs):
+                      fmt='%g',xoffset=None,yoffset=None,ax=None,latmax=None,
+                      **kwargs):
         """
         Draw and label meridians (longitude lines) for values (in degrees)
         given in the sequence ``meridians``.
@@ -2005,6 +2009,8 @@ class Basemap(object):
                          (default is 0.01 times height of map in map
                          projection coordinates).
         ax               axes instance (overrides default axes instance)
+        latmax           absolute value of latitude to which meridians are drawn
+                         (default is 80).
         \**kwargs        additional keyword arguments controlling text
                          for labels that are passed on to 
                          the text method of the axes instance (see
@@ -2026,7 +2032,7 @@ class Basemap(object):
         elif ax is None and self.ax is not None:
             ax = self.ax
         # don't draw meridians past latmax, always draw parallel at latmax.
-        latmax = 80. # not used for cyl, merc or miller projections.
+        if latmax is None: latmax = 80. # unused w/ cyl, merc or miller proj.
         # offset for labels.
         if yoffset is None:
             yoffset = (self.urcrnry-self.llcrnry)/100.
