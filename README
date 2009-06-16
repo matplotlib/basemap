@@ -17,6 +17,11 @@ Source code is included in the geos-2.2.3 directory.
 PIL (http://pythonware.com/products/pil) is optional (only
 needed for Basemap warpimage and bluemarble methods).
 
+On linux, if your python was installed via a package management system, make
+sure the corresponding "python-dev" package is also installed.  Otherwise, you
+may not have the python header (Python.h), which is required to build python
+C extensions.
+
 **Copyright**
 
 source code from proj.4 (http://proj.maptools.org) is included in the
