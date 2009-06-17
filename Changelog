@@ -1,4 +1,6 @@
 version 0.99.4 (not yet released)
+           * ax.frame replaced with ax.spines to maintain compatibility 
+             with matplotlib spines support.
            * added latmax kwarg to drawparallels and drawmeridians 
              (patch from Chris Murphy).
            * added new example "plotmap_shaded.py" (shaded relief plot).
