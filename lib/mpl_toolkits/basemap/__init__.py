@@ -1266,7 +1266,7 @@ class Basemap(object):
                 ax.frame.set_linewidth(linewidth)
             except AttributeError:
                 for spine in ax.spines.itervalues():
-                    ax.spines[spine].set_linewidth(linewidth)
+                    spine.set_linewidth(linewidth)
             if self.projection not in ['geos','ortho']:
                 if fill_color is not None:
                     ax.axesPatch.set_facecolor(fill_color)
@@ -1274,7 +1274,7 @@ class Basemap(object):
                     ax.frame.set_edgecolor(color)
                 except AttributeError:
                     for spine in ax.spines.itervalues():
-                        ax.spines[spine].set_edgecolor(color)
+                        spine.set_edgecolor(color)
                 ax.set_frame_on(True)
                 # FIXME?  should zorder be set separately for edge and background?
                 if zorder is not None:
@@ -1283,14 +1283,14 @@ class Basemap(object):
                         ax.frame.set_zorder(zorder)
                     except AttributeError:
                         for spine in ax.spines.itervalues():
-                            ax.spines[spine].set_zorder(zorder)
+                            spine.set_zorder(zorder)
             else:
                 # use axesPatch for fill_color, frame for border line props.
                 try:
                     ax.frame.set_edgecolor(color)
                 except AttributeError:
                     for spine in ax.spines.itervalues():
-                        ax.spines[spine].set_edgecolor(color)
+                        spine.set_edgecolor(color)
                 ax.set_frame_on(True)
                 # FIXME?  should zorder be set separately for edge and background?
                 if zorder is not None:
@@ -1299,7 +1299,7 @@ class Basemap(object):
                         ax.frame.set_zorder(zorder)
                     except AttributeError:
                         for spine in ax.spines.itervalues():
-                            ax.spines[spine].set_zorder(zorder)
+                            spine.set_zorder(zorder)
                 # for geos or ortho projections, also
                 # draw and fill map projection limb, clipped
                 # to rectangular region.
