@@ -8,13 +8,12 @@
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-etopo = mlab.load('etopo20data.gz')
-lons = mlab.load('etopo20lons.gz')
-lats = mlab.load('etopo20lats.gz')
+etopo = np.loadtxt('etopo20data.gz')
+lons = np.loadtxt('etopo20lons.gz')
+lats = np.loadtxt('etopo20lats.gz')
 
 print 'min/max etopo20 data:'
 print etopo.min(),etopo.max()

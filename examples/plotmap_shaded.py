@@ -6,7 +6,6 @@
 from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
 try:
     from matplotlib.colors import LightSource
 except ImportError:
@@ -15,9 +14,9 @@ except ImportError:
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-topoin = mlab.load('etopo20data.gz')
-lons = mlab.load('etopo20lons.gz')
-lats = mlab.load('etopo20lats.gz')
+topoin = np.loadtxt('etopo20data.gz')
+lons = np.loadtxt('etopo20lons.gz')
+lats = np.loadtxt('etopo20lats.gz')
 # shift data so lons go from -180 to 180 instead of 20 to 380.
 topoin,lons = shiftgrid(180.,topoin,lons,start=False)
 

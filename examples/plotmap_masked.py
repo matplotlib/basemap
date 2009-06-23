@@ -9,14 +9,13 @@ from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy.ma as ma
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
 import matplotlib.colors as colors
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-topoin = mlab.load('etopo20data.gz')
-lonsin = mlab.load('etopo20lons.gz')
-latsin = mlab.load('etopo20lats.gz')
+topoin = np.loadtxt('etopo20data.gz')
+lonsin = np.loadtxt('etopo20lons.gz')
+latsin = np.loadtxt('etopo20lats.gz')
 # shift data so lons go from -180 to 180 instead of 20 to 380.
 topoin,lonsin = shiftgrid(180.,topoin,lonsin,start=False)
 
@@ -33,6 +32,8 @@ topodat,x,y = m.transform_scalar(topoin,lonsin,latsin,nx,ny,returnxy=True)
 fig=plt.figure(figsize=(8,8))
 # add an axes, leaving room for colorbar on the right.
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# associate this axes with the Basemap instance.
+m.ax = ax
 # make topodat a masked array, masking values lower than sea level.
 topodat = np.where(topodat < 0.,1.e10,topodat)
 topodatm = ma.masked_values(topodat, 1.e10)
@@ -44,12 +45,11 @@ im = m.imshow(topodatm,palette,norm=colors.normalize(vmin=0.0,vmax=3000.0,clip=F
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.075, b, 0.05, h])
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+plt.colorbar(im,cax=cax) # draw colorbar
 # plot blue dot on boulder, colorado and label it as such.
 xpt,ypt = m(-104.237,40.125) 
 m.plot([xpt],[ypt],'bo') 
-plt.text(xpt+100000,ypt+100000,'Boulder')
+ax.text(xpt+100000,ypt+100000,'Boulder')
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 m.drawcountries()
@@ -61,5 +61,5 @@ m.drawparallels(parallels,labels=[1,1,0,1])
 meridians = np.arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,1,0,1])
 # set title.
-plt.title('Masked ETOPO Topography - via imshow')
+ax.set_title('Masked ETOPO Topography - via imshow')
 plt.show()

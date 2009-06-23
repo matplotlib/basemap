@@ -8,15 +8,13 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from mpl_toolkits.basemap import Basemap
 from matplotlib.figure import Figure
 import numpy as np
-import matplotlib.mlab as mlab
 import matplotlib.cm as cm
-from matplotlib.mlab import load
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-etopo = mlab.load('etopo20data.gz')
-lons = mlab.load('etopo20lons.gz')
-lats = mlab.load('etopo20lats.gz')
+etopo = np.loadtxt('etopo20data.gz')
+lons = np.loadtxt('etopo20lons.gz')
+lats = np.loadtxt('etopo20lats.gz')
 # create figure.
 fig = Figure()
 canvas = FigureCanvas(fig)

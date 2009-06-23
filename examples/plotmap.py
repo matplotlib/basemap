@@ -7,13 +7,12 @@
 from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-topoin = mlab.load('etopo20data.gz')
-lons = mlab.load('etopo20lons.gz')
-lats = mlab.load('etopo20lats.gz')
+topoin = np.loadtxt('etopo20data.gz')
+lons = np.loadtxt('etopo20lons.gz')
+lats = np.loadtxt('etopo20lats.gz')
 # shift data so lons go from -180 to 180 instead of 20 to 380.
 topoin,lons = shiftgrid(180.,topoin,lons,start=False)
 
@@ -30,18 +29,19 @@ topodat,x,y = m.transform_scalar(topoin,lons,lats,nx,ny,returnxy=True)
 fig=plt.figure(figsize=(8,8))
 # add an axes, leaving room for colorbar on the right.
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# associate this axes with the Basemap instance.
+m.ax = ax
 # plot image over map with imshow.
 im = m.imshow(topodat,plt.cm.jet)
 # setup colorbar axes instance.
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.075, b, 0.05, h])
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+plt.colorbar(im,cax=cax) # draw colorbar
 # plot blue dot on boulder, colorado and label it as such.
 xpt,ypt = m(-104.237,40.125) 
 m.plot([xpt],[ypt],'bo') 
-plt.text(xpt+100000,ypt+100000,'Boulder')
+ax.text(xpt+100000,ypt+100000,'Boulder')
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 m.drawcountries()
@@ -53,6 +53,5 @@ m.drawparallels(parallels,labels=[1,1,0,1])
 meridians = np.arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,1,0,1])
 # set title.
-plt.title('ETOPO Topography - Lambert Conformal Conic')
-#plt.savefig('plotmap.pdf')
+ax.set_title('ETOPO Topography - Lambert Conformal Conic')
 plt.show()

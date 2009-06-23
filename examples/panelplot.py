@@ -3,13 +3,12 @@ from matplotlib import rcParams
 from matplotlib.ticker import MultipleLocator
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
 
 
 # read in data on lat/lon grid.
-hgt  = mlab.load('500hgtdata.gz')
-lons = mlab.load('500hgtlons.gz')
-lats = mlab.load('500hgtlats.gz')
+hgt  = np.loadtxt('500hgtdata.gz')
+lons = np.loadtxt('500hgtlons.gz')
+lats = np.loadtxt('500hgtlats.gz')
 lons, lats = np.meshgrid(lons, lats)
 
 # Example to show how to make multi-panel plots.

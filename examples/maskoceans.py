@@ -1,13 +1,12 @@
 from mpl_toolkits.basemap import Basemap, shiftgrid, maskoceans, interp
 import numpy as np 
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
 
 # example showing how to mask out 'wet' areas on a contour or pcolor plot.
 
-topodatin = mlab.load('etopo20data.gz')
-lonsin = mlab.load('etopo20lons.gz')
-latsin = mlab.load('etopo20lats.gz')
+topodatin = np.loadtxt('etopo20data.gz')
+lonsin = np.loadtxt('etopo20lons.gz')
+latsin = np.loadtxt('etopo20lats.gz')
 
 # shift data so lons go from -180 to 180 instead of 20 to 380.
 topoin,lons1 = shiftgrid(180.,topodatin,lonsin,start=False)

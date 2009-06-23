@@ -1,14 +1,13 @@
 from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
 
 # examples of filled contour plots on map projections.
 
 # read in data on lat/lon grid.
-hgt = mlab.load('500hgtdata.gz')
-lons = mlab.load('500hgtlons.gz')
-lats = mlab.load('500hgtlats.gz')
+hgt = np.loadtxt('500hgtdata.gz')
+lons = np.loadtxt('500hgtlons.gz')
+lats = np.loadtxt('500hgtlats.gz')
 # shift data so lons go from -180 to 180 instead of 0 to 360.
 hgt,lons = shiftgrid(180.,hgt,lons,start=False)
 lons, lats = np.meshgrid(lons, lats)
