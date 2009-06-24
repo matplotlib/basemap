@@ -2543,6 +2543,9 @@ class Basemap(object):
         Other \**kwargs passed on to matplotlib.pyplot.scatter.
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
+        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
+        if self.ax is None and kwargs.pop('ax', None) is None: 
+            import matplotlib.pyplot as plt
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -2611,6 +2614,9 @@ class Basemap(object):
         returns an matplotlib.image.AxesImage instance.
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
+        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
+        if self.ax is None and kwargs.pop('ax', None) is None: 
+            import matplotlib.pyplot as plt
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         # use origin='lower', unless overridden.
         if not kwargs.has_key('origin'):
@@ -2653,6 +2659,9 @@ class Basemap(object):
         Other \**kwargs passed on to matplotlib.pyplot.pcolor.
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
+        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
+        if self.ax is None and kwargs.pop('ax', None) is None: 
+            import matplotlib.pyplot as plt
         # make x,y masked arrays
         # (masked where data is outside of projection limb)
         x = ma.masked_values(np.where(x > 1.e20,1.e20,x), 1.e20)
@@ -2691,6 +2700,9 @@ class Basemap(object):
         Other \**kwargs passed on to matplotlib.pyplot.pcolormesh.
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
+        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
+        if self.ax is None and kwargs.pop('ax', None) is None: 
+            import matplotlib.pyplot as plt
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -2725,6 +2737,9 @@ class Basemap(object):
         Other \*args and \**kwargs passed on to matplotlib.pyplot.contour.
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
+        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
+        if self.ax is None and kwargs.pop('ax', None) is None: 
+            import matplotlib.pyplot as plt
         # make sure x is monotonically increasing - if not,
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
@@ -2789,6 +2804,9 @@ class Basemap(object):
         Other \*args and \**kwargs passed on to matplotlib.pyplot.scatter.
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
+        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
+        if self.ax is None and kwargs.pop('ax', None) is None: 
+            import matplotlib.pyplot as plt
         # make sure x is monotonically increasing - if not,
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
@@ -2850,6 +2868,9 @@ class Basemap(object):
         Other \*args and \**kwargs passed on to matplotlib.pyplot.quiver.
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
+        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
+        if self.ax is None and kwargs.pop('ax', None) is None: 
+            import matplotlib.pyplot as plt
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -2887,6 +2908,9 @@ class Basemap(object):
             you have %s""" % _matplotlib_version)
             raise NotImplementedError(msg)
         ax = kwargs.pop('ax', None) or self._check_ax()
+        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
+        if self.ax is None and kwargs.pop('ax', None) is None: 
+            import matplotlib.pyplot as plt
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
