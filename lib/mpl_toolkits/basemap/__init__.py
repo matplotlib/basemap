@@ -3393,25 +3393,22 @@ class Basemap(object):
             raise KeyError("barstyle must be 'simple' or 'fancy'")
         return rets
 
-    def _check_ax(self, ax=None):
+    def _check_ax(self):
         """
-    Returns the axis on which to draw.
-    By default, returns self.ax. If None, set it to plt.gca()
+        Returns the axis on which to draw.
+        Returns self.ax, or if self.ax=None returns plt.gca().
         """
-        #
-        if ax is None:
-            if self.ax is None:
-                try:
-                    ax = plt.gca()
-                except:
-                    import matplotlib.pyplot as plt
-                    ax = plt.gca()
-            else:
-                ax = self.ax
+        if self.ax is None:
+            try:
+                ax = plt.gca()
+            except:
+                import matplotlib.pyplot as plt
+                ax = plt.gca()
             # associate an axes instance with this Basemap instance
             # the first time this method is called.
-            #    self.ax = ax
-            #return self.ax
+            #self.ax = ax
+        else:
+            ax = self.ax
         return ax
 
 ### End of Basemap class
