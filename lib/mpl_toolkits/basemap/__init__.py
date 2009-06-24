@@ -1203,14 +1203,7 @@ class Basemap(object):
         returns matplotlib.collections.PatchCollection representing map boundary.
         """
         # get current axes instance (if none specified).
-        if ax is None and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif ax is None and self.ax is not None:
-            ax = self.ax
+        ax = ax or self._check_ax()
         limb = None
         if self.projection in ['ortho','geos'] or (self.projection=='aeqd' and\
            self._fulldisk):
@@ -1344,14 +1337,7 @@ class Basemap(object):
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
         # get current axes instance (if none specified).
-        if ax is None and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif ax is None and self.ax is not None:
-            ax = self.ax
+        ax = ax or self._check_ax()
         # get axis background color.
         axisbgc = ax.get_axis_bgcolor()
         npoly = 0
@@ -1414,14 +1400,7 @@ class Basemap(object):
         if self.resolution is None:
             raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
         # get current axes instance (if none specified).
-        if ax is None and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif ax is None and self.ax is not None:
-            ax = self.ax
+        ax = ax or self._check_ax()
         coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linewidth(linewidth)
@@ -1461,14 +1440,7 @@ class Basemap(object):
         if not hasattr(self,'cntrysegs'):
             self.cntrysegs, types = self._readboundarydata('countries')
         # get current axes instance (if none specified).
-        if ax is None and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif ax is None and self.ax is not None:
-            ax = self.ax
+        ax = ax or self._check_ax()
         countries = LineCollection(self.cntrysegs,antialiaseds=(antialiased,))
         countries.set_color(color)
         countries.set_linewidth(linewidth)
@@ -1508,14 +1480,7 @@ class Basemap(object):
         if not hasattr(self,'statesegs'):
             self.statesegs, types = self._readboundarydata('states')
         # get current axes instance (if none specified).
-        if ax is None and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif ax is None and self.ax is not None:
-            ax = self.ax
+        ax = ax or self._check_ax()
         states = LineCollection(self.statesegs,antialiaseds=(antialiased,))
         states.set_color(color)
         states.set_linewidth(linewidth)
@@ -1555,14 +1520,7 @@ class Basemap(object):
         if not hasattr(self,'riversegs'):
             self.riversegs, types = self._readboundarydata('rivers')
         # get current axes instance (if none specified).
-        if ax is None and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif ax is None and self.ax is not None:
-            ax = self.ax
+        ax = ax or self._check_ax()
         rivers = LineCollection(self.riversegs,antialiaseds=(antialiased,))
         rivers.set_color(color)
         rivers.set_linewidth(linewidth)
@@ -1703,14 +1661,7 @@ class Basemap(object):
             # draw shape boundaries using LineCollection.
             if drawbounds:
                 # get current axes instance (if none specified).
-                if ax is None and self.ax is None:
-                    try:
-                        ax = plt.gca()
-                    except:
-                        import matplotlib.pyplot as plt
-                        ax = plt.gca()
-                elif ax is None and self.ax is not None:
-                    ax = self.ax
+                ax = ax or self._check_ax()
                 # make LineCollections for each polygon.
                 lines = LineCollection(shpsegs,antialiaseds=(1,))
                 lines.set_color(color)
@@ -1783,14 +1734,7 @@ class Basemap(object):
         associated with each parallel.
         """
         # get current axes instance (if none specified).
-        if ax is None and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif ax is None and self.ax is not None:
-            ax = self.ax
+        ax = ax or self._check_ax()
         # don't draw meridians past latmax, always draw parallel at latmax.
         if latmax is None: latmax = 80.
         # offset for labels.
@@ -2043,14 +1987,7 @@ class Basemap(object):
         associated with each meridian.
         """
         # get current axes instance (if none specified).
-        if ax is None and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif ax is None and self.ax is not None:
-            ax = self.ax
+        ax = ax or self._check_ax()
         # don't draw meridians past latmax, always draw parallel at latmax.
         if latmax is None: latmax = 80. # unused w/ cyl, merc or miller proj.
         # offset for labels.
@@ -2255,16 +2192,7 @@ class Basemap(object):
         Other \**kwargs passed on to matplotlib.patches.Polygon.
 
         returns a matplotlib.patches.Polygon object."""
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = kwargs.pop('ax')
+        ax = kwargs.pop('ax', None) or self._check_ax()
         g = pyproj.Geod(a=self.rmajor,b=self.rminor)
         az12,az21,dist = g.inv(lon_0,lat_0,lon_0,lat_0+radius_deg)
         seg = [self(lon_0,lat_0+radius_deg)]
@@ -2577,14 +2505,7 @@ class Basemap(object):
         or specified axes instance.
         """
         # get current axes instance (if none specified).
-        if ax is None and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif ax is None and self.ax is not None:
-            ax = self.ax
+        ax = ax or self._check_ax()
         # update data limits for map domain.
         corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
         ax.update_datalim( corners )
@@ -2621,16 +2542,7 @@ class Basemap(object):
 
         Other \**kwargs passed on to matplotlib.pyplot.scatter.
         """
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = kwargs.pop('ax')
+        ax = kwargs.pop('ax', None) or self._check_ax()
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -2664,16 +2576,7 @@ class Basemap(object):
 
         Other \**kwargs passed on to matplotlib.pyplot.plot.
         """
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = kwargs.pop('ax')
+        ax = kwargs.pop('ax', None) or self._check_ax()
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -2707,16 +2610,7 @@ class Basemap(object):
 
         returns an matplotlib.image.AxesImage instance.
         """
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = kwargs.pop('ax')
+        ax = kwargs.pop('ax', None) or self._check_ax()
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         # use origin='lower', unless overridden.
         if not kwargs.has_key('origin'):
@@ -2758,16 +2652,7 @@ class Basemap(object):
 
         Other \**kwargs passed on to matplotlib.pyplot.pcolor.
         """
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = kwargs.pop('ax')
+        ax = kwargs.pop('ax', None) or self._check_ax()
         # make x,y masked arrays
         # (masked where data is outside of projection limb)
         x = ma.masked_values(np.where(x > 1.e20,1.e20,x), 1.e20)
@@ -2805,16 +2690,7 @@ class Basemap(object):
 
         Other \**kwargs passed on to matplotlib.pyplot.pcolormesh.
         """
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = kwargs.pop('ax')
+        ax = kwargs.pop('ax', None) or self._check_ax()
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -2848,16 +2724,7 @@ class Basemap(object):
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.contour.
         """
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = kwargs.pop('ax')
+        ax = kwargs.pop('ax', None) or self._check_ax()
         # make sure x is monotonically increasing - if not,
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
@@ -2921,16 +2788,7 @@ class Basemap(object):
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.scatter.
         """
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = kwargs.pop('ax')
+        ax = kwargs.pop('ax', None) or self._check_ax()
         # make sure x is monotonically increasing - if not,
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
@@ -2991,16 +2849,7 @@ class Basemap(object):
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.quiver.
         """
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = kwargs.pop('ax')
+        ax = kwargs.pop('ax', None) or self._check_ax()
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -3037,16 +2886,7 @@ class Basemap(object):
             barb method requires matplotlib 0.98.3 or higher,
             you have %s""" % _matplotlib_version)
             raise NotImplementedError(msg)
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = kwargs.pop('ax')
+        ax = kwargs.pop('ax', None) or self._check_ax()
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -3136,16 +2976,7 @@ class Basemap(object):
             rgba_ocean = ocean_color
         # look for axes instance (as keyword, an instance variable
         # or from plt.gca().
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = kwargs.pop('ax')
+        ax = kwargs.pop('ax', None) or self._check_ax()
         # if lsmask,lsmask_lons,lsmask_lats keywords not given,
         # read default land-sea mask in from file.
         if lsmask is None or lsmask_lons is None or lsmask_lats is None:
@@ -3267,16 +3098,7 @@ class Basemap(object):
         except ImportError:
             raise ImportError('warpimage method requires PIL (http://www.pythonware.com/products/pil)')
         from matplotlib.image import pil_to_array
-        if not kwargs.has_key('ax') and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif not kwargs.has_key('ax') and self.ax is not None:
-            ax = self.ax
-        else:
-            ax = kwargs.pop('ax')
+        ax = kwargs.pop('ax', None) or self._check_ax()
         # default image file is blue marble next generation
         # from NASA (http://visibleearth.nasa.gov).
         if image == "bluemarble":
@@ -3436,14 +3258,7 @@ class Basemap(object):
         Extra keyword ``ax`` can be used to override the default axis instance.
         """
         # get current axes instance (if none specified).
-        if ax is None and self.ax is None:
-            try:
-                ax = plt.gca()
-            except:
-                import matplotlib.pyplot as plt
-                ax = plt.gca()
-        elif ax is None and self.ax is not None:
-            ax = self.ax
+        ax = ax or self._check_ax()
         # not valid for cylindrical projection
         if self.projection == 'cyl':
             raise ValueError("cannot draw map scale for projection='cyl'")
@@ -3577,6 +3392,27 @@ class Basemap(object):
         else:
             raise KeyError("barstyle must be 'simple' or 'fancy'")
         return rets
+
+    def _check_ax(self, ax=None):
+        """
+    Returns the axis on which to draw.
+    By default, returns self.ax. If None, set it to plt.gca()
+        """
+        #
+        if ax is None:
+            if self.ax is None:
+                try:
+                    ax = plt.gca()
+                except:
+                    import matplotlib.pyplot as plt
+                    ax = plt.gca()
+            else:
+                ax = self.ax
+            # associate an axes instance with this Basemap instance
+            # the first time this method is called.
+            #    self.ax = ax
+            #return self.ax
+        return ax
 
 ### End of Basemap class
 
