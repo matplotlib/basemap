@@ -12,7 +12,7 @@ else:
 date = datetime.datetime(int(date[0:4]),int(date[4:6]),int(date[6:8]))
 print date
 # open dataset.
-dataset = NetCDFFile('http://nomads.ncdc.noaa.gov/thredds/dodsC/oisst/totalAagg')
+dataset = NetCDFFile('http://nomads.ncdc.noaa.gov/thredds/dodsC/oisst/totalAgg')
 # find index of desired time.
 time = dataset.variables['time']
 nt = date2index(date, time, calendar='standard')
