@@ -14,15 +14,14 @@ matplotlib.use('Agg')
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from mpl_toolkits.basemap import Basemap, shiftgrid
 from matplotlib.figure import Figure
-import numpy
+import numpy as np
 import matplotlib.cm as cm
-from matplotlib.mlab import load
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-topoin = load('etopo20data.gz')
-lons = load('etopo20lons.gz')
-lats = load('etopo20lats.gz')
+topoin = np.loadtxt('etopo20data.gz')
+lons = np.loadtxt('etopo20lons.gz')
+lats = np.loadtxt('etopo20lats.gz')
 # shift data so lons go from -180 to 180 instead of 20 to 380.
 topoin,lons = shiftgrid(180.,topoin,lons,start=False)
 
@@ -59,9 +58,9 @@ m.drawcountries()
 m.drawstates()
 # draw parallels and meridians.
 # label on left, right and bottom of map.
-parallels = numpy.arange(0.,80,20.)
+parallels = np.arange(0.,80,20.)
 m.drawparallels(parallels,labels=[1,1,0,1])
-meridians = numpy.arange(10.,360.,30.)
+meridians = np.arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,1,0,1])
 # set title.
 ax.set_title('ETOPO Topography - Lambert Conformal Conic')
