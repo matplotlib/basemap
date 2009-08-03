@@ -1,4 +1,4 @@
-version 0.99.4 (not yet released)
+version 0.99.4 (svn revision 7332)
            * ax.frame replaced with ax.spines to maintain compatibility 
              with matplotlib spines support.
            * added latmax kwarg to drawparallels and drawmeridians 
