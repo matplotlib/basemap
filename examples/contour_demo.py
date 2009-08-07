@@ -19,13 +19,15 @@ m = Basemap(resolution='c',projection='sinu',lon_0=0)
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
-CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS = m.contourf(x,y,hgt,15,cmap=plt.cm.jet)
+# create contour lines
+CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+# fill between contour lines.
+CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet)
 # setup colorbar axes instance.
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-plt.colorbar(drawedges=True, cax=cax) # draw colorbar
+plt.colorbar(CS2, drawedges=True, cax=cax) # draw colorbar
 plt.axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -46,12 +48,12 @@ m = Basemap(resolution='c',projection='moll',lon_0=0)
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
-CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS = m.contourf(x,y,hgt,15,cmap=plt.cm.jet)
+CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet)
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-plt.colorbar(drawedges=True, cax=cax) # draw colorbar
+plt.colorbar(CS2, drawedges=True, cax=cax) # draw colorbar
 plt.axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -72,12 +74,12 @@ m = Basemap(resolution='c',projection='robin',lon_0=0)
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
-CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS = m.contourf(x,y,hgt,15,cmap=plt.cm.jet)
+CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet)
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-plt.colorbar(drawedges=True, cax=cax) # draw colorbar
+plt.colorbar(CS2, drawedges=True, cax=cax) # draw colorbar
 plt.axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -98,12 +100,12 @@ m = Basemap(projection='npaeqd',lon_0=-90,boundinglat=15.,resolution='c')
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
-CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS = m.contourf(x,y,hgt,15,cmap=plt.cm.jet)
+CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+CS2 = m.contourf(x,y,hgt,CS2.levels,cmap=plt.cm.jet)
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-plt.colorbar(drawedges=True, cax=cax) # draw colorbar
+plt.colorbar(CS2, drawedges=True, cax=cax) # draw colorbar
 plt.axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -125,12 +127,12 @@ m = Basemap(resolution='c',projection='ortho',\
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
-CS = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS = m.contourf(x,y,hgt,15,cmap=plt.cm.jet)
+CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+CS2 = m.contourf(x,y,hgt,CS2.levels,cmap=plt.cm.jet)
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-plt.colorbar(drawedges=True, cax=cax) # draw colorbar
+plt.colorbar(CS2, drawedges=True, cax=cax) # draw colorbar
 plt.axes(ax)  # make the original axes current again
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -144,4 +146,3 @@ m.drawmeridians(meridians)
 plt.title('Orthographic Filled Contour Demo')
 print 'plotting with orthographic basemap ..'
 plt.show()
-
