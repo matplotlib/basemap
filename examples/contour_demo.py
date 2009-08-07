@@ -22,7 +22,7 @@ x, y = m(lons, lats)
 # create contour lines
 CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 # fill between contour lines.
-CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet)
+CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet,extend='both')
 # setup colorbar axes instance.
 pos = ax.get_position()
 l, b, w, h = pos.bounds
@@ -49,7 +49,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet)
+CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet,extend='both')
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
@@ -75,7 +75,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet)
+CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet,extend='both')
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
@@ -101,7 +101,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS2 = m.contourf(x,y,hgt,CS2.levels,cmap=plt.cm.jet)
+CS2 = m.contourf(x,y,hgt,CS2.levels,cmap=plt.cm.jet,extend='both')
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
@@ -128,7 +128,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS2 = m.contourf(x,y,hgt,CS2.levels,cmap=plt.cm.jet)
+CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet,extend='both')
 pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
