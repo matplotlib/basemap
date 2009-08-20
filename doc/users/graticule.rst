@@ -7,7 +7,7 @@ Most maps include a graticule grid, a reference network of labelled
 latitude and longitude lines. Basemap does this with the 
 :func:`~mpl_toolkits.basemap.Basemap.drawparallels` and
 :func:`~mpl_toolkits.basemap.Basemap.drawmeridians` instance methods.
-The longitude and latitude lines can be labelled where they
+The longitude and latitude lines can be labelled where they intersect
 the map projection boundary.  There are four exceptions:  meridians
 and parallels cannot be labelled on maps with 
 ``proj`` set to ``ortho`` (orthographic) or
