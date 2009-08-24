@@ -19,6 +19,7 @@ include examples/simpletest.py
 include examples/hires.py
 include examples/simpletest_oo.py
 include examples/randompoints.py
+include examples/daynight.py
 include examples/test.py
 include examples/us_25m.dem
 include examples/testgdal.py

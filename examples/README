@@ -131,3 +131,5 @@ maskoceans.py shows how to mask 'wet' areas on a plot.
 
 plothighsandlows.py shows to plot H's and L's at the local extrema of a pressure map
 (requires scipy).
+
+daynight.py shows how to shade the regions of a map where the sun has set.
