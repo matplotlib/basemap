@@ -68,12 +68,16 @@ map = Basemap(projection='mill',lon_0=0)
 map.drawcoastlines()
 map.drawparallels(np.arange(-90,90,30),labels=[1,0,0,0])
 map.drawmeridians(np.arange(-180,180,60),labels=[0,0,0,1])
+# fill continents 'coral' (with zorder=0), color wet areas 'aqua'
+map.drawmapboundary(fill_color='aqua')
+map.fillcontinents(color='coral',lake_color='aqua',zorder=0)
 # create grid of day=0, night=1
 # 1441 means use a 0.25 degree grid.
 lons,lats,daynight = daynightgrid(d,1441)
 x,y = map(lons, lats)
 # contour this grid with 1 contour level, specifying colors.
-# (gray for night, axis background for day)
-map.contourf(x,y,daynight,1,colors=[plt.gca().get_axis_bgcolor(),'0.7'])
+# (gray for night, white for day). Use alpha transparency so
+# map shows through.
+CS=map.contourf(x,y,daynight,1,colors=['white','0.7'],alpha=0.5)
 plt.title('Day/Night Map for %s (UTC)' %d )
 plt.show()
