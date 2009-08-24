@@ -64,10 +64,10 @@ def daynightgrid(date, nlons):
     return lons2,lats2,daynight
 
 class Basemap2(Basemap):
-    def nightshade(self,color="0.5",nlons=1441,alpha=0.5,zorder=None):
+    def nightshade(self,date,color="0.5",nlons=1441,alpha=0.5,zorder=None):
         # create grid of day=0, night=1
         # 1441 means use a 0.25 degree grid.
-        lons,lats,daynight = daynightgrid(d,nlons)
+        lons,lats,daynight = daynightgrid(date,nlons)
         x,y = self(lons,lats)
         # contour the day-night grid, coloring the night area
         # with the specified color and transparency.
@@ -81,8 +81,6 @@ class Basemap2(Basemap):
                c.set_zorder(zorder)
         return CS
 
-# current time in UTC.
-d = datetime.utcnow()
 
 # miller projection 
 map = Basemap2(projection='mill',lon_0=0)
@@ -95,6 +93,7 @@ map.drawmapboundary(fill_color='aqua')
 map.fillcontinents(color='coral',lake_color='aqua')
 # shade the night areas gray, with alpha transparency so the 
 # map shows through.
-CS=map.nightshade()
+# use current time in UTC.
+CS=map.nightshade(datetime.utcnow())
 plt.title('Day/Night Map for %s (UTC)' %d )
 plt.show()
