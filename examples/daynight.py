@@ -43,20 +43,22 @@ def daynightgrid(date, nlons):
     """
     date is datetime object (assumed UTC).
     nlons is # of longitudes used to compute terminator."""
-    nlats = ((nlons-1)/2)+1
     dg2rad = np.pi/180.
-    lons = np.linspace(-180,180,nlons)
+    lons = np.linspace(-180,180,nlons).astype(np.float32)
     # compute greenwich hour angle and solar declination
     # from datetime object (assumed UTC).
     tau, dec = epem(date) 
+    # compute day/night terminator from hour angle, declination.
     longitude = lons + tau
     lats = np.arctan(-np.cos(longitude*dg2rad)/np.tan(dec*dg2rad))/dg2rad
-    lons2 = np.linspace(-180,180,nlons)
-    lats2 = np.linspace(-90,90,nlats)
+    # create day/night grid (1 for night, 0 for day)
+    nlats = ((nlons-1)/2)+1
+    lons2 = np.linspace(-180,180,nlons).astype(np.float32)
+    lats2 = np.linspace(-90,90,nlats).astype(np.float32)
     lons2, lats2 = np.meshgrid(lons2,lats2)
-    daynight = np.ones(lons2.shape, np.float)
-    for nlon in range(nlons):
-        daynight[:,nlon] = np.where(lats2[:,nlon]>lats[nlon],0,daynight[:,nlon])
+    lats = lats[np.newaxis,:]*np.ones((nlats,nlons),dtype=np.float32)
+    daynight = np.ones(lons2.shape, np.int8)
+    daynight = np.where(lats2>lats,0,daynight)
     return lons2,lats2,daynight
 
 # current time in UTC.
