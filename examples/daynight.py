@@ -1,5 +1,5 @@
 import numpy as np
-from mpl_toolkits.basemap import Basemap, netcdftime, shiftgrid
+from mpl_toolkits.basemap import Basemap, netcdftime
 import matplotlib.pyplot as plt
 from datetime import datetime
 from numpy import ma
@@ -63,11 +63,21 @@ def daynightgrid(date, nlons):
     daynight = ma.array(daynight,mask=1-daynight) # mask day areas.
     return lons2,lats2,daynight
 
+class Basemap2(Basemap):
+    def nightshade(self,color="0.5",nlons=1441,alpha=0.5):
+        # create grid of day=0, night=1
+        # 1441 means use a 0.25 degree grid.
+        lons,lats,daynight = daynightgrid(d,nlons)
+        x,y = self(lons,lats)
+        # contour the day-night grid, coloring the night area
+        # with the specified color and transparency.
+        return map.contourf(x,y,daynight,1,colors=[color],alpha=alpha)
+
 # current time in UTC.
 d = datetime.utcnow()
 
 # miller projection 
-map = Basemap(projection='mill',lon_0=0)
+map = Basemap2(projection='mill',lon_0=0)
 # plot coastlines, draw label meridians and parallels.
 map.drawcoastlines()
 map.drawparallels(np.arange(-90,90,30),labels=[1,0,0,0])
@@ -75,12 +85,8 @@ map.drawmeridians(np.arange(-180,180,60),labels=[0,0,0,1])
 # fill continents 'coral' (with zorder=0), color wet areas 'aqua'
 map.drawmapboundary(fill_color='aqua')
 map.fillcontinents(color='coral',lake_color='aqua',zorder=0)
-# create grid of day=0, night=1
-# 1441 means use a 0.25 degree grid.
-lons,lats,daynight = daynightgrid(d,1441)
-x,y = map(lons, lats)
-# contour this grid with 1 contour level, specifying color for night areas.
-# Use alpha transparency so map shows through.
-CS=map.contourf(x,y,daynight,1,colors=['0.5'],alpha=0.5)
+# shade the night areas gray, with alpha transparency so the 
+# map shows through.
+map.nightshade(color="0.5",nlons=1441,alpha=0.5)
 plt.title('Day/Night Map for %s (UTC)' %d )
 plt.show()
