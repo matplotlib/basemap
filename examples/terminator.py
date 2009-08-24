@@ -71,5 +71,5 @@ x,y = map(lons, lats)
 # contour this grid with 1 contour level, specifying colors.
 # (gray for night, axis background for day)
 map.contourf(x,y,daynight,1,colors=[plt.gca().get_axis_bgcolor(),'0.7'])
-plt.title('Day/Night Terminator %s' %d)
+plt.title('Day/Night Map for %s (UTC)' %d )
 plt.show()
