@@ -64,14 +64,22 @@ def daynightgrid(date, nlons):
     return lons2,lats2,daynight
 
 class Basemap2(Basemap):
-    def nightshade(self,color="0.5",nlons=1441,alpha=0.5):
+    def nightshade(self,color="0.5",nlons=1441,alpha=0.5,zorder=None):
         # create grid of day=0, night=1
         # 1441 means use a 0.25 degree grid.
         lons,lats,daynight = daynightgrid(d,nlons)
         x,y = self(lons,lats)
         # contour the day-night grid, coloring the night area
         # with the specified color and transparency.
-        return map.contourf(x,y,daynight,1,colors=[color],alpha=alpha)
+        CS = map.contourf(x,y,daynight,1,colors=[color],alpha=alpha)
+        # set zorder on ContourSet collections show night shading
+        # is on top.
+        for c in CS.collections:
+            if zorder is None:
+               c.set_zorder(c.get_zorder()+1)
+            else:
+               c.set_zorder(zorder)
+        return CS
 
 # current time in UTC.
 d = datetime.utcnow()
@@ -84,9 +92,9 @@ map.drawparallels(np.arange(-90,90,30),labels=[1,0,0,0])
 map.drawmeridians(np.arange(-180,180,60),labels=[0,0,0,1])
 # fill continents 'coral' (with zorder=0), color wet areas 'aqua'
 map.drawmapboundary(fill_color='aqua')
-map.fillcontinents(color='coral',lake_color='aqua',zorder=0)
+map.fillcontinents(color='coral',lake_color='aqua')
 # shade the night areas gray, with alpha transparency so the 
 # map shows through.
-map.nightshade(color="0.5",nlons=1441,alpha=0.5)
+CS=map.nightshade()
 plt.title('Day/Night Map for %s (UTC)' %d )
 plt.show()
