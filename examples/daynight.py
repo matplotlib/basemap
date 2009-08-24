@@ -1,7 +1,8 @@
 import numpy as np
-from mpl_toolkits.basemap import Basemap, netcdftime
+from mpl_toolkits.basemap import Basemap, netcdftime, shiftgrid
 import matplotlib.pyplot as plt
 from datetime import datetime
+from numpy import ma
 
 # example showing how to compute the day/night terminator and shade nightime
 # areas on a map.
@@ -59,6 +60,7 @@ def daynightgrid(date, nlons):
     lats = lats[np.newaxis,:]*np.ones((nlats,nlons),dtype=np.float32)
     daynight = np.ones(lons2.shape, np.int8)
     daynight = np.where(lats2>lats,0,daynight)
+    daynight = ma.array(daynight,mask=1-daynight) # mask day areas.
     return lons2,lats2,daynight
 
 # current time in UTC.
@@ -77,9 +79,8 @@ map.fillcontinents(color='coral',lake_color='aqua',zorder=0)
 # 1441 means use a 0.25 degree grid.
 lons,lats,daynight = daynightgrid(d,1441)
 x,y = map(lons, lats)
-# contour this grid with 1 contour level, specifying colors.
-# (gray for night, white for day). Use alpha transparency so
-# map shows through.
-CS=map.contourf(x,y,daynight,1,colors=['white','0.7'],alpha=0.5)
+# contour this grid with 1 contour level, specifying color for night areas.
+# Use alpha transparency so map shows through.
+CS=map.contourf(x,y,daynight,1,colors=['0.7'],alpha=0.5)
 plt.title('Day/Night Map for %s (UTC)' %d )
 plt.show()
