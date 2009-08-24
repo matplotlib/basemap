@@ -81,6 +81,6 @@ lons,lats,daynight = daynightgrid(d,1441)
 x,y = map(lons, lats)
 # contour this grid with 1 contour level, specifying color for night areas.
 # Use alpha transparency so map shows through.
-CS=map.contourf(x,y,daynight,1,colors=['0.7'],alpha=0.5)
+CS=map.contourf(x,y,daynight,1,colors=['0.5'],alpha=0.5)
 plt.title('Day/Night Map for %s (UTC)' %d )
 plt.show()
