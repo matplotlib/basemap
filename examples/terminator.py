@@ -65,7 +65,7 @@ map = Basemap(projection='mill',lon_0=0)
 map.drawcoastlines()
 map.drawparallels(np.arange(-90,90,30),labels=[1,0,0,0])
 map.drawmeridians(np.arange(-180,180,60),labels=[0,0,0,1])
-# create grid of day=1, night=0
+# create grid of day=0, night=1
 lons,lats,daynight = daynightgrid(d,1441)
 x,y = map(lons, lats)
 # contour this grid with 1 contour level, specifying colors.
