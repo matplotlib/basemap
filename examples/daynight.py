@@ -64,7 +64,7 @@ def daynightgrid(date, nlons):
     return lons2,lats2,daynight
 
 class Basemap2(Basemap):
-    def nightshade(self,date,color="0.5",nlons=1441,alpha=0.5,zorder=None):
+    def nightshade(self,date,color="k",nlons=1441,alpha=0.5,zorder=None):
         # create grid of day=0, night=1
         # 1441 means use a 0.25 degree grid.
         lons,lats,daynight = daynightgrid(date,nlons)
