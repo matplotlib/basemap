@@ -20,7 +20,7 @@ def epem(date):
     jday = netcdftime.JulianDayFromDate(date)
     jd = np.floor(jday) # truncate to integer.
     # utc hour.
-    ut = d.hour + d.minute/60. + d.second/3600.
+    ut = date.hour + date.minute/60. + date.second/3600.
     # calculate number of centuries from J2000
     t = (jd + (ut/24.) - 2451545.0) / 36525.
     # mean longitude corrected for aberration
@@ -94,6 +94,7 @@ map.fillcontinents(color='coral',lake_color='aqua')
 # shade the night areas gray, with alpha transparency so the 
 # map shows through.
 # use current time in UTC.
-CS=map.nightshade(datetime.utcnow())
-plt.title('Day/Night Map for %s (UTC)' %d )
+date = datetime.utcnow()
+CS=map.nightshade(date)
+plt.title('Day/Night Map for %s (UTC)' % date)
 plt.show()
