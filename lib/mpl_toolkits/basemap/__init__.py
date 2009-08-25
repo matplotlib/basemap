@@ -737,13 +737,19 @@ class Basemap(object):
         if projection in _cylproj:
             self.latmin = self.llcrnrlat
             self.latmax = self.urcrnrlat
+            self.lonmin = self.llcrnrlon
+            self.lonmax = self.urcrnrlon
         elif projection in ['ortho','geos'] + _pseudocyl:
             self.latmin = -90.
             self.latmax = 90.
+            self.lonmin = self.llcrnrlon
+            self.lonmax = self.urcrnrlon
         else:
-            lons, lats = self.makegrid(101,101)
+            lons, lats = self.makegrid(1001,1001)
             self.latmin = lats.min()
             self.latmax = lats.max()
+            self.lonmin = lons.min()
+            self.lonmax = lons.max()
 
         # if ax == None, pyplot.gca may be used.
         self.ax = ax
