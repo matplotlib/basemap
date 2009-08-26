@@ -3445,6 +3445,9 @@ class Basemap(object):
         returns a matplotlib.contour.ContourSet instance.
         """
         from solar import daynight_grid
+        # make sure date is utc.
+        if date.utcoffset() is not None:
+            raise ValueError('datetime instance must be UTC')
         # create grid of day=0, night=1
         lons,lats,daynight = daynight_grid(date,delta,self.lonmin,self.lonmax)
         x,y = self(lons,lats)
