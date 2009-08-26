@@ -53,7 +53,7 @@ if 'BASEMAPDATA' in os.environ:
 else:
     basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
-__version__ = '0.99.4'
+__version__ = '0.99.5'
 
 # supported map projections.
 _projnames = {'cyl'      : 'Cylindrical Equidistant',
@@ -3420,6 +3420,42 @@ class Basemap(object):
         else:
             raise KeyError("barstyle must be 'simple' or 'fancy'")
         return rets
+
+    def nightshade(self,date,color="k",delta=0.25,alpha=0.5,ax=None,zorder=2):
+        """
+        Shade the regions of the map that are in darkness at the time
+        specifed by ``date``.  ``date`` is a datetime instance,
+        assumed to be UTC.
+
+        .. tabularcolumns:: |l|L|
+
+        ==============   ====================================================
+        Keywords         Description
+        ==============   ====================================================
+        color            color to shade night regions (default black).
+        delta            day/night terminator is computed with a
+                         a resolution of ``delta`` degrees (default 0.25).
+        alpha            alpha transparency for shading (default 0.5, so
+                         map background shows through).
+        zorder           zorder for shading (default 2).
+        ==============   ====================================================
+
+        Extra keyword ``ax`` can be used to override the default axis instance.
+
+        returns a matplotlib.contour.ContourSet instance.
+        """
+        from solar import daynight_grid
+        # create grid of day=0, night=1
+        lons,lats,daynight = daynight_grid(date,delta,self.lonmin,self.lonmax)
+        x,y = self(lons,lats)
+        # contour the day-night grid, coloring the night area
+        # with the specified color and transparency.
+        CS = self.contourf(x,y,daynight,1,colors=[color],alpha=alpha,ax=ax)
+        # set zorder on ContourSet collections show night shading
+        # is on top.
+        for c in CS.collections:
+            c.set_zorder(zorder)
+        return CS
 
     def _check_ax(self):
         """

@@ -225,7 +225,7 @@ basemap_datafiles = boundaryfiles + ['data/5minmask.bin']
 package_data = {'mpl_toolkits.basemap':pyproj_datafiles+basemap_datafiles}
 setup(
   name              = "basemap",
-  version           = "0.99.4",
+  version           = "0.99.5",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data
