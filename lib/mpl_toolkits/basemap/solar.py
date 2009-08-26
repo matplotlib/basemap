@@ -48,19 +48,22 @@ def daynight_terminator(date, delta, lonmin, lonmax):
     # compute day/night terminator from hour angle, declination.
     longitude = lons + tau
     lats = np.arctan(-np.cos(longitude*dg2rad)/np.tan(dec*dg2rad))/dg2rad
-    return lons, lats
+    return lons, lats, tau, dec
 
 def daynight_grid(date, delta, lonmin, lonmax):
     """
     date is datetime object (assumed UTC).
     delta is the grid interval (in degrees) used to compute terminator."""
-    lons, lats = daynight_terminator(date, delta, lonmin, lonmax)
+    lons, lats, tau, dec = daynight_terminator(date, delta, lonmin, lonmax)
     # create day/night grid (1 for night, 0 for day)
     lats2 = np.arange(-90,90+0.5*delta,delta,dtype=np.float32)
     nlons = len(lons); nlats = len(lats2)
     lons2, lats2 = np.meshgrid(lons,lats2)
     lats = lats[np.newaxis,:]*np.ones((nlats,nlons),dtype=np.float32)
     daynight = np.ones(lons2.shape, np.int8)
-    daynight = np.where(lats2>lats,0,daynight)
+    if dec > 0: # NH summer
+        daynight = np.where(lats2>lats,0,daynight)
+    else: # NH winter
+        daynight = np.where(lats2<lats,0,daynight)
     daynight = ma.array(daynight,mask=1-daynight) # mask day areas.
     return lons2,lats2,daynight
