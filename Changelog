@@ -1,5 +1,6 @@
 version 0.99.5 (not yet released)
            * added 'nightshade' method to shade night regions on a map.
+             'daynight.py' example added to illustrate usage.
            * added lonmin, lonmax instance variables.
 version 0.99.4 (svn revision 7332)
            * ax.frame replaced with ax.spines to maintain compatibility 
