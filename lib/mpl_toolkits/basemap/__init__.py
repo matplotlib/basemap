@@ -2831,9 +2831,17 @@ class Basemap(object):
                      region (see examples/contour_demo.py).""")
         # mask for points outside projection limb.
         xymask = np.logical_or(np.greater(x,1.e20),np.greater(y,1.e20))
+        # mask outside projection region (workaround for contourf bug?)
+        epsx = 0.1*(self.xmax-self.xmin)
+        epsy = 0.1*(self.ymax-self.ymin)
+        outsidemask = np.logical_or(np.logical_or(x > self.xmax+epsx,\
+                                    x < self.xmin-epsy),\
+                                    np.logical_or(y > self.ymax+epsy,\
+                                    y < self.ymin-epsy))
         data = ma.asarray(data)
-        # combine with data mask.
-        mask = np.logical_or(ma.getmaskarray(data),xymask)
+        # combine masks.
+        mask = \
+        np.logical_or(outsidemask,np.logical_or(ma.getmaskarray(data),xymask))
         data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
