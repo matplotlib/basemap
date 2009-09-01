@@ -1,4 +1,6 @@
 version 0.99.5 (not yet released)
+           * in contourf method, mask data outside map projection region
+             (this prevents contourf from erroneously filling entire map).
            * added 'nightshade' method to shade night regions on a map.
              'daynight.py' example added to illustrate usage.
            * added lonmin, lonmax instance variables.
