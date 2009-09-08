@@ -958,7 +958,11 @@ def _check_index(indices, dates, nctime, calendar):
     if (indices >= nctime.shape[0]).any():
         return False
         
-    t = nctime[indices] 
+#   t = nctime[indices] 
+# fancy indexing not available, fall back on this.
+    t=[]
+    for ind in indices:
+        t.append(nctime[ind])
     return numpy.all( num2date(t, nctime.units, calendar) == dates)
 
 
