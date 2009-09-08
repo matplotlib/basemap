@@ -3919,6 +3919,13 @@ def date2index(dates, nctime, calendar='proleptic_gregorian'):
                      If ``calendar=None``, will use ``calendar`` attribute
                      of ``nctime`` object, and if that attribute does 
                      not exist calendar is set to ``standard``. 
+    select           The index selection method. ``exact`` wil return the
+                     indices perfectly matching the dates given. 
+                     ``before`` and ``after`` will return the indices
+                     corresponding to the dates just before or after
+                     the given dates if an exact match cannot be found.
+                     ``nearest``  will return the indices that 
+                     correspond to the closest dates. 
     ==============   ====================================================
 
     Returns an index or a sequence of indices.
