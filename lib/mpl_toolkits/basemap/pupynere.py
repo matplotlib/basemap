@@ -580,6 +580,9 @@ class netcdf_variable(object):
     def shape(self):
         return self.data.shape
 
+    def __len__(self):
+        return self.data.shape[0]
+
     def getValue(self):
         return self.data.item()
 

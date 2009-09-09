@@ -74,5 +74,8 @@ class _RemoteVariable(object):
         else:
             return datout
 
+    def __len__(self):
+       return self.shape[0]
+
     def typecode(self):
         return _typecodes[self.dtype]
