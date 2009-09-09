@@ -3886,7 +3886,7 @@ def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     cdftime = netcdftime.utime(units,calendar=calendar)
     return cdftime.date2num(dates)
 
-def date2index(dates, nctime, calendar='proleptic_gregorian'):
+def date2index(dates, nctime, calendar='proleptic_gregorian',select='exact'):
     """
     Return indices of a netCDF time variable corresponding to the given dates.
 
@@ -3919,18 +3919,18 @@ def date2index(dates, nctime, calendar='proleptic_gregorian'):
                      If ``calendar=None``, will use ``calendar`` attribute
                      of ``nctime`` object, and if that attribute does 
                      not exist calendar is set to ``standard``. 
-    select           The index selection method. ``exact`` wil return the
+    select           The index selection method. ``exact`` will return the
                      indices perfectly matching the dates given. 
                      ``before`` and ``after`` will return the indices
                      corresponding to the dates just before or after
                      the given dates if an exact match cannot be found.
                      ``nearest``  will return the indices that 
-                     correspond to the closest dates. 
+                     correspond to the closest dates. Default ``exact``. 
     ==============   ====================================================
 
     Returns an index or a sequence of indices.
     """
-    return netcdftime.date2index(dates, nctime, calendar=None)
+    return netcdftime.date2index(dates, nctime, calendar=calendar, select=select)
 
 def maskoceans(lonsin,latsin,datain,inlands=False):
     """
