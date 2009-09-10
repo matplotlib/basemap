@@ -3886,7 +3886,7 @@ def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     cdftime = netcdftime.utime(units,calendar=calendar)
     return cdftime.date2num(dates)
 
-def date2index(dates, nctime, calendar='proleptic_gregorian',select='exact'):
+def date2index(dates, nctime, calendar=None,select='exact'):
     """
     Return indices of a netCDF time variable corresponding to the given dates.
 
@@ -3915,10 +3915,10 @@ def date2index(dates, nctime, calendar='proleptic_gregorian',select='exact'):
                      Valid calendars ``standard``, ``gregorian``,
                      ``proleptic_gregorian``, ``noleap``, ``365_day``,
                      ``julian``, ``all_leap``, ``366_day``.
-                     Default is ``proleptic_gregorian``.
                      If ``calendar=None``, will use ``calendar`` attribute
                      of ``nctime`` object, and if that attribute does 
                      not exist calendar is set to ``standard``. 
+                     Default is ``None``.
     select           The index selection method. ``exact`` will return the
                      indices perfectly matching the dates given. 
                      ``before`` and ``after`` will return the indices
