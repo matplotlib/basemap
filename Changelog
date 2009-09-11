@@ -1,4 +1,5 @@
 version 0.99.5 (not yet released)
+           * fix date2index bugs.
            * update date2index function with a bug-fix from netcdf4-python.
            * in contourf method, mask data outside map projection region
              (this prevents contourf from erroneously filling entire map).
