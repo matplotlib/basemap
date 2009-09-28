@@ -2567,7 +2567,10 @@ class Basemap(object):
         ax.hold(b)
         # reset current active image (only if pyplot is imported).
         try:
-            plt.gci._current = ret
+            try:
+                plt.sci(ret)
+            except AttributeError:
+                plt.gci._current = ret
         except:
             pass
         # set axes limits to fit map region.
@@ -2642,7 +2645,10 @@ class Basemap(object):
         ax.hold(b)
         # reset current active image (only if pyplot is imported).
         try:
-            plt.gci._current = ret
+            try:
+                plt.sci(ret)
+            except AttributeError:
+                plt.gci._current = ret
         except:
             pass
         # set axes limits to fit map region.
@@ -2687,7 +2693,10 @@ class Basemap(object):
         ax.hold(b)
         # reset current active image (only if pyplot is imported).
         try:
-            plt.gci._current = ret
+            try:
+                plt.sci(ret)
+            except AttributeError:
+                plt.gci._current = ret
         except:
             pass
         # set axes limits to fit map region.
@@ -2724,7 +2733,10 @@ class Basemap(object):
         ax.hold(b)
         # reset current active image (only if pyplot is imported).
         try:
-            plt.gci._current = ret
+            try:
+                plt.sci(ret)
+            except AttributeError:
+                plt.gci._current = ret
         except:
             pass
         # set axes limits to fit map region.
@@ -2788,9 +2800,17 @@ class Basemap(object):
         # reset current active image (only if pyplot is imported).
         try:
             try: # new contour.
-                if CS._A is not None: plt.gci._current = CS
+                if CS._A is not None:
+                    try:
+                        plt.sci(CS)
+                    except AttributeError:
+                        plt.gci._current = CS
             except: # old contour.
-                if CS[1].mappable is not None: plt.gci._current = CS[1].mappable
+                if CS[1].mappable is not None:
+                    try:
+                        plt.sci(CS[1].mappable)
+                    except AttributeError:
+                        plt.gci._current = CS[1].mappable
         except:
             pass
         return CS
@@ -2863,9 +2883,17 @@ class Basemap(object):
         # reset current active image (only if pyplot is imported).
         try:
             try: # new contour.
-                if CS._A is not None: plt.gci._current = CS
+                if CS._A is not None:
+                    try:
+                        plt.sci(CS)
+                    except AttributeError:
+                        plt.gci._current = CS
             except: # old contour.
-                if CS[1].mappable is not None: plt.gci._current = CS[1].mappable
+                if CS[1].mappable is not None:
+                    try:
+                        plt.sci(CS[1].mappable)
+                    except AttributeError:
+                        plt.gci._current = CS[1].mappable
         except:
             pass
         return CS
