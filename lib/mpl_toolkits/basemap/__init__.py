@@ -3677,10 +3677,9 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         dataout = np.where(xymask,masked,dataout)
     return dataout
 
-def shiftgrid(lon0,datain,lonsin,start=True):
+def shiftgrid(lon0,datain,lonsin,start=True,cyclic=360.0):
     """
     Shift global lat/lon grid east or west.
-    assumes wraparound (or cyclic point) is included.
 
     .. tabularcolumns:: |l|L|
 
@@ -3702,15 +3701,21 @@ def shiftgrid(lon0,datain,lonsin,start=True):
     start            if True, lon0 represents the starting longitude
                      of the new grid. if False, lon0 is the ending
                      longitude. Default True.
+    cyclic           width of periodic domain (default 360)
     ==============   ====================================================
 
     returns ``dataout,lonsout`` (data and longitudes on shifted grid).
     """
-    if np.fabs(lonsin[-1]-lonsin[0]-360.) > 1.e-4:
-        raise ValueError, 'cyclic point not included'
+    if np.fabs(lonsin[-1]-lonsin[0]-cyclic) > 1.e-4:
+        # Use all data instead of raise ValueError, 'cyclic point not included'
+        start_idx = 0
+    else:
+        # If cyclic, remove the duplicate point
+        start_idx = 1
     if lon0 < lonsin[0] or lon0 > lonsin[-1]:
         raise ValueError, 'lon0 outside of range of lonsin'
     i0 = np.argmin(np.fabs(lonsin-lon0))
+    i0_shift = len(lonsin)-i0
     if hasattr(datain,'mask'):
         dataout  = ma.zeros(datain.shape,datain.dtype)
     else:
@@ -3720,15 +3725,15 @@ def shiftgrid(lon0,datain,lonsin,start=True):
     else:
         lonsout = np.zeros(lonsin.shape,lonsin.dtype)
     if start:
-        lonsout[0:len(lonsin)-i0] = lonsin[i0:]
+        lonsout[0:i0_shift] = lonsin[i0:]
     else:
-        lonsout[0:len(lonsin)-i0] = lonsin[i0:]-360.
-    dataout[:,0:len(lonsin)-i0] = datain[:,i0:]
+        lonsout[0:i0_shift] = lonsin[i0:]-cyclic
+    dataout[:,0:i0_shift] = datain[:,i0:]
     if start:
-        lonsout[len(lonsin)-i0:] = lonsin[1:i0+1]+360.
+        lonsout[i0_shift:] = lonsin[start_idx:i0+start_idx]+cyclic
     else:
-        lonsout[len(lonsin)-i0:] = lonsin[1:i0+1]
-    dataout[:,len(lonsin)-i0:] = datain[:,1:i0+1]
+        lonsout[i0_shift:] = lonsin[start_idx:i0+start_idx]
+    dataout[:,i0_shift:] = datain[:,start_idx:i0+start_idx]
     return dataout,lonsout
 
 def addcyclic(arrin,lonsin):

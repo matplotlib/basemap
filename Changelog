@@ -1,4 +1,6 @@
 version 0.99.5 (not yet released)
+           * shiftgrid no longer requires a cyclic point to be present
+             (patch from Eric Bruning).
            * fix date2index bugs.
            * update date2index function with a bug-fix from netcdf4-python.
            * in contourf method, mask data outside map projection region
