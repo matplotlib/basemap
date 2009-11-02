@@ -11,8 +11,8 @@ matplotlib 0.98 (or higher)
 
 numpy 1.1 (or higher)
 
-The GEOS (Geometry Engine - Open Source) library (version 2.2.3 or higher).
-Source code is included in the geos-2.2.3 directory.
+The GEOS (Geometry Engine - Open Source) library (version 3.1.1 or higher).
+Source code is included in the geos-3.1.1 directory.
 
 PIL (http://pythonware.com/products/pil) is optional (only
 needed for Basemap warpimage and bluemarble methods).
@@ -28,7 +28,7 @@ source code from proj.4 (http://proj.maptools.org) is included in the
 'src' directory under the terms given in LICENSE_proj4.
 
 source code for the GEOS library is
-included in the 'geos-2.2.3' directory under the terms given in
+included in the 'geos-3.1.1' directory under the terms given in
 LICENSE_geos.
 
 pyshapelib by Bernhard Herzog is included in the 'pyshapelib' directory
@@ -93,7 +93,7 @@ geos_c.h is in /usr/local/include, set GEOS_DIR to /usr/local).
 Then go to step (3).  If you don't have it, you can build it from
 the source code included with basemap by following these steps:
 
- > cd geos-2.2.3
+ > cd geos-3.1.1
  > export GEOS_DIR=<where you want the libs and headers to go>
    A reasonable choice on a Unix-like system is /usr/local, or
    if you don't have permission to write there, your home directory.

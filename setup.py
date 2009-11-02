@@ -45,11 +45,11 @@ else:
 
 if GEOS_dir is None:
     # if GEOS_dir not set, check a few standard locations.
-    GEOS_dirs = ['/usr','/usr/local','/sw','/opt','/opt/local',os.path.expanduser('~')]
+    GEOS_dirs = [os.path.expanduser('~'),'/usr','/usr/local','/sw','/opt','/opt/local']
     for direc in GEOS_dirs:
         geos_version = checkversion(direc)
         print 'checking for GEOS lib in %s ....' % direc
-        if geos_version < '"2.2.3"':
+        if geos_version < '"3.1.1"':
             continue
         else:
             print 'GEOS lib (version %s) found in %s' % (geos_version[1:-1],direc)
