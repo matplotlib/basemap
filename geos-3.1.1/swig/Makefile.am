@@ -1,0 +1,13 @@
+if ENABLE_PYTHON
+  MAYBEPYTHON = python
+endif
+
+if ENABLE_RUBY
+  MAYBERUBY = ruby
+endif
+
+SUBDIRS = $(MAYBEPYTHON) $(MAYBERUBY)
+
+EXTRA_DIST = \
+	geos.i 
+	
