@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: PJ_krovak.c,v 1.6 2006/09/14 13:10:50 fwarmerdam Exp $
+ * $Id: PJ_krovak.c 1504 2009-01-06 02:11:57Z warmerdam $
  *
  * Project:  PROJ.4
  * Purpose:  Implementation of the krovak (Krovak) projection.
@@ -27,25 +27,7 @@
  * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- ******************************************************************************
- *
- * $Log: PJ_krovak.c,v $
- * Revision 1.6  2006/09/14 13:10:50  fwarmerdam
- * Add +czech flag to control reversal of signs (bug 1133,147)
- *
- * Revision 1.5  2006/03/30 01:22:48  fwarmerdam
- * Removed win32 only debug hack.
- *
- * Revision 1.4  2002/12/15 22:31:04  warmerda
- * handle lon_0, k, and prime meridian properly
- *
- * Revision 1.3  2002/12/15 00:13:30  warmerda
- * lat_0 may now be set by user, but still defaults to 49d30N
- *
- * Revision 1.2  2002/12/14 19:35:21  warmerda
- * updated headers
- *
- */
+ *****************************************************************************/
 
 #define PROJ_PARMS__ \
 	double	C_x;
@@ -55,9 +37,9 @@
 #include <string.h>
 #include <stdio.h>
 
-PJ_CVSID("$Id: PJ_krovak.c,v 1.6 2006/09/14 13:10:50 fwarmerdam Exp $");	
+PJ_CVSID("$Id: PJ_krovak.c 1504 2009-01-06 02:11:57Z warmerdam $");	
 
-PROJ_HEAD(krovak, "Krovak") "\n\tPCyl., Sph.";
+PROJ_HEAD(krovak, "Krovak") "\n\tPCyl., Ellps.";
 
 /**
    NOTES: According to EPSG the full Krovak projection method should have
@@ -84,7 +66,7 @@ PROJ_HEAD(krovak, "Krovak") "\n\tPCyl., Sph.";
 
 
 
-FORWARD(s_forward); /* spheroid */
+FORWARD(e_forward); /* ellipsoid */
 /* calculate xy from lat/lon */
 
 	char errmess[255];
@@ -153,7 +135,7 @@ FORWARD(s_forward); /* spheroid */
 
 
 
-INVERSE(s_inverse); /* spheroid */
+INVERSE(e_inverse); /* ellipsoid */
 	/* calculate lat/lon from xy */
 
 /* Constants, identisch wie in der Umkehrfunktion */
@@ -258,15 +240,14 @@ ENTRY0(krovak)
         /* as input and output, instead of lat/long relative to Ferro */
 	if (!pj_param(P->params, "tlon_0").i)
             P->lam0 = 0.7417649320975901 - 0.308341501185665;
-; 
 
         /* if scale not set default to 0.9999 */
 	if (!pj_param(P->params, "tk").i)
             P->k0 = 0.9999;
 
 	/* always the same */
-        P->inv = s_inverse; 
-	P->fwd = s_forward;
+        P->inv = e_inverse; 
+	P->fwd = e_forward;
 
 ENDENTRY(P)
 

@@ -1,6 +1,3 @@
-#ifndef lint
-static const char SCCSID[]="@(#)PJ_gn_sinu.c	4.1	94/02/15	GIE	REL";
-#endif
 #define PROJ_PARMS__ \
 	double	*en; \
 	double	m, n, C_x, C_y;
@@ -75,7 +72,6 @@ ENTRY1(sinu, en)
 	if (!(P->en = pj_enfn(P->es)))
 		E_ERROR_0;
 	if (P->es) {
-		P->en = pj_enfn(P->es);
 		P->inv = e_inverse;
 		P->fwd = e_forward;
 	} else {
