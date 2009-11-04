@@ -805,15 +805,16 @@ class Basemap(object):
         # currently only used in is_land method.
         self.landpolygons=[]
         self.lakepolygons=[]
-        #self.islandinlakepolygons=[]
-        #self.lakeinislandinlakepolygons=[]
-        x, y = zip(*self.coastpolygons)
-        for x,y,type in zip(x,y,self.coastpolygontypes):
-            b = np.asarray([x,y]).T
-            if type == 1: self.landpolygons.append(_geoslib.Polygon(b))
-            if type == 2: self.lakepolygons.append(_geoslib.Polygon(b))
-            #if type == 3: self.islandinlakepolygons.append(_geoslib.Polygon(b))
-            #if type == 4: self.lakeinislandinlakepolygons.append(_geoslib.Polygon(b))
+        if resolution is not None:
+            #self.islandinlakepolygons=[]
+            #self.lakeinislandinlakepolygons=[]
+            x, y = zip(*self.coastpolygons)
+            for x,y,type in zip(x,y,self.coastpolygontypes):
+                b = np.asarray([x,y]).T
+                if type == 1: self.landpolygons.append(_geoslib.Polygon(b))
+                if type == 2: self.lakepolygons.append(_geoslib.Polygon(b))
+                #if type == 3: self.islandinlakepolygons.append(_geoslib.Polygon(b))
+                #if type == 4: self.lakeinislandinlakepolygons.append(_geoslib.Polygon(b))
 
     # set __init__'s docstring
     __init__.__doc__ = _Basemap_init_doc
@@ -1558,6 +1559,7 @@ class Basemap(object):
         the GSHHS coastline polygons associated with the class instance.
         Points over lakes inside land regions are not counted as land points.
         """
+        if resolution is None: return None
         landpt = False
         for poly in self.landpolygons:
             landpt = _geoslib.Point((xpt,ypt)).within(poly)
