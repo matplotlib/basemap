@@ -801,6 +801,20 @@ class Basemap(object):
                 else:
                     coastsegs.append(seg)
             self.coastsegs = coastsegs
+        # create geos Polygon structures for land areas.
+        # currently only used in is_land method.
+        self.landpolygons=[]
+        self.lakepolygons=[]
+        #self.islandinlakepolygons=[]
+        #self.lakeinislandinlakepolygons=[]
+        x, y = zip(*self.coastpolygons)
+        for x,y,type in zip(x,y,self.coastpolygontypes):
+            b = np.asarray([x,y]).T
+            if type == 1: self.landpolygons.append(_geoslib.Polygon(b))
+            if type == 2: self.lakepolygons.append(_geoslib.Polygon(b))
+            #if type == 3: self.islandinlakepolygons.append(_geoslib.Polygon(b))
+            #if type == 4: self.lakeinislandinlakepolygons.append(_geoslib.Polygon(b))
+
     # set __init__'s docstring
     __init__.__doc__ = _Basemap_init_doc
 
@@ -1536,6 +1550,23 @@ class Basemap(object):
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return rivers
+
+    def is_land(self,xpt,ypt):
+        """
+        Returns True if the given x,y point (in projection coordinates) is
+        over land, False otherwise.  The definition of land is based upon
+        the GSHHS coastline polygons associated with the class instance.
+        Points over lakes inside land regions are not counted as land points.
+        """
+        landpt = False
+        for poly in self.landpolygons:
+            landpt = _geoslib.Point((xpt,ypt)).within(poly)
+            if landpt: break
+        lakept = False
+        for poly in self.lakepolygons:
+            lakept = _geoslib.Point((xpt,ypt)).within(poly)
+            if lakept: break
+        return landpt and not lakept
 
     def readshapefile(self,shapefile,name,drawbounds=True,zorder=None,
                       linewidth=0.5,color='k',antialiased=1,ax=None):
