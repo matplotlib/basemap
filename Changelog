@@ -1,4 +1,6 @@
 version 0.99.5 (not yet released)
+           * patch from Stephane Raynaud to pass format string to
+             drawmapscale, and allow units='m'.
            * updated proj4 source to version 4.7.0, pyproj to 1.8.6.
 	   * add "is_land" method to check whether a point is over land or
              water.

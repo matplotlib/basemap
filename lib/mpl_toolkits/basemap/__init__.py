@@ -3319,7 +3319,8 @@ class Basemap(object):
 
     def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\
                      units='km',fontsize=9,yoffset=None,labelstyle='simple',\
-                     fontcolor='k',fillcolor1='w',fillcolor2='k',ax=None):
+                     fontcolor='k',fillcolor1='w',fillcolor2='k',ax=None,\
+                     format='%d'):
         """
         Draw a map scale at ``lon,lat`` of length ``length`` 
         representing distance in the map
@@ -3343,6 +3344,8 @@ class Basemap(object):
                          displayed on the top of the scale bar. For 
                          ``simple``, just the units are display on top
                          and the distance below the scale bar.
+                         If equal to False, plot an empty label.
+        format           a string formatter to format numeric values
         yoffset          yoffset controls how tall the scale bar is,
                          and how far the annotations are offset from the
                          scale bar.  Default is 0.02 times the height of 
@@ -3360,17 +3363,15 @@ class Basemap(object):
         if self.projection == 'cyl':
             raise ValueError("cannot draw map scale for projection='cyl'")
         # convert length to meters
+        lenlab = length
         if units == 'km':
-            lenlab = length
             length = length*1000 
         elif units == 'mi':
-            lenlab = length
             length = length*1609.344
         elif units == 'nmi':
-            lenlab = length
             length = length*1852
-        else:
-            msg = "units must be 'km' (kilometers), "\
+        elif units != 'm':
+            msg = "units must be 'm' (meters), 'km' (kilometers), "\
             "'mi' (miles) or 'nmi' (nautical miles)"
             raise KeyError(msg)
         # reference point and center of scale.
@@ -3411,6 +3412,8 @@ class Basemap(object):
             labelstr = units
         elif labelstyle == 'fancy':
             labelstr = units+" (scale factor %4.2f at %s)"%(scalefact,lonlatstr)
+        elif labelstyle == False:
+            labelstr = ''
         else:
             raise KeyError("labelstyle must be 'simple' or 'fancy'")
         # default y offset is 2 percent of map height.
@@ -3456,15 +3459,15 @@ class Basemap(object):
             rets.append(self.plot([xc,xc],[ytick,ybottom],color=fontcolor)[0])
             rets.append(self.plot([x4,x4],[ytick,ybottom],color=fontcolor)[0])
             #label 3 tick marks
-            rets.append(ax.text(x1,ytext,'%d' % (0),\
+            rets.append(ax.text(x1,ytext,format % (0),\
             horizontalalignment='center',\
             verticalalignment='top',\
             fontsize=fontsize,color=fontcolor))
-            rets.append(ax.text(xc,ytext,'%d' % (0.5*lenlab),\
+            rets.append(ax.text(xc,ytext,format % (0.5*lenlab),\
             horizontalalignment='center',\
             verticalalignment='top',\
             fontsize=fontsize,color=fontcolor))
-            rets.append(ax.text(x4,ytext,'%d' % (lenlab),\
+            rets.append(ax.text(x4,ytext,format % (lenlab),\
             horizontalalignment='center',\
             verticalalignment='top',\
             fontsize=fontsize,color=fontcolor))
@@ -3478,7 +3481,7 @@ class Basemap(object):
             rets.append(self.plot([x1,x4],[yc,yc],color=fontcolor)[0])
             rets.append(self.plot([x1,x1],[yc-yoffset,yc+yoffset],color=fontcolor)[0])
             rets.append(self.plot([x4,x4],[yc-yoffset,yc+yoffset],color=fontcolor)[0])
-            rets.append(ax.text(xc,yc-yoffset,'%d' % lenlab,\
+            rets.append(ax.text(xc,yc-yoffset,format % lenlab,\
             verticalalignment='top',horizontalalignment='center',\
             fontsize=fontsize,color=fontcolor))
             #put units, scale factor on top
