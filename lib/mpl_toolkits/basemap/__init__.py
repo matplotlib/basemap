@@ -805,7 +805,7 @@ class Basemap(object):
         # currently only used in is_land method.
         self.landpolygons=[]
         self.lakepolygons=[]
-        if resolution is not None:
+        if resolution is not None and len(self.coastpolygons) > 0:
             #self.islandinlakepolygons=[]
             #self.lakeinislandinlakepolygons=[]
             x, y = zip(*self.coastpolygons)
