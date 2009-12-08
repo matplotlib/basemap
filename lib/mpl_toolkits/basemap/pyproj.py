@@ -370,9 +370,9 @@ class Geod(_Geod):
         initialize a Geod class instance.
 
         Geodetic parameters for specifying the ellipsoid
-        can be given in a dictionary 'initparams', as keyword arguments, 
+        can be given in a dictionary 'initparams', as keyword arguments,
         or as as proj4 geod initialization string.
-        Following is a list of the ellipsoids that may be defined using the 
+        Following is a list of the ellipsoids that may be defined using the
         'ellps' keyword:
 
            MERIT a=6378137.0      rf=298.257       MERIT 1983

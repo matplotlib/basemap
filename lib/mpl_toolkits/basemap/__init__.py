@@ -1,7 +1,7 @@
 """
 Module for plotting data on maps with matplotlib.
 
-Contains the :class:`Basemap` class (which does most of the 
+Contains the :class:`Basemap` class (which does most of the
 heavy lifting), and the following functions:
 
 :func:`NetCDFFile`: Read local and remote NetCDF datasets.
@@ -26,8 +26,8 @@ from matplotlib.cbook import is_scalar, dedent
 _mpl_required_version = '0.98'
 if _matplotlib_version < _mpl_required_version:
     msg = dedent("""
-    your matplotlib is too old - basemap requires version %s or 
-    higher, you have version %s""" % 
+    your matplotlib is too old - basemap requires version %s or
+    higher, you have version %s""" %
     (_mpl_required_version,_matplotlib_version))
     raise ImportError(msg)
 from matplotlib import rcParams, is_interactive, _pylab_helpers
@@ -180,12 +180,12 @@ _Basemap_init_doc = """
  lat_0            center of desired map domain (in degrees).
  ==============   ====================================================
 
- For ``sinu``, ``moll``, ``npstere``, ``spstere``, ``nplaea``, ``splaea``, 
+ For ``sinu``, ``moll``, ``npstere``, ``spstere``, ``nplaea``, ``splaea``,
  ``npaeqd``, ``spaeqd``, ``robin`` or ``mbtfpq``, the values of
  llcrnrlon, llcrnrlat, urcrnrlon, urcrnrlat, width and height are ignored
  (because either they are computed internally, or entire globe is
- always plotted). 
- 
+ always plotted).
+
  For the cylindrical projections (``cyl``, ``merc``, ``mill`` and ``gall``),
  the default is to use
  llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other
@@ -193,7 +193,7 @@ _Basemap_init_doc = """
  corners or width and height must be specified by the user.
 
  For ``ortho`` and ``geos``, the lat/lon values of the corners may be specified,
- or the x/y values of the corners (llcrnrx,llcrnry,urcrnrx,urcrnry) in the 
+ or the x/y values of the corners (llcrnrx,llcrnry,urcrnrx,urcrnry) in the
  coordinate system of the global projection (with x=0,y=0 at the center
  of the global projection).  If the corners are not specified,
  the entire globe is plotted.
@@ -206,7 +206,7 @@ _Basemap_init_doc = """
  Keyword          Description
  ==============   ====================================================
  resolution       resolution of boundary database to use. Can be ``c``
-                  (crude), ``l`` (low), ``i`` (intermediate), ``h``  
+                  (crude), ``l`` (low), ``i`` (intermediate), ``h``
                   (high), ``f`` (full) or None.
                   If None, no boundary data will be read in (and
                   class methods such as drawcoastlines will raise an
@@ -217,40 +217,40 @@ _Basemap_init_doc = """
                   (http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html).
                   State, country and river datasets from the Generic
                   Mapping Tools (http://gmt.soest.hawaii.edu).
- area_thresh      coastline or lake with an area smaller than 
-                  area_thresh in km^2 will not be plotted. 
+ area_thresh      coastline or lake with an area smaller than
+                  area_thresh in km^2 will not be plotted.
                   Default 10000,1000,100,10,1 for resolution
                   ``c``, ``l``, ``i``, ``h``, ``f``.
  rsphere          radius of the sphere used to define map projection
                   (default 6370997 meters, close to the arithmetic mean
-                  radius of the earth). If given as a sequence, the 
+                  radius of the earth). If given as a sequence, the
                   first two elements are interpreted as the radii
-                  of the major and minor axes of an ellipsoid. 
-                  Note: sometimes an ellipsoid is specified by the 
+                  of the major and minor axes of an ellipsoid.
+                  Note: sometimes an ellipsoid is specified by the
                   major axis and an inverse flattening parameter (if).
                   The minor axis (b) can be computed from the major
-                  axis (a) and the inverse flattening parameter using 
+                  axis (a) and the inverse flattening parameter using
                   the formula if = a/(a-b).
  suppress_ticks   suppress automatic drawing of axis ticks and labels
-                  in map projection coordinates.  Default False, 
+                  in map projection coordinates.  Default False,
                   so parallels and meridians can be labelled instead.
                   If parallel or meridian labelling is requested
                   (using drawparallels and drawmeridians methods),
                   automatic tick labelling will be supressed even if
                   suppress_ticks=False.  suppress_ticks=False
                   is useful if you want to use your own custom tick
-                  formatter, or  if you want to let matplotlib label 
+                  formatter, or  if you want to let matplotlib label
                   the axes in meters using map projection
                   coordinates.
  fix_aspect       fix aspect ratio of plot to match aspect ratio
                   of map projection region (default True).
  anchor           determines how map is placed in axes rectangle
-                  (passed to axes.set_aspect). Default is ``C``, 
+                  (passed to axes.set_aspect). Default is ``C``,
                   which means map is centered.
-                  Allowed values are 
-                  ``C``, ``SW``, ``S``, ``SE``, ``E``, ``NE``, 
+                  Allowed values are
+                  ``C``, ``SW``, ``S``, ``SE``, ``E``, ``NE``,
                   ``N``, ``NW``, and ``W``.
- ax               set default axes instance 
+ ax               set default axes instance
                   (default None - matplotlib.pyplot.gca() may be used
                   to get the current axes instance).
                   If you don``t want matplotlib.pyplot to be imported,
@@ -258,10 +258,10 @@ _Basemap_init_doc = """
                   instance, or use the ``ax`` keyword in each Basemap
                   method call that does drawing. In the first case,
                   all Basemap method calls will draw to the same axes
-                  instance.  In the second case, you can draw to 
+                  instance.  In the second case, you can draw to
                   different axes with the same Basemap instance.
                   You can also use the ``ax`` keyword in individual
-                  method calls to selectively override the default 
+                  method calls to selectively override the default
                   axes instance.
  ==============   ====================================================
 
@@ -279,36 +279,36 @@ _Basemap_init_doc = """
                   and mercator projections.
                   default is lat_0 for stereographic projection.
                   default is 0 for mercator projection.
- lat_1            first standard parallel for lambert conformal, 
-                  albers equal area and equidistant conic.
-                  Latitude of one of the two points on the projection 
-                  centerline for oblique mercator. If lat_1 is not given, but 
-                  lat_0 is, lat_1 is set to lat_0 for lambert 
-                  conformal, albers equal area and equidistant conic.
- lat_2            second standard parallel for lambert conformal, 
+ lat_1            first standard parallel for lambert conformal,
                   albers equal area and equidistant conic.
                   Latitude of one of the two points on the projection
-                  centerline for oblique mercator. If lat_2 is not 
-                  given it is set to lat_1 for lambert conformal, 
+                  centerline for oblique mercator. If lat_1 is not given, but
+                  lat_0 is, lat_1 is set to lat_0 for lambert
+                  conformal, albers equal area and equidistant conic.
+ lat_2            second standard parallel for lambert conformal,
+                  albers equal area and equidistant conic.
+                  Latitude of one of the two points on the projection
+                  centerline for oblique mercator. If lat_2 is not
+                  given it is set to lat_1 for lambert conformal,
                   albers equal area and equidistant conic.
  lon_1            Longitude of one of the two points on the projection
                   centerline for oblique mercator.
  lon_2            Longitude of one of the two points on the projection
                   centerline for oblique mercator.
  no_rot           only used by oblique mercator.
-                  If set to True, the map projection coordinates will 
+                  If set to True, the map projection coordinates will
                   not be rotated to true North.  Default is False
                   (projection coordinates are automatically rotated).
- lat_0            central latitude (y-axis origin) - used by all 
-                  projections. 
+ lat_0            central latitude (y-axis origin) - used by all
+                  projections.
  lon_0            central meridian (x-axis origin) - used by all
                   projections.
  boundinglat      bounding latitude for pole-centered projections
-                  (npstere,spstere,nplaea,splaea,npaeqd,spaeqd). 
+                  (npstere,spstere,nplaea,splaea,npaeqd,spaeqd).
                   These projections are square regions centered
                   on the north or south pole.
                   The longitude lon_0 is at 6-o'clock, and the
-                  latitude circle boundinglat is tangent to the edge  
+                  latitude circle boundinglat is tangent to the edge
                   of the map at lon_0.
  satellite_height height of satellite (in m) above equator -
                   only relevant for geostationary projections
@@ -325,11 +325,11 @@ _Basemap_init_doc = """
  projection       map projection. Print the module variable
                   ``supported_projections`` to see a list of allowed
                   values.
- aspect           map aspect ratio 
+ aspect           map aspect ratio
                   (size of y dimension / size of x dimension).
  llcrnrlon        longitude of lower left hand corner of the
                   selected map domain.
- llcrnrlat        latitude of lower left hand corner of the 
+ llcrnrlat        latitude of lower left hand corner of the
                   selected map domain.
  urcrnrlon        longitude of upper right hand corner of the
                   selected map domain.
@@ -337,7 +337,7 @@ _Basemap_init_doc = """
                   selected map domain.
  llcrnrx          x value of lower left hand corner of the
                   selected map domain in map projection coordinates.
- llcrnry          y value of lower left hand corner of the 
+ llcrnry          y value of lower left hand corner of the
                   selected map domain in map projection coordinates.
  urcrnrx          x value of upper right hand corner of the
                   selected map domain in map projection coordinates.
@@ -345,8 +345,8 @@ _Basemap_init_doc = """
                   selected map domain in map projection coordinates.
  rmajor           equatorial radius of ellipsoid used (in meters).
  rminor           polar radius of ellipsoid used (in meters).
- resolution       resolution of boundary dataset being used (``c`` 
-                  for crude, ``l`` for low, etc.). 
+ resolution       resolution of boundary dataset being used (``c``
+                  for crude, ``l`` for low, etc.).
                   If None, no boundary dataset is associated with the
                   Basemap instance.
  proj4string      the string describing the map projection that is
@@ -372,7 +372,7 @@ _Basemap_init_doc = """
  self.llcrnrlon and self.llcrnrlat.
 
  Input arguments lon, lat can be either scalar floats, sequences
- or numpy arrays.  
+ or numpy arrays.
 
  **Example Usage:**
 
@@ -650,7 +650,7 @@ class Basemap(object):
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection in _cylproj:
             if projection == 'merc':
-                if lat_ts is None: 
+                if lat_ts is None:
                     lat_ts = 0.
                     projparams['lat_ts']=lat_ts
             if not using_corners:
@@ -795,7 +795,7 @@ class Basemap(object):
                     ind.append(len(xd))
                     for i in ind:
                         # don't add empty lists.
-                        if len(range(iprev,i)): 
+                        if len(range(iprev,i)):
                             coastsegs.append(zip(x[iprev:i],y[iprev:i]))
                         iprev = i
                 else:
@@ -887,7 +887,7 @@ class Basemap(object):
             raise ValueError('%s projection cannot cross pole'%(self.projection))
         # make sure orthographic or gnomonic projection has containsPole=True
         # we will compute the intersections in stereographic
-        # coordinates, then transform to orthographic. This is 
+        # coordinates, then transform to orthographic. This is
         # because these projections are only defined on a hemisphere, and
         # some boundary features (like Eurasia) would be undefined otherwise.
         if self.projection in ['ortho','gnom'] and name == 'gshhs':
@@ -895,7 +895,7 @@ class Basemap(object):
             lon_0=self.projparams['lon_0']
             lat_0=self.projparams['lat_0']
             re = self.projparams['R']
-            # center of stereographic projection restricted to be 
+            # center of stereographic projection restricted to be
             # nearest one of 6 points on the sphere (every 90 deg lat/lon).
             lon0 = 90.*(np.around(lon_0/90.))
             lat0 = 90.*(np.around(lat_0/90.))
@@ -958,7 +958,7 @@ class Basemap(object):
                     else:
                         poly = Shape(b)
                         # this is a workaround to avoid
-                        # "GEOS_ERROR: TopologyException: 
+                        # "GEOS_ERROR: TopologyException:
                         # found non-noded intersection between ..."
                         # with geos 3.0.0
                         if _geoslib.__geos_major_version__ > 2:
@@ -1035,7 +1035,7 @@ class Basemap(object):
                     # create a GEOS geometry object.
                     poly = Shape(b)
                     # this is a workaround to avoid
-                    # "GEOS_ERROR: TopologyException: 
+                    # "GEOS_ERROR: TopologyException:
                     # found non-noded intersection between ..."
                     # with geos 3.0.0
                     if _geoslib.__geos_major_version__ > 2:
@@ -1212,7 +1212,7 @@ class Basemap(object):
         linewidth        line width for boundary (default 1.)
         color            color of boundary line (default black)
         fill_color       fill the map region background with this
-                         color (default is no fill or fill with axis 
+                         color (default is no fill or fill with axis
                          background color).
         zorder           sets the zorder for filling map background
                          (default 0).
@@ -1411,7 +1411,7 @@ class Basemap(object):
         antialiased      antialiasing switch for coastlines (default True).
         ax               axes instance (overrides default axes instance)
         zorder           sets the zorder for the coastlines (if not specified,
-                         uses default zorder for 
+                         uses default zorder for
                          matplotlib.patches.LineCollections).
         ==============   ====================================================
 
@@ -1443,11 +1443,11 @@ class Basemap(object):
         ==============   ====================================================
         linewidth        country boundary line width (default 0.5)
         color            country boundary line color (default black)
-        antialiased      antialiasing switch for country boundaries (default 
+        antialiased      antialiasing switch for country boundaries (default
                          True).
         ax               axes instance (overrides default axes instance)
         zorder           sets the zorder for the country boundaries (if not
-                         specified uses default zorder for 
+                         specified uses default zorder for
                          matplotlib.patches.LineCollections).
         ==============   ====================================================
 
@@ -1486,7 +1486,7 @@ class Basemap(object):
         antialiased      antialiasing switch for state boundaries
                          (default True).
         ax               axes instance (overrides default axes instance)
-        zorder           sets the zorder for the state boundaries (if not 
+        zorder           sets the zorder for the state boundaries (if not
                          specified, uses default zorder for
                          matplotlib.patches.LineCollections).
         ==============   ====================================================
@@ -1523,10 +1523,10 @@ class Basemap(object):
         ==============   ====================================================
         linewidth        river boundary line width (default 0.5)
         color            river boundary line color (default black)
-        antialiased      antialiasing switch for river boundaries (default 
+        antialiased      antialiasing switch for river boundaries (default
                          True).
         ax               axes instance (overrides default axes instance)
-        zorder           sets the zorder for the rivers (if not 
+        zorder           sets the zorder for the rivers (if not
                          specified uses default zorder for
                          matplotlib.patches.LineCollections).
         ==============   ====================================================
@@ -1588,25 +1588,25 @@ class Basemap(object):
         Argument         Description
         ==============   ====================================================
         shapefile        path to shapefile components.  Example:
-                         shapefile='/home/jeff/esri/world_borders' assumes 
-                         that world_borders.shp, world_borders.shx and 
+                         shapefile='/home/jeff/esri/world_borders' assumes
+                         that world_borders.shp, world_borders.shx and
                          world_borders.dbf live in /home/jeff/esri.
         name             name for Basemap attribute to hold the shapefile
-                         vertices or points in map projection 
-                         coordinates. Class attribute name+'_info' is a list 
-                         of dictionaries, one for each shape, containing 
+                         vertices or points in map projection
+                         coordinates. Class attribute name+'_info' is a list
+                         of dictionaries, one for each shape, containing
                          attributes of each shape from dbf file, For
                          example, if name='counties', self.counties
-                         will be a list of x,y vertices for each shape in 
+                         will be a list of x,y vertices for each shape in
                          map projection  coordinates and self.counties_info
                          will be a list of dictionaries with shape
-                         attributes.  Rings in individual Polygon 
+                         attributes.  Rings in individual Polygon
                          shapes are split out into separate polygons, and
                          additional keys 'RINGNUM' and 'SHAPENUM' are added
                          to the shape attribute dictionary.
         ==============   ====================================================
 
-        The following optional keyword arguments are only relevant for Polyline 
+        The following optional keyword arguments are only relevant for Polyline
         and Polygon shape types, for Point and MultiPoint shapes they are
         ignored.
 
@@ -1615,13 +1615,13 @@ class Basemap(object):
         ==============   ====================================================
         Keyword          Description
         ==============   ====================================================
-        drawbounds       draw boundaries of shapes (default True).  
-        zorder           shape boundary zorder (if not specified, 
-                         default for mathplotlib.lines.LineCollection 
+        drawbounds       draw boundaries of shapes (default True).
+        zorder           shape boundary zorder (if not specified,
+                         default for mathplotlib.lines.LineCollection
                          is used).
         linewidth        shape boundary line width (default 0.5)
         color            shape boundary line color (default black)
-        antialiased      antialiasing switch for shape boundaries 
+        antialiased      antialiasing switch for shape boundaries
                          (default True).
         ax               axes instance (overrides default axes instance)
         ==============   ====================================================
@@ -1632,7 +1632,7 @@ class Basemap(object):
         the SHPT* constants defined in the shapelib module, see
         http://shapelib.maptools.org/shp_api.html) and min and
         max are 4-element lists with the minimum and maximum values of the
-        vertices. If ``drawbounds=True`` a 
+        vertices. If ``drawbounds=True`` a
         matplotlib.patches.LineCollection object is appended to the tuple.
         """
         if not os.path.exists('%s.shp'%shapefile):
@@ -1723,7 +1723,7 @@ class Basemap(object):
                       fmt='%g',xoffset=None,yoffset=None,ax=None,latmax=None,
                       **kwargs):
         """
-        Draw and label parallels (latitude lines) for values (in degrees)  
+        Draw and label parallels (latitude lines) for values (in degrees)
         given in the sequence ``circles``.
 
         .. tabularcolumns:: |l|L|
@@ -1749,7 +1749,7 @@ class Basemap(object):
                          labelled with "N" and "S".
         fmt              a format string to format the parallel labels
                          (default '%g') **or** a function that takes a
-                         latitude value in degrees as it's only argument 
+                         latitude value in degrees as it's only argument
                          and returns a formatted string.
         xoffset          label offset from edge of map in x-direction
                          (default is 0.01 times width of map in map
@@ -1761,13 +1761,13 @@ class Basemap(object):
         latmax           absolute value of latitude to which meridians are drawn
                          (default is 80).
         \**kwargs        additional keyword arguments controlling text
-                         for labels that are passed on to 
+                         for labels that are passed on to
                          the text method of the axes instance (see
                          matplotlib.pyplot.text documentation).
         ==============   ====================================================
 
         returns a dictionary whose keys are the parallel values, and
-        whose values are tuples containing lists of the 
+        whose values are tuples containing lists of the
         matplotlib.lines.Line2D and matplotlib.text.Text instances
         associated with each parallel.
         """
@@ -1811,7 +1811,7 @@ class Basemap(object):
             x,y = self(lons,lats)
             # remove points outside domain.
             # leave a little slop around edges (3*xdelta)
-            # don't really know why, but this appears to be needed to 
+            # don't really know why, but this appears to be needed to
             # or lines sometimes don't reach edge of plot.
             testx = np.logical_and(x>=self.xmin-3*xdelta,x<=self.xmax+3*xdelta)
             x = np.compress(testx, x)
@@ -2001,7 +2001,7 @@ class Basemap(object):
                          labelled with "E" and "W".
         fmt              a format string to format the meridian labels
                          (default '%g') **or** a function that takes a
-                         longitude value in degrees as it's only argument 
+                         longitude value in degrees as it's only argument
                          and returns a formatted string.
         xoffset          label offset from edge of map in x-direction
                          (default is 0.01 times width of map in map
@@ -2013,13 +2013,13 @@ class Basemap(object):
         latmax           absolute value of latitude to which meridians are drawn
                          (default is 80).
         \**kwargs        additional keyword arguments controlling text
-                         for labels that are passed on to 
+                         for labels that are passed on to
                          the text method of the axes instance (see
                          matplotlib.pyplot.text documentation).
         ==============   ====================================================
 
         returns a dictionary whose keys are the meridian values, and
-        whose values are tuples containing lists of the 
+        whose values are tuples containing lists of the
         matplotlib.lines.Line2D and matplotlib.text.Text instances
         associated with each meridian.
         """
@@ -2049,7 +2049,7 @@ class Basemap(object):
             x,y = self(lons,lats)
             # remove points outside domain.
             # leave a little slop around edges (3*xdelta)
-            # don't really know why, but this appears to be needed to 
+            # don't really know why, but this appears to be needed to
             # or lines sometimes don't reach edge of plot.
             testx = np.logical_and(x>=self.xmin-3*xdelta,x<=self.xmax+3*xdelta)
             x = np.compress(testx, x)
@@ -2218,7 +2218,7 @@ class Basemap(object):
         Draw a polygon centered at ``lon_0,lat_0``.  The polygon
         approximates a circle on the surface of the earth with radius
         ``radius_deg`` degrees latitude along longitude ``lon_0``,
-        made up of ``npts`` vertices.  
+        made up of ``npts`` vertices.
         The polygon represents a Tissot's indicatrix
         (http://en.wikipedia.org/wiki/Tissot's_Indicatrix),
         which when drawn on a map shows the distortion
@@ -2308,7 +2308,7 @@ class Basemap(object):
         Interpolate a scalar field (``datin``) from a lat/lon grid with
         longitudes = ``lons`` and latitudes = ``lats`` to a ``ny`` by ``nx``
         map projection grid.  Typically used to transform data to
-        map projection coordinates for plotting on a map with 
+        map projection coordinates for plotting on a map with
         the :meth:`imshow`.
 
         .. tabularcolumns:: |l|L|
@@ -2320,7 +2320,7 @@ class Basemap(object):
         lons, lats       rank-1 arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must  
+                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must
                          fit within range -180 to 180.
         nx, ny           The size of the output regular grid in map
                          projection coordinates
@@ -2391,12 +2391,12 @@ class Basemap(object):
         lons, lats       rank-1 arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must  
+                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must
                          fit within range -180 to 180.
         nx, ny           The size of the output regular grid in map
                          projection coordinates
         ==============   ====================================================
-           
+
         .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
@@ -2442,7 +2442,7 @@ class Basemap(object):
     def rotate_vector(self,uin,vin,lons,lats,returnxy=False):
         """
         Rotate a vector field (``uin,vin``) on a rectilinear grid
-        with longitudes = ``lons`` and latitudes = ``lats`` from 
+        with longitudes = ``lons`` and latitudes = ``lats`` from
         geographical (lat/lon) into map projection (x/y) coordinates.
 
         Differs from transform_vector in that no interpolation is done.
@@ -2463,13 +2463,13 @@ class Basemap(object):
         lons, lats       Arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must 
+                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must
                          fit within range -180 to 180.
         ==============   ====================================================
 
         Returns ``uout, vout`` (rotated vector field).
-        If the optional keyword argument 
-        ``returnxy`` is True (default is False), 
+        If the optional keyword argument
+        ``returnxy`` is True (default is False),
         returns ``uout,vout,x,y`` (where ``x,y`` are the map projection
         coordinates of the grid defined by ``lons,lats``).
         """
@@ -2480,7 +2480,7 @@ class Basemap(object):
         if lons.ndim == lats.ndim == 1 and uin.ndim == vin.ndim == 2 and\
            uin.shape[1] == vin.shape[1] == lons.shape[0] and\
            uin.shape[0] == vin.shape[0] == lats.shape[0]:
-            lons, lats = np.meshgrid(lons, lats) 
+            lons, lats = np.meshgrid(lons, lats)
         else:
             if not lons.shape == lats.shape == uin.shape == vin.shape:
                 raise TypeError("shapes of lons,lats and uin,vin don't match")
@@ -2493,41 +2493,41 @@ class Basemap(object):
             vin = vin.filled(1)
         else:
             masked = False
-        
+
         # Map the (lon, lat) vector in the complex plane.
         uvc = uin + 1j*vin
         uvmag = np.abs(uvc)
         theta = np.angle(uvc)
-        
-        # Define a displacement (dlon, dlat) that moves all 
-        # positions (lons, lats) a small distance in the 
-        # direction of the original vector. 
+
+        # Define a displacement (dlon, dlat) that moves all
+        # positions (lons, lats) a small distance in the
+        # direction of the original vector.
         dc = 1E-5 * np.exp(theta*1j)
         dlat = dc.imag * np.cos(np.radians(lats))
-        dlon = dc.real 
-        
+        dlon = dc.real
+
         # Deal with displacements that overshoot the North or South Pole.
         farnorth = np.abs(lats+dlat) >= 90.0
         somenorth = farnorth.any()
         if somenorth:
             dlon[farnorth] *= -1.0
             dlat[farnorth] *= -1.0
-        
+
         # Add displacement to original location and find the native coordinates.
         lon1 = lons + dlon
         lat1 = lats + dlat
         xn, yn = self(lon1, lat1)
-        
-        # Determine the angle of the displacement in the native coordinates. 
+
+        # Determine the angle of the displacement in the native coordinates.
         vecangle = np.arctan2(yn-y, xn-x)
         if somenorth:
             vecangle[farnorth] += np.pi
-            
+
         # Compute the x-y components of the original vector.
         uvcout = uvmag * np.exp(1j*vecangle)
         uout = uvcout.real
         vout = uvcout.imag
-        
+
         if masked:
             uout = ma.array(uout, mask=mask)
             vout = ma.array(vout, mask=mask)
@@ -2581,7 +2581,7 @@ class Basemap(object):
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
         # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None: 
+        if self.ax is None and kwargs.pop('ax', None) is None:
             import matplotlib.pyplot as plt
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -2612,7 +2612,7 @@ class Basemap(object):
 
     def plot(self, *args, **kwargs):
         """
-        Draw lines and/or markers on the map 
+        Draw lines and/or markers on the map
         (see matplotlib.pyplot.plot documentation).
 
         Extra keyword ``ax`` can be used to override the default axis instance.
@@ -2641,7 +2641,7 @@ class Basemap(object):
 
     def imshow(self, *args, **kwargs):
         """
-        Display an image over the map 
+        Display an image over the map
         (see matplotlib.pyplot.imshow documentation).
 
         ``extent`` and ``origin`` keywords set automatically so image
@@ -2655,7 +2655,7 @@ class Basemap(object):
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
         # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None: 
+        if self.ax is None and kwargs.pop('ax', None) is None:
             import matplotlib.pyplot as plt
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         # use origin='lower', unless overridden.
@@ -2703,7 +2703,7 @@ class Basemap(object):
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
         # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None: 
+        if self.ax is None and kwargs.pop('ax', None) is None:
             import matplotlib.pyplot as plt
         # make x,y masked arrays
         # (masked where data is outside of projection limb)
@@ -2747,7 +2747,7 @@ class Basemap(object):
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
         # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None: 
+        if self.ax is None and kwargs.pop('ax', None) is None:
             import matplotlib.pyplot as plt
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -2778,7 +2778,7 @@ class Basemap(object):
 
     def contour(self,x,y,data,*args,**kwargs):
         """
-        Make a contour plot over the map 
+        Make a contour plot over the map
         (see matplotlib.pyplot.contour documentation).
 
         Extra keyword ``ax`` can be used to override the default axis instance.
@@ -2787,7 +2787,7 @@ class Basemap(object):
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
         # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None: 
+        if self.ax is None and kwargs.pop('ax', None) is None:
             import matplotlib.pyplot as plt
         # make sure x is monotonically increasing - if not,
         # print warning suggesting that the data be shifted in longitude
@@ -2862,7 +2862,7 @@ class Basemap(object):
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
         # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None: 
+        if self.ax is None and kwargs.pop('ax', None) is None:
             import matplotlib.pyplot as plt
         # make sure x is monotonically increasing - if not,
         # print warning suggesting that the data be shifted in longitude
@@ -2942,7 +2942,7 @@ class Basemap(object):
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
         # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None: 
+        if self.ax is None and kwargs.pop('ax', None) is None:
             import matplotlib.pyplot as plt
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -2972,8 +2972,8 @@ class Basemap(object):
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.barbs
 
-        Returns two matplotlib.axes.Barbs instances, one for the Northern 
-        Hemisphere and one for the Southern Hemisphere.  
+        Returns two matplotlib.axes.Barbs instances, one for the Northern
+        Hemisphere and one for the Southern Hemisphere.
         """
         if _matplotlib_version < '0.98.3':
             msg = dedent("""
@@ -2982,7 +2982,7 @@ class Basemap(object):
             raise NotImplementedError(msg)
         ax = kwargs.pop('ax', None) or self._check_ax()
         # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None: 
+        if self.ax is None and kwargs.pop('ax', None) is None:
             import matplotlib.pyplot as plt
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -3025,7 +3025,7 @@ class Basemap(object):
         ==============   ====================================================
         Keywords         Description
         ==============   ====================================================
-        land_color       desired land color (color name or rgba tuple). 
+        land_color       desired land color (color name or rgba tuple).
                          Default gray ("0.8").
         ocean_color      desired ocean color (color name or rgba tuple).
                          Default white.
@@ -3042,7 +3042,7 @@ class Basemap(object):
         lsmask_lats      1d array of latitudes for lsmask (ignored
                          if lsmask is None). Latitudes must be ordered
                          from -90 S northward.
-        \**kwargs        extra keyword arguments passed on to 
+        \**kwargs        extra keyword arguments passed on to
                          :meth:`imshow`
         ==============   ====================================================
 
@@ -3089,7 +3089,7 @@ class Basemap(object):
             # redo the interpolation (unless a new land-sea mask is passed
             # in via the lsmask, lsmask_lons, lsmask_lats keywords).
 
-            # is it a cylindrical projection whose limits lie 
+            # is it a cylindrical projection whose limits lie
             # outside the limits of the image?
             cylproj =  self.projection in _cylproj and \
                       (self.urcrnrlon > lsmask_lons[-1] or \
@@ -3172,12 +3172,12 @@ class Basemap(object):
         If image is a URL (starts with 'http'), it is downloaded to a temp
         file using urllib.urlretrieve.
 
-        Default (if ``image`` not specified) is to display 
+        Default (if ``image`` not specified) is to display
         'blue marble next generation' image from http://visibleearth.nasa.gov/.
 
         Specified image must have pixels covering the whole globe in a regular
         lat/lon grid, starting and -180W and the South Pole.
-        Works with the global images from 
+        Works with the global images from
         http://earthobservatory.nasa.gov/Features/BlueMarble/BlueMarble_monthlies.php.
 
         The ``scale`` keyword can be used to downsample (rescale) the image.
@@ -3232,7 +3232,7 @@ class Basemap(object):
             delta = 360./float(nlons)
             self._bm_lons = np.arange(-180.+0.5*delta,180.,delta)
             self._bm_lats = np.arange(-90.+0.5*delta,90.,delta)
-            # is it a cylindrical projection whose limits lie 
+            # is it a cylindrical projection whose limits lie
             # outside the limits of the image?
             cylproj =  self.projection in _cylproj and \
                       (self.urcrnrlon > self._bm_lons[-1] or \
@@ -3257,13 +3257,13 @@ class Basemap(object):
             if newfile or not hasattr(self,'_bm_rgba_warped'):
                 # transform to nx x ny regularly spaced native
                 # projection grid.
-                # nx and ny chosen to have roughly the 
+                # nx and ny chosen to have roughly the
                 # same horizontal res as original image.
                 if self.projection != 'cyl':
                     dx = 2.*np.pi*self.rmajor/float(nlons)
                     nx = int((self.xmax-self.xmin)/dx)+1
                     ny = int((self.ymax-self.ymin)/dx)+1
-                else: 
+                else:
                     dx = 360./float(nlons)
                     nx = int((self.urcrnrlon-self.llcrnrlon)/dx)+1
                     ny = int((self.urcrnrlat-self.llcrnrlat)/dx)+1
@@ -3322,9 +3322,9 @@ class Basemap(object):
                      fontcolor='k',fillcolor1='w',fillcolor2='k',ax=None,\
                      format='%d'):
         """
-        Draw a map scale at ``lon,lat`` of length ``length`` 
+        Draw a map scale at ``lon,lat`` of length ``length``
         representing distance in the map
-        projection coordinates at ``lon0,lat0``. 
+        projection coordinates at ``lon0,lat0``.
 
         .. tabularcolumns:: |l|L|
 
@@ -3334,24 +3334,24 @@ class Basemap(object):
         units            the units of the length argument (Default km).
         barstyle         ``simple`` or ``fancy`` (roughly corresponding
                          to the styles provided by Generic Mapping Tools).
-                         Default ``simple``. 
+                         Default ``simple``.
         fontsize         for map scale annotations, default 9.
         color            for map scale annotations, default black.
         labelstype       ``simple`` (default) or ``fancy``.  For
                          ``fancy`` the map scale factor (ratio betwee
                          the actual distance and map projection distance
-                         at lon0,lat0) and the value of lon0,lat0 are also 
-                         displayed on the top of the scale bar. For 
+                         at lon0,lat0) and the value of lon0,lat0 are also
+                         displayed on the top of the scale bar. For
                          ``simple``, just the units are display on top
                          and the distance below the scale bar.
                          If equal to False, plot an empty label.
         format           a string formatter to format numeric values
         yoffset          yoffset controls how tall the scale bar is,
                          and how far the annotations are offset from the
-                         scale bar.  Default is 0.02 times the height of 
+                         scale bar.  Default is 0.02 times the height of
                          the map (0.02*(self.ymax-self.ymin)).
         fillcolor1(2)    colors of the alternating filled regions
-                         (default white and black).  Only relevant for 
+                         (default white and black).  Only relevant for
                          'fancy' barstyle.
         ==============   ====================================================
 
@@ -3365,7 +3365,7 @@ class Basemap(object):
         # convert length to meters
         lenlab = length
         if units == 'km':
-            length = length*1000 
+            length = length*1000
         elif units == 'mi':
             length = length*1609.344
         elif units == 'nmi':
@@ -3592,7 +3592,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     ==============   ====================================================
     Arguments        Description
     ==============   ====================================================
-    datain           a rank-2 array with 1st dimension corresponding to 
+    datain           a rank-2 array with 1st dimension corresponding to
                      y, 2nd dimension x.
     xin, yin         rank-1 arrays containing x and y of
                      datain grid in increasing order.
@@ -3606,15 +3606,15 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     ==============   ====================================================
     checkbounds      If True, values of xout and yout are checked to see
                      that they lie within the range specified by xin
-                     and xin.  
-                     If False, and xout,yout are outside xin,yin, 
+                     and xin.
+                     If False, and xout,yout are outside xin,yin,
                      interpolated values will be clipped to values on
                      boundary of input grid (xin,yin)
                      Default is False.
     masked           If True, points outside the range of xin and yin
-                     are masked (in a masked array). 
+                     are masked (in a masked array).
                      If masked is set to a number, then
-                     points outside the range of xin and yin will be 
+                     points outside the range of xin and yin will be
                      set to that number. Default False.
     order            0 for nearest-neighbor interpolation, 1 for
                      bilinear interpolation (default 1).
@@ -3827,16 +3827,16 @@ def NetCDFFile(file, mode='r', maskandscale=True, cache=None, mmap=True,\
     In addition, variables that have the ``scale_factor`` and ``add_offset``
     attribute will automatically be converted to and from short integers.
     To suppress these automatic conversions, set the ``maskandscale``
-    keyword to False. 
+    keyword to False.
 
     The keywords ``cache``, ``username``, ``password`` and ``verbose`` are only
-    valid for remote OPenDAP datasets.  ``username`` and ``password`` are used 
+    valid for remote OPenDAP datasets.  ``username`` and ``password`` are used
     to access OPenDAP datasets that require authentication.  ``verbose=True``
     will make the pydap client print out the URLs being accessed.
     ``cache`` is a location (a directory) for caching data, so that repeated
-    accesses to the same URL avoid the network. 
+    accesses to the same URL avoid the network.
 
-    The keyword ``mmap`` is only valid for local netCDF files.  When 
+    The keyword ``mmap`` is only valid for local netCDF files.  When
     ``mmap=True`` (default), the mmap module is used to access the data.
     This may be slow for very large netCDF variables.
     """
@@ -3851,8 +3851,8 @@ def num2date(times,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     """
     Return datetime objects given numeric time values. The units
     of the numeric time values are described by the ``units`` argument
-    and the ``calendar`` keyword. The returned datetime objects represent 
-    UTC with no time-zone offset, even if the specified 
+    and the ``calendar`` keyword. The returned datetime objects represent
+    UTC with no time-zone offset, even if the specified
     units contain a time-zone offset.
 
     Default behavior is the same as the matplotlib.dates.num2date function
@@ -3872,14 +3872,14 @@ def num2date(times,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     ==============   ====================================================
     Keywords         Description
     ==============   ====================================================
-    units            a string of the form '<time units> since 
+    units            a string of the form '<time units> since
                      <reference time>' describing the units and
                      origin of the time coordinate.
                      <time units> can be days, hours, minutes
-                     or seconds.  <reference time> is the time origin.  
+                     or seconds.  <reference time> is the time origin.
                      Default is 'days since 0001-01-01 00:00:00'.
     calendar         describes the calendar used in the time
-                     calculations.  All the values currently defined in 
+                     calculations.  All the values currently defined in
                      the CF metadata convention
                      (http://cf-pcmdi.llnl.gov/documents/cf-conventions/)
                      are supported.
@@ -3891,11 +3891,11 @@ def num2date(times,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
 
     Returns a datetime instance, or an array of datetime instances.
 
-    The datetime instances returned are 'real' python datetime 
-    objects if the date falls in the Gregorian calendar (i.e. 
+    The datetime instances returned are 'real' python datetime
+    objects if the date falls in the Gregorian calendar (i.e.
     calendar=``proleptic_gregorian``, or calendar = ``standard``
     or ``gregorian`` and the date is after 1582-10-15).
-    Otherwise, they are 'phony' datetime 
+    Otherwise, they are 'phony' datetime
     objects which support some but not all the methods of 'real' python
     datetime objects.  The datetime instances do not contain
     a time-zone offset, even if the specified units contains one.
@@ -3908,7 +3908,7 @@ def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     Return numeric time values given datetime objects. The units
     of the numeric time values are described by the ``units`` argument
     and the ``calendar`` keyword. The datetime objects must
-    be in UTC with no time-zone offset.  If there is a 
+    be in UTC with no time-zone offset.  If there is a
     time-zone offset in units, it will be applied to the
     returned numeric values.
 
@@ -3931,14 +3931,14 @@ def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gr
     ==============   ====================================================
     Keywords         Description
     ==============   ====================================================
-    units            a string of the form '<time units> since 
+    units            a string of the form '<time units> since
                      <reference time>' describing the units and
                      origin of the time coordinate.
                      <time units> can be days, hours, minutes
-                     or seconds.  <reference time> is the time origin.  
+                     or seconds.  <reference time> is the time origin.
                      Default is 'days since 0001-01-01 00:00:00'.
     calendar         describes the calendar used in the time
-                     calculations.  All the values currently defined in 
+                     calculations.  All the values currently defined in
                      the CF metadata convention
                      (http://cf-pcmdi.llnl.gov/documents/cf-conventions/)
                      are supported.
@@ -3977,7 +3977,7 @@ def date2index(dates, nctime, calendar=None,select='exact'):
     Keywords         Description
     ==============   ====================================================
     calendar         describes the calendar used in the time
-                     calculations.  All the values currently defined in 
+                     calculations.  All the values currently defined in
                      the CF metadata convention
                      (http://cf-pcmdi.llnl.gov/documents/cf-conventions/)
                      are supported.
@@ -3985,16 +3985,16 @@ def date2index(dates, nctime, calendar=None,select='exact'):
                      ``proleptic_gregorian``, ``noleap``, ``365_day``,
                      ``julian``, ``all_leap``, ``366_day``.
                      If ``calendar=None``, will use ``calendar`` attribute
-                     of ``nctime`` object, and if that attribute does 
-                     not exist calendar is set to ``standard``. 
+                     of ``nctime`` object, and if that attribute does
+                     not exist calendar is set to ``standard``.
                      Default is ``None``.
     select           The index selection method. ``exact`` will return the
-                     indices perfectly matching the dates given. 
+                     indices perfectly matching the dates given.
                      ``before`` and ``after`` will return the indices
                      corresponding to the dates just before or after
                      the given dates if an exact match cannot be found.
-                     ``nearest``  will return the indices that 
-                     correspond to the closest dates. Default ``exact``. 
+                     ``nearest``  will return the indices that
+                     correspond to the closest dates. Default ``exact``.
     ==============   ====================================================
 
     Returns an index or a sequence of indices.

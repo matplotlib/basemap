@@ -44,7 +44,7 @@ def daynight_terminator(date, delta, lonmin, lonmax):
     lons = np.arange(lonmin,lonmax+0.5*delta,delta,dtype=np.float32)
     # compute greenwich hour angle and solar declination
     # from datetime object (assumed UTC).
-    tau, dec = epem(date) 
+    tau, dec = epem(date)
     # compute day/night terminator from hour angle, declination.
     longitude = lons + tau
     lats = np.arctan(-np.cos(longitude*dg2rad)/np.tan(dec*dg2rad))/dg2rad

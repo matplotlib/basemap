@@ -126,8 +126,8 @@ class Proj(object):
             latmax = 90.-(180./np.pi)*np.arcsin(self.rminor/h)
             # truncate to nearest hundredth of a degree (to make sure
             # they aren't slightly over the horizon)
-            latmax = int(100*latmax)/100. 
-            lonmax = int(100*lonmax)/100. 
+            latmax = int(100*latmax)/100.
+            lonmax = int(100*lonmax)/100.
             # width and height of visible projection
             P = pyproj.Proj(proj='geos',a=self.rmajor,\
                             b=self.rminor,lat_0=0,lon_0=0,h=projparams['h'])
