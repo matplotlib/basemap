@@ -733,28 +733,6 @@ class Basemap(object):
             self.llcrnry = proj.llcrnry
             self.urcrnrx = proj.urcrnrx
             self.urcrnry = proj.urcrnry
-        # set min/max lats for projection domain.
-        if projection in _cylproj:
-            self.latmin = self.llcrnrlat
-            self.latmax = self.urcrnrlat
-            self.lonmin = self.llcrnrlon
-            self.lonmax = self.urcrnrlon
-        elif projection in ['ortho','geos'] + _pseudocyl:
-            self.latmin = -90.
-            self.latmax = 90.
-            self.lonmin = self.llcrnrlon
-            self.lonmax = self.urcrnrlon
-        else:
-            lons, lats = self.makegrid(1001,1001)
-            self.latmin = lats.min()
-            self.latmax = lats.max()
-            self.lonmin = lons.min()
-            self.lonmax = lons.max()
-            # projection crosses dateline.
-            if self.lonmin < 0 and self.lonmax > 0.:
-                lons = np.where(lons < 0, lons+360, lons)
-                self.lonmin = lons.min()
-                self.lonmax = lons.max()
 
         # if ax == None, pyplot.gca may be used.
         self.ax = ax
@@ -778,6 +756,38 @@ class Basemap(object):
         self.area_thresh = area_thresh
         # define map boundary polygon (in lat/lon coordinates)
         self._boundarypolyll, self._boundarypolyxy = self._getmapboundary()
+        # set min/max lats for projection domain.
+        if self.projection in _cylproj:
+            self.latmin = self.llcrnrlat
+            self.latmax = self.urcrnrlat
+            self.lonmin = self.llcrnrlon
+            self.lonmax = self.urcrnrlon
+        elif self.projection in ['ortho','geos'] + _pseudocyl:
+            self.latmin = -90.
+            self.latmax = 90.
+            self.lonmin = self.llcrnrlon
+            self.lonmax = self.urcrnrlon
+        else:
+            lons, lats = self.makegrid(1001,1001)
+            self.latmin = lats.min()
+            self.latmax = lats.max()
+            self.lonmin = lons.min()
+            self.lonmax = lons.max()
+            NPole = _geoslib.Point(self(0.,90.))
+            SPole = _geoslib.Point(self(0.,-90.))
+            Dateline = _geoslib.Point(self(180.,lat_0))
+            Greenwich = _geoslib.Point(self(0.,lat_0))
+            hasNP = NPole.within(self._boundarypolyxy)
+            hasSP = SPole.within(self._boundarypolyxy)
+            hasPole = hasNP or hasSP
+            hasDateline = Dateline.within(self._boundarypolyxy)
+            hasGreenwich = Greenwich.within(self._boundarypolyxy)
+            # projection crosses dateline (and not Greenwich or pole).
+            if not hasPole and hasDateline and not hasGreenwich:
+                if self.lonmin < 0 and self.lonmax > 0.:
+                    lons = np.where(lons < 0, lons+360, lons)
+                    self.lonmin = lons.min()
+                    self.lonmax = lons.max()
         # read in coastline polygons, only keeping those that
         # intersect map boundary polygon.
         if self.resolution is not None:
