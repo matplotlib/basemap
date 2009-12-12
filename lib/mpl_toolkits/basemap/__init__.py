@@ -750,6 +750,11 @@ class Basemap(object):
             self.latmax = lats.max()
             self.lonmin = lons.min()
             self.lonmax = lons.max()
+            # projection crosses dateline.
+            if self.lonmin < 0 and self.lonmax > 0.:
+                lons = np.where(lons < 0, lons+360, lons)
+                self.lonmin = lons.min()
+                self.lonmax = lons.max()
 
         # if ax == None, pyplot.gca may be used.
         self.ax = ax
