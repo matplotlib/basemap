@@ -775,6 +775,10 @@ class Basemap(object):
             self.lonmax = lons.max()
             NPole = _geoslib.Point(self(0.,90.))
             SPole = _geoslib.Point(self(0.,-90.))
+            if lat_0 is None:
+                lon_0, lat_0 =\
+                self(0.5*(self.xmin+self.xmax),
+                     0.5*(self.ymin+self.ymax),inverse=True)
             Dateline = _geoslib.Point(self(180.,lat_0))
             Greenwich = _geoslib.Point(self(0.,lat_0))
             hasNP = NPole.within(self._boundarypolyxy)
