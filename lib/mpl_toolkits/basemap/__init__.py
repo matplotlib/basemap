@@ -585,6 +585,8 @@ class Basemap(object):
             if np.abs(lat_0) < 1.e-2: lat_0 = 1.e-2
             projparams['lat_0'] = lat_0
         elif projection == 'geos':
+            if lat_0 is not None and lat_0 != 0:
+                raise ValueError, 'lat_0 must be zero for Geostationary basemap'
             if lon_0 is None:
                 raise ValueError, 'must specify lon_0 for Geostationary basemap'
             if width is not None or height is not None:
