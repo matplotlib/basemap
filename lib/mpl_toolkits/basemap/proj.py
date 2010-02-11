@@ -147,6 +147,38 @@ class Proj(object):
                 llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
                 if llcrnrx > 1.e20 or llcrnry > 1.e20:
                     raise ValueError(_lower_left_out_of_bounds)
+        elif self.projection == 'nsper':
+            self._proj4 = pyproj.Proj(projparams)
+            # find major and minor axes of ellipse defining map proj region.
+            # h is measured from surface of earth at equator.
+            h = projparams['h'] + self.rmajor
+            # latitude of horizon on central meridian
+            lonmax = 90.-(180./np.pi)*np.arcsin(self.rmajor/h)
+            # longitude of horizon on equator
+            latmax = 90.-(180./np.pi)*np.arcsin(self.rmajor/h)
+            # truncate to nearest hundredth of a degree (to make sure
+            # they aren't slightly over the horizon)
+            latmax = int(100*latmax)/100.
+            lonmax = int(100*lonmax)/100.
+            # width and height of visible projection
+            P = pyproj.Proj(proj='nsper',a=self.rmajor,\
+                            b=self.rminor,lat_0=0,lon_0=0,h=projparams['h'])
+            x1,y1 = P(0.,latmax); x2,y2 = P(lonmax,0.)
+            width = x2; height = y1
+            self._height = height
+            self._width = width
+            if (llcrnrlon == -180 and llcrnrlat == -90 and
+                urcrnrlon == 180 and urcrnrlat == 90):
+                self._fulldisk = True
+                llcrnrx = -width
+                llcrnry = -height
+                urcrnrx = -llcrnrx
+                urcrnry = -llcrnry
+            else:
+                self._fulldisk = False
+                llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
+                if llcrnrx > 1.e20 or llcrnry > 1.e20:
+                    raise ValueError(_lower_left_out_of_bounds)
         elif self.projection in _pseudocyl:
             self._proj4 = pyproj.Proj(projparams)
             xtmp,urcrnry = self(projparams['lon_0'],90.)
@@ -172,9 +204,9 @@ class Proj(object):
         if urcrnrislatlon:
             self.urcrnrlon = urcrnrlon
             self.urcrnrlat = urcrnrlat
-            if self.projection not in ['ortho','geos','aeqd'] + _pseudocyl:
+            if self.projection not in ['ortho','geos','nsper','aeqd'] + _pseudocyl:
                 urcrnrx,urcrnry = self(urcrnrlon,urcrnrlat)
-            elif self.projection in ['ortho','geos','aeqd']:
+            elif self.projection in ['ortho','geos','nsper','aeqd']:
                 if self._fulldisk:
                     urcrnrx = 2.*self._width
                     urcrnry = 2.*self._height

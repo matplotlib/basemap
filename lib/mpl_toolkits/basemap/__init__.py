@@ -78,6 +78,7 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'poly'     : 'Polyconic',
              'ortho'    : 'Orthographic',
              'geos'     : 'Geostationary',
+             'nsper'    : 'Near-Sided Perspective',
              'sinu'     : 'Sinusoidal',
              'moll'     : 'Mollweide',
              'robin'    : 'Robinson',
@@ -116,6 +117,7 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'poly'     : 'lon_0,lat_0',
              'ortho'    : 'lon_0,lat_0,llcrnrx,llcrnry,urcrnrx,urcrnry,no width/height',
              'geos'     : 'lon_0,satellite_height,llcrnrx,llcrnry,urcrnrx,urcrnry,no width/height',
+             'nsper'    : 'lon_0,satellite_height,llcrnrx,llcrnry,urcrnrx,urcrnry,no width/height',
              'sinu'     : 'lon_0,lat_0,no corners or width/height',
              'moll'     : 'lon_0,lat_0,no corners or width/height',
              'robin'    : 'lon_0,lat_0,no corners or width/height',
@@ -189,10 +191,10 @@ _Basemap_init_doc = """
  For the cylindrical projections (``cyl``, ``merc``, ``mill`` and ``gall``),
  the default is to use
  llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other
- projections except ``ortho`` and ``geos``, either the lat/lon values of the
+ projections except ``ortho``, ``geos`` and ``nsper``, either the lat/lon values of the
  corners or width and height must be specified by the user.
 
- For ``ortho`` and ``geos``, the lat/lon values of the corners may be specified,
+ For ``ortho``, ``geos`` and ``nsper``, the lat/lon values of the corners may be specified,
  or the x/y values of the corners (llcrnrx,llcrnry,urcrnrx,urcrnry) in the
  coordinate system of the global projection (with x=0,y=0 at the center
  of the global projection).  If the corners are not specified,
@@ -311,8 +313,9 @@ _Basemap_init_doc = """
                   latitude circle boundinglat is tangent to the edge
                   of the map at lon_0.
  satellite_height height of satellite (in m) above equator -
-                  only relevant for geostationary projections
-                  (``geos``). Default 35,786 km.
+                  only relevant for geostationary 
+                  and near-sided perspective (``geos`` or ``nsper``)
+                  projections. Default 35,786 km.
  ================ ====================================================
 
  Useful instance variables:
@@ -475,7 +478,7 @@ class Basemap(object):
         _insert_validated(projparams, lon_0, 'lon_0', -360, 720)
         _insert_validated(projparams, lon_1, 'lon_1', -360, 720)
         _insert_validated(projparams, lon_2, 'lon_2', -360, 720)
-        if projection == 'geos':
+        if projection in ['geos','nsper']:
             projparams['h'] = satellite_height
         # check for sane values of projection corners.
         using_corners = (None not in [llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat])
@@ -589,6 +592,24 @@ class Basemap(object):
                 raise ValueError, 'lat_0 must be zero for Geostationary basemap'
             if lon_0 is None:
                 raise ValueError, 'must specify lon_0 for Geostationary basemap'
+            if width is not None or height is not None:
+                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
+            if not using_corners:
+                llcrnrlon = -180.
+                llcrnrlat = -90.
+                urcrnrlon = 180
+                urcrnrlat = 90.
+                self._fulldisk = True
+            else:
+                self._fulldisk = False
+            self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+            self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+        elif projection == 'nsper':
+            if not projparams.has_key('R'):
+                raise ValueError, 'near-sided perspective projection only works for perfect spheres - not ellipsoids'
+            if lat_0 is None or lon_0 is None:
+                msg='must specify lon_0 and lat_0 for near-sided perspective Basemap'
+                raise ValueError(msg)
             if width is not None or height is not None:
                 print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
             if not using_corners:
@@ -723,7 +744,7 @@ class Basemap(object):
             self.aspect = (self.urcrnrlat-self.llcrnrlat)/(self.urcrnrlon-self.llcrnrlon)
         else:
             self.aspect = (proj.ymax-proj.ymin)/(proj.xmax-proj.xmin)
-        if projection in ['geos','ortho'] and \
+        if projection in ['geos','ortho','nsper'] and \
            None not in [llcrnrx,llcrnry,urcrnrx,urcrnry]:
             self.llcrnrx = llcrnrx+0.5*proj.xmax
             self.llcrnry = llcrnry+0.5*proj.ymax
@@ -764,7 +785,7 @@ class Basemap(object):
             self.latmax = self.urcrnrlat
             self.lonmin = self.llcrnrlon
             self.lonmax = self.urcrnrlon
-        elif self.projection in ['ortho','geos'] + _pseudocyl:
+        elif self.projection in ['ortho','geos','nsper'] + _pseudocyl:
             self.latmin = -90.
             self.latmax = 90.
             self.lonmin = self.llcrnrlon
@@ -906,12 +927,12 @@ class Basemap(object):
         if containsPole and\
             self.projection in _cylproj + _pseudocyl + ['geos']:
             raise ValueError('%s projection cannot cross pole'%(self.projection))
-        # make sure orthographic or gnomonic projection has containsPole=True
+        # make sure some projections have has containsPole=True
         # we will compute the intersections in stereographic
-        # coordinates, then transform to orthographic. This is
+        # coordinates, then transform back. This is
         # because these projections are only defined on a hemisphere, and
         # some boundary features (like Eurasia) would be undefined otherwise.
-        if self.projection in ['ortho','gnom'] and name == 'gshhs':
+        if self.projection in ['ortho','gnom','nsper'] and name == 'gshhs':
             containsPole = True
             lon_0=self.projparams['lon_0']
             lat_0=self.projparams['lat_0']
@@ -922,7 +943,7 @@ class Basemap(object):
             lat0 = 90.*(np.around(lat_0/90.))
             if np.abs(int(lat0)) == 90: lon0=0.
             maptran = pyproj.Proj(proj='stere',lon_0=lon0,lat_0=lat0,R=re)
-            # boundary polygon for ortho/gnom projection
+            # boundary polygon for ortho/gnom/nsper projection
             # in stereographic coorindates.
             b = self._boundarypolyll.boundary
             blons = b[:,0]; blats = b[:,1]
@@ -1030,9 +1051,10 @@ class Basemap(object):
                 else:
                     # transform coordinates from lat/lon
                     # to map projection coordinates.
-                    # special case for ortho/gnom, compute coastline polygon
+                    # special case for ortho/gnom/nsper, compute coastline polygon
                     # vertices in stereographic coords.
-                    if name == 'gshhs' and self.projection in ['ortho','gnom']:
+                    if name == 'gshhs' and self.projection in\
+                    ['ortho','gnom','nsper']:
                         b[:,0], b[:,1] = maptran(b[:,0], b[:,1])
                     else:
                         b[:,0], b[:,1] = self(b[:,0], b[:,1])
@@ -1046,10 +1068,10 @@ class Basemap(object):
                         # in this map projection.
                         bx = np.compress(goodmask, b[:,0])
                         by = np.compress(goodmask, b[:,1])
-                        # for ortho/gnom projection, all points
+                        # for ortho/gnom/nsper projection, all points
                         # outside map projection region are eliminated
                         # with the above step, so we're done.
-                        if self.projection in ['ortho','gnom']:
+                        if self.projection in ['ortho','gnom','nsper']:
                             polygons.append(zip(bx,by))
                             polygon_types.append(type)
                             continue
@@ -1073,22 +1095,22 @@ class Basemap(object):
                         # iterate over geometries in intersection.
                         for psub in geoms:
                             b = psub.boundary
-                            # if projection in ['ortho','gnom'],
+                            # if projection in ['ortho','gnom','nsper'],
                             # transform polygon from stereographic
-                            # to ortho/gnom coordinates.
-                            if self.projection in ['ortho','gnom']:
+                            # to ortho/gnom/nsper coordinates.
+                            if self.projection in ['ortho','gnom','nsper']:
                                 # if coastline polygon covers more than 99%
                                 # of map region for fulldisk projection,
                                 # it's probably bogus, so skip it.
                                 areafrac = psub.area()/boundarypolyxy.area()
-                                if self.projection == 'ortho':
+                                if self.projection == ['ortho','nsper']:
                                     if name == 'gshhs' and\
                                        self._fulldisk and\
                                        areafrac > 0.99: continue
                                 # inverse transform from stereographic
                                 # to lat/lon.
                                 b[:,0], b[:,1] = maptran(b[:,0], b[:,1], inverse=True)
-                                # orthographic/gnomonic.
+                                # orthographic/gnomonic/nsper.
                                 b[:,0], b[:,1]= self(b[:,0], b[:,1])
                             polygons.append(zip(b[:,0],b[:,1]))
                             polygon_types.append(type)
@@ -1102,7 +1124,7 @@ class Basemap(object):
         if self.projection == 'vandg':
             nx = 10*nx; ny = 10*ny
         maptran = self
-        if self.projection in ['ortho','geos']:
+        if self.projection in ['ortho','geos','nsper']:
             # circular region.
             thetas = np.linspace(0.,2.*np.pi,2*nx*ny)[:-1]
             rminor = self._height
@@ -1246,10 +1268,10 @@ class Basemap(object):
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
         limb = None
-        if self.projection in ['ortho','geos'] or (self.projection=='aeqd' and\
+        if self.projection in ['ortho','geos','nsper'] or (self.projection=='aeqd' and\
            self._fulldisk):
             limb = Ellipse((self._width,self._height),2.*self._width,2.*self._height)
-        if self.projection in ['ortho','geos','aeqd'] and self._fulldisk:
+        if self.projection in ['ortho','geos','nsper','aeqd'] and self._fulldisk:
             # elliptical region.
             ax.add_patch(limb)
             if fill_color is None:
@@ -1301,7 +1323,7 @@ class Basemap(object):
             except AttributeError:
                 for spine in ax.spines.itervalues():
                     spine.set_linewidth(linewidth)
-            if self.projection not in ['geos','ortho']:
+            if self.projection not in ['geos','ortho','nsper']:
                 if fill_color is not None:
                     ax.axesPatch.set_facecolor(fill_color)
                 try:
@@ -1876,7 +1898,7 @@ class Basemap(object):
             linecolls[circ] = (lines,[])
         # draw labels for parallels
         # parallels not labelled for fulldisk orthographic or geostationary
-        if self.projection in ['ortho','geos','vandg','aeqd'] and max(labels):
+        if self.projection in ['ortho','geos','nsper','vandg','aeqd'] and max(labels):
             if self.projection == 'vandg' or self._fulldisk:
                 print 'Warning: Cannot label parallels on %s basemap' % _projnames[self.projection]
                 labels = [0,0,0,0]
@@ -2118,7 +2140,7 @@ class Basemap(object):
         if self.projection in ['sinu','moll','vandg'] and max(labels):
             print 'Warning: Cannot label meridians on %s basemap' % _projnames[self.projection]
             labels = [0,0,0,0]
-        if self.projection in ['ortho','geos','aeqd'] and max(labels):
+        if self.projection in ['ortho','geos','nsper','aeqd'] and max(labels):
             if self._fulldisk:
                 print dedent(
                 """'Warning: Cannot label meridians on full-disk
@@ -2572,7 +2594,7 @@ class Basemap(object):
         # turn off axes frame for non-rectangular projections.
         if self.projection in _pseudocyl:
             ax.set_frame_on(False)
-        if self.projection in ['ortho','geos','aeqd'] and self._fulldisk:
+        if self.projection in ['ortho','geos','nsper','aeqd'] and self._fulldisk:
             ax.set_frame_on(False)
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
@@ -3298,7 +3320,7 @@ class Basemap(object):
                     self.transform_scalar(self._bm_rgba[:,:,k],\
                     self._bm_lons,self._bm_lats,nx,ny,returnxy=True)
                 # for ortho,geos mask pixels outside projection limb.
-                if self.projection in ['geos','ortho'] or \
+                if self.projection in ['geos','ortho','nsper'] or \
                    (self.projection == 'aeqd' and self._fulldisk):
                     lonsr,latsr = self(x,y,inverse=True)
                     mask = ma.zeros((ny,nx,4),np.int8)
