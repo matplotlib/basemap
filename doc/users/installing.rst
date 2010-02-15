@@ -23,8 +23,8 @@ numpy 1.1 (or later)
 
 **Required libraries that ship with basemap**
 
-`GEOS <http://trac.osgeo.org/geos/>`__ (Geometry Engine - Open Source) library 2.2.3 or later (2.2.3 recommended).
-    Source code is included in the geos-2.2.3 directory. 
+`GEOS <http://trac.osgeo.org/geos/>`__ (Geometry Engine - Open Source) library 3.1.1 or later.
+    Source code is included in the geos-3.1.1 directory. 
     When building from source, must be built and installed separately
     from basemap (see build instructions below).
     Included in Windows binary installers.
@@ -75,7 +75,7 @@ For other platforms, download the source release and follow these steps:
   Then go to next step.  If you don't have it, you can build it from
   the source code included with basemap by following these steps::
 
-      cd geos-2.2.3
+      cd geos-3.1.1
       export GEOS_DIR=<where you want the libs and headers to go>
       # A reasonable choice on a Unix-like system is /usr/local, or
       # if you don't have permission to write there, your home directory.
