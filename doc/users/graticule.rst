@@ -8,10 +8,10 @@ latitude and longitude lines. Basemap does this with the
 :func:`~mpl_toolkits.basemap.Basemap.drawparallels` and
 :func:`~mpl_toolkits.basemap.Basemap.drawmeridians` instance methods.
 The longitude and latitude lines can be labelled where they intersect
-the map projection boundary.  There are four exceptions:  meridians
+the map projection boundary.  There are a few exceptions:  meridians
 and parallels cannot be labelled on maps with 
-``proj`` set to ``ortho`` (orthographic) or
-``vandg`` (van der Grinten),
+``proj`` set to ``ortho`` (orthographic), ``geos`` (geostationary),
+``vandg`` (van der Grinten) or ``nsper`` (near-sided perspective),
 and meridians cannot be labelled on maps with 
 ``proj`` set to ``robin`` (robinson), ``mbtfpq``
 (McBryde-Thomas Flat Polar Quartic), ``moll`` (mollweide) or ``sinu``
