@@ -2384,7 +2384,8 @@ class Basemap(object):
                          array with values outside map projection region
                          masked (Default False).
         order            0 for nearest-neighbor interpolation, 1 for
-                         bilinear (Default 1).
+                         bilinear, 3 for cubic spline (Default 1).
+                         Cubic spline interpolation requires scipy.ndimage.
         ==============   ====================================================
 
         Returns ``datout`` (data on map projection grid).
@@ -2455,7 +2456,8 @@ class Basemap(object):
                          array with values outside map projection region
                          masked (Default False).
         order            0 for nearest-neighbor interpolation, 1 for
-                         bilinear (Default 1).
+                         bilinear, 3 for cubic spline (Default 1).
+                         Cubic spline interpolation requires scipy.ndimage.
         ==============   ====================================================
 
         Returns ``uout, vout`` (vector field on map projection grid).
