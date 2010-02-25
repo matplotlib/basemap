@@ -3639,7 +3639,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
                      y, 2nd dimension x.
     xin, yin         rank-1 arrays containing x and y of
                      datain grid in increasing order.
-    xout, yout       arrays containing x and y of desired output grid.
+    xout, yout       rank-2 arrays containing x and y of desired output grid.
     ==============   ====================================================
 
     .. tabularcolumns:: |l|L|
@@ -3660,7 +3660,8 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
                      points outside the range of xin and yin will be
                      set to that number. Default False.
     order            0 for nearest-neighbor interpolation, 1 for
-                     bilinear interpolation (default 1).
+                     bilinear interpolation, 3 for cublic spline
+                     (default 1). order=3 requires scipy.ndimage.
     ==============   ====================================================
 
     .. note::
@@ -3746,8 +3747,15 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         xcoordsi = np.around(xcoords).astype(np.int32)
         ycoordsi = np.around(ycoords).astype(np.int32)
         dataout = datain[ycoordsi,xcoordsi]
+    elif order == 3:
+        try:
+            from scipy.ndimage import map_coordinates
+        except ImportError:
+            raise ValueError('scipy.ndimage must be installed if order=3')
+        coords = [ycoords,xcoords]
+        map_coordinates(datain,coords,order=3,mode='constant')
     else:
-        raise ValueError,'order keyword must be 0 or 1'
+        raise ValueError,'order keyword must be 0, 1 or 3'
     if masked and isinstance(masked,bool):
         dataout = ma.masked_array(dataout)
         newmask = ma.mask_or(ma.getmask(dataout), xymask)
