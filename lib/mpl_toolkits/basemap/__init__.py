@@ -3755,7 +3755,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         except ImportError:
             raise ValueError('scipy.ndimage must be installed if order=3')
         coords = [ycoords,xcoords]
-        dataout = map_coordinates(datain,coords,order=3,mode='constant')
+        dataout = map_coordinates(datain,coords,order=3,mode='nearest')
     else:
         raise ValueError,'order keyword must be 0, 1 or 3'
     if masked and isinstance(masked,bool):
