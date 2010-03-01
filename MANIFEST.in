@@ -94,7 +94,7 @@ include doc/README.txt
 include doc/make.py
 include doc/conf.py
 include doc/index.rst
-recursive-include geos-3.1.1 *
+recursive-include geos-3.2.0 *
 recursive-include lib/dap *
 recursive-include lib/httplib2 *
 recursive-include lib/dbflib *
