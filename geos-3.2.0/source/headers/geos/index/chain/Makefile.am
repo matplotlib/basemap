@@ -1,0 +1,12 @@
+SUBDIRS = 
+
+EXTRA_DIST = 
+
+geosdir = $(includedir)/geos/index/chain
+
+geos_HEADERS = \
+	MonotoneChain.h			\
+	MonotoneChainBuilder.h		\
+	MonotoneChainOverlapAction.h	\
+	MonotoneChainSelectAction.h
+

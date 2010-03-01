@@ -1,0 +1,106 @@
+/**********************************************************************
+ * $Id: QuadtreeNestedRingTester.h 2572 2009-06-08 22:10:55Z strk $
+ *
+ * GEOS - Geometry Engine Open Source
+ * http://geos.refractions.net
+ *
+ * Copyright (C) 2005-2006 Refractions Research Inc.
+ * Copyright (C) 2001-2002 Vivid Solutions Inc.
+ *
+ * This is free software; you can redistribute and/or modify it under
+ * the terms of the GNU Lesser General Public Licence as published
+ * by the Free Software Foundation. 
+ * See the COPYING file for more information.
+ *
+ **********************************************************************
+ *
+ * Last port: operation/valid/QuadtreeNestedRingTester.java rev. 1.12 (JTS-1.10)
+ *
+ **********************************************************************/
+
+#ifndef GEOS_OP_QUADTREENESTEDRINGTESTER_H
+#define GEOS_OP_QUADTREENESTEDRINGTESTER_H
+
+#include <geos/export.h>
+
+#include <geos/geom/Envelope.h> // for composition
+
+#include <vector>
+
+// Forward declarations
+namespace geos {
+	namespace geom {
+		class LinearRing;
+		class Coordinate;
+	}
+	namespace index {
+		namespace quadtree {
+			class Quadtree;
+		}
+	}
+	namespace geomgraph {
+		class GeometryGraph;
+	}
+}
+
+namespace geos {
+namespace operation { // geos::operation
+namespace valid { // geos::operation::valid
+
+/** \brief
+ * Tests whether any of a set of {@link LinearRing}s are
+ * nested inside another ring in the set, using a {@link Quadtree}
+ * index to speed up the comparisons.
+ *
+ */
+class GEOS_DLL QuadtreeNestedRingTester {
+public:
+
+	/// Caller retains ownership of GeometryGraph
+	QuadtreeNestedRingTester(geomgraph::GeometryGraph* newGraph);
+
+	~QuadtreeNestedRingTester();
+
+	/*
+	 * Be aware that the returned Coordinate (if != NULL)
+	 * will point to storage owned by one of the LinearRing
+	 * previously added. If you destroy them, this
+	 * will point to an invalid memory address.
+	 */
+	geom::Coordinate* getNestedPoint();
+
+	void add(const geom::LinearRing* ring);
+
+	bool isNonNested();
+
+private:
+
+	geomgraph::GeometryGraph* graph;  // used to find non-node vertices
+
+	std::vector<const geom::LinearRing*> rings;
+
+	geom::Envelope totalEnv;
+
+	index::quadtree::Quadtree* qt;
+
+	geom::Coordinate* nestedPt;
+
+	void buildQuadtree();
+};
+
+} // namespace geos::operation::valid
+} // namespace geos::operation
+} // namespace geos
+
+#endif // GEOS_OP_QUADTREENESTEDRINGTESTER_H
+
+/**********************************************************************
+ * $Log$
+ * Revision 1.2  2006/03/29 11:48:53  strk
+ * Removed useless heap allocations in construction, enforced const correctness
+ *
+ * Revision 1.1  2006/03/20 16:57:44  strk
+ * spatialindex.h and opValid.h headers split
+ *
+ **********************************************************************/
+
