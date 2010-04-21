@@ -30,7 +30,7 @@ if _matplotlib_version < _mpl_required_version:
     higher, you have version %s""" %
     (_mpl_required_version,_matplotlib_version))
     raise ImportError(msg)
-from matplotlib import rcParams, is_interactive, _pylab_helpers
+from matplotlib import rcParams, is_interactive
 from matplotlib.collections import LineCollection
 from matplotlib.patches import Ellipse, Circle, Polygon
 from matplotlib.lines import Line2D
@@ -41,7 +41,6 @@ import numpy as np
 import numpy.ma as ma
 from shapelib import ShapeFile
 import _geoslib, netcdftime
-import cm
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 # check to see if environment variable BASEMAPDATA set to a directory,
@@ -313,7 +312,7 @@ _Basemap_init_doc = """
                   latitude circle boundinglat is tangent to the edge
                   of the map at lon_0.
  satellite_height height of satellite (in m) above equator -
-                  only relevant for geostationary 
+                  only relevant for geostationary
                   and near-sided perspective (``geos`` or ``nsper``)
                   projections. Default 35,786 km.
  ================ ====================================================
@@ -760,6 +759,8 @@ class Basemap(object):
         # if ax == None, pyplot.gca may be used.
         self.ax = ax
         self.lsmask = None
+        # This will record hashs of Axes instances.
+        self._initialized_axes = set()
 
         # set defaults for area_thresh.
         self.resolution = resolution
@@ -2583,11 +2584,33 @@ class Basemap(object):
 
     def set_axes_limits(self,ax=None):
         """
+        Final step in Basemap method wrappers of Axes plotting methods:
+
         Set axis limits, fix aspect ratio for map domain using current
-        or specified axes instance.
+        or specified axes instance.  This is done only once per axes
+        instance.
+
+        In interactive mode, this method always calls draw_if_interactive
+        before returning.
+
         """
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
+
+        # If we have already set the axes limits, and if the user
+        # has not defeated this by turning autoscaling back on,
+        # then all we need to do is plot if interactive.
+        if (hash(ax) in self._initialized_axes
+                                 and not ax.get_autoscalex_on()
+                                 and not ax.get_autoscaley_on()):
+            if is_interactive():
+                import matplotlib.pyplot as plt
+                plt.draw_if_interactive()
+            return
+
+        self._initialized_axes.add(hash(ax))
+        # Take control of axis scaling:
+        ax.set_autoscale_on(False)
         # update data limits for map domain.
         corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
         ax.update_datalim( corners )
@@ -2605,15 +2628,14 @@ class Basemap(object):
             ax.set_aspect('equal',adjustable='box',anchor=self.anchor)
         else:
             ax.set_aspect('auto',adjustable='box',anchor=self.anchor)
-        ax.apply_aspect()
         # make sure axis ticks are turned off.
         if self.noticks:
             ax.set_xticks([])
             ax.set_yticks([])
         # force draw if in interactive mode.
         if is_interactive():
-            figManager = _pylab_helpers.Gcf.get_active()
-            figManager.canvas.draw()
+            import matplotlib.pyplot as plt
+            plt.draw_if_interactive()
 
     def scatter(self, *args, **kwargs):
         """
@@ -2624,10 +2646,7 @@ class Basemap(object):
 
         Other \**kwargs passed on to matplotlib.pyplot.scatter.
         """
-        ax = kwargs.pop('ax', None) or self._check_ax()
-        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None:
-            import matplotlib.pyplot as plt
+        ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -2635,22 +2654,16 @@ class Basemap(object):
             ax.hold(h)
         try:
             ret =  ax.scatter(*args, **kwargs)
-            try:
-                plt.draw_if_interactive()
-            except:
-                pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
         # reset current active image (only if pyplot is imported).
-        try:
+        if plt:
             try:
                 plt.sci(ret)
             except AttributeError:
                 plt.gci._current = ret
-        except:
-            pass
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2672,10 +2685,6 @@ class Basemap(object):
             ax.hold(h)
         try:
             ret =  ax.plot(*args, **kwargs)
-            try:
-                plt.draw_if_interactive()
-            except:
-                pass
         except:
             ax.hold(b)
             raise
@@ -2698,10 +2707,7 @@ class Basemap(object):
 
         returns an matplotlib.image.AxesImage instance.
         """
-        ax = kwargs.pop('ax', None) or self._check_ax()
-        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None:
-            import matplotlib.pyplot as plt
+        ax, plt = self._ax_plt_from_kw(kwargs)
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         # use origin='lower', unless overridden.
         if not kwargs.has_key('origin'):
@@ -2713,22 +2719,16 @@ class Basemap(object):
             ax.hold(h)
         try:
             ret =  ax.imshow(*args, **kwargs)
-            try:
-                plt.draw_if_interactive()
-            except:
-                pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
         # reset current active image (only if pyplot is imported).
-        try:
+        if plt:
             try:
                 plt.sci(ret)
             except AttributeError:
                 plt.gci._current = ret
-        except:
-            pass
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2746,10 +2746,7 @@ class Basemap(object):
 
         Other \**kwargs passed on to matplotlib.pyplot.pcolor.
         """
-        ax = kwargs.pop('ax', None) or self._check_ax()
-        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None:
-            import matplotlib.pyplot as plt
+        ax, plt = self._ax_plt_from_kw(kwargs)
         # make x,y masked arrays
         # (masked where data is outside of projection limb)
         x = ma.masked_values(np.where(x > 1.e20,1.e20,x), 1.e20)
@@ -2761,22 +2758,16 @@ class Basemap(object):
             ax.hold(h)
         try:
             ret =  ax.pcolor(x,y,data,**kwargs)
-            try:
-                plt.draw_if_interactive()
-            except:
-                pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
         # reset current active image (only if pyplot is imported).
-        try:
+        if plt:
             try:
                 plt.sci(ret)
             except AttributeError:
                 plt.gci._current = ret
-        except:
-            pass
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2790,10 +2781,7 @@ class Basemap(object):
 
         Other \**kwargs passed on to matplotlib.pyplot.pcolormesh.
         """
-        ax = kwargs.pop('ax', None) or self._check_ax()
-        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None:
-            import matplotlib.pyplot as plt
+        ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -2801,22 +2789,16 @@ class Basemap(object):
             ax.hold(h)
         try:
             ret =  ax.pcolormesh(x,y,data,**kwargs)
-            try:
-                plt.draw_if_interactive()
-            except:
-                pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
         # reset current active image (only if pyplot is imported).
-        try:
+        if plt:
             try:
                 plt.sci(ret)
             except AttributeError:
                 plt.gci._current = ret
-        except:
-            pass
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2830,10 +2812,7 @@ class Basemap(object):
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.contour.
         """
-        ax = kwargs.pop('ax', None) or self._check_ax()
-        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None:
-            import matplotlib.pyplot as plt
+        ax, plt = self._ax_plt_from_kw(kwargs)
         # make sure x is monotonically increasing - if not,
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
@@ -2865,10 +2844,6 @@ class Basemap(object):
             ax.hold(h)
         try:
             CS = ax.contour(x,y,data,*args,**kwargs)
-            try:
-                plt.draw_if_interactive()
-            except:
-                pass
         except:
             ax.hold(b)
             raise
@@ -2876,7 +2851,7 @@ class Basemap(object):
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         # reset current active image (only if pyplot is imported).
-        try:
+        if plt:
             try: # new contour.
                 if CS._A is not None:
                     try:
@@ -2889,8 +2864,6 @@ class Basemap(object):
                         plt.sci(CS[1].mappable)
                     except AttributeError:
                         plt.gci._current = CS[1].mappable
-        except:
-            pass
         return CS
 
     def contourf(self,x,y,data,*args,**kwargs):
@@ -2905,10 +2878,7 @@ class Basemap(object):
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.scatter.
         """
-        ax = kwargs.pop('ax', None) or self._check_ax()
-        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None:
-            import matplotlib.pyplot as plt
+        ax, plt = self._ax_plt_from_kw(kwargs)
         # make sure x is monotonically increasing - if not,
         # print warning suggesting that the data be shifted in longitude
         # with the shiftgrid function.
@@ -2948,10 +2918,6 @@ class Basemap(object):
             ax.hold(h)
         try:
             CS = ax.contourf(x,y,data,*args,**kwargs)
-            try:
-                plt.draw_if_interactive()
-            except:
-                pass
         except:
             ax.hold(b)
             raise
@@ -2959,7 +2925,7 @@ class Basemap(object):
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         # reset current active image (only if pyplot is imported).
-        try:
+        if plt:
             try: # new contour.
                 if CS._A is not None:
                     try:
@@ -2972,8 +2938,6 @@ class Basemap(object):
                         plt.sci(CS[1].mappable)
                     except AttributeError:
                         plt.gci._current = CS[1].mappable
-        except:
-            pass
         return CS
 
     def quiver(self, x, y, u, v, *args, **kwargs):
@@ -2985,10 +2949,7 @@ class Basemap(object):
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.quiver.
         """
-        ax = kwargs.pop('ax', None) or self._check_ax()
-        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None:
-            import matplotlib.pyplot as plt
+        ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -2996,14 +2957,12 @@ class Basemap(object):
             ax.hold(h)
         try:
             ret =  ax.quiver(x,y,u,v,*args,**kwargs)
-            try:
-                plt.draw_if_interactive()
-            except:
-                pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
+        if plt is not None and ret.get_array() is not None:
+            plt.sci(ret)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -3025,10 +2984,7 @@ class Basemap(object):
             barb method requires matplotlib 0.98.3 or higher,
             you have %s""" % _matplotlib_version)
             raise NotImplementedError(msg)
-        ax = kwargs.pop('ax', None) or self._check_ax()
-        # if ax kwarg not supplied, and ax attribute not set, import pyplot.
-        if self.ax is None and kwargs.pop('ax', None) is None:
-            import matplotlib.pyplot as plt
+        ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
@@ -3043,14 +2999,14 @@ class Basemap(object):
             retnh =  ax.barbs(x,y,unh,vnh,*args,**kwargs)
             kwargs['flip_barb']=True
             retsh =  ax.barbs(x,y,ush,vsh,*args,**kwargs)
-            try:
-                plt.draw_if_interactive()
-            except:
-                pass
         except:
             ax.hold(b)
             raise
         ax.hold(b)
+        # Because there are two collections returned in general,
+        # we can't set the current image...
+        #if plt is not None and ret.get_array() is not None:
+        #    plt.sci(ret)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return retnh,retsh
@@ -3594,6 +3550,24 @@ class Basemap(object):
         else:
             ax = self.ax
         return ax
+
+    def _ax_plt_from_kw(self, kw):
+        """
+        Return (ax, plt), where ax is the current axes, and plt is
+        None or a reference to the pyplot module.
+
+        plt will be None if ax was popped from kw or taken from self.ax;
+        otherwise, pyplot was used and is returned.
+        """
+        plt = None
+        _ax = kw.pop('ax', None)
+        if _ax is None:
+            _ax = self.ax
+            if _ax is None:
+                import matplotlib.pyplot as plt
+                _ax = plt.gca()
+        return _ax, plt
+
 
 ### End of Basemap class
 
