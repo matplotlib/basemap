@@ -2660,10 +2660,7 @@ class Basemap(object):
         ax.hold(b)
         # reset current active image (only if pyplot is imported).
         if plt:
-            try:
-                plt.sci(ret)
-            except AttributeError:
-                plt.gci._current = ret
+            plt.sci(ret)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2725,10 +2722,7 @@ class Basemap(object):
         ax.hold(b)
         # reset current active image (only if pyplot is imported).
         if plt:
-            try:
-                plt.sci(ret)
-            except AttributeError:
-                plt.gci._current = ret
+            plt.sci(ret)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2764,10 +2758,7 @@ class Basemap(object):
         ax.hold(b)
         # reset current active image (only if pyplot is imported).
         if plt:
-            try:
-                plt.sci(ret)
-            except AttributeError:
-                plt.gci._current = ret
+            plt.sci(ret)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2795,10 +2786,7 @@ class Basemap(object):
         ax.hold(b)
         # reset current active image (only if pyplot is imported).
         if plt:
-            try:
-                plt.sci(ret)
-            except AttributeError:
-                plt.gci._current = ret
+            plt.sci(ret)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2848,22 +2836,11 @@ class Basemap(object):
             ax.hold(b)
             raise
         ax.hold(b)
+        # reset current active image (only if pyplot is imported).
+        if plt and CS.get_array() is not None:
+            plt.sci(CS)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # reset current active image (only if pyplot is imported).
-        if plt:
-            try: # new contour.
-                if CS._A is not None:
-                    try:
-                        plt.sci(CS)
-                    except AttributeError:
-                        plt.gci._current = CS
-            except: # old contour.
-                if CS[1].mappable is not None:
-                    try:
-                        plt.sci(CS[1].mappable)
-                    except AttributeError:
-                        plt.gci._current = CS[1].mappable
         return CS
 
     def contourf(self,x,y,data,*args,**kwargs):
@@ -2922,22 +2899,11 @@ class Basemap(object):
             ax.hold(b)
             raise
         ax.hold(b)
+        # reset current active image (only if pyplot is imported).
+        if plt and CS.get_array() is not None:
+            plt.sci(CS)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        # reset current active image (only if pyplot is imported).
-        if plt:
-            try: # new contour.
-                if CS._A is not None:
-                    try:
-                        plt.sci(CS)
-                    except AttributeError:
-                        plt.gci._current = CS
-            except: # old contour.
-                if CS[1].mappable is not None:
-                    try:
-                        plt.sci(CS[1].mappable)
-                    except AttributeError:
-                        plt.gci._current = CS[1].mappable
         return CS
 
     def quiver(self, x, y, u, v, *args, **kwargs):
@@ -3006,7 +2972,7 @@ class Basemap(object):
         # Because there are two collections returned in general,
         # we can't set the current image...
         #if plt is not None and ret.get_array() is not None:
-        #    plt.sci(ret)
+        #    plt.sci(retnh)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return retnh,retsh
