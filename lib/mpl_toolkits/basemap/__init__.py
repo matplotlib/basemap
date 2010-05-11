@@ -1603,7 +1603,7 @@ class Basemap(object):
         the GSHHS coastline polygons associated with the class instance.
         Points over lakes inside land regions are not counted as land points.
         """
-        if resolution is None: return None
+        if self.resolution is None: return None
         landpt = False
         for poly in self.landpolygons:
             landpt = _geoslib.Point((xpt,ypt)).within(poly)
