@@ -1411,19 +1411,22 @@ class Basemap(object):
             ya = np.array(y,np.float32)
         # check to see if all four corners of domain in polygon (if so,
         # don't draw since it will just fill in the whole map).
-            delx = 10; dely = 10
-            if self.projection in ['cyl']:
-                delx = 0.1
-                dely = 0.1
-            test1 = np.fabs(xa-self.urcrnrx) < delx
-            test2 = np.fabs(xa-self.llcrnrx) < delx
-            test3 = np.fabs(ya-self.urcrnry) < dely
-            test4 = np.fabs(ya-self.llcrnry) < dely
-            hasp1 = np.sum(test1*test3)
-            hasp2 = np.sum(test2*test3)
-            hasp4 = np.sum(test2*test4)
-            hasp3 = np.sum(test1*test4)
-            if not hasp1 or not hasp2 or not hasp3 or not hasp4:
+        # ** turn this off for now since it prevents continents that
+        # fill the whole map from being filled **
+            #delx = 10; dely = 10
+            #if self.projection in ['cyl']:
+            #    delx = 0.1
+            #    dely = 0.1
+            #test1 = np.fabs(xa-self.urcrnrx) < delx
+            #test2 = np.fabs(xa-self.llcrnrx) < delx
+            #test3 = np.fabs(ya-self.urcrnry) < dely
+            #test4 = np.fabs(ya-self.llcrnry) < dely
+            #hasp1 = np.sum(test1*test3)
+            #hasp2 = np.sum(test2*test3)
+            #hasp4 = np.sum(test2*test4)
+            #hasp3 = np.sum(test1*test4)
+            #if not hasp1 or not hasp2 or not hasp3 or not hasp4:
+            if 1:
                 xy = zip(xa.tolist(),ya.tolist())
                 if self.coastpolygontypes[npoly] not in [2,4]:
                     poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0)
