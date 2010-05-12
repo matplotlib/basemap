@@ -1,4 +1,5 @@
 version 0.99.5 (not yet released)
+	   * let continents that fill the whole map be filled.
            * added option for cubic spline interpolation in interp function
            (order=3) using scipy.ndimage.
            * added "near-sided perspective" projection for a satellite
@@ -8,7 +9,7 @@ version 0.99.5 (not yet released)
            * updated proj4 source to version 4.7.0, pyproj to 1.8.6.
 	   * add "is_land" method to check whether a point is over land or
              water.
-	   * geos-3.1.1 now required. 3.1.1 source included (instead of 2.2.3).
+	   * geos-3.1.1 now required. 3.2.0 source included (instead of 2.2.3).
            * shiftgrid no longer requires a cyclic point to be present
              (patch from Eric Bruning).
            * fix date2index bugs.
