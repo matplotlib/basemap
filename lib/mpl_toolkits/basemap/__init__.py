@@ -2730,7 +2730,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
-    def pcolor(self,x,y,data,**kwargs):
+    def pcolor(self,x,y,data,tri=False,**kwargs):
         """
         Make a pseudo-color plot over the map
         (see matplotlib.pyplot.pcolor documentation).
@@ -2739,22 +2739,35 @@ class Basemap(object):
         they will be convert to masked arrays with those values masked.
         As a result, those values will not be plotted.
 
+        If ``tri`` is set to ``True``, an unstructured grid is assumed
+        (x,y,data must be 1-d) and matplotlib.pyplot.tricolor is used.
+
         Extra keyword ``ax`` can be used to override the default axis instance.
 
-        Other \**kwargs passed on to matplotlib.pyplot.pcolor.
+        Other \**kwargs passed on to matplotlib.pyplot.pcolor (or tricolor if
+        ``tri=True``).
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
-        # make x,y masked arrays
-        # (masked where data is outside of projection limb)
-        x = ma.masked_values(np.where(x > 1.e20,1.e20,x), 1.e20)
-        y = ma.masked_values(np.where(y > 1.e20,1.e20,y), 1.e20)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
         if h is not None:
             ax.hold(h)
         try:
-            ret =  ax.pcolor(x,y,data,**kwargs)
+            if tri:
+                # for unstructured grids, toss out points outside
+                # projection limb (don't use those points in triangulation).
+                mask = np.logical_or(x<1.e20,y<1.e20)
+                x = np.compress(mask,x)
+                y = np.compress(mask,y)
+                data = np.compress(mask,data)
+                ret = ax.tripcolor(x,y,data,**kwargs)
+            else:
+                # make x,y masked arrays
+                # (masked where data is outside of projection limb)
+                x = ma.masked_values(np.where(x > 1.e20,1.e20,x), 1.e20)
+                y = ma.masked_values(np.where(y > 1.e20,1.e20,y), 1.e20)
+                ret = ax.pcolor(x,y,data,**kwargs)
         except:
             ax.hold(b)
             raise
@@ -2801,40 +2814,51 @@ class Basemap(object):
 
         Extra keyword ``ax`` can be used to override the default axis instance.
 
-        Other \*args and \**kwargs passed on to matplotlib.pyplot.contour.
+        If ``tri`` is set to ``True``, an unstructured grid is assumed
+        (x,y,data must be 1-d) and matplotlib.pyplot.tricontour is used.
+
+        Other \*args and \**kwargs passed on to matplotlib.pyplot.contour
+        (or tricontour if ``tri=True``).
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
-        # make sure x is monotonically increasing - if not,
-        # print warning suggesting that the data be shifted in longitude
-        # with the shiftgrid function.
-        # only do this check for global projections.
-        if self.projection in _cylproj + _pseudocyl:
-            xx = x[x.shape[0]/2,:]
-            condition = (xx >= self.xmin) & (xx <= self.xmax)
-            xl = xx.compress(condition).tolist()
-            xs = xl[:]
-            xs.sort()
-            if xl != xs:
-                print dedent("""
-                     WARNING: x coordinate not montonically increasing - contour plot
-                     may not be what you expect.  If it looks odd, your can either
-                     adjust the map projection region to be consistent with your data, or
-                     (if your data is on a global lat/lon grid) use the shiftgrid
-                     function to adjust the data to be consistent with the map projection
-                     region (see examples/contour_demo.py).""")
-        # mask for points outside projection limb.
-        xymask = np.logical_or(np.greater(x,1.e20),np.greater(y,1.e20))
-        data = ma.asarray(data)
-        # combine with data mask.
-        mask = np.logical_or(ma.getmaskarray(data),xymask)
-        data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
         if h is not None:
             ax.hold(h)
         try:
-            CS = ax.contour(x,y,data,*args,**kwargs)
+            if kwargs.has_key('tri') and kwargs['tri']:
+                mask = np.logical_or(x<1.e20,y<1.e20)
+                x = np.compress(mask,x)
+                y = np.compress(mask,y)
+                data = np.compress(mask,data)
+                CS = ax.tricontour(x,y,data,*args,**kwargs)
+            else:
+                # make sure x is monotonically increasing - if not,
+                # print warning suggesting that the data be shifted in longitude
+                # with the shiftgrid function.
+                # only do this check for global projections.
+                if self.projection in _cylproj + _pseudocyl:
+                    xx = x[x.shape[0]/2,:]
+                    condition = (xx >= self.xmin) & (xx <= self.xmax)
+                    xl = xx.compress(condition).tolist()
+                    xs = xl[:]
+                    xs.sort()
+                    if xl != xs:
+                        print dedent("""
+                             WARNING: x coordinate not montonically increasing - contour plot
+                             may not be what you expect.  If it looks odd, your can either
+                             adjust the map projection region to be consistent with your data, or
+                             (if your data is on a global lat/lon grid) use the shiftgrid
+                             function to adjust the data to be consistent with the map projection
+                             region (see examples/contour_demo.py).""")
+                # mask for points outside projection limb.
+                xymask = np.logical_or(np.greater(x,1.e20),np.greater(y,1.e20))
+                data = ma.asarray(data)
+                # combine with data mask.
+                mask = np.logical_or(ma.getmaskarray(data),xymask)
+                data = ma.masked_array(data,mask=mask)
+                CS = ax.contour(x,y,data,*args,**kwargs)
         except:
             ax.hold(b)
             raise
@@ -2856,48 +2880,59 @@ class Basemap(object):
 
         Extra keyword 'ax' can be used to override the default axis instance.
 
-        Other \*args and \**kwargs passed on to matplotlib.pyplot.scatter.
+        If ``tri`` is set to ``True``, an unstructured grid is assumed
+        (x,y,data must be 1-d) and matplotlib.pyplot.tricontourf is used.
+
+        Other \*args and \**kwargs passed on to matplotlib.pyplot.contourf
+        (or tricontourf if ``tri=True``).
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
-        # make sure x is monotonically increasing - if not,
-        # print warning suggesting that the data be shifted in longitude
-        # with the shiftgrid function.
-        # only do this check for global projections.
-        if self.projection in _cylproj + _pseudocyl:
-            xx = x[x.shape[0]/2,:]
-            condition = (xx >= self.xmin) & (xx <= self.xmax)
-            xl = xx.compress(condition).tolist()
-            xs = xl[:]
-            xs.sort()
-            if xl != xs:
-                print dedent("""
-                     WARNING: x coordinate not montonically increasing - contour plot
-                     may not be what you expect.  If it looks odd, your can either
-                     adjust the map projection region to be consistent with your data, or
-                     (if your data is on a global lat/lon grid) use the shiftgrid
-                     function to adjust the data to be consistent with the map projection
-                     region (see examples/contour_demo.py).""")
-        # mask for points outside projection limb.
-        xymask = np.logical_or(np.greater(x,1.e20),np.greater(y,1.e20))
-        # mask outside projection region (workaround for contourf bug?)
-        epsx = 0.1*(self.xmax-self.xmin)
-        epsy = 0.1*(self.ymax-self.ymin)
-        outsidemask = np.logical_or(np.logical_or(x > self.xmax+epsx,\
-                                    x < self.xmin-epsy),\
-                                    np.logical_or(y > self.ymax+epsy,\
-                                    y < self.ymin-epsy))
-        data = ma.asarray(data)
-        # combine masks.
-        mask = \
-        np.logical_or(outsidemask,np.logical_or(ma.getmaskarray(data),xymask))
-        data = ma.masked_array(data,mask=mask)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
         h = kwargs.pop('hold',None)
         if h is not None:
             ax.hold(h)
         try:
-            CS = ax.contourf(x,y,data,*args,**kwargs)
+            if kwargs.has_key('tri') and kwargs['tri']:
+                mask = np.logical_or(x<1.e20,y<1.e20)
+                x = np.compress(mask,x)
+                y = np.compress(mask,y)
+                data = np.compress(mask,data)
+                CS = ax.tricontourf(x,y,data,*args,**kwargs)
+            else:
+                # make sure x is monotonically increasing - if not,
+                # print warning suggesting that the data be shifted in longitude
+                # with the shiftgrid function.
+                # only do this check for global projections.
+                if self.projection in _cylproj + _pseudocyl:
+                    xx = x[x.shape[0]/2,:]
+                    condition = (xx >= self.xmin) & (xx <= self.xmax)
+                    xl = xx.compress(condition).tolist()
+                    xs = xl[:]
+                    xs.sort()
+                    if xl != xs:
+                        print dedent("""
+                             WARNING: x coordinate not montonically increasing - contour plot
+                             may not be what you expect.  If it looks odd, your can either
+                             adjust the map projection region to be consistent with your data, or
+                             (if your data is on a global lat/lon grid) use the shiftgrid
+                             function to adjust the data to be consistent with the map projection
+                             region (see examples/contour_demo.py).""")
+                # mask for points outside projection limb.
+                xymask = np.logical_or(np.greater(x,1.e20),np.greater(y,1.e20))
+                # mask outside projection region (workaround for contourf bug?)
+                epsx = 0.1*(self.xmax-self.xmin)
+                epsy = 0.1*(self.ymax-self.ymin)
+                outsidemask = np.logical_or(np.logical_or(x > self.xmax+epsx,\
+                                            x < self.xmin-epsy),\
+                                            np.logical_or(y > self.ymax+epsy,\
+                                            y < self.ymin-epsy))
+                data = ma.asarray(data)
+                # combine masks.
+                mask = \
+                np.logical_or(outsidemask,np.logical_or(ma.getmaskarray(data),xymask))
+                data = ma.masked_array(data,mask=mask)
+                CS = ax.contourf(x,y,data,*args,**kwargs)
         except:
             ax.hold(b)
             raise

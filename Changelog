@@ -1,7 +1,11 @@
 version 0.99.5 (not yet released)
+           * add support for plotting on unstructured grids using
+             keyword 'tri' in pcolor,contour,contourf methods (which
+             then forward to tripcolor, tricontour, tricontourf axes
+             methods).
 	   * let continents that fill the whole map be filled.
            * added option for cubic spline interpolation in interp function
-           (order=3) using scipy.ndimage.
+             (order=3) using scipy.ndimage.
            * added "near-sided perspective" projection for a satellite
            view at an arbitrary altitude.
            * patch from Stephane Raynaud to pass format string to
