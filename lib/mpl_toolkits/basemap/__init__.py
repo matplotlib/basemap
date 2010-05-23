@@ -2757,11 +2757,24 @@ class Basemap(object):
             if tri:
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
+                if hasattr(data,'mask'):
+                    data = data.filled(fill_value=1.e30)
+                    masked=True
+                else:
+                    masked=False
                 mask = np.logical_or(x<1.e20,y<1.e20)
                 x = np.compress(mask,x)
                 y = np.compress(mask,y)
                 data = np.compress(mask,data)
-                ret = ax.tripcolor(x,y,data,**kwargs)
+                if masked:
+                    import matplotlib.tri as tri
+                    triang = tri.Triangulation(x, y)
+                    z = data[triang.triangles]
+                    mask = (z > 1.e20).sum(axis=-1)
+                    triang.set_mask(mask)
+                    ret = ax.tripcolor(triang,data,**kwargs)
+                else:
+                    ret = ax.tripcolor(x,y,data,**kwargs)
             else:
                 # make x,y masked arrays
                 # (masked where data is outside of projection limb)
@@ -2828,11 +2841,26 @@ class Basemap(object):
             ax.hold(h)
         try:
             if kwargs.has_key('tri') and kwargs['tri']:
+                # for unstructured grids, toss out points outside
+                # projection limb (don't use those points in triangulation).
+                if hasattr(data,'mask'):
+                    data = data.filled(fill_value=1.e30)
+                    masked=True
+                else:
+                    masked=False
                 mask = np.logical_or(x<1.e20,y<1.e20)
                 x = np.compress(mask,x)
                 y = np.compress(mask,y)
                 data = np.compress(mask,data)
-                CS = ax.tricontour(x,y,data,*args,**kwargs)
+                if masked:
+                    import matplotlib.tri as tri
+                    triang = tri.Triangulation(x, y)
+                    z = data[triang.triangles]
+                    mask = (z > 1.e20).sum(axis=-1)
+                    triang.set_mask(mask)
+                    CS = ax.tricontour(triang,data,*args,**kwargs)
+                else:
+                    CS = ax.tricontour(x,y,data,*args,**kwargs)
             else:
                 # make sure x is monotonically increasing - if not,
                 # print warning suggesting that the data be shifted in longitude
@@ -2894,11 +2922,26 @@ class Basemap(object):
             ax.hold(h)
         try:
             if kwargs.has_key('tri') and kwargs['tri']:
+                # for unstructured grids, toss out points outside
+                # projection limb (don't use those points in triangulation).
+                if hasattr(data,'mask'):
+                    data = data.filled(fill_value=1.e30)
+                    masked=True
+                else:
+                    masked=False
                 mask = np.logical_or(x<1.e20,y<1.e20)
                 x = np.compress(mask,x)
                 y = np.compress(mask,y)
                 data = np.compress(mask,data)
-                CS = ax.tricontourf(x,y,data,*args,**kwargs)
+                if masked:
+                    import matplotlib.tri as tri
+                    triang = tri.Triangulation(x, y)
+                    z = data[triang.triangles]
+                    mask = (z > 1.e20).sum(axis=-1)
+                    triang.set_mask(mask)
+                    CS = ax.tricontourf(triang,data,*args,**kwargs)
+                else:
+                    CS = ax.tricontourf(x,y,data,*args,**kwargs)
             else:
                 # make sure x is monotonically increasing - if not,
                 # print warning suggesting that the data be shifted in longitude
