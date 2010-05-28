@@ -2759,7 +2759,7 @@ class Basemap(object):
                     import matplotlib.tri as tri
                 except:
                     msg='need basemap > 0.99.1 to plot on unstructured grids'
-                    Raise ImportError(msg)
+                    raise ImportError(msg)
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
                 if hasattr(data,'mask'):
@@ -2849,7 +2849,7 @@ class Basemap(object):
                     import matplotlib.tri as tri
                 except:
                     msg='need basemap > 0.99.1 to plot on unstructured grids'
-                    Raise ImportError(msg)
+                    raise ImportError(msg)
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
                 if hasattr(data,'mask'):
@@ -2934,7 +2934,7 @@ class Basemap(object):
                     import matplotlib.tri as tri
                 except:
                     msg='need basemap > 0.99.1 to plot on unstructured grids'
-                    Raise ImportError(msg)
+                    raise ImportError(msg)
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
                 if hasattr(data,'mask'):
