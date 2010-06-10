@@ -1,4 +1,6 @@
 version 0.99.5 (not yet released)
+	   * don't force adjustable='box' so Basemap is compatible
+             with AxesGrid. Added fcstmaps_axesgrid.py example.
            * add support for plotting on unstructured grids using
              keyword 'tri' in pcolor,contour,contourf methods (which
              then forward to tripcolor, tricontour, tricontourf axes

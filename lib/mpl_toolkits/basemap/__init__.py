@@ -2628,9 +2628,9 @@ class Basemap(object):
         # plot is re-centered in bounding rectangle.
         # (anchor instance var determines where plot is placed)
         if self.fix_aspect:
-            ax.set_aspect('equal',adjustable='box',anchor=self.anchor)
+            ax.set_aspect('equal',anchor=self.anchor)
         else:
-            ax.set_aspect('auto',adjustable='box',anchor=self.anchor)
+            ax.set_aspect('auto',anchor=self.anchor)
         # make sure axis ticks are turned off.
         if self.noticks:
             ax.set_xticks([])

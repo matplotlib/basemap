@@ -2,6 +2,7 @@ import glob, os, sys
 test_files = glob.glob('*.py')
 test_files.remove('run_all.py')
 test_files.remove('fcstmaps.py')
+test_files.remove('fcstmaps_axesgrid.py')
 test_files.remove('testgdal.py')
 test_files.remove('pnganim.py')
 test_files.remove('geos_demo_2.py')

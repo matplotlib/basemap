@@ -63,6 +63,9 @@ plot, where part of the region is outside the projection limb.
 fcstmaps.py is a sample multi-panel plot that accesses
 data over http using the dap module. An internet connection is required.
 
+fcstmaps_axesgrid.py is the same as above, but illustrates the use
+of the AxesGrid toolkit.
+
 plotsst.py also uses dap client to access the data, and also illustrates
 how the NetCDFFile function deals with missing values.
 
