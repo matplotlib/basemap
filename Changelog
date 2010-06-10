@@ -4,12 +4,12 @@ version 0.99.5 (not yet released)
            * add support for plotting on unstructured grids using
              keyword 'tri' in pcolor,contour,contourf methods (which
              then forward to tripcolor, tricontour, tricontourf axes
-             methods).
+             methods). examples/ploticos.py added.
 	   * let continents that fill the whole map be filled.
            * added option for cubic spline interpolation in interp function
              (order=3) using scipy.ndimage.
            * added "near-sided perspective" projection for a satellite
-           view at an arbitrary altitude.
+             view at an arbitrary altitude.
            * patch from Stephane Raynaud to pass format string to
              drawmapscale, and allow units='m'.
            * updated proj4 source to version 4.7.0, pyproj to 1.8.6.
