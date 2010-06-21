@@ -55,8 +55,9 @@ map.drawcoastlines()
 map.fillcontinents(color='white')
 
 x, y = map(tlon,tlat)
-im = map.pcolor(x,y,ma.masked_array(np.zeros(temp.shape,'f'), temp.mask),\
-                shading='faceted',cmap=plt.cm.cool,vmin=0,vmax=0)
+im = map.pcolor(x,y,ma.masked_array(np.zeros(temp.shape,'f'), temp.mask),
+                shading='faceted', antialiased=True, cmap=plt.cm.cool, 
+                vmin=0, vmax=0)
 # disclaimer:  these are not really the grid cells because of the
 # way pcolor interprets the x and y args.
 plt.title('(A) CCSM POP Grid Cells')
