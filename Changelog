@@ -1,4 +1,4 @@
-version 1.0    (not yet released)
+version 1.0    (svn revision 8531)
 	   * don't force adjustable='box' so Basemap is compatible
              with AxesGrid. Added fcstmaps_axesgrid.py example.
            * add support for plotting on unstructured grids using
