@@ -123,7 +123,7 @@ print 'plotting with azimuthal equidistant basemap ...'
 fig=plt.figure()
 # setup of orthographic basemap
 m = Basemap(resolution='c',projection='ortho',\
-            lat_0=50.,lon_0=-120.)
+            lat_0=45.,lon_0=-120.)
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
