@@ -27,9 +27,9 @@ YYYYMMDDHH = sys.argv[1]
 
 # open OpenDAP dataset.
 try:
-    data=NetCDFFile("http://nomad1.ncep.noaa.gov:9090/dods/gdas/rotating/gdas"+YYYYMMDDHH)
+    data=NetCDFFile("http://nomad1.ncep.noaa.gov:9090/dods/gdas/rotating/gdas"+YYYYMMDDHH+".grib2")
 except:
-    data=NetCDFFile("http://nomad1.ncep.noaa.gov:9090/dods/gdas/rotating/"+YYYYMMDDHH[0:6]+"/gdas"+YYYYMMDDHH)
+    data=NetCDFFile("http://nomad2.ncep.noaa.gov:9090/dods/gdas/rotating/gdas"+YYYYMMDDHH+".grib2")
 
 # read lats,lons.
 lats = data.variables['lat'][:]
