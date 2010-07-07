@@ -17,16 +17,20 @@ else:
     YYYYMMDD = datetime.datetime.today().strftime('%Y%m%d')
 
 # set OpenDAP server URL.
-URLbase="http://nomad1.ncep.noaa.gov:9090/dods/mrf/mrf"
-URL=URLbase+YYYYMMDD+'/mrf'+YYYYMMDD
-print URL+'\n'
 try:
+    URLbase="http://nomad1.ncep.noaa.gov:9090/dods/mrf/mrf"
+    URL=URLbase+YYYYMMDD+'/mrf'+YYYYMMDD
     data = NetCDFFile(URL)
 except:
-    msg = """
+    try:
+        URLbase="http://nomad2.ncep.noaa.gov:9090/dods/mrf/mrf"
+        URL=URLbase+YYYYMMDD+'/mrf'+YYYYMMDD
+        data = NetCDFFile(URL)
+    except:
+        msg = """
 opendap server not providing the requested data.
 Try another date by providing YYYYMMDD on command line."""
-    raise IOError, msg
+        raise IOError, msg
 
 
 # read lats,lons,times.
