@@ -1,11 +1,12 @@
 # basemap build options can be modified with the setup.cfg file. See
 # setup.cfg for more information.
-import sys, glob, os, numpy
+import sys, glob, os, numpy, subprocess
 major, minor1, minor2, s, tmp = sys.version_info
 if major==2 and minor1<4 or major<2:
     raise SystemExit("""matplotlib and the basemap toolkit require Python 2.4 or later.""")
 from numpy.distutils.core  import setup, Extension
 from distutils.util import convert_path
+from distutils import ccompiler, sysconfig
 
 def dbf_macros():
     """Return the macros to define when compiling the dbflib wrapper.
@@ -216,13 +217,28 @@ else:
     print 'will not install pyshapelib'
 
 # Specify all the required mpl data
-pyproj_datafiles = ['data/epsg', 'data/esri', 'data/esri.extra', 'data/GL27', 'data/nad.lst', 'data/nad27', 'data/nad83', 'data/ntv2_out.dist', 'data/other.extra', 'data/pj_out27.dist', 'data/pj_out83.dist', 'data/proj_def.dat', 'data/README', 'data/td_out.dist', 'data/test27', 'data/test83', 'data/testntv2', 'data/testvarious', 'data/world','data/bmng.jpg','data/bmng_low.jpg']
-boundaryfiles = []
-for resolution in ['c','l','i','h','f']:
-    boundaryfiles = boundaryfiles + glob.glob("lib/mpl_toolkits/basemap/data/*_"+resolution+".dat")
-boundaryfiles = [os.path.join('data',os.path.basename(bfile)) for bfile in boundaryfiles]
-basemap_datafiles = boundaryfiles + ['data/5minmask.bin']
-package_data = {'mpl_toolkits.basemap':pyproj_datafiles+basemap_datafiles}
+# create pyproj binary datum shift grid files.
+pathout =\
+os.path.join('lib',os.path.join('mpl_toolkits',os.path.join('basemap','data')))
+if sys.argv[1] != 'sdist':
+    cc = ccompiler.new_compiler()
+    sysconfig.customize_compiler(cc)
+    cc.set_include_dirs(['src'])
+    objects = cc.compile(['nad2bin.c'])
+    execname = 'nad2bin'
+    cc.link_executable(objects, execname)
+    llafiles = glob.glob('datumgrid/*.lla')
+    cmd = os.path.join(os.getcwd(),execname)
+    for f in llafiles:
+        fout = os.path.basename(f.split('.lla')[0])
+        fout = os.path.join(pathout,fout)
+        str = '%s %s < %s' % (cmd, fout, f)
+        print 'executing ',str
+        subprocess.call(str,shell=True)
+datafiles = glob.glob(os.path.join(pathout,'*'))
+datafiles = [os.path.join('data',os.path.basename(f)) for f in datafiles]
+package_data = {'mpl_toolkits.basemap':datafiles}
+
 setup(
   name              = "basemap",
   version           = "1.0",
@@ -240,11 +256,11 @@ setup(
   license           = "OSI Approved",
   keywords          = ["python","plotting","plots","graphs","charts","GIS","mapping","map projections","maps"],
   classifiers       = ["Development Status :: 4 - Beta",
-			           "Intended Audience :: Science/Research", 
-			           "License :: OSI Approved", 
-			           "Topic :: Scientific/Engineering :: Visualization",
-			           "Topic :: Software Development :: Libraries :: Python Modules",
-			           "Operating System :: OS Independent"],
+                       "Intended Audience :: Science/Research", 
+                       "License :: OSI Approved", 
+                       "Topic :: Scientific/Engineering :: Visualization",
+                       "Topic :: Software Development :: Libraries :: Python Modules",
+                       "Operating System :: OS Independent"],
   packages          = packages,
   package_dir       = package_dirs,
   ext_modules       = extensions,
