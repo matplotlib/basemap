@@ -241,7 +241,7 @@ package_data = {'mpl_toolkits.basemap':datafiles}
 
 setup(
   name              = "basemap",
-  version           = "1.0",
+  version           = "1.0.1",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data
