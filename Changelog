@@ -1,6 +1,7 @@
 version 1.0.1 (not yet released).
            * add datum grid shift files, so that pyproj.transform can do datum
              shifts.
+           * add removeparallels and removemeridians convenience methods.
 version 1.0   (svn revision 8531)
 	   * don't force adjustable='box' so Basemap is compatible
              with AxesGrid. Added fcstmaps_axesgrid.py example.

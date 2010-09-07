@@ -2017,6 +2017,29 @@ class Basemap(object):
             if v == ([], []): del linecolls[k]
         return linecolls
 
+    def removeparallels(self,pdict,lat=None):
+        """
+        Given a dictionary returned by ``drawparallels``, remove parallels
+        (latitude lines) and associated labels from the map.
+
+        .. tabularcolumns:: |l|L|
+
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        lat              latitude value to remove (Default None, removes all 
+                         of them)
+        ==============   ====================================================
+        """
+        if lat is not None and lat not in pdict.keys():
+            raise ValueError('latitude %s not drawn' % lat)
+        for key in pdict.keys():
+            if lat is None or key == lat:
+                tup = pdict[key]
+                for item in tup:
+                    for x in item:
+                        x.remove()
+
     def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
                       fmt='%g',xoffset=None,yoffset=None,ax=None,latmax=None,
@@ -2259,6 +2282,24 @@ class Basemap(object):
         for k,v in zip(keys,vals):
             if v == ([], []): del linecolls[k]
         return linecolls
+
+    def removemeridians(self,mdict,lon=None):
+        """
+        Given a dictionary returned by ``drawmeridians``, remove meridians
+        (longitude lines) and associated labels from the map.
+
+        .. tabularcolumns:: |l|L|
+
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        lon              longitude value to remove (Default None, removes all 
+                         of them)
+        ==============   ====================================================
+        """
+        if lon is not None and lon not in mdict.keys():
+            raise ValueError('longitude %s not drawn' % lon)
+        self.removeparallels(mdict,lat=lon)
 
     def tissot(self,lon_0,lat_0,radius_deg,npts,ax=None,**kwargs):
         """
