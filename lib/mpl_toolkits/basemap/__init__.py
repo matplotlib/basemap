@@ -2017,7 +2017,7 @@ class Basemap(object):
             if v == ([], []): del linecolls[k]
         return linecolls
 
-    def removeparallels(self,pdict,lat=None):
+    def removeparallels(self,pdict,lat=None,ax=None):
         """
         Given a dictionary returned by :meth:`Basemap.drawparallels`, remove 
         parallels (latitude lines) and associated labels from the map.
@@ -2029,6 +2029,7 @@ class Basemap(object):
         ==============   ====================================================
         lat              latitude value to remove (Default None, removes all 
                          of them)
+        ax               axes instance (overrides default axes instance)
         ==============   ====================================================
         """
         if lat is not None and lat not in pdict.keys():
@@ -2038,7 +2039,16 @@ class Basemap(object):
                 tup = pdict[key]
                 for item in tup:
                     for x in item:
-                        x.remove()
+                        try:
+                            x.remove()
+                        # might already be removed, if so
+                        # don't do anything (exit silently).
+                        except ValueError: 
+                            pass
+        # get current axes instance (if none specified).
+        ax = ax or self._check_ax()
+        # set axes limits to fit map region.
+        self.set_axes_limits(ax=ax)
 
     def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
@@ -2295,6 +2305,7 @@ class Basemap(object):
         ==============   ====================================================
         lon              longitude value to remove (Default None, removes all 
                          of them)
+        ax               axes instance (overrides default axes instance)
         ==============   ====================================================
         """
         if lon is not None and lon not in mdict.keys():
