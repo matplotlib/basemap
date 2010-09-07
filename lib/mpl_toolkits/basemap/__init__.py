@@ -2019,8 +2019,8 @@ class Basemap(object):
 
     def removeparallels(self,pdict,lat=None):
         """
-        Given a dictionary returned by ``drawparallels``, remove parallels
-        (latitude lines) and associated labels from the map.
+        Given a dictionary returned by :meth:`Basemap.drawparallels`, remove 
+        parallels (latitude lines) and associated labels from the map.
 
         .. tabularcolumns:: |l|L|
 
@@ -2285,8 +2285,8 @@ class Basemap(object):
 
     def removemeridians(self,mdict,lon=None):
         """
-        Given a dictionary returned by ``drawmeridians``, remove meridians
-        (longitude lines) and associated labels from the map.
+        Given a dictionary returned by :meth:`Basemap.drawmeridians`, remove
+        meridians (longitude lines) and associated labels from the map.
 
         .. tabularcolumns:: |l|L|
 
