@@ -1814,11 +1814,10 @@ class Basemap(object):
         ==============   ====================================================
 
         returns a dictionary whose keys are the parallel values, and
-        whose values are tuple-like objects containing lists of the
+        whose values are tuples containing lists of the
         matplotlib.lines.Line2D and matplotlib.text.Text instances
-        associated with each parallel. Each one of these tuple-like 
-        objects has a ``remove`` method so it can be easily removed
-        from the plot.
+        associated with each parallel. Deleting an item from the
+        dictionary removes the corresponding parallel from the plot.
         """
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
@@ -2019,7 +2018,7 @@ class Basemap(object):
             if v == ([], []): del linecolls[k]
             # add a remove method to each tuple.
             linecolls[k] = _tup(linecolls[k])
-        return linecolls
+        return _dict(linecolls)
 
     def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
@@ -2070,11 +2069,10 @@ class Basemap(object):
         ==============   ====================================================
 
         returns a dictionary whose keys are the meridian values, and
-        whose values are tuple-like objects containing lists of the
+        whose values are tuples containing lists of the
         matplotlib.lines.Line2D and matplotlib.text.Text instances
-        associated with each meridian. Each one of these tuple-like 
-        objects has a ``remove`` method so it can be easily removed
-        from the plot.
+        associated with each meridian. Deleting an item from the
+        dictionary removes the correpsonding meridian from the plot.
         """
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
@@ -2266,7 +2264,7 @@ class Basemap(object):
             if v == ([], []): del linecolls[k]
             # add a remove method to each tuple.
             linecolls[k] = _tup(linecolls[k])
-        return linecolls
+        return _dict(linecolls)
 
     def tissot(self,lon_0,lat_0,radius_deg,npts,ax=None,**kwargs):
         """
@@ -4156,3 +4154,8 @@ class _tup(tuple):
                 except ValueError:
                     # don't raise an error if item already removed
                     pass
+class _dict(dict):
+    # override __delitem__ to first call remove method on values.
+    def __delitem__(self,key):
+        self[key].remove()
+        super(_dict, self).__delitem__(key)

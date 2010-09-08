@@ -1,4 +1,7 @@
 version 1.0.1 (not yet released).
+           * Deleting an item from the dicts returned by drawparallels
+             and drawmeridians removes the corresponding parallel or meridian (and
+             associated labels) from the plot.
            * add a remove method to the tuples that are returned in
 	     the dicts returned by drawparallels and drawmeridians.
            * add removeparallels and removemeridians convenience methods.
