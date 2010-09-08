@@ -4,7 +4,9 @@ Module for plotting data on maps with matplotlib.
 Contains the :class:`Basemap` class (which does most of the
 heavy lifting), and the following functions:
 
-:func:`NetCDFFile`: Read local and remote NetCDF datasets.
+:func:`NetCDFFile`: Read local and remote NetCDF datasets. Deprecated
+as of version 1.0.1 (will be removed in 1.0.2).  Use netcdf4-python
+(http://netcdf4-python.googlecode.com) module instead.
 
 :func:`interp`:  bilinear interpolation between rectilinear grids.
 
@@ -2015,9 +2017,11 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         keys = linecolls.keys(); vals = linecolls.values()
         for k,v in zip(keys,vals):
-            if v == ([], []): del linecolls[k]
+            if v == ([], []): 
+                del linecolls[k]
             # add a remove method to each tuple.
-            linecolls[k] = _tup(linecolls[k])
+            else:
+                linecolls[k] = _tup(linecolls[k])
         # override __delitem__ in dict to call remove() on values.
         return _dict(linecolls)
 
@@ -2262,9 +2266,11 @@ class Basemap(object):
         # remove empty values from linecolls dictionary
         keys = linecolls.keys(); vals = linecolls.values()
         for k,v in zip(keys,vals):
-            if v == ([], []): del linecolls[k]
+            if v == ([], []): 
+                del linecolls[k]
+            else:
             # add a remove method to each tuple.
-            linecolls[k] = _tup(linecolls[k])
+                linecolls[k] = _tup(linecolls[k])
         # override __delitem__ in dict to call remove() on values.
         return _dict(linecolls)
 
@@ -3935,6 +3941,13 @@ def NetCDFFile(file, mode='r', maskandscale=True, cache=None, mmap=True,\
     This may be slow for very large netCDF variables.
     """
     import netcdf
+    import warnings
+    msg=dedent("""
+    
+    NetCDFFile will be removed in 1.0.2, please use netcdf4-python 
+    (http://netcdf4-python.googlecode.com) instead
+    """)
+    warnings.warn(msg,DeprecationWarning)
     if file.startswith('http'):
         return netcdf._RemoteFile(file,maskandscale=maskandscale,\
         cache=cache,username=username,password=password,verbose=verbose)

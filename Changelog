@@ -1,4 +1,6 @@
 version 1.0.1 (not yet released).
+           * NetCDFFile function deprecated, will be removed in 1.0.2.  Issue
+             warning advising users to use netcdf4-python instead.
            * Deleting an item from the dicts returned by drawparallels
              and drawmeridians removes the corresponding parallel or meridian (and
              associated labels) from the plot.
