@@ -4151,4 +4151,8 @@ class _tup(tuple):
     def remove(self):
         for item in self:
             for x in item:
-                x.remove()
+                try:
+                    x.remove()
+                except ValueError:
+                    # don't raise an error if item already removed
+                    pass
