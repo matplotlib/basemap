@@ -1814,9 +1814,11 @@ class Basemap(object):
         ==============   ====================================================
 
         returns a dictionary whose keys are the parallel values, and
-        whose values are tuples containing lists of the
+        whose values are tuple-like objects containing lists of the
         matplotlib.lines.Line2D and matplotlib.text.Text instances
-        associated with each parallel.
+        associated with each parallel. Each one of these tuple-like 
+        objects has a ``remove`` method so it can be easily removed
+        from the plot.
         """
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
@@ -2015,40 +2017,9 @@ class Basemap(object):
         keys = linecolls.keys(); vals = linecolls.values()
         for k,v in zip(keys,vals):
             if v == ([], []): del linecolls[k]
+            # add a remove method to each tuple.
+            linecolls[k] = _tup(linecolls[k])
         return linecolls
-
-    def removeparallels(self,pdict,lat=None,ax=None):
-        """
-        Given a dictionary returned by :meth:`Basemap.drawparallels`, remove 
-        parallels (latitude lines) and associated labels from the map.
-
-        .. tabularcolumns:: |l|L|
-
-        ==============   ====================================================
-        Keyword          Description
-        ==============   ====================================================
-        lat              latitude value to remove (Default None, removes all 
-                         of them)
-        ax               axes instance (overrides default axes instance)
-        ==============   ====================================================
-        """
-        if lat is not None and lat not in pdict.keys():
-            raise ValueError('latitude %s not drawn' % lat)
-        for key in pdict.keys():
-            if lat is None or key == lat:
-                tup = pdict[key]
-                for item in tup:
-                    for x in item:
-                        try:
-                            x.remove()
-                        # might already be removed, if so
-                        # don't do anything (exit silently).
-                        except ValueError: 
-                            pass
-        # get current axes instance (if none specified).
-        ax = ax or self._check_ax()
-        # set axes limits to fit map region.
-        self.set_axes_limits(ax=ax)
 
     def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
@@ -2099,9 +2070,11 @@ class Basemap(object):
         ==============   ====================================================
 
         returns a dictionary whose keys are the meridian values, and
-        whose values are tuples containing lists of the
+        whose values are tuple-like objects containing lists of the
         matplotlib.lines.Line2D and matplotlib.text.Text instances
-        associated with each meridian.
+        associated with each meridian. Each one of these tuple-like 
+        objects has a ``remove`` method so it can be easily removed
+        from the plot.
         """
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
@@ -2291,26 +2264,9 @@ class Basemap(object):
         keys = linecolls.keys(); vals = linecolls.values()
         for k,v in zip(keys,vals):
             if v == ([], []): del linecolls[k]
+            # add a remove method to each tuple.
+            linecolls[k] = _tup(linecolls[k])
         return linecolls
-
-    def removemeridians(self,mdict,lon=None):
-        """
-        Given a dictionary returned by :meth:`Basemap.drawmeridians`, remove
-        meridians (longitude lines) and associated labels from the map.
-
-        .. tabularcolumns:: |l|L|
-
-        ==============   ====================================================
-        Keyword          Description
-        ==============   ====================================================
-        lon              longitude value to remove (Default None, removes all 
-                         of them)
-        ax               axes instance (overrides default axes instance)
-        ==============   ====================================================
-        """
-        if lon is not None and lon not in mdict.keys():
-            raise ValueError('longitude %s not drawn' % lon)
-        self.removeparallels(mdict,lat=lon)
 
     def tissot(self,lon_0,lat_0,radius_deg,npts,ax=None,**kwargs):
         """
@@ -4188,3 +4144,11 @@ def _readlsmask():
     lsmask = tmparr
     lsmaskf.close()
     return lsmask_lons, lsmask_lats, lsmask
+
+class _tup(tuple):
+    # tuple with an added remove method.
+    # used for objects returned by drawparallels and drawmeridians.
+    def remove(self):
+        for item in self:
+            for x in item:
+                x.remove()
