@@ -2018,6 +2018,7 @@ class Basemap(object):
             if v == ([], []): del linecolls[k]
             # add a remove method to each tuple.
             linecolls[k] = _tup(linecolls[k])
+        # override __delitem__ in dict to call remove() on values.
         return _dict(linecolls)
 
     def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
@@ -2264,6 +2265,7 @@ class Basemap(object):
             if v == ([], []): del linecolls[k]
             # add a remove method to each tuple.
             linecolls[k] = _tup(linecolls[k])
+        # override __delitem__ in dict to call remove() on values.
         return _dict(linecolls)
 
     def tissot(self,lon_0,lat_0,radius_deg,npts,ax=None,**kwargs):
@@ -4149,11 +4151,7 @@ class _tup(tuple):
     def remove(self):
         for item in self:
             for x in item:
-                try:
-                    x.remove()
-                except ValueError:
-                    # don't raise an error if item already removed
-                    pass
+                x.remove()
 class _dict(dict):
     # override __delitem__ to first call remove method on values.
     def __delitem__(self,key):
