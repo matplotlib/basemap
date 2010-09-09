@@ -6,7 +6,6 @@ version 1.0.1 (not yet released).
              associated labels) from the plot.
            * add a remove method to the tuples that are returned in
 	     the dicts returned by drawparallels and drawmeridians.
-           * add removeparallels and removemeridians convenience methods.
 version 1.0   (svn revision 8531)
 	   * don't force adjustable='box' so Basemap is compatible
              with AxesGrid. Added fcstmaps_axesgrid.py example.
