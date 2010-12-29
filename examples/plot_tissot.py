@@ -37,8 +37,16 @@ for m in [m1,m2,m3,m4,m5,m6,m7,m8,m9,m10]:
         for meridian in range(-165,166,30):
             poly = m.tissot(meridian,parallel,6,100,facecolor='green',zorder=10,alpha=0.5)
     # draw meridians and parallels.
-    m.drawparallels(np.arange(-60,61,30),labels=[1,0,0,0])
-    m.drawmeridians(np.arange(-180,180,60),labels=[0,0,0,1])
+    if m.projection != 'ortho':
+        labels = [1,0,0,0]
+    else:
+        labels = [0,0,0,0]
+    m.drawparallels(np.arange(-60,61,30),labels=labels)
+    if m.projection not in ['moll','hammer','mbtfpq','ortho']:
+        labels = [0,0,0,1]
+    else:
+        labels = [0,0,0,0]
+    m.drawmeridians(np.arange(-180,180,60),labels=labels)
     # draw coastlines, fill continents, plot title.
     m.drawcoastlines()
     m.drawmapboundary(fill_color='aqua') 
