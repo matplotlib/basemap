@@ -2010,14 +2010,30 @@ class Basemap(object):
                             else:
                                 xlab = self.llcrnrx
                             xlab = xlab-xoffset
-                            t = ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**kwargs)
+                            if self.projection in _pseudocyl:
+                                if lat>0:
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='bottom',**kwargs)
+                                elif lat<0:
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='top',**kwargs)
+                                else:
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**kwargs)
+                            else:
+                               t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**kwargs)
                         elif side == 'r':
                             if self.projection in _pseudocyl:
                                 xlab,ylab = self(lon_0+179.9,lat)
                             else:
                                 xlab = self.urcrnrx
                             xlab = xlab+xoffset
-                            t = ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',**kwargs)
+                            if self.projection in _pseudocyl:
+                                if lat>0:
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='bottom',**kwargs)
+                                elif lat<0:
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='top',**kwargs)
+                                else:
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',**kwargs)
+                            else:
+                               t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',**kwargs)
                         elif side == 'b':
                             t = ax.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',**kwargs)
                         else:
