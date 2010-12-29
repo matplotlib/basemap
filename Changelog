@@ -1,4 +1,6 @@
 version 1.0.1 (not yet released).
+           * improve placement of labels for parallels for pseudo-cylindrical
+             projections like mollweide, hammer.
            * added support for Hammer-Aitoff projection.
            * updated src/pj_mutex.c from proj4 svn to fix a threading bug
              on Windows.
