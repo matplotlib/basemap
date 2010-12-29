@@ -1,4 +1,9 @@
 version 1.0.1 (not yet released).
+           * updated src/pj_mutex.c from proj4 svn to fix a threading bug
+             on Windows.
+           * if you try to transform NaNs to/from map projection coords, 1.e30 
+             is returned (previously, this caused a segfault for some
+             projections).
            * NetCDFFile function deprecated, will be removed in 1.0.2.  Issue
              warning advising users to use netcdf4-python instead.
            * Deleting an item from the dicts returned by drawparallels
