@@ -1934,8 +1934,14 @@ class Basemap(object):
                         lons,lats = self(xx,yy,inverse=True)
                         lons = lons.tolist(); lats = lats.tolist()
                 else:
-                    lons,lats = self(self.urcrnrx*np.ones(yy.shape,np.float32),yy,inverse=True)
-                    lons = lons.tolist(); lats = lats.tolist()
+                    if self.projection in _pseudocyl:
+                        lats = np.linspace(-89.99,89,99,nmax)
+                        lons = (self.projparams['lon_0']+180.)*np.ones(len(lats),lats.dtype)
+                        xx, yy = self(lons, lats)
+                    else:
+                        xx = self.urcrnrx*np.ones(yy.shape,yy.dtype)
+                        lons,lats = self(xx,yy,inverse=True)
+                        lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
                     raise ValueError,'inverse transformation undefined - please adjust the map projection region'
                 # adjust so 0 <= lons < 360
