@@ -82,6 +82,7 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'nsper'    : 'Near-Sided Perspective',
              'sinu'     : 'Sinusoidal',
              'moll'     : 'Mollweide',
+             'hammer'   : 'Hammer-Aitoff',
              'robin'    : 'Robinson',
              'vandg'    : 'van der Grinten',
              'mbtfpq'   : 'McBryde-Thomas Flat-Polar Quartic',
@@ -93,7 +94,7 @@ for _items in _projnames.iteritems():
 supported_projections = ''.join(supported_projections)
 
 _cylproj = ['cyl','merc','mill','gall']
-_pseudocyl = ['moll','robin','sinu','mbtfpq','vandg']
+_pseudocyl = ['moll','robin','sinu','mbtfpq','vandg','hammer']
 
 # projection specific parameters.
 projection_params = {'cyl'      : 'corners only (no width/height)',
@@ -121,6 +122,7 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'nsper'    : 'lon_0,satellite_height,llcrnrx,llcrnry,urcrnrx,urcrnry,no width/height',
              'sinu'     : 'lon_0,lat_0,no corners or width/height',
              'moll'     : 'lon_0,lat_0,no corners or width/height',
+             'hammer'   : 'lon_0,lat_0,no corners or width/height',
              'robin'    : 'lon_0,lat_0,no corners or width/height',
              'vandg'    : 'lon_0,lat_0,no corners or width/height',
              'mbtfpq'   : 'lon_0,lat_0,no corners or width/height',
@@ -183,7 +185,7 @@ _Basemap_init_doc = """
  lat_0            center of desired map domain (in degrees).
  ==============   ====================================================
 
- For ``sinu``, ``moll``, ``npstere``, ``spstere``, ``nplaea``, ``splaea``,
+ For ``sinu``, ``moll``, ``hammer``, ``npstere``, ``spstere``, ``nplaea``, ``splaea``,
  ``npaeqd``, ``spaeqd``, ``robin`` or ``mbtfpq``, the values of
  llcrnrlon, llcrnrlat, urcrnrlon, urcrnrlat, width and height are ignored
  (because either they are computed internally, or entire globe is
@@ -1923,10 +1925,11 @@ class Basemap(object):
                 nmax = int((self.ymax-self.ymin)/dy+1)
                 yy = np.linspace(self.llcrnry,self.urcrnry,nmax)
                 # mollweide inverse transform undefined at South Pole
-                if self.projection == 'moll' and yy[0] < 1.e-4:
+                if self.projection  == 'moll' and yy[0] < 1.e-4:
                     yy[0] = 1.e-4
                 if side == 'l':
-                    lons,lats = self(self.llcrnrx*np.ones(yy.shape,np.float32),yy,inverse=True)
+                    xx = self.llcrnrx*np.ones(yy.shape,yy.dtype)
+                    lons,lats = self(xx,yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 else:
                     lons,lats = self(self.urcrnrx*np.ones(yy.shape,np.float32),yy,inverse=True)
@@ -2148,9 +2151,9 @@ class Basemap(object):
                         lines.append(l)
             linecolls[merid] = (lines,[])
         # draw labels for meridians.
-        # meridians not labelled for sinusoidal, mollweide, or
-        # or full-disk orthographic/geostationary.
-        if self.projection in ['sinu','moll','vandg'] and max(labels):
+        # meridians not labelled for sinusoidal, hammer, mollweide,
+        # VanDerGrinten or full-disk orthographic/geostationary.
+        if self.projection in ['sinu','moll','hammer','vandg'] and max(labels):
             print 'Warning: Cannot label meridians on %s basemap' % _projnames[self.projection]
             labels = [0,0,0,0]
         if self.projection in ['ortho','geos','nsper','aeqd'] and max(labels):

@@ -8,7 +8,7 @@ _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 
 _cylproj = ['cyl','merc','mill','gall']
-_pseudocyl = ['moll','robin','sinu','mbtfpq','vandg']
+_pseudocyl = ['moll','robin','sinu','mbtfpq','vandg','hammer']
 
 _upper_right_out_of_bounds = (
     'the upper right corner of the plot is not in the map projection region')
