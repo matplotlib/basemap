@@ -1,7 +1,8 @@
 version 1.0.1 (not yet released).
            * improve placement of labels for parallels for pseudo-cylindrical
              projections like mollweide, hammer.
-           * added support for Hammer-Aitoff projection.
+           * added support for Hammer projection (required adding inverse
+             projection to proj4 src in src/PJ_hammer.c).
            * updated src/pj_mutex.c from proj4 svn to fix a threading bug
              on Windows.
            * if you try to transform NaNs to/from map projection coords, 1.e30 
