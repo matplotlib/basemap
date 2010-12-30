@@ -14,7 +14,8 @@ and parallels cannot be labelled on maps with
 ``vandg`` (van der Grinten) or ``nsper`` (near-sided perspective),
 and meridians cannot be labelled on maps with 
 ``proj`` set to ``robin`` (robinson), ``mbtfpq``
-(McBryde-Thomas Flat Polar Quartic), ``moll`` (mollweide) or ``sinu``
+(McBryde-Thomas Flat Polar Quartic), ``moll`` (Mollweide),
+``hammer`` (Hammer), or ``sinu``
 (sinusoidal).  This is because the lines can be very close 
 together where they intersect the boundary on these maps, so that
 they really need to be labelled manually on the interior of the plot.
