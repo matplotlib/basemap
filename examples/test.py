@@ -610,7 +610,7 @@ print m.proj4string
 
 # create new figure
 fig=plt.figure()
-# setup of basemap ('hammer' = Hammer-Aitoff projection)
+# setup of basemap ('hammer' = Hammer projection)
 m = Basemap(projection='hammer',
             resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
