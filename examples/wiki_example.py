@@ -4,13 +4,13 @@ import numpy as np
 # set up orthographic map projection with
 # perspective of satellite looking down at 50N, 100W.
 # use low resolution coastlines.
-map = Basemap(projection='ortho',lat_0=50,lon_0=-100,resolution='l')
+map = Basemap(projection='ortho',lat_0=45,lon_0=-100,resolution='l')
 # draw coastlines, country boundaries, fill continents.
 map.drawcoastlines(linewidth=0.25)
 map.drawcountries(linewidth=0.25)
-map.fillcontinents(color='coral')
+map.fillcontinents(color='coral',lake_color='aqua')
 # draw the edge of the map projection region (the projection limb)
-map.drawmapboundary()
+map.drawmapboundary(fill_color='aqua')
 # draw lat/lon grid lines every 30 degrees.
 map.drawmeridians(np.arange(0,360,30))
 map.drawparallels(np.arange(-90,90,30))
