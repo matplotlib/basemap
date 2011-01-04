@@ -255,6 +255,8 @@ _Basemap_init_doc = """
                   Allowed values are
                   ``C``, ``SW``, ``S``, ``SE``, ``E``, ``NE``,
                   ``N``, ``NW``, and ``W``.
+ celestial        use astronomical conventions for longitude (i.e.
+                  negative longitudes to the east of 0). Default False.
  ax               set default axes instance
                   (default None - matplotlib.pyplot.gca() may be used
                   to get the current axes instance).
@@ -443,6 +445,7 @@ class Basemap(object):
                        boundinglat=None,
                        fix_aspect=True,
                        anchor='C',
+                       celestial=False,
                        ax=None):
         # docstring is added after __init__ method definition
 
@@ -451,6 +454,8 @@ class Basemap(object):
         self.fix_aspect = fix_aspect
         # where to put plot in figure (default is 'C' or center)
         self.anchor = anchor
+        # geographic or celestial coords?
+        self.celestial = celestial
         # map projection.
         self.projection = projection
 
@@ -887,7 +892,12 @@ class Basemap(object):
         Input arguments lon, lat can be either scalar floats,
         sequences, or numpy arrays.
         """
-        return self.projtran(x,y,inverse=inverse)
+        if self.celestial and not inverse:
+            x = -x
+        xout,yout = self.projtran(x,y,inverse=inverse)
+        if self.celestial and inverse:
+            xout = -xout
+
 
     def makegrid(self,nx,ny,returnxy=False):
         """
