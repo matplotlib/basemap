@@ -257,6 +257,7 @@ _Basemap_init_doc = """
                   ``N``, ``NW``, and ``W``.
  celestial        use astronomical conventions for longitude (i.e.
                   negative longitudes to the east of 0). Default False.
+                  Implies ``resolution=None``.
  ax               set default axes instance
                   (default None - matplotlib.pyplot.gca() may be used
                   to get the current axes instance).
@@ -773,7 +774,10 @@ class Basemap(object):
 
         # set defaults for area_thresh.
         self.resolution = resolution
-        if area_thresh is None and resolution is not None:
+        # celestial=True implies resolution=None (no coastlines).
+        if self.celestial:
+            self.resolution=None
+        if area_thresh is None and self.resolution is not None:
             if resolution == 'c':
                 area_thresh = 10000.
             elif resolution == 'l':
@@ -857,7 +861,7 @@ class Basemap(object):
         # currently only used in is_land method.
         self.landpolygons=[]
         self.lakepolygons=[]
-        if resolution is not None and len(self.coastpolygons) > 0:
+        if self.resolution is not None and len(self.coastpolygons) > 0:
             #self.islandinlakepolygons=[]
             #self.lakeinislandinlakepolygons=[]
             x, y = zip(*self.coastpolygons)
@@ -1840,6 +1844,9 @@ class Basemap(object):
         associated with each parallel. Deleting an item from the
         dictionary removes the corresponding parallel from the plot.
         """
+        # if celestial=True, don't use "N" and "S" labels.
+        if labelstyle is None and self.celestial:
+            labelstyle="+/-"
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
         # don't draw meridians past latmax, always draw parallel at latmax.
@@ -2135,6 +2142,9 @@ class Basemap(object):
         associated with each meridian. Deleting an item from the
         dictionary removes the correpsonding meridian from the plot.
         """
+        # if celestial=True, don't use "E" and "W" labels.
+        if labelstyle is None and self.celestial:
+            labelstyle="+/-"
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
         # don't draw meridians past latmax, always draw parallel at latmax.
