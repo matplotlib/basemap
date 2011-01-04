@@ -1,4 +1,8 @@
 version 1.0.1 (not yet released).
+           * added 'celestial' keyword - if True astronomical convention for
+             longitude is used (negative for 'east', positive for 'west').
+             celestial=True implies resolution=None (no continents or
+             coastlines).
            * improve placement of labels for parallels for pseudo-cylindrical
              projections like mollweide, hammer.
            * added support for Hammer projection (required adding inverse
