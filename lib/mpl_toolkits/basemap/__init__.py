@@ -893,10 +893,17 @@ class Basemap(object):
         sequences, or numpy arrays.
         """
         if self.celestial and not inverse:
-            x = -x
+            try:
+                x = -x
+            except TypeError:
+                x = [-xx for xx in x]
         xout,yout = self.projtran(x,y,inverse=inverse)
         if self.celestial and inverse:
-            xout = -xout
+            try:
+                xout = -xout
+            except:
+                xout = [-xx for xx in xout]
+        return xout,yout
 
 
     def makegrid(self,nx,ny,returnxy=False):
@@ -1937,7 +1944,10 @@ class Basemap(object):
                 if side == 'l':
                     if self.projection in _pseudocyl:
                         lats = np.linspace(-89.99,89,99,nmax)
-                        lons = (self.projparams['lon_0']-180.)*np.ones(len(lats),lats.dtype)
+                        if self.celestial:
+                            lons = (self.projparams['lon_0']+180.)*np.ones(len(lats),lats.dtype)
+                        else:
+                            lons = (self.projparams['lon_0']-180.)*np.ones(len(lats),lats.dtype)
                         xx, yy = self(lons, lats)
                     else:
                         xx = self.llcrnrx*np.ones(yy.shape,yy.dtype)
@@ -1946,7 +1956,10 @@ class Basemap(object):
                 else:
                     if self.projection in _pseudocyl:
                         lats = np.linspace(-89.99,89,99,nmax)
-                        lons = (self.projparams['lon_0']+180.)*np.ones(len(lats),lats.dtype)
+                        if self.celestial:
+                           lons = (self.projparams['lon_0']-180.)*np.ones(len(lats),lats.dtype)
+                        else:
+                           lons = (self.projparams['lon_0']+180.)*np.ones(len(lats),lats.dtype)
                         xx, yy = self(lons, lats)
                     else:
                         xx = self.urcrnrx*np.ones(yy.shape,yy.dtype)
@@ -2016,7 +2029,10 @@ class Basemap(object):
                         t = None
                         if side == 'l':
                             if self.projection in _pseudocyl:
-                                xlab,ylab = self(lon_0-179.9,lat)
+                                if self.celestial:
+                                    xlab,ylab = self(lon_0+179.9,lat)
+                                else:
+                                    xlab,ylab = self(lon_0-179.9,lat)
                             else:
                                 xlab = self.llcrnrx
                             xlab = xlab-xoffset
@@ -2031,7 +2047,10 @@ class Basemap(object):
                                t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**kwargs)
                         elif side == 'r':
                             if self.projection in _pseudocyl:
-                                xlab,ylab = self(lon_0+179.9,lat)
+                                if self.celestial:
+                                   xlab,ylab = self(lon_0-179.9,lat)
+                                else:
+                                   xlab,ylab = self(lon_0+179.9,lat)
                             else:
                                 xlab = self.urcrnrx
                             xlab = xlab+xoffset
