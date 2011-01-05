@@ -57,7 +57,7 @@ pos = ax.get_position()
 l, b, w, h = pos.bounds
 cax = plt.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
 # draw colorbar.
-plt.colorbar(cs, cax, format='%g', ticks=clevs, drawedges=False) 
+cb = plt.colorbar(cs, cax, format='%g', ticks=clevs, drawedges=False) 
 plt.axes(ax)  # make the original axes current again
 # plot title
 plt.title(plottitle+'- contourf',fontsize=10)
@@ -85,11 +85,11 @@ cax = plt.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
 # using im2, not im (hack to prevent colors from being
 # too compressed at the low end on the colorbar - results
 # from highly nonuniform colormap)
-plt.colorbar(im2, cax, format='%d') # draw colorbar
+cb = plt.colorbar(im2, cax, format='%d') # draw colorbar
 plt.axes(ax)  # make the original axes current again
 # reset colorbar tick labels (hack to get
-cax.set_yticks(np.linspace(0,1,len(clevs)))
-cax.set_yticklabels(['%g' % clev for clev in clevs])
+cb.set_ticks(np.linspace(clevs[0],clevs[-1],len(clevs)))
+cb.set_ticklabels(['%g' % clev for clev in clevs])
 # plot title
 plt.title(plottitle+' - imshow',fontsize=10)
 plt.show() # display onscreen.
