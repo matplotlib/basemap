@@ -257,7 +257,7 @@ _Basemap_init_doc = """
                   ``N``, ``NW``, and ``W``.
  celestial        use astronomical conventions for longitude (i.e.
                   negative longitudes to the east of 0). Default False.
-                  Implies ``resolution=None``.
+                  Implies resolution=None.
  ax               set default axes instance
                   (default None - matplotlib.pyplot.gca() may be used
                   to get the current axes instance).
