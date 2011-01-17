@@ -2351,6 +2351,10 @@ class Basemap(object):
         which when drawn on a map shows the distortion
         inherent in the map projection.
 
+        .. note::
+         Cannot handle situations in which the polygon intersects
+         the edge of the map projection domain, and then re-enters the domain.
+
         Extra keyword ``ax`` can be used to override the default axis instance.
 
         Other \**kwargs passed on to matplotlib.patches.Polygon.
