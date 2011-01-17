@@ -6,8 +6,12 @@ import matplotlib.pyplot as plt
 import sys
 import numpy.ma as ma
 import datetime
-from mpl_toolkits.basemap import Basemap, NetCDFFile, addcyclic, num2date
+from mpl_toolkits.basemap import Basemap, addcyclic, num2date
 from mpl_toolkits.axes_grid1 import AxesGrid
+try:
+    from netCDF4 import Dataset as NetCDFFile
+except ImportError:
+    from mpl_toolkits.basemap import NetCDFFile
 
 
 # today's date is default.

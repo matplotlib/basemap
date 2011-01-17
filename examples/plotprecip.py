@@ -1,4 +1,8 @@
-from mpl_toolkits.basemap import Basemap, cm, NetCDFFile
+from mpl_toolkits.basemap import Basemap, cm
+try:
+    from netCDF4 import Dataset as NetCDFFile
+except ImportError:
+    from mpl_toolkits.basemap import NetCDFFile
 import numpy as np
 import matplotlib.pyplot as plt
 import copy

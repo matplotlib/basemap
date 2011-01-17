@@ -24,7 +24,11 @@ from matplotlib import rcParams
 import numpy.ma as ma
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap, NetCDFFile
+from mpl_toolkits.basemap import Basemap
+try:
+    from netCDF4 import Dataset as NetCDFFile
+except ImportError:
+    from mpl_toolkits.basemap import NetCDFFile
 
 # read in data from netCDF file.
 infile    = 'ccsm_popgrid.nc'
