@@ -9,7 +9,11 @@ import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 import numpy.ma as ma
 import datetime, sys, time, subprocess
-from mpl_toolkits.basemap import Basemap, shiftgrid, NetCDFFile, date2index, num2date
+from mpl_toolkits.basemap import Basemap, shiftgrid, date2index, num2date
+try:
+    from netCDF4 import Dataset as NetCDFFile
+except:
+    from mpl_toolkits.basemap import NetCDFFile
 
 # times for March 1993 'storm of the century'
 date1 = datetime.datetime(1993,3,10,0)
