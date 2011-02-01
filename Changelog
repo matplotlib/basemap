@@ -1,4 +1,4 @@
-version 1.0.1 (svn revision 8937)
+version 1.0.1 (svn revision 8941)
            * added 'celestial' keyword - if True astronomical convention for
              longitude is used (negative for 'east', positive for 'west').
              celestial=True implies resolution=None (no continents or
