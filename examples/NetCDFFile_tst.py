@@ -5,7 +5,10 @@ import tempfile
 from numpy import ma
 from numpy.testing import assert_array_equal, assert_array_almost_equal
 from numpy.random.mtrand import uniform 
-from mpl_toolkits.basemap import NetCDFFile
+try:
+    from netCDF4 import Dataset as NetCDFFile
+except ImportError:
+    from mpl_toolkits.basemap import NetCDFFile
 
 # test automatic conversion of masked arrays, and
 # packing/unpacking of short ints.
@@ -46,6 +49,8 @@ class TestCase(unittest.TestCase):
         file = NetCDFFile(self.file,maskandscale=False)
         datamasked = file.variables['maskeddata']
         datapacked = file.variables['packeddata']
+        if hasattr(datapacked,'set_auto_maskandscale'):
+            datapacked.set_auto_maskandscale(False)
         # check missing_value, scale_factor and add_offset attributes.
         assert datamasked.missing_value == missing_value
         assert datapacked.scale_factor == scale_factor
@@ -57,7 +62,7 @@ class TestCase(unittest.TestCase):
         file = NetCDFFile(self.file)
         datamasked = file.variables['maskeddata']
         datapacked = file.variables['packeddata']
-        assert_array_almost_equal(datamasked[:].filled(),ranarr)
+        assert_array_almost_equal(datamasked[:].filled(datamasked.missing_value),ranarr)
         assert_array_almost_equal(datapacked[:],packeddata,decimal=4)
         file.close()
 
