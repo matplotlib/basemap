@@ -1,5 +1,8 @@
 Basemap example scripts
 
+allskymap_cr_example.py is an all-sky plot that uses the module allskymap.py
+to make sky maps used in astronomy.
+
 simpletest.py is the simple example given in the Basemap docstrings.
 
 simpletest_oo.py is the same example, but using the "OO" interface (does
