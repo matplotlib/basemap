@@ -69,7 +69,6 @@ include examples/pnganim.py
 include examples/garp.py
 include examples/setwh.py
 include examples/ccsm_popgrid.py
-include examples/ccsm_popgrid.nc
 include examples/plot_tissot.py
 include examples/cities.dbf
 include examples/cities.shp
@@ -77,6 +76,8 @@ include examples/cities.shx
 include examples/show_colormaps.py
 include examples/plotprecip.py
 include examples/nws_precip_conus_20061222.nc
+include examples/C02562.orog.nc
+include examples/ccsm_popgrid.nc
 include examples/NetCDFFile_tst.py
 include examples/maskoceans.py
 include examples/README
