@@ -79,7 +79,7 @@ include examples/lic_demo.py
 include examples/nws_precip_conus_20061222.nc
 include examples/C02562.orog.nc
 include examples/ccsm_popgrid.nc
-include examples/hurrearl.nc
+include examples/rita.nc
 include examples/NetCDFFile_tst.py
 include examples/maskoceans.py
 include examples/README
