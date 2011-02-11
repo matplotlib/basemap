@@ -5,7 +5,7 @@ try:
     from netCDF4 import Dataset as NetCDFFile
 except ImportError:
     from mpl_toolkits.basemap import NetCDFFile
-from mpl_toolkits.basemap import Basemap, cm, shiftgrid
+from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
 try:
@@ -26,10 +26,9 @@ ncfile.close()
 
 fig = plt.figure(figsize=(8,8))
 m = Basemap(projection='stere',lat_0=lat0,lon_0=lon0,width=1.e6,height=1.e6,resolution='i')
-nxv = 501; nyv = 501
+nxv = 301; nyv = 301; kernellen=41
 udat, vdat, xv, yv = m.transform_vector(u,v,lons1,lats1,nxv,nyv,returnxy=True)
 texture = np.random.rand(udat.shape[0],udat.shape[1]).astype(np.float32)
-kernellen=51
 kernel = np.sin(np.arange(kernellen)*np.pi/kernellen).astype(np.float32)
 image = lic_internal.line_integral_convolution(udat.astype(np.float32),\
         vdat.astype(np.float32), texture, kernel)
