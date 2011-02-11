@@ -141,3 +141,6 @@ plothighsandlows.py shows to plot H's and L's at the local extrema of a pressure
 daynight.py shows how to shade the regions of a map where the sun has set.
 
 ploticos.py demonstrates plotting on unstructured grids.
+
+lic_demo.py shows how to use vectorplot scikit to visualize vector fields with
+Line Integral Convolutions (LIC).
