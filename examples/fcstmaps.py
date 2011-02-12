@@ -6,10 +6,7 @@ import sys
 import numpy.ma as ma
 import datetime
 from mpl_toolkits.basemap import Basemap, addcyclic, num2date
-try:
-    from netCDF4 import Dataset as NetCDFFile
-except ImportError:
-    from mpl_toolkits.basemap import NetCDFFile
+from netCDF4 import Dataset as NetCDFFile
 
 
 # today's date is default.

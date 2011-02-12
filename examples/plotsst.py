@@ -1,8 +1,5 @@
 from mpl_toolkits.basemap import Basemap, date2index, num2date
-try:
-    from netCDF4 import Dataset as NetCDFFile
-except:
-    from mpl_toolkits.basemap import NetCDFFile
+from netCDF4 import Dataset as NetCDFFile
 import numpy as np
 import matplotlib.pyplot as plt
 import sys, datetime

@@ -7,10 +7,7 @@ import matplotlib.pyplot as plt
 import sys
 from mpl_toolkits.basemap import Basemap, addcyclic
 from scipy.ndimage.filters import minimum_filter, maximum_filter
-try:
-    from netCDF4 import Dataset as NetCDFFile
-except ImportError:
-    from mpl_toolkits.basemap import NetCDFFile
+from netCDF4 import Dataset as NetCDFFile
 
 def extrema(mat,mode='wrap',window=10):
     """find the indices of local extrema (min and max)

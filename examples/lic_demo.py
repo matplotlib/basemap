@@ -1,10 +1,7 @@
 # example showing how to use Line Integral Convolution to visualize a vector
 # flow field (from Hurricane Earl).  Produces something akin to streamlines.
 # Requires vectorplot scikit (http://scikits.appspot.com/vectorplot).
-try:
-    from netCDF4 import Dataset as NetCDFFile
-except ImportError:
-    from mpl_toolkits.basemap import NetCDFFile
+from netCDF4 import Dataset as NetCDFFile
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt

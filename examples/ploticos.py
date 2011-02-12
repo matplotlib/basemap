@@ -2,10 +2,7 @@ from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy import ma
-try:
-    from netCDF4 import Dataset as NetCDFFile
-except ImportError:
-    from mpl_toolkits.basemap import NetCDFFile
+from netCDF4 import Dataset as NetCDFFile
 # read in orography of icosahedral global grid.
 f = NetCDFFile('C02562.orog.nc')
 lons = (180./np.pi)*f.variables['grid_center_lon'][:]

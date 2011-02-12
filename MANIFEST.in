@@ -80,7 +80,6 @@ include examples/nws_precip_conus_20061222.nc
 include examples/C02562.orog.nc
 include examples/ccsm_popgrid.nc
 include examples/rita.nc
-include examples/NetCDFFile_tst.py
 include examples/maskoceans.py
 include examples/README
 include lib/mpl_toolkits/__init__.py
