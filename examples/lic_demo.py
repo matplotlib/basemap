@@ -2,7 +2,7 @@
 # flow field (from Hurricane Earl).  Produces something akin to streamlines.
 # Requires vectorplot scikit (http://scikits.appspot.com/vectorplot).
 from netCDF4 import Dataset as NetCDFFile
-from mpl_toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap, interp
 import numpy as np
 import matplotlib.pyplot as plt
 try:
@@ -19,6 +19,14 @@ lats1 = ncfile.variables['latitude'][:]
 lat0 = lats1[len(lats1)/2]; lon0 = lons1[len(lons1)/2]
 lons, lats = np.meshgrid(lons1,lats1)
 ncfile.close()
+
+# downsample to finer grid.
+nlats = 2*udat.shape[0]; nlons = 2*udat.shape[1]
+lons = np.linspace(lons1[0],lons1[-1],nlons)
+lats = np.linspace(lats1[0],lats1[-1],nlats)
+lons, lats = np.meshgrid(lons, lats)
+udat = interp(udat,lons1,lats1,lons,lats,order=3)
+vdat = interp(vdat,lons1,lats1,lons,lats,order=3)
 
 
 fig = plt.figure(figsize=(8,8))
