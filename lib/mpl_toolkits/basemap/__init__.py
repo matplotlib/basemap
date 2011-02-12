@@ -4,10 +4,6 @@ Module for plotting data on maps with matplotlib.
 Contains the :class:`Basemap` class (which does most of the
 heavy lifting), and the following functions:
 
-:func:`NetCDFFile`: Read local and remote NetCDF datasets. Deprecated
-as of version 1.0.1 (will be removed in 1.0.2).  Use netcdf4-python
-(http://netcdf4-python.googlecode.com) module instead.
-
 :func:`interp`:  bilinear interpolation between rectilinear grids.
 
 :func:`maskoceans`:  mask 'wet' points of an input array.
@@ -54,7 +50,7 @@ if 'BASEMAPDATA' in os.environ:
 else:
     basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 # supported map projections.
 _projnames = {'cyl'      : 'Cylindrical Equidistant',
@@ -3977,52 +3973,6 @@ def _choosecorners(width,height,**kwargs):
         raise ValueError, 'width and/or height too large for this projection, try smaller values'
     else:
         return corners
-
-def NetCDFFile(file, mode='r', maskandscale=True, cache=None, mmap=True,\
-               username=None, password=None, verbose=False):
-    """NetCDF File reader/writer.  API is the same as Scientific.IO.NetCDF.
-
-    If ``file`` is a URL that starts with `http`, it is assumed
-    to be a remote OPenDAP dataset, and pydap is used
-    to retrieve the data. Only the OPenDAP Array and Grid data
-    types are recognized.  If file does not start with `http`, it
-    is assumed to be a local netCDF file and is read
-    with scipy.io.netcdf. Both pydap and scipy.io.netcdf are written
-    by Roberto De Almeida.
-
-    Data will
-    automatically be converted to and from masked arrays if the variable
-    has either a ``missing_value`` or ``_FillValue`` attribute, and
-    some data points are equal to the value specified by that attribute.
-    In addition, variables that have the ``scale_factor`` and ``add_offset``
-    attribute will automatically be converted to and from short integers.
-    To suppress these automatic conversions, set the ``maskandscale``
-    keyword to False.
-
-    The keywords ``cache``, ``username``, ``password`` and ``verbose`` are only
-    valid for remote OPenDAP datasets.  ``username`` and ``password`` are used
-    to access OPenDAP datasets that require authentication.  ``verbose=True``
-    will make the pydap client print out the URLs being accessed.
-    ``cache`` is a location (a directory) for caching data, so that repeated
-    accesses to the same URL avoid the network.
-
-    The keyword ``mmap`` is only valid for local netCDF files.  When
-    ``mmap=True`` (default), the mmap module is used to access the data.
-    This may be slow for very large netCDF variables.
-    """
-    import netcdf
-    import warnings
-    msg=dedent("""
-    
-    NetCDFFile will be removed in 1.0.2, please use netcdf4-python 
-    (http://netcdf4-python.googlecode.com) instead
-    """)
-    warnings.warn(msg,DeprecationWarning)
-    if file.startswith('http'):
-        return netcdf._RemoteFile(file,maskandscale=maskandscale,\
-        cache=cache,username=username,password=password,verbose=verbose)
-    else:
-        return netcdf.netcdf_file(file,mode=mode,mmap=mmap,maskandscale=maskandscale)
 
 def num2date(times,units='days since 0001-01-01 00:00:00',calendar='proleptic_gregorian'):
     """
