@@ -9,7 +9,7 @@ from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
 try:
-    from vectorplot import lic_internal
+    from scikits.vectorplot import lic_internal
 except ImportError:
     raise  ImportError('need vectorplot scikit for this example')
 
