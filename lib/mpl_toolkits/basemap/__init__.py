@@ -11,12 +11,6 @@ heavy lifting), and the following functions:
 :func:`shiftgrid`:  shifts global lat/lon grids east or west.
 
 :func:`addcyclic`: Add cyclic (wraparound) point in longitude.
-
-:func:`num2date`: convert from a numeric time value to a datetime object.
-
-:func:`date2num`: convert from a datetime object to a numeric time value.
-
-:func:`date2index`: compute a time variable index corresponding to a date.
 """
 from matplotlib import __version__ as _matplotlib_version
 from matplotlib.cbook import is_scalar, dedent
@@ -38,7 +32,7 @@ from proj import Proj
 import numpy as np
 import numpy.ma as ma
 from shapelib import ShapeFile
-import _geoslib, netcdftime
+import _geoslib
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 # check to see if environment variable BASEMAPDATA set to a directory,
@@ -3973,160 +3967,6 @@ def _choosecorners(width,height,**kwargs):
         raise ValueError, 'width and/or height too large for this projection, try smaller values'
     else:
         return corners
-
-def num2date(times,units='days since 0001-01-01 00:00:00',calendar='proleptic_gregorian'):
-    """
-    Return datetime objects given numeric time values. The units
-    of the numeric time values are described by the ``units`` argument
-    and the ``calendar`` keyword. The returned datetime objects represent
-    UTC with no time-zone offset, even if the specified
-    units contain a time-zone offset.
-
-    Default behavior is the same as the matplotlib.dates.num2date function
-    but the reference time and calendar can be changed via the
-    ``units`` and ``calendar`` keywords.
-
-    .. tabularcolumns:: |l|L|
-
-    ==============   ====================================================
-    Arguments        Description
-    ==============   ====================================================
-    times            numeric time values. Maximum resolution is 1 second.
-    ==============   ====================================================
-
-    .. tabularcolumns:: |l|L|
-
-    ==============   ====================================================
-    Keywords         Description
-    ==============   ====================================================
-    units            a string of the form '<time units> since
-                     <reference time>' describing the units and
-                     origin of the time coordinate.
-                     <time units> can be days, hours, minutes
-                     or seconds.  <reference time> is the time origin.
-                     Default is 'days since 0001-01-01 00:00:00'.
-    calendar         describes the calendar used in the time
-                     calculations.  All the values currently defined in
-                     the CF metadata convention
-                     (http://cf-pcmdi.llnl.gov/documents/cf-conventions/)
-                     are supported.
-                     Valid calendars ``standard``, ``gregorian``,
-                     ``proleptic_gregorian``, ``noleap``, ``365_day``,
-                     ``julian``, ``all_leap``, ``366_day``.
-                     Default is ``proleptic_gregorian``.
-    ==============   ====================================================
-
-    Returns a datetime instance, or an array of datetime instances.
-
-    The datetime instances returned are 'real' python datetime
-    objects if the date falls in the Gregorian calendar (i.e.
-    calendar=``proleptic_gregorian``, or calendar = ``standard``
-    or ``gregorian`` and the date is after 1582-10-15).
-    Otherwise, they are 'phony' datetime
-    objects which support some but not all the methods of 'real' python
-    datetime objects.  The datetime instances do not contain
-    a time-zone offset, even if the specified units contains one.
-    """
-    cdftime = netcdftime.utime(units,calendar=calendar)
-    return cdftime.num2date(times)
-
-def date2num(dates,units='days since 0001-01-01 00:00:00',calendar='proleptic_gregorian'):
-    """
-    Return numeric time values given datetime objects. The units
-    of the numeric time values are described by the ``units`` argument
-    and the ``calendar`` keyword. The datetime objects must
-    be in UTC with no time-zone offset.  If there is a
-    time-zone offset in units, it will be applied to the
-    returned numeric values.
-
-    Default behavior is the same as the matplotlib.dates.date2num function
-    but the reference time and calendar can be changed via the
-    ``units`` and ``calendar`` keywords.
-
-    .. tabularcolumns:: |l|L|
-
-    ==============   ====================================================
-    Arguments        Description
-    ==============   ====================================================
-    dates            A datetime object or a sequence of datetime objects.
-                     The datetime objects should not include a
-                     time-zone offset.
-    ==============   ====================================================
-
-    .. tabularcolumns:: |l|L|
-
-    ==============   ====================================================
-    Keywords         Description
-    ==============   ====================================================
-    units            a string of the form '<time units> since
-                     <reference time>' describing the units and
-                     origin of the time coordinate.
-                     <time units> can be days, hours, minutes
-                     or seconds.  <reference time> is the time origin.
-                     Default is 'days since 0001-01-01 00:00:00'.
-    calendar         describes the calendar used in the time
-                     calculations.  All the values currently defined in
-                     the CF metadata convention
-                     (http://cf-pcmdi.llnl.gov/documents/cf-conventions/)
-                     are supported.
-                     Valid calendars ``standard``, ``gregorian``,
-                     ``proleptic_gregorian``, ``noleap``, ``365_day``,
-                     ``julian``, ``all_leap``, ``366_day``.
-                     Default is ``proleptic_gregorian``.
-    ==============   ====================================================
-
-    Returns a numeric time value, or an array of numeric time values.
-
-    The maximum resolution of the numeric time values is 1 second.
-    """
-    cdftime = netcdftime.utime(units,calendar=calendar)
-    return cdftime.date2num(dates)
-
-def date2index(dates, nctime, calendar=None,select='exact'):
-    """
-    Return indices of a netCDF time variable corresponding to the given dates.
-
-    .. tabularcolumns:: |l|L|
-
-    ==============   ====================================================
-    Arguments        Description
-    ==============   ====================================================
-    dates            A datetime object or a sequence of datetime objects.
-                     The datetime objects should not include a
-                     time-zone offset.
-    nctime           A netCDF time variable object.  The nctime object
-                     must have a ``units`` attribute.
-    ==============   ====================================================
-
-    .. tabularcolumns:: |l|L|
-
-    ==============   ====================================================
-    Keywords         Description
-    ==============   ====================================================
-    calendar         describes the calendar used in the time
-                     calculations.  All the values currently defined in
-                     the CF metadata convention
-                     (http://cf-pcmdi.llnl.gov/documents/cf-conventions/)
-                     are supported.
-                     Valid calendars ``standard``, ``gregorian``,
-                     ``proleptic_gregorian``, ``noleap``, ``365_day``,
-                     ``julian``, ``all_leap``, ``366_day``.
-                     If ``calendar=None``, will use ``calendar`` attribute
-                     of ``nctime`` object, and if that attribute does
-                     not exist calendar is set to ``standard``.
-                     Default is ``None``.
-    select           The index selection method. ``exact`` will return the
-                     indices perfectly matching the dates given.
-                     ``before`` and ``after`` will return the indices
-                     corresponding to the dates just before or after
-                     the given dates if an exact match cannot be found.
-                     ``nearest``  will return the indices that
-                     correspond to the closest dates. Default ``exact``.
-    ==============   ====================================================
-
-    Returns an index or a sequence of indices.
-    """
-    return netcdftime.date2index(dates, nctime, calendar=calendar, select=select)
 
 def maskoceans(lonsin,latsin,datain,inlands=False):
     """
