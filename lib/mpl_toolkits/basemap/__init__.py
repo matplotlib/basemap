@@ -3454,7 +3454,7 @@ class Basemap(object):
     def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\
                      units='km',fontsize=9,yoffset=None,labelstyle='simple',\
                      fontcolor='k',fillcolor1='w',fillcolor2='k',ax=None,\
-                     format='%d'):
+                     format='%d',zorder=None):
         """
         Draw a map scale at ``lon,lat`` of length ``length``
         representing distance in the map
@@ -3487,6 +3487,7 @@ class Basemap(object):
         fillcolor1(2)    colors of the alternating filled regions
                          (default white and black).  Only relevant for
                          'fancy' barstyle.
+        zorder           sets the zorder for the map scale.
         ==============   ====================================================
 
         Extra keyword ``ax`` can be used to override the default axis instance.
@@ -3625,6 +3626,8 @@ class Basemap(object):
             fontsize=fontsize,color=fontcolor))
         else:
             raise KeyError("barstyle must be 'simple' or 'fancy'")
+        if zorder is not None:
+            rets = [ret.set_zorder(zorder) for ret in rets]
         return rets
 
     def nightshade(self,date,color="k",delta=0.25,alpha=0.5,ax=None,zorder=2):
