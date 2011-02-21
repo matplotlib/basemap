@@ -106,48 +106,14 @@ if os.path.exists("setup.cfg"):
     import ConfigParser
     config = ConfigParser.SafeConfigParser()
     config.read("setup.cfg")
-    try: options['provide_pydap'] = config.getboolean("provide_packages", "pydap")
-    except: options['provide_pydap'] = 'auto'
     try: options['provide_httplib2'] = config.getboolean("provide_packages", "httplib2")
     except: options['provide_httplib2'] = 'auto'
     try: options['provide_pyshapelib'] = config.getboolean("provide_packages", "pyshapelib")
     except: options['provide_pyshapelib'] = 'auto'
 else:
-    options['provide_pydap'] = 'auto'
     options['provide_httplib2'] = 'auto'
     options['provide_pyshapelib'] = 'auto'
 
-
-provide_pydap = options['provide_pydap']
-if provide_pydap == 'auto': # install pydap stuff if not already available.
-   # only the client is installed (not the server).
-    __dapversion__ = None
-    print 'checking to see if required version of pydap installed ..'
-    try:
-        from dap.lib import __version__ as __dapversion__
-    except ImportError:
-        print 'pydap not installed, client will be installed'
-        packages = packages + ['dap','dap.util','dap.parsers']
-        package_dirs['dap'] = os.path.join('lib','dap')
-    else:
-        print 'pydap installed, checking version ...'
-    # install dap client anyway if installed version is older than
-    # version provided here.
-    if __dapversion__ is not None:
-        __dapversion__ = [repr(v)+'.' for v in __dapversion__]
-        __dapversion__ = ''.join(__dapversion__)[:-1]
-        if __dapversion__ < '2.2.6.2':
-            print 'required version of pydap not installed, client will be installed'
-            packages = packages + ['dap','dap.util','dap.parsers']
-            package_dirs['dap'] = os.path.join('lib','dap')
-        else:
-            print 'pydap version OK, will not be installed'
-elif provide_pydap: # force install of pydap stuff.
-    print 'forcing install of included pydap client'
-    packages = packages + ['dap','dap.util','dap.parsers']
-    package_dirs['dap'] = os.path.join('lib','dap')
-else:
-    print 'will not install pydap'
 
 provide_httplib2 = options['provide_httplib2']
 if provide_httplib2  == 'auto':
