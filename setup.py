@@ -106,32 +106,11 @@ if os.path.exists("setup.cfg"):
     import ConfigParser
     config = ConfigParser.SafeConfigParser()
     config.read("setup.cfg")
-    try: options['provide_httplib2'] = config.getboolean("provide_packages", "httplib2")
-    except: options['provide_httplib2'] = 'auto'
     try: options['provide_pyshapelib'] = config.getboolean("provide_packages", "pyshapelib")
     except: options['provide_pyshapelib'] = 'auto'
 else:
-    options['provide_httplib2'] = 'auto'
     options['provide_pyshapelib'] = 'auto'
 
-
-provide_httplib2 = options['provide_httplib2']
-if provide_httplib2  == 'auto':
-    print 'checking to see if httplib2 installed ..'
-    try:
-        import httplib2
-    except ImportError:
-        print 'httplib2 not installed, will be installed'
-        packages = packages + ['httplib2']
-        package_dirs['httplib2'] = os.path.join('lib','httplib2')
-    else:
-        print 'httplib2 installed'
-elif provide_httplib2: # force install of httplib2
-    print 'forcing install of included httplib2'
-    packages = packages + ['httplib2']
-    package_dirs['httplib2'] = os.path.join('lib','httplib2')
-else:
-    print 'will not install httplib2'
 
 provide_pyshapelib = options['provide_pyshapelib']
 if provide_pyshapelib  == 'auto':
