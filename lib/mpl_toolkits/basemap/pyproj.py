@@ -47,7 +47,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. """
 
 #from . import _proj
 #from . import _geod
-import _proj, _geod
+from mpl_toolkits.basemap import _proj, _geod
 _Proj = _proj.Proj
 _Geod = _geod.Geod
 _transform = _proj._transform

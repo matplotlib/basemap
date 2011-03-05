@@ -27,7 +27,8 @@ from matplotlib.collections import LineCollection
 from matplotlib.patches import Ellipse, Circle, Polygon
 from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox
-import pyproj, sys, os, math
+from mpl_toolkits.basemap import pyproj
+import sys, os, math
 from .proj import Proj
 import numpy as np
 import numpy.ma as ma
