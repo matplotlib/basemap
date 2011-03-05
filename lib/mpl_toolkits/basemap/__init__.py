@@ -2003,7 +2003,7 @@ class Basemap(object):
                             if labelstyle=='+/-':
                                 latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
                             else:
-                                latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                                latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
                         latlab = latlabstr%np.fabs(lat)
                     elif lat>0:
                         if rcParams['text.usetex']:
