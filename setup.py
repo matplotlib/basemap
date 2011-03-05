@@ -7,6 +7,10 @@ if major==2 and minor1<4 or major<2:
 from numpy.distutils.core  import setup, Extension
 from distutils.util import convert_path
 from distutils import ccompiler, sysconfig
+try:
+    from distutils.command.build_py import build_py_2to3 as build_py
+except ImportError:
+    from distutils.command.build_py import build_py
 
 def dbf_macros():
     """Return the macros to define when compiling the dbflib wrapper.
@@ -213,5 +217,6 @@ setup(
   packages          = packages,
   package_dir       = package_dirs,
   ext_modules       = extensions,
+  cmdclass = {'build_py': build_py},
   package_data = package_data
   )
