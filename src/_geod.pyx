@@ -12,7 +12,8 @@ cdef class Geod:
         cdef GEODESIC_T GEOD_T
         # setup geod initialization string.
         self.geodstring = geodstring
-        self.geodinitstring = PyString_AsString(self.geodstring)
+        bytestr = _strencode(geodstring)
+        self.geodinitstring = bytestr
         # initialize projection
         self.geodesic_t = GEOD_init_plus(self.geodinitstring, &GEOD_T)[0]
         if pj_errno != 0:
@@ -45,7 +46,7 @@ cdef class Geod:
         # process data in buffer
         if not buflenlons == buflenlats == buflenaz == buflend:
             raise RuntimeError("Buffer lengths not the same")
-        ndim = buflenlons/_doublesize
+        ndim = buflenlons//_doublesize
         lonsdata = <double *>londata
         latsdata = <double *>latdata
         azdata = <double *>azdat
@@ -100,7 +101,7 @@ cdef class Geod:
         # process data in buffer
         if not buflenlons == buflenlats == buflenaz == buflend:
             raise RuntimeError("Buffer lengths not the same")
-        ndim = buflenlons/_doublesize
+        ndim = buflenlons//_doublesize
         lonsdata = <double *>londata
         latsdata = <double *>latdata
         azdata = <double *>azdat
@@ -165,3 +166,10 @@ cdef class Geod:
                 lats = lats + (_rad2dg*self.geodesic_t.p2.u,)
                 lons = lons + (_rad2dg*self.geodesic_t.p2.v,)
         return lons, lats   
+
+cdef _strencode(pystr,encoding='ascii'):
+    # encode a string into bytes.  If already bytes, do nothing.
+    try:
+        return pystr.encode(encoding)
+    except AttributeError:
+        return pystr # already bytes?

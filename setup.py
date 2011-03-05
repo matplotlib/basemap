@@ -38,7 +38,7 @@ def checkversion(GEOS_dir):
     return geos_version
 
 # get location of geos lib from environment variable if it is set.
-if os.environ.has_key('GEOS_DIR'):
+if 'GEOS_DIR' in os.environ:
     GEOS_dir = os.environ.get('GEOS_DIR')
 else:
 # set GEOS_dir manually here if automatic detection fails.
@@ -49,11 +49,12 @@ if GEOS_dir is None:
     GEOS_dirs = [os.path.expanduser('~'),'/usr','/usr/local','/sw','/opt','/opt/local']
     for direc in GEOS_dirs:
         geos_version = checkversion(direc)
-        print 'checking for GEOS lib in %s ....' % direc
-        if geos_version < '"3.1.1"':
+        sys.stdout.write('checking for GEOS lib in %s ....\n' % direc)
+        if geos_version is None or geos_version < '"3.1.1"':
             continue
         else:
-            print 'GEOS lib (version %s) found in %s' % (geos_version[1:-1],direc)
+            sys.stdout.write('GEOS lib (version %s) found in %s\n' %\
+                    (geos_version[1:-1],direc))
             GEOS_dir = direc
             break
 else:
@@ -103,7 +104,10 @@ else:
 # check setup.cfg file to see how to install auxilliary packages.
 options = {}
 if os.path.exists("setup.cfg"):
-    import ConfigParser
+    try:
+        import ConfigParser
+    except ImportError:
+        import configparser as ConfigParser
     config = ConfigParser.SafeConfigParser()
     config.read("setup.cfg")
     try: options['provide_pyshapelib'] = config.getboolean("provide_packages", "pyshapelib")
@@ -114,12 +118,12 @@ else:
 
 provide_pyshapelib = options['provide_pyshapelib']
 if provide_pyshapelib  == 'auto':
-    print 'checking to see if pyshapelib installed ..'
+    sys.stdout.write('checking to see if pyshapelib installed ..\n')
     try:
         import shapelib
         import dbflib
     except ImportError:
-        print 'shapelib/dbflib not installed, will be installed'
+        sys.stdout.write('shapelib/dbflib not installed, will be installed\n')
         packages = packages + ['shapelib','dbflib']
         package_dirs['shapelib'] = os.path.join('lib','shapelib')
         package_dirs['dbflib'] = os.path.join('lib','dbflib')
@@ -138,9 +142,9 @@ if provide_pyshapelib  == 'auto':
                             include_dirs = ["pyshapelib/shapelib"],
                             define_macros = dbf_macros()) ]
     else:
-        print 'pyshapelib installed'
+        sys.stdout.write('pyshapelib installed\n')
 elif provide_pyshapelib: # force install of shapelib
-    print 'forcing install of included pyshapelib'
+    sys.stdout.write('forcing install of included pyshapelib\n')
     packages = packages + ['shapelib','dbflib']
     package_dirs['shapelib'] = os.path.join('lib','shapelib')
     package_dirs['dbflib'] = os.path.join('lib','dbflib')
@@ -159,7 +163,7 @@ elif provide_pyshapelib: # force install of shapelib
                         include_dirs = ["pyshapelib/shapelib"],
                         define_macros = dbf_macros()) ]
 else:
-    print 'will not install pyshapelib'
+    sys.stdout.write( 'will not install pyshapelib\n')
 
 # Specify all the required mpl data
 # create pyproj binary datum shift grid files.
@@ -177,9 +181,9 @@ if sys.argv[1] != 'sdist':
     for f in llafiles:
         fout = os.path.basename(f.split('.lla')[0])
         fout = os.path.join(pathout,fout)
-        str = '%s %s < %s' % (cmd, fout, f)
-        print 'executing ',str
-        subprocess.call(str,shell=True)
+        strg = '%s %s < %s' % (cmd, fout, f)
+        sys.stdout.write('executing %s\n' % strg)
+        subprocess.call(strg,shell=True)
 datafiles = glob.glob(os.path.join(pathout,'*'))
 datafiles = [os.path.join('data',os.path.basename(f)) for f in datafiles]
 package_data = {'mpl_toolkits.basemap':datafiles}
