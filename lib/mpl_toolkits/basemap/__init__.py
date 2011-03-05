@@ -27,11 +27,10 @@ from matplotlib.collections import LineCollection
 from matplotlib.patches import Ellipse, Circle, Polygon
 from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox
-import pyproj, sys, os, math, dbflib
-from proj import Proj
+import pyproj, sys, os, math
+from .proj import Proj
 import numpy as np
 import numpy.ma as ma
-from shapelib import ShapeFile
 import _geoslib
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
@@ -79,7 +78,7 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'gnom'     : 'Gnomonic',
              }
 supported_projections = []
-for _items in _projnames.iteritems():
+for _items in _projnames.items():
     supported_projections.append(" %-17s%-40s\n" % (_items))
 supported_projections = ''.join(supported_projections)
 
@@ -503,20 +502,20 @@ class Basemap(object):
                 projparams['lat_2'] = lat_1
             if not using_corners:
                 if width is None or height is None:
-                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
                 if lon_0 is None or lat_0 is None:
-                    raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'stere':
             if lat_0 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_0 and lon_0 for Stereographic basemap (lat_ts is optional)'
+                raise ValueError('must specify lat_0 and lon_0 for Stereographic basemap (lat_ts is optional)')
             if not using_corners:
                 if width is None or height is None:
-                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
                 if lon_0 is None or lat_0 is None:
-                    raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
@@ -541,38 +540,38 @@ class Basemap(object):
             lon,self.llcrnrlat = proj(math.sqrt(2.)*y,0.,inverse=True)
             self.urcrnrlat = self.llcrnrlat
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % _projnames[projection]
+                sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[projection])
         elif projection == 'laea':
             if lat_0 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_0 and lon_0 for Lambert Azimuthal basemap'
+                raise ValueError('must specify lat_0 and lon_0 for Lambert Azimuthal basemap')
             if not using_corners:
                 if width is None or height is None:
-                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
                 if lon_0 is None or lat_0 is None:
-                    raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection in ['tmerc','gnom','cass','poly'] :
-            if projection == 'gnom' and not projparams.has_key('R'):
-                raise ValueError, 'gnomonic projection only works for perfect spheres - not ellipsoids'
+            if projection == 'gnom' and 'R' not in projparams:
+                raise ValueError('gnomonic projection only works for perfect spheres - not ellipsoids')
             if lat_0 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldnerr Polyconic basemap'
+                raise ValueError('must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldnerr Polyconic basemap')
             if not using_corners:
                 if width is None or height is None:
-                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
                 if lon_0 is None or lat_0 is None:
-                    raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'ortho':
-            if not projparams.has_key('R'):
-                raise ValueError, 'orthographic projection only works for perfect spheres - not ellipsoids'
+            if 'R' not in projparams:
+                raise ValueError('orthographic projection only works for perfect spheres - not ellipsoids')
             if lat_0 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_0 and lon_0 for Orthographic basemap'
+                raise ValueError('must specify lat_0 and lon_0 for Orthographic basemap')
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
+                sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
             if not using_corners:
                 llcrnrlon = -180.
                 llcrnrlat = -90.
@@ -588,11 +587,11 @@ class Basemap(object):
             projparams['lat_0'] = lat_0
         elif projection == 'geos':
             if lat_0 is not None and lat_0 != 0:
-                raise ValueError, 'lat_0 must be zero for Geostationary basemap'
+                raise ValueError('lat_0 must be zero for Geostationary basemap')
             if lon_0 is None:
-                raise ValueError, 'must specify lon_0 for Geostationary basemap'
+                raise ValueError('must specify lon_0 for Geostationary basemap')
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
+                sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
             if not using_corners:
                 llcrnrlon = -180.
                 llcrnrlat = -90.
@@ -604,13 +603,13 @@ class Basemap(object):
             self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
             self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'nsper':
-            if not projparams.has_key('R'):
-                raise ValueError, 'near-sided perspective projection only works for perfect spheres - not ellipsoids'
+            if 'R' not in projparams:
+                raise ValueError('near-sided perspective projection only works for perfect spheres - not ellipsoids')
             if lat_0 is None or lon_0 is None:
                 msg='must specify lon_0 and lat_0 for near-sided perspective Basemap'
                 raise ValueError(msg)
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
+                sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
             if not using_corners:
                 llcrnrlon = -180.
                 llcrnrlat = -90.
@@ -623,9 +622,9 @@ class Basemap(object):
             self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection in _pseudocyl:
             if lon_0 is None:
-                raise ValueError, 'must specify lon_0 for %s projection' % _projnames[self.projection]
+                raise ValueError('must specify lon_0 for %s projection' % _projnames[self.projection])
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
+                sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
             llcrnrlon = lon_0-180.
             llcrnrlat = -90.
             urcrnrlon = lon_0+180
@@ -634,7 +633,7 @@ class Basemap(object):
             self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'omerc':
             if lat_1 is None or lon_1 is None or lat_2 is None or lon_2 is None:
-                raise ValueError, 'must specify lat_1,lon_1 and lat_2,lon_2 for Oblique Mercator basemap'
+                raise ValueError('must specify lat_1,lon_1 and lat_2,lon_2 for Oblique Mercator basemap')
             projparams['lat_1'] = lat_1
             projparams['lon_1'] = lon_1
             projparams['lat_2'] = lat_2
@@ -646,15 +645,15 @@ class Basemap(object):
             #    raise ValueError, 'cannot specify map region with width and height keywords for this projection, please specify lat/lon values of corners'
             if not using_corners:
                 if width is None or height is None:
-                    raise ValueError, 'must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters'
+                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
                 if lon_0 is None or lat_0 is None:
-                    raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'aeqd':
             if lat_0 is None or lon_0 is None:
-                raise ValueError, 'must specify lat_0 and lon_0 for Azimuthal Equidistant basemap'
+                raise ValueError('must specify lat_0 and lon_0 for Azimuthal Equidistant basemap')
             if not using_corners:
                 if width is None or height is None:
                     self._fulldisk = True
@@ -665,7 +664,7 @@ class Basemap(object):
                 else:
                     self._fulldisk = False
                 if lon_0 is None or lat_0 is None:
-                    raise ValueError, 'must specify lon_0 and lat_0 when using width, height to specify projection region'
+                    raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
                 if not self._fulldisk:
                     llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
@@ -695,7 +694,7 @@ class Basemap(object):
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
             if width is not None or height is not None:
-                print 'warning: width and height keywords ignored for %s projection' % _projnames[self.projection]
+                sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
         else:
             raise ValueError(_unsupported_projection % projection)
 
@@ -723,7 +722,7 @@ class Basemap(object):
             self.srs = proj._proj4.pjinitstring
         else:
             pjargs = []
-            for key,value in self.projparams.iteritems():
+            for key,value in self.projparams.items():
                 # 'cyl' projection translates to 'eqc' in PROJ.4
                 if projection == 'cyl' and key == 'proj':
                     value = 'eqc'
@@ -779,7 +778,7 @@ class Basemap(object):
             elif resolution == 'f':
                 area_thresh = 1.
             else:
-                raise ValueError, "boundary resolution must be one of 'c','l','i','h' or 'f'"
+                raise ValueError("boundary resolution must be one of 'c','l','i','h' or 'f'")
         self.area_thresh = area_thresh
         # define map boundary polygon (in lat/lon coordinates)
         self._boundarypolyll, self._boundarypolyxy = self._getmapboundary()
@@ -828,7 +827,7 @@ class Basemap(object):
             # also, split coastline segments that jump across entire plot.
             coastsegs = []
             for seg in self.coastsegs:
-                x, y = zip(*seg)
+                x, y = list(zip(*seg))
                 self.coastpolygons.append((x,y))
                 x = np.array(x,np.float64); y = np.array(y,np.float64)
                 xd = (x[1:]-x[0:-1])**2
@@ -841,8 +840,8 @@ class Basemap(object):
                     ind.append(len(xd))
                     for i in ind:
                         # don't add empty lists.
-                        if len(range(iprev,i)):
-                            coastsegs.append(zip(x[iprev:i],y[iprev:i]))
+                        if len(list(range(iprev,i))):
+                            coastsegs.append(list(zip(x[iprev:i],y[iprev:i])))
                         iprev = i
                 else:
                     coastsegs.append(seg)
@@ -854,7 +853,7 @@ class Basemap(object):
         if self.resolution is not None and len(self.coastpolygons) > 0:
             #self.islandinlakepolygons=[]
             #self.lakeinislandinlakepolygons=[]
-            x, y = zip(*self.coastpolygons)
+            x, y = list(zip(*self.coastpolygons))
             for x,y,type in zip(x,y,self.coastpolygontypes):
                 b = np.asarray([x,y]).T
                 if type == 1: self.landpolygons.append(_geoslib.Polygon(b))
@@ -923,7 +922,7 @@ class Basemap(object):
             bdatfile = open(os.path.join(basemap_datadir,name+'_'+self.resolution+'.dat'),'rb')
             bdatmetafile = open(os.path.join(basemap_datadir,name+'meta_'+self.resolution+'.dat'),'r')
         except:
-            raise IOError, msg
+            raise IOError(msg)
         polygons = []
         polygon_types = []
         # coastlines are polygons, other boundaries are line segments.
@@ -1058,7 +1057,7 @@ class Basemap(object):
                                 # transformation from lat/lon to
                                 # map projection coordinates.
                                 bx, by = self(blons, blats)
-                                polygons.append(zip(bx,by))
+                                polygons.append(list(zip(bx,by)))
                                 polygon_types.append(type)
                 # if map boundary polygon is not valid in lat/lon
                 # coordinates, compute intersection between map
@@ -1088,7 +1087,7 @@ class Basemap(object):
                         # outside map projection region are eliminated
                         # with the above step, so we're done.
                         if self.projection in ['ortho','gnom','nsper']:
-                            polygons.append(zip(bx,by))
+                            polygons.append(list(zip(bx,by)))
                             polygon_types.append(type)
                             continue
                     # create a GEOS geometry object.
@@ -1128,7 +1127,7 @@ class Basemap(object):
                                 b[:,0], b[:,1] = maptran(b[:,0], b[:,1], inverse=True)
                                 # orthographic/gnomonic/nsper.
                                 b[:,0], b[:,1]= self(b[:,0], b[:,1])
-                            polygons.append(zip(b[:,0],b[:,1]))
+                            polygons.append(list(zip(b[:,0],b[:,1])))
                             polygon_types.append(type)
         return polygons, polygon_types
 
@@ -1321,7 +1320,7 @@ class Basemap(object):
             lons = np.array(lons1+lons2+lons3+lons4,np.float64)
             lats = np.array(lats1+lats2+lats3+lats4,np.float64)
             x, y = self(lons,lats)
-            xy = zip(x,y)
+            xy = list(zip(x,y))
             limb = Polygon(xy,edgecolor=color,linewidth=linewidth)
             ax.add_patch(limb)
             if fill_color is None:
@@ -1337,7 +1336,7 @@ class Basemap(object):
             try:
                 ax.frame.set_linewidth(linewidth)
             except AttributeError:
-                for spine in ax.spines.itervalues():
+                for spine in ax.spines.values():
                     spine.set_linewidth(linewidth)
             if self.projection not in ['geos','ortho','nsper']:
                 if fill_color is not None:
@@ -1345,7 +1344,7 @@ class Basemap(object):
                 try:
                     ax.frame.set_edgecolor(color)
                 except AttributeError:
-                    for spine in ax.spines.itervalues():
+                    for spine in ax.spines.values():
                         spine.set_edgecolor(color)
                 ax.set_frame_on(True)
                 # FIXME?  should zorder be set separately for edge and background?
@@ -1354,14 +1353,14 @@ class Basemap(object):
                     try:
                         ax.frame.set_zorder(zorder)
                     except AttributeError:
-                        for spine in ax.spines.itervalues():
+                        for spine in ax.spines.values():
                             spine.set_zorder(zorder)
             else:
                 # use axesPatch for fill_color, frame for border line props.
                 try:
                     ax.frame.set_edgecolor(color)
                 except AttributeError:
-                    for spine in ax.spines.itervalues():
+                    for spine in ax.spines.values():
                         spine.set_edgecolor(color)
                 ax.set_frame_on(True)
                 # FIXME?  should zorder be set separately for edge and background?
@@ -1370,7 +1369,7 @@ class Basemap(object):
                     try:
                         ax.frame.set_zorder(zorder)
                     except AttributeError:
-                        for spine in ax.spines.itervalues():
+                        for spine in ax.spines.values():
                             spine.set_zorder(zorder)
                 # for geos or ortho projections, also
                 # draw and fill map projection limb, clipped
@@ -1414,7 +1413,7 @@ class Basemap(object):
         returns a list of matplotlib.patches.Polygon objects.
         """
         if self.resolution is None:
-            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
+            raise AttributeError('there are no boundary datasets associated with this Basemap instance')
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
         # get axis background color.
@@ -1442,7 +1441,7 @@ class Basemap(object):
             #hasp3 = np.sum(test1*test4)
             #if not hasp1 or not hasp2 or not hasp3 or not hasp4:
             if 1:
-                xy = zip(xa.tolist(),ya.tolist())
+                xy = list(zip(xa.tolist(),ya.tolist()))
                 if self.coastpolygontypes[npoly] not in [2,4]:
                     poly = Polygon(xy,facecolor=color,edgecolor=color,linewidth=0)
                 else: # lakes filled with background color by default
@@ -1480,7 +1479,7 @@ class Basemap(object):
         returns a matplotlib.patches.LineCollection object.
         """
         if self.resolution is None:
-            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
+            raise AttributeError('there are no boundary datasets associated with this Basemap instance')
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
         coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
@@ -1516,7 +1515,7 @@ class Basemap(object):
         returns a matplotlib.patches.LineCollection object.
         """
         if self.resolution is None:
-            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
+            raise AttributeError('there are no boundary datasets associated with this Basemap instance')
         # read in country line segments, only keeping those that
         # intersect map boundary polygon.
         if not hasattr(self,'cntrysegs'):
@@ -1556,7 +1555,7 @@ class Basemap(object):
         returns a matplotlib.patches.LineCollection object.
         """
         if self.resolution is None:
-            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
+            raise AttributeError('there are no boundary datasets associated with this Basemap instance')
         # read in state line segments, only keeping those that
         # intersect map boundary polygon.
         if not hasattr(self,'statesegs'):
@@ -1596,7 +1595,7 @@ class Basemap(object):
         returns a matplotlib.patches.LineCollection object.
         """
         if self.resolution is None:
-            raise AttributeError, 'there are no boundary datasets associated with this Basemap instance'
+            raise AttributeError('there are no boundary datasets associated with this Basemap instance')
         # read in river line segments, only keeping those that
         # intersect map boundary polygon.
         if not hasattr(self,'riversegs'):
@@ -1697,6 +1696,11 @@ class Basemap(object):
         vertices. If ``drawbounds=True`` a
         matplotlib.patches.LineCollection object is appended to the tuple.
         """
+        try:
+            import dbflib
+            from shapelib import ShapeFile
+        except ImportError:
+            raise ImportError('pyshapelib not installed')
         if not os.path.exists('%s.shp'%shapefile):
             raise IOError('cannot locate %s.shp'%shapefile)
         if not os.path.exists('%s.shx'%shapefile):
@@ -1708,14 +1712,14 @@ class Basemap(object):
         try:
             shp = ShapeFile(shapefile)
         except:
-            raise IOError, 'error reading shapefile %s.shp' % shapefile
+            raise IOError('error reading shapefile %s.shp' % shapefile)
         try:
             dbf = dbflib.open(shapefile)
         except:
-            raise IOError, 'error reading dbffile %s.dbf' % shapefile
+            raise IOError('error reading dbffile %s.dbf' % shapefile)
         info = shp.info()
         if info[1] not in [1,3,5,8]:
-            raise ValueError, 'readshapefile can only handle 2D shape types'
+            raise ValueError('readshapefile can only handle 2D shape types')
         msg=dedent("""
         shapefile must have lat/lon vertices  - it looks like this one has vertices
         in map projection coordinates. You can convert the shapefile to geographic
@@ -1727,12 +1731,12 @@ class Basemap(object):
             for nelement in range(nelements):
                 shp_object = shp.read_object(nelement)
                 verts = shp_object.vertices()
-                lons, lats = zip(*verts)
+                lons, lats = list(zip(*verts))
                 if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
-                    raise ValueError,msg
+                    raise ValueError(msg)
                 if len(verts) > 1: # MultiPoint
                     x,y = self(lons, lats)
-                    coords.append(zip(x,y))
+                    coords.append(list(zip(x,y)))
                 else: # single Point
                     x,y = self(lons[0], lats[0])
                     coords.append((x,y))
@@ -1747,11 +1751,11 @@ class Basemap(object):
                 verts = shp_object.vertices()
                 rings = len(verts)
                 for ring in range(rings):
-                    lons, lats = zip(*verts[ring])
+                    lons, lats = list(zip(*verts[ring]))
                     if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
-                        raise ValueError,msg
+                        raise ValueError(msg)
                     x, y = self(lons, lats)
-                    shpsegs.append(zip(x,y))
+                    shpsegs.append(list(zip(x,y)))
                     if ring == 0:
                         shapedict = dbf.read_record(npoly)
                     # add information about ring number to dictionary.
@@ -1923,7 +1927,7 @@ class Basemap(object):
         # parallels not labelled for fulldisk orthographic or geostationary
         if self.projection in ['ortho','geos','nsper','vandg','aeqd'] and max(labels):
             if self.projection == 'vandg' or self._fulldisk:
-                print 'Warning: Cannot label parallels on %s basemap' % _projnames[self.projection]
+                sys.stdout.write('Warning: Cannot label parallels on %s basemap' % _projnames[self.projection])
                 labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
@@ -1963,7 +1967,7 @@ class Basemap(object):
                         lons,lats = self(xx,yy,inverse=True)
                         lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
-                    raise ValueError,'inverse transformation undefined - please adjust the map projection region'
+                    raise ValueError('inverse transformation undefined - please adjust the map projection region')
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
             else:
@@ -1976,7 +1980,7 @@ class Basemap(object):
                     lons,lats = self(xx,self.urcrnry*np.ones(xx.shape,np.float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
-                    raise ValueError,'inverse transformation undefined - please adjust the map projection region'
+                    raise ValueError('inverse transformation undefined - please adjust the map projection region')
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
             for lat in circles:
@@ -1996,9 +2000,9 @@ class Basemap(object):
                                 latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
                         else:
                             if labelstyle=='+/-':
-                                latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                                latlabstr = '-%s\N{DEGREE SIGN}'%fmt
                             else:
-                                latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
+                                latlabstr = '%s\N{DEGREE SIGN}S'%fmt
                         latlab = latlabstr%np.fabs(lat)
                     elif lat>0:
                         if rcParams['text.usetex']:
@@ -2008,15 +2012,15 @@ class Basemap(object):
                                 latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
                         else:
                             if labelstyle=='+/-':
-                                latlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                                latlabstr = '+%s\N{DEGREE SIGN}'%fmt
                             else:
-                                latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
+                                latlabstr = '%s\N{DEGREE SIGN}N'%fmt
                         latlab = latlabstr%lat
                     else:
                         if rcParams['text.usetex']:
                             latlabstr = r'${%s\/^{\circ}}$'%fmt
                         else:
-                            latlabstr = u'%s\N{DEGREE SIGN}'%fmt
+                            latlabstr = '%s\N{DEGREE SIGN}'%fmt
                         latlab = latlabstr%lat
                 # parallels can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
@@ -2068,7 +2072,7 @@ class Basemap(object):
 
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
-        keys = linecolls.keys(); vals = linecolls.values()
+        keys = list(linecolls.keys()); vals = list(linecolls.values())
         for k,v in zip(keys,vals):
             if v == ([], []): 
                 del linecolls[k]
@@ -2207,14 +2211,14 @@ class Basemap(object):
         # meridians not labelled for sinusoidal, hammer, mollweide,
         # VanDerGrinten or full-disk orthographic/geostationary.
         if self.projection in ['sinu','moll','hammer','vandg'] and max(labels):
-            print 'Warning: Cannot label meridians on %s basemap' % _projnames[self.projection]
+            sys.stdout.write('Warning: Cannot label meridians on %s basemap' % _projnames[self.projection])
             labels = [0,0,0,0]
         if self.projection in ['ortho','geos','nsper','aeqd'] and max(labels):
             if self._fulldisk:
-                print dedent(
+                sys.stdout.write(dedent(
                 """'Warning: Cannot label meridians on full-disk
                 Geostationary, Orthographic or Azimuthal equidistant basemap
-                """)
+                """))
                 labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
@@ -2238,7 +2242,7 @@ class Basemap(object):
                     lons,lats = self(self.urcrnrx*np.ones(yy.shape,np.float32),yy,inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
-                    raise ValueError,'inverse transformation undefined - please adjust the map projection region'
+                    raise ValueError('inverse transformation undefined - please adjust the map projection region')
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
             else:
@@ -2254,7 +2258,7 @@ class Basemap(object):
                     lons,lats = self(xx,self.urcrnry*np.ones(xx.shape,np.float32),inverse=True)
                     lons = lons.tolist(); lats = lats.tolist()
                 if max(lons) > 1.e20 or max(lats) > 1.e20:
-                    raise ValueError,'inverse transformation undefined - please adjust the map projection region'
+                    raise ValueError('inverse transformation undefined - please adjust the map projection region')
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
             for lon in meridians:
@@ -2276,9 +2280,9 @@ class Basemap(object):
                                 lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
                         else:
                             if labelstyle=='+/-':
-                                lonlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                                lonlabstr = '-%s\N{DEGREE SIGN}'%fmt
                             else:
-                                lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
+                                lonlabstr = '%s\N{DEGREE SIGN}W'%fmt
                         lonlab = lonlabstr%np.fabs(lon2-360)
                     elif lon2<180 and lon2 != 0:
                         if rcParams['text.usetex']:
@@ -2288,15 +2292,15 @@ class Basemap(object):
                                 lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
                         else:
                             if labelstyle=='+/-':
-                                lonlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                                lonlabstr = '+%s\N{DEGREE SIGN}'%fmt
                             else:
-                                lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
+                                lonlabstr = '%s\N{DEGREE SIGN}E'%fmt
                         lonlab = lonlabstr%lon2
                     else:
                         if rcParams['text.usetex']:
                             lonlabstr = r'${%s\/^{\circ}}$'%fmt
                         else:
-                            lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
+                            lonlabstr = '%s\N{DEGREE SIGN}'%fmt
                         lonlab = lonlabstr%lon2
                 # meridians can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
@@ -2320,7 +2324,7 @@ class Basemap(object):
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         # remove empty values from linecolls dictionary
-        keys = linecolls.keys(); vals = linecolls.values()
+        keys = list(linecolls.keys()); vals = list(linecolls.values())
         for k,v in zip(keys,vals):
             if v == ([], []): 
                 del linecolls[k]
@@ -2473,16 +2477,16 @@ class Basemap(object):
         delon = lons[1:]-lons[0:-1]
         delat = lats[1:]-lats[0:-1]
         if min(delon) < 0. or min(delat) < 0.:
-            raise ValueError, 'lons and lats must be increasing!'
+            raise ValueError('lons and lats must be increasing!')
         # check that lons in -180,180 for non-cylindrical projections.
         if self.projection not in _cylproj:
             lonsa = np.array(lons)
             count = np.sum(lonsa < -180.00001) + np.sum(lonsa > 180.00001)
             if count > 1:
-                raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
+                raise ValueError('grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)')
             # allow for wraparound point to be outside.
             elif count == 1 and math.fabs(lons[-1]-lons[0]-360.) > 1.e-4:
-                raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
+                raise ValueError('grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)')
         if returnxy:
             lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         else:
@@ -2545,16 +2549,16 @@ class Basemap(object):
         delon = lons[1:]-lons[0:-1]
         delat = lats[1:]-lats[0:-1]
         if min(delon) < 0. or min(delat) < 0.:
-            raise ValueError, 'lons and lats must be increasing!'
+            raise ValueError('lons and lats must be increasing!')
         # check that lons in -180,180 for non-cylindrical projections.
         if self.projection not in _cylproj:
             lonsa = np.array(lons)
             count = np.sum(lonsa < -180.00001) + np.sum(lonsa > 180.00001)
             if count > 1:
-                raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
+                raise ValueError('grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)')
             # allow for wraparound point to be outside.
             elif count == 1 and math.fabs(lons[-1]-lons[0]-360.) > 1.e-4:
-                raise ValueError,'grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)'
+                raise ValueError('grid must be shifted so that lons are monotonically increasing and fit in range -180,+180 (see shiftgrid function)')
         lonsout, latsout, x, y = self.makegrid(nx,ny,returnxy=True)
         # interpolate to map projection coordinates.
         uin = interp(uin,lons,lats,lonsout,latsout,checkbounds=checkbounds,order=order,masked=masked)
@@ -2784,7 +2788,7 @@ class Basemap(object):
         ax, plt = self._ax_plt_from_kw(kwargs)
         kwargs['extent']=(self.llcrnrx,self.urcrnrx,self.llcrnry,self.urcrnry)
         # use origin='lower', unless overridden.
-        if not kwargs.has_key('origin'):
+        if 'origin' not in kwargs:
             kwargs['origin']='lower'
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -2918,7 +2922,7 @@ class Basemap(object):
         if h is not None:
             ax.hold(h)
         try:
-            if kwargs.has_key('tri') and kwargs['tri']:
+            if 'tri' in kwargs and kwargs['tri']:
                 try:
                     import matplotlib.tri as tri
                 except:
@@ -2955,13 +2959,13 @@ class Basemap(object):
                     xs = xl[:]
                     xs.sort()
                     if xl != xs:
-                        print dedent("""
+                        sys.stdout.write(dedent("""
                              WARNING: x coordinate not montonically increasing - contour plot
                              may not be what you expect.  If it looks odd, your can either
                              adjust the map projection region to be consistent with your data, or
                              (if your data is on a global lat/lon grid) use the shiftgrid
                              function to adjust the data to be consistent with the map projection
-                             region (see examples/contour_demo.py).""")
+                             region (see examples/contour_demo.py)."""))
                 # mask for points outside projection limb.
                 xymask = np.logical_or(np.greater(x,1.e20),np.greater(y,1.e20))
                 data = ma.asarray(data)
@@ -3003,7 +3007,7 @@ class Basemap(object):
         if h is not None:
             ax.hold(h)
         try:
-            if kwargs.has_key('tri') and kwargs['tri']:
+            if 'tri' in kwargs and kwargs['tri']:
                 try:
                     import matplotlib.tri as tri
                 except:
@@ -3040,13 +3044,13 @@ class Basemap(object):
                     xs = xl[:]
                     xs.sort()
                     if xl != xs:
-                        print dedent("""
+                        sys.stdout.write(dedent("""
                              WARNING: x coordinate not montonically increasing - contour plot
                              may not be what you expect.  If it looks odd, your can either
                              adjust the map projection region to be consistent with your data, or
                              (if your data is on a global lat/lon grid) use the shiftgrid
                              function to adjust the data to be consistent with the map projection
-                             region (see examples/contour_demo.py).""")
+                             region (see examples/contour_demo.py)."""))
                 # mask for points outside projection limb.
                 xymask = np.logical_or(np.greater(x,1.e20),np.greater(y,1.e20))
                 # mask outside projection region (workaround for contourf bug?)
@@ -3343,7 +3347,7 @@ class Basemap(object):
         else:
             newfile = False
         if file.startswith('http'):
-            from urllib import urlretrieve
+            from urllib.request import urlretrieve
             self._bm_file, headers = urlretrieve(file)
         else:
             self._bm_file = file
@@ -3516,18 +3520,18 @@ class Basemap(object):
         lon_0 = ((lon0+360) % 360) - 360
         if lat0>0:
             if lon>0:
-                lonlatstr = u'%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
+                lonlatstr = '%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
             elif lon<0:
-                lonlatstr = u'%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+                lonlatstr = '%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
             else:
-                lonlatstr = u'%g\N{DEGREE SIGN}, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+                lonlatstr = '%g\N{DEGREE SIGN}, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
         else:
             if lon>0:
-                lonlatstr = u'%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
+                lonlatstr = '%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
             elif lon<0:
-                lonlatstr = u'%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+                lonlatstr = '%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
             else:
-                lonlatstr = u'%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}' % (lat0,lon_0)
+                lonlatstr = '%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}' % (lat0,lon_0)
         # left edge of scale
         lon1,lat1 = self(x0-length/2,y0,inverse=True)
         x1,y1 = self(lon1,lat1)
@@ -3653,7 +3657,7 @@ class Basemap(object):
 
         returns a matplotlib.contour.ContourSet instance.
         """
-        from solar import daynight_grid
+        from .solar import daynight_grid
         # make sure date is utc.
         if date.utcoffset() is not None:
             raise ValueError('datetime instance must be UTC')
@@ -3791,9 +3795,9 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
     """
     # xin and yin must be monotonically increasing.
     if xin[-1]-xin[0] < 0 or yin[-1]-yin[0] < 0:
-        raise ValueError, 'xin and yin must be increasing!'
+        raise ValueError('xin and yin must be increasing!')
     if xout.shape != yout.shape:
-        raise ValueError, 'xout and yout must have same shape!'
+        raise ValueError('xout and yout must have same shape!')
     # check that xout,yout are
     # within region defined by xin,yin.
     if checkbounds:
@@ -3801,7 +3805,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
            xout.max() > xin.max() or \
            yout.min() < yin.min() or \
            yout.max() > yin.max():
-            raise ValueError, 'yout or xout outside range of yin or xin'
+            raise ValueError('yout or xout outside range of yin or xin')
     # compute grid coordinates of output grid.
     delx = xin[1:]-xin[0:-1]
     dely = yin[1:]-yin[0:-1]
@@ -3867,7 +3871,7 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         coords = [ycoords,xcoords]
         dataout = map_coordinates(datain,coords,order=3,mode='nearest')
     else:
-        raise ValueError,'order keyword must be 0, 1 or 3'
+        raise ValueError('order keyword must be 0, 1 or 3')
     if masked and isinstance(masked,bool):
         dataout = ma.masked_array(dataout)
         newmask = ma.mask_or(ma.getmask(dataout), xymask)
@@ -3912,7 +3916,7 @@ def shiftgrid(lon0,datain,lonsin,start=True,cyclic=360.0):
         # If cyclic, remove the duplicate point
         start_idx = 1
     if lon0 < lonsin[0] or lon0 > lonsin[-1]:
-        raise ValueError, 'lon0 outside of range of lonsin'
+        raise ValueError('lon0 outside of range of lonsin')
     i0 = np.argmin(np.fabs(lonsin-lon0))
     i0_shift = len(lonsin)-i0
     if hasattr(datain,'mask'):
@@ -3967,7 +3971,7 @@ def _choosecorners(width,height,**kwargs):
     corners = llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat
     # test for invalid projection points on output
     if llcrnrlon > 1.e20 or urcrnrlon > 1.e20:
-        raise ValueError, 'width and/or height too large for this projection, try smaller values'
+        raise ValueError('width and/or height too large for this projection, try smaller values')
     else:
         return corners
 

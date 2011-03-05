@@ -5,7 +5,7 @@ __version__ = "0.2"
 
 # need some python C API functions for strings.
 cdef extern from "Python.h":
-    object PyString_FromString(char *)
+    object PyBytes_FromString(char *)
 
 # taken from numpy.pxi in numpy 1.0rc2.
 cdef extern from "numpy/arrayobject.h":
@@ -100,8 +100,8 @@ cdef extern from "geos_c.h":
     int GEOSCoordSeq_getSize(GEOSCoordSeq *s, unsigned int *size)
 
 cdef void notice_h(char *fmt, char*msg):
-    format = PyString_FromString(fmt)
-    message = PyString_FromString(msg)
+    format = PyBytes_FromString(fmt)
+    message = PyBytes_FromString(msg)
     try:
         warn_msg = format % message
     except:
@@ -109,8 +109,8 @@ cdef void notice_h(char *fmt, char*msg):
     sys.stdout.write('GEOS_NOTICE: %s\n' % warn_msg)
 
 cdef void error_h(char *fmt, char*msg):
-    format = PyString_FromString(fmt)
-    message = PyString_FromString(msg)
+    format = PyBytes_FromString(fmt)
+    message = PyBytes_FromString(msg)
     try:
         warn_msg = format % message
     except:
@@ -119,7 +119,7 @@ cdef void error_h(char *fmt, char*msg):
 
 # check library version
 cdef geos_version():
-    return PyString_FromString(GEOSversion())
+    return PyBytes_FromString(GEOSversion())
 __geos_version__ = geos_version() # module variable.
 __geos_major_version__ = GEOS_VERSION_MAJOR
 #if __geos_version__ != "2.2.3-CAPI-1.1.1":
@@ -142,7 +142,7 @@ cdef class BaseGeometry:
             return False
 
     def geom_type(self):
-        return PyString_FromString(GEOSGeomType(self._geom))
+        return PyBytes_FromString(GEOSGeomType(self._geom))
 
     def within(self, BaseGeometry geom):
         cdef GEOSGeom *g1, *g2
@@ -182,7 +182,7 @@ cdef class BaseGeometry:
                 b = _get_coords(gout)
                 p = LineString(b)
             else:
-                type = PyString_FromString(GEOSGeomType(g3))
+                type = PyBytes_FromString(GEOSGeomType(g3))
                 raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
             GEOSGeom_destroy(g3)
             return p
@@ -231,7 +231,7 @@ cdef class BaseGeometry:
                 p = LineString(b)
                 pout.append(p)
         else:
-            type = PyString_FromString(GEOSGeomType(g3))
+            type = PyBytes_FromString(GEOSGeomType(g3))
             raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
         GEOSGeom_destroy(g3)
         return pout

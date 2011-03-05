@@ -1,5 +1,5 @@
 import numpy as np
-import pyproj
+from mpl_toolkits.basemap import pyproj
 import math
 from matplotlib.cbook import dedent
 
@@ -368,32 +368,33 @@ if __name__ == "__main__":
     lrcornerlon, lrcornerlat = awips221(lrcornerx, lrcornery, inverse=True)
     urcornerlon, urcornerlat = awips221(urcornerx, urcornery, inverse=True)
     ulcornerlon, ulcornerlat = awips221(ulcornerx, ulcornery, inverse=True)
-    print '4 corners of AWIPS grid 221:'
-    print llcornerlon, llcornerlat
-    print lrcornerlon, lrcornerlat
-    print urcornerlon, urcornerlat
-    print ulcornerlon, ulcornerlat
-    print 'from GRIB docs'
-    print '(see http://www.nco.ncep.noaa.gov/pmb/docs/on388/tableb.html)'
-    print '   -145.5  1.0'
-    print '   -68.318 0.897'
-    print '   -2.566 46.352'
-    print '   148.639 46.635'
+    import sys
+    sys.stdout.write('4 corners of AWIPS grid 221:\n')
+    sys.stdout.write('%s %s\n' % llcornerlon, llcornerlat)
+    sys.stdout.write('%s %s\n' % lrcornerlon, lrcornerlat)
+    sys.stdout.write('%s %s\n' % urcornerlon, urcornerlat)
+    sys.stdout.write('%s %s\n' % ulcornerlon, ulcornerlat)
+    sys.stdout.write('from GRIB docs\n')
+    sys.stdout.write('(http://www.nco.ncep.noaa.gov/pmb/docs/on388/tableb.html)\n')
+    sys.stdout.write('   -145.5  1.0\n')
+    sys.stdout.write('   -68.318 0.897\n')
+    sys.stdout.write('   -2.566 46.352\n')
+    sys.stdout.write('   148.639 46.635\n')
     # compute lons and lats for the whole AWIPS grid 221 (377x249).
     import time; t1 = time.clock()
     lons, lats = awips221.makegrid(nx,ny)
     t2 = time.clock()
-    print 'compute lats/lons for all points on AWIPS 221 grid (%sx%s)' %(nx,ny)
-    print 'max/min lons'
-    print min(np.ravel(lons)),max(np.ravel(lons))
-    print 'max/min lats'
-    print min(np.ravel(lats)),max(np.ravel(lats))
-    print 'took',t2-t1,'secs'
-    print 'Same thing but with a single 3-D array'
+    sys.stdout.write('compute lats/lons for all points on AWIPS 221 grid (%sx%s)\n' %(nx,ny))
+    sys.stdout.write('max/min lons\n')
+    sys.stdout.write('%s %s\n' % min(np.ravel(lons)),max(np.ravel(lons)))
+    sys.stdout.write('max/min lats\n')
+    sys.stdout.write('%s %s\n' % min(np.ravel(lats)),max(np.ravel(lats)))
+    sys.stdout.write('took %s secs\n' % t2-t1)
+    sys.stdout.write('Same thing but with a single 3-D array\n')
     t1 = time.clock()
     lonlat, xy = awips221.makegrid3d(nx,ny, returnxy=True)
     t2 = time.clock()
-    print 'took',t2-t1,'secs'
+    sys.stdout.write('took %s secs\n' % t2-t1)
 
     assert (lons==lonlat[...,0]).all(), "The longitudes are different"
     assert (lats==lonlat[...,1]).all(), "The latitudes are different"

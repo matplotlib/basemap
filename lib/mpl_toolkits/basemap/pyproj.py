@@ -45,8 +45,9 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
 NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. """
 
-from . import _proj
-from . import _geod
+#from . import _proj
+#from . import _geod
+import _proj, _geod
 _Proj = _proj.Proj
 _Geod = _geod.Geod
 _transform = _proj._transform
