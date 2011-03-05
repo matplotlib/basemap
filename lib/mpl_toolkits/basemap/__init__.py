@@ -2001,9 +2001,15 @@ class Basemap(object):
                                 latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
                         else:
                             if labelstyle=='+/-':
-                                latlabstr = '-%s\N{DEGREE SIGN}'%fmt
+                                try:
+                                    latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                                except SyntaxError:
+                                    latlabstr = '-%s\N{DEGREE SIGN}'%fmt
                             else:
-                                latlabstr = '%s\N{DEGREE SIGN}S'%fmt
+                                try:
+                                    latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
+                                except SyntaxError:
+                                    latlabstr = '-%s\N{DEGREE SIGN}'%fmt
                         latlab = latlabstr%np.fabs(lat)
                     elif lat>0:
                         if rcParams['text.usetex']:
@@ -2013,15 +2019,24 @@ class Basemap(object):
                                 latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
                         else:
                             if labelstyle=='+/-':
-                                latlabstr = '+%s\N{DEGREE SIGN}'%fmt
+                                try:
+                                    latlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                                except SyntaxError:
+                                    latlabstr = '+%s\N{DEGREE SIGN}'%fmt
                             else:
-                                latlabstr = '%s\N{DEGREE SIGN}N'%fmt
+                                try:
+                                    latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
+                                except SyntaxError:
+                                    latlabstr = '%s\N{DEGREE SIGN}N'%fmt
                         latlab = latlabstr%lat
                     else:
                         if rcParams['text.usetex']:
                             latlabstr = r'${%s\/^{\circ}}$'%fmt
                         else:
-                            latlabstr = '%s\N{DEGREE SIGN}'%fmt
+                            try:
+                                latlabstr = u'%s\N{DEGREE SIGN}'%fmt
+                            except SyntaxError:
+                                latlabstr = '%s\N{DEGREE SIGN}'%fmt
                         latlab = latlabstr%lat
                 # parallels can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
@@ -2281,9 +2296,15 @@ class Basemap(object):
                                 lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
                         else:
                             if labelstyle=='+/-':
-                                lonlabstr = '-%s\N{DEGREE SIGN}'%fmt
+                                try:
+                                    lonlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                                except SyntaxError:
+                                    lonlabstr = '-%s\N{DEGREE SIGN}'%fmt
                             else:
-                                lonlabstr = '%s\N{DEGREE SIGN}W'%fmt
+                                try:
+                                    lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
+                                except SyntaxError:
+                                    lonlabstr = '%s\N{DEGREE SIGN}W'%fmt
                         lonlab = lonlabstr%np.fabs(lon2-360)
                     elif lon2<180 and lon2 != 0:
                         if rcParams['text.usetex']:
@@ -2293,15 +2314,24 @@ class Basemap(object):
                                 lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
                         else:
                             if labelstyle=='+/-':
-                                lonlabstr = '+%s\N{DEGREE SIGN}'%fmt
+                                try:
+                                    lonlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                                except SyntaxError:
+                                    lonlabstr = '+%s\N{DEGREE SIGN}'%fmt
                             else:
-                                lonlabstr = '%s\N{DEGREE SIGN}E'%fmt
+                                try:
+                                    lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
+                                except SyntaxError:
+                                    lonlabstr = '%s\N{DEGREE SIGN}E'%fmt
                         lonlab = lonlabstr%lon2
                     else:
                         if rcParams['text.usetex']:
                             lonlabstr = r'${%s\/^{\circ}}$'%fmt
                         else:
-                            lonlabstr = '%s\N{DEGREE SIGN}'%fmt
+                            try:
+                                lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
+                            except SyntaxError:
+                                lonlabstr = '%s\N{DEGREE SIGN}'%fmt
                         lonlab = lonlabstr%lon2
                 # meridians can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
@@ -3521,18 +3551,36 @@ class Basemap(object):
         lon_0 = ((lon0+360) % 360) - 360
         if lat0>0:
             if lon>0:
-                lonlatstr = '%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
+                try:
+                    lonlatstr = u'%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
+                except SyntaxError: # python 3
+                    lonlatstr = '%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
             elif lon<0:
-                lonlatstr = '%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+                try:
+                    lonlatstr = u'%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+                except SyntaxError: # python 3
+                    lonlatstr = '%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
             else:
-                lonlatstr = '%g\N{DEGREE SIGN}, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+                try:
+                    lonlatstr = u'%g\N{DEGREE SIGN}, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+                except SyntaxError: # python 3
+                    lonlatstr = '%g\N{DEGREE SIGN}, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
         else:
             if lon>0:
-                lonlatstr = '%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
+                try:
+                    lonlatstr = u'%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
+                except SyntaxError: # python 3
+                    lonlatstr = '%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
             elif lon<0:
-                lonlatstr = '%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+                try:
+                    lonlatstr = u'%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+                except SyntaxError: # python 3
+                    lonlatstr = '%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
             else:
-                lonlatstr = '%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}' % (lat0,lon_0)
+                try:
+                    lonlatstr = u'%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}' % (lat0,lon_0)
+                except SyntaxError: # python 3
+                    lonlatstr = '%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}' % (lat0,lon_0)
         # left edge of scale
         lon1,lat1 = self(x0-length/2,y0,inverse=True)
         x1,y1 = self(lon1,lat1)
