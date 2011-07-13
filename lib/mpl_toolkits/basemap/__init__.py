@@ -3237,9 +3237,9 @@ class Basemap(object):
                 # stack grids side-by-side (in longitiudinal direction), so
                 # any range of longitudes may be plotted on a world map.
                 lsmask_lons = \
-                np.concatenate((lsmask_lons,lsmask_lons+360),1)
+                        np.concatenate((lsmask_lons,lsmask_lons[1:]+360),1)
                 lsmask = \
-                np.concatenate((lsmask,lsmask),1)
+                        np.concatenate((lsmask,lsmask[:,1:]),1)
 
         # transform mask to nx x ny regularly spaced native projection grid
         # nx and ny chosen to have roughly the same horizontal
