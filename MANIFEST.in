@@ -87,11 +87,10 @@ include lib/mpl_toolkits/__init__.py
 include lib/mpl_toolkits/basemap/__init__.py
 include lib/mpl_toolkits/basemap/proj.py
 include lib/mpl_toolkits/basemap/pyproj.py
-include lib/mpl_toolkits/basemap/shapelib.py
+include lib/mpl_toolkits/basemap/shapefile.py
 include lib/mpl_toolkits/basemap/cm.py
-include lib/mpl_toolkits/basemap/netcdf.py
-include lib/mpl_toolkits/basemap/pupynere.py
-include lib/mpl_toolkits/basemap/netcdftime.py
+include lib/mpl_toolkits/basemap/solar.py
+include lib/mpl_toolkits/basemap/test.py
 include pyshapelib/README pyshapelib/COPYING pyshapelib/ChangeLog pyshapelib/NEWS
 include pyshapelib/*.i pyshapelib/*.c pyshapelib/*.py pyshapelib/*.h
 include pyshapelib/*.shp pyshapelib/*.shx pyshapelib/*.dbf
