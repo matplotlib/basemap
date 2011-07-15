@@ -3463,6 +3463,24 @@ class Basemap(object):
         else:
             return self.warpimage(image='bluemarble',scale=scale,**kwargs)
 
+    def etopo1(self,ax=None,scale=None,**kwargs):
+        """
+        display etopo1 image (from
+        http://www.ngdc.noaa.gov/mgg/image/globalimages.html)
+        as map background.
+        Default image size is 5400x2700, which can be quite slow and
+        use quite a bit of memory.  The ``scale`` keyword can be used
+        to downsample the image (``scale=0.5`` downsamples to 2700x1350).
+
+        \**kwargs passed on to :meth:`imshow`.
+
+        returns a matplotlib.image.AxesImage instance.
+        """
+        if ax is not None:
+            return self.warpimage(image='etopo1',ax=ax,scale=scale,**kwargs)
+        else:
+            return self.warpimage(image='etopo1',scale=scale,**kwargs)
+
     def warpimage(self,image="bluemarble",scale=None,**kwargs):
         """
         Display an image (filename given by ``image`` keyword) as a map background.
@@ -3497,6 +3515,10 @@ class Basemap(object):
         # from NASA (http://visibleearth.nasa.gov).
         if image == "bluemarble":
             file = os.path.join(basemap_datadir,'bmng.jpg')
+        # display etopo1 image (from
+        # http://www.ngdc.noaa.gov/mgg/image/globalimages.html)
+        elif image == "etopo1":
+            file = os.path.join(basemap_datadir,'etopo1.jpg')
         else:
             file = image
         # if image is same as previous invocation, used cached data.
@@ -3506,7 +3528,7 @@ class Basemap(object):
         else:
             newfile = False
         if file.startswith('http'):
-            from urllib.request import urlretrieve
+            from urllib import urlretrieve
             self._bm_file, headers = urlretrieve(file)
         else:
             self._bm_file = file
