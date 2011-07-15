@@ -1,4 +1,6 @@
 version 1.0.2 (not yet released)
+           * add etopo1 method (similar to bluemarble, but plots etopo1
+             elevation data as a map background).
            * replace pyshapelib with pure python shapelib.py from
              pyshp.googlecode.com.  Allows full python 3 compatibility.
            * fix doc/conf.py to use inheritance_diagram from Sphinx, not
