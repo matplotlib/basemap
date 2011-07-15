@@ -1,9 +1,11 @@
 version 1.0.2 (not yet released)
+           * replace pyshapelib with pure python shapelib.py from
+             pyshp.googlecode.com.  Allows full python 3 compatibility.
            * fix doc/conf.py to use inheritance_diagram from Sphinx, not
              matplotlib.
            * fix drawlsmask so cylindrical projections work correctly when
              longitude range outside of -180 to 180.
-           * partial python 3 compatibility.
+           * python 3 compatibility.
            * added lic_demo.py to examples (line integral convolution,
              requires scikit.vectorplot).
            * removed deprecated NetCDFFile.

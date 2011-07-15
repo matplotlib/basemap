@@ -1643,6 +1643,159 @@ class Basemap(object):
             else:
                 return 0
 
+    #def readshapefile(self,shapefile,name,drawbounds=True,zorder=None,
+    #                  linewidth=0.5,color='k',antialiased=1,ax=None):
+    #    """
+    #    Read in shape file, optionally draw boundaries on map.
+
+    #    .. note::
+    #      - Assumes shapes are 2D
+    #      - only works for Point, MultiPoint, Polyline and Polygon shapes.
+    #      - vertices/points must be in geographic (lat/lon) coordinates.
+
+    #    Mandatory Arguments:
+
+    #    .. tabularcolumns:: |l|L|
+
+    #    ==============   ====================================================
+    #    Argument         Description
+    #    ==============   ====================================================
+    #    shapefile        path to shapefile components.  Example:
+    #                     shapefile='/home/jeff/esri/world_borders' assumes
+    #                     that world_borders.shp, world_borders.shx and
+    #                     world_borders.dbf live in /home/jeff/esri.
+    #    name             name for Basemap attribute to hold the shapefile
+    #                     vertices or points in map projection
+    #                     coordinates. Class attribute name+'_info' is a list
+    #                     of dictionaries, one for each shape, containing
+    #                     attributes of each shape from dbf file, For
+    #                     example, if name='counties', self.counties
+    #                     will be a list of x,y vertices for each shape in
+    #                     map projection  coordinates and self.counties_info
+    #                     will be a list of dictionaries with shape
+    #                     attributes.  Rings in individual Polygon
+    #                     shapes are split out into separate polygons, and
+    #                     additional keys 'RINGNUM' and 'SHAPENUM' are added
+    #                     to the shape attribute dictionary.
+    #    ==============   ====================================================
+
+    #    The following optional keyword arguments are only relevant for Polyline
+    #    and Polygon shape types, for Point and MultiPoint shapes they are
+    #    ignored.
+
+    #    .. tabularcolumns:: |l|L|
+
+    #    ==============   ====================================================
+    #    Keyword          Description
+    #    ==============   ====================================================
+    #    drawbounds       draw boundaries of shapes (default True).
+    #    zorder           shape boundary zorder (if not specified,
+    #                     default for mathplotlib.lines.LineCollection
+    #                     is used).
+    #    linewidth        shape boundary line width (default 0.5)
+    #    color            shape boundary line color (default black)
+    #    antialiased      antialiasing switch for shape boundaries
+    #                     (default True).
+    #    ax               axes instance (overrides default axes instance)
+    #    ==============   ====================================================
+
+    #    A tuple (num_shapes, type, min, max) containing shape file info
+    #    is returned.
+    #    num_shapes is the number of shapes, type is the type code (one of
+    #    the SHPT* constants defined in the shapelib module, see
+    #    http://shapelib.maptools.org/shp_api.html) and min and
+    #    max are 4-element lists with the minimum and maximum values of the
+    #    vertices. If ``drawbounds=True`` a
+    #    matplotlib.patches.LineCollection object is appended to the tuple.
+    #    """
+    #    try:
+    #        import dbflib
+    #        from shapelib import ShapeFile
+    #    except ImportError:
+    #        raise ImportError('pyshapelib not installed')
+    #    if not os.path.exists('%s.shp'%shapefile):
+    #        raise IOError('cannot locate %s.shp'%shapefile)
+    #    if not os.path.exists('%s.shx'%shapefile):
+    #        raise IOError('cannot locate %s.shx'%shapefile)
+    #    if not os.path.exists('%s.dbf'%shapefile):
+    #        raise IOError('cannot locate %s.dbf'%shapefile)
+    #    # open shapefile, read vertices for each object, convert
+    #    # to map projection coordinates (only works for 2D shape types).
+    #    try:
+    #        shp = ShapeFile(shapefile)
+    #    except:
+    #        raise IOError('error reading shapefile %s.shp' % shapefile)
+    #    try:
+    #        dbf = dbflib.open(shapefile)
+    #    except:
+    #        raise IOError('error reading dbffile %s.dbf' % shapefile)
+    #    info = shp.info()
+    #    if info[1] not in [1,3,5,8]:
+    #        raise ValueError('readshapefile can only handle 2D shape types')
+    #    msg=dedent("""
+    #    shapefile must have lat/lon vertices  - it looks like this one has vertices
+    #    in map projection coordinates. You can convert the shapefile to geographic
+    #    coordinates using the shpproj utility from the shapelib tools
+    #    (http://shapelib.maptools.org/shapelib-tools.html)""")
+    #    if info[1] in [1,8]: # a Point or MultiPoint file.
+    #        coords = []
+    #        nelements = shp.info()[0]
+    #        for nelement in range(nelements):
+    #            shp_object = shp.read_object(nelement)
+    #            verts = shp_object.vertices()
+    #            lons, lats = list(zip(*verts))
+    #            if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
+    #                raise ValueError(msg)
+    #            if len(verts) > 1: # MultiPoint
+    #                x,y = self(lons, lats)
+    #                coords.append(list(zip(x,y)))
+    #            else: # single Point
+    #                x,y = self(lons[0], lats[0])
+    #                coords.append((x,y))
+    #        attributes = [dbf.read_record(i) for i in range(nelements)]
+    #        self.__dict__[name]=coords
+    #        self.__dict__[name+'_info']=attributes
+    #    else: # a Polyline or Polygon file.
+    #        shpsegs = []
+    #        shpinfo = []
+    #        for npoly in range(shp.info()[0]):
+    #            shp_object = shp.read_object(npoly)
+    #            verts = shp_object.vertices()
+    #            rings = len(verts)
+    #            for ring in range(rings):
+    #                lons, lats = list(zip(*verts[ring]))
+    #                if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
+    #                    raise ValueError(msg)
+    #                x, y = self(lons, lats)
+    #                shpsegs.append(list(zip(x,y)))
+    #                if ring == 0:
+    #                    shapedict = dbf.read_record(npoly)
+    #                # add information about ring number to dictionary.
+    #                shapedict['RINGNUM'] = ring+1
+    #                shapedict['SHAPENUM'] = npoly+1
+    #                shpinfo.append(shapedict)
+    #        # draw shape boundaries using LineCollection.
+    #        if drawbounds:
+    #            # get current axes instance (if none specified).
+    #            ax = ax or self._check_ax()
+    #            # make LineCollections for each polygon.
+    #            lines = LineCollection(shpsegs,antialiaseds=(1,))
+    #            lines.set_color(color)
+    #            lines.set_linewidth(linewidth)
+    #            lines.set_label('_nolabel_')
+    #            if zorder is not None:
+    #                lines.set_zorder(zorder)
+    #            ax.add_collection(lines)
+    #            # set axes limits to fit map region.
+    #            self.set_axes_limits(ax=ax)
+    #            info = info + (lines,)
+    #        # save segments/polygons and shape attribute dicts as class attributes.
+    #        self.__dict__[name]=shpsegs
+    #        self.__dict__[name+'_info']=shpinfo
+    #    shp.close()
+    #    dbf.close()
+    #    return info
+
     def readshapefile(self,shapefile,name,drawbounds=True,zorder=None,
                       linewidth=0.5,color='k',antialiased=1,ax=None):
         """
@@ -1708,11 +1861,7 @@ class Basemap(object):
         vertices. If ``drawbounds=True`` a
         matplotlib.patches.LineCollection object is appended to the tuple.
         """
-        try:
-            import dbflib
-            from shapelib import ShapeFile
-        except ImportError:
-            raise ImportError('pyshapelib not installed')
+        from .shapefile import Reader
         if not os.path.exists('%s.shp'%shapefile):
             raise IOError('cannot locate %s.shp'%shapefile)
         if not os.path.exists('%s.shx'%shapefile):
@@ -1722,27 +1871,29 @@ class Basemap(object):
         # open shapefile, read vertices for each object, convert
         # to map projection coordinates (only works for 2D shape types).
         try:
-            shp = ShapeFile(shapefile)
+            shf = Reader(shapefile)
         except:
             raise IOError('error reading shapefile %s.shp' % shapefile)
-        try:
-            dbf = dbflib.open(shapefile)
-        except:
-            raise IOError('error reading dbffile %s.dbf' % shapefile)
-        info = shp.info()
-        if info[1] not in [1,3,5,8]:
-            raise ValueError('readshapefile can only handle 2D shape types')
+        fields = shf.fields
+        coords = []; attributes = []
         msg=dedent("""
         shapefile must have lat/lon vertices  - it looks like this one has vertices
         in map projection coordinates. You can convert the shapefile to geographic
         coordinates using the shpproj utility from the shapelib tools
         (http://shapelib.maptools.org/shapelib-tools.html)""")
-        if info[1] in [1,8]: # a Point or MultiPoint file.
-            coords = []
-            nelements = shp.info()[0]
-            for nelement in range(nelements):
-                shp_object = shp.read_object(nelement)
-                verts = shp_object.vertices()
+        shptype = shf.shapes()[0].shapeType
+        bbox = shf.bbox.tolist()
+        info = (shf.numRecords,shptype,bbox[0:2]+[0.,0.],bbox[2:]+[0.,0.])
+        npoly = 0
+        for shprec in shf.shapeRecords():
+            shp = shprec.shape; rec = shprec.record
+            npoly = npoly + 1
+            if shptype != shp.shapeType:
+                raise ValueError('readshapefile can only handle a single shape type per file')
+            if shptype not in [1,3,5,8]:
+                raise ValueError('readshapefile can only handle 2D shape types')
+            verts = shp.points
+            if shptype in [1,8]: # a Point or MultiPoint shape.
                 lons, lats = list(zip(*verts))
                 if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
                     raise ValueError(msg)
@@ -1752,48 +1903,44 @@ class Basemap(object):
                 else: # single Point
                     x,y = self(lons[0], lats[0])
                     coords.append((x,y))
-            attributes = [dbf.read_record(i) for i in range(nelements)]
-            self.__dict__[name]=coords
-            self.__dict__[name+'_info']=attributes
-        else: # a Polyline or Polygon file.
-            shpsegs = []
-            shpinfo = []
-            for npoly in range(shp.info()[0]):
-                shp_object = shp.read_object(npoly)
-                verts = shp_object.vertices()
-                rings = len(verts)
-                for ring in range(rings):
-                    lons, lats = list(zip(*verts[ring]))
+                attdict={}
+                for r,key in zip(rec,fields[1:]):
+                    attdict[key[0]]=r
+                attributes.append(attdict)
+            else: # a Polyline or Polygon shape.
+                parts = shp.parts.tolist()
+                ringnum = 0
+                for indx1,indx2 in zip(parts,parts[1:]+[len(verts)]):
+                    ringnum = ringnum + 1
+                    lons, lats = list(zip(*verts[indx1:indx2+1]))
                     if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
                         raise ValueError(msg)
                     x, y = self(lons, lats)
-                    shpsegs.append(list(zip(x,y)))
-                    if ring == 0:
-                        shapedict = dbf.read_record(npoly)
+                    coords.append(list(zip(x,y)))
+                    attdict={}
+                    for r,key in zip(rec,fields[1:]):
+                        attdict[key[0]]=r
                     # add information about ring number to dictionary.
-                    shapedict['RINGNUM'] = ring+1
-                    shapedict['SHAPENUM'] = npoly+1
-                    shpinfo.append(shapedict)
-            # draw shape boundaries using LineCollection.
-            if drawbounds:
-                # get current axes instance (if none specified).
-                ax = ax or self._check_ax()
-                # make LineCollections for each polygon.
-                lines = LineCollection(shpsegs,antialiaseds=(1,))
-                lines.set_color(color)
-                lines.set_linewidth(linewidth)
-                lines.set_label('_nolabel_')
-                if zorder is not None:
-                    lines.set_zorder(zorder)
-                ax.add_collection(lines)
-                # set axes limits to fit map region.
-                self.set_axes_limits(ax=ax)
-                info = info + (lines,)
-            # save segments/polygons and shape attribute dicts as class attributes.
-            self.__dict__[name]=shpsegs
-            self.__dict__[name+'_info']=shpinfo
-        shp.close()
-        dbf.close()
+                    attdict['RINGNUM'] = ringnum+1
+                    attdict['SHAPENUM'] = npoly+1
+                    attributes.append(attdict)
+        # draw shape boundaries for polylines, polygons  using LineCollection.
+        if shptype not in [1,8] and drawbounds:
+            # get current axes instance (if none specified).
+            ax = ax or self._check_ax()
+            # make LineCollections for each polygon.
+            lines = LineCollection(coords,antialiaseds=(1,))
+            lines.set_color(color)
+            lines.set_linewidth(linewidth)
+            lines.set_label('_nolabel_')
+            if zorder is not None:
+               lines.set_zorder(zorder)
+            ax.add_collection(lines)
+            # set axes limits to fit map region.
+            self.set_axes_limits(ax=ax)
+            info = info + (lines,)
+        self.__dict__[name]=coords
+        self.__dict__[name+'_info']=attributes
         return info
 
     def drawparallels(self,circles,color='k',linewidth=1.,zorder=None, \
