@@ -12,6 +12,7 @@ include setup.cfg
 include setupegg.py
 include nad2bin.c
 include src/*
+include examples/makelsmask.py
 include examples/allskymap.py
 include examples/allskymap_cr_example.py
 include examples/plothighsandlows.py
@@ -86,6 +87,7 @@ include lib/mpl_toolkits/__init__.py
 include lib/mpl_toolkits/basemap/__init__.py
 include lib/mpl_toolkits/basemap/proj.py
 include lib/mpl_toolkits/basemap/pyproj.py
+include lib/mpl_toolkits/basemap/shapelib.py
 include lib/mpl_toolkits/basemap/cm.py
 include lib/mpl_toolkits/basemap/netcdf.py
 include lib/mpl_toolkits/basemap/pupynere.py
