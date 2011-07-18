@@ -3463,10 +3463,9 @@ class Basemap(object):
         else:
             return self.warpimage(image='bluemarble',scale=scale,**kwargs)
 
-    def etopo1(self,ax=None,scale=None,**kwargs):
+    def shadedrelief(self,ax=None,scale=None,**kwargs):
         """
-        display etopo1 image (from
-        http://www.ngdc.noaa.gov/mgg/image/globalimages.html)
+        display shaded relief image (from http://www.shadedreliefdata.com)
         as map background.
         Default image size is 5400x2700, which can be quite slow and
         use quite a bit of memory.  The ``scale`` keyword can be used
@@ -3477,9 +3476,9 @@ class Basemap(object):
         returns a matplotlib.image.AxesImage instance.
         """
         if ax is not None:
-            return self.warpimage(image='etopo1',ax=ax,scale=scale,**kwargs)
+            return self.warpimage(image='shadedrelief',ax=ax,scale=scale,**kwargs)
         else:
-            return self.warpimage(image='etopo1',scale=scale,**kwargs)
+            return self.warpimage(image='shadedrelief',scale=scale,**kwargs)
 
     def warpimage(self,image="bluemarble",scale=None,**kwargs):
         """
@@ -3515,10 +3514,10 @@ class Basemap(object):
         # from NASA (http://visibleearth.nasa.gov).
         if image == "bluemarble":
             file = os.path.join(basemap_datadir,'bmng.jpg')
-        # display etopo1 image (from
+        # display shadedrelief image (from
         # http://www.ngdc.noaa.gov/mgg/image/globalimages.html)
-        elif image == "etopo1":
-            file = os.path.join(basemap_datadir,'etopo1.jpg')
+        elif image == "shadedrelief":
+            file = os.path.join(basemap_datadir,'shadedrelief.jpg')
         else:
             file = image
         # if image is same as previous invocation, used cached data.
