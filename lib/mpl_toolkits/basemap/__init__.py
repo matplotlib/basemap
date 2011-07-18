@@ -3308,7 +3308,7 @@ class Basemap(object):
         return retnh,retsh
 
     def drawlsmask(self,land_color="0.8",ocean_color="w",lsmask=None,
-                   lsmask_lons=None,lsmask_lats=None,lakes=False,**kwargs):
+                   lsmask_lons=None,lsmask_lats=None,lakes=True,**kwargs):
         """
         Draw land-sea mask image.
 
@@ -3326,13 +3326,12 @@ class Basemap(object):
                          Default gray ("0.8").
         ocean_color      desired ocean color (color name or rgba tuple).
                          Default white.
-        lakes            If True, inland lakes are also colored with
-                         ocean_color (default is lakes=False).
-        lsmask           An array of 0's for ocean pixels, 1's for
-                         land pixels and optionally 2's for inland
-                         lake pixels defining a global land-sea mask.
-                         Default is None, and default
-                         5-minute resolution land-sea mask is used.
+        lsmask           An array of 0's for ocean pixels and 1's for
+                         land pixels defining a global land-sea mask.
+                         Default is None
+                         (default 2.5-minute resolution land-sea mask is used).
+        lakes            Deprecated - currently ignored but kept for
+                         backwards compatibility. Lakes are always plotted.
         lsmask_lons      1d array of longitudes for lsmask (ignored
                          if lsmask is None). Longitudes must be ordered
                          from -180 W eastward.
@@ -3345,7 +3344,7 @@ class Basemap(object):
 
         If any of the lsmask, lsmask_lons or lsmask_lats keywords are not
         set, the default land-sea mask from
-        http://www.ngdc.noaa.gov/ecosys/cdroms/graham/graham/graham.htm.
+        http://www.shadedrelief.com/natural3/pages/extra.html
         is used.
 
         Extra keyword ``ax`` can be used to override the default axis instance.
@@ -3379,7 +3378,6 @@ class Basemap(object):
             if self.lsmask is None:
                 # read in land/sea mask.
                 lsmask_lons, lsmask_lats, lsmask = _readlsmask()
-
             # instance variable lsmask is set on first invocation,
             # it contains the land-sea mask interpolated to the native
             # projection grid.  Further calls to drawlsmask will not
@@ -3429,11 +3427,6 @@ class Basemap(object):
                     mask[j,:]=np.where(np.logical_or(xx<xmin[j],xx>xmax[j]),\
                                         255,mask[j,:])
             self.lsmask = mask
-        # optionally, set lakes to ocean color.
-        if lakes:
-            mask = np.where(self.lsmask==2,0,self.lsmask)
-        else:
-            mask = self.lsmask
         ny, nx = mask.shape
         rgba = np.ones((ny,nx,4),np.uint8)
         rgba_land = np.array(rgba_land,np.uint8)
@@ -4189,10 +4182,14 @@ def maskoceans(lonsin,latsin,datain,inlands=False):
 
 def _readlsmask():
     # read in land/sea mask.
-    lsmaskf = open(os.path.join(basemap_datadir,'5minmask.bin'),'rb')
-    nlons = 4320; nlats = nlons/2
+    import gzip
+    lsmaskf = gzip.open(os.path.join(basemap_datadir,'lsmask.bin'),'rb')
+    nlons = 8192; nlats = nlons/2
+    lsmask =\
+    np.reshape(np.fromstring(lsmaskf.read(),dtype=np.uint8),(nlats,nlons))
+    lsmask = np.where(lsmask==255,0,1)
+    lsmaskf.close()
     delta = 360./float(nlons)
-    lsmask = np.reshape(np.fromstring(lsmaskf.read(),np.uint8),(nlats,nlons))
     lsmask_lons = np.arange(-180,180.,delta)
     lsmask_lats = np.arange(-90.,90+0.5*delta,delta)
     # add cyclic point in longitude
