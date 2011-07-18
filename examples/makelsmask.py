@@ -20,7 +20,7 @@ Basemap(llcrnrlon=-180,llcrnrlat=-90,urcrnrlon=180,urcrnrlat=90,resolution=resol
 for j,lat in enumerate(lats):
     #print j
     for i,lon in enumerate(lons):
-        lsmask[j,i] = m.is_land(lon,lat,lsmask=True)
+        lsmask[j,i] = m.is_land(lon,lat)
 m.drawlsmask(land_color='coral',ocean_color='aqua',lsmask=lsmask,lsmask_lons=lons,lsmask_lats=lats,lakes=True)
 plt.title('%s minute degree land-sea mask' % minutes)
 #lsmask.tofile('%sminlsmask_gshhs_%s.dat' % (minutes, resolution))

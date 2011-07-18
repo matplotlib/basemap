@@ -1614,15 +1614,12 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return rivers
 
-    def is_land(self,xpt,ypt,lsmask=False):
+    def is_land(self,xpt,ypt):
         """
         Returns True if the given x,y point (in projection coordinates) is
         over land, False otherwise.  The definition of land is based upon
         the GSHHS coastline polygons associated with the class instance.
         Points over lakes inside land regions are not counted as land points.
-
-        If optional kwarg ``lsmask`` is ``True`` (default ``False``), returns
-        1 for a land point, 2 for a lake point and 0 for an ocean point.
         """
         if self.resolution is None: return None
         landpt = False
@@ -1633,15 +1630,7 @@ class Basemap(object):
         for poly in self.lakepolygons:
             lakept = _geoslib.Point((xpt,ypt)).within(poly)
             if lakept: break
-        if not lsmask:
-            return landpt and not lakept
-        else:
-            if landpt:
-                return 1
-            elif lakept:
-                return 2
-            else:
-                return 0
+        return landpt and not lakept
 
     def readshapefile(self,shapefile,name,drawbounds=True,zorder=None,
                       linewidth=0.5,color='k',antialiased=1,ax=None):
