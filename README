@@ -31,9 +31,6 @@ source code for the GEOS library is
 included in the 'geos-3.1.1' directory under the terms given in
 LICENSE_geos.
 
-pyshapelib by Bernhard Herzog is included in the 'pyshapelib' directory
-under the terms given in LICENSE_pyshapelib.
-
 the coastline, lake, river and political boundary data are extracted
 from datasets provided with the Generic Mapping Tools
 (http://gmt.soest.hawaii.edu)
@@ -104,13 +101,6 @@ the source code included with basemap by following these steps:
 run the usual 'python setup.py install'.  Check your installation
 by running "from mpl_toolkits.basemap import Basemap" at the python
 prompt.
-
-Basemap includes three auxilliary packages, pydap (http://pydap.org, just 
-the client is included), httplib2 and pyshapelib.  By default, setup.py checks to 
-see if these are already installed, and if so does not try to overwrite 
-them. If you get import errors related to either of these two packages, 
-edit setup.cfg and set pydap, httplib2 and/or pyshapelib to True to force 
-installation of the included versions.
 
 4) To test, cd to the examples directory and run 'python simpletest.py'.
 To run all the examples (except those that have extra dependencies
