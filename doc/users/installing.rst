@@ -32,22 +32,6 @@ numpy 1.2.1 (or later)
 `PROJ4 <http://trac.osgeo.org/proj/>`__ Cartographic Projections Library.
     Patched version automatically built into basemap.
 
-`pyshapelib <http://intevation.de/pipermail/thuban-devel/2004-May/000184.html>`__
-    C library with python interface for reading ESRI shapefiles.
-    If not present, will be installed with basemap.
-
-`pupynere <http://pypi.python.org/pypi/pupynere/>`__ 
-    Pure python `netCDF <http://www.unidata.ucar.edu/software/netcdf/>`__
-    reader. Patched version automatically installed with basemap.
-
-`pydap <http://code.google.com/p/pydap>`__ 
-    Pure python `OPeNDAP <http://opendap.org>`__ implementation.
-    If not present, client (not server) will be installed with basemap.
-
-`httplib2 <http://code.google.com/p/httplib2>`__ (needed for pydap client).
-    If not present, will be installed with basemap.
-  
-
 **Optional libraries**
 
 PIL
@@ -86,13 +70,6 @@ For other platforms, download the source release and follow these steps:
   run the usual ``python setup.py install``.  Check your installation
   by running ``from mpl_toolkits.basemap import Basemap`` at the python
   prompt.
-
-  Basemap includes three auxilliary packages, pydap, pyshapelib and httplib2.
-  By default, setup.py checks to 
-  see if these are already installed, and if so does not try to overwrite 
-  them. If you get import errors related to any of these packages, 
-  edit setup.cfg and set the appropriate entry to True to force 
-  installation of the included versions.
 
 * To test, cd to the examples directory and run ``python simpletest.py``.
   To run all the examples (except those that have extra dependencies
