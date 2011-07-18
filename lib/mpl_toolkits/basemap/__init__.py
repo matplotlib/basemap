@@ -3460,9 +3460,9 @@ class Basemap(object):
         """
         display shaded relief image (from http://www.shadedreliefdata.com)
         as map background.
-        Default image size is 5400x2700, which can be quite slow and
+        Default image size is 10800x5400, which can be quite slow and
         use quite a bit of memory.  The ``scale`` keyword can be used
-        to downsample the image (``scale=0.5`` downsamples to 2700x1350).
+        to downsample the image (``scale=0.5`` downsamples to 5400x2700).
 
         \**kwargs passed on to :meth:`imshow`.
 
