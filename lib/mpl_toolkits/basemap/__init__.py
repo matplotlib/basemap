@@ -1921,8 +1921,8 @@ class Basemap(object):
                     for r,key in zip(rec,fields[1:]):
                         attdict[key[0]]=r
                     # add information about ring number to dictionary.
-                    attdict['RINGNUM'] = ringnum+1
-                    attdict['SHAPENUM'] = npoly+1
+                    attdict['RINGNUM'] = ringnum
+                    attdict['SHAPENUM'] = npoly
                     attributes.append(attdict)
         # draw shape boundaries for polylines, polygons  using LineCollection.
         if shptype not in [1,8] and drawbounds:
