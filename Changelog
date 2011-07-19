@@ -1,4 +1,13 @@
 version 1.0.2 (not yet released)
+	   * change default land-sea mask (now 2.5 minute resolution).
+           * add shadedrelief method (similar to bluemarble, but plots shaded
+             relief image from naturalearthdata.com as a map background).
+           * replace pyshapelib with pure python shapelib.py from
+             pyshp.googlecode.com.  Allows full python 3 compatibility.
+           * fix doc/conf.py to use inheritance_diagram from Sphinx, not
+             matplotlib.
+           * fix drawlsmask so cylindrical projections work correctly when
+             longitude range outside of -180 to 180.
            * python 3 compatibility.
            * added lic_demo.py to examples (line integral convolution,
              requires scikit.vectorplot).

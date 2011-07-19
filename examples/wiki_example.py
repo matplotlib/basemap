@@ -49,6 +49,6 @@ for name,xpt,ypt in zip(cities,xc,yc):
     plt.text(xpt+50000,ypt+50000,name,fontsize=9,color='w')
 # contour data over the map.
 cs = map.contour(x,y,wave+mean,15,linewidths=1.5)
-# draw blue marble image in background.
-map.bluemarble(scale=0.5)
+# draw shaded relief image in background.
+map.shadedrelief()
 plt.show()

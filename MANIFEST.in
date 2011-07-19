@@ -2,7 +2,6 @@ include FAQ
 include README
 include MANIFEST.in
 include LICENSE_proj4
-include LICENSE_pyshapelib
 include LICENSE_data
 include API_CHANGES
 include KNOWN_BUGS
@@ -12,6 +11,7 @@ include setup.cfg
 include setupegg.py
 include nad2bin.c
 include src/*
+include examples/makelsmask.py
 include examples/allskymap.py
 include examples/allskymap_cr_example.py
 include examples/plothighsandlows.py
@@ -86,14 +86,10 @@ include lib/mpl_toolkits/__init__.py
 include lib/mpl_toolkits/basemap/__init__.py
 include lib/mpl_toolkits/basemap/proj.py
 include lib/mpl_toolkits/basemap/pyproj.py
+include lib/mpl_toolkits/basemap/shapefile.py
 include lib/mpl_toolkits/basemap/cm.py
-include lib/mpl_toolkits/basemap/netcdf.py
-include lib/mpl_toolkits/basemap/pupynere.py
-include lib/mpl_toolkits/basemap/netcdftime.py
-include pyshapelib/README pyshapelib/COPYING pyshapelib/ChangeLog pyshapelib/NEWS
-include pyshapelib/*.i pyshapelib/*.c pyshapelib/*.py pyshapelib/*.h
-include pyshapelib/*.shp pyshapelib/*.shx pyshapelib/*.dbf
-include pyshapelib/shapelib/*.c pyshapelib/shapelib/*.h
+include lib/mpl_toolkits/basemap/solar.py
+include lib/mpl_toolkits/basemap/test.py
 include doc/users/figures/*py
 include doc/users/*rst
 include doc/api/*rst
@@ -102,6 +98,4 @@ include doc/make.py
 include doc/conf.py
 include doc/index.rst
 recursive-include geos-3.2.0 *
-recursive-include lib/dbflib *
-recursive-include lib/shapelib *
 recursive-include lib/mpl_toolkits/basemap/data *

@@ -1,5 +1,3 @@
-# basemap build options can be modified with the setup.cfg file. See
-# setup.cfg for more information.
 import sys, glob, os, numpy, subprocess
 major, minor1, minor2, s, tmp = sys.version_info
 if major==2 and minor1<4 or major<2:
@@ -11,23 +9,6 @@ try:
     from distutils.command.build_py import build_py_2to3 as build_py
 except ImportError:
     from distutils.command.build_py import build_py
-
-def dbf_macros():
-    """Return the macros to define when compiling the dbflib wrapper.
-
-    The returned list specifies one macro, HAVE_UPDATE_HEADER, which is
-    '1' if the dbflib version we will be compiling with has the
-    DBFUpdateHeader function and '0' otherwise.  To check whether
-    DBFUpdateHeader is available, we scan shapefil.h for the string
-    'DBFUpdateHeader'.
-    """
-    f = open(convert_path("pyshapelib/shapelib/shapefil.h"))
-    contents = f.read()
-    f.close()
-    if contents.find("DBFUpdateHeader") >= 0:
-        return [("HAVE_UPDATE_HEADER", "1")]
-    else:
-        return [("HAVE_UPDATE_HEADER", "0")]
 
 def checkversion(GEOS_dir):
     """check geos C-API header file (geos_c.h)"""
@@ -104,70 +85,6 @@ else:
                                 runtime_library_dirs=geos_library_dirs,
                                 include_dirs=geos_include_dirs,
                                 libraries=['geos_c','geos']))
-
-# check setup.cfg file to see how to install auxilliary packages.
-options = {}
-if os.path.exists("setup.cfg"):
-    try:
-        import ConfigParser
-    except ImportError:
-        import configparser as ConfigParser
-    config = ConfigParser.SafeConfigParser()
-    config.read("setup.cfg")
-    try: options['provide_pyshapelib'] = config.getboolean("provide_packages", "pyshapelib")
-    except: options['provide_pyshapelib'] = 'auto'
-else:
-    options['provide_pyshapelib'] = 'auto'
-
-
-provide_pyshapelib = options['provide_pyshapelib']
-if provide_pyshapelib  == 'auto':
-    sys.stdout.write('checking to see if pyshapelib installed ..\n')
-    try:
-        import shapelib
-        import dbflib
-    except ImportError:
-        sys.stdout.write('shapelib/dbflib not installed, will be installed\n')
-        packages = packages + ['shapelib','dbflib']
-        package_dirs['shapelib'] = os.path.join('lib','shapelib')
-        package_dirs['dbflib'] = os.path.join('lib','dbflib')
-        extensions = extensions + \
-                 [Extension("shapelibc",
-                            ["pyshapelib/shapelib_wrap.c",
-                             "pyshapelib/shapelib/shpopen.c",
-                             "pyshapelib/shapelib/shptree.c"],
-                            include_dirs = ["pyshapelib/shapelib"]),
-                  Extension("shptree",
-                            ["pyshapelib/shptreemodule.c"],
-                            include_dirs = ["pyshapelib/shapelib"]),
-                  Extension("dbflibc",
-                            ["pyshapelib/dbflib_wrap.c",
-                             "pyshapelib/shapelib/dbfopen.c"],
-                            include_dirs = ["pyshapelib/shapelib"],
-                            define_macros = dbf_macros()) ]
-    else:
-        sys.stdout.write('pyshapelib installed\n')
-elif provide_pyshapelib: # force install of shapelib
-    sys.stdout.write('forcing install of included pyshapelib\n')
-    packages = packages + ['shapelib','dbflib']
-    package_dirs['shapelib'] = os.path.join('lib','shapelib')
-    package_dirs['dbflib'] = os.path.join('lib','dbflib')
-    extensions = extensions + \
-             [Extension("shapelibc",
-                        ["pyshapelib/shapelib_wrap.c",
-                         "pyshapelib/shapelib/shpopen.c",
-                         "pyshapelib/shapelib/shptree.c"],
-                        include_dirs = ["pyshapelib/shapelib"]),
-              Extension("shptree",
-                        ["pyshapelib/shptreemodule.c"],
-                        include_dirs = ["pyshapelib/shapelib"]),
-              Extension("dbflibc",
-                        ["pyshapelib/dbflib_wrap.c",
-                         "pyshapelib/shapelib/dbfopen.c"],
-                        include_dirs = ["pyshapelib/shapelib"],
-                        define_macros = dbf_macros()) ]
-else:
-    sys.stdout.write( 'will not install pyshapelib\n')
 
 # Specify all the required mpl data
 # create pyproj binary datum shift grid files.

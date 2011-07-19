@@ -1697,11 +1697,7 @@ class Basemap(object):
         vertices. If ``drawbounds=True`` a
         matplotlib.patches.LineCollection object is appended to the tuple.
         """
-        try:
-            import dbflib
-            from shapelib import ShapeFile
-        except ImportError:
-            raise ImportError('pyshapelib not installed')
+        from .shapefile import Reader
         if not os.path.exists('%s.shp'%shapefile):
             raise IOError('cannot locate %s.shp'%shapefile)
         if not os.path.exists('%s.shx'%shapefile):
@@ -1711,27 +1707,29 @@ class Basemap(object):
         # open shapefile, read vertices for each object, convert
         # to map projection coordinates (only works for 2D shape types).
         try:
-            shp = ShapeFile(shapefile)
+            shf = Reader(shapefile)
         except:
             raise IOError('error reading shapefile %s.shp' % shapefile)
-        try:
-            dbf = dbflib.open(shapefile)
-        except:
-            raise IOError('error reading dbffile %s.dbf' % shapefile)
-        info = shp.info()
-        if info[1] not in [1,3,5,8]:
-            raise ValueError('readshapefile can only handle 2D shape types')
+        fields = shf.fields
+        coords = []; attributes = []
         msg=dedent("""
         shapefile must have lat/lon vertices  - it looks like this one has vertices
         in map projection coordinates. You can convert the shapefile to geographic
         coordinates using the shpproj utility from the shapelib tools
         (http://shapelib.maptools.org/shapelib-tools.html)""")
-        if info[1] in [1,8]: # a Point or MultiPoint file.
-            coords = []
-            nelements = shp.info()[0]
-            for nelement in range(nelements):
-                shp_object = shp.read_object(nelement)
-                verts = shp_object.vertices()
+        shptype = shf.shapes()[0].shapeType
+        bbox = shf.bbox.tolist()
+        info = (shf.numRecords,shptype,bbox[0:2]+[0.,0.],bbox[2:]+[0.,0.])
+        npoly = 0
+        for shprec in shf.shapeRecords():
+            shp = shprec.shape; rec = shprec.record
+            npoly = npoly + 1
+            if shptype != shp.shapeType:
+                raise ValueError('readshapefile can only handle a single shape type per file')
+            if shptype not in [1,3,5,8]:
+                raise ValueError('readshapefile can only handle 2D shape types')
+            verts = shp.points
+            if shptype in [1,8]: # a Point or MultiPoint shape.
                 lons, lats = list(zip(*verts))
                 if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
                     raise ValueError(msg)
@@ -1741,48 +1739,44 @@ class Basemap(object):
                 else: # single Point
                     x,y = self(lons[0], lats[0])
                     coords.append((x,y))
-            attributes = [dbf.read_record(i) for i in range(nelements)]
-            self.__dict__[name]=coords
-            self.__dict__[name+'_info']=attributes
-        else: # a Polyline or Polygon file.
-            shpsegs = []
-            shpinfo = []
-            for npoly in range(shp.info()[0]):
-                shp_object = shp.read_object(npoly)
-                verts = shp_object.vertices()
-                rings = len(verts)
-                for ring in range(rings):
-                    lons, lats = list(zip(*verts[ring]))
+                attdict={}
+                for r,key in zip(rec,fields[1:]):
+                    attdict[key[0]]=r
+                attributes.append(attdict)
+            else: # a Polyline or Polygon shape.
+                parts = shp.parts.tolist()
+                ringnum = 0
+                for indx1,indx2 in zip(parts,parts[1:]+[len(verts)]):
+                    ringnum = ringnum + 1
+                    lons, lats = list(zip(*verts[indx1:indx2+1]))
                     if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
                         raise ValueError(msg)
                     x, y = self(lons, lats)
-                    shpsegs.append(list(zip(x,y)))
-                    if ring == 0:
-                        shapedict = dbf.read_record(npoly)
+                    coords.append(list(zip(x,y)))
+                    attdict={}
+                    for r,key in zip(rec,fields[1:]):
+                        attdict[key[0]]=r
                     # add information about ring number to dictionary.
-                    shapedict['RINGNUM'] = ring+1
-                    shapedict['SHAPENUM'] = npoly+1
-                    shpinfo.append(shapedict)
-            # draw shape boundaries using LineCollection.
-            if drawbounds:
-                # get current axes instance (if none specified).
-                ax = ax or self._check_ax()
-                # make LineCollections for each polygon.
-                lines = LineCollection(shpsegs,antialiaseds=(1,))
-                lines.set_color(color)
-                lines.set_linewidth(linewidth)
-                lines.set_label('_nolabel_')
-                if zorder is not None:
-                    lines.set_zorder(zorder)
-                ax.add_collection(lines)
-                # set axes limits to fit map region.
-                self.set_axes_limits(ax=ax)
-                info = info + (lines,)
-            # save segments/polygons and shape attribute dicts as class attributes.
-            self.__dict__[name]=shpsegs
-            self.__dict__[name+'_info']=shpinfo
-        shp.close()
-        dbf.close()
+                    attdict['RINGNUM'] = ringnum
+                    attdict['SHAPENUM'] = npoly
+                    attributes.append(attdict)
+        # draw shape boundaries for polylines, polygons  using LineCollection.
+        if shptype not in [1,8] and drawbounds:
+            # get current axes instance (if none specified).
+            ax = ax or self._check_ax()
+            # make LineCollections for each polygon.
+            lines = LineCollection(coords,antialiaseds=(1,))
+            lines.set_color(color)
+            lines.set_linewidth(linewidth)
+            lines.set_label('_nolabel_')
+            if zorder is not None:
+               lines.set_zorder(zorder)
+            ax.add_collection(lines)
+            # set axes limits to fit map region.
+            self.set_axes_limits(ax=ax)
+            info = info + (lines,)
+        self.__dict__[name]=coords
+        self.__dict__[name+'_info']=attributes
         return info
 
     def drawparallels(self,circles,color='k',linewidth=1.,zorder=None, \
@@ -3150,7 +3144,7 @@ class Basemap(object):
         return retnh,retsh
 
     def drawlsmask(self,land_color="0.8",ocean_color="w",lsmask=None,
-                   lsmask_lons=None,lsmask_lats=None,lakes=False,**kwargs):
+                   lsmask_lons=None,lsmask_lats=None,lakes=True,**kwargs):
         """
         Draw land-sea mask image.
 
@@ -3168,13 +3162,12 @@ class Basemap(object):
                          Default gray ("0.8").
         ocean_color      desired ocean color (color name or rgba tuple).
                          Default white.
-        lakes            If True, inland lakes are also colored with
-                         ocean_color (default is lakes=False).
-        lsmask           An array of 0's for ocean pixels, 1's for
-                         land pixels and optionally 2's for inland
-                         lake pixels defining a global land-sea mask.
-                         Default is None, and default
-                         5-minute resolution land-sea mask is used.
+        lsmask           An array of 0's for ocean pixels and 1's for
+                         land pixels defining a global land-sea mask.
+                         Default is None
+                         (default 2.5-minute resolution land-sea mask is used).
+        lakes            Deprecated - currently ignored but kept for
+                         backwards compatibility. Lakes are always plotted.
         lsmask_lons      1d array of longitudes for lsmask (ignored
                          if lsmask is None). Longitudes must be ordered
                          from -180 W eastward.
@@ -3187,7 +3180,7 @@ class Basemap(object):
 
         If any of the lsmask, lsmask_lons or lsmask_lats keywords are not
         set, the default land-sea mask from
-        http://www.ngdc.noaa.gov/ecosys/cdroms/graham/graham/graham.htm.
+        http://www.shadedrelief.com/natural3/pages/extra.html
         is used.
 
         Extra keyword ``ax`` can be used to override the default axis instance.
@@ -3221,7 +3214,6 @@ class Basemap(object):
             if self.lsmask is None:
                 # read in land/sea mask.
                 lsmask_lons, lsmask_lats, lsmask = _readlsmask()
-
             # instance variable lsmask is set on first invocation,
             # it contains the land-sea mask interpolated to the native
             # projection grid.  Further calls to drawlsmask will not
@@ -3237,9 +3229,9 @@ class Basemap(object):
                 # stack grids side-by-side (in longitiudinal direction), so
                 # any range of longitudes may be plotted on a world map.
                 lsmask_lons = \
-                np.concatenate((lsmask_lons,lsmask_lons+360),1)
+                        np.concatenate((lsmask_lons,lsmask_lons[1:]+360),1)
                 lsmask = \
-                np.concatenate((lsmask,lsmask),1)
+                        np.concatenate((lsmask,lsmask[:,1:]),1)
 
         # transform mask to nx x ny regularly spaced native projection grid
         # nx and ny chosen to have roughly the same horizontal
@@ -3271,11 +3263,6 @@ class Basemap(object):
                     mask[j,:]=np.where(np.logical_or(xx<xmin[j],xx>xmax[j]),\
                                         255,mask[j,:])
             self.lsmask = mask
-        # optionally, set lakes to ocean color.
-        if lakes:
-            mask = np.where(self.lsmask==2,0,self.lsmask)
-        else:
-            mask = self.lsmask
         ny, nx = mask.shape
         rgba = np.ones((ny,nx,4),np.uint8)
         rgba_land = np.array(rgba_land,np.uint8)
@@ -3304,6 +3291,23 @@ class Basemap(object):
             return self.warpimage(image='bluemarble',ax=ax,scale=scale,**kwargs)
         else:
             return self.warpimage(image='bluemarble',scale=scale,**kwargs)
+
+    def shadedrelief(self,ax=None,scale=None,**kwargs):
+        """
+        display shaded relief image (from http://www.shadedreliefdata.com)
+        as map background.
+        Default image size is 10800x5400, which can be quite slow and
+        use quite a bit of memory.  The ``scale`` keyword can be used
+        to downsample the image (``scale=0.5`` downsamples to 5400x2700).
+
+        \**kwargs passed on to :meth:`imshow`.
+
+        returns a matplotlib.image.AxesImage instance.
+        """
+        if ax is not None:
+            return self.warpimage(image='shadedrelief',ax=ax,scale=scale,**kwargs)
+        else:
+            return self.warpimage(image='shadedrelief',scale=scale,**kwargs)
 
     def warpimage(self,image="bluemarble",scale=None,**kwargs):
         """
@@ -3339,6 +3343,10 @@ class Basemap(object):
         # from NASA (http://visibleearth.nasa.gov).
         if image == "bluemarble":
             file = os.path.join(basemap_datadir,'bmng.jpg')
+        # display shadedrelief image (from
+        # http://www.ngdc.noaa.gov/mgg/image/globalimages.html)
+        elif image == "shadedrelief":
+            file = os.path.join(basemap_datadir,'shadedrelief.jpg')
         else:
             file = image
         # if image is same as previous invocation, used cached data.
@@ -3348,7 +3356,7 @@ class Basemap(object):
         else:
             newfile = False
         if file.startswith('http'):
-            from urllib.request import urlretrieve
+            from urllib import urlretrieve
             self._bm_file, headers = urlretrieve(file)
         else:
             self._bm_file = file
@@ -4010,10 +4018,14 @@ def maskoceans(lonsin,latsin,datain,inlands=False):
 
 def _readlsmask():
     # read in land/sea mask.
-    lsmaskf = open(os.path.join(basemap_datadir,'5minmask.bin'),'rb')
-    nlons = 4320; nlats = nlons/2
+    import gzip
+    lsmaskf = gzip.open(os.path.join(basemap_datadir,'lsmask.bin'),'rb')
+    nlons = 8192; nlats = nlons/2
+    lsmask =\
+    np.reshape(np.fromstring(lsmaskf.read(),dtype=np.uint8),(nlats,nlons))
+    lsmask = np.where(lsmask==255,0,1)
+    lsmaskf.close()
     delta = 360./float(nlons)
-    lsmask = np.reshape(np.fromstring(lsmaskf.read(),np.uint8),(nlats,nlons))
     lsmask_lons = np.arange(-180,180.,delta)
     lsmask_lats = np.arange(-90.,90+0.5*delta,delta)
     # add cyclic point in longitude
