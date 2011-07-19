@@ -1,6 +1,6 @@
 """
-shapefile3.py
-Provides read and write support for ESRI Shapefiles in Python 3.
+shapefile.py
+Provides read and write support for ESRI Shapefiles
 author: jlawhead<at>geospatialpython.com
 date: 20110131
 """
@@ -9,6 +9,17 @@ from struct import pack, unpack, calcsize, error
 import os
 import time
 import array
+import sys
+
+# python 2.5 compatibility for byte literals.
+if sys.version < '3':
+    def b(x):
+        return x
+else:
+    import codecs
+    def b(x):
+        return codecs.latin_1_encode(x)[0]
+
 #
 # Constants for shape types
 NULL = 0
@@ -245,11 +256,11 @@ class Reader:
 		for field in range(numFields):
 			fieldDesc = list(unpack("<11sc4xBB14x", f.read(32)))
 			name = 0
-			fieldDesc[name] = fieldDesc[name][:fieldDesc[name].index(b'\x00')]
+			fieldDesc[name] = fieldDesc[name][:fieldDesc[name].index(b('\x00'))]
 			fieldDesc[name] = fieldDesc[name].lstrip()
 			self.fields.append(fieldDesc)
 		terminator = f.read(1)
-		assert terminator == b'\r'
+		assert terminator == b('\r')
 		self.fields.insert(0, ('DeletionFlag', 'C', 1, 0))
 
 	def __recordFmt(self):
@@ -265,7 +276,7 @@ class Reader:
 		f = self.__getFileObj(self.dbf)
 		recFmt = self.__recordFmt()
 		recordContents = unpack(recFmt[0], f.read(recFmt[1]))
-		if recordContents[0] != b' ':
+		if recordContents[0] != b(' '):
 			# deleted record
 			return None
 		record = []
@@ -273,20 +284,20 @@ class Reader:
 													recordContents):
 			if name == 'DeletionFlag':
 				continue
-			if typ == b'N':
-				value = value.replace(b'\0', b'').strip()
+			if typ == b('N'):
+				value = value.replace(b('\0'), b('')).strip()
 				if value == '':
 					value = 0
 				elif deci:
 					value = float(value)
 				else:
 					value = int(value)
-			elif typ == b'D':
+			elif typ == b('D'):
 				y, m, d = int(value[:4]), int(value[4:6]), int(value[6:8])
 				value = [y, m, d]
-			elif typ == b'L':
-				value = (value in b'YyTt' and b'T') or \
-							(value in b'NnFf' and b'F') or '?'
+			elif typ == b('L'):
+				value = (value in b('YyTt') and b('T')) or \
+							(value in b('NnFf') and b('F')) or '?'
 			else:
 				value = value.strip()
 			record.append(value)
@@ -513,7 +524,7 @@ class Writer:
 		year -= 1900
 		# Remove deletion flag placeholder from fields
 		for field in self.fields:
-			if field[0][:8] == (b'Deletion'):
+			if field[0][:8] == (b('Deletion')):
 				self.fields.remove(field)
 		numRecs = len(self.records)
 		numFields = len(self.fields)
@@ -526,13 +537,13 @@ class Writer:
 		for field in self.fields:
 			name, fieldType, size, decimal = field
 			name = pack('%ss' % len(name), name)
-			name = name.replace(b' ', b'_')
-			name = name.ljust(11).replace(b' ', b'\x00')
+			name = name.replace(b(' '), b('_'))
+			name = name.ljust(11).replace(b(' '), b('\x00'))
 			size = int(size)
 			fld = pack('<11sc4xBB14x', name, fieldType, size, decimal)
 			f.write(fld)
 		# Terminator
-		f.write(b'\r')
+		f.write(b('\r'))
 
 	def __shpRecords(self):
 		"""Write the shp records"""
