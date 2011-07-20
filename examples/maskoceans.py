@@ -20,7 +20,7 @@ x, y = m(lons, lats)
 # interpolate land/sea mask to topo grid, mask ocean values.
 # output may look 'blocky' near coastlines, since data is at much
 # lower resolution than land/sea mask.
-topo = maskoceans(lons, lats, topoin, inlands=False)
+topo = maskoceans(lons, lats, topoin)
 # make contour plot (ocean values will be masked)
 CS=m.contourf(x,y,topo,np.arange(-300,3001,50),cmap=plt.cm.jet,extend='both')
 #im=m.pcolormesh(x,y,topo,cmap=plt.cm.jet,vmin=-300,vmax=3000)
@@ -39,7 +39,7 @@ lons, lats = np.meshgrid(lons, lats)
 x, y = m(lons, lats)
 topo = interp(topoin,lons1,lats1,lons,lats,order=1)
 # interpolate land/sea mask to topo grid, mask ocean values.
-topo = maskoceans(lons, lats, topo, inlands=False)
+topo = maskoceans(lons, lats, topo)
 # make contour plot (ocean values will be masked)
 CS=m.contourf(x,y,topo,np.arange(-300,3001,50),cmap=plt.cm.jet,extend='both')
 #im=m.pcolormesh(x,y,topo,cmap=plt.cm.jet,vmin=-300,vmax=3000)

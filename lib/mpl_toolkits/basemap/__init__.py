@@ -4006,7 +4006,7 @@ def _choosecorners(width,height,**kwargs):
     else:
         return corners
 
-def maskoceans(lonsin,latsin,datain,inlands=False):
+def maskoceans(lonsin,latsin,datain,inlands=True):
     """
     mask data (``datain``), defined on a grid with latitudes ``latsin``
     longitudes ``lonsin`` so that points over water will not be plotted.
@@ -4020,9 +4020,9 @@ def maskoceans(lonsin,latsin,datain,inlands=False):
                      grid.
     datain           rank-2 input array on grid defined by ``lonsin`` and
                      ``latsin``.
-    inlands          if False, mask only ocean points.  If True, mask
-                     ocean points and points over inland water bodies.
-                     Default False.
+    inlands          Deprecated (set to True). In previous versions
+                     if False, masked only ocean points and not inland 
+                     lakes.
     ==============   ====================================================
 
     returns a masked array the same shape as datain with "wet" points masked.
@@ -4032,10 +4032,7 @@ def maskoceans(lonsin,latsin,datain,inlands=False):
     # nearest-neighbor interpolation to output grid.
     lsmasko = interp(lsmask,lsmask_lons,lsmask_lats,lonsin,latsin,masked=True,order=0)
     # mask input data.
-    if inlands: # mask inland water bodies.
-        mask = np.logical_or(lsmasko==0,lsmasko==2)
-    else: # mask just marine areas.
-        mask = lsmasko == 0
+    mask = lsmasko == 0
     return ma.masked_array(datain,mask=mask)
 
 def _readlsmask():
