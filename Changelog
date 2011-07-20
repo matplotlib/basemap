@@ -1,5 +1,7 @@
 version 1.0.2 (not yet released)
 	   * change default land-sea mask (now 2.5 minute resolution).
+           * add etopo method (similar to bluemarble, but plots etopo 
+             relief image from www.ngdc.noaa.gov/mgg/global as a map background).
            * add shadedrelief method (similar to bluemarble, but plots shaded
              relief image from naturalearthdata.com as a map background).
            * replace pyshapelib with pure python shapelib.py from

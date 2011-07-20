@@ -36,6 +36,22 @@ mean = 0.5*np.cos(2.*lats)*((np.sin(2.*lats))**2 + 2.)
 x, y = map(lons*180./np.pi, lats*180./np.pi)
 # contour data over the map.
 cs = map.contour(x,y,wave+mean,15,linewidths=1.5)
+plt.title('filled continent background')
+
+# as above, but use land-sea mask image as map background.
+fig = plt.figure()
+map.drawmapboundary()
+map.drawmeridians(np.arange(0,360,30))
+map.drawparallels(np.arange(-90,90,30))
+# plot filled circles at the locations of the cities.
+map.plot(xc,yc,'wo')
+# plot the names of five cities.
+for name,xpt,ypt in zip(cities,xc,yc):
+    plt.text(xpt+50000,ypt+50000,name,fontsize=9,color='w')
+# contour data over the map.
+cs = map.contour(x,y,wave+mean,15,linewidths=1.5)
+plt.title('land-sea mask background')
+map.drawlsmask(ocean_color='aqua',land_color='coral')
 
 # as above, but use blue marble image as map background.
 fig = plt.figure()
@@ -49,6 +65,37 @@ for name,xpt,ypt in zip(cities,xc,yc):
     plt.text(xpt+50000,ypt+50000,name,fontsize=9,color='w')
 # contour data over the map.
 cs = map.contour(x,y,wave+mean,15,linewidths=1.5)
-# draw shaded relief image in background.
+plt.title('blue marble background')
+map.bluemarble()
+
+# as above, but use shaded relief image as map background.
+fig = plt.figure()
+map.drawmapboundary()
+map.drawmeridians(np.arange(0,360,30))
+map.drawparallels(np.arange(-90,90,30))
+# plot filled circles at the locations of the cities.
+map.plot(xc,yc,'wo')
+# plot the names of five cities.
+for name,xpt,ypt in zip(cities,xc,yc):
+    plt.text(xpt+50000,ypt+50000,name,fontsize=9,color='w')
+# contour data over the map.
+cs = map.contour(x,y,wave+mean,15,linewidths=1.5)
+plt.title('shaded relief background')
 map.shadedrelief()
+
+# as above, but use etopo image as map background.
+fig = plt.figure()
+map.drawmapboundary()
+map.drawmeridians(np.arange(0,360,30))
+map.drawparallels(np.arange(-90,90,30))
+# plot filled circles at the locations of the cities.
+map.plot(xc,yc,'wo')
+# plot the names of five cities.
+for name,xpt,ypt in zip(cities,xc,yc):
+    plt.text(xpt+50000,ypt+50000,name,fontsize=9,color='w')
+# contour data over the map.
+cs = map.contour(x,y,wave+mean,15,linewidths=1.5)
+plt.title('etopo background')
+map.etopo()
+
 plt.show()
