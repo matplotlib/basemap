@@ -21,13 +21,8 @@ datasets (from `Generic Mapping Tools <http://gmt.soest.hawaii.edu/>`_)
 are provided, along with methods for plotting them. The `GEOS library 
 <http://geos.refractions.net>`_ is used internally to clip the coastline and polticial boundary features to the desired map projection region.
 
-Basemap provides facilities for reading data in `netCDF 
-<http://www.unidata.ucar.edu/software/netcdf/>`_ and `Shapefile
-<http://en.wikipedia.org/wiki/Shapefile>`_ formats, as well as 
-directly over http using `OPeNDAP <http://en.wikipedia.org/wiki/OPeNDAP>`_.
-This functionality is provided through the `PyDAP <http://pydap.org/>`_
-client, and a python interface to the `Shapefile C library 
-<http://shapelib.maptools.org/>`_.
+Basemap provides facilities for reading `shapefiles
+<http://en.wikipedia.org/wiki/Shapefile>`_.
 
 Basemap is geared toward the needs of earth scientists, particular 
 oceanographers and meteorologists.  I originally wrote Basemap to help in my
