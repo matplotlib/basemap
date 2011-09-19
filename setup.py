@@ -90,7 +90,7 @@ else:
 # create pyproj binary datum shift grid files.
 pathout =\
 os.path.join('lib',os.path.join('mpl_toolkits',os.path.join('basemap','data')))
-if sys.argv[1] != 'sdist':
+if sys.argv[1] != ['sdist','clean']:
     cc = ccompiler.new_compiler()
     sysconfig.customize_compiler(cc)
     cc.set_include_dirs(['src'])
