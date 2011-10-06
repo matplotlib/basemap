@@ -31,6 +31,9 @@ source code for the GEOS library is
 included in the 'geos-3.1.1' directory under the terms given in
 LICENSE_geos.
 
+shapefile.py from pyshp.googlecode.com is included under the terms given
+in LICENSE_pyshp.
+
 the coastline, lake, river and political boundary data are extracted
 from datasets provided with the Generic Mapping Tools
 (http://gmt.soest.hawaii.edu)
