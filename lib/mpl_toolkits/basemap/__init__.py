@@ -3160,9 +3160,9 @@ class Basemap(object):
         ==============   ====================================================
         land_color       desired land color (color name or rgba tuple).
                          Default gray ("0.8").
-        ocean_color      desired ocean color (color name or rgba tuple).
+        ocean_color      desired water color (color name or rgba tuple).
                          Default white.
-        lsmask           An array of 0's for ocean pixels and 1's for
+        lsmask           An array of 0's for water pixels and 1's for
                          land pixels defining a global land-sea mask.
                          Default is None
                          (default 2.5-minute resolution land-sea mask is used).
@@ -3187,7 +3187,7 @@ class Basemap(object):
 
         returns a matplotlib.image.AxesImage instance.
         """
-        # convert land and ocean colors to integer rgba tuples with
+        # convert land and water colors to integer rgba tuples with
         # values between 0 and 255.
         from matplotlib.colors import ColorConverter
         c = ColorConverter()
