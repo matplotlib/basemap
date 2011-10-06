@@ -34,14 +34,10 @@ LICENSE_geos.
 shapefile.py from pyshp.googlecode.com is included under the terms given
 in LICENSE_pyshp.
 
-the coastline, lake, river and political boundary data are extracted
+the land-sea mask, coastline, lake, river and political boundary data are extracted
 from datasets provided with the Generic Mapping Tools
 (http://gmt.soest.hawaii.edu)
 and are included under the terms given in LICENSE_data.
-
-a public domain 5-minute land/sea/lake mask dataset from
-http://www.ngdc.noaa.gov/seg/cdroms/graham/graham/graham.htm
-is included.
 
 Everything else (including src/_proj.pyx, src/_geod.pyx, src/_pyproj.pxi,
 src/_proj.c, src/_geod.c, src/_geos.c, and src/_geos.pyx):
