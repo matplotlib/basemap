@@ -1748,7 +1748,7 @@ class Basemap(object):
                 ringnum = 0
                 for indx1,indx2 in zip(parts,parts[1:]+[len(verts)]):
                     ringnum = ringnum + 1
-                    lons, lats = list(zip(*verts[indx1:indx2+1]))
+                    lons, lats = list(zip(*verts[indx1:indx2]))
                     if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
                         raise ValueError(msg)
                     x, y = self(lons, lats)
