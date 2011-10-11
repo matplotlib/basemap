@@ -3230,6 +3230,8 @@ class Basemap(object):
                         np.concatenate((lsmask_lons,lsmask_lons[1:]+360),1)
                 lsmask = \
                         np.concatenate((lsmask,lsmask[:,1:]),1)
+        else:
+            if lakes: lsmask = np.where(lsmask==2,np.array(0,np.uint8),lsmask)
 
         # transform mask to nx x ny regularly spaced native projection grid
         # nx and ny chosen to have roughly the same horizontal
@@ -4019,15 +4021,14 @@ def maskoceans(lonsin,latsin,datain,inlands=True):
                      grid.
     datain           rank-2 input array on grid defined by ``lonsin`` and
                      ``latsin``.
-    inlands          Deprecated (set to True). In previous versions
-                     if False, masked only ocean points and not inland 
-                     lakes.
+    inlands          if False, masked only ocean points and not inland 
+                     lakes (Default True).
     ==============   ====================================================
 
     returns a masked array the same shape as datain with "wet" points masked.
     """
     # read in land/sea mask.
-    lsmask_lons, lsmask_lats, lsmask = _readlsmask()
+    lsmask_lons, lsmask_lats, lsmask = _readlsmask(lakes=inlands)
     # nearest-neighbor interpolation to output grid.
     lsmasko = interp(lsmask,lsmask_lons,lsmask_lats,lonsin,latsin,masked=True,order=0)
     # mask input data.
