@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import sys
 import numpy.ma as ma
 import datetime
-from mpl_toolkits.basemap import Basemap, addcyclic, num2date
-from netCDF4 import Dataset as NetCDFFile
+from mpl_toolkits.basemap import Basemap, addcyclic
+from netCDF4 import Dataset as NetCDFFile, num2date
 
 
 # today's date is default.
@@ -89,6 +89,6 @@ plt.figtext(0.5,0.95,
             u"2-m temp (\N{DEGREE SIGN}C) forecasts from %s"%verifdates[0],
             horizontalalignment='center',fontsize=14)
 # a single colorbar.
-cax = plt.axes([0.1, 0.03, 0.8, 0.025])
+cax = plt.axes([0.1, 0.05, 0.8, 0.025])
 plt.colorbar(cax=cax, orientation='horizontal')
 plt.show()
