@@ -4,3 +4,4 @@ from ftp://ftp.soest.hawaii.edu/pwessel/gshhs/.
 3) run dumpbounds.sh to create states, countries, rivers text files.
 4) run readboundaries.py to process into binary files, with metadata in
 separate text files.
+5) run plotgrdlandmask.py to generate lsmask data.
