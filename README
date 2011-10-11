@@ -7,9 +7,9 @@ using matplotlib.
 
 python 2.4 (or higher)
 
-matplotlib 0.98 (or higher)
+matplotlib 1.0.1 (or higher)
 
-numpy 1.1 (or higher)
+numpy 1.4 (or higher)
 
 The GEOS (Geometry Engine - Open Source) library (version 3.1.1 or higher).
 Source code is included in the geos-3.2.0 directory.
@@ -28,7 +28,7 @@ source code from proj.4 (http://proj.maptools.org) is included in the
 'src' directory under the terms given in LICENSE_proj4.
 
 source code for the GEOS library is
-included in the 'geos-3.1.1' directory under the terms given in
+included in the 'geos-3.2.0' directory under the terms given in
 LICENSE_geos.
 
 shapefile.py from pyshp.googlecode.com is included under the terms given
@@ -42,7 +42,7 @@ and are included under the terms given in LICENSE_data.
 Everything else (including src/_proj.pyx, src/_geod.pyx, src/_pyproj.pxi,
 src/_proj.c, src/_geod.c, src/_geos.c, and src/_geos.pyx):
 
-copyright (c) 2007 by Jeffrey Whitaker.
+copyright (c) 2011 by Jeffrey Whitaker.
 
 Permission to use, copy, modify, and distribute this software and its
 documentation for any purpose and without fee is hereby granted,
@@ -72,15 +72,6 @@ you have problems or questions.
 
 1) Then download basemap-X.Y.Z.tar.gz (approx 100 mb) from
 the sourceforge download site, unpack and cd to basemap-X.Y.Z.
-Note that most of that size consists of coastline data, which 
-does not change with every release.  When it does change, it is
-noted in the Changelog.  If you already have the latest data installed, 
-you can download basemap-nodata-X.Y.Z.tar.gz instead, which is
-*much* smaller.
-
-By default the data is installed in the same directory as the toolkit. 
-You may move it if you wish, and set the environment variable
-BASEMAPDATA to point to the new location.
 
 2) Install the GEOS library.  If you already have it on your
 system, just set the environment variable GEOS_DIR to point to the location 
@@ -89,7 +80,7 @@ geos_c.h is in /usr/local/include, set GEOS_DIR to /usr/local).
 Then go to step (3).  If you don't have it, you can build it from
 the source code included with basemap by following these steps:
 
- > cd geos-3.1.1
+ > cd geos-3.2.0
  > export GEOS_DIR=<where you want the libs and headers to go>
    A reasonable choice on a Unix-like system is /usr/local, or
    if you don't have permission to write there, your home directory.
