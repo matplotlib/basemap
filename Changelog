@@ -1,4 +1,8 @@
 version 1.0.2 (not yet released)
+	   * added optional 2.5 minute land/sea mask (derived from
+             intermediate resolution coastline data). 'resolution'
+             kwarg added to drawlsmask and maskoceans, can be either
+             5 or 2.5.
            * update shapefile.py from pyshp.googlecode.com to r72.
 	   * change default land-sea mask (now derived directly from gshhs
              coastline data, default is 5 minutes use coastline resolution =
