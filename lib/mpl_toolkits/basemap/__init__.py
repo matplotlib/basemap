@@ -3144,7 +3144,7 @@ class Basemap(object):
         return retnh,retsh
 
     def drawlsmask(self,land_color="0.8",ocean_color="w",lsmask=None,
-                   lsmask_lons=None,lsmask_lats=None,lakes=True,resolution=5,**kwargs):
+                   lsmask_lons=None,lsmask_lats=None,lakes=True,resolution='l',grid=5,**kwargs):
         """
         Draw land-sea mask image.
 
@@ -3173,7 +3173,9 @@ class Basemap(object):
         lsmask_lats      1d array of latitudes for lsmask (ignored
                          if lsmask is None). Latitudes must be ordered
                          from -90 S northward.
-        resolution       Resolution of default mask in minutes (Default 5,
+        resolution       gshhs coastline resolution used to define land/sea
+                         mask (default 'l', available 'c','l' or 'i')
+        grid             land/sea mask grid spacing in minutes (Default 5,
                          2.5 is also available).
         \**kwargs        extra keyword arguments passed on to
                          :meth:`imshow`
@@ -3214,7 +3216,7 @@ class Basemap(object):
             if self.lsmask is None:
                 # read in land/sea mask.
                 lsmask_lons, lsmask_lats, lsmask =\
-                _readlsmask(lakes=lakes,resolution=resolution)
+                _readlsmask(lakes=lakes,resolution=resolution,grid=grid)
             # instance variable lsmask is set on first invocation,
             # it contains the land-sea mask interpolated to the native
             # projection grid.  Further calls to drawlsmask will not
@@ -4010,7 +4012,7 @@ def _choosecorners(width,height,**kwargs):
     else:
         return corners
 
-def maskoceans(lonsin,latsin,datain,inlands=True,resolution=5):
+def maskoceans(lonsin,latsin,datain,inlands=True,resolution='l',grid=5):
     """
     mask data (``datain``), defined on a grid with latitudes ``latsin``
     longitudes ``lonsin`` so that points over water will not be plotted.
@@ -4026,7 +4028,9 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution=5):
                      ``latsin``.
     inlands          if False, masked only ocean points and not inland 
                      lakes (Default True).
-    resolution       Resolution of default land/sea mask in minutes (Default 5,
+    resolution       gshhs coastline resolution used to define land/sea
+                     mask (default 'l', available 'c','l' or 'i')
+    grid             land/sea mask grid spacing in minutes (Default 5,
                      2.5 is also available).
     ==============   ====================================================
 
@@ -4034,33 +4038,35 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution=5):
     """
     # read in land/sea mask.
     lsmask_lons, lsmask_lats, lsmask =\
-    _readlsmask(lakes=inlands,resolution=resolution)
+    _readlsmask(lakes=inlands,resolution=resolution,grid=grid)
     # nearest-neighbor interpolation to output grid.
     lsmasko = interp(lsmask,lsmask_lons,lsmask_lats,lonsin,latsin,masked=True,order=0)
     # mask input data.
     mask = lsmasko == 0
     return ma.masked_array(datain,mask=mask)
 
-def _readlsmask(lakes=True,resolution=5):
+def _readlsmask(lakes=True,resolution='l',grid=5):
     # read in land/sea mask.
-    if resolution == 5:
-        nlons = 4321
-    elif resolution == 2.5:
-        nlons = 8641 
+    if grid == 5:
+        nlons = 4320
+    elif grid == 2.5:
+        nlons = 8640 
     else:
         raise ValueError('resolution of land/sea mask must be either 5 or 2.5')
-    nlats = nlons/2 + 1
+    nlats = nlons/2
     import gzip
     lsmaskf =\
-    gzip.open(os.path.join(basemap_datadir,'lsmask_%smin.bin' % resolution), 'rb')
+    gzip.open(os.path.join(basemap_datadir,'lsmask_%smin_%s.bin' %\
+        (grid,resolution)), 'rb')
     lsmask =\
     np.reshape(np.fromstring(lsmaskf.read(),dtype=np.uint8),(nlats,nlons))
     if lakes:
         lsmask =\
         np.where(lsmask==2,np.array(0,dtype=np.uint8),lsmask)
     lsmaskf.close()
-    lsmask_lons = np.linspace(-180,180.,nlons).astype(np.float32)
-    lsmask_lats = np.linspace(-90.,90.,nlats).astype(np.float32)
+    delta = 360./nlons
+    lsmask_lons = np.linspace(-180+0.5*delta,180-0.5*delta,nlons).astype(np.float32)
+    lsmask_lats = np.linspace(-90+0.5*delta,90-0.5*delta,nlats).astype(np.float32)
     return lsmask_lons, lsmask_lats, lsmask
 
 class _tup(tuple):

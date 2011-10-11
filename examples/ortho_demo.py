@@ -8,12 +8,14 @@ lat_0 = float(raw_input('enter reference latitude (lat_0):'))
 
 # map with land/sea mask plotted
 fig = plt.figure()
-m = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0,resolution='i')
+resolution = 'l'; grid = 5
+m = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0,resolution=resolution)
 # land coral, oceans aqua.
 # lakes=True means plot inland lakes with ocean color.
 # resolution = 5 (default) means use 5 min dataset (can use 2.5)
 m.drawcoastlines()
-m.drawlsmask(land_color='coral',ocean_color='aqua', lakes=True, resolution=5)
+m.drawlsmask(land_color='coral',ocean_color='aqua', lakes=True,\
+        resolution=resolution,grid=grid)
 # draw parallels and meridians.
 m.drawparallels(np.arange(-90.,120.,30.))
 m.drawmeridians(np.arange(0.,420.,60.))
@@ -23,7 +25,7 @@ plt.title('Orthographic Map Centered on Lon=%s, Lat=%s' % (lon_0,lat_0))
 # map with continents drawn and filled (continent filling fails for
 # lon=-120,lat=60).
 fig = plt.figure()
-m = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0,resolution='i')
+m = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0,resolution=resolution)
 m.drawcoastlines()
 m.fillcontinents(color='coral',lake_color='aqua')
 m.drawcountries()
