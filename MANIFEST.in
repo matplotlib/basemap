@@ -13,7 +13,6 @@ include setup.cfg
 include setupegg.py
 include nad2bin.c
 include src/*
-include examples/makelsmask.py
 include examples/allskymap.py
 include examples/allskymap_cr_example.py
 include examples/plothighsandlows.py
