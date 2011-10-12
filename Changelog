@@ -1,12 +1,12 @@
 version 1.0.2 (not yet released)
-	   * added optional 2.5 minute land/sea mask (derived from
-             intermediate resolution coastline data). 'resolution'
-             kwarg added to drawlsmask and maskoceans, can be either
-             5 or 2.5.
+	   * added optional 1.25, 2.5 and 10 minute land/sea masks (derived from
+             crude, intermediate and low resolution coastline data). 'resolution'
+             and 'grid' kwargs added to drawlsmask and maskoceans.
+	     'resolution' can be 'c','l' or 'i', grid can be 1.25,2.5,5 or 10.
            * update shapefile.py from pyshp.googlecode.com to r72.
 	   * change default land-sea mask (now derived directly from gshhs
              coastline data, default is 5 minutes use coastline resolution =
-             'i'). Default for plotting lakes is now True.
+             'l'). Default for plotting lakes is now True.
            * add etopo method (similar to bluemarble, but plots etopo 
              relief image from www.ngdc.noaa.gov/mgg/global as a map background).
            * add shadedrelief method (similar to bluemarble, but plots shaded
