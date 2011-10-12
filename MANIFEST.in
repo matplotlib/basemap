@@ -9,8 +9,6 @@ include API_CHANGES
 include KNOWN_BUGS
 include Changelog
 include setup.py
-include setup.cfg
-include setupegg.py
 include nad2bin.c
 include src/*
 include examples/allskymap.py
