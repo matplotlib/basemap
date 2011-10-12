@@ -4047,12 +4047,16 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution='l',grid=5):
 
 def _readlsmask(lakes=True,resolution='l',grid=5):
     # read in land/sea mask.
-    if grid == 5:
+    if grid == 10:
+        nlons = 2160
+    elif grid == 5:
         nlons = 4320
     elif grid == 2.5:
         nlons = 8640 
+    elif grid == 1.25:
+        nlons = 17280
     else:
-        raise ValueError('resolution of land/sea mask must be either 5 or 2.5')
+        raise ValueError('grid for land/sea mask must be 10,5,2.5 or 1.25')
     nlats = nlons/2
     import gzip
     lsmaskf =\
