@@ -36,7 +36,7 @@ numpy 1.2.1 (or later)
 
 PIL
     Python Imaging Library (`download <http://www.pythonware.com/products/pil/>`__),
-    only needed for :func:`~mpl_toolkits.basemap.Basemap.bluemarble` and :func:`~mpl_toolkits.basemap.Basemap.warpimage` instance methods.
+    only needed for :func:`~mpl_toolkits.basemap.Basemap.bluemarble`, :func:`~mpl_toolkits.basemap.Basemap.etopo`, :func:`~mpl_toolkits.basemap.Basemap.shadedrelief` and :func:`~mpl_toolkits.basemap.Basemap.warpimage` instance methods.
 
 Installation
 ============

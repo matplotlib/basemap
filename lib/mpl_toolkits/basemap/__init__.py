@@ -3176,7 +3176,7 @@ class Basemap(object):
         resolution       gshhs coastline resolution used to define land/sea
                          mask (default 'l', available 'c','l' or 'i')
         grid             land/sea mask grid spacing in minutes (Default 5,
-                         2.5 is also available).
+                         10, 2.5 and 1.25 are also available).
         \**kwargs        extra keyword arguments passed on to
                          :meth:`imshow`
         ==============   ====================================================
@@ -4031,7 +4031,7 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution='l',grid=5):
     resolution       gshhs coastline resolution used to define land/sea
                      mask (default 'l', available 'c','l' or 'i')
     grid             land/sea mask grid spacing in minutes (Default 5,
-                     2.5 is also available).
+                     10, 2.5 and 1.25 are also available).
     ==============   ====================================================
 
     returns a masked array the same shape as datain with "wet" points masked.
