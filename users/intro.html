@@ -1,0 +1,150 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &mdash; Basemap Basemap Toolkit 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Basemap Basemap Toolkit 1.0 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="top" title="Basemap Basemap Toolkit 1.0 documentation" href="../index.html" />
+    <link rel="up" title="The Matplotlib Basemap Toolkit User’s Guide" href="index.html" />
+    <link rel="next" title="Installing" href="installing.html" />
+    <link rel="prev" title="The Matplotlib Basemap Toolkit User’s Guide" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="installing.html" title="Installing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="The Matplotlib Basemap Toolkit User’s Guide"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Basemap Basemap Toolkit 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>The matplotlib basemap toolkit is a library for plotting 2D data on maps
+in <a class="reference external" href="http://www.python.org">Python</a>. It is similar in functionality to
+the <a class="reference external" href="http://www.mathworks.com/access/helpdesk/help/toolbox/map/map.shtml">matlab mapping toolbox</a>,
+the <a class="reference external" href="http://www.msi.umn.edu/software/idl/tutorial/idl-mapping.html">IDL mapping facilities</a>,
+<a class="reference external" href="http://www.iges.org/grads/downloads.html">GrADS</a>, or the
+<a class="reference external" href="http://gmt.soest.hawaii.edu/">Generic Mapping Tools</a>.
+<a class="reference external" href="http://www.pyngl.ucar.edu/">PyNGL</a> and
+<a class="reference external" href="http://www-pcmdi.llnl.gov/software/cdat/support/vcs/vcs.html">CDAT</a>
+are other libraries that provide similar capabilities in Python.</p>
+<p>Basemap does not do any plotting on it&#8217;s own, but provides the facilities to transform coordinates to one of 23 different map projections (using the
+<a class="reference external" href="http://trac.osgeo.org/proj/">PROJ.4</a> C library).  <a class="reference external" href="http://matplotlib.sourceforge.net">Matplotlib</a> is then
+used to plot contours, images, vectors, lines or points
+in the transformed coordinates.
+Shoreline, river and political boundary
+datasets (from <a class="reference external" href="http://gmt.soest.hawaii.edu/">Generic Mapping Tools</a>)
+are provided, along with methods for plotting them. The <a class="reference external" href="http://geos.refractions.net">GEOS library</a> is used internally to clip the coastline and polticial boundary features to the desired map projection region.</p>
+<p>Basemap provides facilities for reading <a class="reference external" href="http://en.wikipedia.org/wiki/Shapefile">shapefiles</a>.</p>
+<p>Basemap is geared toward the needs of earth scientists, particular
+oceanographers and meteorologists.  I originally wrote Basemap to help in my
+research (climate and weather forecasting), since at the time
+<a class="reference external" href="http://www-pcmdi.llnl.gov/software/cdat/support/vcs/vcs.html">CDAT</a> was
+the only other tool in python for plotting data on map projections.  Over
+the years, the capabilities of Basemap have evolved as scientists in other
+disciplines (such as biology, geology and geophysics) requested and
+contributed new features.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">The Matplotlib Basemap Toolkit User&#8217;s Guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="installing.html"
+                        title="next chapter">Installing</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/users/intro.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="installing.html" title="Installing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="The Matplotlib Basemap Toolkit User’s Guide"
+             >previous</a> |</li>
+        <li><a href="../index.html">Basemap Basemap Toolkit 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008, Jeffrey Whitaker.
+      Last updated on Oct 12, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>

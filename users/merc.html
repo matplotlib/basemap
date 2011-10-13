@@ -1,0 +1,149 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Mercator Projection &mdash; Basemap Basemap Toolkit 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Basemap Basemap Toolkit 1.0 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="top" title="Basemap Basemap Toolkit 1.0 documentation" href="../index.html" />
+    <link rel="up" title="Setting up the map" href="mapsetup.html" />
+    <link rel="next" title="Transverse Mercator Projection" href="tmerc.html" />
+    <link rel="prev" title="Cassini Projection" href="cass.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tmerc.html" title="Transverse Mercator Projection"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cass.html" title="Cassini Projection"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Basemap Basemap Toolkit 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li>
+          <li><a href="mapsetup.html" accesskey="U">Setting up the map</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mercator-projection">
+<span id="merc"></span><h1>Mercator Projection<a class="headerlink" href="#mercator-projection" title="Permalink to this headline">¶</a></h1>
+<p>A cylindrical, conformal projection.  Very large distortion at high latitudes, cannot fully reach the polar regions.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="c"># llcrnrlat,llcrnrlon,urcrnrlat,urcrnrlon</span>
+<span class="c"># are the lat/lon values of the lower left and upper right corners</span>
+<span class="c"># of the map.</span>
+<span class="c"># lat_ts is the latitude of true scale.</span>
+<span class="c"># resolution = &#39;c&#39; means use crude resolution coastlines.</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&#39;merc&#39;</span><span class="p">,</span><span class="n">llcrnrlat</span><span class="o">=-</span><span class="mi">80</span><span class="p">,</span><span class="n">urcrnrlat</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>\
+            <span class="n">llcrnrlon</span><span class="o">=-</span><span class="mi">180</span><span class="p">,</span><span class="n">urcrnrlon</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span><span class="n">lat_ts</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="s">&#39;c&#39;</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">()</span>
+<span class="n">m</span><span class="o">.</span><span class="n">fillcontinents</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;coral&#39;</span><span class="p">,</span><span class="n">lake_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
+<span class="c"># draw parallels and meridians.</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawparallels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">90.</span><span class="p">,</span><span class="mf">91.</span><span class="p">,</span><span class="mf">30.</span><span class="p">))</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">180.</span><span class="p">,</span><span class="mf">181.</span><span class="p">,</span><span class="mf">60.</span><span class="p">))</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span> 
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Mercator Projection&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;merc.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/merc.png" src="../_images/merc.png" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cass.html"
+                        title="previous chapter">Cassini Projection</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tmerc.html"
+                        title="next chapter">Transverse Mercator Projection</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/users/merc.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tmerc.html" title="Transverse Mercator Projection"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cass.html" title="Cassini Projection"
+             >previous</a> |</li>
+        <li><a href="../index.html">Basemap Basemap Toolkit 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li>
+          <li><a href="mapsetup.html" >Setting up the map</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008, Jeffrey Whitaker.
+      Last updated on Oct 13, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>

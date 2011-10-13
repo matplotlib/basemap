@@ -1,0 +1,207 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Drawing a Map Background &mdash; Basemap Basemap Toolkit 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Basemap Basemap Toolkit 1.0 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="top" title="Basemap Basemap Toolkit 1.0 documentation" href="../index.html" />
+    <link rel="up" title="The Matplotlib Basemap Toolkit User’s Guide" href="index.html" />
+    <link rel="next" title="Drawing and Labelling Parallels and Meridians" href="graticule.html" />
+    <link rel="prev" title="van der Grinten Projection" href="vandg.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="graticule.html" title="Drawing and Labelling Parallels and Meridians"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vandg.html" title="van der Grinten Projection"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Basemap Basemap Toolkit 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="drawing-a-map-background">
+<span id="geography"></span><h1>Drawing a Map Background<a class="headerlink" href="#drawing-a-map-background" title="Permalink to this headline">¶</a></h1>
+<p>Basemap includes the
+<a class="reference external" href="http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html">GSSH</a>
+coastline dataset, as well as datasets for rivers, state and
+country boundaries from
+<a class="reference external" href="http://gmt.soest.hawaii.edu">GMT</a>.
+These datasets can be used to draw coastlines, rivers and political
+boundaries on maps at several different resolutions.  The relevant Basemap
+methods are:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.drawcoastlines" title="mpl_toolkits.basemap.Basemap.drawcoastlines"><tt class="xref py py-func docutils literal"><span class="pre">drawcoastlines()</span></tt></a>: draw coastlines.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.fillcontinents" title="mpl_toolkits.basemap.Basemap.fillcontinents"><tt class="xref py py-func docutils literal"><span class="pre">fillcontinents()</span></tt></a>: color the interior
+of continents (by filling the coastline polygons).</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.drawcountries" title="mpl_toolkits.basemap.Basemap.drawcountries"><tt class="xref py py-func docutils literal"><span class="pre">drawcountries()</span></tt></a>: draw country boundaries.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.drawstates" title="mpl_toolkits.basemap.Basemap.drawstates"><tt class="xref py py-func docutils literal"><span class="pre">drawstates()</span></tt></a>: draw state boundaries
+in North America.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.drawrivers" title="mpl_toolkits.basemap.Basemap.drawrivers"><tt class="xref py py-func docutils literal"><span class="pre">drawrivers()</span></tt></a>: draw rivers.</li>
+</ul>
+<p>Instead of drawing coastlines and political boundaries, an image can be
+used as a map background.  Basemap provides several options for this:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.drawlsmask" title="mpl_toolkits.basemap.Basemap.drawlsmask"><tt class="xref py py-func docutils literal"><span class="pre">drawlsmask()</span></tt></a>: draw a high-resolution
+land-sea mask as an image, with land and ocean colors specified.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.bluemarble" title="mpl_toolkits.basemap.Basemap.bluemarble"><tt class="xref py py-func docutils literal"><span class="pre">bluemarble()</span></tt></a>: draw a NASA
+<a class="reference external" href="http://visibleearth.nasa.gov/view_set.php?categoryID=2363">Blue Marble</a>
+image as a map background.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.warpimage" title="mpl_toolkits.basemap.Basemap.warpimage"><tt class="xref py py-func docutils literal"><span class="pre">warpimage()</span></tt></a>: use an abitrary
+image as a map background.  The image must be global, covering the
+world in lat/lon coordinates from the international dateline eastward
+and the South Pole northward.</li>
+</ul>
+<p>Here are examples of the three different ways to draw a map background.</p>
+<ol class="arabic simple">
+<li>Draw coastlines, filling ocean and land areas.</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="c"># setup Lambert Conformal basemap.</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">12000000</span><span class="p">,</span><span class="n">height</span><span class="o">=</span><span class="mi">9000000</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">&#39;lcc&#39;</span><span class="p">,</span>
+            <span class="n">resolution</span><span class="o">=</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="n">lat_1</span><span class="o">=</span><span class="mf">45.</span><span class="p">,</span><span class="n">lat_2</span><span class="o">=</span><span class="mi">55</span><span class="p">,</span><span class="n">lat_0</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">lon_0</span><span class="o">=-</span><span class="mf">107.</span><span class="p">)</span>
+<span class="c"># draw coastlines.</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">()</span>
+<span class="c"># draw a boundary around the map, fill the background.</span>
+<span class="c"># this background will end up being the ocean color, since</span>
+<span class="c"># the continents will be drawn on top.</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span> 
+<span class="c"># fill continents, set lake color same as ocean color. </span>
+<span class="n">m</span><span class="o">.</span><span class="n">fillcontinents</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;coral&#39;</span><span class="p">,</span><span class="n">lake_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;background1.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/background1.png" src="../_images/background1.png" />
+<ol class="arabic simple" start="2">
+<li>Draw a land-sea mask as an image.</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="c"># setup Lambert Conformal basemap.</span>
+<span class="c"># set resolution=None to skip processing of boundary datasets.</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">12000000</span><span class="p">,</span><span class="n">height</span><span class="o">=</span><span class="mi">9000000</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">&#39;lcc&#39;</span><span class="p">,</span>
+            <span class="n">resolution</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">lat_1</span><span class="o">=</span><span class="mf">45.</span><span class="p">,</span><span class="n">lat_2</span><span class="o">=</span><span class="mi">55</span><span class="p">,</span><span class="n">lat_0</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">lon_0</span><span class="o">=-</span><span class="mf">107.</span><span class="p">)</span>
+<span class="c"># draw a land-sea mask for a map background.</span>
+<span class="c"># lakes=True means plot inland lakes with ocean color.</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawlsmask</span><span class="p">(</span><span class="n">land_color</span><span class="o">=</span><span class="s">&#39;coral&#39;</span><span class="p">,</span><span class="n">ocean_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">,</span><span class="n">lakes</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;background2.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/background2.png" src="../_images/background2.png" />
+<ol class="arabic simple" start="3">
+<li>Draw the NASA &#8216;Blue Marble&#8217; image.</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="c"># setup Lambert Conformal basemap.</span>
+<span class="c"># set resolution=None to skip processing of boundary datasets.</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">12000000</span><span class="p">,</span><span class="n">height</span><span class="o">=</span><span class="mi">9000000</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">&#39;lcc&#39;</span><span class="p">,</span>
+            <span class="n">resolution</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">lat_1</span><span class="o">=</span><span class="mf">45.</span><span class="p">,</span><span class="n">lat_2</span><span class="o">=</span><span class="mi">55</span><span class="p">,</span><span class="n">lat_0</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="n">lon_0</span><span class="o">=-</span><span class="mf">107.</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">bluemarble</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;background3.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/background3.png" src="../_images/background3.png" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vandg.html"
+                        title="previous chapter">van der Grinten Projection</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="graticule.html"
+                        title="next chapter">Drawing and Labelling Parallels and Meridians</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/users/geography.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="graticule.html" title="Drawing and Labelling Parallels and Meridians"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vandg.html" title="van der Grinten Projection"
+             >previous</a> |</li>
+        <li><a href="../index.html">Basemap Basemap Toolkit 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008, Jeffrey Whitaker.
+      Last updated on Oct 13, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>
