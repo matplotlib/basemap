@@ -42,7 +42,7 @@ Installation
 ============
 
 Windows binary installers are available for
-`download <http://sourceforge.net/projects/matplotlib/files/matplotlib-toolkits/`__. 
+`download <http://sourceforge.net/projects/matplotlib/files/matplotlib-toolkits/>`__. 
 
 For other platforms, download the source release and follow these steps:
 
