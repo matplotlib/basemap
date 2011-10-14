@@ -3300,7 +3300,7 @@ class Basemap(object):
 
     def shadedrelief(self,ax=None,scale=None,**kwargs):
         """
-        display shaded relief image (from http://www.shadedreliefdata.com)
+        display shaded relief image (from http://www.shadedrelief.com)
         as map background.
         Default image size is 10800x5400, which can be quite slow and
         use quite a bit of memory.  The ``scale`` keyword can be used
