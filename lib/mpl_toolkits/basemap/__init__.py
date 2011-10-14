@@ -3174,7 +3174,7 @@ class Basemap(object):
                          if lsmask is None). Latitudes must be ordered
                          from -90 S northward.
         resolution       gshhs coastline resolution used to define land/sea
-                         mask (default 'l', available 'c','l' or 'i')
+                         mask (default 'l', available 'c','l','i','h' or 'f')
         grid             land/sea mask grid spacing in minutes (Default 5,
                          10, 2.5 and 1.25 are also available).
         \**kwargs        extra keyword arguments passed on to
@@ -4029,7 +4029,7 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution='l',grid=5):
     inlands          if False, masked only ocean points and not inland 
                      lakes (Default True).
     resolution       gshhs coastline resolution used to define land/sea
-                     mask (default 'l', available 'c','l' or 'i')
+                     mask (default 'l', available 'c','l','i','h' or 'f')
     grid             land/sea mask grid spacing in minutes (Default 5,
                      10, 2.5 and 1.25 are also available).
     ==============   ====================================================
