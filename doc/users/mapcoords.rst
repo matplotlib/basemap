@@ -1,7 +1,7 @@
-.. _graticule:
+.. _mapcoords:
 
-Convert to and from map projection coordinates
-==============================================
+Converting to and from map projection coordinates
+=================================================
 
 In order to plot data on a map, the coordinates of the data must
 be given in map projection coordinates.
