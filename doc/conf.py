@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General substitutions.
-project = 'Basemap Basemap Toolkit'
+project = 'Basemap Matplotlib Toolkit'
 copyright = '2011, Jeffrey Whitaker'
 
 # The default replacements for |version| and |release|, also used in various
