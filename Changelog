@@ -1,4 +1,5 @@
 version 1.0.2 (not yet released)
+           * docs updated, moved to matplotlib.github.com/basemap.
 	   * added optional 1.25, 2.5 and 10 minute land/sea masks (derived from
              crude, intermediate and low resolution coastline data). 'resolution'
              and 'grid' kwargs added to drawlsmask and maskoceans.
