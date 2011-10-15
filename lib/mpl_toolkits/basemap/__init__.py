@@ -251,7 +251,7 @@ _Basemap_init_doc = """
  ax               set default axes instance
                   (default None - matplotlib.pyplot.gca() may be used
                   to get the current axes instance).
-                  If you don``t want matplotlib.pyplot to be imported,
+                  If you don not want matplotlib.pyplot to be imported,
                   you can either set this to a pre-defined axes
                   instance, or use the ``ax`` keyword in each Basemap
                   method call that does drawing. In the first case,
@@ -3175,15 +3175,14 @@ class Basemap(object):
                          from -90 S northward.
         resolution       gshhs coastline resolution used to define land/sea
                          mask (default 'l', available 'c','l','i','h' or 'f')
-        grid             land/sea mask grid spacing in minutes (Default 5,
+        grid             land/sea mask grid spacing in minutes (Default 5;
                          10, 2.5 and 1.25 are also available).
         \**kwargs        extra keyword arguments passed on to
                          :meth:`imshow`
         ==============   ====================================================
 
         If any of the lsmask, lsmask_lons or lsmask_lats keywords are not
-        set, the default 5 min land-sea mask derived from the gshhs 
-        intermediate resolution coastlines is used.
+        set, the built in GSHHS land-sea mask datasets are used.
 
         Extra keyword ``ax`` can be used to override the default axis instance.
 
@@ -4030,7 +4029,7 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution='l',grid=5):
                      lakes (Default True).
     resolution       gshhs coastline resolution used to define land/sea
                      mask (default 'l', available 'c','l','i','h' or 'f')
-    grid             land/sea mask grid spacing in minutes (Default 5,
+    grid             land/sea mask grid spacing in minutes (Default 5;
                      10, 2.5 and 1.25 are also available).
     ==============   ====================================================
 
