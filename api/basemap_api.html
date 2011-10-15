@@ -333,7 +333,7 @@ Implies resolution=None.</td>
 <td>set default axes instance
 (default None - matplotlib.pyplot.gca() may be used
 to get the current axes instance).
-If you don``t want matplotlib.pyplot to be imported,
+If you don not want matplotlib.pyplot to be imported,
 you can either set this to a pre-defined axes
 instance, or use the <tt class="docutils literal"><span class="pre">ax</span></tt> keyword in each Basemap
 method call that does drawing. In the first case,
@@ -745,7 +745,7 @@ from -90 S northward.</td>
 mask (default &#8216;l&#8217;, available &#8216;c&#8217;,&#8217;l&#8217;,&#8217;i&#8217;,&#8217;h&#8217; or &#8216;f&#8217;)</td>
 </tr>
 <tr class="row-odd"><td>grid</td>
-<td>land/sea mask grid spacing in minutes (Default 5,
+<td>land/sea mask grid spacing in minutes (Default 5;
 10, 2.5 and 1.25 are also available).</td>
 </tr>
 <tr class="row-even"><td>**kwargs</td>
@@ -755,8 +755,7 @@ mask (default &#8216;l&#8217;, available &#8216;c&#8217;,&#8217;l&#8217;,&#8217;
 </tbody>
 </table>
 <p>If any of the lsmask, lsmask_lons or lsmask_lats keywords are not
-set, the default 5 min land-sea mask derived from the gshhs 
-intermediate resolution coastlines is used.</p>
+set, the built in GSHHS land-sea mask datasets are used.</p>
 <p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
 <p>returns a matplotlib.image.AxesImage instance.</p>
 </dd></dl>
@@ -1746,7 +1745,7 @@ lakes (Default True).</td>
 mask (default &#8216;l&#8217;, available &#8216;c&#8217;,&#8217;l&#8217;,&#8217;i&#8217;,&#8217;h&#8217; or &#8216;f&#8217;)</td>
 </tr>
 <tr class="row-even"><td>grid</td>
-<td>land/sea mask grid spacing in minutes (Default 5,
+<td>land/sea mask grid spacing in minutes (Default 5;
 10, 2.5 and 1.25 are also available).</td>
 </tr>
 </tbody>
