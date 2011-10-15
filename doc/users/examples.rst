@@ -1,13 +1,37 @@
 .. _examples:
 
-Plotting stuff on a map
-=======================
+Plotting data on a map
+======================
 
-Following are a bunch of examples that illustrate how to use
-Basemap instance methods to plot stuff on a map.  More examples
+Following are a series of examples that illustrate how to use
+Basemap instance methods to plot your data on a map.  More examples
 are included in the examples directory of the basemap source distribution.
-For more specifics of how to use the instance methods,
+There are a number of Basemap instance methods for plotting data:
+
+* :func:`~mpl_toolkits.basemap.Basemap.contour`: draw contour lines.
+* :func:`~mpl_toolkits.basemap.Basemap.contourf`: draw filled contours.
+* :func:`~mpl_toolkits.basemap.Basemap.imshow`: draw an image.
+* :func:`~mpl_toolkits.basemap.Basemap.pcolor`: draw a pseudocolor plot.
+* :func:`~mpl_toolkits.basemap.Basemap.pcolormesh`: draw a pseudocolor plot (faster version for regular meshes).
+* :func:`~mpl_toolkits.basemap.Basemap.plot`: draw lines and/or markers.
+* :func:`~mpl_toolkits.basemap.Basemap.scatter`: draw points with markers.
+* :func:`~mpl_toolkits.basemap.Basemap.quiver`: draw vectors.
+* :func:`~mpl_toolkits.basemap.Basemap.barbs`: draw `wind barbs <http://en.wikipedia.org/wiki/Station_model#Plotted_winds>`__.
+* :func:`~mpl_toolkits.basemap.Basemap.drawgreatcircle`: draw a `great circle <http://en.wikipedia.org/wiki/Great_circle>`__.
+
+Many of these instances methods simply forward to the corresponding matplotlib
+`Axes <http://matplotlib.sourceforge.net/api/axes_api.html>`__ instance method, 
+with some extra pre/post processing and argument checking. 
+You can also plot on the map directly with the matplotlib 
+`pyplot <http://matplotlib.sourceforge.net/api/pyplot_api.html>`__ interface,
+or the `OO api <http://matplotlib.sourceforge.net/examples/api/index.html>`__, 
+using the `Axes <http://matplotlib.sourceforge.net/api/axes_api.html>`__ instance 
+associated with the Basemap.
+
+For more specifics of how to use the Basemap instance methods,
 see :ref:`api-index`.
+
+Here are the examples:
 
 * Plot contour lines on a basemap
 
