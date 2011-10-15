@@ -1,18 +1,11 @@
 To build docs ....
 
-* install sphinx from svn.
-
-* make _static and sphinxext symlinks here that point to the corresponding
-  directories in the matplotlib doc tree, e.g.
-
-  ln -s ../../../matplotlib/doc/_static _static
-  ln -s ../../../matplotlib/doc/sphinxext sphinxext
-
-* copy matplotlibrc to users/figures, edit to make default figure size 6,6 
-  instead of 8,6.
+* install sphinx.
 
 * run 'python make.py html'.  Entry point is build/html/index.html.
 
-* to update on sf site:
-  cd build
-  rsync -avz html jswhit,matplotlib@web.sf.net:/home/groups/m/ma/matplotlib/htdocs/basemap/doc/ -essh
+* to update on github site:
+  checkout gh-pages basemap branch in ../../basemap.git.web
+  (cd ../..; git clone git@github.com:matplotlib/basemap.git -b gh-pages basemap.git.web)
+  rsync -vaz build/html/ ../../basemap.git.web
+  go to basemap.git.web, commit and push the updates.
