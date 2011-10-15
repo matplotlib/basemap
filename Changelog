@@ -1,9 +1,9 @@
 version 1.0.2 (not yet released)
            * docs updated, moved to matplotlib.github.com/basemap.
 	   * added optional 1.25, 2.5 and 10 minute land/sea masks (derived from
-             crude, intermediate and low resolution coastline data). 'resolution'
+             GSHHS coastline data). 'resolution'
              and 'grid' kwargs added to drawlsmask and maskoceans.
-	     'resolution' can be 'c','l' or 'i', grid can be 1.25,2.5,5 or 10.
+	     'resolution' can be 'c','l','i','h' or 'f', grid can be 1.25,2.5,5 or 10.
            * update shapefile.py from pyshp.googlecode.com to r72.
 	   * change default land-sea mask (now derived directly from gshhs
              coastline data, default is 5 minutes use coastline resolution =
