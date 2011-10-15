@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Plotting stuff on a map &mdash; Basemap Matplotlib Toolkit 1.0.2 documentation</title>
+    <title>Plotting data on a map &mdash; Basemap Matplotlib Toolkit 1.0.2 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -59,13 +59,35 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="plotting-stuff-on-a-map">
-<span id="examples"></span><h1>Plotting stuff on a map<a class="headerlink" href="#plotting-stuff-on-a-map" title="Permalink to this headline">¶</a></h1>
-<p>Following are a bunch of examples that illustrate how to use
-Basemap instance methods to plot stuff on a map.  More examples
+  <div class="section" id="plotting-data-on-a-map">
+<span id="examples"></span><h1>Plotting data on a map<a class="headerlink" href="#plotting-data-on-a-map" title="Permalink to this headline">¶</a></h1>
+<p>Following are a series of examples that illustrate how to use
+Basemap instance methods to plot your data on a map.  More examples
 are included in the examples directory of the basemap source distribution.
-For more specifics of how to use the instance methods,
+There are a number of Basemap instance methods for plotting data:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.contour" title="mpl_toolkits.basemap.Basemap.contour"><tt class="xref py py-func docutils literal"><span class="pre">contour()</span></tt></a>: draw contour lines.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.contourf" title="mpl_toolkits.basemap.Basemap.contourf"><tt class="xref py py-func docutils literal"><span class="pre">contourf()</span></tt></a>: draw filled contours.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><tt class="xref py py-func docutils literal"><span class="pre">imshow()</span></tt></a>: draw an image.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.pcolor" title="mpl_toolkits.basemap.Basemap.pcolor"><tt class="xref py py-func docutils literal"><span class="pre">pcolor()</span></tt></a>: draw a pseudocolor plot.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.pcolormesh" title="mpl_toolkits.basemap.Basemap.pcolormesh"><tt class="xref py py-func docutils literal"><span class="pre">pcolormesh()</span></tt></a>: draw a pseudocolor plot (faster version for regular meshes).</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.plot" title="mpl_toolkits.basemap.Basemap.plot"><tt class="xref py py-func docutils literal"><span class="pre">plot()</span></tt></a>: draw lines and/or markers.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.scatter" title="mpl_toolkits.basemap.Basemap.scatter"><tt class="xref py py-func docutils literal"><span class="pre">scatter()</span></tt></a>: draw points with markers.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.quiver" title="mpl_toolkits.basemap.Basemap.quiver"><tt class="xref py py-func docutils literal"><span class="pre">quiver()</span></tt></a>: draw vectors.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.barbs" title="mpl_toolkits.basemap.Basemap.barbs"><tt class="xref py py-func docutils literal"><span class="pre">barbs()</span></tt></a>: draw <a class="reference external" href="http://en.wikipedia.org/wiki/Station_model#Plotted_winds">wind barbs</a>.</li>
+<li><a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.drawgreatcircle" title="mpl_toolkits.basemap.Basemap.drawgreatcircle"><tt class="xref py py-func docutils literal"><span class="pre">drawgreatcircle()</span></tt></a>: draw a <a class="reference external" href="http://en.wikipedia.org/wiki/Great_circle">great circle</a>.</li>
+</ul>
+<p>Many of these instances methods simply forward to the corresponding matplotlib
+<a class="reference external" href="http://matplotlib.sourceforge.net/api/axes_api.html">Axes</a> instance method,
+with some extra pre/post processing and argument checking.
+You can also plot on the map directly with the matplotlib
+<a class="reference external" href="http://matplotlib.sourceforge.net/api/pyplot_api.html">pyplot</a> interface,
+or the <a class="reference external" href="http://matplotlib.sourceforge.net/examples/api/index.html">OO api</a>,
+using the <a class="reference external" href="http://matplotlib.sourceforge.net/api/axes_api.html">Axes</a> instance
+associated with the Basemap.</p>
+<p>For more specifics of how to use the Basemap instance methods,
 see <a class="reference internal" href="../api/index.html#api-index"><em>The Matplotlib Basemap Toolkit API</em></a>.</p>
+<p>Here are the examples:</p>
 <ul class="simple">
 <li>Plot contour lines on a basemap</li>
 </ul>
