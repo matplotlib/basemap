@@ -41,10 +41,10 @@ PIL
 Installation
 ============
 
-Windows binary installers are available for
-`download <http://sourceforge.net/projects/matplotlib/files/matplotlib-toolkits/>`__. 
+Download either Windows binary installers or source tarballs 
+`here <http://sourceforge.net/projects/matplotlib/files/matplotlib-toolkits/>`__. 
 
-For other platforms, download the source release and follow these steps:
+To install from the source, follow these steps:
 
 
 * Install pre-requisite requirements.
