@@ -9,6 +9,7 @@
 
 .. toctree::
 
+    download.rst
     intro.rst
     installing.rst
     mapsetup.rst
