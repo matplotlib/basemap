@@ -6,10 +6,7 @@
 from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy as np
 import matplotlib.pyplot as plt
-try:
-    from matplotlib.colors import LightSource
-except ImportError:
-    raise ImportError("Need a more recent version of matplotlib to run this example")
+from matplotlib.colors import LightSource
 
 
 # read in topo data (on a regular lat/lon grid)

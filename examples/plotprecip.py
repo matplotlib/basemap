@@ -13,7 +13,7 @@ rcParams['ytick.labelsize']=9
 # colormap used by the NWS, and included in basemap.
 
 nc = NetCDFFile('nws_precip_conus_20061222.nc')
-# data from http://www.srh.noaa.gov/rfcshare/precip_analysis_new.php
+# data from http://water.weather.gov/precip/
 prcpvar = nc.variables['amountofprecip']
 data = 0.01*prcpvar[:]
 latcorners = nc.variables['lat'][:]
