@@ -66,3 +66,10 @@ Here are the examples:
 
 .. image:: figures/etopo5_shaded.png
 
+* Plot markers at locations of `ARGO <http://www.argo.ucsd.edu/>__` floats.
+
+.. literalinclude:: figures/plotargo.py
+ 
+.. image:: figures/plotargo.png
+
+
