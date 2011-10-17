@@ -38,3 +38,31 @@ Here are the examples:
 .. literalinclude:: figures/contour1.py
 
 .. image:: figures/contour1.png
+
+* Plot precip with filled contours
+
+.. literalinclude:: figures/plotprecip.py
+
+.. image:: figures/plotprecip.png
+
+* Plot sea-level pressure weather map with labelled highs and lows
+
+.. literalinclude:: figures/plothighsandlows.py
+ 
+.. image:: figures/plothighsandlows.png
+
+* Plot hurricane tracks from a shapefile
+
+.. literalinclude:: figures/hurrtracks.py
+ 
+.. image:: figures/hurrtracks.png
+
+* Plot etopo5 topography/bathymetry data as an image (with 
+  and without shading from a specified light source).
+
+.. literalinclude:: figures/plotetopo5.py
+ 
+.. image:: figures/etopo5.png
+
+.. image:: figures/etopo5_shaded.png
+
