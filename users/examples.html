@@ -319,6 +319,82 @@ see <a class="reference internal" href="../api/index.html#api-index"><em>The Mat
 </pre></div>
 </div>
 <img alt="../_images/hurrtracks.png" src="../_images/hurrtracks.png" />
+<ul class="simple">
+<li>Plot etopo5 topography/bathymetry data as an image (with
+and without shading from a specified light source).</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span><span class="p">,</span> <span class="n">shiftgrid</span><span class="p">,</span> <span class="n">cm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="kn">import</span> <span class="n">make_axes_locatable</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="c"># read in etopo5 topography/bathymetry.</span>
+<span class="n">etopodata</span> <span class="o">=</span>\
+<span class="n">Dataset</span><span class="p">(</span><span class="s">&#39;http://ferret.pmel.noaa.gov/thredds/dodsC/data/PMEL/etopo5.nc&#39;</span><span class="p">)</span>
+<span class="n">topoin</span> <span class="o">=</span> <span class="n">etopodata</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;ROSE&#39;</span><span class="p">][:]</span>
+<span class="n">lons</span> <span class="o">=</span> <span class="n">etopodata</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;ETOPO05_X&#39;</span><span class="p">][:]</span>
+<span class="n">lats</span> <span class="o">=</span> <span class="n">etopodata</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;ETOPO05_Y&#39;</span><span class="p">][:]</span>
+<span class="c"># shift data so lons go from -180 to 180 instead of 20 to 380.</span>
+<span class="n">topoin</span><span class="p">,</span><span class="n">lons</span> <span class="o">=</span> <span class="n">shiftgrid</span><span class="p">(</span><span class="mf">180.</span><span class="p">,</span><span class="n">topoin</span><span class="p">,</span><span class="n">lons</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="c"># plot topography/bathymetry as an image.</span>
+
+<span class="c"># create the figure and axes instances.</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.8</span><span class="p">])</span>
+<span class="c"># setup of basemap (&#39;lcc&#39; = lambert conformal conic).</span>
+<span class="c"># use major and minor sphere radii from WGS84 ellipsoid.</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">llcrnrlon</span><span class="o">=-</span><span class="mf">145.5</span><span class="p">,</span><span class="n">llcrnrlat</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">urcrnrlon</span><span class="o">=-</span><span class="mf">2.566</span><span class="p">,</span><span class="n">urcrnrlat</span><span class="o">=</span><span class="mf">46.352</span><span class="p">,</span>\
+            <span class="n">rsphere</span><span class="o">=</span><span class="p">(</span><span class="mf">6378137.00</span><span class="p">,</span><span class="mf">6356752.3142</span><span class="p">),</span>\
+            <span class="n">resolution</span><span class="o">=</span><span class="s">&#39;l&#39;</span><span class="p">,</span><span class="n">area_thresh</span><span class="o">=</span><span class="mf">1000.</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">&#39;lcc&#39;</span><span class="p">,</span>\
+            <span class="n">lat_1</span><span class="o">=</span><span class="mf">50.</span><span class="p">,</span><span class="n">lon_0</span><span class="o">=-</span><span class="mf">107.</span><span class="p">,</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="c"># transform to nx x ny regularly spaced 5km native projection grid</span>
+<span class="n">nx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">m</span><span class="o">.</span><span class="n">xmax</span><span class="o">-</span><span class="n">m</span><span class="o">.</span><span class="n">xmin</span><span class="p">)</span><span class="o">/</span><span class="mf">5000.</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="n">ny</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">m</span><span class="o">.</span><span class="n">ymax</span><span class="o">-</span><span class="n">m</span><span class="o">.</span><span class="n">ymin</span><span class="p">)</span><span class="o">/</span><span class="mf">5000.</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+<span class="n">topodat</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">transform_scalar</span><span class="p">(</span><span class="n">topoin</span><span class="p">,</span><span class="n">lons</span><span class="p">,</span><span class="n">lats</span><span class="p">,</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">)</span>
+<span class="c"># plot image over map with imshow.</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">topodat</span><span class="p">,</span><span class="n">cm</span><span class="o">.</span><span class="n">GMT_haxby</span><span class="p">)</span>
+<span class="c"># draw coastlines and political boundaries.</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">()</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawcountries</span><span class="p">()</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawstates</span><span class="p">()</span>
+<span class="c"># draw parallels and meridians.</span>
+<span class="c"># label on left and bottom of map.</span>
+<span class="n">parallels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mf">20.</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawparallels</span><span class="p">(</span><span class="n">parallels</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">meridians</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">10.</span><span class="p">,</span><span class="mf">360.</span><span class="p">,</span><span class="mf">30.</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">meridians</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="c"># use axes_grid toolkit to make colorbar axes.</span>
+<span class="n">divider</span> <span class="o">=</span> <span class="n">make_axes_locatable</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">cax</span> <span class="o">=</span> <span class="n">divider</span><span class="o">.</span><span class="n">append_axes</span><span class="p">(</span><span class="s">&quot;right&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s">&quot;5%&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">cb</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="n">cax</span><span class="o">=</span><span class="n">cax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;ETOPO5 Topography - Lambert Conformal Conic&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;etopo5.png&#39;</span><span class="p">)</span>
+
+<span class="c"># make a shaded relief plot.</span>
+
+<span class="c"># create new figure, axes instance.</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.8</span><span class="p">])</span>
+<span class="c"># attach new axes image to existing Basemap instance.</span>
+<span class="n">m</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span>
+<span class="c"># create light source object.</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">LightSource</span>
+<span class="n">ls</span> <span class="o">=</span> <span class="n">LightSource</span><span class="p">(</span><span class="n">azdeg</span> <span class="o">=</span> <span class="mi">90</span><span class="p">,</span> <span class="n">altdeg</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span>
+<span class="c"># convert data to rgb array including shading from light source.</span>
+<span class="c"># (must specify color map)</span>
+<span class="n">rgb</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">shade</span><span class="p">(</span><span class="n">topodat</span><span class="p">,</span> <span class="n">cm</span><span class="o">.</span><span class="n">GMT_haxby</span><span class="p">)</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rgb</span><span class="p">)</span>
+<span class="c"># draw coastlines and political boundaries.</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">()</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawcountries</span><span class="p">()</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawstates</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;Shaded ETOPO5 Topography - Lambert Conformal Conic&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;etopo5_shaded.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../_images/etopo5.png" src="../_images/etopo5.png" />
+<img alt="../_images/etopo5_shaded.png" src="../_images/etopo5_shaded.png" />
 </div>
 
 
@@ -376,7 +452,7 @@ see <a class="reference internal" href="../api/index.html#api-index"><em>The Mat
     </div>
     <div class="footer">
         &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Oct 15, 2011.
+      Last updated on Oct 17, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
     </div>
   </body>

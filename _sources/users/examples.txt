@@ -57,4 +57,12 @@ Here are the examples:
  
 .. image:: figures/hurrtracks.png
 
+* Plot etopo5 topography/bathymetry data as an image (with 
+  and without shading from a specified light source).
+
+.. literalinclude:: figures/plotetopo5.py
+ 
+.. image:: figures/etopo5.png
+
+.. image:: figures/etopo5_shaded.png
 
