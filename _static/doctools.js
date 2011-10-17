@@ -185,9 +185,9 @@ var Documentation = {
           body.highlightText(this.toLowerCase(), 'highlighted');
         });
       }, 10);
-      $('<p class="highlight-link"><a href="javascript:Documentation.' +
-        'hideSearchWords()">' + _('Hide Search Matches') + '</a></p>')
-          .appendTo($('#searchbox'));
+      $('<li class="highlight-link"><a href="javascript:Documentation.' +
+        'hideSearchWords()">' + _('Hide Search Matches') + '</a></li>')
+          .appendTo($('.sidebar .this-page-menu'));
     }
   },
 
@@ -213,7 +213,7 @@ var Documentation = {
    * helper function to hide the search marks again
    */
   hideSearchWords : function() {
-    $('#searchbox .highlight-link').fadeOut(300);
+    $('.sidebar .this-page-menu li.highlight-link').fadeOut(300);
     $('span.highlighted').removeClass('highlighted');
   },
 
