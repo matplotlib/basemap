@@ -72,4 +72,8 @@ Here are the examples:
  
 .. image:: figures/plotargo.png
 
+* Pseudo-color plot of SST and sea ice analysis.
 
+.. literalinclude:: figures/plotsst.py
+ 
+.. image:: figures/plotsst.png
