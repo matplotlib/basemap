@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Plotting data on a map &mdash; Basemap Matplotlib Toolkit 1.0.2 documentation</title>
+    <title>Plotting data on a map (Example Gallery) &mdash; Basemap Matplotlib Toolkit 1.0.2 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -59,8 +59,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="plotting-data-on-a-map">
-<span id="examples"></span><h1>Plotting data on a map<a class="headerlink" href="#plotting-data-on-a-map" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="plotting-data-on-a-map-example-gallery">
+<span id="examples"></span><h1>Plotting data on a map (Example Gallery)<a class="headerlink" href="#plotting-data-on-a-map-example-gallery" title="Permalink to this headline">¶</a></h1>
 <p>Following are a series of examples that illustrate how to use
 Basemap instance methods to plot your data on a map.  More examples
 are included in the examples directory of the basemap source distribution.
@@ -137,7 +137,7 @@ see <a class="reference internal" href="../api/index.html#api-index"><em>The Mat
 <span class="c"># colormap used by the NWS, and included in basemap.</span>
 
 <span class="n">nc</span> <span class="o">=</span> <span class="n">NetCDFFile</span><span class="p">(</span><span class="s">&#39;../../../examples/nws_precip_conus_20061222.nc&#39;</span><span class="p">)</span>
-<span class="c"># data from http://www.srh.noaa.gov/rfcshare/precip_analysis_new.php</span>
+<span class="c"># data from http://water.weather.gov/precip/</span>
 <span class="n">prcpvar</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;amountofprecip&#39;</span><span class="p">]</span>
 <span class="n">data</span> <span class="o">=</span> <span class="mf">0.01</span><span class="o">*</span><span class="n">prcpvar</span><span class="p">[:]</span>
 <span class="n">latcorners</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;lat&#39;</span><span class="p">][:]</span>
