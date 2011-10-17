@@ -1,7 +1,7 @@
 .. _examples:
 
-Plotting data on a map
-======================
+Plotting data on a map (Example Gallery)
+========================================
 
 Following are a series of examples that illustrate how to use
 Basemap instance methods to plot your data on a map.  More examples
