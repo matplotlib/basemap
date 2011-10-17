@@ -1,7 +1,7 @@
 """
 draw Atlantic Hurricane Tracks for storms that reached Cat 4 or 5.
 part of the track for which storm is cat 4 or 5 is shown red.
-ESRI shapefile data from http://www.nationalatlas.gov/atlasftplt.html
+ESRI shapefile data from http://nationalatlas.gov/mld/huralll.html
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -28,9 +28,9 @@ for shapedict,shape in zip(m.hurrtracks_info,m.hurrtracks):
         xx,yy = zip(*shape)
         # show part of track where storm > Cat 4 as thick red.
         if cat in ['H4','H5']: 
-            plt.plot(xx,yy,linewidth=1.5,color='r')
+            m.plot(xx,yy,linewidth=1.5,color='r')
         elif cat in ['H1','H2','H3']:
-            plt.plot(xx,yy,color='k')
+            m.plot(xx,yy,color='k')
 # draw coastlines, meridians and parallels.
 m.drawcoastlines()
 m.drawcountries()
