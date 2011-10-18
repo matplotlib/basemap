@@ -87,7 +87,9 @@ using the <a class="reference external" href="http://matplotlib.sourceforge.net/
 associated with the Basemap.</p>
 <p>For more specifics of how to use the Basemap instance methods,
 see <a class="reference internal" href="../api/index.html#api-index"><em>The Matplotlib Basemap Toolkit API</em></a>.</p>
-<p>Here are the examples:</p>
+<p>Here are the examples (many of which utilize the
+<a class="reference external" href="http://netcdf4-python.googlecode.com">netcdf4-python</a> module
+to retrieve datasets over http):</p>
 <ul class="simple">
 <li>Plot contour lines on a basemap</li>
 </ul>
@@ -187,7 +189,7 @@ see <a class="reference internal" href="../api/index.html#api-index"><em>The Mat
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span><span class="p">,</span> <span class="n">addcyclic</span>
 <span class="kn">from</span> <span class="nn">scipy.ndimage.filters</span> <span class="kn">import</span> <span class="n">minimum_filter</span><span class="p">,</span> <span class="n">maximum_filter</span>
 <span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span> 
@@ -202,8 +204,8 @@ see <a class="reference internal" href="../api/index.html#api-index"><em>The Mat
     <span class="c"># Return the indices of the maxima, minima</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">mat</span> <span class="o">==</span> <span class="n">mn</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">mat</span> <span class="o">==</span> <span class="n">mx</span><span class="p">)</span>
 
-<span class="c"># set date (today at 00 UTC)</span>
-<span class="n">YYYYMMDDHH</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y%m</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;00&#39;</span>
+<span class="c"># set date (yesterday at 00 UTC)</span>
+<span class="n">YYYYMMDDHH</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y%m</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;00&#39;</span>
 
 <span class="c"># open OpenDAP dataset.</span>
 <span class="n">data</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="s">&quot;http://nomad2.ncep.noaa.gov:9090/dods/gdas/rotating/gdas&quot;</span><span class="o">+</span><span class="n">YYYYMMDDHH</span><span class="o">+</span><span class="s">&quot;.grib2&quot;</span><span class="p">)</span>
