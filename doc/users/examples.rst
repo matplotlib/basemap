@@ -77,3 +77,23 @@ Here are the examples:
 .. literalinclude:: figures/plotsst.py
  
 .. image:: figures/plotsst.png
+
+* Plotting wind vectors and wind barbs.
+
+.. literalinclude:: figures/plotwindvec.py
+ 
+.. image:: figures/plotwindvec1.png
+
+.. image:: figures/plotwindvec2.png
+
+* Draw great circle between NY and London.
+
+.. literalinclude:: figures/plotgreatcircle.py
+ 
+.. image:: figures/plotgreatcircle.png
+
+* Draw day-night terminator on a map.
+
+.. literalinclude:: figures/plotdaynight.py
+ 
+.. image:: figures/plotdaynight.png
