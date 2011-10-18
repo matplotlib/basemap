@@ -31,7 +31,9 @@ associated with the Basemap.
 For more specifics of how to use the Basemap instance methods,
 see :ref:`api-index`.
 
-Here are the examples:
+Here are the examples (many of which utilize the 
+`netcdf4-python <http://netcdf4-python.googlecode.com>`__ module
+to retrieve datasets over http):
 
 * Plot contour lines on a basemap
 
