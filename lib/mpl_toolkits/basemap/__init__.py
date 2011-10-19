@@ -2835,7 +2835,7 @@ class Basemap(object):
                     raise ImportError(msg)
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
-                if hasattr(data,'mask'):
+                if ma.isMA(data):
                     data = data.filled(fill_value=1.e30)
                     masked=True
                 else:
@@ -2925,7 +2925,7 @@ class Basemap(object):
                     raise ImportError(msg)
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
-                if hasattr(data,'mask'):
+                if ma.isMA(data):
                     data = data.filled(fill_value=1.e30)
                     masked=True
                 else:
@@ -3010,7 +3010,7 @@ class Basemap(object):
                     raise ImportError(msg)
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
-                if hasattr(data,'mask'):
+                if ma.isMA(data):
                     data = data.filled(fill_value=1.e30)
                     masked=True
                 else:
@@ -3955,11 +3955,11 @@ def shiftgrid(lon0,datain,lonsin,start=True,cyclic=360.0):
         raise ValueError('lon0 outside of range of lonsin')
     i0 = np.argmin(np.fabs(lonsin-lon0))
     i0_shift = len(lonsin)-i0
-    if hasattr(datain,'mask'):
+    if ma.isMA(datain):
         dataout  = ma.zeros(datain.shape,datain.dtype)
     else:
         dataout  = np.zeros(datain.shape,datain.dtype)
-    if hasattr(lonsin,'mask'):
+    if ma.isMA(lonsin):
         lonsout = ma.zeros(lonsin.shape,lonsin.dtype)
     else:
         lonsout = np.zeros(lonsin.shape,lonsin.dtype)
@@ -3982,13 +3982,13 @@ def addcyclic(arrin,lonsin):
     """
     nlats = arrin.shape[0]
     nlons = arrin.shape[1]
-    if hasattr(arrin,'mask'):
+    if ma.isMA(arrin):
         arrout  = ma.zeros((nlats,nlons+1),arrin.dtype)
     else:
         arrout  = np.zeros((nlats,nlons+1),arrin.dtype)
     arrout[:,0:nlons] = arrin[:,:]
     arrout[:,nlons] = arrin[:,0]
-    if hasattr(lonsin,'mask'):
+    if ma.isMA(lonsin):
         lonsout = ma.zeros(nlons+1,lonsin.dtype)
     else:
         lonsout = np.zeros(nlons+1,lonsin.dtype)
