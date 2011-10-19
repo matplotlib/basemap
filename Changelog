@@ -1,6 +1,7 @@
 version 1.0.2 (not yet released)
+           * replace hasattr(arr,'mask') with numpy.ma.isMA(arr).
            * docs updated, moved to matplotlib.github.com/basemap.
-	   * added optional 1.25, 2.5 and 10 minute land/sea masks (derived from
+           * added optional 1.25, 2.5 and 10 minute land/sea masks (derived from
              GSHHS coastline data). 'resolution'
              and 'grid' kwargs added to drawlsmask and maskoceans.
 	     'resolution' can be 'c','l','i','h' or 'f', grid can be 1.25,2.5,5 or 10.
