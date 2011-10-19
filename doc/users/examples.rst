@@ -31,7 +31,9 @@ associated with the Basemap.
 For more specifics of how to use the Basemap instance methods,
 see :ref:`api-index`.
 
-Here are the examples:
+Here are the examples (many of which utilize the 
+`netcdf4-python <http://netcdf4-python.googlecode.com>`__ module
+to retrieve datasets over http):
 
 * Plot contour lines on a basemap
 
@@ -77,3 +79,23 @@ Here are the examples:
 .. literalinclude:: figures/plotsst.py
  
 .. image:: figures/plotsst.png
+
+* Plotting wind vectors and wind barbs.
+
+.. literalinclude:: figures/plotwindvec.py
+ 
+.. image:: figures/plotwindvec1.png
+
+.. image:: figures/plotwindvec2.png
+
+* Draw great circle between NY and London.
+
+.. literalinclude:: figures/plotgreatcircle.py
+ 
+.. image:: figures/plotgreatcircle.png
+
+* Draw day-night terminator on a map.
+
+.. literalinclude:: figures/plotdaynight.py
+ 
+.. image:: figures/plotdaynight.png
