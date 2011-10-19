@@ -60,14 +60,11 @@ print uin.min(), uin.max()
 print vin.min(), vin.max()
 print 'dates'
 print dates
-# make orthographic basemaplt.
+# make orthographic basemap.
 m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
 plt.ion() # interactive mode on.
 uin = udata[ntime1:ntime2+1,0,:,:] 
 vin = vdata[ntime1:ntime2+1,0,:,:] 
-# make orthographic basemaplt.
-m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
-plt.ion() # interactive mode on.
 # create figure, add axes (leaving room for colorbar on right)
 fig = plt.figure()
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
@@ -90,16 +87,16 @@ for nt,date in enumerate(dates):
     # plot wind vectors on lat/lon grid.
     # rotate wind vectors to map projection coordinates.
     #urot,vrot = m.rotate_vector(u[nt,:,:],v[nt,:,:],lons,lats)
-    # plot wind vectors over maplt.
+    # plot wind vectors over map.
     #Q = m.quiver(x,y,urot,vrot,scale=500) 
     # plot wind vectors on projection grid (looks better).
     # first, shift grid so it goes from -180 to 180 (instead of 0 to 360
-    # in longitude).  Otherwise, interpolation is messed uplt.
+    # in longitude).  Otherwise, interpolation is messed up.
     ugrid,newlons = shiftgrid(180.,u[nt,:,:],longitudes,start=False)
     vgrid,newlons = shiftgrid(180.,v[nt,:,:],longitudes,start=False)
     # transform vectors to projection grid.
     urot,vrot,xx,yy = m.transform_vector(ugrid,vgrid,newlons,latitudes,51,51,returnxy=True,masked=True)
-    # plot wind vectors over maplt.
+    # plot wind vectors over map.
     Q = m.quiver(xx,yy,urot,vrot,scale=500)
     # make quiver key.
     qk = plt.quiverkey(Q, 0.1, 0.1, 20, '20 m/s', labelpos='W')
