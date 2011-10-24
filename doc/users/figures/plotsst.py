@@ -48,10 +48,8 @@ im2 = m.pcolor(x,y,ice,shading='flat',cmap=plt.cm.gist_gray)
 # draw parallels and meridians, but don't bother labelling them.
 m.drawparallels(np.arange(-90.,120.,30.))
 m.drawmeridians(np.arange(0.,420.,60.))
-# use axes_grid toolkit to make colorbar axes.
-divider = make_axes_locatable(ax)
-cax = divider.append_axes("bottom", size="5%", pad=0.1)
-cb = plt.colorbar(im1,orientation='horizontal',cax=cax)
+# add colorbar
+cb = m.colorbar(im1,"bottom", size="5%", pad="2%")
 # add a title.
 ax.set_title('SST and ICE analysis for %s'%date)
 plt.savefig('plotsst.png')

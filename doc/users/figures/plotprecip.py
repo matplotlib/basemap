@@ -42,9 +42,8 @@ x, y = m(lons, lats) # compute map proj coordinates.
 clevs = [0,1,2.5,5,7.5,10,15,20,30,40,50,70,100,150,200,250,300,400,500,600,750]
 cs = m.contourf(x,y,data,clevs,cmap=cm.s3pcpn)
 # add colorbar.
-cbar = m.colorbar(cs,location='bottom',pad=0.25)
+cbar = m.colorbar(cs,location='bottom',pad="5%")
 cbar.set_label('mm')
 # add title
 plt.title(prcpvar.long_name+' for period ending '+prcpvar.dateofdata)
 plt.savefig('plotprecip.png')
-plt.show()

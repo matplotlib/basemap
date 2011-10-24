@@ -39,10 +39,8 @@ parallels = np.arange(0.,80,20.)
 m.drawparallels(parallels,labels=[1,0,0,1])
 meridians = np.arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,0,0,1])
-# use axes_grid toolkit to make colorbar axes.
-divider = make_axes_locatable(ax)
-cax = divider.append_axes("right", size="5%", pad=0.1)
-cb = fig.colorbar(im,cax=cax)
+# add colorbar
+cb = m.colorbar(im,"right", size="5%", pad='2%')
 ax.set_title('ETOPO5 Topography - Lambert Conformal Conic')
 fig.savefig('etopo5.png')
 

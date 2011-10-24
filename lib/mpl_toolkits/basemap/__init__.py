@@ -3671,13 +3671,14 @@ class Basemap(object):
             rets = [ret.set_zorder(zorder) for ret in rets]
         return rets
 
-    def colorbar(self,mappable=None,location='right',size="5%",pad=0.1,fig=None,ax=None,**kwargs):
+    def colorbar(self,mappable=None,location='right',size="5%",pad='2%',fig=None,ax=None,**kwargs):
         """
         Add colorbar to axes associated with a map.
         The colorbar axes instance is created using the axes_grid toolkit.
 
         .. tabularcolumns:: |l|L|
 
+        ==============   ====================================================
         Keywords         Description
         ==============   ====================================================
         mappable         the Image, ContourSet, etc. to which the colorbar
@@ -3686,10 +3687,10 @@ class Basemap(object):
         location         where to put colorbar ('top','bottom','left','right')
                          Default 'right'.
         size             width of colorbar axes (string 'N%', where N is
-                         an integer describing the percentage of the parent
+                         an integer describing the fractional width of the parent
                          axes). Default '5%'.
         pad              Padding between parent axes and colorbar axes in
-                         inches. Default 0.1.
+                         same units as size. Default '2%'.
         fig              Figure instance the map axes instance is associated
                          with. Default None, and matplotlib.pyplot.gcf() is used
                          to retrieve the current active figure instance.

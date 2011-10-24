@@ -64,10 +64,8 @@ qk = plt.quiverkey(Q, 0.1, 0.1, 20, '20 m/s', labelpos='W')
 m.drawcoastlines(linewidth=1.5)
 m.drawparallels(parallels)
 m.drawmeridians(meridians)
-# use axes_grid toolkit to make colorbar axes.
-divider = make_axes_locatable(ax)
-cax = divider.append_axes("bottom", size="5%", pad=0.1)
-cb = plt.colorbar(CS2,orientation='horizontal',cax=cax)
+# add colorbar
+cb = m.colorbar(CS2,"bottom", size="5%", pad="2%")
 cb.set_label('hPa')
 # set plot title
 ax.set_title('SLP and Wind Vectors '+str(date))
@@ -85,10 +83,8 @@ barbs = m.barbs(xx,yy,uproj,vproj,length=5,barbcolor='k',flagcolor='r',linewidth
 m.drawcoastlines(linewidth=1.5)
 m.drawparallels(parallels)
 m.drawmeridians(meridians)
-# use axes_grid toolkit to make colorbar axes.
-divider = make_axes_locatable(ax)
-cax = divider.append_axes("bottom", size="5%", pad=0.1)
-cb = plt.colorbar(CS2,orientation='horizontal',cax=cax)
+# add colorbar
+cb = m.colorbar(CS2,"bottom", size="5%", pad="2%")
 cb.set_label('hPa')
 # set plot title.
 ax.set_title('SLP and Wind Barbs '+str(date))

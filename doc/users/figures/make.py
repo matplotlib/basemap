@@ -9,9 +9,10 @@ matplotlib.use('Agg')
 #mplshell = IPython.Shell.MatplotlibShell('mpl') # for Ipython 0.10
 mplshell = IPython.core.interactiveshell.InteractiveShell() # for Ipython 0.11
 
-formats = [('png', 100),
-           ('hires.png', 200),
-           ('pdf', 72)]
+#formats = [('png', 100),
+#           ('hires.png', 200),
+#           ('pdf', 72)]
+formats = [('png', 100)]
 
 def figs():
     print 'making figs'
