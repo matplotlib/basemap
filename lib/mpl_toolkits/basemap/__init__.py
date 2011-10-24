@@ -28,6 +28,7 @@ from matplotlib.patches import Ellipse, Circle, Polygon
 from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox
 from mpl_toolkits.basemap import pyproj
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import sys, os, math
 from .proj import Proj
 import numpy as np
@@ -3669,6 +3670,61 @@ class Basemap(object):
         if zorder is not None:
             rets = [ret.set_zorder(zorder) for ret in rets]
         return rets
+
+    def colorbar(self,mappable=None,location='right',size="5%",pad=0.1,fig=None,ax=None,**kwargs):
+        """
+        Add colorbar to axes associated with a map.
+        The colorbar axes instance is created using the axes_grid toolkit.
+
+        .. tabularcolumns:: |l|L|
+
+        Keywords         Description
+        ==============   ====================================================
+        mappable         the Image, ContourSet, etc. to which the colorbar
+                         applies.  Default None, matplotlib.pyplot.gci() is
+                         used to retrieve the current image mappable.
+        location         where to put colorbar ('top','bottom','left','right')
+                         Default 'right'.
+        size             width of colorbar axes (string 'N%', where N is
+                         an integer describing the percentage of the parent
+                         axes). Default '5%'.
+        pad              Padding between parent axes and colorbar axes in
+                         inches. Default 0.1.
+        fig              Figure instance the map axes instance is associated
+                         with. Default None, and matplotlib.pyplot.gcf() is used
+                         to retrieve the current active figure instance.
+        ax               The axes instance which the colorbar will be
+                         associated with.  Default None, searches for self.ax, 
+                         and if None uses matplotlib.pyplot.gca().
+        \**kwargs        extra keyword arguments passed on to
+                         colorbar method of the figure instance.
+        ==============   ====================================================
+
+        Returns a matplotlib colorbar instance.
+        """
+        # get current axes instance (if none specified).
+        ax = ax or self._check_ax()
+        # get current figure instance (if none specified).
+        if fig is None or mappable is None:
+            import matplotlib.pyplot as plt
+        if fig is None:
+            fig = plt.gcf()
+        # get current mappable if none specified.
+        if mappable is None:
+            mappable = plt.gci()
+        # create colorbar axes uses axes_grid toolkit.
+        divider = make_axes_locatable(ax)
+        if location in ['left','right']:
+            orientation = 'vertical'
+        elif location in ['top','bottom']:
+            orientation = 'horizontal'
+        else:
+            raise ValueError('location must be top,bottom,left or right')
+        cax = divider.append_axes(location, size=size, pad=pad)
+        # create colorbar.
+        cb = fig.colorbar(mappable,orientation=orientation,cax=cax,**kwargs)
+        fig.sca(ax) # reset parent axes as current axes.
+        return cb
 
     def nightshade(self,date,color="k",delta=0.25,alpha=0.5,ax=None,zorder=2):
         """
