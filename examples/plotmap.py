@@ -27,17 +27,13 @@ nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat,x,y = m.transform_scalar(topoin,lons,lats,nx,ny,returnxy=True)
 # create the figure.
 fig=plt.figure(figsize=(8,8))
-# add an axes, leaving room for colorbar on the right.
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# add an axes.
+ax = fig.add_axes([0.1,0.1,0.8,0.8])
 # associate this axes with the Basemap instance.
 m.ax = ax
 # plot image over map with imshow.
 im = m.imshow(topodat,plt.cm.jet)
-# setup colorbar axes instance.
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h])
-plt.colorbar(im,cax=cax) # draw colorbar
+cb = m.colorbar(im,location='right',pad='10%') # draw colorbar
 # plot blue dot on boulder, colorado and label it as such.
 xpt,ypt = m(-104.237,40.125) 
 m.plot([xpt],[ypt],'bo') 

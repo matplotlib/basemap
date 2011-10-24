@@ -20,8 +20,8 @@ lats = np.loadtxt('etopo20lats.gz')
 fig = Figure()
 canvas = FigureCanvas(fig)
 
-# create axes instance, leaving room for colorbar at bottom.
-ax = fig.add_axes([0.125,0.175,0.75,0.75])
+# create axes instance
+ax = fig.add_axes([0.1,0.1,0.8,0.8])
 
 # create Basemap instance for Robinson projection.
 # set 'ax' keyword so pylab won't be imported.
@@ -40,11 +40,9 @@ m.drawmeridians(np.arange(0.,420.,60.),labels=[0,0,0,1],fontsize=10)
 # add a title.
 ax.set_title('Robinson Projection')
 
-# add a colorbar.
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = fig.add_axes([l, b-0.1, w, 0.03],frameon=False) # setup colorbar axes
-fig.colorbar(cs, cax=cax, orientation='horizontal',ticks=cs.levels[::3])
+# add a colorbar (must specify mappable and fig keywords, of pyplot will be
+# invoked) .
+cb=m.colorbar(mappable=cs,location='right',size='5%',pad='2%',ticks=cs.levels[::3],fig=fig)
 
 # save image (width 800 pixels with dpi=100 and fig width 8 inches).
 canvas.print_figure('simpletest',dpi=100)
