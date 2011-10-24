@@ -29,12 +29,7 @@ m = Basemap(llcrnrlon=-180.,llcrnrlat=-90,urcrnrlon=180.,urcrnrlat=90.,\
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topoin,plt.cm.jet)
-# get axes position, add colorbar axes to right of this.
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar() # draw colorbar
 m.drawcoastlines()
 #m.drawcountries()
 #m.drawstates()
@@ -128,13 +123,7 @@ nx = int((m.xmax-m.xmin)/20000.)+1; ny = int((m.ymax-m.ymin)/20000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
-# get current axis instance.
-ax = plt.gca()
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar() # draw colorbar
 m.drawcoastlines()
 # draw parallels
 delat = 2.
@@ -160,13 +149,7 @@ nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
-# get current axis instance.
-ax = plt.gca()
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar() # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
 # draw parallels
@@ -193,13 +176,7 @@ nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
-# get current axis instance.
-ax = plt.gca()
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar() # draw colorbar
 m.drawcoastlines()
 # draw parallels
 delat = 20.
@@ -224,13 +201,7 @@ nx = int((m.xmax-m.xmin)/20000.)+1; ny = int((m.ymax-m.ymin)/20000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
-# get current axis instance.
-ax = plt.gca()
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar() # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
 m.drawstates()
@@ -254,13 +225,7 @@ nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
-# get current axis instance.
-ax = plt.gca()
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar() # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
 # draw parallels
@@ -285,13 +250,8 @@ m = Basemap(llcrnrlon=-90.,llcrnrlat=18,urcrnrlon=-70.,urcrnrlat=26.,\
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar() # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
 m.drawstates()
@@ -318,13 +278,8 @@ m = Basemap(llcrnrlon=-145.5,llcrnrlat=1,urcrnrlon=-2.566,urcrnrlat=46.352,\
 nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(pad='10%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
 m.drawstates()
@@ -355,11 +310,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
 im.set_clim(-4000.,3000.) # adjust range of colors.
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(pad='10%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
 # draw parallels
@@ -390,11 +341,7 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(pad='12%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
 #m.fillcontinents()
@@ -421,11 +368,7 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(pad='12%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
 m.drawstates()
@@ -453,11 +396,7 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(pad='12%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
 m.drawstates()
@@ -494,11 +433,7 @@ palette.set_bad(ax.get_axis_bgcolor(), 0.0)
 #  and values outside projection limb would be handled transparently
 #  - see contour_demo.py)
 im = m.imshow(topo,palette,norm=colors.normalize(clip=False))
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar() # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 # draw parallels and meridians (labelling is 
@@ -535,11 +470,7 @@ palette.set_bad(ax.get_axis_bgcolor(), 0.0)
 #  and values outside projection limb would be handled transparently
 #  - see contour_demo.py)
 im = m.imshow(topo,palette,norm=colors.normalize(clip=False))
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar() # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 # draw parallels and meridians (labelling is 
@@ -563,11 +494,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with pcolormesh.
 x,y = m(*np.meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(location='bottom') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 # draw parallels and meridians
@@ -590,11 +517,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with pcolormesh.
 x,y = m(*np.meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(location='bottom') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 # draw parallels and meridians
@@ -617,11 +540,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with pcolormesh.
 x,y = m(*np.meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(location='bottom') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 # draw parallels and meridians
@@ -644,11 +563,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with pcolormesh.
 x,y = m(*np.meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(location='bottom') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 # draw parallels and meridians
@@ -671,11 +586,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with pcolormesh.
 x,y = m(*np.meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(location='bottom') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 # draw parallels and meridians
@@ -697,11 +608,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with pcolormesh.
 x,y = m(*np.meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.05, h]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar() # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 # draw parallels and meridians
