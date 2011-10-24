@@ -19,7 +19,7 @@ lon_0 = -nc.variables['true_lon'].getValue()
 lat_0 = nc.variables['true_lat'].getValue()
 # create figure and axes instances
 fig = plt.figure(figsize=(8,8))
-ax = fig.add_axes([0.05,0.05,0.9,0.9])
+ax = fig.add_axes([0.1,0.1,0.8,0.8])
 # create polar stereographic Basemap instance.
 m = Basemap(projection='stere',lon_0=lon_0,lat_0=90.,lat_ts=lat_0,\
             llcrnrlat=latcorners[0],urcrnrlat=latcorners[2],\
@@ -41,9 +41,10 @@ x, y = m(lons, lats) # compute map proj coordinates.
 # draw filled contours.
 clevs = [0,1,2.5,5,7.5,10,15,20,30,40,50,70,100,150,200,250,300,400,500,600,750]
 cs = m.contourf(x,y,data,clevs,cmap=cm.s3pcpn)
-cbar = plt.colorbar(orientation='horizontal',shrink=0.75)
+# add colorbar.
+cbar = m.colorbar(cs,location='bottom',pad=0.25)
 cbar.set_label('mm')
-
-# plot title
+# add title
 plt.title(prcpvar.long_name+' for period ending '+prcpvar.dateofdata)
 plt.savefig('plotprecip.png')
+plt.show()
