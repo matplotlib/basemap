@@ -46,8 +46,6 @@ m.drawcountries(linewidth=0.5, color=overlay_color)
 # be outside map projection region.
 m.drawmeridians(np.arange(10,76,5), labels=[0,0,1,0], color=overlay_color)
 m.drawparallels(np.arange(-90,90,5), labels=[1,0,0,0], color=overlay_color)
-# add a colobar
-#plt.colorbar()
 # add timestamp and save
 fig = plt.gcf()
 fig.text(x=0.275, y=0.025, s=u'Meteosat-9 VIS 0.6 channel - 12:00 UTC 04/06/2007\n    \N{COPYRIGHT SIGN} EUMETSAT 2007',

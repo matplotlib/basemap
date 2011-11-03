@@ -28,11 +28,7 @@ ax = fig.add_subplot(211)
 CS = mnh.contour(xnh,ynh,hgt,15,linewidths=0.5,colors='k')
 CS = mnh.contourf(xnh,ynh,hgt,15,cmap=plt.cm.Spectral)
 # colorbar on bottom.
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l, b-0.05, w, 0.025]) # setup colorbar axes
-plt.colorbar(cax=cax, orientation='horizontal',ticks=CS.levels[0::4]) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+mnh.colorbar(location='bottom',pad='12%',ticks=CS.levels[0::4])
 mnh.drawcoastlines(linewidth=0.5)
 delat = 30.
 circles = np.arange(0.,90.,delat).tolist()+\
@@ -51,11 +47,7 @@ ax = fig.add_subplot(212)
 CS = msh.contour(xsh,ysh,hgt,15,linewidths=0.5,colors='k')
 CS = msh.contourf(xsh,ysh,hgt,15,cmap=plt.cm.Spectral)
 # colorbar on bottom.
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l, b-0.05, w, 0.025]) # setup colorbar axes
-plt.colorbar(cax=cax,orientation='horizontal',ticks=MultipleLocator(320)) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+msh.colorbar(location='bottom',pad='12%',ticks=MultipleLocator(320))
 msh.drawcoastlines(linewidth=0.5)
 msh.drawparallels(circles,labels=[1,0,0,0])
 msh.drawmeridians(meridians,labels=[1,0,0,1])
@@ -74,11 +66,7 @@ ax = fig.add_subplot(121)
 CS = mnh.contour(xnh,ynh,hgt,15,linewidths=0.5,colors='k')
 CS = mnh.contourf(xnh,ynh,hgt,15,cmap=plt.cm.RdBu)
 # colorbar on right
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
-plt.colorbar(cax=cax, ticks=MultipleLocator(160), format='%4i') # draw colorbar
-plt.axes(ax)  # make the original axes current again
+mnh.colorbar(location='right',ticks=MultipleLocator(160))
 mnh.drawcoastlines(linewidth=0.5)
 mnh.drawparallels(circles,labels=[1,0,0,0])
 mnh.drawmeridians(meridians,labels=[1,0,0,1])
@@ -89,11 +77,7 @@ ax = fig.add_subplot(122)
 CS = msh.contour(xsh,ysh,hgt,15,linewidths=0.5,colors='k')
 CS = msh.contourf(xsh,ysh,hgt,15,cmap=plt.cm.RdBu)
 # colorbar on right.
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
-plt.colorbar(cax=cax, ticks=MultipleLocator(160), format='%4i') # draw colorbar
-plt.axes(ax)  # make the original axes current again
+msh.colorbar(location='right',ticks=MultipleLocator(160))
 msh.drawcoastlines(linewidth=0.5)
 msh.drawparallels(circles,labels=[1,0,0,0])
 msh.drawmeridians(meridians,labels=[1,0,0,1])

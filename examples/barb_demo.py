@@ -41,9 +41,7 @@ cs2 = m.contourf(x,y,p,levs)
 # plot barbs.
 m.barbs(xv,yv,udat,vdat,length=6,barbcolor='k',flagcolor='r',linewidth=0.5)
 # plot colorbar for pressure
-cax = plt.axes([0.875, 0.1, 0.05, 0.8]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(pad='12%') # draw colorbar
 # draw coastlines
 m.drawcoastlines()
 # draw parallels
@@ -72,9 +70,7 @@ cs2 = m.contourf(x,y,p,levs)
 # plot barbs.
 m.barbs(xv,yv,udat,vdat,length=6,barbcolor='k',flagcolor='r',linewidth=0.5)
 # plot colorbar for pressure
-cax = plt.axes([0.875, 0.1, 0.05, 0.8]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(pad='12%') # draw colorbar
 # draw coastlines
 m.drawcoastlines()
 # draw parallels

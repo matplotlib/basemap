@@ -36,9 +36,7 @@ cs = m.contourf(x,y,p[36:,:],15,cmap=plt.cm.jet)
 # plot wind vectors over map.
 Q = m.quiver(x,y,urot,vrot) #or specify, e.g., width=0.003, scale=400)
 qk = plt.quiverkey(Q, 0.95, 1.05, 25, '25 m/s', labelpos='W')
-cax = plt.axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(pad='12%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
 # draw parallels
@@ -72,9 +70,7 @@ im = m.imshow(pdat,plt.cm.jet)
 # plot wind vectors over map.
 Q = m.quiver(xv,yv,udat,vdat) #or specify, e.g., width=0.003, scale=400)
 qk = plt.quiverkey(Q, 0.95, 1.05, 25, '25 m/s', labelpos='W')
-cax = plt.axes([0.875, 0.1, 0.05, 0.7]) # setup colorbar axes.
-plt.colorbar(cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(pad='12%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
 # draw parallels

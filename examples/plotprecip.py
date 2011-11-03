@@ -32,7 +32,7 @@ m = Basemap(projection='stere',lon_0=lon_0,lat_0=90.,lat_ts=lat_0,\
             llcrnrlon=loncorners[0],urcrnrlon=loncorners[2],\
             rsphere=6371200.,resolution='l',area_thresh=10000)
 # create figure
-fig = plt.figure(figsize=(6,8.5))
+fig = plt.figure(figsize=(8.5,11))
 plt.subplot(211)
 ax = plt.gca()
 # draw coastlines, state and country boundaries, edge of map.
@@ -53,13 +53,9 @@ x, y = m(lons, lats) # compute map proj coordinates.
 # draw filled contours.
 clevs = [0,1,2.5,5,7.5,10,15,20,30,40,50,70,100,150,200,250,300,400,500,600,750]
 cs = m.contourf(x,y,data,clevs,cmap=cm.s3pcpn)
-# new axis for colorbar.
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
 # draw colorbar.
-cb = plt.colorbar(cs, cax, format='%g', ticks=clevs, drawedges=False) 
-plt.axes(ax)  # make the original axes current again
+cbar = m.colorbar(cs,location='bottom',pad="10%")
+cbar.set_label('mm')
 # plot title
 plt.title(plottitle+'- contourf',fontsize=10)
 
@@ -79,16 +75,12 @@ im = m.imshow(data,cmap=cm.s3pcpn,interpolation='nearest',vmin=0,vmax=750)
 # colormap to linear version of the precip colormap.
 im2 = copy.copy(im)
 im2.set_cmap(cm.s3pcpn_l)
-# new axis for colorbar.
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.025, b, 0.025, h]) # setup colorbar axes
-# using im2, not im (hack to prevent colors from being
+# draw colorbar using im2, not im (hack to prevent colors from being
 # too compressed at the low end on the colorbar - results
 # from highly nonuniform colormap)
-cb = plt.colorbar(im2, cax, format='%d') # draw colorbar
-plt.axes(ax)  # make the original axes current again
-# reset colorbar tick labels (hack to get
+cb = m.colorbar(im2,location='bottom',pad="10%")
+cb.set_label('mm')
+# reset colorbar tick labels.
 cb.set_ticks(np.linspace(clevs[0],clevs[-1],len(clevs)))
 cb.set_ticklabels(['%g' % clev for clev in clevs])
 # plot title

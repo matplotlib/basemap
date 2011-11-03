@@ -33,8 +33,8 @@ topodat = m.transform_scalar(topoin,lons,lats,nx,ny,masked=True)
 # plot DEM image on map.
 im = m.imshow(topodat,cmap=cm.GMT_haxby_r)
 # draw meridians and parallels.
-m.drawparallels(np.arange(20,71,10),labels=[1,0,1,0])
-m.drawmeridians(np.arange(-120,-40,10),labels=[0,1,0,1])
+m.drawparallels(np.arange(20,71,10),labels=[1,0,0,0])
+m.drawmeridians(np.arange(-120,-40,10),labels=[0,0,0,1])
 # plot state boundaries from shapefile using ogr.
 g = ogr.Open ("st99_d00.shp")
 L = g.GetLayer(0) # data is in 1st layer.
@@ -58,13 +58,7 @@ for feat in L: # iterate over features in layer
                 lats = [g.GetY(i) for i in range(g.GetPointCount())]
                 x, y = m(lons,lats)
                 m.plot(x,y,'k')
-# new axis for colorbar.
-ax = plt.gca()
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.05, b, 0.025, h]) # setup colorbar axes
 # draw colorbar.
-plt.colorbar(im, cax=cax)
-plt.axes(ax)  # make the original axes current again
+m.colorbar(im)
 plt.title(gd.GetDescription()+' with state boundaries from '+g.GetName(),y=1.05)
 plt.show()

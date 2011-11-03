@@ -30,7 +30,7 @@ fig=plt.figure()
 # (otherwise they are covered up when continents are filled)
 m.scatter(x,y,25,z,cmap=plt.cm.jet,marker='o',edgecolors='none',zorder=10) 
 # plot colorbar for markers.
-plt.colorbar()
+m.colorbar()
 # create a list of strings containing z values
 # or, plot actual numbers as color-coded text strings.
 #zn = [ '%2i' % zz for zz in z ]

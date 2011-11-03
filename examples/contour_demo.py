@@ -23,12 +23,7 @@ x, y = m(lons, lats)
 CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 # fill between contour lines.
 CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet,extend='both')
-# setup colorbar axes instance.
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-plt.colorbar(CS2, drawedges=True, cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(CS2) # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 m.drawmapboundary()
@@ -50,11 +45,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x, y = m(lons, lats)
 CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet,extend='both')
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-plt.colorbar(CS2, drawedges=True, cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(CS2) # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 m.drawmapboundary()
@@ -76,11 +67,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x, y = m(lons, lats)
 CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet,extend='both')
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-plt.colorbar(CS2, drawedges=True, cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(CS2) # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 m.drawmapboundary()
@@ -102,11 +89,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x, y = m(lons, lats)
 CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS2 = m.contourf(x,y,hgt,CS2.levels,cmap=plt.cm.jet,extend='both')
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-plt.colorbar(CS2, drawedges=True, cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(CS2,pad='12%') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 m.drawmapboundary()
@@ -129,11 +112,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 x, y = m(lons, lats)
 CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
 CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet,extend='both')
-pos = ax.get_position()
-l, b, w, h = pos.bounds
-cax = plt.axes([l+w+0.075, b, 0.05, h]) # setup colorbar axes
-plt.colorbar(CS2, drawedges=True, cax=cax) # draw colorbar
-plt.axes(ax)  # make the original axes current again
+m.colorbar(CS2) # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 m.fillcontinents()
