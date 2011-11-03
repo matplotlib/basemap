@@ -1,4 +1,6 @@
 version 1.0.2 (not yet released)
+           * update include geos from 3.2.0 to 3.3.1 so it compiles with gcc
+             4.6.
            * added colorbar method that uses axes_grid toolkit to
              create colorbar axes.
            * replace hasattr(arr,'mask') with numpy.ma.isMA(arr).

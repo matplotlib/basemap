@@ -1,0 +1,114 @@
+Compatibility notes
+===================
+
+OS/X 10.6, compile with gcc-4.0 rather than the default gcc that 
+comes with XCode.
+
+  CC=gcc-4.0 CXX=g++-4.0 ./configure
+
+Quickstart
+==========
+
+As root:
+
+   ./configure
+   make
+   make install
+
+The default install location for GEOS is /usr/local.
+
+Linux: Make sure that /usr/local/lib is added to /etc/ld.so.conf 
+       Make sure that you run /sbin/ldconfig afterwards 
+
+Solaris: Make sure that /usr/local/lib is added to LD_LIBRARY_PATH
+
+
+Basic Installation
+==================
+
+The simplest way to compile this package is:
+
+
+  1. `cd' to the directory containing the package's source code and type
+     `./configure' to configure the package for your system.  If you're
+     using `csh' on an old version of System V, you might need to type
+     `sh ./configure' instead to prevent `csh' from trying to execute
+     `configure' itself.
+
+     Running `configure' takes awhile.  While running, it prints some
+     messages telling which features it is checking for.
+
+  2. Type `make' to compile the package.
+
+  3. Optionally, type `make check' to run any self-tests that come with
+     the package.
+
+  4. Type `make install' to install the programs and any data files and
+     documentation.
+
+  5. You can remove the program binaries and object files from the
+     source code directory by typing `make clean'.  To also remove the
+     files that `configure' created (so you can compile the package for
+     a different kind of computer), type `make distclean'.  There is
+     also a `make maintainer-clean' target, but that is intended mainly
+     for the package's developers.  If you use it, you may have to get
+     all sorts of other programs in order to regenerate files that came
+     with the distribution.
+
+
+Compilers and Options
+=====================
+
+   Some systems require unusual options for compilation or linking that
+the `configure' script does not know about.  You can give `configure'
+initial values for variables by setting them in the environment.  Using
+a Bourne-compatible shell, you can do that on the command line like
+this:
+     CC=c89 CFLAGS=-O2 LIBS=-lposix ./configure
+
+Or on systems that have the `env' program, you can do it like this:
+     env CPPFLAGS=-I/usr/local/include LDFLAGS=-s ./configure
+
+
+Installation Names
+==================
+
+   By default, `make install' will install the package's files in
+`/usr/local/bin', `/usr/local/man', etc.  You can specify an
+installation prefix other than `/usr/local' by giving `configure' the
+option `--prefix=PATH'.
+
+
+Operation Controls
+==================
+
+`configure' recognizes the following options to control how it
+operates.
+
+--cache-file=FILE
+     Use and save the results of the tests in FILE instead of
+     `./config.cache'.  Set FILE to `/dev/null' to disable caching, for
+     debugging `configure'.
+
+--help
+     Print a summary of the options to `configure', and exit.
+
+--quiet
+--silent
+-q
+     Do not print messages saying which checks are being made.  To
+     suppress all normal output, redirect it to `/dev/null' (any error
+     messages will still be shown).
+
+--srcdir=DIR
+     Look for the package's source code in directory DIR.  Usually
+     `configure' can determine that directory automatically.
+
+--version
+     Print the version of Autoconf used to generate the `configure'
+     script, and exit.
+
+--prefix
+     Change the default installation location
+
+`configure' also accepts some other, not widely useful, options.

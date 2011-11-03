@@ -1,0 +1,73 @@
+/**********************************************************************
+ * $Id: CoordinateArrayFilter.h 2556 2009-06-06 22:22:28Z strk $
+ *
+ * GEOS - Geometry Engine Open Source
+ * http://geos.refractions.net
+ *
+ * Copyright (C) 2001-2002 Vivid Solutions Inc.
+ * Copyright (C) 2006 Refractions Research Inc.
+ *
+ * This is free software; you can redistribute and/or modify it under
+ * the terms of the GNU Lesser General Public Licence as published
+ * by the Free Software Foundation. 
+ * See the COPYING file for more information.
+ *
+ **********************************************************************/
+
+#ifndef GEOS_UTIL_COORDINATEARRAYFILTER_H
+#define GEOS_UTIL_COORDINATEARRAYFILTER_H
+
+#include <geos/export.h>
+#include <cassert>
+
+#include <geos/geom/CoordinateFilter.h>
+#include <geos/geom/CoordinateSequence.h>
+#include <geos/geom/Coordinate.h>
+
+namespace geos {
+namespace util { // geos::util
+
+/**
+ * A CoordinateFilter that adds read-only pointers
+ * to every Coordinate in a Geometry to a given
+ * vector.
+ *
+ * Last port: util/CoordinateArrayFilter.java rev. 1.15
+ */
+class GEOS_DLL CoordinateArrayFilter: public geom::CoordinateFilter {
+private:
+	geom::Coordinate::ConstVect &pts; // target vector reference
+public:
+	/**
+	 * Constructs a CoordinateArrayFilter.
+	 *
+	 * @param  target   The destination vector. 
+	 */
+	CoordinateArrayFilter(geom::Coordinate::ConstVect& target)
+		:
+		pts(target)
+		{}
+
+	virtual ~CoordinateArrayFilter() {}
+
+	virtual void filter_ro(const geom::Coordinate *coord)
+	{
+		pts.push_back(coord);
+	}
+};
+
+
+} // namespace geos.util
+} // namespace geos
+
+#endif // GEOS_UTIL_COORDINATEARRAYFILTER_H
+
+/**********************************************************************
+ * $Log$
+ * Revision 1.2  2006/06/19 23:33:03  strk
+ * Don't *require* CoordinateFilters to define both read-only and read-write methods.
+ *
+ * Revision 1.1  2006/03/09 16:46:49  strk
+ * geos::geom namespace definition, first pass at headers split
+ *
+ **********************************************************************/
