@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import datetime
 from mpl_toolkits.basemap import Basemap, shiftgrid
 from netCDF4 import Dataset, date2index, num2date
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 # specify date to plot.
 date = datetime.datetime(1993,3,14,0)
 # set OpenDAP server URL.

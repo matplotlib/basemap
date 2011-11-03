@@ -3,7 +3,6 @@ from netCDF4 import Dataset, date2index, num2date
 import numpy as np
 import matplotlib.pyplot as plt
 import datetime
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 # create datetime object for desired time
 date = datetime.datetime(2007,12,15,0)
 # open dataset.
