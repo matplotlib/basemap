@@ -558,6 +558,59 @@ to downsample the image (<tt class="docutils literal"><span class="pre">scale=0.
 </dd></dl>
 
 <dl class="method">
+<dt id="mpl_toolkits.basemap.Basemap.colorbar">
+<tt class="descname">colorbar</tt><big>(</big><em>mappable=None</em>, <em>location='right'</em>, <em>size='5%'</em>, <em>pad='2%'</em>, <em>fig=None</em>, <em>ax=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.colorbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add colorbar to axes associated with a map.
+The colorbar axes instance is created using the axes_grid toolkit.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Keywords</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>mappable</td>
+<td>the Image, ContourSet, etc. to which the colorbar
+applies.  Default None, matplotlib.pyplot.gci() is
+used to retrieve the current image mappable.</td>
+</tr>
+<tr class="row-odd"><td>location</td>
+<td>where to put colorbar (&#8216;top&#8217;,&#8217;bottom&#8217;,&#8217;left&#8217;,&#8217;right&#8217;)
+Default &#8216;right&#8217;.</td>
+</tr>
+<tr class="row-even"><td>size</td>
+<td>width of colorbar axes (string &#8216;N%&#8217;, where N is
+an integer describing the fractional width of the parent
+axes). Default &#8216;5%&#8217;.</td>
+</tr>
+<tr class="row-odd"><td>pad</td>
+<td>Padding between parent axes and colorbar axes in
+same units as size. Default &#8216;2%&#8217;.</td>
+</tr>
+<tr class="row-even"><td>fig</td>
+<td>Figure instance the map axes instance is associated
+with. Default None, and matplotlib.pyplot.gcf() is used
+to retrieve the current active figure instance.</td>
+</tr>
+<tr class="row-odd"><td>ax</td>
+<td>The axes instance which the colorbar will be
+associated with.  Default None, searches for self.ax,
+and if None uses matplotlib.pyplot.gca().</td>
+</tr>
+<tr class="row-even"><td>**kwargs</td>
+<td>extra keyword arguments passed on to
+colorbar method of the figure instance.</td>
+</tr>
+</tbody>
+</table>
+<p>Returns a matplotlib colorbar instance.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.contour">
 <tt class="descname">contour</tt><big>(</big><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.contour" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a contour plot over the map
@@ -1865,7 +1918,7 @@ longitude. Default True.</td>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Oct 18, 2011.
+      Last updated on Nov 05, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
     </div>
   </body>
