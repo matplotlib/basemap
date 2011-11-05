@@ -2064,7 +2064,7 @@ class Basemap(object):
                             t = ax.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',**kwargs)
                         else:
                             t = ax.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
-                        if t is not None: linecolls[lat][1].append(t)
+                        if t is not None: linecolls[int(lat)][1].append(t) 
 
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
