@@ -1,4 +1,4 @@
-version 1.0.2 (not yet released)
+version 1.0.2 (git tag v1.0.2)
            * update include geos from 3.2.0 to 3.3.1 so it compiles with gcc
              4.6.
            * added colorbar method that uses axes_grid toolkit to
@@ -8,9 +8,9 @@ version 1.0.2 (not yet released)
            * added optional 1.25, 2.5 and 10 minute land/sea masks (derived from
              GSHHS coastline data). 'resolution'
              and 'grid' kwargs added to drawlsmask and maskoceans.
-	     'resolution' can be 'c','l','i','h' or 'f', grid can be 1.25,2.5,5 or 10.
+             'resolution' can be 'c','l','i','h' or 'f', grid can be 1.25,2.5,5 or 10.
            * update shapefile.py from pyshp.googlecode.com to r72.
-	   * change default land-sea mask (now derived directly from gshhs
+           * change default land-sea mask (now derived directly from gshhs
              coastline data, default is 5 minutes use coastline resolution =
              'l'). Default for plotting lakes is now True.
            * add etopo method (similar to bluemarble, but plots etopo 
