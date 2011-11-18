@@ -2132,6 +2132,21 @@ class Basemap(object):
         associated with each meridian. Deleting an item from the
         dictionary removes the correpsonding meridian from the plot.
         """
+        # for cylindrical projections, try to handle wraparound (i.e. if
+        # projection is defined in -180 to 0 and user asks for meridians from
+        # 180 to 360 to be drawn, it should work)
+        if self.projection in _cylproj:
+            def addlon(meridians,madd):
+                minside = (madd >= self.llcrnrlon and madd <= self.urcrnrlon)
+                if minside and madd not in meridians: meridians.append(madd)
+                return meridians 
+            merids = list(meridians)
+            meridians = []
+            for m in merids:
+                meridians = addlon(meridians,m)
+                meridians = addlon(meridians,m+360)
+                meridians = addlon(meridians,m-360)
+            meridians.sort()
         # if celestial=True, don't use "E" and "W" labels.
         if labelstyle is None and self.celestial:
             labelstyle="+/-"
