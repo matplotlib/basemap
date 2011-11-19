@@ -1,4 +1,6 @@
 since version 1.0.2
+           * fix constant in Robinson projection (update PJ_robin.c
+             from proj4 svn).
            * fix typo in setup.py (replace "!= ['sdist','clean']" with
              "not in ['sdist','clean']").
            * make sure drawmeridians can handle wrap-around (so that
