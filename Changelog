@@ -1,4 +1,6 @@
-since version 1.0.2
+version 1.0.3 (not yet released)
+           * fix bug in drawparallels that results in 'KeyError' when drawing
+             parallels very close together (0.1 degrees).
            * fix constant in Robinson projection (update PJ_robin.c
              from proj4 svn).
            * fix typo in setup.py (replace "!= ['sdist','clean']" with
