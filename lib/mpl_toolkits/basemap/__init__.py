@@ -887,19 +887,22 @@ class Basemap(object):
         Input arguments lon, lat can be either scalar floats,
         sequences, or numpy arrays.
         """
+        if (self.projection in _pseudocyl) or (self.projection in _cylproj):
+            lon_0=self.projparams['lon_0']
+        else:
+            lon_0=0.
         if self.celestial and not inverse:
             try:
-                x = -x
+                x = 2.*lon_0-x
             except TypeError:
-                x = [-xx for xx in x]
+                x = [2.*lon_0-xx for xx in x]
         xout,yout = self.projtran(x,y,inverse=inverse)
         if self.celestial and inverse:
             try:
-                xout = -xout
+                xout = 2.*lon_0-xout
             except:
-                xout = [-xx for xx in xout]
+                xout = [2.*lon_0-xx for xx in xout]
         return xout,yout
-
 
     def makegrid(self,nx,ny,returnxy=False):
         """
