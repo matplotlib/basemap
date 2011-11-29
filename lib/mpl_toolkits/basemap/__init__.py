@@ -835,7 +835,7 @@ class Basemap(object):
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
                 dist = np.sqrt(xd+yd)
-                split = dist > 5000000.
+                split = dist > 5000000./6370997.0*self.projparams['R']
                 if np.sum(split) and self.projection not in _cylproj:
                     ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                     iprev = 0
@@ -887,19 +887,22 @@ class Basemap(object):
         Input arguments lon, lat can be either scalar floats,
         sequences, or numpy arrays.
         """
+        if (self.projection in _pseudocyl) or (self.projection in _cylproj):
+            lon_0=self.projparams['lon_0']
+        else:
+            lon_0=0.
         if self.celestial and not inverse:
             try:
-                x = -x
+                x = 2.*lon_0-x
             except TypeError:
-                x = [-xx for xx in x]
+                x = [2.*lon_0-xx for xx in x]
         xout,yout = self.projtran(x,y,inverse=inverse)
         if self.celestial and inverse:
             try:
-                xout = -xout
+                xout = 2.*lon_0-xout
             except:
-                xout = [-xx for xx in xout]
+                xout = [2.*lon_0-xx for xx in xout]
         return xout,yout
-
 
     def makegrid(self,nx,ny,returnxy=False):
         """
