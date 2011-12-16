@@ -1,12 +1,14 @@
 """
-Pyrex wrapper to provide python interfaces to
-PROJ.4 (http://proj.maptools.org) functions.
+Cython wrapper to provide python interfaces to
+PROJ.4 (http://trac.osgeo.org/proj/) functions.
 
 Performs cartographic transformations and geodetic computations.
 
 The Proj class can convert from geographic (longitude,latitude)
 to native map projection (x,y) coordinates and vice versa, or
 from one map projection coordinate system directly to another.
+The module variable pj_list is a dictionary containing all the 
+available projections and their descriptions.
 
 The Geod class can perform forward and inverse geodetic, or
 Great Circle, computations.  The forward computation involves
@@ -45,17 +47,191 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
 NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. """
 
-#from . import _proj
-#from . import _geod
 from mpl_toolkits.basemap import _proj, _geod
-_Proj = _proj.Proj
-_Geod = _geod.Geod
-_transform = _proj._transform
 __version__ =  _proj.__version__
 set_datapath =  _proj.set_datapath
 from array import array
 import os
 #import numpy as np
+pj_list={
+'aea': "Albers Equal Area",
+'aeqd': "Azimuthal Equidistant",
+'airy': "Airy",
+'aitoff': "Aitoff",
+'alsk': "Mod. Stererographics of Alaska",
+'apian': "Apian Globular I",
+'august': "August Epicycloidal",
+'bacon': "Bacon Globular",
+'bipc': "Bipolar conic of western hemisphere",
+'boggs': "Boggs Eumorphic",
+'bonne': "Bonne (Werner lat_1=90)",
+'cass': "Cassini",
+'cc': "Central Cylindrical",
+'cea': "Equal Area Cylindrical",
+'chamb': "Chamberlin Trimetric",
+'collg': "Collignon",
+'crast': "Craster Parabolic (Putnins P4)",
+'denoy': "Denoyer Semi-Elliptical",
+'eck1': "Eckert I",
+'eck2': "Eckert II",
+'eck3': "Eckert III",
+'eck4': "Eckert IV",
+'eck5': "Eckert V",
+'eck6': "Eckert VI",
+'eqc': "Equidistant Cylindrical (Plate Caree)",
+'eqdc': "Equidistant Conic",
+'etmerc': "Extended Transverse Mercator" ,
+'euler': "Euler",
+'fahey': "Fahey",
+'fouc': "Foucaut",
+'fouc_s': "Foucaut Sinusoidal",
+'gall': "Gall (Gall Stereographic)",
+'geocent': "Geocentric",
+'geos': "Geostationary Satellite View",
+'gins8': "Ginsburg VIII (TsNIIGAiK)",
+'gn_sinu': "General Sinusoidal Series",
+'gnom': "Gnomonic",
+'goode': "Goode Homolosine",
+'gs48': "Mod. Stererographics of 48 U.S.",
+'gs50': "Mod. Stererographics of 50 U.S.",
+'hammer': "Hammer & Eckert-Greifendorff",
+'hatano': "Hatano Asymmetrical Equal Area",
+'healpix': "HEALPix",
+'rhealpix': "rHEALPix",
+'igh':  "Interrupted Goode Homolosine",
+'imw_p': "Internation Map of the World Polyconic",
+'kav5': "Kavraisky V",
+'kav7': "Kavraisky VII",
+'krovak': "Krovak",
+'labrd': "Laborde",
+'laea': "Lambert Azimuthal Equal Area",
+'lagrng': "Lagrange",
+'larr': "Larrivee",
+'lask': "Laskowski",
+'lonlat': "Lat/long (Geodetic)",
+'latlon': "Lat/long (Geodetic alias)",
+'latlong': "Lat/long (Geodetic alias)",
+'longlat': "Lat/long (Geodetic alias)",
+'lcc': "Lambert Conformal Conic",
+'lcca': "Lambert Conformal Conic Alternative",
+'leac': "Lambert Equal Area Conic",
+'lee_os': "Lee Oblated Stereographic",
+'loxim': "Loximuthal",
+'lsat': "Space oblique for LANDSAT",
+'mbt_s': "McBryde-Thomas Flat-Polar Sine",
+'mbt_fps': "McBryde-Thomas Flat-Pole Sine (No. 2)",
+'mbtfpp': "McBride-Thomas Flat-Polar Parabolic",
+'mbtfpq': "McBryde-Thomas Flat-Polar Quartic",
+'mbtfps': "McBryde-Thomas Flat-Polar Sinusoidal",
+'merc': "Mercator",
+'mil_os': "Miller Oblated Stereographic",
+'mill': "Miller Cylindrical",
+'moll': "Mollweide",
+'murd1': "Murdoch I",
+'murd2': "Murdoch II",
+'murd3': "Murdoch III",
+'nell': "Nell",
+'nell_h': "Nell-Hammer",
+'nicol': "Nicolosi Globular",
+'nsper': "Near-sided perspective",
+'nzmg': "New Zealand Map Grid",
+'ob_tran': "General Oblique Transformation",
+'ocea': "Oblique Cylindrical Equal Area",
+'oea': "Oblated Equal Area",
+'omerc': "Oblique Mercator",
+'ortel': "Ortelius Oval",
+'ortho': "Orthographic",
+'pconic': "Perspective Conic",
+'poly': "Polyconic (American)",
+'putp1': "Putnins P1",
+'putp2': "Putnins P2",
+'putp3': "Putnins P3",
+'putp3p': "Putnins P3'",
+'putp4p': "Putnins P4'",
+'putp5': "Putnins P5",
+'putp5p': "Putnins P5'",
+'putp6': "Putnins P6",
+'putp6p': "Putnins P6'",
+'qua_aut': "Quartic Authalic",
+'robin': "Robinson",
+'rouss': "Roussilhe Stereographic",
+'rpoly': "Rectangular Polyconic",
+'sinu': "Sinusoidal (Sanson-Flamsteed)",
+'somerc': "Swiss. Obl. Mercator",
+'stere': "Stereographic",
+'sterea': "Oblique Stereographic Alternative",
+'gstmerc': "Gauss-Schreiber Transverse Mercator (aka Gauss-Laborde Reunion)",
+'tcc': "Transverse Central Cylindrical",
+'tcea': "Transverse Cylindrical Equal Area",
+'tissot': "Tissot Conic",
+'tmerc': "Transverse Mercator",
+'tpeqd': "Two Point Equidistant",
+'tpers': "Tilted perspective",
+'ups': "Universal Polar Stereographic",
+'urm5': "Urmaev V",
+'urmfps': "Urmaev Flat-Polar Sinusoidal",
+'utm': "Universal Transverse Mercator (UTM)",
+'vandg': "van der Grinten (I)",
+'vandg2': "van der Grinten II",
+'vandg3': "van der Grinten III",
+'vandg4': "van der Grinten IV",
+'vitk1': "Vitkovsky I",
+'wag1': "Wagner I (Kavraisky VI)",
+'wag2': "Wagner II",
+'wag3': "Wagner III",
+'wag4': "Wagner IV",
+'wag5': "Wagner V",
+'wag6': "Wagner VI",
+'wag7': "Wagner VII",
+'weren': "Werenskiold I",
+'wink1': "Winkel I",
+'wink2': "Winkel II",
+'wintri': "Winkel Tripel"}
+
+pj_ellps={
+"MERIT":	"a=6378137.0 rf=298.257 MERIT 1983",
+"SGS85":	"a=6378136.0 rf=298.257 Soviet Geodetic System 85",
+"GRS80":	"a=6378137.0 rf=298.257222101 GRS 1980(IUGG, 1980)",
+"IAU76":	"a=6378140.0 rf=298.257 IAU 1976",
+"airy":		"a=6377563.396 b=6356256.910 Airy 1830",
+"APL4.9":	"a=6378137.0. rf=298.25 Appl. Physics. 1965",
+"NWL9D":	"a=6378145.0. rf=298.25 Naval Weapons Lab., 1965",
+"mod_airy":	"a=6377340.189 b=6356034.446 Modified Airy",
+"andrae":	"a=6377104.43 rf=300.0 Andrae 1876 (Den., Iclnd.)",
+"aust_SA":	"a=6378160.0 rf=298.25 Australian Natl & S. Amer. 1969",
+"GRS67":	"a=6378160.0 rf=298.2471674270 GRS 67(IUGG 1967)",
+"bessel":	"a=6377397.155 rf=299.1528128 Bessel 1841",
+"bess_nam":	"a=6377483.865 rf=299.1528128 Bessel 1841 (Namibia)",
+"clrk66":	"a=6378206.4 b=6356583.8 Clarke 1866",
+"clrk80":	"a=6378249.145 rf=293.4663 Clarke 1880 mod.",
+"CPM":  	"a=6375738.7 rf=334.29 Comm. des Poids et Mesures 1799",
+"delmbr":	"a=6376428. rf=311.5 Delambre 1810 (Belgium)",
+"engelis":	"a=6378136.05 rf=298.2566 Engelis 1985",
+"evrst30":  "a=6377276.345 rf=300.8017 Everest 1830",
+"evrst48":  "a=6377304.063 rf=300.8017 Everest 1948",
+"evrst56":  "a=6377301.243 rf=300.8017 Everest 1956",
+"evrst69":  "a=6377295.664 rf=300.8017 Everest 1969",
+"evrstSS":  "a=6377298.556 rf=300.8017 Everest (Sabah & Sarawak)",
+"fschr60":  "a=6378166. rf=298.3 Fischer (Mercury Datum) 1960",
+"fschr60m": "a=6378155. rf=298.3 Modified Fischer 1960",
+"fschr68":  "a=6378150. rf=298.3 Fischer 1968",
+"helmert":  "a=6378200. rf=298.3 Helmert 1906",
+"hough":	"a=6378270.0 rf=297. Hough",
+"intl":		"a=6378388.0 rf=297. International 1909 (Hayford)",
+"krass":	"a=6378245.0 rf=298.3 Krassovsky, 1942",
+"kaula":	"a=6378163. rf=298.24 Kaula 1961",
+"lerch":	"a=6378139. rf=298.257 Lerch 1979",
+"mprts":	"a=6397300. rf=191. Maupertius 1738",
+"new_intl":	"a=6378157.5 b=6356772.2 New International 1967",
+"plessis":	"a=6376523. b=6355863. Plessis 1817 (France)",
+"SEasia":	"a=6378155.0 b=6356773.3205 Southeast Asia",
+"walbeck":	"a=6376896.0 b=6355834.8467 Walbeck",
+"WGS60":    "a=6378165.0 rf=298.3 WGS 60",
+"WGS66":	"a=6378145.0 rf=298.25 WGS 66",
+"WGS72":	"a=6378135.0 rf=298.26 WGS 72",
+"WGS84":    "a=6378137.0 rf=298.257223563 WGS 84",
+"sphere":   "a=6370997.0 b=6370997.0 Normal Sphere",
+}
 
 pyproj_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 if not os.path.isdir(pyproj_datadir):
@@ -64,11 +240,11 @@ if not os.path.isdir(pyproj_datadir):
 
 set_datapath(pyproj_datadir)
 
-class Proj(_Proj):
+class Proj(_proj.Proj):
     """
     performs cartographic transformations (converts from
     longitude,latitude to native map projection x,y coordinates and
-    vice versa) using proj (http://proj.maptools.org/)
+    vice versa) using proj (http://trac.osgeo.org/proj/).
 
     A Proj class instance is initialized with proj map projection
     control parameter key/value pairs. The key/value pairs can
@@ -100,7 +276,7 @@ class Proj(_Proj):
 
         Proj4 projection control parameters must either be given in a
         dictionary 'projparams' or as keyword arguments. See the proj
-        documentation (http://proj.maptools.org) for more information
+        documentation (http://trac.osgeo.org/proj/) for more information
         about specifying projection parameters.
 
         Example usage:
@@ -162,7 +338,7 @@ class Proj(_Proj):
         # look for EPSG, replace with epsg (EPSG only works
         # on case-insensitive filesystems).
         projstring = projstring.replace('EPSG','epsg')
-        return _Proj.__new__(self, projstring)
+        return _proj.Proj.__new__(self, projstring)
 
     def __call__(self, *args, **kw):
     #,lon,lat,inverse=False,radians=False,errcheck=False):
@@ -195,9 +371,9 @@ class Proj(_Proj):
         #    latlon = np.array(args[0], copy=True,
         #                      order='C', dtype=float, ndmin=2)
         #    if inverse:
-        #        _Proj._invn(self, latlon, radians=radians, errcheck=errcheck)
+        #        _proj.Proj._invn(self, latlon, radians=radians, errcheck=errcheck)
         #    else:
-        #        _Proj._fwdn(self, latlon, radians=radians, errcheck=errcheck)
+        #        _proj.Proj._fwdn(self, latlon, radians=radians, errcheck=errcheck)
         #    return latlon
         lon, lat = args
         # process inputs, making copies that support buffer API.
@@ -205,9 +381,9 @@ class Proj(_Proj):
         iny, yisfloat, yislist, yistuple = _copytobuffer(lat)
         # call proj4 functions. inx and iny modified in place.
         if inverse:
-            _Proj._inv(self, inx, iny, radians=radians, errcheck=errcheck)
+            _proj.Proj._inv(self, inx, iny, radians=radians, errcheck=errcheck)
         else:
-            _Proj._fwd(self, inx, iny, radians=radians, errcheck=errcheck)
+            _proj.Proj._fwd(self, inx, iny, radians=radians, errcheck=errcheck)
         # if inputs were lists, tuples or floats, convert back.
         outx = _convertback(xisfloat,xislist,xistuple,inx)
         outy = _convertback(yisfloat,yislist,xistuple,iny)
@@ -215,11 +391,11 @@ class Proj(_Proj):
 
     def is_latlong(self):
         """returns True if projection in geographic (lon/lat) coordinates"""
-        return _Proj.is_latlong(self)
+        return _proj.Proj.is_latlong(self)
 
     def is_geocent(self):
         """returns True if projection in geocentric (x/y) coordinates"""
-        return _Proj.is_geocent(self)
+        return _proj.Proj.is_geocent(self)
 
 def transform(p1, p2, x, y, z=None, radians=False):
     """
@@ -301,7 +477,7 @@ def transform(p1, p2, x, y, z=None, radians=False):
     else:
         inz = None
     # call pj_transform.  inx,iny,inz buffers modified in place.
-    _transform(p1,p2,inx,iny,inz,radians)
+    _proj._transform(p1,p2,inx,iny,inz,radians)
     # if inputs were lists, tuples or floats, convert back.
     outx = _convertback(xisfloat,xislist,xistuple,inx)
     outy = _convertback(yisfloat,yislist,xistuple,iny)
@@ -377,7 +553,7 @@ def _dict2string(projparams):
         pjargs.append('+'+key+"="+str(value)+' ')
     return ''.join(pjargs)
 
-class Geod(_Geod):
+class Geod(_geod.Geod):
     """
     performs forward and inverse geodetic, or Great Circle,
     computations.  The forward computation (using the 'fwd' method)
@@ -396,50 +572,50 @@ class Geod(_Geod):
         can be given in a dictionary 'initparams', as keyword arguments, 
         or as as proj4 geod initialization string.
         Following is a list of the ellipsoids that may be defined using the 
-        'ellps' keyword:
+        'ellps' keyword (these are stored in the model variable pj_ellps)::
 
            MERIT a=6378137.0      rf=298.257       MERIT 1983
            SGS85 a=6378136.0      rf=298.257       Soviet Geodetic System 85
            GRS80 a=6378137.0      rf=298.257222101 GRS 1980(IUGG, 1980)
            IAU76 a=6378140.0      rf=298.257       IAU 1976
-            airy a=6377563.396    b=6356256.910    Airy 1830
-          APL4.9 a=6378137.0.     rf=298.25        Appl. Physics. 1965
+           airy a=6377563.396     b=6356256.910    Airy 1830
+           APL4.9 a=6378137.0.    rf=298.25        Appl. Physics. 1965
            NWL9D a=6378145.0.     rf=298.25        Naval Weapons Lab., 1965
-        mod_airy a=6377340.189    b=6356034.446    Modified Airy
-          andrae a=6377104.43     rf=300.0         Andrae 1876 (Den., Iclnd.)
-         aust_SA a=6378160.0      rf=298.25        Australian Natl & S. Amer. 1969
-           GRS67 a=6378160.0      rf=298.2471674270 GRS 67(IUGG 1967)
-          bessel a=6377397.155    rf=299.1528128   Bessel 1841
-        bess_nam a=6377483.865    rf=299.1528128   Bessel 1841 (Namibia)
-          clrk66 a=6378206.4      b=6356583.8      Clarke 1866
-          clrk80 a=6378249.145    rf=293.4663      Clarke 1880 mod.
-             CPM a=6375738.7      rf=334.29        Comm. des Poids et Mesures 1799
-          delmbr a=6376428.       rf=311.5         Delambre 1810 (Belgium)
-         engelis a=6378136.05     rf=298.2566      Engelis 1985
-         evrst30 a=6377276.345    rf=300.8017      Everest 1830
-         evrst48 a=6377304.063    rf=300.8017      Everest 1948
-         evrst56 a=6377301.243    rf=300.8017      Everest 1956
-         evrst69 a=6377295.664    rf=300.8017      Everest 1969
-         evrstSS a=6377298.556    rf=300.8017      Everest (Sabah & Sarawak)
-         fschr60 a=6378166.       rf=298.3         Fischer (Mercury Datum) 1960
-        fschr60m a=6378155.       rf=298.3         Modified Fischer 1960
-         fschr68 a=6378150.       rf=298.3         Fischer 1968
-         helmert a=6378200.       rf=298.3         Helmert 1906
+           mod_airy a=6377340.189 b=6356034.446    Modified Airy
+           andrae a=6377104.43    rf=300.0         Andrae 1876 (Den., Iclnd.)
+           aust_SA a=6378160.0    rf=298.25        Australian Natl & S. Amer. 1969
+           GRS67 a=6378160.0      rf=298.247167427 GRS 67(IUGG 1967)
+           bessel a=6377397.155   rf=299.1528128   Bessel 1841
+           bess_nam a=6377483.865 rf=299.1528128   Bessel 1841 (Namibia)
+           clrk66 a=6378206.4     b=6356583.8      Clarke 1866
+           clrk80 a=6378249.145   rf=293.4663      Clarke 1880 mod.
+           CPM a=6375738.7        rf=334.29        Comm. des Poids et Mesures 1799
+           delmbr a=6376428.      rf=311.5         Delambre 1810 (Belgium)
+           engelis a=6378136.05   rf=298.2566      Engelis 1985
+           evrst30 a=6377276.345  rf=300.8017      Everest 1830
+           evrst48 a=6377304.063  rf=300.8017      Everest 1948
+           evrst56 a=6377301.243  rf=300.8017      Everest 1956
+           evrst69 a=6377295.664  rf=300.8017      Everest 1969
+           evrstSS a=6377298.556  rf=300.8017      Everest (Sabah & Sarawak)
+           fschr60 a=6378166.     rf=298.3         Fischer (Mercury Datum) 1960
+           fschr60m a=6378155.    rf=298.3         Modified Fischer 1960
+           fschr68 a=6378150.     rf=298.3         Fischer 1968
+           helmert a=6378200.     rf=298.3         Helmert 1906
            hough a=6378270.0      rf=297.          Hough
-            intl a=6378388.0      rf=297.          International 1909 (Hayford)
+           intl a=6378388.0       rf=297.          International 1909 (Hayford)
            krass a=6378245.0      rf=298.3         Krassovsky, 1942
            kaula a=6378163.       rf=298.24        Kaula 1961
            lerch a=6378139.       rf=298.257       Lerch 1979
            mprts a=6397300.       rf=191.          Maupertius 1738
-        new_intl a=6378157.5      b=6356772.2      New International 1967
-         plessis a=6376523.       b=6355863.       Plessis 1817 (France)
-          SEasia a=6378155.0      b=6356773.3205   Southeast Asia
-         walbeck a=6376896.0      b=6355834.8467   Walbeck
+           new_intl a=6378157.5   b=6356772.2      New International 1967
+           plessis a=6376523.     b=6355863.       Plessis 1817 (France)
+           SEasia a=6378155.0     b=6356773.3205   Southeast Asia
+           walbeck a=6376896.0    b=6355834.8467   Walbeck
            WGS60 a=6378165.0      rf=298.3         WGS 60
            WGS66 a=6378145.0      rf=298.25        WGS 66
            WGS72 a=6378135.0      rf=298.26        WGS 72
            WGS84 a=6378137.0      rf=298.257223563 WGS 84
-          sphere a=6370997.0      b=6370997.0      Normal Sphere (r=6370997)
+           sphere a=6370997.0     b=6370997.0      Normal Sphere (r=6370997)
 
         The parameters of the ellipsoid may also be set directly using
         the 'a' (semi-major or equatorial axis radius) keyword, and
@@ -447,7 +623,7 @@ class Geod(_Geod):
         or polar axis radius), 'e' (eccentricity), 'es' (eccentricity
         squared), 'f' (flattening), or 'rf' (reciprocal flattening).
 
-        See the proj documentation (http://proj.maptools.org) for more
+        See the proj documentation (http://trac.osgeo.org/proj/) for more
         information about specifying ellipsoid parameters (specifically,
         the chapter 'Specifying the Earth's figure' in the main Proj
         users manual).
@@ -509,10 +685,20 @@ class Geod(_Geod):
                 else:
                     kvpairs.append(kvpair+' ')
             initstring = ''.join(kvpairs)
+        # check ellps keyword
+        for kvpair in initstring.split():
+            try:
+               k,v = kvpair.split('=')
+            except:
+               msg="Geod must be specified using dict or kwargs" 
+               raise ValueError(msg)
+            if k == '+ellps' and v not in pj_ellps:
+                msg = 'unknown ellps specification - see pj_ellps for options'
+                raise ValueError(msg)
         # first try a Proj class (catches errors properly)
         projstring = initstring + ' +proj=latlon'
         p = Proj(projstring) # this is never used
-        return _Geod.__new__(self, initstring)
+        return _geod.Geod.__new__(self, initstring)
 
     def fwd(self, lons, lats, az, dist, radians=False):
         """
@@ -533,7 +719,7 @@ class Geod(_Geod):
         inz, zisfloat, zislist, zistuple = _copytobuffer(az)
         ind, disfloat, dislist, distuple = _copytobuffer(dist)
         # call geod_for function. inputs modified in place.
-        _Geod._fwd(self, inx, iny, inz, ind, radians=radians)
+        _geod.Geod._fwd(self, inx, iny, inz, ind, radians=radians)
         # if inputs were lists, tuples or floats, convert back.
         outx = _convertback(xisfloat,xislist,xistuple,inx)
         outy = _convertback(yisfloat,yislist,xistuple,iny)
@@ -558,7 +744,7 @@ class Geod(_Geod):
         inz, zisfloat, zislist, zistuple = _copytobuffer(lons2)
         ind, disfloat, dislist, distuple = _copytobuffer(lats2)
         # call geod_inv function. inputs modified in place.
-        _Geod._inv(self, inx, iny, inz, ind, radians=radians)
+        _geod.Geod._inv(self, inx, iny, inz, ind, radians=radians)
         # if inputs were lists, tuples or floats, convert back.
         outx = _convertback(xisfloat,xislist,xistuple,inx)
         outy = _convertback(yisfloat,yislist,xistuple,iny)
@@ -596,7 +782,7 @@ class Geod(_Geod):
         '46.805  -114.051'
         '46.262  -118.924'
         """
-        lons, lats = _Geod._npts(self,lon1,lat1,lon2,lat2,npts,radians=radians)
+        lons, lats = _geod.Geod._npts(self,lon1,lat1,lon2,lat2,npts,radians=radians)
         return list(zip(lons, lats))
 
 def test():
