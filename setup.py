@@ -61,14 +61,14 @@ else:
 # proj4 and geos extensions.
 deps = glob.glob('src/*.c')
 deps.remove(os.path.join('src','_proj.c'))
-deps.remove(os.path.join('src','_geod.c'))
 deps.remove(os.path.join('src','_geoslib.c'))
 
 packages          = ['mpl_toolkits','mpl_toolkits.basemap']
 package_dirs       = {'':'lib'}
 extensions = [Extension("mpl_toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
 deps = glob.glob('geodesic/*.c')
-extensions.append(Extension("mpl_toolkits.basemap._geod",deps+['src/_geod.c'],\
+deps.remove(os.path.join('geodesic','_geod.c'))
+extensions.append(Extension("mpl_toolkits.basemap._geod",deps+['geodesic/_geod.c'],\
     include_dirs = ['geodesic'],))
 # can't install _geoslib in mpl_toolkits.basemap namespace,
 # or Basemap objects won't be pickleable.
