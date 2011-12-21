@@ -1,35 +1,78 @@
-# Make changes to this file, not the c-wrappers that Pyrex generates.
-
-include "_pyproj.pxi"
 #cimport c_numpy
 #c_numpy.import_array()
+
+import math
+
+cdef double _dg2rad, _rad2dg 
+
+_dg2rad = math.radians(1.)
+_rad2dg = math.degrees(1.)
+_doublesize = sizeof(double)
+__version__ = "1.9.0"
+
+cdef extern from "math.h":
+    cdef enum:
+        HUGE_VAL
+        FP_NAN
+
+cdef extern from "proj_api.h":
+    ctypedef struct projUV:
+        double u
+        double v
+    ctypedef void *projPJ
+    ctypedef void *projCtx
+    projPJ pj_init_plus(char *)
+    projPJ pj_init_plus_ctx(projCtx, char *)
+    projUV pj_fwd(projUV, projPJ)
+    projUV pj_inv(projUV, projPJ)
+    int pj_transform(projPJ src, projPJ dst, long point_count, int point_offset,
+                     double *x, double *y, double *z)
+    int pj_is_latlong(projPJ)
+    int pj_is_geocent(projPJ)
+    char *pj_strerrno(int)
+    void pj_ctx_free( projCtx )
+    int pj_ctx_get_errno( projCtx )
+    projCtx pj_ctx_alloc()
+    projCtx pj_get_default_ctx()
+    void pj_free(projPJ)
+    void pj_set_searchpath ( int count, char **path )
+    cdef enum:
+        PJ_VERSION
+
+cdef extern from "Python.h":
+    int PyObject_AsWriteBuffer(object, void **rbuf, Py_ssize_t *len)
 
 def set_datapath(datapath):
     cdef char *searchpath
     bytestr = _strencode(datapath)
     searchpath = bytestr
     pj_set_searchpath(1, &searchpath)
-    
+
 cdef class Proj:
     cdef projPJ projpj
+    cdef projCtx projctx
     cdef public object proj_version
     cdef char *pjinitstring
     cdef public object srs
 
     def __cinit__(self, projstring):
         # setup proj initialization string.
+        cdef int err
         self.srs = projstring
         bytestr = _strencode(projstring)
         self.pjinitstring = bytestr
         # initialize projection
-        self.projpj = pj_init_plus(self.pjinitstring)
-        if pj_errno != 0:
-            raise RuntimeError(pj_strerrno(pj_errno))
+        self.projctx = pj_ctx_alloc()
+        self.projpj = pj_init_plus_ctx(self.projctx, self.pjinitstring)
+        err = pj_ctx_get_errno(self.projctx)
+        if err != 0:
+             raise RuntimeError(pj_strerrno(err))
         self.proj_version = PJ_VERSION/100.
 
     def __dealloc__(self):
         """destroy projection definition"""
         pj_free(self.projpj)
+        pj_ctx_free(self.projctx)
 
     def __reduce__(self):
         """special method that allows pyproj.Proj instance to be pickled"""
@@ -48,6 +91,7 @@ cdef class Proj:
         cdef double u, v
         cdef double *lonsdata, *latsdata
         cdef void *londata, *latdata
+        cdef int err
         # if buffer api is supported, get pointer to data buffers.
         if PyObject_AsWriteBuffer(lons, &londata, &buflenx) <> 0:
             raise RuntimeError
@@ -73,8 +117,10 @@ cdef class Proj:
                 projlonlatin.u = _dg2rad*lonsdata[i]
                 projlonlatin.v = _dg2rad*latsdata[i]
             projxyout = pj_fwd(projlonlatin,self.projpj)
-            if errcheck and pj_errno != 0:
-                raise RuntimeError(pj_strerrno(pj_errno))
+            if errcheck:
+                err = pj_ctx_get_errno(self.projctx)
+                if err != 0:
+                     raise RuntimeError(pj_strerrno(err))
             # since HUGE_VAL can be 'inf',
             # change it to a real (but very large) number.
             # also check for NaNs.
@@ -128,8 +174,10 @@ cdef class Proj:
             projxyin.u = xdatab[i]
             projxyin.v = ydatab[i]
             projlonlatout = pj_inv(projxyin,self.projpj)
-            if errcheck and pj_errno != 0:
-                raise RuntimeError(pj_strerrno(pj_errno))
+            if errcheck:
+                err = pj_ctx_get_errno(self.projctx)
+                if err != 0:
+                     raise RuntimeError(pj_strerrno(err))
             # since HUGE_VAL can be 'inf',
             # change it to a real (but very large) number.
             # also check for NaNs.
@@ -165,6 +213,7 @@ cdef class Proj:
 #       """
 #       cdef projUV projxyout, projlonlatin
 #       cdef projUV *llptr
+#       cdef int err
 #       cdef Py_ssize_t npts, i
 #       npts = c_numpy.PyArray_SIZE(lonlat)//2
 #       llptr = <projUV *>lonlat.data
@@ -176,8 +225,10 @@ cdef class Proj:
 #               projlonlatin.v = _dg2rad*llptr[i].v
 #           projxyout = pj_fwd(projlonlatin,self.projpj)
 
-#           if errcheck and pj_errno != 0:
-#               raise RuntimeError(pj_strerrno(pj_errno))
+#           if errcheck:
+#               err = pj_ctx_get_errno(self.projctx)
+#               if err != 0:
+#                    raise RuntimeError(pj_strerrno(err))
 #           # since HUGE_VAL can be 'inf',
 #           # change it to a real (but very large) number.
 #           if projxyout.u == HUGE_VAL:
@@ -207,8 +258,10 @@ cdef class Proj:
 #       for i from 0 <= i < npts:
 #           projxyin = llptr[i]
 #           projlonlatout = pj_inv(projxyin, self.projpj)
-#           if errcheck and pj_errno != 0:
-#               raise RuntimeError(pj_strerrno(pj_errno))
+#           if errcheck:
+#               err = pj_ctx_get_errno(self.projctx)
+#               if err != 0:
+#                    raise RuntimeError(pj_strerrno(err))
 #           # since HUGE_VAL can be 'inf',
 #           # change it to a real (but very large) number.
 #           if projlonlatout.u == HUGE_VAL:
@@ -247,6 +300,7 @@ def _transform(Proj p1, Proj p2, inx, iny, inz, radians):
     cdef void *xdata, *ydata, *zdata
     cdef double *xx, *yy, *zz
     cdef Py_ssize_t buflenx, bufleny, buflenz, npts, i
+    cdef int err
     if PyObject_AsWriteBuffer(inx, &xdata, &buflenx) <> 0:
         raise RuntimeError
     if PyObject_AsWriteBuffer(iny, &ydata, &bufleny) <> 0:
@@ -268,11 +322,11 @@ def _transform(Proj p1, Proj p2, inx, iny, inz, radians):
             xx[i] = xx[i]*_dg2rad
             yy[i] = yy[i]*_dg2rad
     if inz is not None:
-        ierr = pj_transform(p1.projpj, p2.projpj, npts, 0, xx, yy, zz)
+        err = pj_transform(p1.projpj, p2.projpj, npts, 0, xx, yy, zz)
     else:
-        ierr = pj_transform(p1.projpj, p2.projpj, npts, 0, xx, yy, NULL)
-    if ierr != 0:
-        raise RuntimeError(pj_strerrno(ierr))
+        err = pj_transform(p1.projpj, p2.projpj, npts, 0, xx, yy, NULL)
+    if err != 0:
+        raise RuntimeError(pj_strerrno(err))
     if not radians and p2.is_latlong():
         for i from 0 <= i < npts:
             xx[i] = xx[i]*_rad2dg

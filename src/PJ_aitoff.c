@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: PJ_aitoff.c 1504 2009-01-06 02:11:57Z warmerdam $
+ * $Id: PJ_aitoff.c 1856 2010-06-11 03:26:04Z warmerdam $
  *
  * Project:  PROJ.4
  * Purpose:  Implementation of the aitoff (Aitoff) and wintri (Winkel Tripel)
@@ -34,7 +34,7 @@
 #define PJ_LIB__
 #include <projects.h>
 
-PJ_CVSID("$Id: PJ_aitoff.c 1504 2009-01-06 02:11:57Z warmerdam $");
+PJ_CVSID("$Id: PJ_aitoff.c 1856 2010-06-11 03:26:04Z warmerdam $");
 
 PROJ_HEAD(aitoff, "Aitoff") "\n\tMisc Sph";
 PROJ_HEAD(wintri, "Winkel Tripel") "\n\tMisc Sph\n\tlat_1";
@@ -66,9 +66,9 @@ ENTRY0(aitoff)
 ENDENTRY(setup(P))
 ENTRY0(wintri)
 	P->mode = 1;
-	if (pj_param(P->params, "tlat_1").i)
+	if (pj_param(P->ctx, P->params, "tlat_1").i)
         {
-		if ((P->cosphi1 = cos(pj_param(P->params, "rlat_1").f)) == 0.)
+		if ((P->cosphi1 = cos(pj_param(P->ctx, P->params, "rlat_1").f)) == 0.)
 			E_ERROR(-22)
         }
 	else /* 50d28' or acos(2/pi) */
