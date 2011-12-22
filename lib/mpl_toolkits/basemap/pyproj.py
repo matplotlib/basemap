@@ -47,7 +47,8 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
 NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. """
 
-from mpl_toolkits.basemap import _proj, _geod
+from mpl_toolkits.basemap import _proj
+from mpl_toolkits.basemap.geodesic import Geodesic
 __version__ =  _proj.__version__
 set_datapath =  _proj.set_datapath
 from array import array
@@ -281,7 +282,7 @@ class Proj(_proj.Proj):
 
         Example usage:
 
-        >>> from pyproj import Proj
+        >>> from mpl_toolkits.basemap import Proj
         >>> p = Proj(proj='utm',zone=10,ellps='WGS84') # use kwargs
         >>> x,y = p(-120.108, 34.36116666)
         >>> 'x=%9.3f y=%11.3f' % (x,y)
@@ -553,9 +554,13 @@ def _dict2string(projparams):
         pjargs.append('+'+key+"="+str(value)+' ')
     return ''.join(pjargs)
 
-class Geod(_geod.Geod):
+# uses pure python geographiclib
+
+class Geod(object):
     """
     performs forward and inverse geodetic, or Great Circle,
+    computations.  The forward computation (using the 'fwd' method)
+    involves determining latitude, longitude and back azimuth of a
     computations.  The forward computation (using the 'fwd' method)
     involves determining latitude, longitude and back azimuth of a
     terminus point given the latitude and longitude of an initial
@@ -564,7 +569,7 @@ class Geod(_geod.Geod):
     azimuths and distance given the latitudes and longitudes of an
     initial and terminus point.
     """
-    def __new__(self, initstring=None, **kwargs):
+    def __init__(self, initstring=None, **kwargs):
         """
         initialize a Geod class instance.
 
@@ -578,6 +583,8 @@ class Geod(_geod.Geod):
            SGS85 a=6378136.0      rf=298.257       Soviet Geodetic System 85
            GRS80 a=6378137.0      rf=298.257222101 GRS 1980(IUGG, 1980)
            IAU76 a=6378140.0      rf=298.257       IAU 1976
+           airy a=6377563.396     b=6356256.910    Airy 1830
+           APL4.9 a=6378137.0.    rf=298.25        Appl. Physics. 1965
            airy a=6377563.396     b=6356256.910    Airy 1830
            APL4.9 a=6378137.0.    rf=298.25        Appl. Physics. 1965
            NWL9D a=6378145.0.     rf=298.25        Naval Weapons Lab., 1965
@@ -602,6 +609,8 @@ class Geod(_geod.Geod):
            fschr68 a=6378150.     rf=298.3         Fischer 1968
            helmert a=6378200.     rf=298.3         Helmert 1906
            hough a=6378270.0      rf=297.          Hough
+           helmert a=6378200.     rf=298.3         Helmert 1906
+           hough a=6378270.0      rf=297.          Hough
            intl a=6378388.0       rf=297.          International 1909 (Hayford)
            krass a=6378245.0      rf=298.3         Krassovsky, 1942
            kaula a=6378163.       rf=298.24        Kaula 1961
@@ -624,13 +633,15 @@ class Geod(_geod.Geod):
         squared), 'f' (flattening), or 'rf' (reciprocal flattening).
 
         See the proj documentation (http://trac.osgeo.org/proj/) for more
+
+        See the proj documentation (http://trac.osgeo.org/proj/) for more
         information about specifying ellipsoid parameters (specifically,
         the chapter 'Specifying the Earth's figure' in the main Proj
         users manual).
 
         Example usage:
 
-        >>> from pyproj import Geod
+        >>> from mpl_toolkits.basemap import Geod
         >>> g = Geod(ellps='clrk66') # Use Clarke 1966 ellipsoid.
         >>> # specify the lat/lons of some cities.
         >>> boston_lat = 42.+(15./60.); boston_lon = -71.-(7./60.)
@@ -675,17 +686,17 @@ class Geod(_geod.Geod):
         # merge this dict with kwargs dict.
         kwargs = dict(list(kwargs.items()) + list(ellpsd.items()))
         self.sphere = False
-        if kwargs.has_key('ellps'):
+        if 'ellps' in kwargs:
             # ellipse name given, look up in pj_ellps dict
             ellps_dict = pj_ellps[kwargs['ellps']]
             a = ellps_dict['a']
             if ellps_dict['description']=='Normal Sphere':
                 self.sphere = True
-            if ellps_dict.has_key('b'):
+            if 'b' in ellps_dict:
                 b = ellps_dict['b']
                 es = 1. - (b * b) / (a * a)
                 f = (a - b)/a
-            elif ellps_dict.has_key('rf'):
+            elif 'rf' in ellps_dict:
                 f = 1./ellps_dict['rf']
                 b = a*(1. - f)
                 es = 1. - (b * b) / (a * a)
@@ -697,23 +708,23 @@ class Geod(_geod.Geod):
             # es eccentricity squared
             # must be given.
             a = kwargs['a']
-            if kwargs.has_key('b'):
+            if 'b' in kwargs:
                 b = kwargs['b']
                 es = 1. - (b * b) / (a * a)
                 f = (a - b)/a
-            elif kwargs.has_key('rf'):
+            elif 'rf' in kwargs:
                 f = 1./kwargs['rf']
                 b = a*(1. - f)
                 es = 1. - (b * b) / (a * a)
-            elif kwargs.has_key('f'):
+            elif 'f' in kwargs:
                 f = kwargs['f']
                 b = a*(1. - f)
                 es = 1. - (b/a)**2
-            elif kwargs.has_key('es'):
+            elif 'es' in kwargs:
                 es = kwargs['es']
                 b = math.sqrt(a**2 - es*a**2)
                 f = (a - b)/a
-            elif kwargs.has_key('e'):
+            elif 'e' in kwargs:
                 es = kwargs['e']**2
                 b = math.sqrt(a**2 - es*a**2)
                 f = (a - b)/a
@@ -725,14 +736,17 @@ class Geod(_geod.Geod):
                 #raise ValueError(msg)
         if math.fabs(f) < 1.e-8: self.sphere = True
         self.a = a
+        self.b = b
         self.f = f
         self.es = es
-        return _geod.Geod.__new__(self,self.a,self.f,self.es,self.sphere)
+        self.G = Geodesic(self.a, self.f)
 
     def fwd(self, lons, lats, az, dist, radians=False):
         """
         forward transformation - Returns longitudes, latitudes and back
         azimuths of terminus points given longitudes (lons) and
+        latitudes (lats) of initial points, plus forward azimuths (az)
+        and distances (dist).
         latitudes (lats) of initial points, plus forward azimuths (az)
         and distances (dist).
 
@@ -747,15 +761,30 @@ class Geod(_geod.Geod):
         iny, yisfloat, yislist, yistuple = _copytobuffer(lats)
         inz, zisfloat, zislist, zistuple = _copytobuffer(az)
         ind, disfloat, dislist, distuple = _copytobuffer(dist)
-        # call geod_for function. inputs modified in place.
-        _geod.Geod._fwd(self, inx, iny, inz, ind, radians=radians)
+        n = 0
+        zipin = zip(inx,iny,inz,ind)
+        for lon,lat,az,dist in zipin:
+            result = self.G.Direct(lat, lon, az, dist)
+            inx[n] = result['lon2']
+            iny[n] = result['lat2']
+            inz[n] = result['azi2']
+            az = result['azi2']
+            if az > 0:
+                inz[n] = az-180.
+            elif az < 0:
+                inz[n] = az+180.
+            else:
+                inz[n] = az
+            n = n + 1
         # if inputs were lists, tuples or floats, convert back.
         outx = _convertback(xisfloat,xislist,xistuple,inx)
         outy = _convertback(yisfloat,yislist,xistuple,iny)
         outz = _convertback(zisfloat,zislist,zistuple,inz)
+        outy = _convertback(yisfloat,yislist,xistuple,iny)
+        outz = _convertback(zisfloat,zislist,zistuple,inz)
         return outx, outy, outz
 
-    def inv(self, lons1, lats1, lons2, lats2, radians=False):
+    def inv(self,lons1,lats1,lons2,lats2,radians=False):
         """
         inverse transformation - Returns forward and back azimuths, plus
         distances between initial points (specified by lons1, lats1) and
@@ -772,8 +801,20 @@ class Geod(_geod.Geod):
         iny, yisfloat, yislist, yistuple = _copytobuffer(lats1)
         inz, zisfloat, zislist, zistuple = _copytobuffer(lons2)
         ind, disfloat, dislist, distuple = _copytobuffer(lats2)
-        # call geod_inv function. inputs modified in place.
-        _geod.Geod._inv(self, inx, iny, inz, ind, radians=radians)
+        n = 0
+        zipin = zip(inx,iny,inz,ind)
+        for lon1,lat1,lon2,lat2 in zipin:
+            result = self.G.Inverse(lat1, lon1, lat2, lon2)
+            inx[n] = result['azi1']
+            az = result['azi2']
+            if az > 0:
+                iny[n] = az-180.
+            elif az < 0:
+                iny[n] = az+180.
+            else:
+                iny[n] = az
+            inz[n] = result['s12']
+            n = n + 1
         # if inputs were lists, tuples or floats, convert back.
         outx = _convertback(xisfloat,xislist,xistuple,inx)
         outy = _convertback(yisfloat,yislist,xistuple,iny)
@@ -792,7 +833,9 @@ class Geod(_geod.Geod):
 
         Example usage:
 
-        >>> from pyproj import Geod
+        >>> from mpl_toolkits.basemap import Geod
+        >>> g = Geod(ellps='clrk66') # Use Clarke 1966 ellipsoid.
+        >>> # specify the lat/lons of Boston and Portland.
         >>> g = Geod(ellps='clrk66') # Use Clarke 1966 ellipsoid.
         >>> # specify the lat/lons of Boston and Portland.
         >>> boston_lat = 42.+(15./60.); boston_lon = -71.-(7./60.)
@@ -811,7 +854,26 @@ class Geod(_geod.Geod):
         '46.805  -114.051'
         '46.262  -118.924'
         """
-        lons, lats = _geod.Geod._npts(self,lon1,lat1,lon2,lat2,npts,radians=radians)
+        result = self.G.Inverse(lat1, lon1, lat2, lon2)
+        dist = result['s12']
+        az = result['azi1']
+        # distance increment.
+        del_s = dist/(npts+1)
+        # initialize output tuples.
+        del_s = dist/(npts+1)
+        # initialize output tuples.
+        lats = ()
+        lons = ()
+        # loop over intermediate points, compute lat/lons.
+        for i in range(1,npts+1):
+            S = i*del_s
+            result = self.G.Direct(lat1, lon1, az, S)
+            if radians:
+                lats = lats + (_dg2rad*result['lat2'],)
+                lons = lons + (_dg2rad*result['lon2'],)
+            else:
+                lats = lats + (result['lat2'],)
+                lons = lons + (result['lon2'],)
         return list(zip(lons, lats))
 
 def test():

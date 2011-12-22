@@ -11,7 +11,6 @@ include Changelog
 include setup.py
 include nad2bin.c
 include src/*
-include geodesic/*
 include examples/allskymap.py
 include examples/allskymap_cr_example.py
 include examples/plothighsandlows.py
