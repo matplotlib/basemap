@@ -282,7 +282,7 @@ class Proj(_proj.Proj):
 
         Example usage:
 
-        >>> from mpl_toolkits.basemap import Proj
+        >>> from mpl_toolkits.basemap.pyproj import Proj
         >>> p = Proj(proj='utm',zone=10,ellps='WGS84') # use kwargs
         >>> x,y = p(-120.108, 34.36116666)
         >>> 'x=%9.3f y=%11.3f' % (x,y)
@@ -641,7 +641,7 @@ class Geod(object):
 
         Example usage:
 
-        >>> from mpl_toolkits.basemap import Geod
+        >>> from mpl_toolkits.basemap.pyproj import Geod
         >>> g = Geod(ellps='clrk66') # Use Clarke 1966 ellipsoid.
         >>> # specify the lat/lons of some cities.
         >>> boston_lat = 42.+(15./60.); boston_lon = -71.-(7./60.)
@@ -833,7 +833,7 @@ class Geod(object):
 
         Example usage:
 
-        >>> from mpl_toolkits.basemap import Geod
+        >>> from mpl_toolkits.basemap.pyproj import Geod
         >>> g = Geod(ellps='clrk66') # Use Clarke 1966 ellipsoid.
         >>> # specify the lat/lons of Boston and Portland.
         >>> g = Geod(ellps='clrk66') # Use Clarke 1966 ellipsoid.
@@ -878,7 +878,8 @@ class Geod(object):
 
 def test():
     """run the examples in the docstrings using the doctest module"""
-    import doctest, pyproj
+    import doctest
+    from mpl_toolkits.basemap import pyproj
     doctest.testmod(pyproj,verbose=True)
 
 if __name__ == "__main__": test()
