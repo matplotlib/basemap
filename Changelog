@@ -1,6 +1,7 @@
 version 1.0.3 (not yet released)
            * update pyproj source from pyproj.googlecode.com. Includes
-             new more accurate code for geodesic computations.
+             new more robust and accurate pure python code for geodesic computations
+             from geographiclib.
            * bug fixes for celestial projections, and non-standard sphere
              radii (https://github.com/matplotlib/basemap/pull/6).
            * fix bug in drawparallels that results in 'KeyError' when drawing

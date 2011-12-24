@@ -2383,11 +2383,7 @@ class Basemap(object):
         az = az12
         for n in range(npts):
             az = az+delaz
-            # skip segments along equator (Geod can't handle equatorial arcs)
-            if np.allclose(0.,lat_0) and (np.allclose(90.,az) or np.allclose(270.,az)):
-                continue
-            else:
-                lon, lat, az21 = g.fwd(lon_0, lat_0, az, dist)
+            lon, lat, az21 = g.fwd(lon_0, lat_0, az, dist)
             x,y = self(lon,lat)
             # add segment if it is in the map projection region.
             if x < 1.e20 and y < 1.e20:
