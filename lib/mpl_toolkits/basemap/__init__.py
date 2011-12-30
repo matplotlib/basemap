@@ -75,6 +75,8 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'moll'     : 'Mollweide',
              'hammer'   : 'Hammer',
              'robin'    : 'Robinson',
+             'kav7'     : 'Kavrayskiy VII',
+             'eck4'     : 'Eckert IV',
              'vandg'    : 'van der Grinten',
              'mbtfpq'   : 'McBryde-Thomas Flat-Polar Quartic',
              'gnom'     : 'Gnomonic',
@@ -85,7 +87,7 @@ for _items in _projnames.items():
 supported_projections = ''.join(supported_projections)
 
 _cylproj = ['cyl','merc','mill','gall']
-_pseudocyl = ['moll','robin','sinu','mbtfpq','vandg','hammer']
+_pseudocyl = ['moll','robin','eck4','kav7','sinu','mbtfpq','vandg','hammer']
 
 # projection specific parameters.
 projection_params = {'cyl'      : 'corners only (no width/height)',
@@ -115,6 +117,8 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'moll'     : 'lon_0,lat_0,no corners or width/height',
              'hammer'   : 'lon_0,lat_0,no corners or width/height',
              'robin'    : 'lon_0,lat_0,no corners or width/height',
+             'eck4'    : 'lon_0,lat_0,no corners or width/height',
+             'kav7'    : 'lon_0,lat_0,no corners or width/height',
              'vandg'    : 'lon_0,lat_0,no corners or width/height',
              'mbtfpq'   : 'lon_0,lat_0,no corners or width/height',
              'gnom'     : 'lon_0,lat_0',
@@ -177,7 +181,7 @@ _Basemap_init_doc = """
  ==============   ====================================================
 
  For ``sinu``, ``moll``, ``hammer``, ``npstere``, ``spstere``, ``nplaea``, ``splaea``,
- ``npaeqd``, ``spaeqd``, ``robin`` or ``mbtfpq``, the values of
+ ``npaeqd``, ``spaeqd``, ``robin``, ``eck4``, ``kav7``, or ``mbtfpq``, the values of
  llcrnrlon, llcrnrlat, urcrnrlon, urcrnrlat, width and height are ignored
  (because either they are computed internally, or entire globe is
  always plotted).
