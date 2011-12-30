@@ -185,6 +185,9 @@ class Proj(object):
             urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
             llcrnrx = -urcrnrx
             llcrnry = -urcrnry
+            if self.ellipsoid and self.projection in ['kav7','eck4','mbtfpq']:
+                msg = "this projection can only be drawn for a perfect sphere"
+                raise ValueError(msg)
         else:
             self._proj4 = pyproj.Proj(projparams)
             llcrnrx, llcrnry = self(llcrnrlon,llcrnrlat)
