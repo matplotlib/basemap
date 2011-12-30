@@ -16,7 +16,8 @@ m.drawcoastlines()
 m.drawmapboundary()
 # draw parallels and meridians.
 m.drawparallels(np.arange(-60.,90.,30.),labels=[1,0,0,0])
-m.drawmeridians(np.arange(0.,420.,60.),labels=[0,0,0,1])
+m.drawmeridians(np.arange(0.,360.,60.),labels=[0,0,0,1],fontsize=12)
+m.colorbar(location='bottom',pad='10%')
 # add a title.
 plt.title('Robinson Projection')
 plt.show()
