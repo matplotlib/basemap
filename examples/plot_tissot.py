@@ -33,8 +33,7 @@ m11 = Basemap(lon_0=0,projection='eck4')
 m12 = Basemap(lon_0=0,projection='kav7')
 m13 = Basemap(lon_0=270,lat_0=90,boundinglat=5,projection='npaeqd')
 
-#for m in [m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13]:
-for m in [m6]:
+for m in [m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13]:
     # make a new figure.
     fig = plt.figure()
     # draw "circles" at specified longitudes and latitudes.
