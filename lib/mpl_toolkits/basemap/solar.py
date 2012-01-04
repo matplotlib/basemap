@@ -1,7 +1,7 @@
 # some simple functions to calculate solar position, day-night terminator
 import numpy as np
 from numpy import ma
-import netcdftime
+from mpl_toolkits.basemap import netcdftime
 
 def epem(date):
     """
