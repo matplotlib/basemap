@@ -563,7 +563,7 @@ ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map with pcolormesh.
 x,y = m(*np.meshgrid(lonsin,latsin))
 p = m.pcolormesh(x,y,topodatin,shading='flat')
-m.colorbar(location='bottom') # draw colorbar
+m.colorbar(location='bottom',pad='10%') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
 # draw parallels and meridians
@@ -575,6 +575,52 @@ m.drawmeridians(meridians,labels=[0,0,0,1])
 m.drawmapboundary()
 plt.title('Robinson')
 print 'plotting Robinson example ...'
+print m.proj4string
+
+# create new figure
+fig=plt.figure()
+# setup of basemap ('kav7' = Kavrayskiy VII projection)
+m = Basemap(projection='kav7',
+            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# plot image over map with pcolormesh.
+x,y = m(*np.meshgrid(lonsin,latsin))
+p = m.pcolormesh(x,y,topodatin,shading='flat')
+m.colorbar(location='bottom',pad='10%') # draw colorbar
+# draw coastlines and political boundaries.
+m.drawcoastlines()
+# draw parallels and meridians
+parallels = np.arange(-60.,90,30.)
+m.drawparallels(parallels,labels=[1,0,0,0])
+meridians = np.arange(0.,360.,60.)
+m.drawmeridians(meridians,labels=[0,0,0,1])
+# draw boundary around map region.
+m.drawmapboundary()
+plt.title('Kavrayskiy VII')
+print 'plotting Kavrayskiy VII example ...'
+print m.proj4string
+
+# create new figure
+fig=plt.figure()
+# setup of basemap ('eck4' = Eckert IV projection)
+m = Basemap(projection='eck4',
+            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# plot image over map with pcolormesh.
+x,y = m(*np.meshgrid(lonsin,latsin))
+p = m.pcolormesh(x,y,topodatin,shading='flat')
+m.colorbar(location='bottom',pad='10%') # draw colorbar
+# draw coastlines and political boundaries.
+m.drawcoastlines()
+# draw parallels and meridians
+parallels = np.arange(-60.,90,30.)
+m.drawparallels(parallels,labels=[1,0,0,0])
+meridians = np.arange(0.,360.,60.)
+m.drawmeridians(meridians,labels=[0,0,0,1])
+# draw boundary around map region.
+m.drawmapboundary()
+plt.title('Eckert IV')
+print 'plotting Eckert IV example ...'
 print m.proj4string
 
 # create new figure
