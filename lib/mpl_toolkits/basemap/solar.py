@@ -5,7 +5,6 @@ from numpy import ma
 def JulianDayFromDate(date,calendar='standard'):
 
     """
-
 creates a Julian Day from a 'datetime-like' object.  Returns the fractional
 Julian Day (resolution 1 second).
 
@@ -20,26 +19,19 @@ Algorithm:
 
 Meeus, Jean (1998) Astronomical Algorithms (2nd Edition). Willmann-Bell,
 Virginia. p. 63
-
     """
-    
     # based on redate.py by David Finlayson.
-
     year=date.year; month=date.month; day=date.day
     hour=date.hour; minute=date.minute; second=date.second
     # Convert time to fractions of a day
     day = day + hour/24.0 + minute/1440.0 + second/86400.0
-
     # Start Meeus algorithm (variables are in his notation)
     if (month < 3):
         month = month + 12
         year = year - 1
-        
     A = int(year/100)
-
     jd = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + \
          day - 1524.5
-
     # optionally adjust the jd for the switch from 
     # the Julian to Gregorian Calendar
     # here assumed to have occurred the day after 1582 October 4
@@ -58,10 +50,8 @@ Virginia. p. 63
         B = 0
     else:
         raise ValueError('unknown calendar, must be one of julian,standard,gregorian,proleptic_gregorian, got %s' % calendar)
-    
     # adjust for Julian calendar if necessary
     jd = jd + B
-    
     return jd 
 
 def epem(date):
