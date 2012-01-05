@@ -1,4 +1,5 @@
 version 1.0.3 (not yet released)
+           * fix broken daynight terminator function.
            * added kav7 (Kavrayskiy VII) and eck4 (Eckert IV) projections
              (https://github.com/matplotlib/basemap/issues/9).
            * update pyproj source from pyproj.googlecode.com. Includes
