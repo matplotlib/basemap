@@ -1,7 +1,68 @@
 # some simple functions to calculate solar position, day-night terminator
 import numpy as np
 from numpy import ma
-from mpl_toolkits.basemap import netcdftime
+
+def JulianDayFromDate(date,calendar='standard'):
+
+    """
+
+creates a Julian Day from a 'datetime-like' object.  Returns the fractional
+Julian Day (resolution 1 second).
+
+if calendar='standard' or 'gregorian' (default), Julian day follows Julian 
+Calendar on and before 1582-10-5, Gregorian calendar after 1582-10-15.
+
+if calendar='proleptic_gregorian', Julian Day follows gregorian calendar.
+
+if calendar='julian', Julian Day follows julian calendar.
+
+Algorithm:
+
+Meeus, Jean (1998) Astronomical Algorithms (2nd Edition). Willmann-Bell,
+Virginia. p. 63
+
+    """
+    
+    # based on redate.py by David Finlayson.
+
+    year=date.year; month=date.month; day=date.day
+    hour=date.hour; minute=date.minute; second=date.second
+    # Convert time to fractions of a day
+    day = day + hour/24.0 + minute/1440.0 + second/86400.0
+
+    # Start Meeus algorithm (variables are in his notation)
+    if (month < 3):
+        month = month + 12
+        year = year - 1
+        
+    A = int(year/100)
+
+    jd = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + \
+         day - 1524.5
+
+    # optionally adjust the jd for the switch from 
+    # the Julian to Gregorian Calendar
+    # here assumed to have occurred the day after 1582 October 4
+    if calendar in ['standard','gregorian']:
+        if jd >= 2299170.5:
+            # 1582 October 15 (Gregorian Calendar)
+            B = 2 - A + int(A/4)
+        elif jd < 2299160.5:
+            # 1582 October 5 (Julian Calendar)
+            B = 0
+        else:
+            raise ValueError('impossible date (falls in gap between end of Julian calendar and beginning of Gregorian calendar')
+    elif calendar == 'proleptic_gregorian':
+        B = 2 - A + int(A/4)
+    elif calendar == 'julian':
+        B = 0
+    else:
+        raise ValueError('unknown calendar, must be one of julian,standard,gregorian,proleptic_gregorian, got %s' % calendar)
+    
+    # adjust for Julian calendar if necessary
+    jd = jd + B
+    
+    return jd 
 
 def epem(date):
     """
@@ -13,7 +74,8 @@ def epem(date):
     dg2rad = np.pi/180.
     rad2dg = 1./dg2rad
     # compute julian day from UTC datetime object.
-    jday = netcdftime.JulianDayFromDate(date)
+    # datetime objects use proleptic gregorian calendar.
+    jday = JulianDayFromDate(date,calendar='proleptic_gregorian')
     jd = np.floor(jday) # truncate to integer.
     # utc hour.
     ut = date.hour + date.minute/60. + date.second/3600.
