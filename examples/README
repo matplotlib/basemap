@@ -144,3 +144,6 @@ ploticos.py demonstrates plotting on unstructured grids.
 
 lic_demo.py shows how to use vectorplot scikit to visualize vector fields with
 Line Integral Convolutions (LIC).
+
+round.py shows how to make a polar plot round (by using a clip path to mask everything
+outside the bounding latitude).
