@@ -1,8 +1,13 @@
-# hack to draw a round polar stereographic plot.
-from mpl_toolkits.basemap import Basemap, cm
+# make plots of etopo bathymetry/topography data on
+# various map projections, drawing coastlines, state and
+# country boundaries, filling continents and drawing
+# parallels/meridians
+
+# illustrates special-case polar-centric projections.
+
+from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
@@ -13,38 +18,53 @@ lats = np.loadtxt('etopo20lats.gz')
 print 'min/max etopo20 data:'
 print etopo.min(),etopo.max()
 
-# create projection.
-#m = Basemap(boundinglat=-20,lon_0=90,projection='spstere')
-m = Basemap(boundinglat=20,lon_0=270,projection='npstere)
-print m.xmin, m.xmax,m.ymin,m.ymax
-# compute native map projection coordinates for lat/lon grid.
-x,y = m(*np.meshgrid(lons,lats))
-# make filled contour plot.
-cs =\
-m.contourf(x,y,etopo,np.linspace(-7500,4500,41),cmap=cm.GMT_haxby,extend='both')
-# colorbar
-cb = m.colorbar()
-# draw coastlines.
-coasts = m.drawcoastlines()
-# draw parallels and meridians.
-parallels = m.drawparallels(np.arange(20.,90,20.))
-merids = m.drawmeridians(np.arange(0.,360.,60.))
-plt.box(on=False) # don't draw axes frame.
-# create clip path.
-clipit =\
-patches.Circle((0.5*(m.xmax+m.xmin),0.5*(m.ymax+m.ymin)),radius=0.5*(m.xmax-m.xmin),fc='none')
-ax = plt.gca()
-p = ax.add_patch(clipit)
-p.set_clip_on(False)
-# clip coastlines.
-coasts.set_clip_path(clipit)
-# clip contours.
-for cntr in cs.collections:
-    cntr.set_clip_path(clipit)
-# clip meridian lines.
-for merid in merids:
-    lines,labels = merids[merid]
-    for l in lines:
-        l.set_clip_path(clipit)
-plt.title('a round polar plot')
+# these are the 4 polar projections
+projs = ['laea','stere','aeqd','ortho'] # short names
+# long names
+projnames = ['Lambert Azimuthal Equal Area','Stereographic','Azimuthal Equidistant','Orthographic']
+# loop over hemispheres, make a 4-panel plot for each hemisphere
+# showing all four polar projections.
+for hem in ['North','South']:
+    if hem == 'South':
+        lon_0 = 130.
+        lon_0_ortho = lon_0 - 180.
+        lat_0 = -90.
+        bounding_lat = -1.
+    elif hem == 'North':
+        lon_0 = -90.
+        lon_0_ortho = lon_0
+        lat_0 = 90.
+        bounding_lat = 1.
+    # loop over projections, one for each panel of the figure.
+    fig = plt.figure(figsize=(8,8))
+    npanel = 0
+    for proj,projname in zip(projs,projnames):
+        npanel = npanel + 1
+        if hem == 'South':
+            projection = 'sp'+proj
+        elif hem == 'North':
+            projection = 'np'+proj
+        # setup map projection
+        # centered on Australia (for SH) or US (for NH).
+        if proj == 'ortho':
+           m = Basemap(projection='ortho',
+                       resolution='c',area_thresh=10000.,lat_0=lat_0,lon_0=lon_0_ortho)
+        else:
+           m = Basemap(boundinglat=bounding_lat,lon_0=lon_0,\
+                       resolution='c',area_thresh=10000.,projection=projection,round=True)
+        # compute native map projection coordinates for lat/lon grid.
+        x,y = m(*np.meshgrid(lons,lats))
+        ax = fig.add_subplot(2,2,npanel)
+        # make filled contour plot.
+        cs = m.contourf(x,y,etopo,20,cmap=plt.cm.jet)
+        # draw coastlines.
+        m.drawcoastlines()
+        # draw parallels and meridians.
+        m.drawparallels(np.arange(-80.,90,20.))
+        m.drawmeridians(np.arange(0.,360.,60.))
+        # draw boundary around map region.
+        m.drawmapboundary()
+        # draw title.
+        plt.title(hem+' Polar '+projname,y=1.05,fontsize=12)
+        print 'plotting '+hem+' Polar '+projname+' basemap ...'
 plt.show()

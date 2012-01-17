@@ -29,12 +29,12 @@ for hem in ['North','South']:
         lon_0 = 130.
         lon_0_ortho = lon_0 - 180.
         lat_0 = -90.
-        bounding_lat = -20.
+        bounding_lat = -1.
     elif hem == 'North':
         lon_0 = -90.
         lon_0_ortho = lon_0
         lat_0 = 90.
-        bounding_lat = 20.
+        bounding_lat = 1.
     # loop over projections, one for each panel of the figure.
     fig = plt.figure(figsize=(8,8))
     npanel = 0
@@ -51,7 +51,7 @@ for hem in ['North','South']:
                        resolution='c',area_thresh=10000.,lat_0=lat_0,lon_0=lon_0_ortho)
         else:
            m = Basemap(boundinglat=bounding_lat,lon_0=lon_0,\
-                       resolution='c',area_thresh=10000.,projection=projection)
+                       resolution='c',area_thresh=10000.,projection=projection,round=True)
         # compute native map projection coordinates for lat/lon grid.
         x,y = m(*np.meshgrid(lons,lats))
         ax = fig.add_subplot(2,2,npanel)
