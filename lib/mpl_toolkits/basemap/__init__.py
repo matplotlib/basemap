@@ -316,7 +316,7 @@ _Basemap_init_doc = """
  round            cut off pole-centered projection at boundinglat
                   (so plot is a circle instead of a square). Only
                   relevant for npstere,spstere,nplaea,splaea,npaeqd
-                  or spaeqd projections.
+                  or spaeqd projections. Default False.
  satellite_height height of satellite (in m) above equator -
                   only relevant for geostationary
                   and near-sided perspective (``geos`` or ``nsper``)
