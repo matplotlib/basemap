@@ -29,12 +29,14 @@ for hem in ['North','South']:
         lon_0 = 130.
         lon_0_ortho = lon_0 - 180.
         lat_0 = -90.
-        bounding_lat = -1.
+        #  Lambert Azimuth bounding lat must not extend into opposite hem.
+        bounding_lat = -0.01 
     elif hem == 'North':
         lon_0 = -90.
         lon_0_ortho = lon_0
         lat_0 = 90.
-        bounding_lat = 1.
+        #  Lambert Azimuth bounding lat must not extend into opposite hem.
+        bounding_lat = 0.01
     # loop over projections, one for each panel of the figure.
     fig = plt.figure(figsize=(8,8))
     npanel = 0
