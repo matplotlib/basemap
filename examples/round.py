@@ -14,7 +14,9 @@ print 'min/max etopo20 data:'
 print etopo.min(),etopo.max()
 
 # create projection.
-m = Basemap(boundinglat=20,lon_0=270,projection='npstere')
+#m = Basemap(boundinglat=-20,lon_0=90,projection='spstere')
+m = Basemap(boundinglat=20,lon_0=270,projection='npstere)
+print m.xmin, m.xmax,m.ymin,m.ymax
 # compute native map projection coordinates for lat/lon grid.
 x,y = m(*np.meshgrid(lons,lats))
 # make filled contour plot.
@@ -29,9 +31,11 @@ parallels = m.drawparallels(np.arange(20.,90,20.))
 merids = m.drawmeridians(np.arange(0.,360.,60.))
 plt.box(on=False) # don't draw axes frame.
 # create clip path.
-clipit = patches.Circle((0.5*m.xmax,0.5*m.ymax),radius=0.5*m.xmax,fc='none')
+clipit =\
+patches.Circle((0.5*(m.xmax+m.xmin),0.5*(m.ymax+m.ymin)),radius=0.5*(m.xmax-m.xmin),fc='none')
 ax = plt.gca()
-ax.add_patch(clipit)
+p = ax.add_patch(clipit)
+p.set_clip_on(False)
 # clip coastlines.
 coasts.set_clip_path(clipit)
 # clip contours.
