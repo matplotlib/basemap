@@ -5,7 +5,7 @@
 
 # illustrates special-case polar-centric projections.
 
-from mpl_toolkits.basemap import Basemap
+from mpl_toolkits.basemap import Basemap, cm
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -58,7 +58,7 @@ for hem in ['North','South']:
         x,y = m(*np.meshgrid(lons,lats))
         ax = fig.add_subplot(2,2,npanel)
         # make filled contour plot.
-        cs = m.contourf(x,y,etopo,20,cmap=plt.cm.jet)
+        cs = m.contourf(x,y,etopo,np.linspace(-7500,4500,41),cmap=cm.GMT_haxby)
         # draw coastlines.
         m.drawcoastlines()
         # draw parallels and meridians.
