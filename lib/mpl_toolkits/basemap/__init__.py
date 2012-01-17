@@ -313,6 +313,10 @@ _Basemap_init_doc = """
                   The longitude lon_0 is at 6-o'clock, and the
                   latitude circle boundinglat is tangent to the edge
                   of the map at lon_0.
+ round            cut off pole-centered projection at boundinglat
+                  (so plot is a circle instead of a square). Only
+                  relevant for npstere,spstere,nplaea,splaea,npaeqd
+                  or spaeqd projections.
  satellite_height height of satellite (in m) above equator -
                   only relevant for geostationary
                   and near-sided perspective (``geos`` or ``nsper``)
@@ -442,6 +446,7 @@ class Basemap(object):
                        fix_aspect=True,
                        anchor='C',
                        celestial=False,
+                       round=False,
                        ax=None):
         # docstring is added after __init__ method definition
 
@@ -866,6 +871,14 @@ class Basemap(object):
                 if type == 2: self.lakepolygons.append(_geoslib.Polygon(b))
                 #if type == 3: self.islandinlakepolygons.append(_geoslib.Polygon(b))
                 #if type == 4: self.lakeinislandinlakepolygons.append(_geoslib.Polygon(b))
+        # set clipping path for round polar plots.
+        self.round = False
+        if (self.projection.startswith('np') or 
+            self.projection.startswith('sp')) and round:
+            self.clipcircle =\
+            Circle((0.5*(self.xmax+self.xmin),0.5*(self.ymax+self.ymin)),
+                    radius=0.5*(self.xmax-self.xmin),fc='none')
+            self.round = True
 
     # set __init__'s docstring
     __init__.__doc__ = _Basemap_init_doc
@@ -1343,6 +1356,17 @@ class Basemap(object):
             limb.set_clip_on(False)
             if zorder is not None:
                 limb.set_zorder(zorder)
+        elif self.round:
+            limb = self.clipcircle
+            ax.add_patch(limb)
+            if fill_color is None:
+                limb.set_fill(False)
+            else:
+                limb.set_facecolor(fill_color)
+                limb.set_zorder(0)
+            limb.set_clip_on(False)
+            if zorder is not None:
+                limb.set_zorder(zorder)
         else: # all other projections are rectangular.
             # use axesPatch for fill_color, frame for border line props.
             try:
@@ -1468,6 +1492,13 @@ class Basemap(object):
             npoly = npoly + 1
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # clip continent polygons for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            for poly in polys:
+                poly.set_clip_path(self.clipcircle)
         return polys
 
     def drawcoastlines(self,linewidth=1.,color='k',antialiased=1,ax=None,zorder=None):
@@ -1500,6 +1531,12 @@ class Basemap(object):
         coastlines.set_label('_nolabel_')
         if zorder is not None:
             coastlines.set_zorder(zorder)
+        # clip coastlines for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            coastlines.set_clip_path(self.clipcircle)
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
@@ -1541,6 +1578,12 @@ class Basemap(object):
         if zorder is not None:
             countries.set_zorder(zorder)
         ax.add_collection(countries)
+        # clip countries for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            countries.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return countries
@@ -1581,6 +1624,12 @@ class Basemap(object):
         if zorder is not None:
             states.set_zorder(zorder)
         ax.add_collection(states)
+        # clip states for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            states.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return states
@@ -1621,6 +1670,12 @@ class Basemap(object):
         if zorder is not None:
             rivers.set_zorder(zorder)
         ax.add_collection(rivers)
+        # clip rivers for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            rivers.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return rivers
@@ -1783,6 +1838,12 @@ class Basemap(object):
             if zorder is not None:
                lines.set_zorder(zorder)
             ax.add_collection(lines)
+            # clip boundaries for round polar plots.
+            if self.round:
+                if self.clipcircle not in ax.patches:
+                    p = ax.add_patch(self.clipcircle)
+                    p.set_clip_on(False)
+                lines.set_clip_path(self.clipcircle)
             # set axes limits to fit map region.
             self.set_axes_limits(ax=ax)
             info = info + (lines,)
@@ -2088,7 +2149,17 @@ class Basemap(object):
             else:
                 linecolls[k] = _tup(linecolls[k])
         # override __delitem__ in dict to call remove() on values.
-        return _dict(linecolls)
+        pardict = _dict(linecolls)
+        # clip meridian lines.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            for merid in pardict:
+                lines,labels = pardict[merid]
+                for l in lines:
+                    l.set_clip_path(self.clipcircle)
+        return pardict
 
     def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
@@ -2357,7 +2428,17 @@ class Basemap(object):
             # add a remove method to each tuple.
                 linecolls[k] = _tup(linecolls[k])
         # override __delitem__ in dict to call remove() on values.
-        return _dict(linecolls)
+        meridict = _dict(linecolls)
+        # clip meridian lines.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            for merid in meridict:
+                lines,labels = meridict[merid]
+                for l in lines:
+                    l.set_clip_path(self.clipcircle)
+        return meridict
 
     def tissot(self,lon_0,lat_0,radius_deg,npts,ax=None,**kwargs):
         """
@@ -2394,6 +2475,12 @@ class Basemap(object):
                 seg.append((x,y))
         poly = Polygon(seg,**kwargs)
         ax.add_patch(poly)
+        # clip polygons for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            poly.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return poly
@@ -2723,6 +2810,9 @@ class Basemap(object):
             ax.set_frame_on(False)
         if self.projection in ['ortho','geos','nsper','aeqd'] and self._fulldisk:
             ax.set_frame_on(False)
+        # for round polar plots, turn off frame.
+        if self.round:
+            ax.set_frame_on(False)
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
         # (anchor instance var determines where plot is placed)
@@ -2763,6 +2853,12 @@ class Basemap(object):
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2788,6 +2884,12 @@ class Basemap(object):
             ax.hold(b)
             raise
         ax.hold(b)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2825,6 +2927,12 @@ class Basemap(object):
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
+        # clip image for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2891,6 +2999,12 @@ class Basemap(object):
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2919,6 +3033,12 @@ class Basemap(object):
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -3001,6 +3121,13 @@ class Basemap(object):
         # reset current active image (only if pyplot is imported).
         if plt and CS.get_array() is not None:
             plt.sci(CS)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            for cntr in CS.collections:
+                cntr.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return CS
@@ -3096,6 +3223,13 @@ class Basemap(object):
             plt.sci(CS)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            for cntr in CS.collections:
+                cntr.set_clip_path(self.clipcircle)
         return CS
 
     def quiver(self, x, y, u, v, *args, **kwargs):
@@ -3121,6 +3255,12 @@ class Basemap(object):
         ax.hold(b)
         if plt is not None and ret.get_array() is not None:
             plt.sci(ret)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -3166,6 +3306,12 @@ class Basemap(object):
         #if plt is not None and ret.get_array() is not None:
         #    plt.sci(retnh)
         # set axes limits to fit map region.
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         self.set_axes_limits(ax=ax)
         return retnh,retsh
 
@@ -3304,6 +3450,12 @@ class Basemap(object):
         rgba[:,:,3] = np.where(mask==255,0,rgba[:,:,3])
         # plot mask as rgba image.
         im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            im.set_clip_path(self.clipcircle)
         return im
 
     def bluemarble(self,ax=None,scale=None,**kwargs):
@@ -3515,6 +3667,12 @@ class Basemap(object):
         else:
             # bmproj True, no interpolation necessary.
             im = self.imshow(self._bm_rgba,ax=ax,**kwargs)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            im.set_clip_path(self.clipcircle)
         return im
 
     def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\
@@ -3789,6 +3947,13 @@ class Basemap(object):
         # is on top.
         for c in CS.collections:
             c.set_zorder(zorder)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            for cntr in CS.collections:
+                cntr.set_clip_path(self.clipcircle)
         return CS
 
     def _check_ax(self):
