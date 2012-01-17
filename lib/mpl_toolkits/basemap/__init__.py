@@ -459,6 +459,8 @@ class Basemap(object):
         self.celestial = celestial
         # map projection.
         self.projection = projection
+        # bounding lat (for pole-centered plots)
+        self.boundinglat = boundinglat
 
         # set up projection parameter dict.
         projparams = {}
@@ -581,6 +583,9 @@ class Basemap(object):
                 raise ValueError('orthographic projection only works for perfect spheres - not ellipsoids')
             if lat_0 is None or lon_0 is None:
                 raise ValueError('must specify lat_0 and lon_0 for Orthographic basemap')
+            if lat_0 == 90 or lat_0 == -90:
+                # for ortho plot centered on pole, set boundinglat to equator.
+                self.boundinglat = 0.
             if width is not None or height is not None:
                 sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
             if not using_corners:
