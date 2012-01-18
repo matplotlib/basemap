@@ -2402,9 +2402,9 @@ class Basemap(object):
                 elif self.projection == 'ortho' and self.round:
                     pole = 1
                 if pole == 1:
-                    if self.projection != 'ortho':
-                        theta = (np.pi/180.)*(merid-self.projparams['lon_0']-90)
-                    else:
+                    theta = (np.pi/180.)*(merid-self.projparams['lon_0']-90)
+                    if self.projection == 'ortho' and\
+                       self.projparams['lat_0'] == -90:
                         theta = (np.pi/180.)*(-merid+self.projparams['lon_0']+90)
                     x = r*np.cos(theta)+0.5*(self.xmin+self.xmax)
                     y = r*np.sin(theta)+0.5*(self.ymin+self.ymax)
@@ -2421,10 +2421,10 @@ class Basemap(object):
                     else:
                         vertalign = 'center'
                     # labels [l,r,t,b]
-                    if labels[0] and x >= 0.5*(self.xmin+self.xmax)+xoffset: continue
-                    if labels[1] and x <= 0.5*(self.xmin+self.xmax)-xoffset: continue
-                    if labels[2] and y <= 0.5*(self.ymin+self.ymax)-yoffset: continue
-                    if labels[3] and y >= 0.5*(self.ymin+self.ymax)+yoffset: continue
+                    if labels[0] and not labels[1] and x >= 0.5*(self.xmin+self.xmax)+xoffset: continue
+                    if labels[1] and not labels[0] and x <= 0.5*(self.xmin+self.xmax)-xoffset: continue
+                    if labels[2] and not labels[3] and y <= 0.5*(self.ymin+self.ymax)-yoffset: continue
+                    if labels[3] and not labels[2]and y >= 0.5*(self.ymin+self.ymax)+yoffset: continue
                 elif pole == -1:
                     theta = (np.pi/180.)*(-merid+self.projparams['lon_0']+90)
                     x = r*np.cos(theta)+0.5*(self.xmin+self.xmax)
@@ -2442,10 +2442,10 @@ class Basemap(object):
                     else:
                         vertalign = 'center'
                     # labels [l,r,t,b]
-                    if labels[0] and x <=  0.5*(self.xmin+self.xmax)+xoffset: continue
-                    if labels[1] and x >=  0.5*(self.xmin+self.xmax)-xoffset: continue
-                    if labels[2] and y >=  0.5*(self.ymin+self.ymax)-yoffset: continue
-                    if labels[3] and y <=  0.5*(self.ymin+self.ymax)+yoffset: continue
+                    if labels[0] and not labels[1] and x <=  0.5*(self.xmin+self.xmax)+xoffset: continue
+                    if labels[1] and not labels[0] and x >=  0.5*(self.xmin+self.xmax)-xoffset: continue
+                    if labels[2] and not labels[3] and y >=  0.5*(self.ymin+self.ymax)-yoffset: continue
+                    if labels[3] and not labels[2] and y <=  0.5*(self.ymin+self.ymax)+yoffset: continue
                 t =\
                 ax.text(x,y,lonlab,horizontalalignment=horizalign,verticalalignment=vertalign,**kwargs)
                 meridict[merid][1].append(t)

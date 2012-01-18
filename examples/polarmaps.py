@@ -26,7 +26,7 @@ projnames = ['Lambert Azimuthal Equal Area','Stereographic','Azimuthal Equidista
 # showing all four polar projections.
 for hem in ['North','South']:
     if hem == 'South':
-        lon_0 = -130.
+        lon_0 = 130.
         lon_0_ortho = lon_0 - 180.
         lat_0 = -90.
         #  Lambert Azimuth bounding lat must not extend into opposite hem.
@@ -63,7 +63,8 @@ for hem in ['North','South']:
         m.drawcoastlines()
         # draw parallels and meridians.
         m.drawparallels(np.arange(-80.,90,20.))
-        m.drawmeridians(np.arange(0.,340.,30.),labels=[1,0,0,0],fontsize=7)
+        #labels = [l,r,t,b]
+        m.drawmeridians(np.arange(0.,340.,30.),labels=[1,1,1,1],fontsize=7)
         # draw boundary around map region.
         m.drawmapboundary()
         # draw title.
