@@ -2164,9 +2164,6 @@ class Basemap(object):
                          example labels=[1,0,0,1] will cause meridians
                          to be labelled where they intersect the left and
                          and bottom of the plot, but not the right and top.
-                         For round pole-centered plots, if element in labels
-                         evaluates to True, then meridians are labelled all around
-                         the bounding latitude.
         labelstyle       if set to "+/-", east and west longitudes are
                          labelled with "+" and "-", otherwise they are
                          labelled with "E" and "W".
@@ -2387,7 +2384,7 @@ class Basemap(object):
             for lab in labels:
                 if lab: label = True
             for merid in meridict:
-                lines,labels = meridict[merid]
+                lines,labs = meridict[merid]
                 # clip lines.
                 for l in lines:
                     l.set_clip_path(self.clipcircle)
@@ -2423,6 +2420,11 @@ class Basemap(object):
                         vertalign = 'top'
                     else:
                         vertalign = 'center'
+                    # labels [l,r,t,b]
+                    if labels[0] and x >= 0.5*(self.xmin+self.xmax)+xoffset: continue
+                    if labels[1] and x <= 0.5*(self.xmin+self.xmax)-xoffset: continue
+                    if labels[2] and y <= 0.5*(self.ymin+self.ymax)-yoffset: continue
+                    if labels[3] and y >= 0.5*(self.ymin+self.ymax)+yoffset: continue
                 elif pole == -1:
                     theta = (np.pi/180.)*(-merid+self.projparams['lon_0']+90)
                     x = r*np.cos(theta)+0.5*(self.xmin+self.xmax)
@@ -2439,6 +2441,11 @@ class Basemap(object):
                         vertalign = 'bottom'
                     else:
                         vertalign = 'center'
+                    # labels [l,r,t,b]
+                    if labels[0] and x <=  0.5*(self.xmin+self.xmax)+xoffset: continue
+                    if labels[1] and x >=  0.5*(self.xmin+self.xmax)-xoffset: continue
+                    if labels[2] and y >=  0.5*(self.ymin+self.ymax)-yoffset: continue
+                    if labels[3] and y <=  0.5*(self.ymin+self.ymax)+yoffset: continue
                 t =\
                 ax.text(x,y,lonlab,horizontalalignment=horizalign,verticalalignment=vertalign,**kwargs)
                 meridict[merid][1].append(t)
@@ -4337,6 +4344,7 @@ class _dict(dict):
         super(_dict, self).__delitem__(key)
 
 def _setlonlab(fmt,lon,labelstyle):
+    # set lon label string (called by Basemap.drawmeridians)
     try: # fmt is a function that returns a formatted string
         lonlab = fmt(lon)
     except: # fmt is a format string.
@@ -4373,6 +4381,7 @@ def _setlonlab(fmt,lon,labelstyle):
     return lonlab
 
 def _setlatlab(fmt,lat,labelstyle):
+    # set lat label string (called by Basemap.drawparallels)
     try: # fmt is a function that returns a formatted string
            latlab = fmt(lat)
     except: # fmt is a format string.
