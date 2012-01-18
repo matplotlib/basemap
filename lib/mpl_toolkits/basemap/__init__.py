@@ -981,7 +981,8 @@ class Basemap(object):
         # coordinates, then transform back. This is
         # because these projections are only defined on a hemisphere, and
         # some boundary features (like Eurasia) would be undefined otherwise.
-        if self.projection in ['ortho','gnom','nsper'] and name == 'gshhs':
+        tostere = ['ortho','gnom','nsper','nplaea','npaeqd','splaea','spaeqd']
+        if self.projection in tostere and name == 'gshhs':
             containsPole = True
             lon_0=self.projparams['lon_0']
             lat_0=self.projparams['lat_0']
@@ -1102,8 +1103,7 @@ class Basemap(object):
                     # to map projection coordinates.
                     # special case for ortho/gnom/nsper, compute coastline polygon
                     # vertices in stereographic coords.
-                    if name == 'gshhs' and self.projection in\
-                    ['ortho','gnom','nsper']:
+                    if name == 'gshhs' and self.projection in tostere:
                         b[:,0], b[:,1] = maptran(b[:,0], b[:,1])
                     else:
                         b[:,0], b[:,1] = self(b[:,0], b[:,1])
@@ -1120,7 +1120,7 @@ class Basemap(object):
                         # for ortho/gnom/nsper projection, all points
                         # outside map projection region are eliminated
                         # with the above step, so we're done.
-                        if self.projection in ['ortho','gnom','nsper']:
+                        if self.projection in tostere:
                             polygons.append(list(zip(bx,by)))
                             polygon_types.append(type)
                             continue
@@ -1147,7 +1147,7 @@ class Basemap(object):
                             # if projection in ['ortho','gnom','nsper'],
                             # transform polygon from stereographic
                             # to ortho/gnom/nsper coordinates.
-                            if self.projection in ['ortho','gnom','nsper']:
+                            if self.projection in tostere:
                                 # if coastline polygon covers more than 99%
                                 # of map region for fulldisk projection,
                                 # it's probably bogus, so skip it.

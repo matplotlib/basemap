@@ -26,13 +26,13 @@ projnames = ['Lambert Azimuthal Equal Area','Stereographic','Azimuthal Equidista
 # showing all four polar projections.
 for hem in ['North','South']:
     if hem == 'South':
-        lon_0 = 130.
+        lon_0 = -130.
         lon_0_ortho = lon_0 - 180.
         lat_0 = -90.
         #  Lambert Azimuth bounding lat must not extend into opposite hem.
         bounding_lat = -0.01
     elif hem == 'North':
-        lon_0 = -130.
+        lon_0 = 130.
         lon_0_ortho = lon_0
         lat_0 = 90.
         #  Lambert Azimuth bounding lat must not extend into opposite hem.
