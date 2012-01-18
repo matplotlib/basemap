@@ -2374,7 +2374,7 @@ class Basemap(object):
                 linecolls[k] = _tup(linecolls[k])
         # override __delitem__ in dict to call remove() on values.
         meridict = _dict(linecolls)
-        # clip meridian lines and label them.
+        # for round polar plots, clip meridian lines and label them.
         if self.round:
             if self.clipcircle not in ax.patches:
                 p = ax.add_patch(self.clipcircle)
