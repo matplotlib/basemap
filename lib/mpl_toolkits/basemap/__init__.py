@@ -461,6 +461,8 @@ class Basemap(object):
         self.projection = projection
         # bounding lat (for pole-centered plots)
         self.boundinglat = boundinglat
+        # is a round pole-centered plot desired?
+        self.round = round
 
         # set up projection parameter dict.
         projparams = {}
@@ -587,6 +589,7 @@ class Basemap(object):
                 # for ortho plot centered on pole, set boundinglat to equator.
                 # (so meridian labels can be drawn in this special case).
                 self.boundinglat = 0
+                self.round = True
             if width is not None or height is not None:
                 sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
             if not using_corners:
@@ -878,9 +881,9 @@ class Basemap(object):
                 #if type == 3: self.islandinlakepolygons.append(_geoslib.Polygon(b))
                 #if type == 4: self.lakeinislandinlakepolygons.append(_geoslib.Polygon(b))
         # set clipping path for round polar plots.
-        self.round = False
         if (self.projection.startswith('np') or 
-            self.projection.startswith('sp')) and round:
+            self.projection.startswith('sp') or 
+            self.projection == 'ortho') and self.round:
             self.clipcircle =\
             Circle((0.5*(self.xmax+self.xmin),0.5*(self.ymax+self.ymin)),
                     radius=0.5*(self.xmax-self.xmin),fc='none')
@@ -2064,39 +2067,7 @@ class Basemap(object):
                 nl = _searchlist(lats,lat)
                 nr = _searchlist(lats[::-1],lat)
                 if nr != -1: nr = len(lons)-nr-1
-                try: # fmt is a function that returns a formatted string
-                    latlab = fmt(lat)
-                except: # fmt is a format string.
-                    if lat<0:
-                        if rcParams['text.usetex']:
-                            if labelstyle=='+/-':
-                                latlabstr = r'${\/-%s\/^{\circ}}$'%fmt
-                            else:
-                                latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
-                        else:
-                            if labelstyle=='+/-':
-                                latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
-                            else:
-                                latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
-                        latlab = latlabstr%np.fabs(lat)
-                    elif lat>0:
-                        if rcParams['text.usetex']:
-                            if labelstyle=='+/-':
-                                latlabstr = r'${\/+%s\/^{\circ}}$'%fmt
-                            else:
-                                latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
-                        else:
-                            if labelstyle=='+/-':
-                                latlabstr = u'+%s\N{DEGREE SIGN}'%fmt
-                            else:
-                                latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
-                        latlab = latlabstr%lat
-                    else:
-                        if rcParams['text.usetex']:
-                            latlabstr = r'${%s\/^{\circ}}$'%fmt
-                        else:
-                            latlabstr = u'%s\N{DEGREE SIGN}'%fmt
-                        latlab = latlabstr%lat
+                latlab = _setlatlab(fmt,lat,labelstyle)
                 # parallels can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     # don't bother if close to the first label.
@@ -2193,6 +2164,9 @@ class Basemap(object):
                          example labels=[1,0,0,1] will cause meridians
                          to be labelled where they intersect the left and
                          and bottom of the plot, but not the right and top.
+                         For round pole-centered plots, if element in labels
+                         evaluates to True, then meridians are labelled all around
+                         the bounding latitude.
         labelstyle       if set to "+/-", east and west longitudes are
                          labelled with "+" and "-", otherwise they are
                          labelled with "E" and "W".
@@ -2316,7 +2290,7 @@ class Basemap(object):
             sys.stdout.write('Warning: Cannot label meridians on %s basemap' % _projnames[self.projection])
             labels = [0,0,0,0]
         if self.projection in ['ortho','geos','nsper','aeqd'] and max(labels):
-            if self._fulldisk:
+            if self._fulldisk and self.boundinglat is None:
                 sys.stdout.write(dedent(
                 """'Warning: Cannot label meridians on full-disk
                 Geostationary, Orthographic or Azimuthal equidistant basemap
@@ -2331,7 +2305,7 @@ class Basemap(object):
             xmin,ymin = self(lon_0-179.9,-90)
             xmax,ymax = self(lon_0+179.9,90)
         for dolab,side in zip(labels,['l','r','t','b']):
-            if not dolab: continue
+            if not dolab or self.round: continue
             # for cylindrical projections, don't draw meridians on left or right.
             if self.projection in _cylproj + _pseudocyl and side in ['l','r']: continue
             if side in ['l','r']:
@@ -2371,39 +2345,7 @@ class Basemap(object):
                 nl = _searchlist(lons,lon2)
                 nr = _searchlist(lons[::-1],lon2)
                 if nr != -1: nr = len(lons)-nr-1
-                try: # fmt is a function that returns a formatted string
-                    lonlab = fmt(lon)
-                except: # fmt is a format string.
-                    if lon2>180:
-                        if rcParams['text.usetex']:
-                            if labelstyle=='+/-':
-                                lonlabstr = r'${\/-%s\/^{\circ}}$'%fmt
-                            else:
-                                lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
-                        else:
-                            if labelstyle=='+/-':
-                                lonlabstr = u'-%s\N{DEGREE SIGN}'%fmt
-                            else:
-                                lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
-                        lonlab = lonlabstr%np.fabs(lon2-360)
-                    elif lon2<180 and lon2 != 0:
-                        if rcParams['text.usetex']:
-                            if labelstyle=='+/-':
-                                lonlabstr = r'${\/+%s\/^{\circ}}$'%fmt
-                            else:
-                                lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
-                        else:
-                            if labelstyle=='+/-':
-                                lonlabstr = u'+%s\N{DEGREE SIGN}'%fmt
-                            else:
-                                lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
-                        lonlab = lonlabstr%lon2
-                    else:
-                        if rcParams['text.usetex']:
-                            lonlabstr = r'${%s\/^{\circ}}$'%fmt
-                        else:
-                            lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
-                        lonlab = lonlabstr%lon2
+                lonlab = _setlonlab(fmt,merid,labelstyle)
                 # meridians can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     lat = lats[n]/100.
@@ -2422,7 +2364,7 @@ class Basemap(object):
                         else:
                             t = ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
 
-                        if t is not None: linecolls[lon][1].append(t)
+                        if t is not None: linecolls[lon2][1].append(t)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         # remove empty values from linecolls dictionary
@@ -2435,15 +2377,71 @@ class Basemap(object):
                 linecolls[k] = _tup(linecolls[k])
         # override __delitem__ in dict to call remove() on values.
         meridict = _dict(linecolls)
-        # clip meridian lines.
+        # clip meridian lines and label them.
         if self.round:
             if self.clipcircle not in ax.patches:
                 p = ax.add_patch(self.clipcircle)
                 p.set_clip_on(False)
+            # label desired?
+            label = False
+            for lab in labels:
+                if lab: label = True
             for merid in meridict:
                 lines,labels = meridict[merid]
+                # clip lines.
                 for l in lines:
                     l.set_clip_path(self.clipcircle)
+                if not label: continue
+                # label
+                lonlab = _setlonlab(fmt,merid,labelstyle)
+                x,y = self(merid,self.boundinglat)
+                r = np.sqrt((x-0.5*(self.xmin+self.xmax))**2+
+                            (y-0.5*(self.ymin+self.ymax))**2)
+                r = r + np.sqrt(xoffset**2+yoffset**2)
+                if self.projection.startswith('np'):
+                    pole = 1
+                elif self.projection.startswith('sp'):
+                    pole = -1
+                elif self.projection == 'ortho' and self.round:
+                    pole = 1
+                if pole == 1:
+                    if self.projection != 'ortho':
+                        theta = (np.pi/180.)*(merid-self.projparams['lon_0']-90)
+                    else:
+                        theta = (np.pi/180.)*(-merid+self.projparams['lon_0']+90)
+                    x = r*np.cos(theta)+0.5*(self.xmin+self.xmax)
+                    y = r*np.sin(theta)+0.5*(self.ymin+self.ymax)
+                    if x > 0.5*(self.xmin+self.xmax)+xoffset:
+                        horizalign = 'left'
+                    elif x < 0.5*(self.xmin+self.xmax)-xoffset:
+                        horizalign = 'right'
+                    else:
+                        horizalign = 'center'
+                    if y > 0.5*(self.ymin+self.ymax)+yoffset:
+                        vertalign = 'bottom'
+                    elif y < 0.5*(self.ymin+self.ymax)-yoffset:
+                        vertalign = 'top'
+                    else:
+                        vertalign = 'center'
+                elif pole == -1:
+                    theta = (np.pi/180.)*(-merid+self.projparams['lon_0']+90)
+                    x = r*np.cos(theta)+0.5*(self.xmin+self.xmax)
+                    y = r*np.sin(theta)+0.5*(self.ymin+self.ymax)
+                    if x > 0.5*(self.xmin+self.xmax)-xoffset:
+                        horizalign = 'right'
+                    elif x < 0.5*(self.xmin+self.xmax)+xoffset:
+                        horizalign = 'left'
+                    else:
+                        horizalign = 'center'
+                    if y > 0.5*(self.ymin+self.ymax)-yoffset:
+                        vertalign = 'top'
+                    elif y < 0.5*(self.ymin+self.ymax)+yoffset:
+                        vertalign = 'bottom'
+                    else:
+                        vertalign = 'center'
+                t =\
+                ax.text(x,y,lonlab,horizontalalignment=horizalign,verticalalignment=vertalign,**kwargs)
+                meridict[merid][1].append(t)
         return meridict
 
     def tissot(self,lon_0,lat_0,radius_deg,npts,ax=None,**kwargs):
@@ -4337,3 +4335,74 @@ class _dict(dict):
     def __delitem__(self,key):
         self[key].remove()
         super(_dict, self).__delitem__(key)
+
+def _setlonlab(fmt,lon,labelstyle):
+    try: # fmt is a function that returns a formatted string
+        lonlab = fmt(lon)
+    except: # fmt is a format string.
+        if lon>180:
+            if rcParams['text.usetex']:
+                if labelstyle=='+/-':
+                    lonlabstr = r'${\/-%s\/^{\circ}}$'%fmt
+                else:
+                    lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
+            else:
+                if labelstyle=='+/-':
+                    lonlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                else:
+                    lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
+            lonlab = lonlabstr%np.fabs(lon-360)
+        elif lon<180 and lon != 0:
+            if rcParams['text.usetex']:
+                if labelstyle=='+/-':
+                    lonlabstr = r'${\/+%s\/^{\circ}}$'%fmt
+                else:
+                    lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
+            else:
+                if labelstyle=='+/-':
+                    lonlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                else:
+                    lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
+            lonlab = lonlabstr%lon
+        else:
+            if rcParams['text.usetex']:
+                lonlabstr = r'${%s\/^{\circ}}$'%fmt
+            else:
+                lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
+            lonlab = lonlabstr%lon
+    return lonlab
+
+def _setlatlab(fmt,lat,labelstyle):
+    try: # fmt is a function that returns a formatted string
+           latlab = fmt(lat)
+    except: # fmt is a format string.
+        if lat<0:
+            if rcParams['text.usetex']:
+                if labelstyle=='+/-':
+                    latlabstr = r'${\/-%s\/^{\circ}}$'%fmt
+                else:
+                    latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
+            else:
+                if labelstyle=='+/-':
+                    latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                else:
+                    latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
+            latlab = latlabstr%np.fabs(lat)
+        elif lat>0:
+            if rcParams['text.usetex']:
+                if labelstyle=='+/-':
+                    latlabstr = r'${\/+%s\/^{\circ}}$'%fmt
+                else:
+                    latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
+            else:
+                if labelstyle=='+/-':
+                    latlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                else:
+                    latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
+            latlab = latlabstr%lat
+        else:
+            if rcParams['text.usetex']:
+                latlabstr = r'${%s\/^{\circ}}$'%fmt
+            else:
+                latlabstr = u'%s\N{DEGREE SIGN}'%fmt
+            latlab = latlabstr%lat
