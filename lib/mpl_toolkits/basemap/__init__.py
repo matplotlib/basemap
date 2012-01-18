@@ -2133,7 +2133,7 @@ class Basemap(object):
                 p = ax.add_patch(self.clipcircle)
                 p.set_clip_on(False)
             for merid in pardict:
-                lines,labels = pardict[merid]
+                lines,labs = pardict[merid]
                 for l in lines:
                     l.set_clip_path(self.clipcircle)
         return pardict
