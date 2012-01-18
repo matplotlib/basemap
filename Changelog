@@ -1,4 +1,7 @@
 version 1.0.3 (not yet released)
+           * clip coastlines for nplaea,npaeqd,splaea,spaeqd in stereographic
+             coordinates to avoid S. America disappearing in some south polar
+             plots.
            * add 'round' keyword to Basemap.__init__ for pole-centered
              projections to make them round (clipped at boundinglat) instead
              of square.
