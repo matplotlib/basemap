@@ -2343,7 +2343,7 @@ class Basemap(object):
                 nl = _searchlist(lons,lon2)
                 nr = _searchlist(lons[::-1],lon2)
                 if nr != -1: nr = len(lons)-nr-1
-                lonlab = _setlonlab(fmt,merid,labelstyle)
+                lonlab = _setlonlab(fmt,lon2,labelstyle)
                 # meridians can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     lat = lats[n]/100.
@@ -4416,3 +4416,4 @@ def _setlatlab(fmt,lat,labelstyle):
             else:
                 latlabstr = u'%s\N{DEGREE SIGN}'%fmt
             latlab = latlabstr%lat
+        return latlab
