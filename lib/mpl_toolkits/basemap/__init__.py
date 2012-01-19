@@ -585,7 +585,8 @@ class Basemap(object):
                 raise ValueError('orthographic projection only works for perfect spheres - not ellipsoids')
             if lat_0 is None or lon_0 is None:
                 raise ValueError('must specify lat_0 and lon_0 for Orthographic basemap')
-            if lat_0 == 90 or lat_0 == -90:
+            if lat_0 == 90 or lat_0 == -90 and\
+               None in [llcrnrx,llcrnry,urcrnrx,urcrnry]:
                 # for ortho plot centered on pole, set boundinglat to equator.
                 # (so meridian labels can be drawn in this special case).
                 self.boundinglat = 0
@@ -2374,7 +2375,7 @@ class Basemap(object):
                 linecolls[k] = _tup(linecolls[k])
         # override __delitem__ in dict to call remove() on values.
         meridict = _dict(linecolls)
-        # clip meridian lines and label them.
+        # for round polar plots, clip meridian lines and label them.
         if self.round:
             if self.clipcircle not in ax.patches:
                 p = ax.add_patch(self.clipcircle)
