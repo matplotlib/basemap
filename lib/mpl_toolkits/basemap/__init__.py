@@ -2067,6 +2067,8 @@ class Basemap(object):
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
             for lat in circles:
+                # don't label parallels for round polar plots
+                if self.round: continue
                 # find index of parallel (there may be two, so
                 # search from left and right).
                 nl = _searchlist(lats,lat)
@@ -2132,13 +2134,13 @@ class Basemap(object):
                 linecolls[k] = _tup(linecolls[k])
         # override __delitem__ in dict to call remove() on values.
         pardict = _dict(linecolls)
-        # clip meridian lines.
+        # clip parallels for round polar plots (and delete labels).
         if self.round:
             if self.clipcircle not in ax.patches:
                 p = ax.add_patch(self.clipcircle)
                 p.set_clip_on(False)
-            for merid in pardict:
-                lines,labs = pardict[merid]
+            for par in pardict:
+                lines,labs = pardict[par]
                 for l in lines:
                     l.set_clip_path(self.clipcircle)
         return pardict
