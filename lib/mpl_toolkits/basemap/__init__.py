@@ -585,7 +585,8 @@ class Basemap(object):
                 raise ValueError('orthographic projection only works for perfect spheres - not ellipsoids')
             if lat_0 is None or lon_0 is None:
                 raise ValueError('must specify lat_0 and lon_0 for Orthographic basemap')
-            if lat_0 == 90 or lat_0 == -90:
+            if lat_0 == 90 or lat_0 == -90 and\
+               None in [llcrnrx,llcrnry,urcrnrx,urcrnry]:
                 # for ortho plot centered on pole, set boundinglat to equator.
                 # (so meridian labels can be drawn in this special case).
                 self.boundinglat = 0
