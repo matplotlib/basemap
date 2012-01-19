@@ -5,7 +5,7 @@
 
 # illustrates special-case polar-centric projections.
 
-from mpl_toolkits.basemap import Basemap, cm
+from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -26,17 +26,15 @@ projnames = ['Lambert Azimuthal Equal Area','Stereographic','Azimuthal Equidista
 # showing all four polar projections.
 for hem in ['North','South']:
     if hem == 'South':
-        lon_0 = -130.
+        lon_0 = 130.
         lon_0_ortho = lon_0 - 180.
         lat_0 = -90.
-        #  Lambert Azimuth bounding lat must not extend into opposite hem.
-        bounding_lat = -0.01
+        bounding_lat = -1.
     elif hem == 'North':
-        lon_0 = 130.
+        lon_0 = -90.
         lon_0_ortho = lon_0
         lat_0 = 90.
-        #  Lambert Azimuth bounding lat must not extend into opposite hem.
-        bounding_lat = 0.01
+        bounding_lat = 1.
     # loop over projections, one for each panel of the figure.
     fig = plt.figure(figsize=(8,8))
     npanel = 0
@@ -58,13 +56,12 @@ for hem in ['North','South']:
         x,y = m(*np.meshgrid(lons,lats))
         ax = fig.add_subplot(2,2,npanel)
         # make filled contour plot.
-        cs = m.contourf(x,y,etopo,np.linspace(-7500,4500,41),cmap=cm.GMT_haxby)
+        cs = m.contourf(x,y,etopo,20,cmap=plt.cm.jet)
         # draw coastlines.
         m.drawcoastlines()
         # draw parallels and meridians.
         m.drawparallels(np.arange(-80.,90,20.))
-        #labels = [l,r,t,b]
-        m.drawmeridians(np.arange(0.,340.,30.),labels=[1,1,1,1],fontsize=7)
+        m.drawmeridians(np.arange(0.,360.,60.))
         # draw boundary around map region.
         m.drawmapboundary()
         # draw title.

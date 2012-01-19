@@ -313,6 +313,10 @@ _Basemap_init_doc = """
                   The longitude lon_0 is at 6-o'clock, and the
                   latitude circle boundinglat is tangent to the edge
                   of the map at lon_0.
+ round            cut off pole-centered projection at boundinglat
+                  (so plot is a circle instead of a square). Only
+                  relevant for npstere,spstere,nplaea,splaea,npaeqd
+                  or spaeqd projections. Default False.
  satellite_height height of satellite (in m) above equator -
                   only relevant for geostationary
                   and near-sided perspective (``geos`` or ``nsper``)
@@ -442,6 +446,7 @@ class Basemap(object):
                        fix_aspect=True,
                        anchor='C',
                        celestial=False,
+                       round=False,
                        ax=None):
         # docstring is added after __init__ method definition
 
@@ -454,6 +459,10 @@ class Basemap(object):
         self.celestial = celestial
         # map projection.
         self.projection = projection
+        # bounding lat (for pole-centered plots)
+        self.boundinglat = boundinglat
+        # is a round pole-centered plot desired?
+        self.round = round
 
         # set up projection parameter dict.
         projparams = {}
@@ -576,6 +585,11 @@ class Basemap(object):
                 raise ValueError('orthographic projection only works for perfect spheres - not ellipsoids')
             if lat_0 is None or lon_0 is None:
                 raise ValueError('must specify lat_0 and lon_0 for Orthographic basemap')
+            if lat_0 == 90 or lat_0 == -90:
+                # for ortho plot centered on pole, set boundinglat to equator.
+                # (so meridian labels can be drawn in this special case).
+                self.boundinglat = 0
+                self.round = True
             if width is not None or height is not None:
                 sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
             if not using_corners:
@@ -866,6 +880,14 @@ class Basemap(object):
                 if type == 2: self.lakepolygons.append(_geoslib.Polygon(b))
                 #if type == 3: self.islandinlakepolygons.append(_geoslib.Polygon(b))
                 #if type == 4: self.lakeinislandinlakepolygons.append(_geoslib.Polygon(b))
+        # set clipping path for round polar plots.
+        if (self.projection.startswith('np') or 
+            self.projection.startswith('sp') or 
+            self.projection == 'ortho') and self.round:
+            self.clipcircle =\
+            Circle((0.5*(self.xmax+self.xmin),0.5*(self.ymax+self.ymin)),
+                    radius=0.5*(self.xmax-self.xmin),fc='none')
+            self.round = True
 
     # set __init__'s docstring
     __init__.__doc__ = _Basemap_init_doc
@@ -959,7 +981,8 @@ class Basemap(object):
         # coordinates, then transform back. This is
         # because these projections are only defined on a hemisphere, and
         # some boundary features (like Eurasia) would be undefined otherwise.
-        if self.projection in ['ortho','gnom','nsper'] and name == 'gshhs':
+        tostere = ['ortho','gnom','nsper','nplaea','npaeqd','splaea','spaeqd']
+        if self.projection in tostere and name == 'gshhs':
             containsPole = True
             lon_0=self.projparams['lon_0']
             lat_0=self.projparams['lat_0']
@@ -1080,8 +1103,7 @@ class Basemap(object):
                     # to map projection coordinates.
                     # special case for ortho/gnom/nsper, compute coastline polygon
                     # vertices in stereographic coords.
-                    if name == 'gshhs' and self.projection in\
-                    ['ortho','gnom','nsper']:
+                    if name == 'gshhs' and self.projection in tostere:
                         b[:,0], b[:,1] = maptran(b[:,0], b[:,1])
                     else:
                         b[:,0], b[:,1] = self(b[:,0], b[:,1])
@@ -1098,7 +1120,7 @@ class Basemap(object):
                         # for ortho/gnom/nsper projection, all points
                         # outside map projection region are eliminated
                         # with the above step, so we're done.
-                        if self.projection in ['ortho','gnom','nsper']:
+                        if self.projection in tostere:
                             polygons.append(list(zip(bx,by)))
                             polygon_types.append(type)
                             continue
@@ -1125,7 +1147,7 @@ class Basemap(object):
                             # if projection in ['ortho','gnom','nsper'],
                             # transform polygon from stereographic
                             # to ortho/gnom/nsper coordinates.
-                            if self.projection in ['ortho','gnom','nsper']:
+                            if self.projection in tostere:
                                 # if coastline polygon covers more than 99%
                                 # of map region for fulldisk projection,
                                 # it's probably bogus, so skip it.
@@ -1343,6 +1365,17 @@ class Basemap(object):
             limb.set_clip_on(False)
             if zorder is not None:
                 limb.set_zorder(zorder)
+        elif self.round:
+            limb = self.clipcircle
+            ax.add_patch(limb)
+            if fill_color is None:
+                limb.set_fill(False)
+            else:
+                limb.set_facecolor(fill_color)
+                limb.set_zorder(0)
+            limb.set_clip_on(False)
+            if zorder is not None:
+                limb.set_zorder(zorder)
         else: # all other projections are rectangular.
             # use axesPatch for fill_color, frame for border line props.
             try:
@@ -1468,6 +1501,13 @@ class Basemap(object):
             npoly = npoly + 1
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # clip continent polygons for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            for poly in polys:
+                poly.set_clip_path(self.clipcircle)
         return polys
 
     def drawcoastlines(self,linewidth=1.,color='k',antialiased=1,ax=None,zorder=None):
@@ -1500,6 +1540,12 @@ class Basemap(object):
         coastlines.set_label('_nolabel_')
         if zorder is not None:
             coastlines.set_zorder(zorder)
+        # clip coastlines for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            coastlines.set_clip_path(self.clipcircle)
         ax.add_collection(coastlines)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
@@ -1541,6 +1587,12 @@ class Basemap(object):
         if zorder is not None:
             countries.set_zorder(zorder)
         ax.add_collection(countries)
+        # clip countries for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            countries.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return countries
@@ -1581,6 +1633,12 @@ class Basemap(object):
         if zorder is not None:
             states.set_zorder(zorder)
         ax.add_collection(states)
+        # clip states for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            states.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return states
@@ -1621,6 +1679,12 @@ class Basemap(object):
         if zorder is not None:
             rivers.set_zorder(zorder)
         ax.add_collection(rivers)
+        # clip rivers for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            rivers.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return rivers
@@ -1783,6 +1847,12 @@ class Basemap(object):
             if zorder is not None:
                lines.set_zorder(zorder)
             ax.add_collection(lines)
+            # clip boundaries for round polar plots.
+            if self.round:
+                if self.clipcircle not in ax.patches:
+                    p = ax.add_patch(self.clipcircle)
+                    p.set_clip_on(False)
+                lines.set_clip_path(self.clipcircle)
             # set axes limits to fit map region.
             self.set_axes_limits(ax=ax)
             info = info + (lines,)
@@ -1997,39 +2067,7 @@ class Basemap(object):
                 nl = _searchlist(lats,lat)
                 nr = _searchlist(lats[::-1],lat)
                 if nr != -1: nr = len(lons)-nr-1
-                try: # fmt is a function that returns a formatted string
-                    latlab = fmt(lat)
-                except: # fmt is a format string.
-                    if lat<0:
-                        if rcParams['text.usetex']:
-                            if labelstyle=='+/-':
-                                latlabstr = r'${\/-%s\/^{\circ}}$'%fmt
-                            else:
-                                latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
-                        else:
-                            if labelstyle=='+/-':
-                                latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
-                            else:
-                                latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
-                        latlab = latlabstr%np.fabs(lat)
-                    elif lat>0:
-                        if rcParams['text.usetex']:
-                            if labelstyle=='+/-':
-                                latlabstr = r'${\/+%s\/^{\circ}}$'%fmt
-                            else:
-                                latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
-                        else:
-                            if labelstyle=='+/-':
-                                latlabstr = u'+%s\N{DEGREE SIGN}'%fmt
-                            else:
-                                latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
-                        latlab = latlabstr%lat
-                    else:
-                        if rcParams['text.usetex']:
-                            latlabstr = r'${%s\/^{\circ}}$'%fmt
-                        else:
-                            latlabstr = u'%s\N{DEGREE SIGN}'%fmt
-                        latlab = latlabstr%lat
+                latlab = _setlatlab(fmt,lat,labelstyle)
                 # parallels can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     # don't bother if close to the first label.
@@ -2088,7 +2126,17 @@ class Basemap(object):
             else:
                 linecolls[k] = _tup(linecolls[k])
         # override __delitem__ in dict to call remove() on values.
-        return _dict(linecolls)
+        pardict = _dict(linecolls)
+        # clip meridian lines.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            for merid in pardict:
+                lines,labs = pardict[merid]
+                for l in lines:
+                    l.set_clip_path(self.clipcircle)
+        return pardict
 
     def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
@@ -2239,7 +2287,7 @@ class Basemap(object):
             sys.stdout.write('Warning: Cannot label meridians on %s basemap' % _projnames[self.projection])
             labels = [0,0,0,0]
         if self.projection in ['ortho','geos','nsper','aeqd'] and max(labels):
-            if self._fulldisk:
+            if self._fulldisk and self.boundinglat is None:
                 sys.stdout.write(dedent(
                 """'Warning: Cannot label meridians on full-disk
                 Geostationary, Orthographic or Azimuthal equidistant basemap
@@ -2254,7 +2302,7 @@ class Basemap(object):
             xmin,ymin = self(lon_0-179.9,-90)
             xmax,ymax = self(lon_0+179.9,90)
         for dolab,side in zip(labels,['l','r','t','b']):
-            if not dolab: continue
+            if not dolab or self.round: continue
             # for cylindrical projections, don't draw meridians on left or right.
             if self.projection in _cylproj + _pseudocyl and side in ['l','r']: continue
             if side in ['l','r']:
@@ -2294,39 +2342,7 @@ class Basemap(object):
                 nl = _searchlist(lons,lon2)
                 nr = _searchlist(lons[::-1],lon2)
                 if nr != -1: nr = len(lons)-nr-1
-                try: # fmt is a function that returns a formatted string
-                    lonlab = fmt(lon)
-                except: # fmt is a format string.
-                    if lon2>180:
-                        if rcParams['text.usetex']:
-                            if labelstyle=='+/-':
-                                lonlabstr = r'${\/-%s\/^{\circ}}$'%fmt
-                            else:
-                                lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
-                        else:
-                            if labelstyle=='+/-':
-                                lonlabstr = u'-%s\N{DEGREE SIGN}'%fmt
-                            else:
-                                lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
-                        lonlab = lonlabstr%np.fabs(lon2-360)
-                    elif lon2<180 and lon2 != 0:
-                        if rcParams['text.usetex']:
-                            if labelstyle=='+/-':
-                                lonlabstr = r'${\/+%s\/^{\circ}}$'%fmt
-                            else:
-                                lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
-                        else:
-                            if labelstyle=='+/-':
-                                lonlabstr = u'+%s\N{DEGREE SIGN}'%fmt
-                            else:
-                                lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
-                        lonlab = lonlabstr%lon2
-                    else:
-                        if rcParams['text.usetex']:
-                            lonlabstr = r'${%s\/^{\circ}}$'%fmt
-                        else:
-                            lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
-                        lonlab = lonlabstr%lon2
+                lonlab = _setlonlab(fmt,merid,labelstyle)
                 # meridians can intersect each map edge twice.
                 for i,n in enumerate([nl,nr]):
                     lat = lats[n]/100.
@@ -2345,7 +2361,7 @@ class Basemap(object):
                         else:
                             t = ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
 
-                        if t is not None: linecolls[lon][1].append(t)
+                        if t is not None: linecolls[lon2][1].append(t)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         # remove empty values from linecolls dictionary
@@ -2357,7 +2373,83 @@ class Basemap(object):
             # add a remove method to each tuple.
                 linecolls[k] = _tup(linecolls[k])
         # override __delitem__ in dict to call remove() on values.
-        return _dict(linecolls)
+        meridict = _dict(linecolls)
+        # clip meridian lines and label them.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            # label desired?
+            label = False
+            for lab in labels:
+                if lab: label = True
+            for merid in meridict:
+                lines,labs = meridict[merid]
+                # clip lines.
+                for l in lines:
+                    l.set_clip_path(self.clipcircle)
+                if not label: continue
+                # label
+                lonlab = _setlonlab(fmt,merid,labelstyle)
+                x,y = self(merid,self.boundinglat)
+                r = np.sqrt((x-0.5*(self.xmin+self.xmax))**2+
+                            (y-0.5*(self.ymin+self.ymax))**2)
+                r = r + np.sqrt(xoffset**2+yoffset**2)
+                if self.projection.startswith('np'):
+                    pole = 1
+                elif self.projection.startswith('sp'):
+                    pole = -1
+                elif self.projection == 'ortho' and self.round:
+                    pole = 1
+                if pole == 1:
+                    theta = (np.pi/180.)*(merid-self.projparams['lon_0']-90)
+                    if self.projection == 'ortho' and\
+                       self.projparams['lat_0'] == -90:
+                        theta = (np.pi/180.)*(-merid+self.projparams['lon_0']+90)
+                    x = r*np.cos(theta)+0.5*(self.xmin+self.xmax)
+                    y = r*np.sin(theta)+0.5*(self.ymin+self.ymax)
+                    if x > 0.5*(self.xmin+self.xmax)+xoffset:
+                        horizalign = 'left'
+                    elif x < 0.5*(self.xmin+self.xmax)-xoffset:
+                        horizalign = 'right'
+                    else:
+                        horizalign = 'center'
+                    if y > 0.5*(self.ymin+self.ymax)+yoffset:
+                        vertalign = 'bottom'
+                    elif y < 0.5*(self.ymin+self.ymax)-yoffset:
+                        vertalign = 'top'
+                    else:
+                        vertalign = 'center'
+                    # labels [l,r,t,b]
+                    if labels[0] and not labels[1] and x >= 0.5*(self.xmin+self.xmax)+xoffset: continue
+                    if labels[1] and not labels[0] and x <= 0.5*(self.xmin+self.xmax)-xoffset: continue
+                    if labels[2] and not labels[3] and y <= 0.5*(self.ymin+self.ymax)-yoffset: continue
+                    if labels[3] and not labels[2]and y >= 0.5*(self.ymin+self.ymax)+yoffset: continue
+                elif pole == -1:
+                    theta = (np.pi/180.)*(-merid+self.projparams['lon_0']+90)
+                    x = r*np.cos(theta)+0.5*(self.xmin+self.xmax)
+                    y = r*np.sin(theta)+0.5*(self.ymin+self.ymax)
+                    if x > 0.5*(self.xmin+self.xmax)-xoffset:
+                        horizalign = 'right'
+                    elif x < 0.5*(self.xmin+self.xmax)+xoffset:
+                        horizalign = 'left'
+                    else:
+                        horizalign = 'center'
+                    if y > 0.5*(self.ymin+self.ymax)-yoffset:
+                        vertalign = 'top'
+                    elif y < 0.5*(self.ymin+self.ymax)+yoffset:
+                        vertalign = 'bottom'
+                    else:
+                        vertalign = 'center'
+                    # labels [l,r,t,b]
+                    if labels[0] and not labels[1] and x <=  0.5*(self.xmin+self.xmax)+xoffset: continue
+                    if labels[1] and not labels[0] and x >=  0.5*(self.xmin+self.xmax)-xoffset: continue
+                    if labels[2] and not labels[3] and y >=  0.5*(self.ymin+self.ymax)-yoffset: continue
+                    if labels[3] and not labels[2] and y <=  0.5*(self.ymin+self.ymax)+yoffset: continue
+                t =\
+                ax.text(x,y,lonlab,horizontalalignment=horizalign,verticalalignment=vertalign,**kwargs)
+                meridict[merid][1].append(t)
+        return meridict
 
     def tissot(self,lon_0,lat_0,radius_deg,npts,ax=None,**kwargs):
         """
@@ -2394,6 +2486,12 @@ class Basemap(object):
                 seg.append((x,y))
         poly = Polygon(seg,**kwargs)
         ax.add_patch(poly)
+        # clip polygons for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            poly.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return poly
@@ -2723,6 +2821,9 @@ class Basemap(object):
             ax.set_frame_on(False)
         if self.projection in ['ortho','geos','nsper','aeqd'] and self._fulldisk:
             ax.set_frame_on(False)
+        # for round polar plots, turn off frame.
+        if self.round:
+            ax.set_frame_on(False)
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
         # (anchor instance var determines where plot is placed)
@@ -2763,6 +2864,12 @@ class Basemap(object):
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2788,6 +2895,12 @@ class Basemap(object):
             ax.hold(b)
             raise
         ax.hold(b)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2825,6 +2938,12 @@ class Basemap(object):
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
+        # clip image for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2891,6 +3010,12 @@ class Basemap(object):
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -2919,6 +3044,12 @@ class Basemap(object):
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -3001,6 +3132,13 @@ class Basemap(object):
         # reset current active image (only if pyplot is imported).
         if plt and CS.get_array() is not None:
             plt.sci(CS)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            for cntr in CS.collections:
+                cntr.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return CS
@@ -3096,6 +3234,13 @@ class Basemap(object):
             plt.sci(CS)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            for cntr in CS.collections:
+                cntr.set_clip_path(self.clipcircle)
         return CS
 
     def quiver(self, x, y, u, v, *args, **kwargs):
@@ -3121,6 +3266,12 @@ class Basemap(object):
         ax.hold(b)
         if plt is not None and ret.get_array() is not None:
             plt.sci(ret)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
@@ -3166,6 +3317,12 @@ class Basemap(object):
         #if plt is not None and ret.get_array() is not None:
         #    plt.sci(retnh)
         # set axes limits to fit map region.
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            ret.set_clip_path(self.clipcircle)
         self.set_axes_limits(ax=ax)
         return retnh,retsh
 
@@ -3304,6 +3461,12 @@ class Basemap(object):
         rgba[:,:,3] = np.where(mask==255,0,rgba[:,:,3])
         # plot mask as rgba image.
         im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            im.set_clip_path(self.clipcircle)
         return im
 
     def bluemarble(self,ax=None,scale=None,**kwargs):
@@ -3515,6 +3678,12 @@ class Basemap(object):
         else:
             # bmproj True, no interpolation necessary.
             im = self.imshow(self._bm_rgba,ax=ax,**kwargs)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            im.set_clip_path(self.clipcircle)
         return im
 
     def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\
@@ -3789,6 +3958,13 @@ class Basemap(object):
         # is on top.
         for c in CS.collections:
             c.set_zorder(zorder)
+        # clip for round polar plots.
+        if self.round:
+            if self.clipcircle not in ax.patches:
+                p = ax.add_patch(self.clipcircle)
+                p.set_clip_on(False)
+            for cntr in CS.collections:
+                cntr.set_clip_path(self.clipcircle)
         return CS
 
     def _check_ax(self):
@@ -4166,3 +4342,76 @@ class _dict(dict):
     def __delitem__(self,key):
         self[key].remove()
         super(_dict, self).__delitem__(key)
+
+def _setlonlab(fmt,lon,labelstyle):
+    # set lon label string (called by Basemap.drawmeridians)
+    try: # fmt is a function that returns a formatted string
+        lonlab = fmt(lon)
+    except: # fmt is a format string.
+        if lon>180:
+            if rcParams['text.usetex']:
+                if labelstyle=='+/-':
+                    lonlabstr = r'${\/-%s\/^{\circ}}$'%fmt
+                else:
+                    lonlabstr = r'${%s\/^{\circ}\/W}$'%fmt
+            else:
+                if labelstyle=='+/-':
+                    lonlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                else:
+                    lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
+            lonlab = lonlabstr%np.fabs(lon-360)
+        elif lon<180 and lon != 0:
+            if rcParams['text.usetex']:
+                if labelstyle=='+/-':
+                    lonlabstr = r'${\/+%s\/^{\circ}}$'%fmt
+                else:
+                    lonlabstr = r'${%s\/^{\circ}\/E}$'%fmt
+            else:
+                if labelstyle=='+/-':
+                    lonlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                else:
+                    lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
+            lonlab = lonlabstr%lon
+        else:
+            if rcParams['text.usetex']:
+                lonlabstr = r'${%s\/^{\circ}}$'%fmt
+            else:
+                lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
+            lonlab = lonlabstr%lon
+    return lonlab
+
+def _setlatlab(fmt,lat,labelstyle):
+    # set lat label string (called by Basemap.drawparallels)
+    try: # fmt is a function that returns a formatted string
+           latlab = fmt(lat)
+    except: # fmt is a format string.
+        if lat<0:
+            if rcParams['text.usetex']:
+                if labelstyle=='+/-':
+                    latlabstr = r'${\/-%s\/^{\circ}}$'%fmt
+                else:
+                    latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
+            else:
+                if labelstyle=='+/-':
+                    latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                else:
+                    latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
+            latlab = latlabstr%np.fabs(lat)
+        elif lat>0:
+            if rcParams['text.usetex']:
+                if labelstyle=='+/-':
+                    latlabstr = r'${\/+%s\/^{\circ}}$'%fmt
+                else:
+                    latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
+            else:
+                if labelstyle=='+/-':
+                    latlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                else:
+                    latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
+            latlab = latlabstr%lat
+        else:
+            if rcParams['text.usetex']:
+                latlabstr = r'${%s\/^{\circ}}$'%fmt
+            else:
+                latlabstr = u'%s\N{DEGREE SIGN}'%fmt
+            latlab = latlabstr%lat
