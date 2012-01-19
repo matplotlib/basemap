@@ -2366,7 +2366,7 @@ class Basemap(object):
                         else:
                             t = ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
 
-                        if t is not None: linecolls[lon2][1].append(t)
+                        if t is not None: linecolls[lon][1].append(t)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         # remove empty values from linecolls dictionary
