@@ -1309,8 +1309,9 @@ class Basemap(object):
         linewidth        line width for boundary (default 1.)
         color            color of boundary line (default black)
         fill_color       fill the map region background with this
-                         color (default is no fill or fill with axis
-                         background color).
+                         color (default is to fill with axis
+                         background color). If set to the string
+                         'none', no filling is done.
         zorder           sets the zorder for filling map background
                          (default 0).
         ax               axes instance to use
@@ -1321,6 +1322,12 @@ class Basemap(object):
         """
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
+        # if no fill_color given, use axes background color.
+        # if fill_color is string 'none', really don't fill.
+        if fill_color is None:
+            fill_color = ax.get_axis_bgcolor()
+        elif fill_color == 'none' or fill_color == 'None':
+            fill_color = None
         limb = None
         if self.projection in ['ortho','geos','nsper'] or (self.projection=='aeqd' and\
            self._fulldisk):
