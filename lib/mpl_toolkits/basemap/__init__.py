@@ -537,6 +537,10 @@ class Basemap(object):
         elif projection in ['spstere', 'npstere',
                             'splaea', 'nplaea',
                             'spaeqd', 'npaeqd']:
+            if (projection == 'splaea' and boundinglat >= 0) or\
+               (projection == 'nplaea' and boundinglat <= 0):
+                msg='boundinglat cannot extend into opposite hemisphere'
+                raise ValueError(msg)
             if boundinglat is None or lon_0 is None:
                 raise ValueError('must specify boundinglat and lon_0 for %s basemap' % _projnames[projection])
             if projection[0] == 's':
