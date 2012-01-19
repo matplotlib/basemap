@@ -537,6 +537,10 @@ class Basemap(object):
         elif projection in ['spstere', 'npstere',
                             'splaea', 'nplaea',
                             'spaeqd', 'npaeqd']:
+            if (projection == 'splaea' and boundinglat >= 0) or\
+               (projection == 'nplaea' and boundinglat <= 0):
+                msg='boundinglat cannot extend into opposite hemisphere'
+                raise ValueError(msg)
             if boundinglat is None or lon_0 is None:
                 raise ValueError('must specify boundinglat and lon_0 for %s basemap' % _projnames[projection])
             if projection[0] == 's':
@@ -2063,6 +2067,8 @@ class Basemap(object):
                 # adjust so 0 <= lons < 360
                 lons = [(lon+360) % 360 for lon in lons]
             for lat in circles:
+                # don't label parallels for round polar plots
+                if self.round: continue
                 # find index of parallel (there may be two, so
                 # search from left and right).
                 nl = _searchlist(lats,lat)
@@ -2128,13 +2134,13 @@ class Basemap(object):
                 linecolls[k] = _tup(linecolls[k])
         # override __delitem__ in dict to call remove() on values.
         pardict = _dict(linecolls)
-        # clip meridian lines.
+        # clip parallels for round polar plots (and delete labels).
         if self.round:
             if self.clipcircle not in ax.patches:
                 p = ax.add_patch(self.clipcircle)
                 p.set_clip_on(False)
-            for merid in pardict:
-                lines,labs = pardict[merid]
+            for par in pardict:
+                lines,labs = pardict[par]
                 for l in lines:
                     l.set_clip_path(self.clipcircle)
         return pardict
@@ -2362,7 +2368,7 @@ class Basemap(object):
                         else:
                             t = ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
 
-                        if t is not None: linecolls[lon2][1].append(t)
+                        if t is not None: linecolls[lon][1].append(t)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         # remove empty values from linecolls dictionary
