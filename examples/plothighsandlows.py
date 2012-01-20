@@ -44,7 +44,7 @@ prmsl = 0.01*data.variables['prmslmsl'][0]
 local_min, local_max = extrema(prmsl, mode='wrap', window=25)
 # create Basemap instance.
 m =\
-Basemap(llcrnrlon=0,llcrnrlat=-80,urcrnrlon=360,urcrnrlat=80,projection='mill')
+Basemap(lon_0=180,projection='kav7')
 # add wrap-around point in longitude.
 prmsl, lons = addcyclic(prmsl, lons1)
 # contour levels
