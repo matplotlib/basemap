@@ -1953,7 +1953,7 @@ class Basemap(object):
             # tmerc only defined within +/- 90 degrees of lon_0
             lons = np.arange(lon_0-90,lon_0+90.01,0.01)
         else:
-            lons = np.arange(0,360.01,0.01)
+            lons = np.arange(-180,180.001,0.01)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = circles.tolist()
@@ -2833,12 +2833,21 @@ class Basemap(object):
         ax.update_datalim( corners )
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
         ax.set_ylim((self.llcrnry, self.urcrnry))
-        # turn off axes frame.
-        ax.set_frame_on(False)
         # if map boundary not yet drawn, draw it with default values.
         if not self._mapboundarydrawn:
-            limb = self.drawmapboundary()
-            self._mapboundarydrawn = True
+            # elliptical map, turn off axis_frame, draw boundary manually.
+            if (self.projection in ['ortho','geos','nsper','aeqd'] and
+                self._fulldisk) or self.round or self.projection in _pseudocyl:
+                # turn off axes frame.
+                ax.set_frame_on(False)
+                # first draw boundary, no fill
+                limb = self.drawmapboundary(fill_color='none')
+                # draw another filled patch, with no boundary.
+                limb = self.drawmapboundary(linewidth=0)
+                self._mapboundarydrawn = True
+            else: # square map, leave just turn on axis frame.
+                ax.set_frame_on(True)
+                self._mapboundarydrawn = True
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
         # (anchor instance var determines where plot is placed)
