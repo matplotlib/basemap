@@ -1383,7 +1383,9 @@ class Basemap(object):
                 limb.set_zorder(zorder)
         elif self.round:
             ax.set_frame_on(False)
-            limb = self.clipcircle
+            #limb = self.clipcircle
+            limb = Circle((0.5*(self.xmax+self.xmin),0.5*(self.ymax+self.ymin)),
+                    radius=0.5*(self.xmax-self.xmin),fc='none')
             ax.add_patch(limb)
             if fill_color is None:
                 limb.set_fill(False)
@@ -2844,11 +2846,11 @@ class Basemap(object):
                 # turn off axes frame.
                 ax.set_frame_on(False)
                 # first draw boundary, no fill
-                limb = self.drawmapboundary(fill_color='none')
+                limb1 = self.drawmapboundary(fill_color='none')
                 # draw another filled patch, with no boundary.
-                limb = self.drawmapboundary(linewidth=0)
+                limb2 = self.drawmapboundary(linewidth=0)
                 self._mapboundarydrawn = True
-            else: # square map, leave just turn on axis frame.
+            else: # square map, just turn on axis frame.
                 ax.set_frame_on(True)
                 self._mapboundarydrawn = True
         # make sure aspect ratio of map preserved.
