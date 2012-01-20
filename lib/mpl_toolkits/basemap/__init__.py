@@ -1335,6 +1335,7 @@ class Basemap(object):
            self._fulldisk):
             limb = Ellipse((self._width,self._height),2.*self._width,2.*self._height)
         if self.projection in ['ortho','geos','nsper','aeqd'] and self._fulldisk:
+            ax.set_frame_on(False)
             # elliptical region.
             ax.add_patch(limb)
             if fill_color is None:
@@ -1348,6 +1349,7 @@ class Basemap(object):
             if zorder is not None:
                 limb.set_zorder(zorder)
         elif self.projection in _pseudocyl:  # elliptical region.
+            ax.set_frame_on(False)
             nx = 100; ny = 100
             if self.projection == 'vandg':
                 nx = 10*nx; ny = 10*ny
@@ -1380,6 +1382,7 @@ class Basemap(object):
             if zorder is not None:
                 limb.set_zorder(zorder)
         elif self.round:
+            ax.set_frame_on(False)
             limb = self.clipcircle
             ax.add_patch(limb)
             if fill_color is None:
