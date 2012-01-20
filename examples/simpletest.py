@@ -13,7 +13,9 @@ cs = m.contourf(x,y,etopo,30,cmap=plt.cm.jet)
 # draw coastlines.
 m.drawcoastlines()
 # draw a line around the map region.
-m.drawmapboundary()
+# use fill_color='none' for transparent background, 
+# zorder=10 so map boundary line comes out on top of contour fill.
+m.drawmapboundary(zorder=10,fill_color='none')
 # draw parallels and meridians.
 m.drawparallels(np.arange(-60.,90.,30.),labels=[1,0,0,0])
 m.drawmeridians(np.arange(0.,360.,60.),labels=[0,0,0,1],fontsize=12)
