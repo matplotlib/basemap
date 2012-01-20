@@ -728,6 +728,8 @@ class Basemap(object):
 
         # make sure axis ticks are suppressed.
         self.noticks = suppress_ticks
+        # map boundary not yet drawn.
+        self._mapboundarydrawn = False
 
         # make Proj instance a Basemap instance variable.
         self.projtran = proj
@@ -1443,6 +1445,7 @@ class Basemap(object):
                     limb.set_zorder(zorder)
                 limb.set_clip_on(True)
         # set axes limits to fit map region.
+        self._mapboundarydrawn = True
         self.set_axes_limits(ax=ax)
         return limb
 
@@ -2830,14 +2833,12 @@ class Basemap(object):
         ax.update_datalim( corners )
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
         ax.set_ylim((self.llcrnry, self.urcrnry))
-        # turn off axes frame for non-rectangular projections.
-        if self.projection in _pseudocyl:
-            ax.set_frame_on(False)
-        if self.projection in ['ortho','geos','nsper','aeqd'] and self._fulldisk:
-            ax.set_frame_on(False)
-        # for round polar plots, turn off frame.
-        if self.round:
-            ax.set_frame_on(False)
+        # turn off axes frame.
+        ax.set_frame_on(False)
+        # if map boundary not yet drawn, draw it with default values.
+        if not self._mapboundarydrawn:
+            limb = self.drawmapboundary()
+            self._mapboundarydrawn = True
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
         # (anchor instance var determines where plot is placed)
@@ -4429,4 +4430,4 @@ def _setlatlab(fmt,lat,labelstyle):
             else:
                 latlabstr = u'%s\N{DEGREE SIGN}'%fmt
             latlab = latlabstr%lat
-        return latlab
+    return latlab
