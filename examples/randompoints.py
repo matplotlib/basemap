@@ -48,12 +48,7 @@ m.fillcontinents(color='grey',lake_color='black')
 # color ocean areas 
 m.drawmapboundary(fill_color='black')
 # draw parallels and meridians.
-delat = 20.
-circles = np.arange(0.,90.,delat).tolist()+\
-          np.arange(-delat,-90,-delat).tolist()
-m.drawparallels(circles,color='y')
-delon = 45.
-meridians = np.arange(0,360,delon)
-m.drawmeridians(meridians,labels=[1,1,1,1],color='y')
-plt.title('Random Points',y=1.05)
+m.drawparallels(np.arange(-80,81,20),color='y')
+m.drawmeridians(np.arange(-180,181,45),labels=[1,1,0,0],color='y')
+plt.title('Colored Random Points',y=1.05)
 plt.show()
