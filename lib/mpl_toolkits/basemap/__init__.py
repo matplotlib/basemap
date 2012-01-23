@@ -728,6 +728,8 @@ class Basemap(object):
 
         # make sure axis ticks are suppressed.
         self.noticks = suppress_ticks
+        # map boundary not yet drawn.
+        self._mapboundarydrawn = False
 
         # make Proj instance a Basemap instance variable.
         self.projtran = proj
@@ -1309,8 +1311,9 @@ class Basemap(object):
         linewidth        line width for boundary (default 1.)
         color            color of boundary line (default black)
         fill_color       fill the map region background with this
-                         color (default is no fill or fill with axis
-                         background color).
+                         color (default is to fill with axis
+                         background color). If set to the string
+                         'none', no filling is done.
         zorder           sets the zorder for filling map background
                          (default 0).
         ax               axes instance to use
@@ -1321,11 +1324,18 @@ class Basemap(object):
         """
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
+        # if no fill_color given, use axes background color.
+        # if fill_color is string 'none', really don't fill.
+        if fill_color is None:
+            fill_color = ax.get_axis_bgcolor()
+        elif fill_color == 'none' or fill_color == 'None':
+            fill_color = None
         limb = None
         if self.projection in ['ortho','geos','nsper'] or (self.projection=='aeqd' and\
            self._fulldisk):
             limb = Ellipse((self._width,self._height),2.*self._width,2.*self._height)
         if self.projection in ['ortho','geos','nsper','aeqd'] and self._fulldisk:
+            ax.set_frame_on(False)
             # elliptical region.
             ax.add_patch(limb)
             if fill_color is None:
@@ -1339,6 +1349,7 @@ class Basemap(object):
             if zorder is not None:
                 limb.set_zorder(zorder)
         elif self.projection in _pseudocyl:  # elliptical region.
+            ax.set_frame_on(False)
             nx = 100; ny = 100
             if self.projection == 'vandg':
                 nx = 10*nx; ny = 10*ny
@@ -1371,7 +1382,10 @@ class Basemap(object):
             if zorder is not None:
                 limb.set_zorder(zorder)
         elif self.round:
-            limb = self.clipcircle
+            ax.set_frame_on(False)
+            #limb = self.clipcircle
+            limb = Circle((0.5*(self.xmax+self.xmin),0.5*(self.ymax+self.ymin)),
+                    radius=0.5*(self.xmax-self.xmin),fc='none')
             ax.add_patch(limb)
             if fill_color is None:
                 limb.set_fill(False)
@@ -1436,6 +1450,7 @@ class Basemap(object):
                     limb.set_zorder(zorder)
                 limb.set_clip_on(True)
         # set axes limits to fit map region.
+        self._mapboundarydrawn = True
         self.set_axes_limits(ax=ax)
         return limb
 
@@ -1943,7 +1958,7 @@ class Basemap(object):
             # tmerc only defined within +/- 90 degrees of lon_0
             lons = np.arange(lon_0-90,lon_0+90.01,0.01)
         else:
-            lons = np.arange(0,360.01,0.01)
+            lons = np.arange(-180,180.001,0.01)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = circles.tolist()
@@ -2823,14 +2838,21 @@ class Basemap(object):
         ax.update_datalim( corners )
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
         ax.set_ylim((self.llcrnry, self.urcrnry))
-        # turn off axes frame for non-rectangular projections.
-        if self.projection in _pseudocyl:
-            ax.set_frame_on(False)
-        if self.projection in ['ortho','geos','nsper','aeqd'] and self._fulldisk:
-            ax.set_frame_on(False)
-        # for round polar plots, turn off frame.
-        if self.round:
-            ax.set_frame_on(False)
+        # if map boundary not yet drawn, draw it with default values.
+        if not self._mapboundarydrawn:
+            # elliptical map, turn off axis_frame, draw boundary manually.
+            if (self.projection in ['ortho','geos','nsper','aeqd'] and
+                self._fulldisk) or self.round or self.projection in _pseudocyl:
+                # turn off axes frame.
+                ax.set_frame_on(False)
+                # first draw boundary, no fill
+                limb1 = self.drawmapboundary(fill_color='none')
+                # draw another filled patch, with no boundary.
+                limb2 = self.drawmapboundary(linewidth=0)
+                self._mapboundarydrawn = True
+            else: # square map, just turn on axis frame.
+                ax.set_frame_on(True)
+                self._mapboundarydrawn = True
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
         # (anchor instance var determines where plot is placed)
@@ -4422,4 +4444,4 @@ def _setlatlab(fmt,lat,labelstyle):
             else:
                 latlabstr = u'%s\N{DEGREE SIGN}'%fmt
             latlab = latlabstr%lat
-        return latlab
+    return latlab

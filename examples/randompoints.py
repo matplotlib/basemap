@@ -7,10 +7,10 @@ from numpy.random import uniform
 # Plot a bunch of randomly distributed points on the earth.
 
 # set up stereographic map centered on N. Pole.
-m = Basemap(lon_0=-105,boundinglat=30.,
+m = Basemap(lon_0=-105,boundinglat=20.,round=True,
             resolution='l',area_thresh=10000.,projection='npstere')
 # number of points to plot.
-npts = 500
+npts = 1000
 # generate random points on a sphere,
 # so that every small area on the sphere is expected
 # to have the same number of points.
@@ -30,7 +30,7 @@ fig=plt.figure()
 # (otherwise they are covered up when continents are filled)
 m.scatter(x,y,25,z,cmap=plt.cm.jet,marker='o',edgecolors='none',zorder=10) 
 # plot colorbar for markers.
-m.colorbar()
+m.colorbar(pad='8%')
 # create a list of strings containing z values
 # or, plot actual numbers as color-coded text strings.
 #zn = [ '%2i' % zz for zz in z ]
@@ -41,17 +41,14 @@ m.colorbar()
 #        hexcolor = rgb2hex(plt.cm.jet(zval/100.)[:3])
 #        plt.text(xpt,ypt,numstr,fontsize=9,weight='bold',color=hexcolor)
 # draw coasts and fill continents/lakes.
-m.drawcoastlines(linewidth=0.5)
-m.fillcontinents(color='coral',lake_color='aqua')
+m.drawcoastlines(linewidth=0.5,color='y')
+m.drawcountries(color='y')
+m.drawstates(color='y')
+m.fillcontinents(color='grey',lake_color='black')
 # color ocean areas 
-m.drawmapboundary(fill_color='aqua')
+m.drawmapboundary(fill_color='black')
 # draw parallels and meridians.
-delat = 20.
-circles = np.arange(0.,90.,delat).tolist()+\
-          np.arange(-delat,-90,-delat).tolist()
-m.drawparallels(circles)
-delon = 45.
-meridians = np.arange(0,360,delon)
-m.drawmeridians(meridians,labels=[1,0,1,1])
-plt.title('Random Points',y=1.05)
+m.drawparallels(np.arange(-80,81,20),color='y')
+m.drawmeridians(np.arange(-180,181,45),labels=[1,1,0,0],color='y')
+plt.title('Colored Random Points',y=1.05)
 plt.show()
