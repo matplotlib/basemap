@@ -3,7 +3,7 @@
 # country boundaries, filling continents and drawing
 # parallels/meridians
 
-from mpl_toolkits.basemap import Basemap, shiftgrid
+from mpl_toolkits.basemap import Basemap, shiftgrid, cm
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
@@ -349,8 +349,30 @@ m.drawcountries()
 m.drawparallels(circles)
 # draw meridians
 m.drawmeridians(meridians,labels=[1,1,1,1])
-plt.title('Polar Stereographic',y=1.075)
-print 'plotting Stereographic example ...'
+plt.title('Square Polar Stereographic',y=1.075)
+print 'plotting Square Stereographic example ...'
+print m.proj4string
+
+# create new figure
+fig=plt.figure()
+m = Basemap(lon_0=75.,boundinglat=-20,
+            resolution='c',area_thresh=10000.,projection='spstere',round=True)
+# transform to nx x ny regularly spaced native projection grid
+nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
+topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# plot image over map.
+im = m.imshow(topodat,plt.cm.jet)
+m.colorbar(pad='12%') # draw colorbar
+m.drawcoastlines()
+m.drawcountries()
+#m.fillcontinents()
+# draw parallels.
+m.drawparallels(circles)
+# draw meridians
+m.drawmeridians(meridians,labels=[1,1,1,1])
+plt.title('Round Polar Stereographic',y=1.075)
+print 'plotting Round Stereographic example ...'
 print m.proj4string
 
 # create new figure
@@ -377,8 +399,31 @@ m.drawstates()
 m.drawparallels(circles)
 # draw meridians
 m.drawmeridians(meridians,labels=[1,1,1,1])
-plt.title('Lambert Azimuthal Equal Area',y=1.075)
-print 'plotting Lambert Azimuthal example ...'
+plt.title('Square Lambert Azimuthal Equal Area',y=1.075)
+print 'plotting Square Lambert Azimuthal example ...'
+print m.proj4string
+
+# create new figure
+fig=plt.figure()
+m = Basemap(lon_0=-105,boundinglat=20.,
+            resolution='c',area_thresh=10000.,projection='nplaea',round=True)
+# transform to nx x ny regularly spaced native projection grid
+nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
+topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
+ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# plot image over map.
+im = m.imshow(topodat,plt.cm.jet)
+m.colorbar(pad='12%') # draw colorbar
+m.drawcoastlines()
+m.drawcountries()
+m.drawstates()
+#m.fillcontinents()
+# draw parallels.
+m.drawparallels(circles)
+# draw meridians
+m.drawmeridians(meridians,labels=[1,1,1,1])
+plt.title('Round Lambert Azimuthal Equal Area',y=1.075)
+print 'plotting Round Lambert Azimuthal example ...'
 print m.proj4string
 
 # create new figure
@@ -443,7 +488,6 @@ m.drawparallels(parallels)
 meridians = np.arange(0.,360.,20.)
 m.drawmeridians(meridians)
 # draw boundary around map region.
-m.drawmapboundary()
 plt.title('Orthographic')
 print 'plotting Orthographic example ...'
 print m.proj4string
@@ -480,7 +524,6 @@ m.drawparallels(parallels)
 meridians = np.arange(0.,360.,20.)
 m.drawmeridians(meridians)
 # draw boundary around map region.
-m.drawmapboundary()
 plt.title('Geostationary')
 print 'plotting Geostationary example ...'
 print m.proj4string
@@ -503,7 +546,6 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = np.arange(0.,360.,30.)
 m.drawmeridians(meridians)
 # draw boundary around map region.
-m.drawmapboundary()
 plt.title('Sinusoidal')
 print 'plotting Sinusoidal example ...'
 print m.proj4string
@@ -526,7 +568,6 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = np.arange(0.,360.,30.)
 m.drawmeridians(meridians)
 # draw boundary around map region.
-m.drawmapboundary()
 plt.title('Mollweide')
 print 'plotting Mollweide example ...'
 print m.proj4string
@@ -549,7 +590,6 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = np.arange(0.,360.,30.)
 m.drawmeridians(meridians)
 # draw boundary around map region.
-m.drawmapboundary()
 plt.title('Hammer')
 print 'plotting Hammer example ...'
 print m.proj4string
@@ -572,7 +612,6 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = np.arange(0.,360.,60.)
 m.drawmeridians(meridians,labels=[0,0,0,1])
 # draw boundary around map region.
-m.drawmapboundary()
 plt.title('Robinson')
 print 'plotting Robinson example ...'
 print m.proj4string
@@ -595,7 +634,6 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = np.arange(0.,360.,60.)
 m.drawmeridians(meridians,labels=[0,0,0,1])
 # draw boundary around map region.
-m.drawmapboundary()
 plt.title('Kavrayskiy VII')
 print 'plotting Kavrayskiy VII example ...'
 print m.proj4string
@@ -618,7 +656,6 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = np.arange(0.,360.,60.)
 m.drawmeridians(meridians,labels=[0,0,0,1])
 # draw boundary around map region.
-m.drawmapboundary()
 plt.title('Eckert IV')
 print 'plotting Eckert IV example ...'
 print m.proj4string
@@ -641,7 +678,6 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = np.arange(0.,360.,60.)
 m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=8)
 # draw boundary around map region.
-m.drawmapboundary()
 plt.title('McBryde-Thomas Flat Polar Quartic')
 print 'plotting McBryde-Thomas Flat Polar Quartic example ...'
 print m.proj4string
@@ -663,7 +699,6 @@ m.drawparallels(parallels)
 meridians = np.arange(0.,360.,60.)
 m.drawmeridians(meridians)
 # draw boundary around map region.
-m.drawmapboundary()
 # add a title.
 plt.title('van der Grinten')
 print 'plotting van der Grinten example ...'
