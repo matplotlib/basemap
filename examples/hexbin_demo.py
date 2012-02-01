@@ -29,7 +29,8 @@ yscaled = 4.*(y-0.5*(m.ymax-m.ymin))/m.ymax
 z = xscaled*np.exp(-xscaled**2-yscaled**2)
 
 # make plot using hexbin
-fig = plt.figure()
+fig = plt.figure(figsize=(12,5))
+ax = fig.add_subplot(121)
 CS = plt.hexbin(x,y,C=z,gridsize=bins,cmap=plt.cm.jet)
 # draw coastlines, lat/lon lines.
 m.drawcoastlines()
@@ -39,7 +40,8 @@ m.colorbar() # draw colorbar
 plt.title('hexbin demo')
 
 # use histogram2d instead of hexbin.
-fig = plt.figure()
+ax = fig.add_subplot(122)
+#m = Basemap(lon_0=270, boundinglat=20, projection='npstere',round=True)
 bincount, xedges, yedges = np.histogram2d(x, y, bins=bins)
 mask = bincount == 0
 # reset zero values to one to avoid divide-by-zero
