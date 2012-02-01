@@ -887,11 +887,6 @@ class Basemap(object):
                 if type == 2: self.lakepolygons.append(_geoslib.Polygon(b))
                 #if type == 3: self.islandinlakepolygons.append(_geoslib.Polygon(b))
                 #if type == 4: self.lakeinislandinlakepolygons.append(_geoslib.Polygon(b))
-        # set clipping path for round polar plots.
-        if (self.projection.startswith('np') or 
-            self.projection.startswith('sp') or 
-            self.projection == 'ortho') and self.round:
-            self.round = True
 
     # set __init__'s docstring
     __init__.__doc__ = _Basemap_init_doc
