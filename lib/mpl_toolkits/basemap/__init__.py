@@ -3047,6 +3047,9 @@ class Basemap(object):
             ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        if self.round:
+            # for some reason, frame gets turned on.
+            ax.set_frame_on(False)
         return ret
 
     def pcolormesh(self,x,y,data,**kwargs):
@@ -3081,6 +3084,9 @@ class Basemap(object):
             ret.set_clip_path(self.clipcircle)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
+        if self.round:
+            # for some reason, frame gets turned on.
+            ax.set_frame_on(False)
         return ret
 
     def contour(self,x,y,data,*args,**kwargs):
