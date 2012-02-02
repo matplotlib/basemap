@@ -41,7 +41,6 @@ plt.title('hexbin demo')
 
 # use histogram2d instead of hexbin.
 ax = fig.add_subplot(122)
-#m = Basemap(lon_0=270, boundinglat=20, projection='npstere',round=True)
 bincount, xedges, yedges = np.histogram2d(x, y, bins=bins)
 mask = bincount == 0
 # reset zero values to one to avoid divide-by-zero
