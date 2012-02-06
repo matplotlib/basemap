@@ -1,4 +1,5 @@
 version 1.0.3 (not yet released)
+           * added hexbin method.
            * drawmapboundary now uses axes bgcolor as default fill_color. If
              no color fill wanted, set fill_color='none' (a string).
            * clip coastlines for nplaea,npaeqd,splaea,spaeqd in stereographic

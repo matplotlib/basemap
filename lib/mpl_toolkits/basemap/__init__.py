@@ -3048,6 +3048,53 @@ class Basemap(object):
             ax.set_frame_on(False)
         return ret
 
+    def hexbin(self,x,y,**kwargs):
+        """
+        Make a hexagonal binning plot of x versus y, where x, y are 1-D
+        sequences of the same length, N. If C is None (the default), this is a
+        histogram of the number of occurences of the observations at
+        (x[i],y[i]).
+
+        If C is specified, it specifies values at the coordinate (x[i],y[i]).
+        These values are accumulated for each hexagonal bin and then reduced
+        according to reduce_C_function, which defaults to numpy?s mean function
+        (np.mean). (If C is specified, it must also be a 1-D sequence of the
+        same length as x and y.)
+
+        x, y and/or C may be masked arrays, in which case only unmasked points
+        will be plotted.
+
+        (see matplotlib.pyplot.hexbin documentation).
+
+        Extra keyword ``ax`` can be used to override the default axis instance.
+
+        Other \**kwargs passed on to matplotlib.pyplot.hexbin
+        """
+        ax, plt = self._ax_plt_from_kw(kwargs)
+        # allow callers to override the hold state by passing hold=True|False
+        b = ax.ishold()
+        h = kwargs.pop('hold',None)
+        if h is not None:
+            ax.hold(h)
+        try:
+            # make x,y masked arrays
+            # (masked where data is outside of projection limb)
+            x = ma.masked_values(np.where(x > 1.e20,1.e20,x), 1.e20)
+            y = ma.masked_values(np.where(y > 1.e20,1.e20,y), 1.e20)
+            ret = ax.hexbin(x,y,**kwargs)
+        except:
+            ax.hold(b)
+            raise
+        ax.hold(b)
+        # reset current active image (only if pyplot is imported).
+        if plt:
+            plt.sci(ret)
+        # clip for round polar plots.
+        if self.round: ret = self._clipcircle(ax,ret)
+        # set axes limits to fit map region.
+        self.set_axes_limits(ax=ax)
+        return ret
+
     def contour(self,x,y,data,*args,**kwargs):
         """
         Make a contour plot over the map
