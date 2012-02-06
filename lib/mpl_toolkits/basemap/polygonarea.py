@@ -14,8 +14,8 @@
 ######################################################################
 
 import math
-from pyproj.geomath import Math
-from pyproj.accumulator import Accumulator
+from mpl_toolkits.basemap.geomath import Math
+from mpl_toolkits.basemap.accumulator import Accumulator
 
 class PolygonArea(object):
   """Area of a geodesic polygon"""

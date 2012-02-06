@@ -25,9 +25,9 @@
 ######################################################################
 
 import math
-from pyproj.geomath import Math
-from pyproj.constants import Constants
-from pyproj.geodesiccapability import GeodesicCapability
+from mpl_toolkits.basemap.geomath import Math
+from mpl_toolkits.basemap.constants import Constants
+from mpl_toolkits.basemap.geodesiccapability import GeodesicCapability
 
 class Geodesic(object):
   """

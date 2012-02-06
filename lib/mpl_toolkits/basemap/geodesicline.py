@@ -25,8 +25,8 @@
 ######################################################################
 
 import math
-from pyproj.geomath import Math
-from pyproj.geodesiccapability import GeodesicCapability
+from mpl_toolkits.basemap.geomath import Math
+from mpl_toolkits.basemap.geodesiccapability import GeodesicCapability
 
 class GeodesicLine(object):
   """Points on a geodesic path"""
