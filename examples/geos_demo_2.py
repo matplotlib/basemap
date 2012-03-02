@@ -58,5 +58,3 @@ fig.set_size_inches((8, 6))
 plt.title('Meteosat Geostationary Satellite Image - Portion of Full Earth',y=1.05,fontsize=12)
 
 plt.show()
-#fig.savefig(plot_name)
-#print 'Plot saved to %s' % (plot_name)

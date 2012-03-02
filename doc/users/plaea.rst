@@ -7,10 +7,6 @@ For convenience, the projections ``nplaea`` and ``splaea`` are provided
 for easy access to the polar aspect of the lambert azimuthal equal-area
 projection.
 
-.. literalinclude:: figures/nplaea.py
+.. plot:: users/figures/nplaea.py
 
-.. image:: figures/nplaea.png
-
-.. literalinclude:: figures/splaea.py
-
-.. image:: figures/splaea.png
+.. plot:: users/figures/splaea.py

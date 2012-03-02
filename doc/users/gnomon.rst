@@ -5,6 +5,4 @@ Gnomonic Projection
 
 In the gnomonic projection, great circles are straight lines.
 
-.. literalinclude:: figures/gnomon.py
-
-.. image:: figures/gnomon.png
+.. plot:: users/figures/gnomon.py

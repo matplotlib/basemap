@@ -25,4 +25,4 @@ x, y = map(lons*180./np.pi, lats*180./np.pi)
 # contour data over the map.
 cs = map.contour(x,y,wave+mean,15,linewidths=1.5)
 plt.title('contour lines over filled continent background')
-plt.savefig('contour1.png')
+plt.show()

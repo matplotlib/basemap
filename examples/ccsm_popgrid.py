@@ -74,5 +74,3 @@ CS2 = map.contour(x,y,temp,15,colors='black',linewidths=0.5)
 plt.title('(B) Surface Temp contours on POP Grid')
 
 plt.show()
-#plt.savefig('ccsm_popgrid.ps')
-

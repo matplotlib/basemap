@@ -21,4 +21,4 @@ for y in np.linspace(m.ymax/20,19*m.ymax/20,9):
         poly = m.tissot(lon,lat,1.5,100,\
                         facecolor='green',zorder=10,alpha=0.5)
 plt.title("Stereographic Projection")
-plt.savefig('stere.png')
+plt.show()
