@@ -85,4 +85,4 @@ for x,y,p in zip(xhighs, yhighs, highvals):
                     bbox = dict(boxstyle="square",ec='None',fc=(1,1,1,0.5)))
             xyplotted.append((x,y))
 plt.title('Mean Sea-Level Pressure (with Highs and Lows) %s' % YYYYMMDDHH)
-plt.savefig('plothighsandlows.png')
+plt.show()

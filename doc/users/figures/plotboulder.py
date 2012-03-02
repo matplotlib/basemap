@@ -29,4 +29,4 @@ m.plot(xpt,ypt,'bo')  # plot a blue dot there
 # put some text next to the dot, offset a little bit
 # (the offset is in map projection coordinates)
 plt.text(xpt+100000,ypt+100000,'Boulder (%5.1fW,%3.1fN)' % (lonpt,latpt))
-plt.savefig('plotboulder.png')
+plt.show()

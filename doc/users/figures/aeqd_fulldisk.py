@@ -16,4 +16,4 @@ xpt, ypt = m(lon_0, lat_0)
 m.plot([xpt],[ypt],'ko') 
 # draw the title.
 plt.title('Whole World Azimuthal Equidistant Projection')
-plt.savefig('aeqd_fulldisk.png')
+plt.show()

@@ -68,7 +68,7 @@ cb = m.colorbar(CS2,"bottom", size="5%", pad="2%")
 cb.set_label('hPa')
 # set plot title
 ax.set_title('SLP and Wind Vectors '+str(date))
-fig1.savefig('plotwindvec1.png')
+plt.show()
 
 # create 2nd figure, add axes
 fig2 = plt.figure(figsize=(8,10))
@@ -87,4 +87,4 @@ cb = m.colorbar(CS2,"bottom", size="5%", pad="2%")
 cb.set_label('hPa')
 # set plot title.
 ax.set_title('SLP and Wind Barbs '+str(date))
-fig2.savefig('plotwindvec2.png')
+plt.show()

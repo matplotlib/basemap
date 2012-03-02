@@ -30,4 +30,4 @@ m.drawmeridians(np.arange(0.,360.,60.))
 m.drawmapboundary()
 plt.title('Near-Sided Perspective Map Showing A Quadrant of the Globe',\
           fontsize=12)
-plt.savefig('nsper_partial.png')
+plt.show()

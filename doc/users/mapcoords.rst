@@ -12,8 +12,6 @@ convert lon/lat (in degrees) to x/y map projection coordinates
 Here's an example that uses this feature to plot a marker and some text to 
 denote the location of Boulder, CO, given the lat/lon position.
 
-.. literalinclude:: figures/plotboulder.py
-
-.. image:: figures/plotboulder.png
+.. plot:: users/figures/plotboulder.py
 
 .. toctree::

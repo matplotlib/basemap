@@ -21,4 +21,4 @@ for y in np.linspace(m.ymax/20,19*m.ymax/20,10):
         poly = m.tissot(lon,lat,2.5,100,\
                         facecolor='green',zorder=10,alpha=0.5)
 plt.title("North Polar Azimuthal Equidistant Projection")
-plt.savefig('npaeqd.png')
+plt.show()

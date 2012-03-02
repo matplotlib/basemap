@@ -23,4 +23,4 @@ for y in np.linspace(m.ymax/20,19*m.ymax/20,10):
         poly = m.tissot(lon,lat,1.25,100,\
                         facecolor='green',zorder=10,alpha=0.5)
 plt.title("Albers Equal Area Projection")
-plt.savefig('aea.png')
+plt.show()
