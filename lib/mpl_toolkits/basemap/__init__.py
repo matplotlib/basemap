@@ -1330,6 +1330,7 @@ class Basemap(object):
             ax.set_frame_on(False)
             # elliptical region.
             ax.add_patch(limb)
+            self._mapboundarydrawn = limb
             if fill_color is None:
                 limb.set_fill(False)
             else:
@@ -1365,6 +1366,7 @@ class Basemap(object):
             xy = list(zip(x,y))
             limb = Polygon(xy,edgecolor=color,linewidth=linewidth)
             ax.add_patch(limb)
+            self._mapboundarydrawn = limb
             if fill_color is None:
                 limb.set_fill(False)
             else:
@@ -1378,6 +1380,7 @@ class Basemap(object):
             limb = Circle((0.5*(self.xmax+self.xmin),0.5*(self.ymax+self.ymin)),
                     radius=0.5*(self.xmax-self.xmin),fc='none')
             ax.add_patch(limb)
+            self._mapboundarydrawn = limb
             if fill_color is None:
                 limb.set_fill(False)
             else:
@@ -1430,6 +1433,7 @@ class Basemap(object):
                 # draw and fill map projection limb, clipped
                 # to rectangular region.
                 ax.add_patch(limb)
+                self._mapboundarydrawn = limb
                 if fill_color is None:
                     limb.set_fill(False)
                 else:
@@ -1441,7 +1445,6 @@ class Basemap(object):
                     limb.set_zorder(zorder)
                 limb.set_clip_on(True)
         # set axes limits to fit map region.
-        self._mapboundarydrawn = True
         self.set_axes_limits(ax=ax)
         return limb
 
@@ -2819,19 +2822,20 @@ class Basemap(object):
         ax.set_ylim((self.llcrnry, self.urcrnry))
         # if map boundary not yet drawn, draw it with default values.
         if not self._mapboundarydrawn:
-            # elliptical map, turn off axis_frame, draw boundary manually.
-            if (self.projection in ['ortho','geos','nsper','aeqd'] and
-                self._fulldisk) or self.round or self.projection in _pseudocyl:
-                # turn off axes frame.
-                ax.set_frame_on(False)
-                # first draw boundary, no fill
-                limb1 = self.drawmapboundary(fill_color='none')
-                # draw another filled patch, with no boundary.
-                limb2 = self.drawmapboundary(linewidth=0)
-                self._mapboundarydrawn = True
+            # is the map boundary already drawn on the current axes?
+            if self._mapboundarydrawn not in ax.patches:
+                # elliptical map, turn off axis_frame, draw boundary manually.
+                if (self.projection in ['ortho','geos','nsper','aeqd'] and
+                    self._fulldisk) or self.round or self.projection in _pseudocyl:
+                    # turn off axes frame.
+                    ax.set_frame_on(False)
+                    # first draw boundary, no fill
+                    limb1 = self.drawmapboundary(fill_color='none')
+                    # draw another filled patch, with no boundary.
+                    limb2 = self.drawmapboundary(linewidth=0)
+                    self._mapboundarydrawn = True
             else: # square map, just turn on axis frame.
                 ax.set_frame_on(True)
-                self._mapboundarydrawn = True
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
         # (anchor instance var determines where plot is placed)
