@@ -22,8 +22,6 @@ they really need to be labelled manually on the interior of the plot.
 Here's an example that shows how to draw parallels and meridians
 and label them on different sides of the plot.
 
-.. literalinclude:: figures/graticule.py
-
-.. image:: figures/graticule.png
+.. plot:: users/figures/graticule.py
 
 .. toctree::

@@ -12,6 +12,5 @@ shape is not.
 
 Distortion is very large near the poles in this projection.
 
-.. literalinclude:: figures/aea.py
 
-.. image:: figures/aea.png
+.. plot:: users/figures/aea.py

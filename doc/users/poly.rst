@@ -3,6 +3,4 @@
 Polyconic Projection
 ====================
 
-.. literalinclude:: figures/poly.py
-
-.. image:: figures/poly.png
+.. plot:: users/figures/poly.py

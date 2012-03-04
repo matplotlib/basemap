@@ -12,13 +12,9 @@ The specified point ``lon_0, lat_0`` shows up as a black dot in the center of th
 
 Here's an example using the width and height keywords to specify the map region.
 
-.. literalinclude:: figures/aeqd.py
-
-.. image:: figures/aeqd.png
+.. plot:: users/figures/aeqd.py
 
 If both the width/height and corner lat/lon keywords are omitted, the whole world is 
 plotted in a circle.
 
-.. literalinclude:: figures/aeqd_fulldisk.py
-
-.. image:: figures/aeqd_fulldisk.png
+.. plot:: users/figures/aeqd_fulldisk.py

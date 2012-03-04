@@ -51,4 +51,4 @@ m.drawmeridians(np.arange(0.,420.,60.))
 cb = m.colorbar(im1,"bottom", size="5%", pad="2%")
 # add a title.
 ax.set_title('SST and ICE analysis for %s'%date)
-plt.savefig('plotsst.png')
+plt.show()

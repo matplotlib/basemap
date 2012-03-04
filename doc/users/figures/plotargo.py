@@ -25,4 +25,4 @@ m.fillcontinents(color='#cc9966',lake_color='#99ffff')
 m.scatter(x,y,3,marker='o',color='k')
 plt.title('Locations of %s ARGO floats active between %s and %s' %\
         (len(lats),date1.strftime('%Y%m%d'),date2.strftime('%Y%m%d')))
-plt.savefig('plotargo.png')
+plt.show()

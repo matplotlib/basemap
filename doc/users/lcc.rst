@@ -10,6 +10,4 @@ On a conformal projection, the shape of the circles is preserved, but the
 area is not.  On a equal-area projection, the area is preserved but the 
 shape is not.
 
-.. literalinclude:: figures/lcc.py
-
-.. image:: figures/lcc.png
+.. plot:: users/figures/lcc.py

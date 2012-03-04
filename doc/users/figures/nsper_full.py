@@ -15,4 +15,4 @@ m.drawmeridians(np.arange(0.,420.,60.))
 m.drawmapboundary(fill_color='aqua') 
 plt.title("Full Disk Near-Sided Perspective Projection %d km above earth" %
         h,fontsize=10)
-plt.savefig('nsper_full.png')
+plt.show()

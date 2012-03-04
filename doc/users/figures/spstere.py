@@ -21,4 +21,4 @@ for y in np.linspace(19*m.ymin/20,m.ymin/20,10):
         poly = m.tissot(lon,lat,2.5,100,\
                         facecolor='green',zorder=10,alpha=0.5)
 plt.title("South Polar Stereographic Projection")
-plt.savefig('spstere.png')
+plt.show()

@@ -11,4 +11,4 @@ m.drawcoastlines()
 m.drawmapboundary(fill_color='aqua') 
 # fill continents, set lake color same as ocean color. 
 m.fillcontinents(color='coral',lake_color='aqua')
-plt.savefig('background1.png')
+plt.show()

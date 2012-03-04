@@ -46,4 +46,4 @@ cbar = m.colorbar(cs,location='bottom',pad="5%")
 cbar.set_label('mm')
 # add title
 plt.title(prcpvar.long_name+' for period ending '+prcpvar.dateofdata)
-plt.savefig('plotprecip.png')
+plt.show()
