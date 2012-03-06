@@ -2,20 +2,16 @@ from mpl_toolkits.basemap import Basemap
 from netCDF4 import Dataset, date2index, num2date
 import numpy as np
 import matplotlib.pyplot as plt
-import datetime
-# create datetime object for desired time
-date = datetime.datetime(2007,12,15,0)
-# open dataset.
-dataset =\
-Dataset('http://nomads.ncdc.noaa.gov/thredds/dodsC/oisst2/totalAmsrAgg')
-# find index of desired time.
-time = dataset.variables['time']
-nt = date2index(date, time, calendar='standard')
+date = '20071215' # date to plot.
+# open dataset for that date.
+dataset = \
+Dataset('http://nomads.ncdc.noaa.gov/thredds/dodsC/oisst2/%s/AVHRR-AMSR/amsr-avhrr-v2.%s.nc'%\
+       (date[0:4],date))
 # read sst.  Will automatically create a masked array using
-# missing_value variable attribute.
-sst = dataset.variables['sst'][nt]
+# missing_value variable attribute. 'squeeze out' singleton dimensions.
+sst = dataset.variables['sst'][:].squeeze()
 # read ice.
-ice = dataset.variables['ice'][nt]
+ice = dataset.variables['ice'][:].squeeze()
 # read lats and lons (representing centers of grid boxes).
 lats = dataset.variables['lat'][:]
 lons = dataset.variables['lon'][:]
@@ -28,7 +24,7 @@ lons = np.array(lons,np.float64)
 lats = (lats - 0.5*delat).tolist()
 lats.append(lats[-1]+delat)
 lats = np.array(lats,np.float64)
-# creat figure, axes instances.
+# create figure, axes instances.
 fig = plt.figure()
 ax = fig.add_axes([0.05,0.05,0.9,0.9])
 # create Basemap instance for Robinson projection.
@@ -51,4 +47,4 @@ m.drawmeridians(np.arange(0.,420.,60.))
 cb = m.colorbar(im1,"bottom", size="5%", pad="2%")
 # add a title.
 ax.set_title('SST and ICE analysis for %s'%date)
-plt.savefig('plotsst.png')
+plt.show()
