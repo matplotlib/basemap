@@ -2820,22 +2820,23 @@ class Basemap(object):
         ax.update_datalim( corners )
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
         ax.set_ylim((self.llcrnry, self.urcrnry))
-        # if map boundary not yet drawn, draw it with default values.
-        if not self._mapboundarydrawn:
-            # is the map boundary already drawn on the current axes?
-            if self._mapboundarydrawn not in ax.patches:
-                # elliptical map, turn off axis_frame, draw boundary manually.
-                if (self.projection in ['ortho','geos','nsper','aeqd'] and
-                    self._fulldisk) or self.round or self.projection in _pseudocyl:
-                    # turn off axes frame.
-                    ax.set_frame_on(False)
-                    # first draw boundary, no fill
-                    limb1 = self.drawmapboundary(fill_color='none')
-                    # draw another filled patch, with no boundary.
-                    limb2 = self.drawmapboundary(linewidth=0)
-                    self._mapboundarydrawn = True
-            else: # square map, just turn on axis frame.
-                ax.set_frame_on(True)
+        # if map boundary not yet drawn for elliptical maps, draw it with default values.
+        if not self._mapboundarydrawn or self._mapboundarydrawn not in ax.patches:
+            # elliptical map, draw boundary manually.
+            if (self.projection in ['ortho','geos','nsper','aeqd'] and
+                self._fulldisk) or self.round or self.projection in _pseudocyl:
+                # first draw boundary, no fill
+                limb1 = self.drawmapboundary(fill_color='none')
+                # draw another filled patch, with no boundary.
+                limb2 = self.drawmapboundary(linewidth=0)
+                self._mapboundarydrawn = limb2
+        # for elliptical map, always turn off axis_frame.
+        if (self.projection in ['ortho','geos','nsper','aeqd'] and
+            self._fulldisk) or self.round or self.projection in _pseudocyl:
+            # turn off axes frame.
+            ax.set_frame_on(False)
+        else: # square map, always turn on axis frame.
+             ax.set_frame_on(True)
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
         # (anchor instance var determines where plot is placed)
