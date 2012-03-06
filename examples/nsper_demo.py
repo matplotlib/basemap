@@ -19,7 +19,7 @@ m.drawstates()
 # draw parallels and meridians.
 m.drawparallels(np.arange(-90.,120.,10.))
 m.drawmeridians(np.arange(0.,420.,20.))
-m.drawmapboundary()
+m.drawmapboundary(fill_color='aqua')
 plt.title('Near-Sided Perspective Map Centered on Lon=%s, Lat=%s, H=%g' %\
     (lon_0,lat_0,h/1000.),fontsize=10)
 
@@ -36,7 +36,6 @@ m.drawstates()
 # draw parallels and meridians.
 m.drawparallels(np.arange(-90.,120.,30.))
 m.drawmeridians(np.arange(0.,420.,60.))
-m.drawmapboundary()
 plt.title('Near-Sided Perspective Map Centered on Lon=%s, Lat=%s, H=%g' %\
     (lon_0,lat_0,h/1000.),fontsize=10)
 
