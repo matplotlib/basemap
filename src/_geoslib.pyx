@@ -262,8 +262,10 @@ cdef class BaseGeometry:
                 p = LineString(b)
                 pout.append(p)
         else:
-            type = PyBytes_FromString(GEOSGeomType(g3))
-            raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
+            #type = PyBytes_FromString(GEOSGeomType(g3))
+            #raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
+            GEOSGeom_destroy(g3)
+            return []
         GEOSGeom_destroy(g3)
         return pout
 
