@@ -1067,8 +1067,21 @@ class Basemap(object):
                         lats.insert(0,-90.)
                         lons.append(lonend)
                         lats.append(-90.)
-                        polygons.append(list(zip(lons,lats)))
-                        polygon_types.append(typ)
+                        b = np.empty((len(lons),2),np.float64)
+                        b[:,0] = lons; b[:,1] = lats
+                        poly = Shape(b)
+                        if not poly.is_valid(): poly=poly.fix()
+                        # if polygon instersects map projection
+                        # region, process it.
+                        if poly.intersects(boundarypolyll):
+                            geoms = poly.intersection(boundarypolyll)
+                            # iterate over geometries in intersection.
+                            for psub in geoms:
+                                b = psub.boundary
+                                blons = b[:,0]; blats = b[:,1]
+                                bx, by = self(blons, blats)
+                                polygons.append(list(zip(bx,by)))
+                                polygon_types.append(typ)
                     else:
                         # create duplicate polygons shifted by -360 and +360
                         # (so as to properly treat polygons that cross
