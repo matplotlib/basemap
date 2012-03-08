@@ -1003,6 +1003,13 @@ class Basemap(object):
             area = float(linesplit[1])
             south = float(linesplit[3])
             north = float(linesplit[4])
+            crossdatelineE=False; crossdatelineW=False
+            if name == 'gshhs':
+                id = linesplit[7]
+                if id.endswith('E'):
+                    crossdatelineE = True
+                elif id.endswith('W'):
+                    crossdatelineW = True
             if area < 0.: area = 1.e30
             useit = self.latmax>=south and self.latmin<=north and area>self.area_thresh
             if useit:
@@ -1018,6 +1025,26 @@ class Basemap(object):
                 b = np.array(np.fromstring(polystring,dtype='<f4'),'f8')
                 b.shape = (npts,2)
                 b2 = b.copy()
+                # merge polygons that cross dateline.
+                poly = Shape(b)
+                if crossdatelineE:
+                    if not poly.is_valid(): poly=poly.fix()
+                    polyE = poly
+                    continue
+                elif crossdatelineW:
+                    if not poly.is_valid(): poly=poly.fix()
+                    b = poly.boundary
+                    b[:,0] = b[:,0]+360.
+                    poly = Shape(b)
+                    poly = poly.union(polyE)
+                    if not poly.is_valid(): poly=poly.fix()
+                    b = poly.boundary
+                    b2 = b.copy()
+                    # fix Antartica.
+                    if name == 'gshhs' and south < -89:
+                        b = b[4:,:]
+                        b2 = b.copy()
+                        poly = Shape(b)
                 # if map boundary polygon is a valid one in lat/lon
                 # coordinates (i.e. it does not contain either pole),
                 # the intersections of the boundary geometries
@@ -1026,37 +1053,53 @@ class Basemap(object):
                 # coordinates (this saves time, especially for small map
                 # regions and high-resolution boundary geometries).
                 if not containsPole:
-                    poly = Shape(b)
-                    # create duplicate polygons shifted by -360 and +360
-                    # (so as to properly treat polygons that cross
-                    # Greenwich meridian).
-                    b2[:,0] = b[:,0]-360
-                    poly1 = Shape(b2)
-                    b2[:,0] = b[:,0]+360
-                    poly2 = Shape(b2)
-                    polys = [poly1,poly,poly2]
-                    for poly in polys:
-                        # try to fix "non-noded intersection" errors.
-                        #if not poly.is_valid(): poly=poly.simplify(1.e-10)
-                        if not poly.is_valid(): poly=poly.fix()
-                        # if polygon instersects map projection
-                        # region, process it.
-                        if poly.intersects(boundarypolyll):
-                            geoms = poly.intersection(boundarypolyll)
-                            # iterate over geometries in intersection.
-                            for psub in geoms:
-                                # only coastlines are polygons,
-                                # which have a 'boundary' attribute.
-                                # otherwise, use 'coords' attribute
-                                # to extract coordinates.
-                                b = psub.boundary
-                                blons = b[:,0]; blats = b[:,1]
-                                # transformation from lat/lon to
-                                # map projection coordinates.
-                                bx, by = self(blons, blats)
-                                if name != 'gshhs' or len(bx) > 4:
-                                    polygons.append(list(zip(bx,by)))
-                                    polygon_types.append(typ)
+                    # close Antarctica.
+                    if name == 'gshhs' and south < -89:
+                        lons2 = b[:,0]
+                        lats = b[:,1]
+                        lons1 = lons2 - 360.
+                        lons3 = lons2 + 360.
+                        lons = lons1.tolist()+lons2.tolist()+lons3.tolist()
+                        lats = lats.tolist()+lats.tolist()+lats.tolist()
+                        lonstart,latstart = lons[0], lats[0]
+                        lonend,latend = lons[-1], lats[-1]
+                        lons.insert(0,lonstart)
+                        lats.insert(0,-90.)
+                        lons.append(lonend)
+                        lats.append(-90.)
+                        polygons.append(list(zip(lons,lats)))
+                        polygon_types.append(typ)
+                    else:
+                        # create duplicate polygons shifted by -360 and +360
+                        # (so as to properly treat polygons that cross
+                        # Greenwich meridian).
+                        b2[:,0] = b[:,0]-360
+                        poly1 = Shape(b2)
+                        b2[:,0] = b[:,0]+360
+                        poly2 = Shape(b2)
+                        polys = [poly1,poly,poly2]
+                        for poly in polys:
+                            # try to fix "non-noded intersection" errors.
+                            #if not poly.is_valid(): poly=poly.simplify(1.e-10)
+                            if not poly.is_valid(): poly=poly.fix()
+                            # if polygon instersects map projection
+                            # region, process it.
+                            if poly.intersects(boundarypolyll):
+                                geoms = poly.intersection(boundarypolyll)
+                                # iterate over geometries in intersection.
+                                for psub in geoms:
+                                    # only coastlines are polygons,
+                                    # which have a 'boundary' attribute.
+                                    # otherwise, use 'coords' attribute
+                                    # to extract coordinates.
+                                    b = psub.boundary
+                                    blons = b[:,0]; blats = b[:,1]
+                                    # transformation from lat/lon to
+                                    # map projection coordinates.
+                                    bx, by = self(blons, blats)
+                                    if name != 'gshhs' or len(bx) > 4:
+                                        polygons.append(list(zip(bx,by)))
+                                        polygon_types.append(typ)
                 # if map boundary polygon is not valid in lat/lon
                 # coordinates, compute intersection between map
                 # projection region and boundary geometries in map
