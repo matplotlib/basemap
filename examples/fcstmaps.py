@@ -59,13 +59,12 @@ nlons = len(lons1)
 # unpack 2-meter temp forecast data.
 
 t2mvar = data.variables['tmp2m']
-t2min = t2mvar[0:ntimes,:,:]
-t2m = np.zeros((ntimes,nlats,nlons+1),t2min.dtype)
+t2m = np.zeros((ntimes,nlats,nlons+1),np.float32)
 # create Basemap instance for Orthographic projection.
 m = Basemap(lon_0=-90,lat_0=60,projection='ortho')
 # add wrap-around point in longitude.
 for nt in range(ntimes):
-    t2m[nt,:,:], lons = addcyclic(t2min[nt,:,:], lons1)
+    t2m[nt,:,:], lons = addcyclic(t2mvar[nt,:,:], lons1)
 # convert to celsius.
 t2m = t2m-273.15
 # contour levels
