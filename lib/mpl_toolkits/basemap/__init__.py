@@ -1027,11 +1027,16 @@ class Basemap(object):
                 b2 = b.copy()
                 # merge polygons that cross dateline.
                 poly = Shape(b)
-                if crossdatelineE:
+                # hack to try to avoid having Antartica filled polygon
+                # covering entire map (if skipAnart = False, this happens
+                # for ortho lon_0=-120, lat_0=60, for example).
+                skipAntart = self.projection in tostere and south < -89 and \
+                 not hasSP
+                if crossdatelineE and not skipAntart:
                     if not poly.is_valid(): poly=poly.fix()
                     polyE = poly
                     continue
-                elif crossdatelineW:
+                elif crossdatelineW and not skipAntart:
                     if not poly.is_valid(): poly=poly.fix()
                     b = poly.boundary
                     b[:,0] = b[:,0]+360.
