@@ -1,5 +1,5 @@
 from mpl_toolkits.basemap import Basemap
-from netCDF4 import Dataset, date2index, num2date
+from netCDF4 import Dataset
 import numpy as np
 import matplotlib.pyplot as plt
 date = '20071215' # date to plot.
