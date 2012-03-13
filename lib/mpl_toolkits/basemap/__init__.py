@@ -852,27 +852,27 @@ class Basemap(object):
             # reformat for use in matplotlib.patches.Polygon.
             self.coastpolygons = []
             # also, split coastline segments that jump across entire plot.
-            coastsegs = []
+            #coastsegs = []
             for seg in self.coastsegs:
                 x, y = list(zip(*seg))
                 self.coastpolygons.append((x,y))
-                x = np.array(x,np.float64); y = np.array(y,np.float64)
-                xd = (x[1:]-x[0:-1])**2
-                yd = (y[1:]-y[0:-1])**2
-                dist = np.sqrt(xd+yd)
-                split = dist > 5000000.
-                if np.sum(split) and self.projection not in _cylproj:
-                    ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
-                    iprev = 0
-                    ind.append(len(xd))
-                    for i in ind:
-                        # don't add empty lists.
-                        if len(list(range(iprev,i))):
-                            coastsegs.append(list(zip(x[iprev:i],y[iprev:i])))
-                        iprev = i
-                else:
-                    coastsegs.append(seg)
-            self.coastsegs = coastsegs
+                #x = np.array(x,np.float64); y = np.array(y,np.float64)
+                #xd = (x[1:]-x[0:-1])**2
+                #yd = (y[1:]-y[0:-1])**2
+                #dist = np.sqrt(xd+yd)
+                #split = dist > 5000000.
+                #if np.sum(split) and self.projection not in _cylproj:
+                #    ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
+                #    iprev = 0
+                #    ind.append(len(xd))
+                #    for i in ind:
+                #        # don't add empty lists.
+                #        if len(list(range(iprev,i))):
+                #            coastsegs.append(list(zip(x[iprev:i],y[iprev:i])))
+                #        iprev = i
+                #else:
+                #    coastsegs.append(seg)
+            #self.coastsegs = coastsegs
         # create geos Polygon structures for land areas.
         # currently only used in is_land method.
         self.landpolygons=[]
@@ -881,12 +881,12 @@ class Basemap(object):
             #self.islandinlakepolygons=[]
             #self.lakeinislandinlakepolygons=[]
             x, y = list(zip(*self.coastpolygons))
-            for x,y,type in zip(x,y,self.coastpolygontypes):
+            for x,y,typ in zip(x,y,self.coastpolygontypes):
                 b = np.asarray([x,y]).T
-                if type == 1: self.landpolygons.append(_geoslib.Polygon(b))
-                if type == 2: self.lakepolygons.append(_geoslib.Polygon(b))
-                #if type == 3: self.islandinlakepolygons.append(_geoslib.Polygon(b))
-                #if type == 4: self.lakeinislandinlakepolygons.append(_geoslib.Polygon(b))
+                if typ == 1: self.landpolygons.append(_geoslib.Polygon(b))
+                if typ == 2: self.lakepolygons.append(_geoslib.Polygon(b))
+                #if typ == 3: self.islandinlakepolygons.append(_geoslib.Polygon(b))
+                #if typ == 4: self.lakeinislandinlakepolygons.append(_geoslib.Polygon(b))
 
     # set __init__'s docstring
     __init__.__doc__ = _Basemap_init_doc
@@ -1003,10 +1003,17 @@ class Basemap(object):
             area = float(linesplit[1])
             south = float(linesplit[3])
             north = float(linesplit[4])
+            crossdatelineE=False; crossdatelineW=False
+            if name == 'gshhs':
+                id = linesplit[7]
+                if id.endswith('E'):
+                    crossdatelineE = True
+                elif id.endswith('W'):
+                    crossdatelineW = True
             if area < 0.: area = 1.e30
             useit = self.latmax>=south and self.latmin<=north and area>self.area_thresh
             if useit:
-                type = int(linesplit[0])
+                typ = int(linesplit[0])
                 npts = int(linesplit[2])
                 offsetbytes = int(linesplit[5])
                 bytecount = int(linesplit[6])
@@ -1018,6 +1025,31 @@ class Basemap(object):
                 b = np.array(np.fromstring(polystring,dtype='<f4'),'f8')
                 b.shape = (npts,2)
                 b2 = b.copy()
+                # merge polygons that cross dateline.
+                poly = Shape(b)
+                # hack to try to avoid having Antartica filled polygon
+                # covering entire map (if skipAnart = False, this happens
+                # for ortho lon_0=-120, lat_0=60, for example).
+                skipAntart = self.projection in tostere and south < -89 and \
+                 not hasSP
+                if crossdatelineE and not skipAntart:
+                    if not poly.is_valid(): poly=poly.fix()
+                    polyE = poly
+                    continue
+                elif crossdatelineW and not skipAntart:
+                    if not poly.is_valid(): poly=poly.fix()
+                    b = poly.boundary
+                    b[:,0] = b[:,0]+360.
+                    poly = Shape(b)
+                    poly = poly.union(polyE)
+                    if not poly.is_valid(): poly=poly.fix()
+                    b = poly.boundary
+                    b2 = b.copy()
+                    # fix Antartica.
+                    if name == 'gshhs' and south < -89:
+                        b = b[4:,:]
+                        b2 = b.copy()
+                        poly = Shape(b)
                 # if map boundary polygon is a valid one in lat/lon
                 # coordinates (i.e. it does not contain either pole),
                 # the intersections of the boundary geometries
@@ -1027,15 +1059,13 @@ class Basemap(object):
                 # regions and high-resolution boundary geometries).
                 if not containsPole:
                     # close Antarctica.
-                    if name == 'gshhs' and south < -68 and area > 10000:
-                        lons = b[:,0]
+                    if name == 'gshhs' and south < -89:
+                        lons2 = b[:,0]
                         lats = b[:,1]
-                        lons2 = lons[:-2][::-1]
-                        lats2 = lats[:-2][::-1]
                         lons1 = lons2 - 360.
                         lons3 = lons2 + 360.
                         lons = lons1.tolist()+lons2.tolist()+lons3.tolist()
-                        lats = lats2.tolist()+lats2.tolist()+lats2.tolist()
+                        lats = lats.tolist()+lats.tolist()+lats.tolist()
                         lonstart,latstart = lons[0], lats[0]
                         lonend,latend = lons[-1], lats[-1]
                         lons.insert(0,lonstart)
@@ -1044,55 +1074,50 @@ class Basemap(object):
                         lats.append(-90.)
                         b = np.empty((len(lons),2),np.float64)
                         b[:,0] = lons; b[:,1] = lats
-                        poly = _geoslib.Polygon(b)
-                        antart = True
-                    else:
                         poly = Shape(b)
-                        # this is a workaround to avoid
-                        # "GEOS_ERROR: TopologyException:
-                        # found non-noded intersection between ..."
-                        # with geos 3.0.0
-                        if _geoslib.__geos_major_version__ > 2:
-                            poly = poly.simplify(1.e-10)
-                        antart = False
-                    # create duplicate polygons shifted by -360 and +360
-                    # (so as to properly treat polygons that cross
-                    # Greenwich meridian).
-                    if not antart:
-                        b2[:,0] = b[:,0]-360
-                        poly1 = Shape(b2)
-                        if _geoslib.__geos_major_version__ > 2:
-                            poly1 = poly1.simplify(1.e-10)
-                        b2[:,0] = b[:,0]+360
-                        poly2 = Shape(b2)
-                        if _geoslib.__geos_major_version__ > 2:
-                            poly2 = poly2.simplify(1.e-10)
-                        polys = [poly1,poly,poly2]
-                    else: # Antartica already extends from -360 to +720.
-                        polys = [poly]
-                    for poly in polys:
+                        if not poly.is_valid(): poly=poly.fix()
                         # if polygon instersects map projection
                         # region, process it.
                         if poly.intersects(boundarypolyll):
-                            # if geometry intersection calculation fails,
-                            # just move on.
-                            try:
-                                geoms = poly.intersection(boundarypolyll)
-                            except:
-                                continue
+                            geoms = poly.intersection(boundarypolyll)
                             # iterate over geometries in intersection.
                             for psub in geoms:
-                                # only coastlines are polygons,
-                                # which have a 'boundary' attribute.
-                                # otherwise, use 'coords' attribute
-                                # to extract coordinates.
                                 b = psub.boundary
                                 blons = b[:,0]; blats = b[:,1]
-                                # transformation from lat/lon to
-                                # map projection coordinates.
                                 bx, by = self(blons, blats)
                                 polygons.append(list(zip(bx,by)))
-                                polygon_types.append(type)
+                                polygon_types.append(typ)
+                    else:
+                        # create duplicate polygons shifted by -360 and +360
+                        # (so as to properly treat polygons that cross
+                        # Greenwich meridian).
+                        b2[:,0] = b[:,0]-360
+                        poly1 = Shape(b2)
+                        b2[:,0] = b[:,0]+360
+                        poly2 = Shape(b2)
+                        polys = [poly1,poly,poly2]
+                        for poly in polys:
+                            # try to fix "non-noded intersection" errors.
+                            #if not poly.is_valid(): poly=poly.simplify(1.e-10)
+                            if not poly.is_valid(): poly=poly.fix()
+                            # if polygon instersects map projection
+                            # region, process it.
+                            if poly.intersects(boundarypolyll):
+                                geoms = poly.intersection(boundarypolyll)
+                                # iterate over geometries in intersection.
+                                for psub in geoms:
+                                    # only coastlines are polygons,
+                                    # which have a 'boundary' attribute.
+                                    # otherwise, use 'coords' attribute
+                                    # to extract coordinates.
+                                    b = psub.boundary
+                                    blons = b[:,0]; blats = b[:,1]
+                                    # transformation from lat/lon to
+                                    # map projection coordinates.
+                                    bx, by = self(blons, blats)
+                                    if name != 'gshhs' or len(bx) > 4:
+                                        polygons.append(list(zip(bx,by)))
+                                        polygon_types.append(typ)
                 # if map boundary polygon is not valid in lat/lon
                 # coordinates, compute intersection between map
                 # projection region and boundary geometries in map
@@ -1119,18 +1144,18 @@ class Basemap(object):
                         # for ortho/gnom/nsper projection, all points
                         # outside map projection region are eliminated
                         # with the above step, so we're done.
-                        if self.projection in tostere:
+                        if name != 'gshhs' or\
+                           (self.projection in tostere and len(bx) > 4):
                             polygons.append(list(zip(bx,by)))
-                            polygon_types.append(type)
-                            continue
+                            polygon_types.append(typ)
+                        continue
                     # create a GEOS geometry object.
                     poly = Shape(b)
                     # this is a workaround to avoid
                     # "GEOS_ERROR: TopologyException:
                     # found non-noded intersection between ..."
-                    # with geos 3.0.0
-                    if _geoslib.__geos_major_version__ > 2:
-                        poly = poly.simplify(1.e-10)
+                    #if not poly.is_valid(): poly=poly.simplify(1.e-10)
+                    if not poly.is_valid(): poly=poly.fix()
                     # if geometry instersects map projection
                     # region, and doesn't have any invalid points, process it.
                     if goodmask.all() and poly.intersects(boundarypolyxy):
@@ -1150,18 +1175,19 @@ class Basemap(object):
                                 # if coastline polygon covers more than 99%
                                 # of map region for fulldisk projection,
                                 # it's probably bogus, so skip it.
-                                areafrac = psub.area()/boundarypolyxy.area()
-                                if self.projection == ['ortho','nsper']:
-                                    if name == 'gshhs' and\
-                                       self._fulldisk and\
-                                       areafrac > 0.99: continue
+                                #areafrac = psub.area()/boundarypolyxy.area()
+                                #if self.projection == ['ortho','nsper']:
+                                #    if name == 'gshhs' and\
+                                #       self._fulldisk and\
+                                #       areafrac > 0.99: continue
                                 # inverse transform from stereographic
                                 # to lat/lon.
                                 b[:,0], b[:,1] = maptran(b[:,0], b[:,1], inverse=True)
                                 # orthographic/gnomonic/nsper.
                                 b[:,0], b[:,1]= self(b[:,0], b[:,1])
-                            polygons.append(list(zip(b[:,0],b[:,1])))
-                            polygon_types.append(type)
+                            if name != 'gshhs' or b.shape[0] > 4:
+                                polygons.append(list(zip(b[:,0],b[:,1])))
+                                polygon_types.append(typ)
         return polygons, polygon_types
 
     def _getmapboundary(self):

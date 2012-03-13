@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 # create Basemap instance for Near-Sided Perspective (satellite view) projection.
 lon_0 = float(raw_input('enter reference longitude (lon_0):'))
-lat_0 = float(raw_input('enter reference longitude (lat_0):'))
+lat_0 = float(raw_input('enter reference latitude (lat_0):'))
 h = float(raw_input('enter altitude of camera in km (h):'))
 h=h*1000.
 

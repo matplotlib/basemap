@@ -2,33 +2,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datetime
 from mpl_toolkits.basemap import Basemap, shiftgrid
-from netCDF4 import Dataset, date2index, num2date
+from netCDF4 import Dataset
 # specify date to plot.
-date = datetime.datetime(1993,3,14,0)
+yyyy=1993; mm=03; dd=14; hh=00
+date = datetime.datetime(yyyy,mm,dd,hh)
 # set OpenDAP server URL.
-URL="http://nomad1.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-2/6hr/pgb/pgb"
+URLbase="http://nomads.ncdc.noaa.gov/thredds/dodsC/modeldata/cmd_pgbh/"
+URL=URLbase+"%04i/%04i%02i/%04i%02i%02i/pgbh00.gdas.%04i%02i%02i%02i.grb2" %\
+             (yyyy,yyyy,mm,yyyy,mm,dd,yyyy,mm,dd,hh)
 data = Dataset(URL)
-# read lats,lons,times.
-latitudes = data.variables['lat'][:]
+# read lats,lons
+# reverse latitudes so they go from south to north.
+latitudes = data.variables['lat'][::-1]
 longitudes = data.variables['lon'][:].tolist()
-times = data.variables['time']
-# get time index for desired date.
-ntime = date2index(date,times,calendar='standard')
 # get sea level pressure and 10-m wind data.
-slpdata = data.variables['presmsl']
-udata = data.variables['ugrdprs']
-vdata = data.variables['vgrdprs']
 # mult slp by 0.01 to put in units of hPa.
-slpin = 0.01*slpdata[ntime,:,:]
-uin = udata[ntime,0,:,:] 
-vin = vdata[ntime,0,:,:] 
+slpin = 0.01*data.variables['Pressure_msl'][:].squeeze()
+uin = data.variables['U-component_of_wind_height_above_ground'][:].squeeze()
+vin = data.variables['V-component_of_wind_height_above_ground'][:].squeeze()
 # add cyclic points manually (could use addcyclic function)
 slp = np.zeros((slpin.shape[0],slpin.shape[1]+1),np.float)
-slp[:,0:-1] = slpin; slp[:,-1] = slpin[:,0]
+slp[:,0:-1] = slpin[::-1]; slp[:,-1] = slpin[::-1,0]
 u = np.zeros((uin.shape[0],uin.shape[1]+1),np.float64)
-u[:,0:-1] = uin; u[:,-1] = uin[:,0]
+u[:,0:-1] = uin[::-1]; u[:,-1] = uin[::-1,0]
 v = np.zeros((vin.shape[0],vin.shape[1]+1),np.float64)
-v[:,0:-1] = vin; v[:,-1] = vin[:,0]
+v[:,0:-1] = vin[::-1]; v[:,-1] = vin[::-1,0]
 longitudes.append(360.); longitudes = np.array(longitudes)
 # make 2-d grid of lons, lats
 lons, lats = np.meshgrid(longitudes,latitudes)
