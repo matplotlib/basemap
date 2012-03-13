@@ -1,13 +1,17 @@
 version 1.0.3 (not yet released)
-           * added hexbin method.
-           * drawmapboundary now uses axes bgcolor as default fill_color. If
-             no color fill wanted, set fill_color='none' (a string).
-           * clip coastlines for nplaea,npaeqd,splaea,spaeqd in stereographic
-             coordinates to avoid S. America disappearing in some south polar
-             plots.
-           * add 'round' keyword to Basemap.__init__ for pole-centered
+           * update coastlines, rivers, political boundaries to GSHHS
+             2.2.0/GMT 4.5.7. The fillcontinents bug (filling the outside
+	     instead of the inside of a coastline polygon) is now much
+             harder to trigger.    
+           * add 'round' keyword keyword to Basemap.__init__ for pole-centered
              projections to make them round (clipped at boundinglat) instead
-             of square.
+             of square.        
+	   * added hexbin method.
+	   * drawmapboundary now uses axes bgcolor as default fill_color. If
+	     no color fill wanted, set fill_color='none' (a string).
+	   * clip coastlines for nplaea,npaeqd,splaea,spaeqd in stereographic
+	     coordinates to avoid S. America disappearing in some south polar
+	     plots.
            * fix broken daynight terminator function.
            * added kav7 (Kavrayskiy VII) and eck4 (Eckert IV) projections
              (https://github.com/matplotlib/basemap/issues/9).
