@@ -1,25 +1,21 @@
-# make a sequence of png files which may then be displayed
-# as an animation using a tool like imagemagick animate, or
-# converted to an animate gif (using imagemagick convert).
-
+# example using matplotlib.animation to create a movie
 # reads data over http - needs an active internet connection.
 
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
 import numpy.ma as ma
-import datetime, sys, time, subprocess
+import datetime, time
 from mpl_toolkits.basemap import Basemap, shiftgrid
 from netCDF4 import Dataset as NetCDFFile, date2index, num2date
+import matplotlib.animation as animation
 
 # times for March 1993 'storm of the century'
 date1 = datetime.datetime(1993,3,10,0)
 date2 = datetime.datetime(1993,3,17,0)
 print date1, date2
 
-
 # set OpenDAP server URL.
-URL="http://nomad1.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-2/6hr/pgb/pgb"
+URL="http://nomad2.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-2/6hr/pgb/pgb"
 print URL
 try:
     data = NetCDFFile(URL)
@@ -62,7 +58,6 @@ print 'dates'
 print dates
 # make orthographic basemap.
 m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
-plt.ion() # interactive mode on.
 uin = udata[ntime1:ntime2+1,0,:,:] 
 vin = vdata[ntime1:ntime2+1,0,:,:] 
 # create figure, add axes (leaving room for colorbar on right)
@@ -81,52 +76,51 @@ pos = ax.get_position()
 l, b, w, h = pos.bounds
 # loop over times, make contour plots, draw coastlines, 
 # parallels, meridians and title.
-for nt,date in enumerate(dates):
-    CS = m.contour(x,y,slp[nt,:,:],clevs,linewidths=0.5,colors='k',animated=True)
-    CS = m.contourf(x,y,slp[nt,:,:],clevs,cmap=plt.cm.RdBu_r,animated=True)
-    # plot wind vectors on lat/lon grid.
-    # rotate wind vectors to map projection coordinates.
-    #urot,vrot = m.rotate_vector(u[nt,:,:],v[nt,:,:],lons,lats)
-    # plot wind vectors over map.
-    #Q = m.quiver(x,y,urot,vrot,scale=500) 
-    # plot wind vectors on projection grid (looks better).
-    # first, shift grid so it goes from -180 to 180 (instead of 0 to 360
-    # in longitude).  Otherwise, interpolation is messed up.
+nt = 0; date = dates[nt]
+CS1 = m.contour(x,y,slp[nt,:,:],clevs,linewidths=0.5,colors='k')
+CS2 = m.contourf(x,y,slp[nt,:,:],clevs,cmap=plt.cm.RdBu_r)
+# plot wind vectors on lat/lon grid.
+# rotate wind vectors to map projection coordinates.
+#urot,vrot = m.rotate_vector(u[nt,:,:],v[nt,:,:],lons,lats)
+# plot wind vectors over map.
+#Q = m.quiver(x,y,urot,vrot,scale=500) 
+# plot wind vectors on projection grid (looks better).
+# first, shift grid so it goes from -180 to 180 (instead of 0 to 360
+# in longitude).  Otherwise, interpolation is messed up.
+ugrid,newlons = shiftgrid(180.,u[nt,:,:],longitudes,start=False)
+vgrid,newlons = shiftgrid(180.,v[nt,:,:],longitudes,start=False)
+# transform vectors to projection grid.
+urot,vrot,xx,yy = m.transform_vector(ugrid,vgrid,newlons,latitudes,51,51,returnxy=True,masked=True)
+# plot wind vectors over map.
+Q = m.quiver(xx,yy,urot,vrot,scale=500,zorder=10)
+# make quiver key.
+qk = plt.quiverkey(Q, 0.1, 0.1, 20, '20 m/s', labelpos='W')
+# draw coastlines, parallels, meridians, title.
+m.drawcoastlines(linewidth=1.5)
+m.drawparallels(parallels)
+m.drawmeridians(meridians)
+txt = plt.title('SLP and Wind Vectors '+str(date))
+# plot colorbar on a separate axes (only for first frame)
+cax = plt.axes([l+w-0.05, b, 0.03, h]) # setup colorbar axes
+fig.colorbar(CS2,drawedges=True, cax=cax) # draw colorbar
+cax.text(0.0,-0.05,'mb')
+plt.axes(ax) # reset current axes
+
+def updatefig(nt):
+    global CS1,CS2,Q
+    date = dates[nt]
+    for c in CS1.collections: c.remove()
+    CS1 = m.contour(x,y,slp[nt,:,:],clevs,linewidths=0.5,colors='k')
+    for c in CS2.collections: c.remove()
+    CS2 = m.contourf(x,y,slp[nt,:,:],clevs,cmap=plt.cm.RdBu_r)
     ugrid,newlons = shiftgrid(180.,u[nt,:,:],longitudes,start=False)
     vgrid,newlons = shiftgrid(180.,v[nt,:,:],longitudes,start=False)
-    # transform vectors to projection grid.
     urot,vrot,xx,yy = m.transform_vector(ugrid,vgrid,newlons,latitudes,51,51,returnxy=True,masked=True)
-    # plot wind vectors over map.
-    Q = m.quiver(xx,yy,urot,vrot,scale=500)
-    # make quiver key.
-    qk = plt.quiverkey(Q, 0.1, 0.1, 20, '20 m/s', labelpos='W')
-    # draw coastlines, parallels, meridians, title.
-    m.drawcoastlines(linewidth=1.5)
-    m.drawparallels(parallels)
-    m.drawmeridians(meridians)
-    plt.title('SLP and Wind Vectors '+str(date))
-    if nt == 0: # plot colorbar on a separate axes (only for first frame)
-        cax = plt.axes([l+w-0.05, b, 0.03, h]) # setup colorbar axes
-        fig.colorbar(CS,drawedges=True, cax=cax) # draw colorbar
-        cax.text(0.0,-0.05,'mb')
-        plt.axes(ax) # reset current axes
-    plt.draw() # draw the plot
-    # save first and last frame n1 times 
-    # (so gif animation pauses at beginning and end)
-    if nframe == 0 or nt == slp.shape[0]-1:
-       for n in range(n1):
-           plt.savefig('anim%03i'%nframe+'.png')
-           nframe = nframe + 1
-    else:
-       plt.savefig('anim%03i'%nframe+'.png')
-       nframe = nframe + 1
-    ax.clear() # clear the axes for the next plot.
+    txt.set_text('SLP and Wind Vectors '+str(date))
+    Q.set_UVC(urot,vrot)
 
-print """
-Now display animation using imagemagick 'animate -delay 10 anim*png'
-or, create an animated gif using 'convert -delay 10 anim*png anim.gif'
-and display in a web browser (or Powerpoint).
+ani = animation.FuncAnimation(fig, updatefig, frames=len(dates))
 
-Will try to run imagemagick animate in 5 seconds ..."""
-time.sleep(5)
-subprocess.call('animate -delay 10 anim*png',shell=True)
+#ani.save('movie.mp4')
+
+plt.show()
