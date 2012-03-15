@@ -109,7 +109,7 @@ More examples of using the 'width' and 'height' keywords (instead of
 plot_tissot.py - tissot's indicatrix, shows the distorting effects of
 different map projections.
 
-pnganim.py shows how to make an animation.
+animate.py shows how to make an animation.
 
 ccsm_popgrid.py shows how to plot data on 2d grids which are not 
 rectilinear in map projection or geographic coordinates.  The NCAR

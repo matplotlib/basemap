@@ -3003,7 +3003,7 @@ class Basemap(object):
                 try:
                     import matplotlib.tri as tri
                 except:
-                    msg='need basemap > 0.99.1 to plot on unstructured grids'
+                    msg='need matplotlib > 0.99.1 to plot on unstructured grids'
                     raise ImportError(msg)
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
@@ -3150,7 +3150,7 @@ class Basemap(object):
                 try:
                     import matplotlib.tri as tri
                 except:
-                    msg='need basemap > 0.99.1 to plot on unstructured grids'
+                    msg='need matplotlib > 0.99.1 to plot on unstructured grids'
                     raise ImportError(msg)
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
@@ -3237,7 +3237,7 @@ class Basemap(object):
                 try:
                     import matplotlib.tri as tri
                 except:
-                    msg='need basemap > 0.99.1 to plot on unstructured grids'
+                    msg='need matplotlib > 0.99.1 to plot on unstructured grids'
                     raise ImportError(msg)
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
