@@ -808,7 +808,9 @@ class Basemap(object):
                 raise ValueError("boundary resolution must be one of 'c','l','i','h' or 'f'")
         self.area_thresh = area_thresh
         # define map boundary polygon (in lat/lon coordinates)
-        self._boundarypolyll, self._boundarypolyxy = self._getmapboundary()
+        blons, blats, self._boundarypolyll, self._boundarypolyxy = self._getmapboundary()
+        self.boundarylats = blats
+        self.boundarylons = blons
         # set min/max lats for projection domain.
         if self.projection in _cylproj:
             self.latmin = self.llcrnrlat
@@ -1312,7 +1314,7 @@ class Basemap(object):
         b = np.empty((len(lons),2),np.float64)
         b[:,0]=lons; b[:,1]=lats
         boundaryll = _geoslib.Polygon(b)
-        return boundaryll, boundaryxy
+        return lons, lats, boundaryll, boundaryxy
 
 
     def drawmapboundary(self,color='k',linewidth=1.0,fill_color=None,\

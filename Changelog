@@ -1,4 +1,7 @@
 version 1.0.3 (not yet released)
+           * add boundarylats, boundarylons Basemap attributes (arrays
+             describing map boundaries - useful for illustrating map projection
+             region on another map).
            * update coastlines, rivers, political boundaries to GSHHS
              2.2.0/GMT 4.5.7. The fillcontinents bug (filling the outside
 	     instead of the inside of a coastline polygon) is now much
