@@ -6,7 +6,8 @@ from matplotlib.patches import Polygon
 # Set up the primary map
 fig = plt.figure()
 ax = fig.add_subplot(111)
-bmap = Basemap(projection='lcc',width=6000.e3,height=4000.e3,lon_0=-90,lat_0=40,ax=ax)
+bmap =\
+Basemap(projection='lcc',width=6000.e3,height=4000.e3,lon_0=-90,lat_0=40,resolution='l',ax=ax)
 bmap.fillcontinents(color='coral', lake_color='aqua')
 bmap.drawcountries()
 bmap.drawstates()
