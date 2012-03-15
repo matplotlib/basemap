@@ -66,6 +66,7 @@ include examples/warpimage.py
 include examples/earth_lights_lrg.jpg
 include examples/animate.py
 include examples/hexbin_demo.py
+include examples/make_inset.py
 include examples/garp.py
 include examples/setwh.py
 include examples/ccsm_popgrid.py
