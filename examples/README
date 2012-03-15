@@ -146,3 +146,6 @@ lic_demo.py shows how to use vectorplot scikit to visualize vector fields with
 Line Integral Convolutions (LIC).
 
 hexbin_demo.py shows how to plot scattered data using matplotlib hexbin function.
+
+make_inset.py shows how to make an inset showing the location of the map projection region
+from a global perspective.
