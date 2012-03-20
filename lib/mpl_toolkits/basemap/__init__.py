@@ -1418,45 +1418,31 @@ class Basemap(object):
             if zorder is not None:
                 limb.set_zorder(zorder)
         else: # all other projections are rectangular.
-            # use axesPatch for fill_color, frame for border line props.
-            try:
-                ax.frame.set_linewidth(linewidth)
-            except AttributeError:
-                for spine in ax.spines.values():
-                    spine.set_linewidth(linewidth)
+            # use axesPatch for fill_color, spine for border line props.
+            for spine in ax.spines.values():
+                spine.set_linewidth(linewidth)
             if self.projection not in ['geos','ortho','nsper']:
+                limb = ax.axesPatch
                 if fill_color is not None:
-                    ax.axesPatch.set_facecolor(fill_color)
-                try:
-                    ax.frame.set_edgecolor(color)
-                except AttributeError:
-                    for spine in ax.spines.values():
-                        spine.set_edgecolor(color)
+                    limb.set_facecolor(fill_color)
+                for spine in ax.spines.values():
+                    spine.set_edgecolor(color)
                 ax.set_frame_on(True)
                 # FIXME?  should zorder be set separately for edge and background?
                 if zorder is not None:
-                    ax.axesPatch.set_zorder(zorder)
-                    try:
-                        ax.frame.set_zorder(zorder)
-                    except AttributeError:
-                        for spine in ax.spines.values():
-                            spine.set_zorder(zorder)
+                    limb.set_zorder(zorder)
+                    for spine in ax.spines.values():
+                        spine.set_zorder(zorder)
             else:
-                # use axesPatch for fill_color, frame for border line props.
-                try:
-                    ax.frame.set_edgecolor(color)
-                except AttributeError:
-                    for spine in ax.spines.values():
-                        spine.set_edgecolor(color)
+                # use axesPatch for fill_color, spine for border line props.
+                for spine in ax.spines.values():
+                    spine.set_edgecolor(color)
                 ax.set_frame_on(True)
                 # FIXME?  should zorder be set separately for edge and background?
                 if zorder is not None:
                     ax.axesPatch.set_zorder(zorder)
-                    try:
-                        ax.frame.set_zorder(zorder)
-                    except AttributeError:
-                        for spine in ax.spines.values():
-                            spine.set_zorder(zorder)
+                    for spine in ax.spines.values():
+                        spine.set_zorder(zorder)
                 # for geos or ortho projections, also
                 # draw and fill map projection limb, clipped
                 # to rectangular region.
