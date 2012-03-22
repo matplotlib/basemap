@@ -145,6 +145,8 @@ ploticos.py demonstrates plotting on unstructured grids.
 lic_demo.py shows how to use vectorplot scikit to visualize vector fields with
 Line Integral Convolutions (LIC).
 
+streamplot_demo.py shows how to use new matplotlib streamplot method to visualize wind fields.
+
 hexbin_demo.py shows how to plot scattered data using matplotlib hexbin function.
 
 make_inset.py shows how to make an inset showing the location of the map projection region
