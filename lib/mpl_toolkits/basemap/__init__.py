@@ -3296,6 +3296,7 @@ class Basemap(object):
     def quiver(self, x, y, u, v, *args, **kwargs):
         """
         Make a vector plot (u, v) with arrows on the map.
+        Grid must be evenly spaced regular grid in x and y.
         (see matplotlib.pyplot.quiver documentation).
 
         Extra keyword ``ax`` can be used to override the default axis instance.
@@ -3346,11 +3347,12 @@ class Basemap(object):
         if plt is not None and ret.get_array() is not None:
             plt.sci(ret)
         # clip for round polar plots.
-        if self.round: ret,c = self._clipcircle(ax,ret)
         # streamplot arrows not returned in matplotlib 1.1.1, so clip all
         # FancyArrow patches attached to axes instance.
-        for p in ax.patches:
-            if isinstance(p,FancyArrowPatch): p.set_clip_path(c)
+        if self. round:
+            ret,c = self._clipcircle(ax,ret)
+            for p in ax.patches:
+                if isinstance(p,FancyArrowPatch): p.set_clip_path(c)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return ret
