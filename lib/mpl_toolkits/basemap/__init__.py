@@ -3322,6 +3322,35 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
+    def streamplot(self, x, y, u, v, *args, **kwargs):
+        """
+        Draws streamlines of a vector flow.
+        (see matplotlib.pyplot.streamplot documentation).
+
+        Extra keyword ``ax`` can be used to override the default axis instance.
+
+        Other \*args and \**kwargs passed on to matplotlib.pyplot.streamplot.
+        """
+        ax, plt = self._ax_plt_from_kw(kwargs)
+        # allow callers to override the hold state by passing hold=True|False
+        b = ax.ishold()
+        h = kwargs.pop('hold',None)
+        if h is not None:
+            ax.hold(h)
+        try:
+            ret =  ax.streamplot(x,y,u,v,*args,**kwargs)
+        except:
+            ax.hold(b)
+            raise
+        ax.hold(b)
+        if plt is not None and ret.get_array() is not None:
+            plt.sci(ret)
+        # clip for round polar plots.
+        if self.round: ret = self._clipcircle(ax,ret)
+        # set axes limits to fit map region.
+        self.set_axes_limits(ax=ax)
+        return ret
+
     def barbs(self, x, y, u, v, *args, **kwargs):
         """
         Make a wind barb plot (u, v) with on the map.
