@@ -151,3 +151,5 @@ hexbin_demo.py shows how to plot scattered data using matplotlib hexbin function
 
 make_inset.py shows how to make an inset showing the location of the map projection region
 from a global perspective.
+
+utmtest.py shows how to plot a UTM zone.
