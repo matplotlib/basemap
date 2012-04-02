@@ -2,6 +2,9 @@ from mpl_toolkits.basemap import pyproj
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 # proj4 definition of UTM zone 17.
+# coordinates agree to the 3rd decimal place (less than 1mm)
+# when compared to result from
+# http://home.hiwaay.net/~taylorc/toolbox/geography/geoutm.html
 p1 = pyproj.Proj(proj='utm',zone='17')
 miamilon=-80.28; miamilat=25.92
 x,y = p1(miamilon,miamilat)
