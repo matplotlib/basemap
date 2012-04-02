@@ -93,10 +93,10 @@ _pseudocyl = ['moll','robin','eck4','kav7','sinu','mbtfpq','vandg','hammer']
 projection_params = {'cyl'      : 'corners only (no width/height)',
              'merc'     : 'corners plus lat_ts (no width/height)',
              'tmerc'    : 'lon_0,lat_0,k_0',
-             'omerc'    : 'lon_0,lat_0,lat_1,lat_2,lon_1,lon_2,no_rot',
+             'omerc'    : 'lon_0,lat_0,lat_1,lat_2,lon_1,lon_2,no_rot,k_0',
              'mill'     : 'corners only (no width/height)',
              'gall'     : 'corners only (no width/height)',
-             'lcc'      : 'lon_0,lat_0,lat_1,lat_2',
+             'lcc'      : 'lon_0,lat_0,lat_1,lat_2,k_0',
              'laea'     : 'lon_0,lat_0',
              'nplaea'   : 'bounding_lat,lon_0,lat_0,no corners or width/height',
              'splaea'   : 'bounding_lat,lon_0,lat_0,no corners or width/height',
@@ -105,7 +105,7 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'npaeqd'   : 'bounding_lat,lon_0,lat_0,no corners or width/height',
              'spaeqd'   : 'bounding_lat,lon_0,lat_0,no corners or width/height',
              'aea'      : 'lon_0,lat_0,lat_1',
-             'stere'    : 'lon_0,lat_0,lat_ts',
+             'stere'    : 'lon_0,lat_0,lat_ts,k_0',
              'npstere'  : 'bounding_lat,lon_0,lat_0,no corners or width/height',
              'spstere'  : 'bounding_lat,lon_0,lat_0,no corners or width/height',
              'cass'     : 'lon_0,lat_0',
@@ -298,8 +298,8 @@ _Basemap_init_doc = """
                   centerline for oblique mercator.
  lon_2            Longitude of one of the two points on the projection
                   centerline for oblique mercator.
- k_0              Scale factor along central meridian of transverse
-                  mercator ('tmerc') projection.
+ k_0              Scale factor at natural origin (used
+                  by 'tmerc', 'omerc', 'stere' and 'lcc').
  no_rot           only used by oblique mercator.
                   If set to True, the map projection coordinates will
                   not be rotated to true North.  Default is False
@@ -509,6 +509,8 @@ class Basemap(object):
         # and set values in projparams dict as needed.
 
         if projection in ['lcc', 'eqdc', 'aea']:
+            if projection == 'lcc' and k_0 is not None:
+                projparams['k_0']=k_0
             # if lat_0 is given, but not lat_1,
             # set lat_1=lat_0
             if lat_1 is None and lat_0 is not None:
@@ -527,6 +529,8 @@ class Basemap(object):
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'stere':
+            if k_0 is not None:
+                projparams['k_0']=k_0
             if lat_0 is None or lon_0 is None:
                 raise ValueError('must specify lat_0 and lon_0 for Stereographic basemap (lat_ts is optional)')
             if not using_corners:
@@ -662,6 +666,8 @@ class Basemap(object):
             self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
             self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'omerc':
+            if k_0 is not None:
+                projparams['k_0']=k_0
             if lat_1 is None or lon_1 is None or lat_2 is None or lon_2 is None:
                 raise ValueError('must specify lat_1,lon_1 and lat_2,lon_2 for Oblique Mercator basemap')
             projparams['lat_1'] = lat_1
