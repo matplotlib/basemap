@@ -1,6 +1,7 @@
 version 1.0.3 (not yet released)
            * add k_0 keyword for projection = 'tmerc' so UTM zones can be
              created. Also can be used with 'lcc','omerc' and 'stere'.
+             Added "utmtest.py" example.
            * add streamplot method, along with streamplot_demo.py example.
            * add boundarylats, boundarylons Basemap attributes (arrays
              describing map boundaries - useful for illustrating map projection
