@@ -92,7 +92,7 @@ _pseudocyl = ['moll','robin','eck4','kav7','sinu','mbtfpq','vandg','hammer']
 # projection specific parameters.
 projection_params = {'cyl'      : 'corners only (no width/height)',
              'merc'     : 'corners plus lat_ts (no width/height)',
-             'tmerc'    : 'lon_0,lat_0',
+             'tmerc'    : 'lon_0,lat_0,k_0',
              'omerc'    : 'lon_0,lat_0,lat_1,lat_2,lon_1,lon_2,no_rot',
              'mill'     : 'corners only (no width/height)',
              'gall'     : 'corners only (no width/height)',
@@ -298,6 +298,8 @@ _Basemap_init_doc = """
                   centerline for oblique mercator.
  lon_2            Longitude of one of the two points on the projection
                   centerline for oblique mercator.
+ k_0              Scale factor along central meridian of transverse
+                  mercator ('tmerc') projection.
  no_rot           only used by oblique mercator.
                   If set to True, the map projection coordinates will
                   not be rotated to true North.  Default is False
@@ -439,6 +441,7 @@ class Basemap(object):
                        lat_1=None, lat_2=None,
                        lat_0=None, lon_0=None,
                        lon_1=None, lon_2=None,
+                       k_0=None,
                        no_rot=False,
                        suppress_ticks=True,
                        satellite_height=35786000,
@@ -572,6 +575,8 @@ class Basemap(object):
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection in ['tmerc','gnom','cass','poly'] :
+            if projection == 'tmerc' and k_0 is not None:
+                projparams['k_0']=k_0
             if projection == 'gnom' and 'R' not in projparams:
                 raise ValueError('gnomonic projection only works for perfect spheres - not ellipsoids')
             if lat_0 is None or lon_0 is None:
