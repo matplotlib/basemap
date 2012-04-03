@@ -167,25 +167,25 @@ print m.proj4string
 # create new figure
 fig=plt.figure()
 # setup transverse mercator basemap.
-m = Basemap(width=2*6370997,height=3.1*6370997,\
-            resolution='c',area_thresh=10000.,projection='cass',\
-            lat_0=0.,lon_0=-90.)
+m = Basemap(llcrnrlon=-6,llcrnrlat=49,urcrnrlon=4,urcrnrlat=59,\
+            resolution='l',area_thresh=1000.,projection='tmerc',\
+            lat_0=54.,lon_0=-2.)
 fig.add_axes([0.125,0.2,0.6,0.6])
 # transform to nx x ny regularly spaced native projection grid
-nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
+nx = int((m.xmax-m.xmin)/20000.)+1; ny = int((m.ymax-m.ymin)/20000.)+1
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
 m.colorbar() # draw colorbar
 m.drawcoastlines()
 # draw parallels
-delat = 20.
-circles = np.arange(-80.,100.,delat)
-m.drawparallels(circles,labels=[1,0,0,0],fontsize=10)
+delat = 2.
+circles = np.arange(40.,70.,delat)
+m.drawparallels(circles,labels=[1,0,0,1],fontsize=10)
 # draw meridians
-delon = 20.
-meridians = np.arange(-180,180,delon)
-m.drawmeridians(meridians,labels=[1,0,0,0],fontsize=10)
+delon = 2.
+meridians = np.arange(-10,10,delon)
+m.drawmeridians(meridians,labels=[1,0,0,1],fontsize=10)
 plt.title('Transverse Mercator Projection')
 print 'plotting Transverse Mercator example ...'
 print m.proj4string
