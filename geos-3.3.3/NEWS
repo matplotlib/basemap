@@ -1,0 +1,393 @@
+Changes in 3.3.3
+2012-04-01
+
+- Bug fixes / improvements
+    - Fix simplification of collections with empty items (#519)
+    - Fix MSVC compilation of ambiguous log() call (#506)
+    - Fix CMake issues with std:: namespace detection (#493)
+
+Changes in 3.3.2
+2012-01-05
+
+- Bug fixes / improvements
+    - Fix CMAKE_CXX_FLAGS overriding -std=gnu++0x (#489)
+    - Missing versions update in CMake configuration (#490)
+    - Fix noding of self-intersecting lines through UnaryUnion (#482)
+    - Fix handling of collapsed edges skipping in BufferOp (#494)
+    - Print up to 18 digits of precision for TopologyException points
+    - Fix noding with reduced precision in Buffer operation (#473)
+    - Fix HotPixel original point invalidation (#498)
+    - Fix CascadedPolygonUnion to discard non-polygonal components (#499)
+    - Improve buffer robustness by reverting to non-snaprounding noder (#495)
+    - Fix C++11 build by avoiding std::pair<auto_ptr> (#491)
+    - Add --clibs to geos-config and GEOS_C_LIBS to geos.m4 (#497)
+    - Apply shoelace formula for area calculation (#485)
+    - Fix default initialization issue for clang (#500)
+    - Improve overlay robustness by fixing areal validity on snapping (#488)
+
+Changes in 3.3.1
+2011-09-27
+
+- Bug fixes / improvements
+  - Fix memory leak on invalid geometry in InteriorPointArea (#475)
+  - ValidOp abort in presence of 2 touching holes forming an island (#449)
+  - Enable prepared intersects operation for points
+  - Fortify suspicious code found by static analisys tools
+  - Fix for SOLARIS build (#461)
+  - Fix EMPTY result from GEOSOffsetCurve with distance 0 (#454)
+  - Fix Geometry::clone to copy SRID (#464)
+  - Fix for clang builds (#463)
+  - Fix out-of-place builds for python binding (#332) and regress testing
+  - Fix OS X framework cmake build (#385)
+
+Changes in 3.3.0
+2011-05-30
+
+- New things:
+  - CAPI: GEOSBufferWithParams (allows single sided buffers)
+  - CAPI: GEOSOffsetCurve deprecates GEOSSingleSidedBuffer
+  - CAPI: GEOSUnaryUnion deprecates GEOSCascadedUnion
+  - CAPI: GEOSisValidDetail: tell state, reason & location apart. allows
+          passing flags.
+  - CAPI: GEOSContext_setNoticeHandler_r, GEOSContext_setErrorHandler_r
+  - CAPI: GEOSGeom_createEmptyPoint, GEOSGeom_createEmptyLineString
+          GEOSGeom_createEmptyPolygon, GEOSGeom_createEmptyCollection
+  - CAPI: GEOSGeom_extractUniquePoints
+  - CAPI: GEOSGetGeometryN support for single geometries
+  - CAPI: GEOSPolygonize_full to return all informations computed by
+          the polygonizer
+  - CAPI: GEOSOrientationIndex
+  - CAPI: GEOSSharedPaths to find shared paths and their orientation
+  - CAPI: GEOSSnap 
+  - CAPI: GEOSRelatePatternMatch 
+  - CAPI: GEOSCovers, GEOSCoveredBy (#396) 
+  - CAPI: GEOSRelateBoundaryNodeRule (#399) 
+  - CAPI: GEOSGeom_getCoordinateDimension() (#311)
+  - CAPI: GEOSWKTWriter_setOutputDimension, GEOSWKTWriter_setOld3D (#292)
+  -  PHP: new PHP5 bindings based on CAPI
+- Semantic C++ API changes:
+  - Geometry inheritance chain changed to introduce Puntal, Lineal
+    and Polygonal classes (virtual inheritance introduced)
+  - Polygonizer::getInvalidRingLines retains ownership of vector elements
+  - Geometry::isWithinDistance method is now const
+  - Polygonizer::getCutEdges returns by const ref
+  - Polygonizer::getDangles returns by const ref
+  - Empty LinearRings are closed by definition
+- Bug fixes / improvements
+  - Fixed Geometry.distance() and DistanceOp to return 0.0 for empty inputs
+  - Invalid compound geometries reported as valid (#333)
+  - Return up to 15 digits of precision from GEOSisValidReason_t (#329)
+  - CAPI: do not leak contexts when using the non-reentrant interface
+  - Fix duplicated dangles returned by Polygonizer
+  - Fix SnapIfNeededOverlayOp to throw the originating exception
+  - Fixed LineMerger to skip lines with only a single unique coordinate
+  - Fix NodedSegmentString to handle zero-length line segments correctly
+    (via safeOctant)
+  - Fixed buffer OffsetCurveSetBuilder to handle "flat" rings correctly
+  - Added illegal state check in LineSegment::pointAlongOffset() 
+  - Improved performance of RectangleIntersects by always using
+    segment-scanning and refining SegmentIntersectionTester
+  - Reduce memory use in PreparedGeometry predicates (#342)
+  - Fix infinite loop in RobustDeterminant with nan/inf input (#357)
+
+Changes in 3.2.0 
+2009-12-14
+
+- Add Single-sided buffer operation
+- JTS-1.10 sync ...
+  - Drastically improved Buffer speed (20x for a case in testsuite)
+  - Improved EdgeList duplicate edge finding
+  - Added algorithm::distance package
+  - Added algorithm::Angle class
+  - Added algorithm::BoundaryNodeRule class
+  - IsSimpleOp can now return non-simple location coordinate
+  - DistanceOp can now check for 'within distance' predicate
+    (earlier exit)
+  - MultiPolygon::getBoundary always return MultiLineString, also
+    when the result is the EMPTY geometry.
+- Various bug and leak fixes, optimizations
+- Replace MarkupSTL with tinyXML
+
+Changes in 3.1.0
+
+- PreparedGeometry operations for very fast predicate testing.
+  - Intersects()
+  - Covers() 
+  - CoveredBy()
+  - ContainsProperly()
+- Easier builds under MSVC and OpenSolaris
+- Thread-safe CAPI option
+- IsValidReason added to CAPI
+- GEOSPolygonizer_getCutEdges added to CAPI
+- CascadedUnion operation for fast unions of geometry sets
+- Numerous bug fixes.
+  http://trac.osgeo.org/geos/query?status=closed&milestone=3.1.0&order=priority
+
+Changes in 3.0.0
+
+   These are mostly ABI breaking changes.
+   In few cases the API also changed, but the most external one
+   (the documented one) should be unchanged.
+
+- New things:
+	- Added geom::BinaryOp class performing a binary operation
+	  using different heuristics to reduce probability of robustness
+	  issues. Both C-API and XMLTester now use this class for
+	  binary operations.
+	- Added covers() and coveredBy() predicates to Geometry class
+	- Added overlay::overlayOp() adapter class
+	- Added GEOSSimplify() and GEOSTopologyPreserveSimplify()
+	  to the C API
+	- Added closed ring checks in IsValidOp
+	- Multi-input support in XMLTester 
+	- HEXWKB I/O
+	- Envelope(string) ctor
+	- Ruby interface
+	- New ShortCircuitedGeometryVisitor class
+	- New operation/predicate package
+	- Added CGAlgorithms::isPointInRing() version working with
+	  Coordinate::ConstVect type (faster!)
+	- Added getAt(int pos, Coordinate &to) funtion to CoordinateSequence
+	  class.
+	- Moved GetNumGeometries() and GetGeometryN() interfaces
+	  from GeometryCollection to Geometry class.
+	- New planarSubgraph class
+	- New ConnectedSubgraphFinder class.
+	- New LineSequencer class
+	- New WKTWriter::toLineString and ::toPoint convenience methods
+	- New IsValidOp::setSelfTouchingRingFormingHoleValid method
+	- New WKTWriter::toLineString and ::toPoint convenience methods
+	- New IsValidOp::setSelfTouchingRingFormingHoleValid method
+	- New Envelope::centre()
+	- New Envelope::intersection(Envelope)
+	- New Envelope::expandBy(distance, [ydistance])
+	- New LineString::reverse()
+	- New MultiLineString::reverse()
+	- New Geometry::buffer(distance, quadSeg, endCapStyle)
+	- New SnapRounding code
+	- New size() and operator[] interfaces to CoordinateSequence
+	- New ScaledNoder class
+	- New unit tests (make check rule)
+
+- Optimizations:
+	- WKT parser speedup
+	- Function inlining
+	- Coordinate copies reduction
+  	- Heap allocations reduction
+	- More classes made final
+	- Better use of standard containers
+	- Use of singletons when appropriate
+	- Removed many function calls in loops' end conditions
+	- Improved XMLTester output and user interface
+	- Improved memory use in geos::geom::util::PolygonExtractor
+	- Ported JTS-1.7 version of ConvexHull with big attention to
+	  memory usage optimizations.
+	- Changed CoordinateArrayFilter to reduce memory copies
+	- Changed UniqueCoordinateArrayFilter to reduce memory copies
+	- Added rectangle-based optimizations of intersects() and
+	  contains() ops
+	- Inlined all planarGraphComponent class
+	- More iterators returning methods and inlining in planargraph.
+	- Obsoleted toInternalGeometry/fromInternalGeometry 
+	- Improved buffering speed and robustness by using Snap Rounding
+
+- Semantic changes
+
+	- SegmentString: getCoordinates() doesn't return a clone
+	  anymore, getCoordinatesRO() obsoleted.
+	- JTS packages mapped to geos:: sub-namespaces
+	- Geometry::getInteriorPoint() returns NULL if called
+	  against an EMPTY geom
+	- LineString::get{Start,End}Point return NULL for
+	  EMPTY geoms
+	- GEOSException is now derived by std::runtim_exception
+	  and thrown by const reference.
+	- Geometry constructors made protected, to force use
+	  of a GeometryFactory.
+
+- Correctness:
+	- More const-correct signatures
+	- Stronger methods typing (removed some void * args).
+	- Changed index-related funx signatures to use size_t
+	  rather then int
+	- More const-correctness in Buffer "package"
+	- Bugfix in LineString::getCoordinate() failing to return
+	  NULL from getCoordinat() when empty.
+	- Use unsigned int for indexes and sizes.
+
+- Layout changes:
+	- Namespaces mapping JTS packages
+	- Renamed classes after JTS names (namespaces use made this possible
+	  w/out name clashes)
+	- Splitted headers, for build speedup and possible API reduction.
+	- Moved source/bigtest and source/test to tests/bigtest
+	  and test/xmltester
+	- Moved C-API in it's own top-level dir capi/
+	- Reworked automake scripts to produce a static lib for each subdir
+	  and then link all subsystem's libs togheter
+	- Renamed DefaultCoordinateSequence to CoordinateArraySequence.
+	- Renamed OverlayOp opcodes by prepending the 'op' prefix, and
+	  given the enum a name (OpCode) for type-safety.
+
+- Bug fixes:
+	- Fixed bug causing redundant linestrings to be returned in the
+	  result of overlaying polygons containing touching holes (#13)
+	- Fixed integer conversion bug
+	- Fixed PointLocator handling of LinearRings
+	- Added missing ::clone() methods for Multi* geoms 
+
+- (Partial) Detailed list of changes:
+	- Changed SegmentNode to contain a *real* Coordinate (not a pointer)
+  	  to reduce construction costs.
+	- Changed geomgraph nodeMap to use Coordinate pointers as keys
+	- Envelope destructor made non-virtual to give compiler more static
+	  binding options.
+	- Changed BufferSubgraph::computeDepths to use a set instead of a
+	  vector for checking visited Edges.
+	- Made LineIntersector a concrete type
+	- Node::isIncidentEdgeInResult() method made virtual
+	- Const-correct signatures in LineMerger package
+	- Changed operation/valid/*NestedRingTester classes interface
+	  to use Coordinate pointers instead of copies.
+	- Changed EdgeIntersectionList to use a set instead of a vector
+	- Changed DepthSegment to store a real Coordinate rather then a pointer.
+	- Changed SubgraphDepthLocater to store real containers rather then
+	  pointers.
+	- Changed BufferSubgraph to store a real RightmostEdgeFinder and real
+ 	  containers rather then pointers.
+	- CoordinateSequence API changes:
+		- point index and size related functions
+	  	  use unsigned int rather then int
+	- Changed EdgeEndStar to maintain a single container for EdgeEnds 
+	- Changed PlanarGraph::addEdges to take a const vector by ref
+	  rathern then a non-const vector by pointer
+	- Changed EdgeList::addAll to take a const vector by ref
+	  rather then a non-const vector by pointer
+	- Added apply_rw(CoordinateFilter *) and apply_ro(CoordinateFilter *)
+	  const to CoordinateSequence
+	- LineBuilder::lineEdgesList made a real vector, rather then pointer
+	  (private member)
+	- SegmentString::eiList made a real SegmentNodeList, rather then
+	  a pointer (private member)
+	- Removed coordinate copies in ElevationMatrix::elevate
+	- Changed CoordinateFilter interface to have a const method
+	  for filter_rw, updated interfaces using this to take
+	  const CoordinateFilter (apply_rw).
+
+
+Changes in 2.2.4
+
+	- Added version.in.vc to distribution
+
+Changes in 2.2.1
+
+- Support for MingW builds
+- Bugfix in Polygonizer chocking on invalid LineString inputs
+- CAPI: small leak removed in GEOSHasZ() 
+
+Changes in 2.2.0
+
+- Performance improvement in OverlayOp::insertUniqueEdge()
+- CoordinateSequence copy removal in EdgeRing
+- Minor memory allocation improvements 
+- Higher dimensions interface for CoordinateSequence
+- Added getCoordinatesRO for Point class
+- NEW WKB IO
+- NEW Simplified and stabler C API 
+
+Changes in 2.1.4
+
+- Severe BUGFIX in BufferSubgraphGT and other functions used
+  as StrictWeakOrdering predicates for sort()
+
+Changes in 2.1.3
+
+- win32/mingw build support
+- Segfault fix in LinearRing and LineString constructors
+- Segfault fix in Polygonizer
+- XMLTester installed by default
+- XMLTester code cleanup
+- Fixed handling of collection input in GeometryFactory::buildGeometry
+- Added shortcircuit test for Union operation
+- Reduced useless Coordinate copies in CGAlgorithms::isPointInRing()
+- Performance improvements in CGAlgorithms::isOnLine()
+- Other minor performance improvements
+- New Node::isIncidentEdgeInResult() method
+- OverlayOp's PointBuilder performance improvement by reduction
+  of LineIntersector calls.
+- Optimizations in Buffer operation
+- Sever BUGFIX in DepthSegmentLT as suggested by Graeme Hiebert
+
+Changes in 2.1.2
+
+- Segfault fix in Point::isEmpty
+- Mem Leak fix in OffsetCurveBuilder::getRingCurve
+- Bugfix in LineSegment::reverse
+- Added multipolygon buffering test in source/test/testLeaksBig
+- Ported JTS robustness patch for RobustLineIntersector
+- Removed useless Coordinate copies in OverlayOp::mergeZ()
+- Avoided throws by IsValid on invalid input
+- Stricter C++ syntax (math.h=>cmath, ieeefp.h in "C" block, ostringstream
+  instead of sprintf)
+- Better support for older compilers (Polygonizer::LineStringAdder friendship)
+- Removed useless Coordinate copies in CGAlgorithms::isOnLine()
+- Added support for polygonize and parametrized buffer tests in XMLTester
+- Fixed support for --includedir and --libdir
+- Fixed Z interpolation in LineIntersector
+- Handled NULL results from getCentroid() in XMLTester
+- Segfault fix in (EMPTY)Geometry::getCentroid()
+- Made polygon::getBoundary() always OGC-valid (no LinearRings)
+- Input checking and promoting in GeometryFactory::createMultiLineString()
+- Segfault fix in GeometryEditor::editPolygon()
+
+
+Changes in 2.1.1
+
+- Fixed uninitialized Coordinate in TopologyException
+- Added install of version.h, platform.h and timeval.h
+- Memleak fix in PolygonizeGraph
+- Memleak fix in OverlayOp
+- Compiler warnings removal
+- Cleaner w32 build
+- Z interpolation in overlay operations
+- Debian package build scripts
+
+
+Changes in 2.1.0
+
+- Added Polygonizer and LineMerger classes.
+- python wrapper examples
+- General cleanup / warnings removal
+- cleaner win32 / older copilers builds
+- Reduced heap allocations
+- debian package builder scripts
+- reduction of standard C lib headers dependency
+- Z support in overlay operations.
+
+
+Changes in 2.0.0
+
+- CoordinateList renamed to CoordinateSequence, BasicCoordinateList
+  renamed to DefaultCoordinateSequence to reflect JTS changes.
+  DefaultCoordinateSequenceFactory and CoordinateSequenceFactory
+  got same interface as JTS.
+- Added geos/version.h defining versioning infos
+- Added geos.h for quick inclusion. It will include geos/geom.h,
+  new geos/version.h, geos/util.h geos/io.h and geos/unload.h
+  (geometry input/output, exceptions, operations).
+- Added a geos::version() function showing GEOS and equivalent
+  JTS versions as strings.
+- All geometry constructors take ownership of given arguments.
+  GeometryFactory provides pass-by-reference geometry creators
+  to take care of a deep-copy.
+- GeometryFactory::createMultiPoint(const CoordinateList *)
+  has been renamed to
+  GeometryFactory::createMultiPoint(const CoordinateList &)
+  to reflect copy semantic
+- GeometryFactory: EMPTY geometry creation do now have their
+  own constructors taking no arguments.
+- Geometry constructors taking PrecisionModel and SRID have
+  been dropped. You have to use GeometryFactory instead.
+- WKTWriter default constructor has been dropped. You need
+  to initialize it with an explicit GeometryFactory
+
