@@ -3944,7 +3944,11 @@ class Basemap(object):
         else:
             raise KeyError("barstyle must be 'simple' or 'fancy'")
         if zorder is not None:
-            rets = [ret.set_zorder(zorder) for ret in rets]
+            for ret in rets:
+                try:
+                    ret.set_zorder(zorder)
+                except:
+                    pass
         return rets
 
     def colorbar(self,mappable=None,location='right',size="5%",pad='2%',fig=None,ax=None,**kwargs):
