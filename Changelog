@@ -1,45 +1,46 @@
 version 1.0.3 (not yet released)
-           * update geos from 3.3.1 to 3.3.3.
-           * upgrade proj4 source to version 4.8.0, pyproj to version 1.9.2.
-           * add k_0 keyword for projection = 'tmerc' so UTM zones can be
-             created. Also can be used with 'lcc','omerc' and 'stere'.
-             Added "utmtest.py" example.
-           * add streamplot method, along with streamplot_demo.py example.
-           * add boundarylats, boundarylons Basemap attributes (arrays
-             describing map boundaries - useful for illustrating map projection
-             region on another map). Example illustrating usage
-             (make_inset.py) added.
-           * update coastlines, rivers, political boundaries to GSHHS
-             2.2.0/GMT 4.5.7. The fillcontinents bug (filling the outside
-	     instead of the inside of a coastline polygon) is now much
-             harder to trigger.    
-           * add 'round' keyword keyword to Basemap.__init__ for pole-centered
-             projections to make them round (clipped at boundinglat) instead
-             of square.        
-	   * added hexbin method, along with hexbin_demo.py example.
-	   * drawmapboundary now uses axes bgcolor as default fill_color. If
-	     no color fill wanted, set fill_color='none' (a string).
-	   * clip coastlines for nplaea,npaeqd,splaea,spaeqd in stereographic
-	     coordinates to avoid S. America disappearing in some south polar
-	     plots.
-           * fix broken daynight terminator function.
-           * added kav7 (Kavrayskiy VII) and eck4 (Eckert IV) projections
-             (https://github.com/matplotlib/basemap/issues/9).
-           * update pyproj source from pyproj.googlecode.com. Includes
-             new more robust and accurate pure python code for geodesic computations
-             from geographiclib.
-           * bug fixes for celestial projections, and non-standard sphere
-             radii (https://github.com/matplotlib/basemap/pull/6).
-           * fix bug in drawparallels that results in 'KeyError' when drawing
-             parallels very close together (0.1 degrees).
-           * fix constant in Robinson projection (update PJ_robin.c
-             from proj4 svn).
-           * fix typo in setup.py (replace "!= ['sdist','clean']" with
-             "not in ['sdist','clean']").
-           * make sure drawmeridians can handle wrap-around (so that
-             if projection is defined in -180 to 0 and user asks for
-             meridians from 180 to 360 to be drawn, it should work).
-             Only affects projections 'mill','gall','merc' and 'cyl'.
+--------------------------------
+* update geos from 3.3.1 to 3.3.3.
+* upgrade proj4 source to version 4.8.0, pyproj to version 1.9.2.
+* add k_0 keyword for projection = 'tmerc' so UTM zones can be
+  created. Also can be used with 'lcc','omerc' and 'stere'.
+  Added "utmtest.py" example.
+* add streamplot method, along with streamplot_demo.py example.
+* add boundarylats, boundarylons Basemap attributes (arrays
+  describing map boundaries - useful for illustrating map projection
+  region on another map). Example illustrating usage
+  (make_inset.py) added.
+* update coastlines, rivers, political boundaries to GSHHS
+  2.2.0/GMT 4.5.7. The fillcontinents bug (filling the outside
+  instead of the inside of a coastline polygon) is now much
+  harder to trigger.    
+* add 'round' keyword keyword to Basemap.__init__ for pole-centered
+  projections to make them round (clipped at boundinglat) instead
+  of square.        
+* added hexbin method, along with hexbin_demo.py example.
+* drawmapboundary now uses axes bgcolor as default fill_color. If
+ no color fill wanted, set fill_color='none' (a string).
+* clip coastlines for nplaea,npaeqd,splaea,spaeqd in stereographic
+  coordinates to avoid S. America disappearing in some south polar
+  plots.
+* fix broken daynight terminator function.
+* added kav7 (Kavrayskiy VII) and eck4 (Eckert IV) projections
+  (https://github.com/matplotlib/basemap/issues/9).
+* update pyproj source from pyproj.googlecode.com. Includes
+  new more robust and accurate pure python code for geodesic computations
+  from geographiclib.
+* bug fixes for celestial projections, and non-standard sphere
+  radii (https://github.com/matplotlib/basemap/pull/6).
+* fix bug in drawparallels that results in 'KeyError' when drawing
+  parallels very close together (0.1 degrees).
+* fix constant in Robinson projection (update PJ_robin.c
+  from proj4 svn).
+* fix typo in setup.py (replace "!= ['sdist','clean']" with
+  "not in ['sdist','clean']").
+* make sure drawmeridians can handle wrap-around (so that
+  if projection is defined in -180 to 0 and user asks for
+  meridians from 180 to 360 to be drawn, it should work).
+  Only affects projections 'mill','gall','merc' and 'cyl'.
 
 version 1.0.2 (git tag v1.0.2)
            * update include geos from 3.2.0 to 3.3.1 so it compiles with gcc
