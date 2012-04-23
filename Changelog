@@ -19,7 +19,7 @@ version 1.0.3 (not yet released)
   of square.        
 * added hexbin method, along with hexbin_demo.py example.
 * drawmapboundary now uses axes bgcolor as default fill_color. If
- no color fill wanted, set fill_color='none' (a string).
+  no color fill wanted, set fill_color='none' (a string).
 * clip coastlines for nplaea,npaeqd,splaea,spaeqd in stereographic
   coordinates to avoid S. America disappearing in some south polar
   plots.
