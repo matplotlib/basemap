@@ -1,5 +1,6 @@
 version 1.0.3 (not yet released)
 --------------------------------
+* added alpha keyword to fillcontinents (to set transparency).
 * update geos from 3.3.1 to 3.3.3.
 * upgrade proj4 source to version 4.8.0, pyproj to version 1.9.2.
 * add k_0 keyword for projection = 'tmerc' so UTM zones can be
