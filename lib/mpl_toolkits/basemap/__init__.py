@@ -1473,7 +1473,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return limb
 
-    def fillcontinents(self,color='0.8',lake_color=None,ax=None,zorder=None):
+    def fillcontinents(self,color='0.8',lake_color=None,ax=None,zorder=None,alpha=None):
         """
         Fill continents.
 
@@ -1489,6 +1489,7 @@ class Basemap(object):
                          specified, uses default zorder for a Polygon patch).
                          Set to zero if you want to paint over the filled
                          continents).
+        alpha            sets alpha transparency for continent polygons
         ==============   ====================================================
 
         After filling continents, lakes are re-filled with
@@ -1535,6 +1536,8 @@ class Basemap(object):
                         poly = Polygon(xy,facecolor=lake_color,edgecolor=lake_color,linewidth=0)
                 if zorder is not None:
                     poly.set_zorder(zorder)
+                if alpha is not None:
+                    poly.set_alpha(alpha)
                 ax.add_patch(poly)
                 polys.append(poly)
             npoly = npoly + 1
