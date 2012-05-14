@@ -5,7 +5,7 @@ test_files.remove('allskymap.py')
 test_files.remove('fcstmaps.py')
 test_files.remove('fcstmaps_axesgrid.py')
 test_files.remove('testgdal.py')
-test_files.remove('animdate.py')
+test_files.remove('animate.py')
 test_files.remove('geos_demo_2.py')
 test_files.remove('plotsst.py')
 test_files.remove('embedding_map_in_wx.py') # requires wx
