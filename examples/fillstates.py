@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap as Basemap
@@ -64,13 +65,13 @@ popdensity = {
 'Montana':     2.39,
 'Wyoming':      1.96,
 'Alaska':     0.42}
-print shp_info
+print(shp_info)
 # choose a color for each state based on population density.
 colors={}
 statenames=[]
 cmap = plt.cm.hot # use 'hot' colormap
 vmin = 0; vmax = 450 # set range.
-print m.states_info[0].keys()
+print(m.states_info[0].keys())
 for shapedict in m.states_info:
     statename = shapedict['NAME']
     # skip DC and Puerto Rico.
