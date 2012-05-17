@@ -1,5 +1,5 @@
-version 1.0.3 (git tag v1.0.3)
-------------------------------
+version 1.0.3 (git tag v1.0.3rel)
+--------------------------------
 * fix some more python 3 compatibility issues (all examples now
   work with python 3.2).
 * added alpha keyword to fillcontinents (to set transparency).
