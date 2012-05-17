@@ -1,11 +1,18 @@
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
+
+def get_input(prompt):
+    if sys.hexversion > 0x03000000:
+        return input(prompt)
+    else:
+        return raw_input(prompt)
 
 # create Basemap instance for Near-Sided Perspective (satellite view) projection.
-lon_0 = float(raw_input('enter reference longitude (lon_0):'))
-lat_0 = float(raw_input('enter reference latitude (lat_0):'))
-h = float(raw_input('enter altitude of camera in km (h):'))
+lon_0 = float(get_input('enter reference longitude (lon_0):'))
+lat_0 = float(get_input('enter reference latitude (lat_0):'))
+h = float(get_input('enter altitude of camera in km (h):'))
 h=h*1000.
 
 # map with continents drawn and filled.

@@ -1,6 +1,13 @@
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
+
+def get_input(prompt):
+    if sys.hexversion > 0x03000000:
+        return input(prompt)
+    else:
+        return raw_input(prompt)
 
 # the shortest route from the center of the map
 # to any other point is a straight line in the azimuthal
@@ -12,9 +19,9 @@ import matplotlib.pyplot as plt
 # The specified point shows up as a red dot in the center of the map.
 
 # user enters the lon/lat of the point, and it's name
-lon_0 = float(raw_input('input reference lon (degrees):'))
-lat_0 = float(raw_input('input reference lat (degrees):'))
-location = raw_input('name of location:')
+lon_0 = float(get_input('input reference lon (degrees):'))
+lat_0 = float(get_input('input reference lat (degrees):'))
+location = get_input('name of location:')
 
 # no width/height or lat/lon corners specified, so whole world
 # is plotted in a circle.
