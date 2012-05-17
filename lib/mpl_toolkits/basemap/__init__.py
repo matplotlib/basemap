@@ -1971,7 +1971,7 @@ class Basemap(object):
             lons = np.arange(-180,180.001,0.01)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
-            circlesl = circles.tolist()
+            circlesl = list(circles)
         except:
             circlesl = circles
         if self.projection not in _cylproj + _pseudocyl:
