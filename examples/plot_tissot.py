@@ -49,7 +49,7 @@ for m in [m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13]:
     m.drawmapboundary(fill_color='aqua') 
     m.fillcontinents(color='coral',lake_color='aqua')
     title = 'Tissot Diagram: projection = %s' % m.projection
-    sys.stdout.write(title)
+    sys.stdout.write(title+'\n')
     plt.title(title)
 
 plt.show()

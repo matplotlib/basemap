@@ -67,4 +67,4 @@ ax.set_title('ETOPO Topography - Lambert Conformal Conic')
 # save image (width 800 pixels with dpi=100 and fig width 8 inches).
 canvas.print_figure('plotmap',dpi=100)
 # done.
-sys.stdout.write('image saved in plotmap.png')
+sys.stdout.write('image saved in plotmap.png\n')
