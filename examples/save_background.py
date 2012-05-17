@@ -1,4 +1,4 @@
-import matplotlib
+import matplotlib, sys
 matplotlib.use('Agg')
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
@@ -36,4 +36,4 @@ map.drawmeridians(range(-180,180,60))
 # save figure 2.
 fig2.savefig('figure2.png', dpi=100)
 
-print 'images saved in figure1.png and figure2.png'
+sys.stdout.write('images saved in figure1.png and figure2.png')

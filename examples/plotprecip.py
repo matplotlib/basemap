@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mpl_toolkits.basemap import Basemap, cm
 from netCDF4 import Dataset as NetCDFFile
 import numpy as np
@@ -19,11 +20,11 @@ data = 0.01*prcpvar[:]
 latcorners = nc.variables['lat'][:]
 loncorners = -nc.variables['lon'][:]
 plottitle = prcpvar.long_name+' for period ending '+prcpvar.dateofdata
-print data.min(), data.max()
-print latcorners
-print loncorners
-print plottitle
-print data.shape
+print(data.min(), data.max())
+print(latcorners)
+print(loncorners)
+print(plottitle)
+print(data.shape)
 lon_0 = -nc.variables['true_lon'].getValue()
 lat_0 = nc.variables['true_lat'].getValue()
 # create polar stereographic Basemap instance.

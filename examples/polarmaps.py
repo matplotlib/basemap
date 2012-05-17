@@ -1,3 +1,4 @@
+from __future__ import print_function
 # make plots of etopo bathymetry/topography data on
 # various map projections, drawing coastlines, state and
 # country boundaries, filling continents and drawing
@@ -15,8 +16,8 @@ etopo = np.loadtxt('etopo20data.gz')
 lons = np.loadtxt('etopo20lons.gz')
 lats = np.loadtxt('etopo20lats.gz')
 
-print 'min/max etopo20 data:'
-print etopo.min(),etopo.max()
+print('min/max etopo20 data:')
+print(etopo.min(),etopo.max())
 
 # these are the 4 polar projections
 projs = ['laea','stere','aeqd','ortho'] # short names
@@ -69,5 +70,5 @@ for hem in ['North','South']:
         m.drawmapboundary()
         # draw title.
         plt.title(hem+' Polar '+projname,y=1.05,fontsize=12)
-        print 'plotting '+hem+' Polar '+projname+' basemap ...'
+        print('plotting '+hem+' Polar '+projname+' basemap ...')
 plt.show()
