@@ -1,6 +1,7 @@
 from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
 # examples of filled contour plots on map projections.
 
@@ -34,7 +35,7 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = np.arange(-360.,360.,30.)
 m.drawmeridians(meridians)
 plt.title('Sinusoidal Filled Contour Demo')
-print 'plotting with sinusoidal basemap ...'
+sys.stdout.write('plotting with sinusoidal basemap ...\n')
 
 # create new figure
 fig=plt.figure()
@@ -56,7 +57,7 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = np.arange(-360.,360.,30.)
 m.drawmeridians(meridians)
 plt.title('Mollweide Filled Contour Demo')
-print 'plotting with mollweide basemap ...'
+sys.stdout.write('plotting with mollweide basemap ...\n')
 
 # create new figure
 fig=plt.figure()
@@ -78,7 +79,7 @@ m.drawparallels(parallels,labels=[1,0,0,0])
 meridians = np.arange(-360.,360.,60.)
 m.drawmeridians(meridians,labels=[0,0,0,1])
 plt.title('Robinson Filled Contour Demo')
-print 'plotting with robinson basemap ...'
+sys.stdout.write('plotting with robinson basemap ...\n')
 
 # create new figure
 fig=plt.figure()
@@ -100,7 +101,7 @@ m.drawparallels(parallels,labels=[0,0,1,1])
 meridians = np.arange(10.,360.,20.)
 m.drawmeridians(meridians,labels=[1,1,1,1])
 plt.title('Azimuthal Equidistant Filled Contour Demo',y=1.075)
-print 'plotting with azimuthal equidistant basemap ...'
+sys.stdout.write('plotting with azimuthal equidistant basemap ...\n')
 
 # create new figure
 fig=plt.figure()
@@ -123,5 +124,5 @@ m.drawparallels(parallels)
 meridians = np.arange(0.,360.,20.)
 m.drawmeridians(meridians)
 plt.title('Orthographic Filled Contour Demo')
-print 'plotting with orthographic basemap ..'
+sys.stdout.write('plotting with orthographic basemap ..\n')
 plt.show()

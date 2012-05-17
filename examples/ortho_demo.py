@@ -1,10 +1,17 @@
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
+
+def get_input(prompt):
+    if sys.hexversion > 0x03000000:
+        return input(prompt)
+    else:
+        return raw_input(prompt)
 
 # create Basemap instance for Orthographic (satellite view) projection.
-lon_0 = float(raw_input('enter reference longitude (lon_0):'))
-lat_0 = float(raw_input('enter reference latitude (lat_0):'))
+lon_0 = float(get_input('enter reference longitude (lon_0):'))
+lat_0 = float(get_input('enter reference latitude (lat_0):'))
 
 # map with land/sea mask plotted
 fig = plt.figure()

@@ -1,5 +1,7 @@
-version 1.0.3 (not yet released)
---------------------------------
+version 1.0.3 (git tag v1.0.3)
+------------------------------
+* fix some more python 3 compatibility issues (all examples now
+  work with python 3.2).
 * added alpha keyword to fillcontinents (to set transparency).
 * update geos from 3.3.1 to 3.3.3.
 * upgrade proj4 source to version 4.8.0, pyproj to version 1.9.2.

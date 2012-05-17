@@ -20,7 +20,7 @@ def extrema(mat,mode='wrap',window=10):
     return np.nonzero(mat == mn), np.nonzero(mat == mx)
 
 if len(sys.argv) < 2:
-    print 'enter date to plot (YYYYMMDDHH) on command line'
+    sys.stdout.write('enter date to plot (YYYYMMDDHH) on command line')
     raise SystemExit
 
 # get date from command line.

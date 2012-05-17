@@ -21,8 +21,8 @@ nlats = 2*udat.shape[0]; nlons = 2*udat.shape[1]
 lons = np.linspace(lons1[0],lons1[-1],nlons)
 lats = np.linspace(lats1[0],lats1[-1],nlats)
 lons, lats = np.meshgrid(lons, lats)
-udat = interp(udat,lons1,lats1,lons,lats,order=3)
-vdat = interp(vdat,lons1,lats1,lons,lats,order=3)
+udat = interp(udat,lons1,lats1,lons,lats)
+vdat = interp(vdat,lons1,lats1,lons,lats)
 speed = np.sqrt(udat**2+vdat**2)
 
 

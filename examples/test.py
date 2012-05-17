@@ -1,3 +1,4 @@
+from __future__ import print_function
 # make plots of etopo bathymetry/topography data on
 # various map projections, drawing coastlines, state and
 # country boundaries, filling continents and drawing
@@ -18,8 +19,8 @@ latsin = np.loadtxt('etopo20lats.gz')
 topoin,lons = shiftgrid(180.,topodatin,lonsin,start=False)
 lats = latsin
 
-print 'min/max etopo20 data:'
-print topoin.min(),topoin.max()
+print('min/max etopo20 data:')
+print(topoin.min(),topoin.max())
 
 # create new figure
 fig=plt.figure()
@@ -44,8 +45,8 @@ delon = 60.
 meridians = np.arange(-180,180,delon)
 m.drawmeridians(meridians,labels=[1,0,0,1])
 plt.title('Cylindrical Equidistant')
-print 'plotting Cylindrical Equidistant example ...'
-print m.proj4string
+print('plotting Cylindrical Equidistant example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -64,8 +65,8 @@ m.drawparallels(circles,labels=[1,1,1,1])
 # draw meridians
 m.drawmeridians(meridians,labels=[1,1,1,1])
 plt.title('Miller Cylindrical',y=1.1)
-print 'plotting Miller Cylindrical example ...'
-print m.proj4string
+print('plotting Miller Cylindrical example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -84,8 +85,8 @@ m.drawparallels(circles,labels=[1,1,1,1])
 # draw meridians
 m.drawmeridians(meridians,labels=[1,1,1,1])
 plt.title('Gall Stereographic Cylindrical',y=1.1)
-print 'plotting Gall Stereographic Cylindrical example ...'
-print m.proj4string
+print('plotting Gall Stereographic Cylindrical example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -108,8 +109,8 @@ m.drawparallels(circles,labels=[1,1,1,1])
 # draw meridians
 m.drawmeridians(meridians,labels=[1,1,1,1])
 plt.title('Mercator',y=1.1)
-print 'plotting Mercator example ...'
-print m.proj4string
+print('plotting Mercator example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -134,8 +135,8 @@ delon = 2.
 meridians = np.arange(-10,10,delon)
 m.drawmeridians(meridians,labels=[1,0,0,1],fontsize=10)
 plt.title('Cassini-Soldner Projection')
-print 'plotting Cassini-Soldner example ...'
-print m.proj4string
+print('plotting Cassini-Soldner example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -161,8 +162,8 @@ delon = 20.
 meridians = np.arange(-180,180,delon)
 m.drawmeridians(meridians,labels=[1,0,0,1],fontsize=10)
 plt.title('Gnomonic Projection')
-print 'plotting Gnomonic example ...'
-print m.proj4string
+print('plotting Gnomonic example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -187,8 +188,8 @@ delon = 2.
 meridians = np.arange(-10,10,delon)
 m.drawmeridians(meridians,labels=[1,0,0,1],fontsize=10)
 plt.title('Transverse Mercator Projection')
-print 'plotting Transverse Mercator example ...'
-print m.proj4string
+print('plotting Transverse Mercator example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -210,8 +211,8 @@ m.drawparallels(np.arange(-80,81,20),labels=[1,0,0,0],fontsize=10)
 # draw meridians
 m.drawmeridians(np.arange(-180,181,30),labels=[0,0,0,1],fontsize=10)
 plt.title('Oblique Mercator Projection')
-print 'plotting Oblique Mercator example ...'
-print m.proj4string
+print('plotting Oblique Mercator example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -237,8 +238,8 @@ delon = 20.
 meridians = np.arange(-180,180,delon)
 m.drawmeridians(meridians,labels=[1,0,0,1],fontsize=10)
 plt.title('Polyconic Projection')
-print 'plotting Polyconic example ...'
-print m.proj4string
+print('plotting Polyconic example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -265,8 +266,8 @@ delon = 5.
 meridians = np.arange(-100,-60,delon)
 m.drawmeridians(meridians,labels=[0,0,0,1])
 plt.title('Equidistant Conic')
-print 'plotting Equidistant Conic example ...'
-print m.proj4string
+print('plotting Equidistant Conic example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -294,8 +295,8 @@ delon = 30.
 meridians = np.arange(10.,360.,delon)
 m.drawmeridians(meridians,labels=[1,1,0,1])
 plt.title('Lambert Conformal Conic')
-print 'plotting Lambert Conformal example ...'
-print m.proj4string
+print('plotting Lambert Conformal example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -323,8 +324,8 @@ delon = 30.
 meridians = np.arange(10.,360.,delon)
 m.drawmeridians(meridians,labels=[1,1,1,1])
 plt.title('Albers Equal Area Conic',y=1.075)
-print 'plotting Albers Equal Area example ...'
-print m.proj4string
+print('plotting Albers Equal Area example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -350,8 +351,8 @@ m.drawparallels(circles)
 # draw meridians
 m.drawmeridians(meridians,labels=[1,1,1,1])
 plt.title('Square Polar Stereographic',y=1.075)
-print 'plotting Square Stereographic example ...'
-print m.proj4string
+print('plotting Square Stereographic example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -372,8 +373,8 @@ m.drawparallels(circles)
 # draw meridians
 m.drawmeridians(meridians,labels=[1,1,1,1])
 plt.title('Round Polar Stereographic',y=1.075)
-print 'plotting Round Stereographic example ...'
-print m.proj4string
+print('plotting Round Stereographic example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -400,8 +401,8 @@ m.drawparallels(circles)
 # draw meridians
 m.drawmeridians(meridians,labels=[1,1,1,1])
 plt.title('Square Lambert Azimuthal Equal Area',y=1.075)
-print 'plotting Square Lambert Azimuthal example ...'
-print m.proj4string
+print('plotting Square Lambert Azimuthal example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -423,8 +424,8 @@ m.drawparallels(circles)
 # draw meridians
 m.drawmeridians(meridians,labels=[1,1,1,1])
 plt.title('Round Lambert Azimuthal Equal Area',y=1.075)
-print 'plotting Round Lambert Azimuthal example ...'
-print m.proj4string
+print('plotting Round Lambert Azimuthal example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -451,8 +452,8 @@ m.drawparallels(circles)
 # draw meridians
 m.drawmeridians(meridians,labels=[1,1,1,1])
 plt.title('Azimuthal Equidistant',y=1.075)
-print 'plotting Azimuthal Equidistant example ...'
-print m.proj4string
+print('plotting Azimuthal Equidistant example ...')
+print(m.proj4string)
 
 # projections with elliptical boundaries (orthographic, sinusoidal,
 # mollweide and robinson)
@@ -489,8 +490,8 @@ meridians = np.arange(0.,360.,20.)
 m.drawmeridians(meridians)
 # draw boundary around map region.
 plt.title('Orthographic')
-print 'plotting Orthographic example ...'
-print m.proj4string
+print('plotting Orthographic example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -525,8 +526,8 @@ meridians = np.arange(0.,360.,20.)
 m.drawmeridians(meridians)
 # draw boundary around map region.
 plt.title('Geostationary')
-print 'plotting Geostationary example ...'
-print m.proj4string
+print('plotting Geostationary example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -547,8 +548,8 @@ meridians = np.arange(0.,360.,30.)
 m.drawmeridians(meridians)
 # draw boundary around map region.
 plt.title('Sinusoidal')
-print 'plotting Sinusoidal example ...'
-print m.proj4string
+print('plotting Sinusoidal example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -569,8 +570,8 @@ meridians = np.arange(0.,360.,30.)
 m.drawmeridians(meridians)
 # draw boundary around map region.
 plt.title('Mollweide')
-print 'plotting Mollweide example ...'
-print m.proj4string
+print('plotting Mollweide example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -591,8 +592,8 @@ meridians = np.arange(0.,360.,30.)
 m.drawmeridians(meridians)
 # draw boundary around map region.
 plt.title('Hammer')
-print 'plotting Hammer example ...'
-print m.proj4string
+print('plotting Hammer example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -613,8 +614,8 @@ meridians = np.arange(0.,360.,60.)
 m.drawmeridians(meridians,labels=[0,0,0,1])
 # draw boundary around map region.
 plt.title('Robinson')
-print 'plotting Robinson example ...'
-print m.proj4string
+print('plotting Robinson example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -635,8 +636,8 @@ meridians = np.arange(0.,360.,60.)
 m.drawmeridians(meridians,labels=[0,0,0,1])
 # draw boundary around map region.
 plt.title('Kavrayskiy VII')
-print 'plotting Kavrayskiy VII example ...'
-print m.proj4string
+print('plotting Kavrayskiy VII example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -657,8 +658,8 @@ meridians = np.arange(0.,360.,60.)
 m.drawmeridians(meridians,labels=[0,0,0,1])
 # draw boundary around map region.
 plt.title('Eckert IV')
-print 'plotting Eckert IV example ...'
-print m.proj4string
+print('plotting Eckert IV example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -679,8 +680,8 @@ meridians = np.arange(0.,360.,60.)
 m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=8)
 # draw boundary around map region.
 plt.title('McBryde-Thomas Flat Polar Quartic')
-print 'plotting McBryde-Thomas Flat Polar Quartic example ...'
-print m.proj4string
+print('plotting McBryde-Thomas Flat Polar Quartic example ...')
+print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
@@ -701,9 +702,9 @@ m.drawmeridians(meridians)
 # draw boundary around map region.
 # add a title.
 plt.title('van der Grinten')
-print 'plotting van der Grinten example ...'
-print m.proj4string
+print('plotting van der Grinten example ...')
+print(m.proj4string)
 
 plt.show()
 
-print 'done'
+print('done')
