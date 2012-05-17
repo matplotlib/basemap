@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap 
 from mpl_toolkits.basemap import __version__ as basemap_version
@@ -48,7 +49,7 @@ for m in [m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13]:
     m.drawmapboundary(fill_color='aqua') 
     m.fillcontinents(color='coral',lake_color='aqua')
     title = 'Tissot Diagram: projection = %s' % m.projection
-    print title
+    sys.stdout.write(title)
     plt.title(title)
 
 plt.show()
