@@ -12,25 +12,20 @@ import matplotlib.animation as animation
 # times for March 1993 'storm of the century'
 date1 = datetime.datetime(1993,3,10,0)
 date2 = datetime.datetime(1993,3,17,0)
-print date1, date2
 
 # set OpenDAP server URL.
 URL="http://nomad2.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-2/6hr/pgb/pgb"
-print URL
 try:
     data = NetCDFFile(URL)
 except:
-    raise IOError, 'opendap server not providing the requested data'
+    raise IOError('opendap server not providing the requested data')
 
 # read lats,lons,times.
-print data.variables.keys()
 latitudes = data.variables['lat'][:]
 longitudes = data.variables['lon'][:].tolist()
 times = data.variables['time']
 ntime1 = date2index(date1,times,calendar='standard')
 ntime2 = date2index(date2,times,calendar='standard')
-print 'ntime1,ntime2:',ntime1,ntime2
-print num2date(times[ntime1],times.units,calendar='standard'), num2date(times[ntime2],times.units,calendar='standard')
 # get sea level pressure and 10-m wind data.
 slpdata = data.variables['presmsl']
 udata = data.variables['ugrdprs']
@@ -50,12 +45,6 @@ v[:,:,0:-1] = vin; v[:,:,-1] = vin[:,:,0]
 longitudes.append(360.); longitudes = np.array(longitudes)
 # make 2-d grid of lons, lats
 lons, lats = np.meshgrid(longitudes,latitudes)
-print 'min/max slp,u,v'
-print slp.min(), slp.max()
-print uin.min(), uin.max()
-print vin.min(), vin.max()
-print 'dates'
-print dates
 # make orthographic basemap.
 m = Basemap(resolution='c',projection='ortho',lat_0=60.,lon_0=-60.)
 uin = udata[ntime1:ntime2+1,0,:,:] 

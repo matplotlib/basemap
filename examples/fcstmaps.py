@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import unicode_literals
 # this example reads today's numerical weather forecasts 
 # from the NOAA OpenDAP servers and makes a multi-panel plot.
 import numpy as np
@@ -29,12 +31,12 @@ except:
         msg = """
 opendap server not providing the requested data.
 Try another date by providing YYYYMMDD on command line."""
-        raise IOError, msg
+        raise IOError(msg)
 
 
 # read lats,lons,times.
 
-print data.variables.keys()
+print(data.variables.keys())
 latitudes = data.variables['lat']
 longitudes = data.variables['lon']
 fcsttimes = data.variables['time']
@@ -49,8 +51,8 @@ fcsthrs = []
 for fdate in fdates:
     fdiff = fdate-fdates[0]
     fcsthrs.append(fdiff.days*24. + fdiff.seconds/3600.)
-print fcsthrs
-print verifdates
+print(fcsthrs)
+print(verifdates)
 lats = latitudes[:]
 nlats = len(lats)
 lons1 = longitudes[:]
@@ -85,7 +87,7 @@ for nt,fcsthr in enumerate(fcsthrs):
     plt.title('%d-h forecast valid '%fcsthr+verifdates[nt],fontsize=9)
 # figure title
 plt.figtext(0.5,0.95,
-            u"2-m temp (\N{DEGREE SIGN}C) forecasts from %s"%verifdates[0],
+            "2-m temp (\N{DEGREE SIGN}C) forecasts from %s"%verifdates[0],
             horizontalalignment='center',fontsize=14)
 # a single colorbar.
 cax = plt.axes([0.1, 0.05, 0.8, 0.025])

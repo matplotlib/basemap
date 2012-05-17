@@ -11,7 +11,6 @@ test_files.remove('plotsst.py')
 test_files.remove('embedding_map_in_wx.py') # requires wx
 test_files.remove('plothighsandlows.py') # requires scipy
 test_files.remove('lic_demo.py')
-print test_files
 py_path = os.environ.get('PYTHONPATH')
 if py_path is None:
     py_path = '.'
@@ -20,10 +19,10 @@ else:
 os.environ['PYTHONPATH'] = py_path
 
 for f in test_files:
-    print "**********************************************"
+    sys.stdout.write( "**********************************************\n")
     ff = os.path.join(sys.path[0],f)
     args = [sys.executable,ff]
-    print "Running",' '.join(args)
+    sys.stdout.write("Running %s\n" % f)
     status = os.spawnve(os.P_WAIT,sys.executable,args,os.environ)
     if status:
-        print 'TEST FAILURE (status=%s)' % (status)
+        sys.stdout.write('TEST FAILURE (status=%s)\n' % (status))

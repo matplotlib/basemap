@@ -1,3 +1,4 @@
+from __future__ import print_function
 """
 draw Atlantic Hurricane Tracks for storms that reached Cat 4 or 5.
 part of the track for which storm is cat 4 or 5 is shown red.
@@ -14,7 +15,7 @@ m = Basemap(llcrnrlon=-100.,llcrnrlat=0.,urcrnrlon=-20.,urcrnrlat=57.,
 fig=plt.figure()
 # read shapefile.
 shp_info = m.readshapefile('huralll020','hurrtracks',drawbounds=False)
-print shp_info
+print(shp_info)
 # find names of storms that reached Cat 4.
 names = []
 for shapedict in m.hurrtracks_info:
@@ -23,8 +24,8 @@ for shapedict in m.hurrtracks_info:
     if cat in ['H4','H5'] and name not in names:
         # only use named storms.
         if name != 'NOT NAMED':  names.append(name)
-print names
-print len(names)
+print(names)
+print(len(names))
 # plot tracks of those storms.
 for shapedict,shape in zip(m.hurrtracks_info,m.hurrtracks):
     name = shapedict['NAME']

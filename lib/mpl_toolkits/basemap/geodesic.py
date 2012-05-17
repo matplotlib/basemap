@@ -29,6 +29,9 @@ from mpl_toolkits.basemap.geomath import Math
 from mpl_toolkits.basemap.constants import Constants
 from mpl_toolkits.basemap.geodesiccapability import GeodesicCapability
 
+def cmp(a,b):
+    return (a > b) - (a < b) 
+
 class Geodesic(object):
   """
   Solve geodesic problems.  The following illustrates its use

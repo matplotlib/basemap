@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mpl_toolkits.basemap import pyproj
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
@@ -8,7 +9,7 @@ import matplotlib.pyplot as plt
 p1 = pyproj.Proj(proj='utm',zone='17')
 miamilon=-80.28; miamilat=25.92
 x,y = p1(miamilon,miamilat)
-print 'utm coordinates from pyproj: ',x,y
+print('utm coordinates from pyproj: ',x,y)
 lon_0=-81; lat_0=0.
 # mimic this with Basemap (WGS84 ellipsoid, with scaling factor of 0.9996 at
 # central meridian).  latitude bounds are given for the MGRS band N, which covers Florida.
@@ -21,7 +22,7 @@ x1,y1 = m(miamilon,miamilat)
 # left corner of domain)
 x = x1-x0+5.e5
 y = y1-y0
-print 'utm coordinates from Basemap:',x,y
+print('utm coordinates from Basemap:',x,y)
 m.drawcoastlines()
 m.drawstates()
 m.fillcontinents(color='coral',lake_color='aqua')

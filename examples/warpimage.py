@@ -1,3 +1,4 @@
+from __future__ import print_function
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,7 +19,7 @@ m.drawcoastlines(linewidth=0.5,color='0.5')
 m.drawmeridians(np.arange(0,360,30),color='0.5')
 m.drawparallels(np.arange(-90,90,30),color='0.5')
 plt.title("Lights at Night image warped from 'cyl' to 'ortho' projection",fontsize=12)
-print 'warp to orthographic map ...'
+print('warp to orthographic map ...')
 
 # create new figure
 fig=plt.figure()
@@ -31,7 +32,7 @@ m.drawcoastlines(linewidth=0.5,color='0.5')
 m.drawmeridians(np.arange(0,360,60),color='0.5')
 m.drawparallels(np.arange(-90,90,30),color='0.5')
 plt.title("Blue Marble image warped from 'cyl' to 'mbtfpq' projection",fontsize=12)
-print 'warp to McBryde-Thomas Flat-Polar Quartic map ...'
+print('warp to McBryde-Thomas Flat-Polar Quartic map ...')
 
 # create new figure
 fig=plt.figure()
@@ -45,7 +46,7 @@ m.drawcoastlines(linewidth=0.5,color='0.5')
 m.drawmeridians(np.arange(-180,180,60),labels=[0,0,0,1],color='0.5')
 m.drawparallels(np.arange(-90,90,30),labels=[1,0,0,0],color='0.5')
 plt.title("Blue Marble image - native 'cyl' projection",fontsize=12)
-print 'plot native cylindrical map (no warping needed) ...'
+print('plot native cylindrical map (no warping needed) ...')
 
 # create new figure
 fig=plt.figure()
@@ -59,7 +60,7 @@ m.drawcoastlines(linewidth=0.5,color='0.5')
 m.drawmeridians(np.arange(0,360,60),labels=[0,0,0,1],color='0.5')
 m.drawparallels(np.arange(-90,90,30),labels=[1,0,0,0],color='0.5')
 plt.title("Blue Marble image - non-native 'cyl' projection",fontsize=12)
-print 'plot non-native cylindrical map (warping needed) ...'
+print('plot non-native cylindrical map (warping needed) ...')
 
 # create new figure
 fig=plt.figure()
@@ -73,7 +74,7 @@ m.drawcoastlines(linewidth=0.5,color='0.5')
 m.drawmeridians(np.arange(0,360,30),color='0.5')
 m.drawparallels(np.arange(-90,90,30),color='0.5')
 plt.title("Blue Marble image warped from 'cyl' to 'ortho' projection",fontsize=12)
-print 'warp to orthographic map ...'
+print('warp to orthographic map ...')
 
 # create new figure
 fig=plt.figure()
@@ -91,7 +92,7 @@ m.drawparallels(parallels,labels=[1,1,0,1],color='0.5')
 meridians = np.arange(10.,360.,30.)
 m.drawmeridians(meridians,labels=[1,1,0,1],color='0.5')
 plt.title("Blue Marble image warped from 'cyl' to 'lcc' projection",fontsize=12)
-print 'warp to lambert conformal map ...'
+print('warp to lambert conformal map ...')
 
 # create new figure
 fig=plt.figure()
@@ -105,6 +106,6 @@ im = m.bluemarble(scale=0.5)
 m.drawmeridians(np.arange(0,360,20),color='0.5')
 m.drawparallels(np.arange(-80,81,20),color='0.5')
 plt.title("Blue Marble image warped from 'cyl' to 'omerc' projection",fontsize=12)
-print 'warp to oblique mercator map ...'
+print('warp to oblique mercator map ...')
 
 plt.show()
