@@ -1,3 +1,4 @@
+from __future__ import print_function
 # this example reads today's numerical weather forecasts 
 # from the NOAA OpenDAP servers and makes a multi-panel plot.
 # This version demonstrates the use of the AxesGrid toolkit.
@@ -31,12 +32,12 @@ except:
         msg = """
 opendap server not providing the requested data.
 Try another date by providing YYYYMMDD on command line."""
-        raise IOError, msg
+        raise IOError(msg)
 
 
 # read lats,lons,times.
 
-print data.variables.keys()
+print(data.variables.keys())
 latitudes = data.variables['lat']
 longitudes = data.variables['lon']
 fcsttimes = data.variables['time']
@@ -51,8 +52,8 @@ fcsthrs = []
 for fdate in fdates:
     fdiff = fdate-fdates[0]
     fcsthrs.append(fdiff.days*24. + fdiff.seconds/3600.)
-print fcsthrs
-print verifdates
+print(fcsthrs)
+print(verifdates)
 lats = latitudes[:]
 nlats = len(lats)
 lons1 = longitudes[:]
