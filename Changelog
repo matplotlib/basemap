@@ -1,3 +1,6 @@
+* fix splitting of parallels in conic projections that cross the dateline
+  (issue 40).
+
 version 1.0.3 (git tag v1.0.3)
 ------------------------------
 * fix some more python 3 compatibility issues (all examples now
