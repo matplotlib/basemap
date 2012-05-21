@@ -78,8 +78,8 @@ denote the location of Boulder, CO, given the lat/lon position.</p>
 <span class="c"># draw a boundary around the map, fill the background.</span>
 <span class="c"># this background will end up being the ocean color, since</span>
 <span class="c"># the continents will be drawn on top.</span>
-<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span> 
-<span class="c"># fill continents, set lake color same as ocean color. </span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
+<span class="c"># fill continents, set lake color same as ocean color.</span>
 <span class="n">m</span><span class="o">.</span><span class="n">fillcontinents</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;coral&#39;</span><span class="p">,</span><span class="n">lake_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
 <span class="c"># draw parallels and meridians.</span>
 <span class="c"># label parallels on right and top</span>
@@ -91,19 +91,22 @@ denote the location of Boulder, CO, given the lat/lon position.</p>
 <span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">meridians</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="bp">True</span><span class="p">,</span><span class="bp">False</span><span class="p">,</span><span class="bp">False</span><span class="p">,</span><span class="bp">True</span><span class="p">])</span>
 <span class="c"># plot blue dot on Boulder, colorado and label it as such.</span>
 <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span> <span class="o">=</span> <span class="o">-</span><span class="mf">104.237</span><span class="p">,</span> <span class="mf">40.125</span> <span class="c"># Location of Boulder</span>
-<span class="c"># convert to map projection coords. </span>
+<span class="c"># convert to map projection coords.</span>
 <span class="c"># Note that lon,lat can be scalars, lists or numpy arrays.</span>
-<span class="n">xpt</span><span class="p">,</span><span class="n">ypt</span> <span class="o">=</span> <span class="n">m</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span><span class="n">lat</span><span class="p">)</span> 
+<span class="n">xpt</span><span class="p">,</span><span class="n">ypt</span> <span class="o">=</span> <span class="n">m</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span><span class="n">lat</span><span class="p">)</span>
 <span class="c"># convert back to lat/lon</span>
 <span class="n">lonpt</span><span class="p">,</span> <span class="n">latpt</span> <span class="o">=</span> <span class="n">m</span><span class="p">(</span><span class="n">xpt</span><span class="p">,</span><span class="n">ypt</span><span class="p">,</span><span class="n">inverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">m</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xpt</span><span class="p">,</span><span class="n">ypt</span><span class="p">,</span><span class="s">&#39;bo&#39;</span><span class="p">)</span>  <span class="c"># plot a blue dot there</span>
 <span class="c"># put some text next to the dot, offset a little bit</span>
 <span class="c"># (the offset is in map projection coordinates)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">xpt</span><span class="o">+</span><span class="mi">100000</span><span class="p">,</span><span class="n">ypt</span><span class="o">+</span><span class="mi">100000</span><span class="p">,</span><span class="s">&#39;Boulder (</span><span class="si">%5.1f</span><span class="s">W,</span><span class="si">%3.1f</span><span class="s">N)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">lonpt</span><span class="p">,</span><span class="n">latpt</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;plotboulder.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/plotboulder.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/plotboulder.png" src="../_images/plotboulder.png" />
+</div>
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
@@ -165,8 +168,8 @@ denote the location of Boulder, CO, given the lat/lon position.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Oct 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on May 21, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

@@ -41,6 +41,9 @@ time, many compromise between the two.
     moll.rst
     hammer.rst
     robin.rst
+    eck4.rst
+    kav7.rst
+    mbtfpq.rst
     sinu.rst
     cyl.rst
     cass.rst
@@ -58,5 +61,4 @@ time, many compromise between the two.
     pstere.rst
     plaea.rst
     paeqd.rst
-    mbtfpq.rst
     vandg.rst

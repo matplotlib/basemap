@@ -87,7 +87,7 @@ shape is not.</p>
 <span class="c"># draw parallels and meridians.</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawparallels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">80.</span><span class="p">,</span><span class="mf">81.</span><span class="p">,</span><span class="mf">20.</span><span class="p">))</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">180.</span><span class="p">,</span><span class="mf">181.</span><span class="p">,</span><span class="mf">20.</span><span class="p">))</span>
-<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span> 
+<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
 <span class="c"># draw tissot&#39;s indicatrix to show distortion.</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">ymax</span><span class="o">/</span><span class="mi">20</span><span class="p">,</span><span class="mi">19</span><span class="o">*</span><span class="n">m</span><span class="o">.</span><span class="n">ymax</span><span class="o">/</span><span class="mi">20</span><span class="p">,</span><span class="mi">9</span><span class="p">):</span>
@@ -96,10 +96,13 @@ shape is not.</p>
         <span class="n">poly</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">tissot</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="mf">1.5</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span>\
                         <span class="n">facecolor</span><span class="o">=</span><span class="s">&#39;green&#39;</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Lambert Conformal Projection&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;lcc.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/lcc.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/lcc.png" src="../_images/lcc.png" />
+</div>
 </div>
 
 
@@ -158,8 +161,8 @@ shape is not.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Oct 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on May 21, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

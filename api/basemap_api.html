@@ -68,7 +68,7 @@ heavy lifting), and the following functions:</p>
 <p><a class="reference internal" href="#mpl_toolkits.basemap.addcyclic" title="mpl_toolkits.basemap.addcyclic"><tt class="xref py py-func docutils literal"><span class="pre">addcyclic()</span></tt></a>: Add cyclic (wraparound) point in longitude.</p>
 <dl class="class">
 <dt id="mpl_toolkits.basemap.Basemap">
-<em class="property">class </em><tt class="descclassname">mpl_toolkits.basemap.</tt><tt class="descname">Basemap</tt><big>(</big><em>llcrnrlon=None</em>, <em>llcrnrlat=None</em>, <em>urcrnrlon=None</em>, <em>urcrnrlat=None</em>, <em>llcrnrx=None</em>, <em>llcrnry=None</em>, <em>urcrnrx=None</em>, <em>urcrnry=None</em>, <em>width=None</em>, <em>height=None</em>, <em>projection='cyl'</em>, <em>resolution='c'</em>, <em>area_thresh=None</em>, <em>rsphere=6370997.0</em>, <em>lat_ts=None</em>, <em>lat_1=None</em>, <em>lat_2=None</em>, <em>lat_0=None</em>, <em>lon_0=None</em>, <em>lon_1=None</em>, <em>lon_2=None</em>, <em>no_rot=False</em>, <em>suppress_ticks=True</em>, <em>satellite_height=35786000</em>, <em>boundinglat=None</em>, <em>fix_aspect=True</em>, <em>anchor='C'</em>, <em>celestial=False</em>, <em>ax=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">mpl_toolkits.basemap.</tt><tt class="descname">Basemap</tt><big>(</big><em>llcrnrlon=None</em>, <em>llcrnrlat=None</em>, <em>urcrnrlon=None</em>, <em>urcrnrlat=None</em>, <em>llcrnrx=None</em>, <em>llcrnry=None</em>, <em>urcrnrx=None</em>, <em>urcrnry=None</em>, <em>width=None</em>, <em>height=None</em>, <em>projection='cyl'</em>, <em>resolution='c'</em>, <em>area_thresh=None</em>, <em>rsphere=6370997.0</em>, <em>lat_ts=None</em>, <em>lat_1=None</em>, <em>lat_2=None</em>, <em>lat_0=None</em>, <em>lon_0=None</em>, <em>lon_1=None</em>, <em>lon_2=None</em>, <em>k_0=None</em>, <em>no_rot=False</em>, <em>suppress_ticks=True</em>, <em>satellite_height=35786000</em>, <em>boundinglat=None</em>, <em>fix_aspect=True</em>, <em>anchor='C'</em>, <em>celestial=False</em>, <em>round=False</em>, <em>ax=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up a basemap with specified map projection.
 and creates the coastline data structures in map projection
 coordinates.</p>
@@ -89,17 +89,29 @@ Supported values for the projection keyword are:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>aeqd</td>
+<tr class="row-even"><td>mbtfpq</td>
+<td>McBryde-Thomas Flat-Polar Quartic</td>
+</tr>
+<tr class="row-odd"><td>aeqd</td>
 <td>Azimuthal Equidistant</td>
+</tr>
+<tr class="row-even"><td>sinu</td>
+<td>Sinusoidal</td>
 </tr>
 <tr class="row-odd"><td>poly</td>
 <td>Polyconic</td>
 </tr>
-<tr class="row-even"><td>gnom</td>
+<tr class="row-even"><td>omerc</td>
+<td>Oblique Mercator</td>
+</tr>
+<tr class="row-odd"><td>gnom</td>
 <td>Gnomonic</td>
 </tr>
-<tr class="row-odd"><td>moll</td>
+<tr class="row-even"><td>moll</td>
 <td>Mollweide</td>
+</tr>
+<tr class="row-odd"><td>lcc</td>
+<td>Lambert Conformal</td>
 </tr>
 <tr class="row-even"><td>tmerc</td>
 <td>Transverse Mercator</td>
@@ -110,17 +122,29 @@ Supported values for the projection keyword are:</p>
 <tr class="row-even"><td>gall</td>
 <td>Gall Stereographic Cylindrical</td>
 </tr>
-<tr class="row-odd"><td>mill</td>
+<tr class="row-odd"><td>npaeqd</td>
+<td>North-Polar Azimuthal Equidistant</td>
+</tr>
+<tr class="row-even"><td>mill</td>
 <td>Miller Cylindrical</td>
 </tr>
-<tr class="row-even"><td>merc</td>
+<tr class="row-odd"><td>merc</td>
 <td>Mercator</td>
 </tr>
-<tr class="row-odd"><td>stere</td>
+<tr class="row-even"><td>stere</td>
 <td>Stereographic</td>
 </tr>
-<tr class="row-even"><td>npstere</td>
+<tr class="row-odd"><td>eqdc</td>
+<td>Equidistant Conic</td>
+</tr>
+<tr class="row-even"><td>cyl</td>
+<td>Cylindrical Equidistant</td>
+</tr>
+<tr class="row-odd"><td>npstere</td>
 <td>North-Polar Stereographic</td>
+</tr>
+<tr class="row-even"><td>spstere</td>
+<td>South-Polar Stereographic</td>
 </tr>
 <tr class="row-odd"><td>hammer</td>
 <td>Hammer</td>
@@ -131,38 +155,14 @@ Supported values for the projection keyword are:</p>
 <tr class="row-odd"><td>nsper</td>
 <td>Near-Sided Perspective</td>
 </tr>
-<tr class="row-even"><td>vandg</td>
-<td>van der Grinten</td>
+<tr class="row-even"><td>eck4</td>
+<td>Eckert IV</td>
 </tr>
-<tr class="row-odd"><td>laea</td>
-<td>Lambert Azimuthal Equal Area</td>
-</tr>
-<tr class="row-even"><td>mbtfpq</td>
-<td>McBryde-Thomas Flat-Polar Quartic</td>
-</tr>
-<tr class="row-odd"><td>sinu</td>
-<td>Sinusoidal</td>
-</tr>
-<tr class="row-even"><td>spstere</td>
-<td>South-Polar Stereographic</td>
-</tr>
-<tr class="row-odd"><td>lcc</td>
-<td>Lambert Conformal</td>
-</tr>
-<tr class="row-even"><td>npaeqd</td>
-<td>North-Polar Azimuthal Equidistant</td>
-</tr>
-<tr class="row-odd"><td>eqdc</td>
-<td>Equidistant Conic</td>
-</tr>
-<tr class="row-even"><td>cyl</td>
-<td>Cylindrical Equidistant</td>
-</tr>
-<tr class="row-odd"><td>omerc</td>
-<td>Oblique Mercator</td>
-</tr>
-<tr class="row-even"><td>aea</td>
+<tr class="row-odd"><td>aea</td>
 <td>Albers Equal Area</td>
+</tr>
+<tr class="row-even"><td>kav7</td>
+<td>Kavrayskiy VII</td>
 </tr>
 <tr class="row-odd"><td>spaeqd</td>
 <td>South-Polar Azimuthal Equidistant</td>
@@ -172,6 +172,12 @@ Supported values for the projection keyword are:</p>
 </tr>
 <tr class="row-odd"><td>cass</td>
 <td>Cassini-Soldner</td>
+</tr>
+<tr class="row-even"><td>vandg</td>
+<td>van der Grinten</td>
+</tr>
+<tr class="row-odd"><td>laea</td>
+<td>Lambert Azimuthal Equal Area</td>
 </tr>
 <tr class="row-even"><td>splaea</td>
 <td>South-Polar Lambert Azimuthal</td>
@@ -241,7 +247,7 @@ domain (degrees).</td>
 </tbody>
 </table>
 <p>For <tt class="docutils literal"><span class="pre">sinu</span></tt>, <tt class="docutils literal"><span class="pre">moll</span></tt>, <tt class="docutils literal"><span class="pre">hammer</span></tt>, <tt class="docutils literal"><span class="pre">npstere</span></tt>, <tt class="docutils literal"><span class="pre">spstere</span></tt>, <tt class="docutils literal"><span class="pre">nplaea</span></tt>, <tt class="docutils literal"><span class="pre">splaea</span></tt>,
-<tt class="docutils literal"><span class="pre">npaeqd</span></tt>, <tt class="docutils literal"><span class="pre">spaeqd</span></tt>, <tt class="docutils literal"><span class="pre">robin</span></tt> or <tt class="docutils literal"><span class="pre">mbtfpq</span></tt>, the values of
+<tt class="docutils literal"><span class="pre">npaeqd</span></tt>, <tt class="docutils literal"><span class="pre">spaeqd</span></tt>, <tt class="docutils literal"><span class="pre">robin</span></tt>, <tt class="docutils literal"><span class="pre">eck4</span></tt>, <tt class="docutils literal"><span class="pre">kav7</span></tt>, or <tt class="docutils literal"><span class="pre">mbtfpq</span></tt>, the values of
 llcrnrlon, llcrnrlat, urcrnrlon, urcrnrlat, width and height are ignored
 (because either they are computed internally, or entire globe is
 always plotted).</p>
@@ -391,21 +397,25 @@ centerline for oblique mercator.</td>
 <td>Longitude of one of the two points on the projection
 centerline for oblique mercator.</td>
 </tr>
-<tr class="row-odd"><td>no_rot</td>
+<tr class="row-odd"><td>k_0</td>
+<td>Scale factor at natural origin (used
+by &#8216;tmerc&#8217;, &#8216;omerc&#8217;, &#8216;stere&#8217; and &#8216;lcc&#8217;).</td>
+</tr>
+<tr class="row-even"><td>no_rot</td>
 <td>only used by oblique mercator.
 If set to True, the map projection coordinates will
 not be rotated to true North.  Default is False
 (projection coordinates are automatically rotated).</td>
 </tr>
-<tr class="row-even"><td>lat_0</td>
+<tr class="row-odd"><td>lat_0</td>
 <td>central latitude (y-axis origin) - used by all
 projections.</td>
 </tr>
-<tr class="row-odd"><td>lon_0</td>
+<tr class="row-even"><td>lon_0</td>
 <td>central meridian (x-axis origin) - used by all
 projections.</td>
 </tr>
-<tr class="row-even"><td>boundinglat</td>
+<tr class="row-odd"><td>boundinglat</td>
 <td>bounding latitude for pole-centered projections
 (npstere,spstere,nplaea,splaea,npaeqd,spaeqd).
 These projections are square regions centered
@@ -413,6 +423,12 @@ on the north or south pole.
 The longitude lon_0 is at 6-o&#8217;clock, and the
 latitude circle boundinglat is tangent to the edge
 of the map at lon_0.</td>
+</tr>
+<tr class="row-even"><td>round</td>
+<td>cut off pole-centered projection at boundinglat
+(so plot is a circle instead of a square). Only
+relevant for npstere,spstere,nplaea,splaea,npaeqd
+or spaeqd projections. Default False.</td>
 </tr>
 <tr class="row-odd"><td>satellite_height</td>
 <td>height of satellite (in m) above equator -
@@ -837,8 +853,9 @@ filling interior of region.</p>
 </tr>
 <tr class="row-even"><td>fill_color</td>
 <td>fill the map region background with this
-color (default is no fill or fill with axis
-background color).</td>
+color (default is to fill with axis
+background color). If set to the string
+&#8216;none&#8217;, no filling is done.</td>
 </tr>
 <tr class="row-odd"><td>zorder</td>
 <td>sets the zorder for filling map background
@@ -1171,7 +1188,7 @@ to downsample the image (<tt class="docutils literal"><span class="pre">scale=0.
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.fillcontinents">
-<tt class="descname">fillcontinents</tt><big>(</big><em>color='0.8'</em>, <em>lake_color=None</em>, <em>ax=None</em>, <em>zorder=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.fillcontinents" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fillcontinents</tt><big>(</big><em>color='0.8'</em>, <em>lake_color=None</em>, <em>ax=None</em>, <em>zorder=None</em>, <em>alpha=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.fillcontinents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fill continents.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -1199,6 +1216,9 @@ specified, uses default zorder for a Polygon patch).
 Set to zero if you want to paint over the filled
 continents).</td>
 </tr>
+<tr class="row-even"><td>alpha</td>
+<td>sets alpha transparency for continent polygons</td>
+</tr>
 </tbody>
 </table>
 <p>After filling continents, lakes are re-filled with
@@ -1212,6 +1232,25 @@ axis background color.</p>
 <dd><p>compute <tt class="docutils literal"><span class="pre">points</span></tt> points along a great circle with endpoints
 <tt class="docutils literal"><span class="pre">(lon1,lat1)</span></tt> and <tt class="docutils literal"><span class="pre">(lon2,lat2)</span></tt>.</p>
 <p>Returns arrays x,y with map projection coordinates.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mpl_toolkits.basemap.Basemap.hexbin">
+<tt class="descname">hexbin</tt><big>(</big><em>x</em>, <em>y</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.hexbin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a hexagonal binning plot of x versus y, where x, y are 1-D
+sequences of the same length, N. If C is None (the default), this is a
+histogram of the number of occurences of the observations at
+(x[i],y[i]).</p>
+<p>If C is specified, it specifies values at the coordinate (x[i],y[i]).
+These values are accumulated for each hexagonal bin and then reduced
+according to reduce_C_function, which defaults to numpy?s mean function
+(np.mean). (If C is specified, it must also be a 1-D sequence of the
+same length as x and y.)</p>
+<p>x, y and/or C may be masked arrays, in which case only unmasked points
+will be plotted.</p>
+<p>(see matplotlib.pyplot.hexbin documentation).</p>
+<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Other **kwargs passed on to matplotlib.pyplot.hexbin</p>
 </dd></dl>
 
 <dl class="method">
@@ -1317,6 +1356,7 @@ As a result, those values will not be plotted.</p>
 <dt id="mpl_toolkits.basemap.Basemap.quiver">
 <tt class="descname">quiver</tt><big>(</big><em>x</em>, <em>y</em>, <em>u</em>, <em>v</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.quiver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a vector plot (u, v) with arrows on the map.
+Grid must be evenly spaced regular grid in x and y.
 (see matplotlib.pyplot.quiver documentation).</p>
 <p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
 <p>Other *args and **kwargs passed on to matplotlib.pyplot.quiver.</p>
@@ -1489,6 +1529,15 @@ use quite a bit of memory.  The <tt class="docutils literal"><span class="pre">s
 to downsample the image (<tt class="docutils literal"><span class="pre">scale=0.5</span></tt> downsamples to 5400x2700).</p>
 <p>**kwargs passed on to <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><tt class="xref py py-meth docutils literal"><span class="pre">imshow()</span></tt></a>.</p>
 <p>returns a matplotlib.image.AxesImage instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mpl_toolkits.basemap.Basemap.streamplot">
+<tt class="descname">streamplot</tt><big>(</big><em>x</em>, <em>y</em>, <em>u</em>, <em>v</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.streamplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws streamlines of a vector flow.
+(see matplotlib.pyplot.streamplot documentation).</p>
+<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Other *args and **kwargs passed on to matplotlib.pyplot.streamplot.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1918,8 +1967,8 @@ longitude. Default True.</td>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Nov 05, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on May 21, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

@@ -13,17 +13,15 @@ and parallels cannot be labelled on maps with
 ``proj`` set to ``ortho`` (orthographic), ``geos`` (geostationary),
 ``vandg`` (van der Grinten) or ``nsper`` (near-sided perspective),
 and meridians cannot be labelled on maps with 
-``proj`` set to ``robin`` (robinson), ``mbtfpq``
-(McBryde-Thomas Flat Polar Quartic), ``moll`` (Mollweide),
-``hammer`` (Hammer), or ``sinu``
+``proj`` set to ``ortho`` (orthographic), ``geos`` (geostationary),
+``vandg`` (van der Grinten), ``nsper`` (near-sided perspective),
+``moll`` (Mollweide), ``hammer`` (Hammer), or ``sinu``
 (sinusoidal).  This is because the lines can be very close 
 together where they intersect the boundary on these maps, so that
 they really need to be labelled manually on the interior of the plot.
 Here's an example that shows how to draw parallels and meridians
 and label them on different sides of the plot.
 
-.. literalinclude:: figures/graticule.py
-
-.. image:: figures/graticule.png
+.. plot:: users/figures/graticule.py
 
 .. toctree::

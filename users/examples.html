@@ -120,10 +120,13 @@ to retrieve datasets over http):</p>
 <span class="c"># contour data over the map.</span>
 <span class="n">cs</span> <span class="o">=</span> <span class="nb">map</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">wave</span><span class="o">+</span><span class="n">mean</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="n">linewidths</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;contour lines over filled continent background&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;contour1.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/contour1.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/contour1.png" src="../_images/contour1.png" />
+</div>
 <ul class="simple">
 <li>Plot precip with filled contours</li>
 </ul>
@@ -175,10 +178,13 @@ to retrieve datasets over http):</p>
 <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s">&#39;mm&#39;</span><span class="p">)</span>
 <span class="c"># add title</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">prcpvar</span><span class="o">.</span><span class="n">long_name</span><span class="o">+</span><span class="s">&#39; for period ending &#39;</span><span class="o">+</span><span class="n">prcpvar</span><span class="o">.</span><span class="n">dateofdata</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;plotprecip.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/plotprecip.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/plotprecip.png" src="../_images/plotprecip.png" />
+</div>
 <ul class="simple">
 <li>Plot sea-level pressure weather map with labelled highs and lows</li>
 </ul>
@@ -189,10 +195,10 @@ to retrieve datasets over http):</p>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span><span class="p">,</span> <span class="n">addcyclic</span>
 <span class="kn">from</span> <span class="nn">scipy.ndimage.filters</span> <span class="kn">import</span> <span class="n">minimum_filter</span><span class="p">,</span> <span class="n">maximum_filter</span>
-<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span> 
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
 
 <span class="k">def</span> <span class="nf">extrema</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;wrap&#39;</span><span class="p">,</span><span class="n">window</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;find the indices of local extrema (min and max)</span>
@@ -204,8 +210,8 @@ to retrieve datasets over http):</p>
     <span class="c"># Return the indices of the maxima, minima</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">mat</span> <span class="o">==</span> <span class="n">mn</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">mat</span> <span class="o">==</span> <span class="n">mx</span><span class="p">)</span>
 
-<span class="c"># set date (yesterday at 00 UTC)</span>
-<span class="n">YYYYMMDDHH</span> <span class="o">=</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">timedelta</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y%m</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;00&#39;</span>
+<span class="c"># set date (today at 00 UTC)</span>
+<span class="n">YYYYMMDDHH</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y%m</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;00&#39;</span>
 
 <span class="c"># open OpenDAP dataset.</span>
 <span class="n">data</span><span class="o">=</span><span class="n">Dataset</span><span class="p">(</span><span class="s">&quot;http://nomad2.ncep.noaa.gov:9090/dods/gdas/rotating/gdas&quot;</span><span class="o">+</span><span class="n">YYYYMMDDHH</span><span class="o">+</span><span class="s">&quot;.grib2&quot;</span><span class="p">)</span>
@@ -269,10 +275,13 @@ to retrieve datasets over http):</p>
                     <span class="n">bbox</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s">&quot;square&quot;</span><span class="p">,</span><span class="n">ec</span><span class="o">=</span><span class="s">&#39;None&#39;</span><span class="p">,</span><span class="n">fc</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)))</span>
             <span class="n">xyplotted</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Mean Sea-Level Pressure (with Highs and Lows) </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">YYYYMMDDHH</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;plothighsandlows.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/plothighsandlows.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/plothighsandlows.png" src="../_images/plothighsandlows.png" />
+</div>
 <ul class="simple">
 <li>Plot hurricane tracks from a shapefile</li>
 </ul>
@@ -283,7 +292,7 @@ to retrieve datasets over http):</p>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span> 
+<span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
 <span class="c"># Lambert Conformal Conic map.</span>
 <span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">llcrnrlon</span><span class="o">=-</span><span class="mf">100.</span><span class="p">,</span><span class="n">llcrnrlat</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span><span class="n">urcrnrlon</span><span class="o">=-</span><span class="mf">20.</span><span class="p">,</span><span class="n">urcrnrlat</span><span class="o">=</span><span class="mf">57.</span><span class="p">,</span>
             <span class="n">projection</span><span class="o">=</span><span class="s">&#39;lcc&#39;</span><span class="p">,</span><span class="n">lat_1</span><span class="o">=</span><span class="mf">20.</span><span class="p">,</span><span class="n">lat_2</span><span class="o">=</span><span class="mf">40.</span><span class="p">,</span><span class="n">lon_0</span><span class="o">=-</span><span class="mf">60.</span><span class="p">,</span>
@@ -305,7 +314,7 @@ to retrieve datasets over http):</p>
     <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
         <span class="n">xx</span><span class="p">,</span><span class="n">yy</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">)</span>
         <span class="c"># show part of track where storm &gt; Cat 4 as thick red.</span>
-        <span class="k">if</span> <span class="n">cat</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;H4&#39;</span><span class="p">,</span><span class="s">&#39;H5&#39;</span><span class="p">]:</span> 
+        <span class="k">if</span> <span class="n">cat</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;H4&#39;</span><span class="p">,</span><span class="s">&#39;H5&#39;</span><span class="p">]:</span>
             <span class="n">m</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span><span class="n">yy</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">cat</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;H1&#39;</span><span class="p">,</span><span class="s">&#39;H2&#39;</span><span class="p">,</span><span class="s">&#39;H3&#39;</span><span class="p">]:</span>
             <span class="n">m</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span><span class="n">yy</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">)</span>
@@ -317,10 +326,13 @@ to retrieve datasets over http):</p>
 <span class="n">m</span><span class="o">.</span><span class="n">drawparallels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Atlantic Hurricane Tracks (Storms Reaching Category 4, 1851-2004)&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;hurrtracks.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/hurrtracks.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/hurrtracks.png" src="../_images/hurrtracks.png" />
+</div>
 <ul class="simple">
 <li>Plot etopo5 topography/bathymetry data as an image (with
 and without shading from a specified light source).</li>
@@ -331,8 +343,9 @@ and without shading from a specified light source).</li>
 <span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
 
 <span class="c"># read in etopo5 topography/bathymetry.</span>
-<span class="n">etopodata</span> <span class="o">=</span>\
-<span class="n">Dataset</span><span class="p">(</span><span class="s">&#39;http://ferret.pmel.noaa.gov/thredds/dodsC/data/PMEL/etopo5.nc&#39;</span><span class="p">)</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s">&#39;http://ferret.pmel.noaa.gov/thredds/dodsC/data/PMEL/etopo5.nc&#39;</span>
+<span class="n">etopodata</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
 <span class="n">topoin</span> <span class="o">=</span> <span class="n">etopodata</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;ROSE&#39;</span><span class="p">][:]</span>
 <span class="n">lons</span> <span class="o">=</span> <span class="n">etopodata</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;ETOPO05_X&#39;</span><span class="p">][:]</span>
 <span class="n">lats</span> <span class="o">=</span> <span class="n">etopodata</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;ETOPO05_Y&#39;</span><span class="p">][:]</span>
@@ -368,9 +381,14 @@ and without shading from a specified light source).</li>
 <span class="c"># add colorbar</span>
 <span class="n">cb</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="s">&quot;right&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s">&quot;5%&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="s">&#39;2%&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;ETOPO5 Topography - Lambert Conformal Conic&#39;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;etopo5.png&#39;</span><span class="p">)</span>
-
-<span class="c"># make a shaded relief plot.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../users/figures/plotetopo5.py">Source code</a>)</p>
+<div class="figure">
+<img alt="../_images/plotetopo5_00_00.png" src="../_images/plotetopo5_00_00.png" />
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># make a shaded relief plot.</span>
 
 <span class="c"># create new figure, axes instance.</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
@@ -389,11 +407,12 @@ and without shading from a specified light source).</li>
 <span class="n">m</span><span class="o">.</span><span class="n">drawcountries</span><span class="p">()</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawstates</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;Shaded ETOPO5 Topography - Lambert Conformal Conic&#39;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;etopo5_shaded.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<img alt="../_images/etopo5.png" src="../_images/etopo5.png" />
-<img alt="../_images/etopo5_shaded.png" src="../_images/etopo5_shaded.png" />
+<div class="figure">
+<img alt="../_images/plotetopo5_01_00.png" src="../_images/plotetopo5_01_00.png" />
+</div>
 <ul class="simple">
 <li>Plot markers at locations of <a class="reference external" href="http://www.argo.ucsd.edu/">ARGO</a> floats.</li>
 </ul>
@@ -424,31 +443,30 @@ and without shading from a specified light source).</li>
 <span class="n">m</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s">&#39;o&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Locations of </span><span class="si">%s</span><span class="s"> ARGO floats active between </span><span class="si">%s</span><span class="s"> and </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>\
         <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lats</span><span class="p">),</span><span class="n">date1</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y%m</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">),</span><span class="n">date2</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%Y%m</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">)))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;plotargo.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/plotargo.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/plotargo.png" src="../_images/plotargo.png" />
+</div>
 <ul class="simple">
 <li>Pseudo-color plot of SST and sea ice analysis.</li>
 </ul>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
-<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">date2index</span><span class="p">,</span> <span class="n">num2date</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">datetime</span>
-<span class="c"># create datetime object for desired time</span>
-<span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2007</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-<span class="c"># open dataset.</span>
-<span class="n">dataset</span> <span class="o">=</span>\
-<span class="n">Dataset</span><span class="p">(</span><span class="s">&#39;http://nomads.ncdc.noaa.gov/thredds/dodsC/oisst2/totalAmsrAgg&#39;</span><span class="p">)</span>
-<span class="c"># find index of desired time.</span>
-<span class="n">time</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;time&#39;</span><span class="p">]</span>
-<span class="n">nt</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s">&#39;standard&#39;</span><span class="p">)</span>
+<span class="n">date</span> <span class="o">=</span> <span class="s">&#39;20071215&#39;</span> <span class="c"># date to plot.</span>
+<span class="c"># open dataset for that date.</span>
+<span class="n">dataset</span> <span class="o">=</span> \
+<span class="n">Dataset</span><span class="p">(</span><span class="s">&#39;http://nomads.ncdc.noaa.gov/thredds/dodsC/oisst2/</span><span class="si">%s</span><span class="s">/AVHRR-AMSR/amsr-avhrr-v2.</span><span class="si">%s</span><span class="s">.nc&#39;</span><span class="o">%</span>\
+       <span class="p">(</span><span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span><span class="n">date</span><span class="p">))</span>
 <span class="c"># read sst.  Will automatically create a masked array using</span>
-<span class="c"># missing_value variable attribute.</span>
-<span class="n">sst</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;sst&#39;</span><span class="p">][</span><span class="n">nt</span><span class="p">]</span>
+<span class="c"># missing_value variable attribute. &#39;squeeze out&#39; singleton dimensions.</span>
+<span class="n">sst</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;sst&#39;</span><span class="p">][:]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 <span class="c"># read ice.</span>
-<span class="n">ice</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;ice&#39;</span><span class="p">][</span><span class="n">nt</span><span class="p">]</span>
+<span class="n">ice</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;ice&#39;</span><span class="p">][:]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 <span class="c"># read lats and lons (representing centers of grid boxes).</span>
 <span class="n">lats</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;lat&#39;</span><span class="p">][:]</span>
 <span class="n">lons</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;lon&#39;</span><span class="p">][:]</span>
@@ -461,7 +479,7 @@ and without shading from a specified light source).</li>
 <span class="n">lats</span> <span class="o">=</span> <span class="p">(</span><span class="n">lats</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">delat</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 <span class="n">lats</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lats</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">delat</span><span class="p">)</span>
 <span class="n">lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lats</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-<span class="c"># creat figure, axes instances.</span>
+<span class="c"># create figure, axes instances.</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.05</span><span class="p">,</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">0.9</span><span class="p">])</span>
 <span class="c"># create Basemap instance for Robinson projection.</span>
@@ -484,10 +502,13 @@ and without shading from a specified light source).</li>
 <span class="n">cb</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im1</span><span class="p">,</span><span class="s">&quot;bottom&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s">&quot;5%&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="s">&quot;2%&quot;</span><span class="p">)</span>
 <span class="c"># add a title.</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;SST and ICE analysis for </span><span class="si">%s</span><span class="s">&#39;</span><span class="o">%</span><span class="n">date</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;plotsst.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/plotsst.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/plotsst.png" src="../_images/plotsst.png" />
+</div>
 <ul class="simple">
 <li>Plotting wind vectors and wind barbs.</li>
 </ul>
@@ -495,33 +516,31 @@ and without shading from a specified light source).</li>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span><span class="p">,</span> <span class="n">shiftgrid</span>
-<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">date2index</span><span class="p">,</span> <span class="n">num2date</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
 <span class="c"># specify date to plot.</span>
-<span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1993</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">yyyy</span><span class="o">=</span><span class="mi">1993</span><span class="p">;</span> <span class="n">mm</span><span class="o">=</span><span class="mo">03</span><span class="p">;</span> <span class="n">dd</span><span class="o">=</span><span class="mi">14</span><span class="p">;</span> <span class="n">hh</span><span class="o">=</span><span class="mo">00</span>
+<span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">yyyy</span><span class="p">,</span><span class="n">mm</span><span class="p">,</span><span class="n">dd</span><span class="p">,</span><span class="n">hh</span><span class="p">)</span>
 <span class="c"># set OpenDAP server URL.</span>
-<span class="n">URL</span><span class="o">=</span><span class="s">&quot;http://nomad1.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-2/6hr/pgb/pgb&quot;</span>
+<span class="n">URLbase</span><span class="o">=</span><span class="s">&quot;http://nomads.ncdc.noaa.gov/thredds/dodsC/modeldata/cmd_pgbh/&quot;</span>
+<span class="n">URL</span><span class="o">=</span><span class="n">URLbase</span><span class="o">+</span><span class="s">&quot;</span><span class="si">%04i</span><span class="s">/</span><span class="si">%04i%02i</span><span class="s">/</span><span class="si">%04i%02i%02i</span><span class="s">/pgbh00.gdas.</span><span class="si">%04i%02i%02i%02i</span><span class="s">.grb2&quot;</span> <span class="o">%</span>\
+             <span class="p">(</span><span class="n">yyyy</span><span class="p">,</span><span class="n">yyyy</span><span class="p">,</span><span class="n">mm</span><span class="p">,</span><span class="n">yyyy</span><span class="p">,</span><span class="n">mm</span><span class="p">,</span><span class="n">dd</span><span class="p">,</span><span class="n">yyyy</span><span class="p">,</span><span class="n">mm</span><span class="p">,</span><span class="n">dd</span><span class="p">,</span><span class="n">hh</span><span class="p">)</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">URL</span><span class="p">)</span>
-<span class="c"># read lats,lons,times.</span>
-<span class="n">latitudes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;lat&#39;</span><span class="p">][:]</span>
+<span class="c"># read lats,lons</span>
+<span class="c"># reverse latitudes so they go from south to north.</span>
+<span class="n">latitudes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;lat&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">longitudes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;lon&#39;</span><span class="p">][:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-<span class="n">times</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;time&#39;</span><span class="p">]</span>
-<span class="c"># get time index for desired date.</span>
-<span class="n">ntime</span> <span class="o">=</span> <span class="n">date2index</span><span class="p">(</span><span class="n">date</span><span class="p">,</span><span class="n">times</span><span class="p">,</span><span class="n">calendar</span><span class="o">=</span><span class="s">&#39;standard&#39;</span><span class="p">)</span>
 <span class="c"># get sea level pressure and 10-m wind data.</span>
-<span class="n">slpdata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;presmsl&#39;</span><span class="p">]</span>
-<span class="n">udata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;ugrdprs&#39;</span><span class="p">]</span>
-<span class="n">vdata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;vgrdprs&#39;</span><span class="p">]</span>
 <span class="c"># mult slp by 0.01 to put in units of hPa.</span>
-<span class="n">slpin</span> <span class="o">=</span> <span class="mf">0.01</span><span class="o">*</span><span class="n">slpdata</span><span class="p">[</span><span class="n">ntime</span><span class="p">,:,:]</span>
-<span class="n">uin</span> <span class="o">=</span> <span class="n">udata</span><span class="p">[</span><span class="n">ntime</span><span class="p">,</span><span class="mi">0</span><span class="p">,:,:]</span> 
-<span class="n">vin</span> <span class="o">=</span> <span class="n">vdata</span><span class="p">[</span><span class="n">ntime</span><span class="p">,</span><span class="mi">0</span><span class="p">,:,:]</span> 
+<span class="n">slpin</span> <span class="o">=</span> <span class="mf">0.01</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;Pressure_msl&#39;</span><span class="p">][:]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">uin</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;U-component_of_wind_height_above_ground&#39;</span><span class="p">][:]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="n">vin</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s">&#39;V-component_of_wind_height_above_ground&#39;</span><span class="p">][:]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 <span class="c"># add cyclic points manually (could use addcyclic function)</span>
 <span class="n">slp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">slpin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">slpin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-<span class="n">slp</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">slpin</span><span class="p">;</span> <span class="n">slp</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">slpin</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">slp</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">slpin</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="n">slp</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">slpin</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">uin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">uin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-<span class="n">u</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">uin</span><span class="p">;</span> <span class="n">u</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">uin</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">u</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">uin</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="n">u</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">uin</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">vin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">vin</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-<span class="n">v</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">vin</span><span class="p">;</span> <span class="n">v</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">vin</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">v</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">vin</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="n">v</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">vin</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">longitudes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">360.</span><span class="p">);</span> <span class="n">longitudes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">longitudes</span><span class="p">)</span>
 <span class="c"># make 2-d grid of lons, lats</span>
 <span class="n">lons</span><span class="p">,</span> <span class="n">lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">longitudes</span><span class="p">,</span><span class="n">latitudes</span><span class="p">)</span>
@@ -561,9 +580,14 @@ and without shading from a specified light source).</li>
 <span class="n">cb</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s">&#39;hPa&#39;</span><span class="p">)</span>
 <span class="c"># set plot title</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;SLP and Wind Vectors &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">date</span><span class="p">))</span>
-<span class="n">fig1</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;plotwindvec1.png&#39;</span><span class="p">)</span>
-
-<span class="c"># create 2nd figure, add axes</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../users/figures/plotwindvec.py">Source code</a>)</p>
+<div class="figure">
+<img alt="../_images/plotwindvec_00_00.png" src="../_images/plotwindvec_00_00.png" />
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># create 2nd figure, add axes</span>
 <span class="n">fig2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig2</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.8</span><span class="p">])</span>
 <span class="c"># plot SLP contours</span>
@@ -580,11 +604,12 @@ and without shading from a specified light source).</li>
 <span class="n">cb</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s">&#39;hPa&#39;</span><span class="p">)</span>
 <span class="c"># set plot title.</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;SLP and Wind Barbs &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">date</span><span class="p">))</span>
-<span class="n">fig2</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;plotwindvec2.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<img alt="../_images/plotwindvec1.png" src="../_images/plotwindvec1.png" />
-<img alt="../_images/plotwindvec2.png" src="../_images/plotwindvec2.png" />
+<div class="figure">
+<img alt="../_images/plotwindvec_01_00.png" src="../_images/plotwindvec_01_00.png" />
+</div>
 <ul class="simple">
 <li>Draw great circle between NY and London.</li>
 </ul>
@@ -612,10 +637,13 @@ and without shading from a specified light source).</li>
 <span class="c"># draw meridians</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">30</span><span class="p">),</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&#39;Great Circle from New York to London&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;plotgreatcircle.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/plotgreatcircle.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/plotgreatcircle.png" src="../_images/plotgreatcircle.png" />
+</div>
 <ul class="simple">
 <li>Draw day-night terminator on a map.</li>
 </ul>
@@ -623,7 +651,7 @@ and without shading from a specified light source).</li>
 <span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="c"># miller projection </span>
+<span class="c"># miller projection</span>
 <span class="nb">map</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&#39;mill&#39;</span><span class="p">,</span><span class="n">lon_0</span><span class="o">=</span><span class="mi">180</span><span class="p">)</span>
 <span class="c"># plot coastlines, draw label meridians and parallels.</span>
 <span class="nb">map</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">()</span>
@@ -632,15 +660,18 @@ and without shading from a specified light source).</li>
 <span class="c"># fill continents &#39;coral&#39; (with zorder=0), color wet areas &#39;aqua&#39;</span>
 <span class="nb">map</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
 <span class="nb">map</span><span class="o">.</span><span class="n">fillcontinents</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;coral&#39;</span><span class="p">,</span><span class="n">lake_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
-<span class="c"># shade the night areas, with alpha transparency so the </span>
+<span class="c"># shade the night areas, with alpha transparency so the</span>
 <span class="c"># map shows through. Use current time in UTC.</span>
 <span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
 <span class="n">CS</span><span class="o">=</span><span class="nb">map</span><span class="o">.</span><span class="n">nightshade</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Day/Night Map for </span><span class="si">%s</span><span class="s"> (UTC)&#39;</span> <span class="o">%</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%d</span><span class="s"> %b %Y %H:%M:%S&quot;</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;plotdaynight.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/plotdaynight.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/plotdaynight.png" src="../_images/plotdaynight.png" />
+</div>
 </div>
 
 
@@ -698,8 +729,8 @@ and without shading from a specified light source).</li>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Nov 05, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on May 21, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

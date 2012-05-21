@@ -30,7 +30,7 @@
           href="../_static/opensearch.xml"/>
     <link rel="top" title="Basemap Matplotlib Toolkit 1.0.2 documentation" href="../index.html" />
     <link rel="up" title="Setting up the map" href="mapsetup.html" />
-    <link rel="next" title="Sinusoidal Projection" href="sinu.html" />
+    <link rel="next" title="Eckert IV Projection" href="eck4.html" />
     <link rel="prev" title="Hammer Projection" href="hammer.html" /> 
   </head>
   <body>
@@ -44,7 +44,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="sinu.html" title="Sinusoidal Projection"
+          <a href="eck4.html" title="Eckert IV Projection"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="hammer.html" title="Hammer Projection"
@@ -74,12 +74,15 @@
 <span class="c"># draw parallels and meridians.</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawparallels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">90.</span><span class="p">,</span><span class="mf">120.</span><span class="p">,</span><span class="mf">30.</span><span class="p">))</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">360.</span><span class="p">,</span><span class="mf">60.</span><span class="p">))</span>
-<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span> 
+<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Robinson Projection&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;robin.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/robin.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/robin.png" src="../_images/robin.png" />
+</div>
 </div>
 
 
@@ -92,8 +95,8 @@
   <p class="topless"><a href="hammer.html"
                         title="previous chapter">Hammer Projection</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="sinu.html"
-                        title="next chapter">Sinusoidal Projection</a></p>
+  <p class="topless"><a href="eck4.html"
+                        title="next chapter">Eckert IV Projection</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/users/robin.txt"
@@ -126,7 +129,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="sinu.html" title="Sinusoidal Projection"
+          <a href="eck4.html" title="Eckert IV Projection"
              >next</a> |</li>
         <li class="right" >
           <a href="hammer.html" title="Hammer Projection"
@@ -138,8 +141,8 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Oct 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on May 21, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

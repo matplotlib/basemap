@@ -30,8 +30,8 @@
           href="../_static/opensearch.xml"/>
     <link rel="top" title="Basemap Matplotlib Toolkit 1.0.2 documentation" href="../index.html" />
     <link rel="up" title="Setting up the map" href="mapsetup.html" />
-    <link rel="next" title="van der Grinten Projection" href="vandg.html" />
-    <link rel="prev" title="Polar Azimuthal Equidistant Projection" href="paeqd.html" /> 
+    <link rel="next" title="Sinusoidal Projection" href="sinu.html" />
+    <link rel="prev" title="Kavrayskiy VII Projection" href="kav7.html" /> 
   </head>
   <body>
     <div class="related">
@@ -44,10 +44,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="vandg.html" title="van der Grinten Projection"
+          <a href="sinu.html" title="Sinusoidal Projection"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="paeqd.html" title="Polar Azimuthal Equidistant Projection"
+          <a href="kav7.html" title="Kavrayskiy VII Projection"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.2 documentation</a> &raquo;</li>
           <li><a href="index.html" >The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li>
@@ -74,12 +74,15 @@
 <span class="c"># draw parallels and meridians.</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawparallels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">90.</span><span class="p">,</span><span class="mf">120.</span><span class="p">,</span><span class="mf">30.</span><span class="p">))</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">360.</span><span class="p">,</span><span class="mf">60.</span><span class="p">))</span>
-<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span> 
+<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;McBryde-Thomas Flat Polar Quartic Projection&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;mbtfpq.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/mbtfpq.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/mbtfpq.png" src="../_images/mbtfpq.png" />
+</div>
 </div>
 
 
@@ -89,11 +92,11 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="paeqd.html"
-                        title="previous chapter">Polar Azimuthal Equidistant Projection</a></p>
+  <p class="topless"><a href="kav7.html"
+                        title="previous chapter">Kavrayskiy VII Projection</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="vandg.html"
-                        title="next chapter">van der Grinten Projection</a></p>
+  <p class="topless"><a href="sinu.html"
+                        title="next chapter">Sinusoidal Projection</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/users/mbtfpq.txt"
@@ -126,10 +129,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="vandg.html" title="van der Grinten Projection"
+          <a href="sinu.html" title="Sinusoidal Projection"
              >next</a> |</li>
         <li class="right" >
-          <a href="paeqd.html" title="Polar Azimuthal Equidistant Projection"
+          <a href="kav7.html" title="Kavrayskiy VII Projection"
              >previous</a> |</li>
         <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.2 documentation</a> &raquo;</li>
           <li><a href="index.html" >The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li>
@@ -138,8 +141,8 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Oct 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on May 21, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

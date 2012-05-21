@@ -71,9 +71,9 @@ and parallels cannot be labelled on maps with
 <tt class="docutils literal"><span class="pre">proj</span></tt> set to <tt class="docutils literal"><span class="pre">ortho</span></tt> (orthographic), <tt class="docutils literal"><span class="pre">geos</span></tt> (geostationary),
 <tt class="docutils literal"><span class="pre">vandg</span></tt> (van der Grinten) or <tt class="docutils literal"><span class="pre">nsper</span></tt> (near-sided perspective),
 and meridians cannot be labelled on maps with
-<tt class="docutils literal"><span class="pre">proj</span></tt> set to <tt class="docutils literal"><span class="pre">robin</span></tt> (robinson), <tt class="docutils literal"><span class="pre">mbtfpq</span></tt>
-(McBryde-Thomas Flat Polar Quartic), <tt class="docutils literal"><span class="pre">moll</span></tt> (Mollweide),
-<tt class="docutils literal"><span class="pre">hammer</span></tt> (Hammer), or <tt class="docutils literal"><span class="pre">sinu</span></tt>
+<tt class="docutils literal"><span class="pre">proj</span></tt> set to <tt class="docutils literal"><span class="pre">ortho</span></tt> (orthographic), <tt class="docutils literal"><span class="pre">geos</span></tt> (geostationary),
+<tt class="docutils literal"><span class="pre">vandg</span></tt> (van der Grinten), <tt class="docutils literal"><span class="pre">nsper</span></tt> (near-sided perspective),
+<tt class="docutils literal"><span class="pre">moll</span></tt> (Mollweide), <tt class="docutils literal"><span class="pre">hammer</span></tt> (Hammer), or <tt class="docutils literal"><span class="pre">sinu</span></tt>
 (sinusoidal).  This is because the lines can be very close
 together where they intersect the boundary on these maps, so that
 they really need to be labelled manually on the interior of the plot.
@@ -90,8 +90,8 @@ and label them on different sides of the plot.</p>
 <span class="c"># draw a boundary around the map, fill the background.</span>
 <span class="c"># this background will end up being the ocean color, since</span>
 <span class="c"># the continents will be drawn on top.</span>
-<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span> 
-<span class="c"># fill continents, set lake color same as ocean color. </span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
+<span class="c"># fill continents, set lake color same as ocean color.</span>
 <span class="n">m</span><span class="o">.</span><span class="n">fillcontinents</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;coral&#39;</span><span class="p">,</span><span class="n">lake_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
 <span class="c"># draw parallels and meridians.</span>
 <span class="c"># label parallels on right and top</span>
@@ -101,10 +101,13 @@ and label them on different sides of the plot.</p>
 <span class="n">m</span><span class="o">.</span><span class="n">drawparallels</span><span class="p">(</span><span class="n">parallels</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="bp">False</span><span class="p">,</span><span class="bp">True</span><span class="p">,</span><span class="bp">True</span><span class="p">,</span><span class="bp">False</span><span class="p">])</span>
 <span class="n">meridians</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">10.</span><span class="p">,</span><span class="mf">351.</span><span class="p">,</span><span class="mf">20.</span><span class="p">)</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">meridians</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="bp">True</span><span class="p">,</span><span class="bp">False</span><span class="p">,</span><span class="bp">False</span><span class="p">,</span><span class="bp">True</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;graticule.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../users/figures/graticule.py">Source code</a>)</p>
+<div class="figure">
 <img alt="../_images/graticule.png" src="../_images/graticule.png" />
+</div>
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
@@ -166,8 +169,8 @@ and label them on different sides of the plot.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Oct 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on May 21, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>
