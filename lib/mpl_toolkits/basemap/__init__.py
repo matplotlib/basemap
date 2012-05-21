@@ -584,7 +584,7 @@ class Basemap(object):
             if projection == 'gnom' and 'R' not in projparams:
                 raise ValueError('gnomonic projection only works for perfect spheres - not ellipsoids')
             if lat_0 is None or lon_0 is None:
-                raise ValueError('must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldnerr Polyconic basemap')
+                raise ValueError('must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldnerr and Polyconic basemap')
             if not using_corners:
                 if width is None or height is None:
                     raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
@@ -1968,7 +1968,17 @@ class Basemap(object):
             # tmerc only defined within +/- 90 degrees of lon_0
             lons = np.arange(lon_0-90,lon_0+90.01,0.01)
         else:
-            lons = np.arange(-180,180.001,0.01)
+            if 'lat_0' in self.projparams:
+                Dateline = _geoslib.Point(self(180.,self.projparams['lat_0']))
+            elif 'lat_1' in self.projparams:
+                Dateline = _geoslib.Point(self(180.,self.projparams['lat_1']))
+            else:
+                Dateline = _geoslib.Point(self(180.,0.)) # geos projection
+            hasDateline = Dateline.within(self._boundarypolyxy)
+            if hasDateline:
+                lons = np.arange(0,360.001,0.01)
+            else:
+                lons = np.arange(-180,180.001,0.01)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = list(circles)
