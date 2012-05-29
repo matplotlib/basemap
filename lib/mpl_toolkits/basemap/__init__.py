@@ -1023,6 +1023,15 @@ class Basemap(object):
                     crossdatelineE = True
                 elif id.endswith('W'):
                     crossdatelineW = True
+            # make sure south/north limits of dateline crossing polygons
+            # (Eurasia) are the same, since they will be merged into one.
+            # (this avoids having one filtered out and not the other).
+            if crossdatelineE:
+                south_save=south
+                north_save=north
+            if crossdatelineW: 
+                south=south_save
+                north=north_save
             if area < 0.: area = 1.e30
             useit = self.latmax>=south and self.latmin<=north and area>self.area_thresh
             if useit:
