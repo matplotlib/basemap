@@ -1,3 +1,7 @@
+since version 1.0.3 release
+---------------------------
+* fix bug that caused Europe coastlines to disappear from some maps
+  (evident from nytolondon.py example).
 * fix splitting of parallels in conic projections that cross the dateline
   (issue 40).
 
