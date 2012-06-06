@@ -1985,9 +1985,9 @@ class Basemap(object):
                 Dateline = _geoslib.Point(self(180.,0.)) # geos projection
             hasDateline = Dateline.within(self._boundarypolyxy)
             if hasDateline:
-                lons = np.arange(-180,180.001,0.01)
-            else:
                 lons = np.arange(0,360.001,0.01)
+            else:
+                lons = np.arange(-180,180.001,0.01)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = list(circles)
@@ -3180,7 +3180,8 @@ class Basemap(object):
                     masked=True
                 else:
                     masked=False
-                mask = np.logical_or(x<1.e20,y<1.e20)
+                mask = np.logical_or(x<self.xmin,y<self.xmin) +\
+                       np.logical_or(x>self.xmax,y>self.xmax)
                 x = np.compress(mask,x)
                 y = np.compress(mask,y)
                 data = np.compress(mask,data)
@@ -3212,7 +3213,10 @@ class Basemap(object):
                              function to adjust the data to be consistent with the map projection
                              region (see examples/contour_demo.py)."""))
                 # mask for points outside projection limb.
-                xymask = np.logical_or(np.greater(x,1.e20),np.greater(y,1.e20))
+                xymask = \
+                np.logical_or(np.greater(x,self.xmax),np.greater(y,self.xmax))
+                xymask = xymask + \
+                np.logical_or(np.less(x,self.xmin),np.less(y,self.xmin))
                 data = ma.asarray(data)
                 # combine with data mask.
                 mask = np.logical_or(ma.getmaskarray(data),xymask)
