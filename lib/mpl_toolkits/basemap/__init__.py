@@ -1985,9 +1985,9 @@ class Basemap(object):
                 Dateline = _geoslib.Point(self(180.,0.)) # geos projection
             hasDateline = Dateline.within(self._boundarypolyxy)
             if hasDateline:
-                lons = np.arange(0,360.001,0.01)
-            else:
                 lons = np.arange(-180,180.001,0.01)
+            else:
+                lons = np.arange(0,360.001,0.01)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = list(circles)
