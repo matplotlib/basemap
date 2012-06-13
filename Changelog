@@ -1,4 +1,4 @@
-version 1.0.4 (not yet released)
+version 1.0.4 (git tag v1.0.4rel)
 --------------------------------
 * fix bug that caused Europe coastlines to disappear from some maps
   (evident from nytolondon.py example).
