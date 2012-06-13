@@ -73,7 +73,7 @@ class AllSkyMap(Basemap):
                        suppress_ticks=True,
                        boundinglat=None,
                        fix_aspect=True,
-                       anchor='C',
+                       anchor=str('C'),
                        ax=None):
 
         if projection != 'hammer' and projection !='moll':
