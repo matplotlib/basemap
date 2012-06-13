@@ -11,9 +11,9 @@ Created 2011-02-07 by Tom Loredo
 """
 
 try:
-   from cStringIO import StringIO
+    from cStringIO import StringIO
 except:
-   from io import StringIO
+    from io import StringIO
 import numpy as np
 from numpy import cos, sin, arccos, deg2rad, rad2deg
 import csv, re, sys
