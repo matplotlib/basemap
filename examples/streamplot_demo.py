@@ -1,10 +1,13 @@
-# example showing how to use Line Integral Convolution to visualize a vector
-# flow field (from Hurricane Earl).  Produces something akin to streamlines.
-# Requires vectorplot scikit (http://scikits.appspot.com/vectorplot).
+# example showing how to use streamlines to visualize a vector
+# flow field (from Hurricane Earl).  
+# Requires matplotlib 1.1.1 or newer.
 from netCDF4 import Dataset as NetCDFFile
 from mpl_toolkits.basemap import Basemap, interp
 import numpy as np
 import matplotlib.pyplot as plt
+
+if not hasattr(plt, 'streamplot'):
+    raise ValueError('need newer version of matplotlib to run this example')
 
 # H*wind data from http://www.aoml.noaa.gov/hrd/data_sub/wind.html
 ncfile = NetCDFFile('rita.nc')
