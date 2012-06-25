@@ -3696,7 +3696,7 @@ class Basemap(object):
                 width = int(np.round(w*scale))
                 height = int(np.round(h*scale))
                 pilImage = pilImage.resize((width,height),Image.ANTIALIAS)
-            if _matplotlib_version > '1.2':
+            if _matplotlib_version >= '1.2':
                 # orientation of arrays returned by pil_to_array
                 # changed (https://github.com/matplotlib/matplotlib/pull/616)
                 self._bm_rgba = pil_to_array(pilImage)[::-1,:]
