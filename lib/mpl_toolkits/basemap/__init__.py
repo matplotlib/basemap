@@ -3692,7 +3692,12 @@ class Basemap(object):
                 width = int(np.round(w*scale))
                 height = int(np.round(h*scale))
                 pilImage = pilImage.resize((width,height),Image.ANTIALIAS)
-            self._bm_rgba = pil_to_array(pilImage)
+            if _matplotlib_version > '1.2':
+                # orientation of arrays returned by pil_to_array
+                # changed (https://github.com/matplotlib/matplotlib/pull/616)
+                self._bm_rgba = pil_to_array(pilImage)[::-1,:]
+            else:
+                self._bm_rgba = pil_to_array(pilImage)
             # define lat/lon grid that image spans.
             nlons = self._bm_rgba.shape[1]; nlats = self._bm_rgba.shape[0]
             delta = 360./float(nlons)
