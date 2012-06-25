@@ -1,3 +1,10 @@
+since version 1.0.4
+-------------------
+* fix bluemarble and warpimage methods to account for change in orientation
+  of arrays returned to matplotlib's pil_to_array (issue 51)
+* fix glitch with drawing meridians and filling coastline polygons with 
+  omerc projection that includes pole.
+
 version 1.0.4 (git tag v1.0.4rel)
 --------------------------------
 * fix bug that caused Europe coastlines to disappear from some maps
