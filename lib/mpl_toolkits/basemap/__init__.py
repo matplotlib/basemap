@@ -993,7 +993,7 @@ class Basemap(object):
         # coordinates, then transform back. This is
         # because these projections are only defined on a hemisphere, and
         # some boundary features (like Eurasia) would be undefined otherwise.
-        tostere = ['ortho','gnom','nsper','nplaea','npaeqd','splaea','spaeqd']
+        tostere = ['omerc','ortho','gnom','nsper','nplaea','npaeqd','splaea','spaeqd']
         if self.projection in tostere and name == 'gshhs':
             containsPole = True
             lon_0=self.projparams['lon_0']
@@ -1312,6 +1312,8 @@ class Basemap(object):
                 llcrnrlat = self.llcrnrlat
             lons = [self.llcrnrlon, self.llcrnrlon, self.urcrnrlon, self.urcrnrlon]
             lats = [llcrnrlat, urcrnrlat, urcrnrlat, llcrnrlat]
+            self.boundarylonmin = min(lons)
+            self.boundarylonmax = max(lons)
             x, y = self(lons, lats)
             b = np.empty((len(x),2),np.float64)
             b[:,0]=x; b[:,1]=y
@@ -1319,6 +1321,8 @@ class Basemap(object):
         else:
             if self.projection not in _pseudocyl:
                 lons, lats = maptran(x,y,inverse=True)
+                self.boundarylonmin = lons.min()
+                self.boundarylonmax = lons.max()
                 # fix lons so there are no jumps.
                 n = 1
                 lonprev = lons[0]
@@ -1977,7 +1981,7 @@ class Basemap(object):
             # tmerc only defined within +/- 90 degrees of lon_0
             lons = np.arange(lon_0-90,lon_0+90.01,0.01)
         else:
-            lonmin = self.boundarylons.min(); lonmax = self.boundarylons.max()
+            lonmin = self.boundarylonmin; lonmax = self.boundarylonmax
             lons = np.linspace(lonmin, lonmax, 1001)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
@@ -3692,7 +3696,12 @@ class Basemap(object):
                 width = int(np.round(w*scale))
                 height = int(np.round(h*scale))
                 pilImage = pilImage.resize((width,height),Image.ANTIALIAS)
-            self._bm_rgba = pil_to_array(pilImage)
+            if _matplotlib_version >= '1.2':
+                # orientation of arrays returned by pil_to_array
+                # changed (https://github.com/matplotlib/matplotlib/pull/616)
+                self._bm_rgba = pil_to_array(pilImage)[::-1,:]
+            else:
+                self._bm_rgba = pil_to_array(pilImage)
             # define lat/lon grid that image spans.
             nlons = self._bm_rgba.shape[1]; nlats = self._bm_rgba.shape[0]
             delta = 360./float(nlons)
