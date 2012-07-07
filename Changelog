@@ -2,7 +2,7 @@ version 1.0.5 (not yet released)
 --------------------------------
 * automatically recenter longitudes in plot region for cylindrical and
   pseudo-cylindrical projections when transforming to map projection
-  coordinates.
+  coordinates (issue 54).
 * added shiftlons function (to recenter longitudes in interval
   [lon_0-180,lon_0+180].
 * fix bluemarble and warpimage methods to account for change in orientation
