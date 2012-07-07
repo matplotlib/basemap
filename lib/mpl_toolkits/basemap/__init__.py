@@ -30,7 +30,6 @@ from matplotlib.patches import Ellipse, Circle, Polygon, FancyArrowPatch
 from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox
 from mpl_toolkits.basemap import pyproj
-from mpl_toolkits.basemap.proj import shiftlon as _shiftlon
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import sys, os, math
 from .proj import Proj
@@ -932,10 +931,15 @@ class Basemap(object):
         Input arguments lon, lat can be either scalar floats,
         sequences, or numpy arrays.
         """
+        # for cylindrical or pseudo-cylindrical projections recenter
+        # longitudes in interval [lon_0-180,lon_0+180].
+        if not inverse and \
+        (self.projection in _cylproj or self.projection in _pseudocyl): 
+            x = shiftlons(x, self.projparams['lon_0'])
         if self.celestial:
             # don't assume center of map is at greenwich
             # (only relevant for cyl or pseudo-cyl projections)
-            if (self.projection in _pseudocyl) or (self.projection in _cylproj):
+            if self.projection in _pseudocyl or self.projection in _cylproj:
                 lon_0=self.projparams['lon_0']
             else:
                 lon_0 = 0.
@@ -4419,8 +4423,18 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution='l',grid=5):
 def shiftlons(lons,lon_0):
     """returns original sequence of longitudes (in degrees) recentered
     in the interval [lon_0-180,lon_0+180]"""
-    # from private proj module
-    return _shiftlon(lons,lon_0)
+    lon_shift = np.asarray(lons)
+    if not lon_shift.shape:
+        if lon_shift > lon_0+180: lon_shift=lon_shift-360
+        if lon_shift < lon_0-180: lon_shift=lon_shift+360
+        return lon_shift
+    lon_shift = np.where(lon_shift > lon_0+180, lon_shift-360 ,lon_shift)
+    lon_shift = np.where(lon_shift < lon_0-180, lon_shift+360 ,lon_shift)
+    itemindex = len(lons)-np.where(lon_shift[0:-1]-lon_shift[1:] >= 180)[0]
+    if itemindex:
+        return np.roll(lon_shift,itemindex-1)
+    else:
+        return lon_shift
 
 def _readlsmask(lakes=True,resolution='l',grid=5):
     # read in land/sea mask.
