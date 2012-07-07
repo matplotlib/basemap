@@ -11,6 +11,8 @@ heavy lifting), and the following functions:
 :func:`shiftgrid`:  shifts global lat/lon grids east or west.
 
 :func:`addcyclic`: Add cyclic (wraparound) point in longitude.
+
+:func:`shiftlons`: Recenter lons in interval [lon_0-180,lon_0+180].
 """
 from matplotlib import __version__ as _matplotlib_version
 from matplotlib.cbook import is_scalar, dedent
@@ -28,6 +30,7 @@ from matplotlib.patches import Ellipse, Circle, Polygon, FancyArrowPatch
 from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox
 from mpl_toolkits.basemap import pyproj
+from mpl_toolkits.basemap.proj import shiftlon as _shiftlon
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import sys, os, math
 from .proj import Proj
@@ -731,6 +734,10 @@ class Basemap(object):
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
             if width is not None or height is not None:
                 sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
+            if lon_0 is not None:
+                projparams['lon_0']=lon_0
+            else:
+                projparams['lon_0']=0.5*(llcrnrlon+urcrnrlon)
         else:
             raise ValueError(_unsupported_projection % projection)
 
@@ -4408,6 +4415,12 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution='l',grid=5):
     # mask input data.
     mask = lsmasko == 0
     return ma.masked_array(datain,mask=mask)
+
+def shiftlons(lons,lon_0):
+    """returns original sequence of longitudes (in degrees) recentered
+    in the interval [lon_0-180,lon_0+180]"""
+    # from private proj module
+    return _shiftlon(lons,lon_0)
 
 def _readlsmask(lakes=True,resolution='l',grid=5):
     # read in land/sea mask.

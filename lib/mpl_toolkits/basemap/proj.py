@@ -264,6 +264,17 @@ class Proj(object):
         else:
             x,y = args
             onearray = False
+        # for cylindrical or pseudo-cylindrical projections recenter
+        # longitudes in interval [lon_0-180,lon_0+180].
+        if self.projection in _cylproj or self.projection in _pseudocyl: 
+            if onearray:
+                x = xy[:,0]
+            # process inputs, making copies that support buffer API.
+            xx, xisfloat, xislist, xistuple = pyproj._copytobuffer(x)
+            xx = shiftlon(xx, self.projparams['lon_0'])
+            x = pyproj._convertback(xisfloat,xislist,xistuple,xx)
+            if onearray:
+                xy[:,0] = x
         if self.projection == 'cyl': # for cyl x,y == lon,lat
             if onearray:
                 return xy
@@ -347,6 +358,22 @@ class Proj(object):
             return lonlat, xy
         else:
             return lonlat
+
+def shiftlon(lon,lon_0):
+    """returns original sequence of longitudes (in degrees) recentered
+    in the interval [lon_0-180,lon_0+180]"""
+    lon_shift = np.asarray(lon)
+    if not lon_shift.shape:
+        if lon_shift > lon_0+180: lon_shift=lon_shift-360
+        if lon_shift < lon_0-180: lon_shift=lon_shift+360
+        return lon_shift
+    lon_shift = np.where(lon_shift > lon_0+180, lon_shift-360 ,lon_shift)
+    lon_shift = np.where(lon_shift < lon_0-180, lon_shift+360 ,lon_shift)
+    itemindex = len(lon)-np.where(lon_shift[0:-1]-lon_shift[1:] >= 180)[0]
+    if itemindex:
+        return np.roll(lon_shift,itemindex-1)
+    else:
+        return lon_shift
 
 
 if __name__ == "__main__":
