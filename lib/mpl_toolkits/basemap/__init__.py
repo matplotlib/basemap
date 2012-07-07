@@ -48,7 +48,7 @@ if 'BASEMAPDATA' in os.environ:
 else:
     basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 
 # supported map projections.
 _projnames = {'cyl'      : 'Cylindrical Equidistant',
