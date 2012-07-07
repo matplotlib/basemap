@@ -267,14 +267,18 @@ class Proj(object):
         # for cylindrical or pseudo-cylindrical projections recenter
         # longitudes in interval [lon_0-180,lon_0+180].
         if self.projection in _cylproj or self.projection in _pseudocyl: 
+            #if onearray:
+            #    x = xy[:,0]
+            ## process inputs, making copies that support buffer API.
+            #xx, xisfloat, xislist, xistuple = pyproj._copytobuffer(x)
+            #xx = shiftlon(xx, self.projparams['lon_0'])
+            #x = pyproj._convertback(xisfloat,xislist,xistuple,xx)
+            #if onearray:
+            #    xy[:,0] = x
             if onearray:
-                x = xy[:,0]
-            # process inputs, making copies that support buffer API.
-            xx, xisfloat, xislist, xistuple = pyproj._copytobuffer(x)
-            xx = shiftlon(xx, self.projparams['lon_0'])
-            x = pyproj._convertback(xisfloat,xislist,xistuple,xx)
-            if onearray:
-                xy[:,0] = x
+                xy[:,0] = shiftlon(xy[:,0], self.projparams['lon_0'])
+            else:
+                x = shiftlon(x, self.projparams['lon_0'])
         if self.projection == 'cyl': # for cyl x,y == lon,lat
             if onearray:
                 return xy
