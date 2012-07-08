@@ -2,9 +2,10 @@ version 1.0.5 (not yet released)
 --------------------------------
 * automatically recenter longitudes in plot region for cylindrical and
   pseudo-cylindrical projections when transforming to map projection
-  coordinates (issue 54).
+  coordinates (issue 54). This can be suppressed by setting lonshift=False
+  in Basemap.__call__.
 * added shiftlons function (to recenter longitudes in interval
-  [lon_0-180,lon_0+180].
+  [lon_0-180,lon_0+180]).
 * fix bluemarble and warpimage methods to account for change in orientation
   of arrays returned to matplotlib's pil_to_array (issue 51)
 * fix glitch with drawing meridians and filling coastline polygons with 
