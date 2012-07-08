@@ -910,13 +910,17 @@ class Basemap(object):
     # set __init__'s docstring
     __init__.__doc__ = _Basemap_init_doc
 
-    def __call__(self,x,y,inverse=False):
+    def __call__(self,x,y,inverse=False,lonshift=True):
         """
         Calling a Basemap class instance with the arguments lon, lat will
         convert lon/lat (in degrees) to x/y map projection
         coordinates (in meters).  If optional keyword ``inverse`` is
         True (default is False), the inverse transformation from x/y
-        to lon/lat is performed.
+        to lon/lat is performed. For cylindrical or pseudo-cylindrical
+        projections, by default longitudes are shifted so that they
+        lie in the range [lon_0-180,lon_0+180] before the transform is 
+        applied.  This can be suppressed by setting the keyword ``lonshift``
+        to False.
 
         For cylindrical equidistant projection (``cyl``), this
         does nothing (i.e. x,y == lon,lat).
@@ -933,7 +937,7 @@ class Basemap(object):
         """
         # for cylindrical or pseudo-cylindrical projections recenter
         # longitudes in interval [lon_0-180,lon_0+180].
-        if not inverse and \
+        if lonshift and not inverse and \
         (self.projection in _cylproj or self.projection in _pseudocyl): 
             x = shiftlons(x, self.projparams['lon_0'])
         if self.celestial:
@@ -1117,7 +1121,7 @@ class Basemap(object):
                             for psub in geoms:
                                 b = psub.boundary
                                 blons = b[:,0]; blats = b[:,1]
-                                bx, by = self(blons, blats)
+                                bx, by = self(blons, blats,lonshift=False)
                                 polygons.append(list(zip(bx,by)))
                                 polygon_types.append(typ)
                     else:
