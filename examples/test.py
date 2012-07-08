@@ -91,9 +91,8 @@ print(m.proj4string)
 # create new figure
 fig=plt.figure()
 # setup mercator map projection (-80 to +80).
-m = Basemap(llcrnrlon=-180.,llcrnrlat=-80,urcrnrlon=180.,urcrnrlat=80.,\
-            resolution='c',area_thresh=10000.,projection='merc',\
-            lon_0=0.5*(lons[0]+lons[-1]),lat_ts=20.)
+m = Basemap(llcrnrlon=-180.,llcrnrlat=-75,urcrnrlon=180.,urcrnrlat=75.,\
+            resolution='c',area_thresh=10000.,projection='merc',lat_ts=20)
 # transform to nx x ny regularly spaced native projection grid
 nx = len(lons); ny = int(80.*len(lats)/90.)
 topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
