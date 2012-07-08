@@ -4434,7 +4434,7 @@ def shiftlons(lons,lon_0):
         return lon_shift
     lon_shift = np.where(lon_shift > lon_0+180, lon_shift-360 ,lon_shift)
     lon_shift = np.where(lon_shift < lon_0-180, lon_shift+360 ,lon_shift)
-    itemindex = len(lons)-np.where(lon_shift[0:-1]-lon_shift[1:] >= 180)[0]
+    itemindex = len(lon_shift)-np.where(lon_shift[0:-1]-lon_shift[1:] >= 180)[0]
     if itemindex:
         return np.roll(lon_shift,itemindex-1)
     else:
