@@ -910,17 +910,13 @@ class Basemap(object):
     # set __init__'s docstring
     __init__.__doc__ = _Basemap_init_doc
 
-    def __call__(self,x,y,inverse=False,lonshift=True):
+    def __call__(self,x,y,inverse=False):
         """
         Calling a Basemap class instance with the arguments lon, lat will
         convert lon/lat (in degrees) to x/y map projection
         coordinates (in meters).  If optional keyword ``inverse`` is
         True (default is False), the inverse transformation from x/y
-        to lon/lat is performed. For cylindrical or pseudo-cylindrical
-        projections, by default longitudes are shifted so that they
-        lie in the range [lon_0-180,lon_0+180] before the transform is 
-        applied.  This can be suppressed by setting the keyword ``lonshift``
-        to False.
+        to lon/lat is performed. 
 
         For cylindrical equidistant projection (``cyl``), this
         does nothing (i.e. x,y == lon,lat).
@@ -935,11 +931,6 @@ class Basemap(object):
         Input arguments lon, lat can be either scalar floats,
         sequences, or numpy arrays.
         """
-        # for cylindrical or pseudo-cylindrical projections recenter
-        # longitudes in interval [lon_0-180,lon_0+180].
-        if lonshift and not inverse and \
-        (self.projection in _cylproj or self.projection in _pseudocyl): 
-            x = _recenterlons(x, self.projparams['lon_0'])
         if self.celestial:
             # don't assume center of map is at greenwich
             # (only relevant for cyl or pseudo-cyl projections)
@@ -1121,7 +1112,7 @@ class Basemap(object):
                             for psub in geoms:
                                 b = psub.boundary
                                 blons = b[:,0]; blats = b[:,1]
-                                bx, by = self(blons, blats,lonshift=False)
+                                bx, by = self(blons, blats)
                                 polygons.append(list(zip(bx,by)))
                                 polygon_types.append(typ)
                     else:
@@ -3209,9 +3200,9 @@ class Basemap(object):
                              WARNING: x coordinate not montonically increasing - contour plot
                              may not be what you expect.  If it looks odd, your can either
                              adjust the map projection region to be consistent with your data, or
-                             (if your data is on a global lat/lon grid) use the shiftgrid
-                             function to adjust the data to be consistent with the map projection
-                             region (see examples/contour_demo.py)."""))
+                             (if your data is on a global lat/lon grid) use the shiftdata
+                             method to adjust the data to be consistent with the map projection
+                             region (see examples/shiftdata.py)."""))
                 # mask for points outside projection limb.
                 xymask = \
                 np.logical_or(np.greater(x,self.xmax),np.greater(y,self.xmax))
@@ -4114,6 +4105,44 @@ class Basemap(object):
                 _ax = plt.gca()
         return _ax, plt
 
+    def shiftdata(self, datain, lonsin):
+        """
+        Shift data array and longitudes so that they match map projection region.
+        Only valid for cylindrical/pseudo-cylindrical global projections and data
+        on regular lat/lon grids.
+
+        .. tabularcolumns:: |l|L|
+
+        ==============   ====================================================
+        Arguments        Description
+        ==============   ====================================================
+        datain           original 2-d data.
+        lonsin           original 2-d longitudes.
+        ==============   ====================================================
+
+        returns ``dataout,lonsout`` (data and longitudes shifted to fit in interval
+        [lon_0-180,lon_0+180]).
+        """
+        if self.projection not in _cylproj and \
+           self.projection not in _pseudocyl:
+            msg='projection must be cylindrical or pseudo-cylindrical'
+            raise ValueError(msg)
+        if datain.ndim != 2 or lonsin.ndim != 2:
+            raise ValueError('2-d data and longitudes required')
+        lon_0 = self.projparams['lon_0']
+        nlats = lonsin.shape[0]
+        nlons = lonsin.shape[1]
+        lonsin1 = lonsin[0,:]
+        for n in range(1,nlats):
+            lonscheck = lonsin[n,:]
+            diff = np.abs(lonscheck-lonsin1)
+            if diff.max() > 1.e-5:
+                msg="regular lat/lon grid required"
+                raise ValueError(msg)
+        dataout,lonsout1 = shiftgrid(lon_0+180,datain,lonsin1,start=False) 
+        for n in range(nlats):
+            lonsin[n,:] = lonsout1
+        return dataout, lonsin
 
 ### End of Basemap class
 
@@ -4414,19 +4443,14 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution='l',grid=5):
     mask = lsmasko == 0
     return ma.masked_array(datain,mask=mask)
 
-def _recenterlons(lons,lon_0):
-    lon_shift = np.asarray(lons)
-    lon_shift = np.where(lon_shift > lon_0+180, lon_shift-360 ,lon_shift)
-    lon_shift = np.where(lon_shift < lon_0-180, lon_shift+360 ,lon_shift)
-    return lon_shift
-
 def shiftlons(lons,lon_0):
     """returns original sequence of longitudes (in degrees) recentered
     in the interval [lon_0-180,lon_0+180]"""
     lon_shift = np.asarray(lons)
     if len(lon_shift.shape) > 1:
         raise ValueError('shiftlons only works on 1d sequences of longitudes')
-    lon_shift = _recenterlons(lon_shift,lon_0)
+    lon_shift = np.where(lon_shift > lon_0+180, lon_shift-360 ,lon_shift)
+    lon_shift = np.where(lon_shift < lon_0-180, lon_shift+360 ,lon_shift)
     if lon_shift.shape:
         itemindex = len(lon_shift)-np.where(lon_shift[0:-1]-lon_shift[1:]>359.9)[0]
         if itemindex:
