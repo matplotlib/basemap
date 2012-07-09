@@ -939,7 +939,7 @@ class Basemap(object):
         # longitudes in interval [lon_0-180,lon_0+180].
         if lonshift and not inverse and \
         (self.projection in _cylproj or self.projection in _pseudocyl): 
-            x = shiftlons(x, self.projparams['lon_0'])
+            x = _recenterlons(x, self.projparams['lon_0'])
         if self.celestial:
             # don't assume center of map is at greenwich
             # (only relevant for cyl or pseudo-cyl projections)
@@ -4414,21 +4414,24 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution='l',grid=5):
     mask = lsmasko == 0
     return ma.masked_array(datain,mask=mask)
 
+def _recenterlons(lons,lon_0):
+    lon_shift = np.asarray(lons)
+    lon_shift = np.where(lon_shift > lon_0+180, lon_shift-360 ,lon_shift)
+    lon_shift = np.where(lon_shift < lon_0-180, lon_shift+360 ,lon_shift)
+    return lon_shift
+
 def shiftlons(lons,lon_0):
     """returns original sequence of longitudes (in degrees) recentered
     in the interval [lon_0-180,lon_0+180]"""
     lon_shift = np.asarray(lons)
-    if not lon_shift.shape:
-        if lon_shift > lon_0+180: lon_shift=lon_shift-360
-        if lon_shift < lon_0-180: lon_shift=lon_shift+360
-        return lon_shift
-    lon_shift = np.where(lon_shift > lon_0+180, lon_shift-360 ,lon_shift)
-    lon_shift = np.where(lon_shift < lon_0-180, lon_shift+360 ,lon_shift)
-    itemindex = len(lon_shift)-np.where(lon_shift[0:-1]-lon_shift[1:]>359.9)[0]
-    if itemindex:
-        return np.roll(lon_shift,itemindex-1)
-    else:
-        return lon_shift
+    if len(lon_shift.shape) > 1:
+        raise ValueError('shiftlons only works on 1d sequences of longitudes')
+    lon_shift = _recenterlons(lon_shift,lon_0)
+    if lon_shift.shape:
+        itemindex = len(lon_shift)-np.where(lon_shift[0:-1]-lon_shift[1:]>359.9)[0]
+        if itemindex:
+            lon_shift = np.roll(lon_shift,itemindex-1)
+    return lon_shift
 
 def _readlsmask(lakes=True,resolution='l',grid=5):
     # read in land/sea mask.
