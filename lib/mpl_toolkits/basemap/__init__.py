@@ -11,8 +11,6 @@ heavy lifting), and the following functions:
 :func:`shiftgrid`:  shifts global lat/lon grids east or west.
 
 :func:`addcyclic`: Add cyclic (wraparound) point in longitude.
-
-:func:`shiftlons`: Recenter lons in interval [lon_0-180,lon_0+180].
 """
 from matplotlib import __version__ as _matplotlib_version
 from matplotlib.cbook import is_scalar, dedent
@@ -2250,7 +2248,17 @@ class Basemap(object):
         # projection is defined in -180 to 0 and user asks for meridians from
         # 180 to 360 to be drawn, it should work)
         if self.projection in _cylproj or self.projection in _pseudocyl:
-            meridians = shiftlons(meridians, self.projparams['lon_0'])
+            def addlon(meridians,madd):
+                minside = (madd >= self.llcrnrlon and madd <= self.urcrnrlon)
+                if minside and madd not in meridians: meridians.append(madd)
+                return meridians 
+            merids = list(meridians)
+            meridians = []
+            for m in merids:
+                meridians = addlon(meridians,m)
+                meridians = addlon(meridians,m+360)
+                meridians = addlon(meridians,m-360)
+            meridians.sort()
         # if celestial=True, don't use "E" and "W" labels.
         if labelstyle is None and self.celestial:
             labelstyle="+/-"
@@ -4105,72 +4113,54 @@ class Basemap(object):
                 _ax = plt.gca()
         return _ax, plt
 
-    def shiftdata(self, datain, lonsin):
+    def shiftdata(self,lonsin,datain=None):
         """
-        Shift data array and longitudes so that they match map projection region.
+        Shift longitudes (and optionally data) so that they match map projection region.
         Only valid for cylindrical/pseudo-cylindrical global projections and data
-        on regular lat/lon grids.
+        on regular lat/lon grids. longitudes and data can be 1-d or 2-d, if 2-d
+        it is assumed longitudes are 2nd (rightmost) dimension.
 
         .. tabularcolumns:: |l|L|
 
         ==============   ====================================================
         Arguments        Description
         ==============   ====================================================
-        datain           original 2-d data.
-        lonsin           original 2-d longitudes.
+        lonsin           original 1-d or 2-d longitudes.  
         ==============   ====================================================
 
-        returns ``dataout,lonsout`` (data and longitudes shifted to fit in interval
-        [lon_0-180,lon_0+180]).
+        .. tabularcolumns:: |l|L|
+
+        ==============   ====================================================
+        Keywords         Description
+        ==============   ====================================================
+        datain           original 1-d or 2-d data. Default None.
+        ==============   ====================================================
+
+        if datain given, returns ``dataout,lonsout`` (data and longitudes shifted to fit in interval
+        [lon_0-180,lon_0+180]), otherwise just returns longitudes.
         """
         if self.projection not in _cylproj and \
            self.projection not in _pseudocyl:
             msg='projection must be cylindrical or pseudo-cylindrical'
             raise ValueError(msg)
-        if datain.ndim not in [1,2] or lonsin.ndim not in [1,2]:
-            raise ValueError('1-d or 2-d data and longitudes required')
+        lonsin = np.asarray(lonsin)
+        if lonsin.ndim not in [1,2]:
+            raise ValueError('1-d or 2-d longitudes required')
+        if datain is not None:
+            datain = np.asarray(datain)
+            if datain.ndim not in [1,2]:
+                raise ValueError('1-d or 2-d data required')
         lon_0 = self.projparams['lon_0']
+        # 2-d data.
         if lonsin.ndim == 2:
             nlats = lonsin.shape[0]
             nlons = lonsin.shape[1]
             lonsin1 = lonsin[0,:]
-            for n in range(1,nlats):
-                lonscheck = lonsin[n,:]
-                diff = np.abs(lonscheck-lonsin1)
-                if diff.max() > 1.e-5:
-                    msg="regular lat/lon grid required"
-                    raise ValueError(msg)
-            dataout,lonsout1 = shiftgrid(lon_0+180,datain,lonsin1,start=False) 
-            for n in range(nlats):
-                lonsin[n,:] = lonsout1
-        elif lonsin.ndim == 1:
-            nlons = len(lonsin)
-            dataout,lonsin = shiftgrid(lon_0+180,datain,lonsin,start=False) 
-        return dataout, lonsin
-
-    def shiftdata2(self,datain,lonsin):
-        if self.projection not in _cylproj and \
-           self.projection not in _pseudocyl:
-            msg='projection must be cylindrical or pseudo-cylindrical'
-            raise ValueError(msg)
-        if datain.ndim not in [1,2] or lonsin.ndim not in [1,2]:
-            raise ValueError('1-d or 2-d data and longitudes required')
-        lon_0 = self.projparams['lon_0']
-        if lonsin.ndim == 2:
-            nlats = lonsin.shape[0]
-            nlons = lonsin.shape[1]
-            lonsin1 = lonsin[0,:]
-            for n in range(1,nlats):
-                lonscheck = lonsin[n,:]
-                diff = np.abs(lonscheck-lonsin1)
-                if diff.max() > 1.e-5:
-                    msg="regular lat/lon grid required"
-                    raise ValueError(msg)
             lonsin1 = np.where(lonsin1 > lon_0+180, lonsin1-360 ,lonsin1)
             lonsin1 = np.where(lonsin1 < lon_0-180, lonsin1+360 ,lonsin1)
             londiff = np.abs(lonsin1[0:-1]-lonsin1[1:])
             londiff_sort = np.sort(londiff)
-            thresh = 360.-londiff_sort[-2]-1.e-5
+            thresh = 360.-londiff_sort[-2]+1.e-5
             itemindex = nlons-np.where(londiff>thresh)[0]
             # if no shift necessary, itemindex will be
             # empty, so don't do anything
@@ -4181,21 +4171,24 @@ class Basemap(object):
                     hascyclic = True
                     lonsin_save = lonsin.copy()
                     lonsin = lonsin[:,1:]
-                    datain_save = datain.copy()
-                    datain = datain[:,1:]
+                    if datain is not None:
+                       datain_save = datain.copy()
+                       datain = datain[:,1:]
                 else:
                     hascyclic = False
                 lonsin = np.where(lonsin > lon_0+180, lonsin-360 ,lonsin)
                 lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
                 lonsin = np.roll(lonsin,itemindex-1,axis=1)
-                datain = np.roll(datain,itemindex-1,axis=1)
+                if datain is not None: datain = np.roll(datain,itemindex-1,axis=1)
                 # add cyclic point back at beginning.
                 if hascyclic:
-                    datain_save[:,1:] = datain
                     lonsin_save[:,1:] = lonsin
-                    datain_save[:,0] = datain[:,-1] 
                     lonsin_save[:,0] = lonsin[:,-1]-360.
-                    datain = datain_save; lonsin = lonsin_save
+                    lonsin = lonsin_save
+                    if datain is not None:
+                        datain_save[:,1:] = datain
+                        datain_save[:,0] = datain[:,-1] 
+                        datain = datain_save
                 # for pseudo-cyl projections, mask points outside
                 # map region so they don't wrap back in the domain.
                 if self.projection in _pseudocyl:
@@ -4203,18 +4196,49 @@ class Basemap(object):
                     lonsin = np.where(mask,1.e30,lonsin)
                     if mask.any():
                         datain = ma.array(datain,mask=mask)
+        # 1-d data.
         elif lonsin.ndim == 1:
             nlons = len(lonsin)
             lonsin = np.where(lonsin > lon_0+180, lonsin-360 ,lonsin)
             lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
             londiff = np.abs(lonsin[0:-1]-lonsin[1:])
             londiff_sort = np.sort(londiff)
-            thresh = 360.-londiff_sort[-2]-1.e-5
-            itemindex = len(lon_shift)-np.where(londiff>thresh)[0]
+            thresh = 360.-londiff_sort[-2]+1.e-5
+            itemindex = len(lonsin)-np.where(londiff>thresh)[0]
             if itemindex:
+                # check to see if cyclic (wraparound) point included
+                # if so, remove it.
+                if np.abs(lonsin[0]-lonsin[-1]) < 1.e-4: 
+                    hascyclic = True
+                    lonsin_save = lonsin.copy()
+                    lonsin = lonsin[1:]
+                    if datain is not None:
+                        datain_save = datain.copy()
+                        datain = datain[1:]
+                else:
+                    hascyclic = False
                 lonsin = np.roll(lonsin,itemindex-1)
-                datain = np.roll(datain,itemindex-1)
-        return datain, lonsin
+                if datain is not None: datain = np.roll(datain,itemindex-1)
+                # add cyclic point back at beginning.
+                if hascyclic:
+                    lonsin_save[1:] = lonsin
+                    lonsin_save[0] = lonsin[-1]-360.
+                    lonsin = lonsin_save
+                    if datain is not None:
+                        datain_save[1:] = datain
+                        datain_save[0] = datain[-1] 
+                        datain = datain_save
+                # for pseudo-cyl projections, mask points outside
+                # map region so they don't wrap back in the domain.
+                if self.projection in _pseudocyl:
+                    mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
+                    lonsin = np.where(mask,1.e30,lonsin)
+                    if datain is not None and mask.any():
+                        datain = ma.array(datain,mask=mask)
+        if datain is not None:
+            return lonsin, datain
+        else:
+            return lonsin
 
 ### End of Basemap class
 
@@ -4522,23 +4546,6 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution='l',grid=5):
     # mask input data.
     mask = lsmasko == 0
     return ma.masked_array(datain,mask=mask)
-
-def shiftlons(lons,lon_0):
-    """returns original sequence of longitudes (in degrees) recentered
-    in the interval [lon_0-180,lon_0+180]"""
-    lon_shift = np.asarray(lons)
-    if len(lon_shift.shape) > 1:
-        raise ValueError('shiftlons only works on 1d sequences of longitudes')
-    lon_shift = np.where(lon_shift > lon_0+180, lon_shift-360 ,lon_shift)
-    lon_shift = np.where(lon_shift < lon_0-180, lon_shift+360 ,lon_shift)
-    if lon_shift.shape:
-        londiff = np.abs(lon_shift[0:-1]-lon_shift[1:])
-        londiff_sort = np.sort(londiff)
-        thresh = 360.-londiff_sort[-2]-1.e-5
-        itemindex = len(lon_shift)-np.where(londiff>thresh)[0]
-        if itemindex:
-            lon_shift = np.roll(lon_shift,itemindex-1)
-    return lon_shift
 
 def _readlsmask(lakes=True,resolution='l',grid=5):
     # read in land/sea mask.
