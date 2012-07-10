@@ -3399,10 +3399,28 @@ class Basemap(object):
         Grid must be evenly spaced regular grid in x and y.
         (see matplotlib.pyplot.quiver documentation).
 
+        If ``latlon`` keyword is set to True, x,y are intrepreted as
+        longitude and latitude in degrees.  Data and longitudes are 
+        automatically shifted to match map projection region for cylindrical
+        and pseudocylindrical projections, and x,y are transformed to map
+        projection coordinates. If ``latlon`` is False (default), x and y
+        are assumed to be map projection coordinates.
+
         Extra keyword ``ax`` can be used to override the default axis instance.
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.quiver.
         """
+        # input coordinates are latitude/longitude, not map projection coords.
+        if 'latlon' in kwargs and kwargs['latlon']:
+            # shift data to map projection region for
+            # cylindrical and pseudo-cylindrical projections.
+            if self.projection in _cylproj or self.projection in _pseudocyl:
+                xsave = x.copy()
+                x, u = self.shiftdata(x, u)
+                x, v = self.shiftdata(xsave, v)
+            # convert lat/lon coords to map projection coords.
+            x, y = self(x,y)
+            del kwargs['latlon']
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -3428,10 +3446,28 @@ class Basemap(object):
         Draws streamlines of a vector flow.
         (see matplotlib.pyplot.streamplot documentation).
 
+        If ``latlon`` keyword is set to True, x,y are intrepreted as
+        longitude and latitude in degrees.  Data and longitudes are 
+        automatically shifted to match map projection region for cylindrical
+        and pseudocylindrical projections, and x,y are transformed to map
+        projection coordinates. If ``latlon`` is False (default), x and y
+        are assumed to be map projection coordinates.
+
         Extra keyword ``ax`` can be used to override the default axis instance.
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.streamplot.
         """
+        # input coordinates are latitude/longitude, not map projection coords.
+        if 'latlon' in kwargs and kwargs['latlon']:
+            # shift data to map projection region for
+            # cylindrical and pseudo-cylindrical projections.
+            if self.projection in _cylproj or self.projection in _pseudocyl:
+                xsave = x.copy()
+                x, u = self.shiftdata(x, u)
+                x, v = self.shiftdata(xsave, v)
+            # convert lat/lon coords to map projection coords.
+            x, y = self(x,y)
+            del kwargs['latlon']
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -3462,6 +3498,13 @@ class Basemap(object):
         Make a wind barb plot (u, v) with on the map.
         (see matplotlib.pyplot.barbs documentation).
 
+        If ``latlon`` keyword is set to True, x,y are intrepreted as
+        longitude and latitude in degrees.  Data and longitudes are 
+        automatically shifted to match map projection region for cylindrical
+        and pseudocylindrical projections, and x,y are transformed to map
+        projection coordinates. If ``latlon`` is False (default), x and y
+        are assumed to be map projection coordinates.
+
         Extra keyword ``ax`` can be used to override the default axis instance.
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.barbs
@@ -3469,6 +3512,17 @@ class Basemap(object):
         Returns two matplotlib.axes.Barbs instances, one for the Northern
         Hemisphere and one for the Southern Hemisphere.
         """
+        # input coordinates are latitude/longitude, not map projection coords.
+        if 'latlon' in kwargs and kwargs['latlon']:
+            # shift data to map projection region for
+            # cylindrical and pseudo-cylindrical projections.
+            if self.projection in _cylproj or self.projection in _pseudocyl:
+                xsave = x.copy()
+                x, u = self.shiftdata(x, u)
+                x, v = self.shiftdata(xsave, v)
+            # convert lat/lon coords to map projection coords.
+            x, y = self(x,y)
+            del kwargs['latlon']
         if _matplotlib_version < '0.98.3':
             msg = dedent("""
             barb method requires matplotlib 0.98.3 or higher,
