@@ -8,12 +8,16 @@ lats=np.loadtxt('etopo20lats.gz')
 lons, lats = np.meshgrid(lons, lats)
 # create Basemap instance.
 m = Basemap(projection='kav7',lon_0=0)
+# can either shift data manually...
 # shift data and longitudes to fit map region
-lons, etopo = m.shiftdata(lons, etopo)
+#lons, etopo = m.shiftdata(lons, etopo)
 # transform lats/lons to map projection coords
-x, y = m(lons, lats)
+#x, y = m(lons, lats)
 # make filled contour plot
-cs = m.contourf(x,y,etopo,30,cmap=plt.cm.jet)
+#cs = m.contourf(x,y,etopo,30,cmap=plt.cm.jet)
+# or let contourf to it for you by passing lons/lats and
+# setting latlon=True.
+cs = m.contourf(lons,lats,etopo,30,cmap=plt.cm.jet,latlon=True)
 # draw coastlines.
 m.drawcoastlines()
 # draw parallels and meridians.
