@@ -4160,8 +4160,8 @@ class Basemap(object):
             lonsin1 = np.where(lonsin1 < lon_0-180, lonsin1+360 ,lonsin1)
             londiff = np.abs(lonsin1[0:-1]-lonsin1[1:])
             londiff_sort = np.sort(londiff)
-            thresh = 360.-londiff_sort[-2]+1.e-5
-            itemindex = nlons-np.where(londiff>thresh)[0]
+            thresh = 360.-londiff_sort[-2]
+            itemindex = nlons-np.where(londiff>=thresh)[0]
             # if no shift necessary, itemindex will be
             # empty, so don't do anything
             if itemindex:
@@ -4203,8 +4203,8 @@ class Basemap(object):
             lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
             londiff = np.abs(lonsin[0:-1]-lonsin[1:])
             londiff_sort = np.sort(londiff)
-            thresh = 360.-londiff_sort[-2]+1.e-5
-            itemindex = len(lonsin)-np.where(londiff>thresh)[0]
+            thresh = 360.-londiff_sort[-2]
+            itemindex = len(lonsin)-np.where(londiff>=thresh)[0]
             if itemindex:
                 # check to see if cyclic (wraparound) point included
                 # if so, remove it.
