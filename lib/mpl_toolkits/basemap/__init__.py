@@ -4189,8 +4189,8 @@ class Basemap(object):
                 lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
                 lonsin = np.roll(lonsin,itemindex-1,axis=1)
                 datain = np.roll(datain,itemindex-1,axis=1)
-                # add cyclic point back at beginning
-                if hascyclic:
+                # add cyclic point back at beginning if it is within map region
+                if hascyclic and lonsin[0,-1]-360 >= lon_0-180:
                     datain_save[:,1:] = datain
                     lonsin_save[:,1:] = lonsin
                     datain_save[:,0] = datain[:,-1] 
