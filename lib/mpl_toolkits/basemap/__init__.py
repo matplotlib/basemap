@@ -3239,6 +3239,13 @@ class Basemap(object):
         Make a filled contour plot over the map
         (see matplotlib.pyplot.contourf documentation).
 
+        If ``latlon`` keyword is set to True, x,y are intrepreted as
+        longitude and latitude in degrees.  Data and longitudes are 
+        automatically shifted to match map projection region for cylindrical
+        and pseudocylindrical projections, and x,y are transformed to map
+        projection coordinates. If ``latlon`` is False (default), x and y
+        are assumed to be map projection coordinates.
+
         If x or y are outside projection limb (i.e. they have values > 1.e20),
         the corresponing data elements will be masked.
 
@@ -3250,6 +3257,15 @@ class Basemap(object):
         Other \*args and \**kwargs passed on to matplotlib.pyplot.contourf
         (or tricontourf if ``tri=True``).
         """
+        # input coordinates are latitude/longitude, not map projection coords.
+        if 'latlon' in kwargs and kwargs['latlon']:
+            # shift data to map projection region for
+            # cylindrical and pseudo-cylindrical projections.
+            if self.projection in _cylproj or self.projection in _pseudocyl:
+                x, data = self.shiftdata(x, data)
+            # convert lat/lon coords to map projection coords.
+            x, y = self(x,y)
+            del kwargs['latlon']
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
