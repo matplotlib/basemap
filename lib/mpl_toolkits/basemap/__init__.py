@@ -4297,7 +4297,7 @@ class Basemap(object):
                     if ma.isMA(datain):
                         mask = datain.mask
                         fillval = datain.fill_value
-                        datain = np.roll(datain.filled(),itemindex-1,axis=1)
+                        datain = np.roll(datain.filled(),itemindex-1)
                         datain = ma.array(datain,mask=mask,fill_value=fillval)
                     else:
                         datain = np.roll(datain,itemindex-1)
