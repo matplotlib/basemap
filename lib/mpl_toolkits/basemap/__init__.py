@@ -4189,13 +4189,20 @@ class Basemap(object):
                 lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
                 lonsin = np.roll(lonsin,itemindex-1,axis=1)
                 datain = np.roll(datain,itemindex-1,axis=1)
-                # add cyclic point back at beginning if it is within map region
-                if hascyclic and lonsin[0,-1]-360 >= lon_0-180:
+                # add cyclic point back at beginning.
+                if hascyclic:
                     datain_save[:,1:] = datain
                     lonsin_save[:,1:] = lonsin
                     datain_save[:,0] = datain[:,-1] 
                     lonsin_save[:,0] = lonsin[:,-1]-360.
                     datain = datain_save; lonsin = lonsin_save
+                # for pseudo-cyl projections, mask points outside
+                # map region so they don't wrap back in the domain.
+                if self.projection in _pseudocyl:
+                    mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
+                    lonsin = np.where(mask,1.e30,lonsin)
+                    if mask.any():
+                        datain = ma.array(datain,mask=mask)
         elif lonsin.ndim == 1:
             nlons = len(lonsin)
             lonsin = np.where(lonsin > lon_0+180, lonsin-360 ,lonsin)
