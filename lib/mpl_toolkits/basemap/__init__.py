@@ -4137,7 +4137,9 @@ class Basemap(object):
         ==============   ====================================================
 
         if datain given, returns ``dataout,lonsout`` (data and longitudes shifted to fit in interval
-        [lon_0-180,lon_0+180]), otherwise just returns longitudes.
+        [lon_0-180,lon_0+180]), otherwise just returns longitudes.  If
+        transformed longitudes lie outside map projection region, data is
+        masked and longitudes are set to 1.e30.
         """
         if self.projection not in _cylproj and \
            self.projection not in _pseudocyl:
@@ -4189,13 +4191,12 @@ class Basemap(object):
                         datain_save[:,1:] = datain
                         datain_save[:,0] = datain[:,-1] 
                         datain = datain_save
-                # for pseudo-cyl projections, mask points outside
+                # mask points outside
                 # map region so they don't wrap back in the domain.
-                if self.projection in _pseudocyl:
-                    mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
-                    lonsin = np.where(mask,1.e30,lonsin)
-                    if mask.any():
-                        datain = ma.array(datain,mask=mask)
+                mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
+                lonsin = np.where(mask,1.e30,lonsin)
+                if datain is not None and mask.any():
+                    datain = ma.array(datain,mask=mask)
         # 1-d data.
         elif lonsin.ndim == 1:
             nlons = len(lonsin)
@@ -4228,13 +4229,12 @@ class Basemap(object):
                         datain_save[1:] = datain
                         datain_save[0] = datain[-1] 
                         datain = datain_save
-                # for pseudo-cyl projections, mask points outside
+                # mask points outside
                 # map region so they don't wrap back in the domain.
-                if self.projection in _pseudocyl:
-                    mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
-                    lonsin = np.where(mask,1.e30,lonsin)
-                    if datain is not None and mask.any():
-                        datain = ma.array(datain,mask=mask)
+                mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
+                lonsin = np.where(mask,1.e30,lonsin)
+                if datain is not None and mask.any():
+                    datain = ma.array(datain,mask=mask)
         if datain is not None:
             return lonsin, datain
         else:
