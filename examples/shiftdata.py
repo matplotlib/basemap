@@ -18,6 +18,8 @@ m = Basemap(projection='kav7',lon_0=0)
 # or let contourf to it for you by passing lons/lats and
 # setting latlon=True.
 cs = m.contourf(lons,lats,etopo,30,cmap=plt.cm.jet,latlon=True)
+#cs = m.pcolormesh(lons,lats,etopo,shading='flat',latlon=True)
+#cs = m.pcolor(lons,lats,etopo,shading='flat',latlon=True)
 # draw coastlines.
 m.drawcoastlines()
 # draw parallels and meridians.
