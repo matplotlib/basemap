@@ -4127,22 +4127,87 @@ class Basemap(object):
            self.projection not in _pseudocyl:
             msg='projection must be cylindrical or pseudo-cylindrical'
             raise ValueError(msg)
-        if datain.ndim != 2 or lonsin.ndim != 2:
-            raise ValueError('2-d data and longitudes required')
+        if datain.ndim not in [1,2] or lonsin.ndim not in [1,2]:
+            raise ValueError('1-d or 2-d data and longitudes required')
         lon_0 = self.projparams['lon_0']
-        nlats = lonsin.shape[0]
-        nlons = lonsin.shape[1]
-        lonsin1 = lonsin[0,:]
-        for n in range(1,nlats):
-            lonscheck = lonsin[n,:]
-            diff = np.abs(lonscheck-lonsin1)
-            if diff.max() > 1.e-5:
-                msg="regular lat/lon grid required"
-                raise ValueError(msg)
-        dataout,lonsout1 = shiftgrid(lon_0+180,datain,lonsin1,start=False) 
-        for n in range(nlats):
-            lonsin[n,:] = lonsout1
+        if lonsin.ndim == 2:
+            nlats = lonsin.shape[0]
+            nlons = lonsin.shape[1]
+            lonsin1 = lonsin[0,:]
+            for n in range(1,nlats):
+                lonscheck = lonsin[n,:]
+                diff = np.abs(lonscheck-lonsin1)
+                if diff.max() > 1.e-5:
+                    msg="regular lat/lon grid required"
+                    raise ValueError(msg)
+            dataout,lonsout1 = shiftgrid(lon_0+180,datain,lonsin1,start=False) 
+            for n in range(nlats):
+                lonsin[n,:] = lonsout1
+        elif lonsin.ndim == 1:
+            nlons = len(lonsin)
+            dataout,lonsin = shiftgrid(lon_0+180,datain,lonsin,start=False) 
         return dataout, lonsin
+
+    def shiftdata2(self,datain,lonsin):
+        if self.projection not in _cylproj and \
+           self.projection not in _pseudocyl:
+            msg='projection must be cylindrical or pseudo-cylindrical'
+            raise ValueError(msg)
+        if datain.ndim not in [1,2] or lonsin.ndim not in [1,2]:
+            raise ValueError('1-d or 2-d data and longitudes required')
+        lon_0 = self.projparams['lon_0']
+        if lonsin.ndim == 2:
+            nlats = lonsin.shape[0]
+            nlons = lonsin.shape[1]
+            lonsin1 = lonsin[0,:]
+            for n in range(1,nlats):
+                lonscheck = lonsin[n,:]
+                diff = np.abs(lonscheck-lonsin1)
+                if diff.max() > 1.e-5:
+                    msg="regular lat/lon grid required"
+                    raise ValueError(msg)
+            lonsin1 = np.where(lonsin1 > lon_0+180, lonsin1-360 ,lonsin1)
+            lonsin1 = np.where(lonsin1 < lon_0-180, lonsin1+360 ,lonsin1)
+            londiff = np.abs(lonsin1[0:-1]-lonsin1[1:])
+            londiff_sort = np.sort(londiff)
+            thresh = 360.-londiff_sort[-2]-1.e-5
+            itemindex = nlons-np.where(londiff>thresh)[0]
+            # if no shift necessary, itemindex will be
+            # empty, so don't do anything
+            if itemindex:
+                # check to see if cyclic (wraparound) point included
+                # if so, remove it.
+                if np.abs(lonsin1[0]-lonsin1[-1]) < 1.e-4: 
+                    hascyclic = True
+                    lonsin_save = lonsin.copy()
+                    lonsin = lonsin[:,1:]
+                    datain_save = datain.copy()
+                    datain = datain[:,1:]
+                else:
+                    hascyclic = False
+                lonsin = np.where(lonsin > lon_0+180, lonsin-360 ,lonsin)
+                lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
+                lonsin = np.roll(lonsin,itemindex-1,axis=1)
+                datain = np.roll(datain,itemindex-1,axis=1)
+                # add cyclic point back at beginning
+                if hascyclic:
+                    datain_save[:,1:] = datain
+                    lonsin_save[:,1:] = lonsin
+                    datain_save[:,0] = datain[:,-1] 
+                    lonsin_save[:,0] = lonsin[:,-1]-360.
+                    datain = datain_save; lonsin = lonsin_save
+        elif lonsin.ndim == 1:
+            nlons = len(lonsin)
+            lonsin = np.where(lonsin > lon_0+180, lonsin-360 ,lonsin)
+            lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
+            londiff = np.abs(lonsin[0:-1]-lonsin[1:])
+            londiff_sort = np.sort(londiff)
+            thresh = 360.-londiff_sort[-2]-1.e-5
+            itemindex = len(lon_shift)-np.where(londiff>thresh)[0]
+            if itemindex:
+                lonsin = np.roll(lonsin,itemindex-1)
+                datain = np.roll(datain,itemindex-1)
+        return datain, lonsin
 
 ### End of Basemap class
 
@@ -4366,12 +4431,20 @@ def shiftgrid(lon0,datain,lonsin,start=True,cyclic=360.0):
         lonsout[0:i0_shift] = lonsin[i0:]
     else:
         lonsout[0:i0_shift] = lonsin[i0:]-cyclic
-    dataout[:,0:i0_shift] = datain[:,i0:]
+    if datain.ndim == 2:
+        dataout[:,0:i0_shift] = datain[:,i0:]
+    elif datain.ndim == 1:
+        dataout[0:i0_shift] = datain[i0:]
+    else:
+        raise ValueError('data must be 1d or 2d with longitude as 2nd dim')
     if start:
         lonsout[i0_shift:] = lonsin[start_idx:i0+start_idx]+cyclic
     else:
         lonsout[i0_shift:] = lonsin[start_idx:i0+start_idx]
-    dataout[:,i0_shift:] = datain[:,start_idx:i0+start_idx]
+    if datain.ndim == 2:
+       dataout[:,i0_shift:] = datain[:,start_idx:i0+start_idx]
+    elif datain.ndim == 1:
+       dataout[i0_shift:] = datain[start_idx:i0+start_idx]
     return dataout,lonsout
 
 def addcyclic(arrin,lonsin):
@@ -4452,7 +4525,10 @@ def shiftlons(lons,lon_0):
     lon_shift = np.where(lon_shift > lon_0+180, lon_shift-360 ,lon_shift)
     lon_shift = np.where(lon_shift < lon_0-180, lon_shift+360 ,lon_shift)
     if lon_shift.shape:
-        itemindex = len(lon_shift)-np.where(lon_shift[0:-1]-lon_shift[1:]>359.9)[0]
+        londiff = np.abs(lon_shift[0:-1]-lon_shift[1:])
+        londiff_sort = np.sort(londiff)
+        thresh = 360.-londiff_sort[-2]-1.e-5
+        itemindex = len(lon_shift)-np.where(londiff>thresh)[0]
         if itemindex:
             lon_shift = np.roll(lon_shift,itemindex-1)
     return lon_shift
