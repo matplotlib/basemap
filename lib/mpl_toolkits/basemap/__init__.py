@@ -3000,6 +3000,13 @@ class Basemap(object):
         Make a pseudo-color plot over the map
         (see matplotlib.pyplot.pcolor documentation).
 
+        If ``latlon`` keyword is set to True, x,y are intrepreted as
+        longitude and latitude in degrees.  Data and longitudes are 
+        automatically shifted to match map projection region for cylindrical
+        and pseudocylindrical projections, and x,y are transformed to map
+        projection coordinates. If ``latlon`` is False (default), x and y
+        are assumed to be map projection coordinates.
+
         If x or y are outside projection limb (i.e. they have values > 1.e20)
         they will be convert to masked arrays with those values masked.
         As a result, those values will not be plotted.
@@ -3012,6 +3019,15 @@ class Basemap(object):
         Other \**kwargs passed on to matplotlib.pyplot.pcolor (or tricolor if
         ``tri=True``).
         """
+        # input coordinates are latitude/longitude, not map projection coords.
+        if 'latlon' in kwargs and kwargs['latlon']:
+            # shift data to map projection region for
+            # cylindrical and pseudo-cylindrical projections.
+            if self.projection in _cylproj or self.projection in _pseudocyl:
+                x, data = self.shiftdata(x, data)
+            # convert lat/lon coords to map projection coords.
+            x, y = self(x,y)
+            del kwargs['latlon']
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -3071,10 +3087,26 @@ class Basemap(object):
         Make a pseudo-color plot over the map
         (see matplotlib.pyplot.pcolormesh documentation).
 
+        If ``latlon`` keyword is set to True, x,y are intrepreted as
+        longitude and latitude in degrees.  Data and longitudes are 
+        automatically shifted to match map projection region for cylindrical
+        and pseudocylindrical projections, and x,y are transformed to map
+        projection coordinates. If ``latlon`` is False (default), x and y
+        are assumed to be map projection coordinates.
+
         Extra keyword ``ax`` can be used to override the default axis instance.
 
         Other \**kwargs passed on to matplotlib.pyplot.pcolormesh.
         """
+        # input coordinates are latitude/longitude, not map projection coords.
+        if 'latlon' in kwargs and kwargs['latlon']:
+            # shift data to map projection region for
+            # cylindrical and pseudo-cylindrical projections.
+            if self.projection in _cylproj or self.projection in _pseudocyl:
+                x, data = self.shiftdata(x, data)
+            # convert lat/lon coords to map projection coords.
+            x, y = self(x,y)
+            del kwargs['latlon']
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -3151,6 +3183,13 @@ class Basemap(object):
         Make a contour plot over the map
         (see matplotlib.pyplot.contour documentation).
 
+        If ``latlon`` keyword is set to True, x,y are intrepreted as
+        longitude and latitude in degrees.  Data and longitudes are 
+        automatically shifted to match map projection region for cylindrical
+        and pseudocylindrical projections, and x,y are transformed to map
+        projection coordinates. If ``latlon`` is False (default), x and y
+        are assumed to be map projection coordinates.
+
         Extra keyword ``ax`` can be used to override the default axis instance.
 
         If ``tri`` is set to ``True``, an unstructured grid is assumed
@@ -3159,6 +3198,15 @@ class Basemap(object):
         Other \*args and \**kwargs passed on to matplotlib.pyplot.contour
         (or tricontour if ``tri=True``).
         """
+        # input coordinates are latitude/longitude, not map projection coords.
+        if 'latlon' in kwargs and kwargs['latlon']:
+            # shift data to map projection region for
+            # cylindrical and pseudo-cylindrical projections.
+            if self.projection in _cylproj or self.projection in _pseudocyl:
+                x, data = self.shiftdata(x, data)
+            # convert lat/lon coords to map projection coords.
+            x, y = self(x,y)
+            del kwargs['latlon']
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -4165,7 +4213,8 @@ class Basemap(object):
         if lonsin.ndim not in [1,2]:
             raise ValueError('1-d or 2-d longitudes required')
         if datain is not None:
-            datain = np.asarray(datain)
+            # if it's a masked array, leave it alone.
+            if not ma.isMA(datain): datain = np.asarray(datain)
             if datain.ndim not in [1,2]:
                 raise ValueError('1-d or 2-d data required')
         lon_0 = self.projparams['lon_0']
@@ -4197,7 +4246,14 @@ class Basemap(object):
                 lonsin = np.where(lonsin > lon_0+180, lonsin-360 ,lonsin)
                 lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
                 lonsin = np.roll(lonsin,itemindex-1,axis=1)
-                if datain is not None: datain = np.roll(datain,itemindex-1,axis=1)
+                if datain is not None:
+                    if ma.isMA(datain):
+                        mask = datain.mask
+                        fillval = datain.fill_value
+                        datain = np.roll(datain.filled(),itemindex-1,axis=1)
+                        datain = ma.array(datain,mask=mask,fill_value=fillval)
+                    else:
+                        datain = np.roll(datain,itemindex-1,axis=1)
                 # add cyclic point back at beginning.
                 if hascyclic:
                     lonsin_save[:,1:] = lonsin
@@ -4212,6 +4268,8 @@ class Basemap(object):
                 mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
                 lonsin = np.where(mask,1.e30,lonsin)
                 if datain is not None and mask.any():
+                    # superimpose on existing mask
+                    if ma.isMA(datain): mask = mask + datain.mask
                     datain = ma.array(datain,mask=mask)
         # 1-d data.
         elif lonsin.ndim == 1:
@@ -4235,7 +4293,14 @@ class Basemap(object):
                 else:
                     hascyclic = False
                 lonsin = np.roll(lonsin,itemindex-1)
-                if datain is not None: datain = np.roll(datain,itemindex-1)
+                if datain is not None: 
+                    if ma.isMA(datain):
+                        mask = datain.mask
+                        fillval = datain.fill_value
+                        datain = np.roll(datain.filled(),itemindex-1,axis=1)
+                        datain = ma.array(datain,mask=mask,fill_value=fillval)
+                    else:
+                        datain = np.roll(datain,itemindex-1)
                 # add cyclic point back at beginning.
                 if hascyclic:
                     lonsin_save[1:] = lonsin
