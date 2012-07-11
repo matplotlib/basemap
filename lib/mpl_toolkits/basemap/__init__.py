@@ -3140,7 +3140,7 @@ class Basemap(object):
 
         If C is specified, it specifies values at the coordinate (x[i],y[i]).
         These values are accumulated for each hexagonal bin and then reduced
-        according to reduce_C_function, which defaults to numpy?s mean function
+        according to reduce_C_function, which defaults to the numpy mean function
         (np.mean). (If C is specified, it must also be a 1-D sequence of the
         same length as x and y.)
 
