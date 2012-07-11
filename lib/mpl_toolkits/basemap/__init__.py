@@ -4231,7 +4231,7 @@ class Basemap(object):
                 _ax = plt.gca()
         return _ax, plt
 
-    def shiftdata(self,lonsin,datain=None):
+    def shiftdata(self,lonsin,datain=None,lon_0=None):
         """
         Shift longitudes (and optionally data) so that they match map projection region.
         Only valid for cylindrical/pseudo-cylindrical global projections and data
@@ -4252,6 +4252,8 @@ class Basemap(object):
         Keywords         Description
         ==============   ====================================================
         datain           original 1-d or 2-d data. Default None.
+        lon_0            center of map projection region. Defaut None, 
+                         given by current map projection.
         ==============   ====================================================
 
         if datain given, returns ``dataout,lonsout`` (data and longitudes shifted to fit in interval
@@ -4259,9 +4261,8 @@ class Basemap(object):
         transformed longitudes lie outside map projection region, data is
         masked and longitudes are set to 1.e30.
         """
-        if self.projection not in _cylproj and \
-           self.projection not in _pseudocyl:
-            msg='projection must be cylindrical or pseudo-cylindrical'
+        if lon_0 is None and 'lon_0' not in self.projparams:
+            msg='lon_0 keyword must be provided'
             raise ValueError(msg)
         lonsin = np.asarray(lonsin)
         if lonsin.ndim not in [1,2]:
@@ -4271,7 +4272,8 @@ class Basemap(object):
             if not ma.isMA(datain): datain = np.asarray(datain)
             if datain.ndim not in [1,2]:
                 raise ValueError('1-d or 2-d data required')
-        lon_0 = self.projparams['lon_0']
+        if lon_0 is None:
+            lon_0 = self.projparams['lon_0']
         # 2-d data.
         if lonsin.ndim == 2:
             nlats = lonsin.shape[0]
