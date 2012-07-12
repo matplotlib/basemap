@@ -6,8 +6,7 @@ version 1.0.5 (not yet released)
   cylindrical and pseudo-cylindrical projections) using the shiftdata
   method, and lons/lats are converted to map projection coords. Default
   value is False.
-* add shiftdata method and shiftlons function to address issue 54. Added
-  shiftdata.py example.
+* add shiftdata method to address issue 54. Added shifdata.py example.
 * fix bluemarble and warpimage methods to account for change in orientation
   of arrays returned to matplotlib's pil_to_array (issue 51)
 * fix glitch with drawing meridians and filling coastline polygons with 
