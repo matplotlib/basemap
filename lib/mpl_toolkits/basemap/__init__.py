@@ -34,6 +34,7 @@ from .proj import Proj
 import numpy as np
 import numpy.ma as ma
 import _geoslib
+import functools
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 # check to see if environment variable BASEMAPDATA set to a directory,
@@ -427,6 +428,42 @@ def _validated_ll(param, name, minval, maxval):
 def _insert_validated(d, param, name, minval, maxval):
     if param is not None:
         d[name] = _validated_ll(param, name, minval, maxval)
+
+def transform(plotfunc):
+    # shift data and longitudes to map projection region, then compute
+    # transformation to map projection coordinates.
+    @functools.wraps(plotfunc)
+    def with_transform(self,x,y,data,*args,**kwargs):
+        # input coordinates are latitude/longitude, not map projection coords.
+        if 'latlon' in kwargs and kwargs['latlon']:
+            # shift data to map projection region for
+            # cylindrical and pseudo-cylindrical projections.
+            if self.projection in _cylproj or self.projection in _pseudocyl:
+                x, data = self.shiftdata(x, data)
+            # convert lat/lon coords to map projection coords.
+            x, y = self(x,y)
+            del kwargs['latlon']
+        return plotfunc(self,x,y,data,*args,**kwargs)
+    return with_transform
+
+def transformuv(plotfunc):
+    # shift data and longitudes to map projection region, then compute
+    # transformation to map projection coordinates. Works when call
+    # signature has two data arrays instead of one.
+    @functools.wraps(plotfunc)
+    def with_transform(self,x,y,u,v,*args,**kwargs):
+        # input coordinates are latitude/longitude, not map projection coords.
+        if 'latlon' in kwargs and kwargs['latlon']:
+            # shift data to map projection region for
+            # cylindrical and pseudo-cylindrical projections.
+            if self.projection in _cylproj or self.projection in _pseudocyl:
+                x1, u = self.shiftdata(x, u)
+                x, v = self.shiftdata(x, v)
+            # convert lat/lon coords to map projection coords.
+            x, y = self(x,y)
+            del kwargs['latlon']
+        return plotfunc(self,x,y,u,v,*args,**kwargs)
+    return with_transform
 
 class Basemap(object):
 
@@ -2995,7 +3032,8 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
-    def pcolor(self,x,y,data,tri=False,**kwargs):
+    @transform
+    def pcolor(self,x,y,data,**kwargs):
         """
         Make a pseudo-color plot over the map
         (see matplotlib.pyplot.pcolor documentation).
@@ -3019,15 +3057,6 @@ class Basemap(object):
         Other \**kwargs passed on to matplotlib.pyplot.pcolor (or tricolor if
         ``tri=True``).
         """
-        # input coordinates are latitude/longitude, not map projection coords.
-        if 'latlon' in kwargs and kwargs['latlon']:
-            # shift data to map projection region for
-            # cylindrical and pseudo-cylindrical projections.
-            if self.projection in _cylproj or self.projection in _pseudocyl:
-                x, data = self.shiftdata(x, data)
-            # convert lat/lon coords to map projection coords.
-            x, y = self(x,y)
-            del kwargs['latlon']
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -3035,7 +3064,7 @@ class Basemap(object):
         if h is not None:
             ax.hold(h)
         try:
-            if tri:
+            if 'tri' in kwargs and kwargs['tri']:
                 try:
                     import matplotlib.tri as tri
                 except:
@@ -3060,6 +3089,7 @@ class Basemap(object):
                     ret = ax.tripcolor(triang,data,**kwargs)
                 else:
                     ret = ax.tripcolor(x,y,data,**kwargs)
+                del kwargs['tri']
             else:
                 # make x,y masked arrays
                 # (masked where data is outside of projection limb)
@@ -3082,6 +3112,7 @@ class Basemap(object):
             ax.set_frame_on(False)
         return ret
 
+    @transform
     def pcolormesh(self,x,y,data,**kwargs):
         """
         Make a pseudo-color plot over the map
@@ -3098,15 +3129,6 @@ class Basemap(object):
 
         Other \**kwargs passed on to matplotlib.pyplot.pcolormesh.
         """
-        # input coordinates are latitude/longitude, not map projection coords.
-        if 'latlon' in kwargs and kwargs['latlon']:
-            # shift data to map projection region for
-            # cylindrical and pseudo-cylindrical projections.
-            if self.projection in _cylproj or self.projection in _pseudocyl:
-                x, data = self.shiftdata(x, data)
-            # convert lat/lon coords to map projection coords.
-            x, y = self(x,y)
-            del kwargs['latlon']
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -3178,6 +3200,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
+    @transform
     def contour(self,x,y,data,*args,**kwargs):
         """
         Make a contour plot over the map
@@ -3198,15 +3221,6 @@ class Basemap(object):
         Other \*args and \**kwargs passed on to matplotlib.pyplot.contour
         (or tricontour if ``tri=True``).
         """
-        # input coordinates are latitude/longitude, not map projection coords.
-        if 'latlon' in kwargs and kwargs['latlon']:
-            # shift data to map projection region for
-            # cylindrical and pseudo-cylindrical projections.
-            if self.projection in _cylproj or self.projection in _pseudocyl:
-                x, data = self.shiftdata(x, data)
-            # convert lat/lon coords to map projection coords.
-            x, y = self(x,y)
-            del kwargs['latlon']
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -3282,6 +3296,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return CS
 
+    @transform
     def contourf(self,x,y,data,*args,**kwargs):
         """
         Make a filled contour plot over the map
@@ -3305,15 +3320,6 @@ class Basemap(object):
         Other \*args and \**kwargs passed on to matplotlib.pyplot.contourf
         (or tricontourf if ``tri=True``).
         """
-        # input coordinates are latitude/longitude, not map projection coords.
-        if 'latlon' in kwargs and kwargs['latlon']:
-            # shift data to map projection region for
-            # cylindrical and pseudo-cylindrical projections.
-            if self.projection in _cylproj or self.projection in _pseudocyl:
-                x, data = self.shiftdata(x, data)
-            # convert lat/lon coords to map projection coords.
-            x, y = self(x,y)
-            del kwargs['latlon']
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -3393,6 +3399,7 @@ class Basemap(object):
         if self.round: CS.collections,c = self._clipcircle(ax,CS.collections)
         return CS
 
+    @transformuv
     def quiver(self, x, y, u, v, *args, **kwargs):
         """
         Make a vector plot (u, v) with arrows on the map.
@@ -3410,17 +3417,6 @@ class Basemap(object):
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.quiver.
         """
-        # input coordinates are latitude/longitude, not map projection coords.
-        if 'latlon' in kwargs and kwargs['latlon']:
-            # shift data to map projection region for
-            # cylindrical and pseudo-cylindrical projections.
-            if self.projection in _cylproj or self.projection in _pseudocyl:
-                xsave = x.copy()
-                x, u = self.shiftdata(x, u)
-                x, v = self.shiftdata(xsave, v)
-            # convert lat/lon coords to map projection coords.
-            x, y = self(x,y)
-            del kwargs['latlon']
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -3441,6 +3437,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
+    @transformuv
     def streamplot(self, x, y, u, v, *args, **kwargs):
         """
         Draws streamlines of a vector flow.
@@ -3457,17 +3454,6 @@ class Basemap(object):
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.streamplot.
         """
-        # input coordinates are latitude/longitude, not map projection coords.
-        if 'latlon' in kwargs and kwargs['latlon']:
-            # shift data to map projection region for
-            # cylindrical and pseudo-cylindrical projections.
-            if self.projection in _cylproj or self.projection in _pseudocyl:
-                xsave = x.copy()
-                x, u = self.shiftdata(x, u)
-                x, v = self.shiftdata(xsave, v)
-            # convert lat/lon coords to map projection coords.
-            x, y = self(x,y)
-            del kwargs['latlon']
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
@@ -3493,6 +3479,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
+    @transformuv
     def barbs(self, x, y, u, v, *args, **kwargs):
         """
         Make a wind barb plot (u, v) with on the map.
@@ -3512,17 +3499,6 @@ class Basemap(object):
         Returns two matplotlib.axes.Barbs instances, one for the Northern
         Hemisphere and one for the Southern Hemisphere.
         """
-        # input coordinates are latitude/longitude, not map projection coords.
-        if 'latlon' in kwargs and kwargs['latlon']:
-            # shift data to map projection region for
-            # cylindrical and pseudo-cylindrical projections.
-            if self.projection in _cylproj or self.projection in _pseudocyl:
-                xsave = x.copy()
-                x, u = self.shiftdata(x, u)
-                x, v = self.shiftdata(xsave, v)
-            # convert lat/lon coords to map projection coords.
-            x, y = self(x,y)
-            del kwargs['latlon']
         if _matplotlib_version < '0.98.3':
             msg = dedent("""
             barb method requires matplotlib 0.98.3 or higher,
