@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 date = '20071215' # date to plot.
 # open dataset for that date.
 dataset = \
-Dataset('http://nomads.ncdc.noaa.gov/thredds/dodsC/oisst2/%s/AVHRR-AMSR/amsr-avhrr-v2.%s.nc'%\
+Dataset('http://www.ncdc.noaa.gov/thredds/dodsC/oisst/NetCDF/AVHRR-AMSR/%s/AVHRR-AMSR/amsr-avhrr-v2.%s.nc.gz'%
        (date[0:4],date))
 # read sst.  Will automatically create a masked array using
 # missing_value variable attribute. 'squeeze out' singleton dimensions.
