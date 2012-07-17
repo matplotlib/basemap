@@ -429,7 +429,7 @@ def _insert_validated(d, param, name, minval, maxval):
     if param is not None:
         d[name] = _validated_ll(param, name, minval, maxval)
 
-def transform(plotfunc):
+def _transform(plotfunc):
     # shift data and longitudes to map projection region, then compute
     # transformation to map projection coordinates.
     @functools.wraps(plotfunc)
@@ -446,7 +446,7 @@ def transform(plotfunc):
         return plotfunc(self,x,y,data,*args,**kwargs)
     return with_transform
 
-def transformuv(plotfunc):
+def _transformuv(plotfunc):
     # shift data and longitudes to map projection region, then compute
     # transformation to map projection coordinates. Works when call
     # signature has two data arrays instead of one.
@@ -3032,7 +3032,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
-    @transform
+    @_transform
     def pcolor(self,x,y,data,**kwargs):
         """
         Make a pseudo-color plot over the map
@@ -3112,7 +3112,7 @@ class Basemap(object):
             ax.set_frame_on(False)
         return ret
 
-    @transform
+    @_transform
     def pcolormesh(self,x,y,data,**kwargs):
         """
         Make a pseudo-color plot over the map
@@ -3200,7 +3200,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
-    @transform
+    @_transform
     def contour(self,x,y,data,*args,**kwargs):
         """
         Make a contour plot over the map
@@ -3296,7 +3296,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return CS
 
-    @transform
+    @_transform
     def contourf(self,x,y,data,*args,**kwargs):
         """
         Make a filled contour plot over the map
@@ -3399,7 +3399,7 @@ class Basemap(object):
         if self.round: CS.collections,c = self._clipcircle(ax,CS.collections)
         return CS
 
-    @transformuv
+    @_transformuv
     def quiver(self, x, y, u, v, *args, **kwargs):
         """
         Make a vector plot (u, v) with arrows on the map.
@@ -3437,7 +3437,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
-    @transformuv
+    @_transformuv
     def streamplot(self, x, y, u, v, *args, **kwargs):
         """
         Draws streamlines of a vector flow.
@@ -3479,7 +3479,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
-    @transformuv
+    @_transformuv
     def barbs(self, x, y, u, v, *args, **kwargs):
         """
         Make a wind barb plot (u, v) with on the map.
