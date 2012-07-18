@@ -435,13 +435,14 @@ def _transform(plotfunc):
     @functools.wraps(plotfunc)
     def with_transform(self,x,y,data,*args,**kwargs):
         # input coordinates are latitude/longitude, not map projection coords.
-        if 'latlon' in kwargs and kwargs['latlon']:
+        if kwargs.get('latlon', False):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
                 x, data = self.shiftdata(x, data)
             # convert lat/lon coords to map projection coords.
             x, y = self(x,y)
+            # delete this keyword so it's not passed on to matplotlib.
             del kwargs['latlon']
         return plotfunc(self,x,y,data,*args,**kwargs)
     return with_transform
@@ -453,7 +454,7 @@ def _transformuv(plotfunc):
     @functools.wraps(plotfunc)
     def with_transform(self,x,y,u,v,*args,**kwargs):
         # input coordinates are latitude/longitude, not map projection coords.
-        if 'latlon' in kwargs and kwargs['latlon']:
+        if kwargs.get('latlon', False):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
@@ -461,6 +462,7 @@ def _transformuv(plotfunc):
                 x, v = self.shiftdata(x, v)
             # convert lat/lon coords to map projection coords.
             x, y = self(x,y)
+            # delete this keyword so it's not passed on to matplotlib.
             del kwargs['latlon']
         return plotfunc(self,x,y,u,v,*args,**kwargs)
     return with_transform
@@ -746,7 +748,7 @@ class Basemap(object):
             if projection == 'merc':
                 if lat_ts is None:
                     lat_ts = 0.
-                    projparams['lat_ts']=lat_ts
+                    projparams['lat_ts'] = lat_ts
             if not using_corners:
                 llcrnrlat = -90.
                 urcrnrlat = 90.
@@ -769,7 +771,7 @@ class Basemap(object):
             if width is not None or height is not None:
                 sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
             if lon_0 is not None:
-                projparams['lon_0']=lon_0
+                projparams['lon_0'] = lon_0
             else:
                 projparams['lon_0']=0.5*(llcrnrlon+urcrnrlon)
         else:
@@ -1377,7 +1379,7 @@ class Basemap(object):
                 self.boundarylonmin = lons.min()
                 self.boundarylonmax = lons.max()
         b = np.empty((len(lons),2),np.float64)
-        b[:,0]=lons; b[:,1]=lats
+        b[:,0] = lons; b[:,1] = lats
         boundaryll = _geoslib.Polygon(b)
         return lons, lats, boundaryll, boundaryxy
 
@@ -3064,7 +3066,7 @@ class Basemap(object):
         if h is not None:
             ax.hold(h)
         try:
-            if 'tri' in kwargs and kwargs['tri']:
+            if kwargs.get('tri', False)
                 try:
                     import matplotlib.tri as tri
                 except:
@@ -3089,6 +3091,7 @@ class Basemap(object):
                     ret = ax.tripcolor(triang,data,**kwargs)
                 else:
                     ret = ax.tripcolor(x,y,data,**kwargs)
+                # delete this keyword so it's not pass on to pcolor.
                 del kwargs['tri']
             else:
                 # make x,y masked arrays
@@ -3228,7 +3231,7 @@ class Basemap(object):
         if h is not None:
             ax.hold(h)
         try:
-            if 'tri' in kwargs and kwargs['tri']:
+            if kwargs.get('tri', False):
                 try:
                     import matplotlib.tri as tri
                 except:
@@ -3327,7 +3330,7 @@ class Basemap(object):
         if h is not None:
             ax.hold(h)
         try:
-            if 'tri' in kwargs and kwargs['tri']:
+            if kwargs.get('tri', False):
                 try:
                     import matplotlib.tri as tri
                 except:
