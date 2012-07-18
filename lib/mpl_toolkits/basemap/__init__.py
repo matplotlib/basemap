@@ -1029,7 +1029,7 @@ class Basemap(object):
             if crossdatelineE:
                 south_save=south
                 north_save=north
-            if crossdatelineW: 
+            if crossdatelineW:
                 south=south_save
                 north=north_save
             if area < 0.: area = 1.e30
@@ -1321,8 +1321,6 @@ class Basemap(object):
         else:
             if self.projection not in _pseudocyl:
                 lons, lats = maptran(x,y,inverse=True)
-                self.boundarylonmin = lons.min()
-                self.boundarylonmax = lons.max()
                 # fix lons so there are no jumps.
                 n = 1
                 lonprev = lons[0]
@@ -1335,6 +1333,8 @@ class Basemap(object):
                         lons[n] = lon
                     lonprev = lon
                     n = n + 1
+                self.boundarylonmin = lons.min()
+                self.boundarylonmax = lons.max()
         b = np.empty((len(lons),2),np.float64)
         b[:,0]=lons; b[:,1]=lats
         boundaryll = _geoslib.Polygon(b)
@@ -2160,13 +2160,13 @@ class Basemap(object):
                             t = ax.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',**kwargs)
                         else:
                             t = ax.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
-                        if t is not None: linecolls[lat][1].append(t) 
+                        if t is not None: linecolls[lat][1].append(t)
 
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         keys = list(linecolls.keys()); vals = list(linecolls.values())
         for k,v in zip(keys,vals):
-            if v == ([], []): 
+            if v == ([], []):
                 del linecolls[k]
             # add a remove method to each tuple.
             else:
@@ -2247,7 +2247,7 @@ class Basemap(object):
             def addlon(meridians,madd):
                 minside = (madd >= self.llcrnrlon and madd <= self.urcrnrlon)
                 if minside and madd not in meridians: meridians.append(madd)
-                return meridians 
+                return meridians
             merids = list(meridians)
             meridians = []
             for m in merids:
@@ -2415,7 +2415,7 @@ class Basemap(object):
         # remove empty values from linecolls dictionary
         keys = list(linecolls.keys()); vals = list(linecolls.values())
         for k,v in zip(keys,vals):
-            if v == ([], []): 
+            if v == ([], []):
                 del linecolls[k]
             else:
             # add a remove method to each tuple.
@@ -4001,7 +4001,7 @@ class Basemap(object):
                          with. Default None, and matplotlib.pyplot.gcf() is used
                          to retrieve the current active figure instance.
         ax               The axes instance which the colorbar will be
-                         associated with.  Default None, searches for self.ax, 
+                         associated with.  Default None, searches for self.ax,
                          and if None uses matplotlib.pyplot.gca().
         \**kwargs        extra keyword arguments passed on to
                          colorbar method of the figure instance.
@@ -4390,7 +4390,7 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution='l',grid=5):
                      grid.
     datain           rank-2 input array on grid defined by ``lonsin`` and
                      ``latsin``.
-    inlands          if False, masked only ocean points and not inland 
+    inlands          if False, masked only ocean points and not inland
                      lakes (Default True).
     resolution       gshhs coastline resolution used to define land/sea
                      mask (default 'l', available 'c','l','i','h' or 'f')
@@ -4416,7 +4416,7 @@ def _readlsmask(lakes=True,resolution='l',grid=5):
     elif grid == 5:
         nlons = 4320
     elif grid == 2.5:
-        nlons = 8640 
+        nlons = 8640
     elif grid == 1.25:
         nlons = 17280
     else:
