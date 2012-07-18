@@ -1321,8 +1321,6 @@ class Basemap(object):
         else:
             if self.projection not in _pseudocyl:
                 lons, lats = maptran(x,y,inverse=True)
-                self.boundarylonmin = lons.min()
-                self.boundarylonmax = lons.max()
                 # fix lons so there are no jumps.
                 n = 1
                 lonprev = lons[0]
@@ -1335,6 +1333,8 @@ class Basemap(object):
                         lons[n] = lon
                     lonprev = lon
                     n = n + 1
+                self.boundarylonmin = lons.min()
+                self.boundarylonmax = lons.max()
         b = np.empty((len(lons),2),np.float64)
         b[:,0]=lons; b[:,1]=lats
         boundaryll = _geoslib.Polygon(b)
