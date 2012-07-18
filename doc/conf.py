@@ -48,9 +48,10 @@ copyright = '2011, Jeffrey Whitaker'
 # other places throughout the built documents.
 #
 # The short X.Y version.
-version = '1.0.2'
+from mpl_toolkits.basemap import __version__ as bmversion
+version = bmversion
 # The full version, including alpha/beta/rc tags.
-release = '1.0.2'
+release = bmversion
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:

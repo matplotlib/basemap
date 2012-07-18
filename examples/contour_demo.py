@@ -1,4 +1,4 @@
-from mpl_toolkits.basemap import Basemap, shiftgrid
+from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -9,21 +9,18 @@ import sys
 hgt = np.loadtxt('500hgtdata.gz')
 lons = np.loadtxt('500hgtlons.gz')
 lats = np.loadtxt('500hgtlats.gz')
-# shift data so lons go from -180 to 180 instead of 0 to 360.
-hgt,lons = shiftgrid(180.,hgt,lons,start=False)
 lons, lats = np.meshgrid(lons, lats)
 
 # create new figure
 fig=plt.figure()
 # setup of sinusoidal basemap
 m = Basemap(resolution='c',projection='sinu',lon_0=0)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
-x, y = m(lons, lats)
 # create contour lines
-CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
+CS1 = m.contour(lons,lats,hgt,15,linewidths=0.5,colors='k',latlon=True)
 # fill between contour lines.
-CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet,extend='both')
+CS2 =\
+m.contourf(lons,lats,hgt,CS1.levels,cmap=plt.cm.jet,extend='both',latlon=True)
 m.colorbar(CS2) # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -41,11 +38,10 @@ sys.stdout.write('plotting with sinusoidal basemap ...\n')
 fig=plt.figure()
 # setup of mollweide basemap
 m = Basemap(resolution='c',projection='moll',lon_0=0)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
-x, y = m(lons, lats)
-CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet,extend='both')
+CS1 = m.contour(lons,lats,hgt,15,linewidths=0.5,colors='k',latlon=True)
+CS2 =\
+m.contourf(lons,lats,hgt,CS1.levels,cmap=plt.cm.jet,extend='both',latlon=True)
 m.colorbar(CS2) # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -63,11 +59,9 @@ sys.stdout.write('plotting with mollweide basemap ...\n')
 fig=plt.figure()
 # set up Robinson map projection.
 m = Basemap(resolution='c',projection='robin',lon_0=0)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
-x, y = m(lons, lats)
-CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
-CS2 = m.contourf(x,y,hgt,CS1.levels,cmap=plt.cm.jet,extend='both')
+CS1 = m.contour(lons,lats,hgt,15,linewidths=0.5,colors='k',latlon=True)
+CS2 = m.contourf(lons,lats,hgt,CS1.levels,cmap=plt.cm.jet,extend='both',latlon=True)
 m.colorbar(CS2) # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -85,7 +79,6 @@ sys.stdout.write('plotting with robinson basemap ...\n')
 fig=plt.figure()
 # set up map projection (azimuthal equidistant).
 m = Basemap(projection='npaeqd',lon_0=-90,boundinglat=15.,resolution='c')
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
@@ -108,7 +101,6 @@ fig=plt.figure()
 # setup of orthographic basemap
 m = Basemap(resolution='c',projection='ortho',\
             lat_0=45.,lon_0=-120.)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # make a filled contour plot.
 x, y = m(lons, lats)
 CS1 = m.contour(x,y,hgt,15,linewidths=0.5,colors='k')
@@ -121,7 +113,7 @@ m.drawmapboundary()
 # draw parallels and meridians.
 parallels = np.arange(-80.,90,20.)
 m.drawparallels(parallels)
-meridians = np.arange(0.,360.,20.)
+meridians = np.arange(-360.,360.,20.)
 m.drawmeridians(meridians)
 plt.title('Orthographic Filled Contour Demo')
 sys.stdout.write('plotting with orthographic basemap ..\n')

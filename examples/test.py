@@ -1,49 +1,40 @@
 from __future__ import print_function
-# make plots of etopo bathymetry/topography data on
-# various map projections, drawing coastlines, state and
+# exercise all the projections by plotting
+# etopo bathymetry/topography over them, plus
+# drawing coastlines, state and
 # country boundaries, filling continents and drawing
 # parallels/meridians
 
-from mpl_toolkits.basemap import Basemap, shiftgrid, cm
+from mpl_toolkits.basemap import Basemap, cm, shiftgrid
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 
+cmap = cm.GMT_haxby # colormap to use
+
 # read in topo data (on a regular lat/lon grid)
 # longitudes go from 20 to 380.
-topodatin = np.loadtxt('etopo20data.gz')
-lonsin = np.loadtxt('etopo20lons.gz')
-latsin = np.loadtxt('etopo20lats.gz')
-
-# shift data so lons go from -180 to 180 instead of 20 to 380.
-topoin,lons = shiftgrid(180.,topodatin,lonsin,start=False)
-lats = latsin
+topodat = np.loadtxt('etopo20data.gz')
+lons = np.loadtxt('etopo20lons.gz')
+lats = np.loadtxt('etopo20lats.gz')
+lons, lats = np.meshgrid(lons, lats)
 
 print('min/max etopo20 data:')
-print(topoin.min(),topoin.max())
+print(topodat.min(),topodat.max())
 
 # create new figure
 fig=plt.figure()
 # setup cylindrical equidistant map projection (global domain).
 m = Basemap(llcrnrlon=-180.,llcrnrlat=-90,urcrnrlon=180.,urcrnrlat=90.,\
             resolution='c',area_thresh=10000.,projection='cyl')
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
-im = m.imshow(topoin,plt.cm.jet)
+im = m.pcolormesh(lons,lats,topodat,cmap=cmap,latlon=True)
 m.colorbar() # draw colorbar
 m.drawcoastlines()
-#m.drawcountries()
-#m.drawstates()
-#m.fillcontinents()
 # draw parallels
-delat = 30.
-circles = np.arange(0.,90.+delat,delat).tolist()+\
-          np.arange(-delat,-90.-delat,-delat).tolist()
-m.drawparallels(circles,labels=[1,0,0,1])
+m.drawparallels(np.arange(-90,90,30),labels=[1,0,0,1])
 # draw meridians
-delon = 60.
-meridians = np.arange(-180,180,delon)
-m.drawmeridians(meridians,labels=[1,0,0,1])
+m.drawmeridians(np.arange(0,360,60),labels=[1,0,0,1])
 plt.title('Cylindrical Equidistant')
 print('plotting Cylindrical Equidistant example ...')
 print(m.proj4string)
@@ -53,18 +44,14 @@ fig=plt.figure()
 # setup miller cylindrical map projection.
 m = Basemap(llcrnrlon=-180.,llcrnrlat=-90,urcrnrlon=180.,urcrnrlat=90.,\
             resolution='c',area_thresh=10000.,projection='mill')
-# transform to nx x ny regularly spaced native projection grid
-nx = len(lons); ny = len(lats)
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-fig.add_axes([0.1,0.1,0.75,0.75])
 # plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
-m.drawcoastlines()
-# draw parallels
-m.drawparallels(circles,labels=[1,1,1,1])
-# draw meridians
-m.drawmeridians(meridians,labels=[1,1,1,1])
-plt.title('Miller Cylindrical',y=1.1)
+im = m.pcolormesh(lons,lats,topodat,cmap=cmap,latlon=True)
+m.colorbar(location='bottom',pad='7%') # draw colorbar
+m.drawcoastlines() # draw coastlines
+# draw parallels and meridiands
+m.drawparallels(np.arange(-90,90,30),labels=[1,0,0,1])
+m.drawmeridians(np.arange(0,360,60),labels=[1,0,0,1])
+plt.title('Miller Cylindrical')
 print('plotting Miller Cylindrical example ...')
 print(m.proj4string)
 
@@ -73,17 +60,13 @@ fig=plt.figure()
 # setup gall stereographic cylindrical map projection.
 m = Basemap(llcrnrlon=-180.,llcrnrlat=-90,urcrnrlon=180.,urcrnrlat=90.,\
             resolution='c',area_thresh=10000.,projection='gall')
-# transform to nx x ny regularly spaced native projection grid
-nx = len(lons); ny = len(lats)
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-fig.add_axes([0.1,0.1,0.75,0.75])
 # plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
-m.drawcoastlines()
-# draw parallels
-m.drawparallels(circles,labels=[1,1,1,1])
-# draw meridians
-m.drawmeridians(meridians,labels=[1,1,1,1])
+im = m.pcolormesh(lons,lats,topodat,cmap=cmap,latlon=True)
+cb = m.colorbar() # draw colorbar
+m.drawcoastlines() # draw coastlines
+# draw parallels and meridiands
+m.drawparallels(np.arange(-90,90,30),labels=[1,0,0,1])
+m.drawmeridians(np.arange(0,360,60),labels=[1,0,0,1])
 plt.title('Gall Stereographic Cylindrical',y=1.1)
 print('plotting Gall Stereographic Cylindrical example ...')
 print(m.proj4string)
@@ -91,23 +74,17 @@ print(m.proj4string)
 # create new figure
 fig=plt.figure()
 # setup mercator map projection (-80 to +80).
-m = Basemap(llcrnrlon=-180.,llcrnrlat=-80,urcrnrlon=180.,urcrnrlat=80.,\
-            resolution='c',area_thresh=10000.,projection='merc',\
-            lon_0=0.5*(lons[0]+lons[-1]),lat_ts=20.)
-# transform to nx x ny regularly spaced native projection grid
-nx = len(lons); ny = int(80.*len(lats)/90.)
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-fig.add_axes([0.1,0.1,0.75,0.75])
+m = Basemap(llcrnrlon=-180.,llcrnrlat=-75,urcrnrlon=180.,urcrnrlat=75.,\
+            resolution='c',area_thresh=10000.,projection='merc',lat_ts=20)
 # plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
-m.drawcoastlines()
-m.drawcountries()
-m.drawstates()
-m.fillcontinents()
-# draw parallels
-m.drawparallels(circles,labels=[1,1,1,1])
-# draw meridians
-m.drawmeridians(meridians,labels=[1,1,1,1])
+im = m.pcolormesh(lons,lats,topodat,cmap=cmap,latlon=True)
+cb = m.colorbar() # draw colorbar
+m.drawcoastlines() # draw coastlines
+m.drawstates() # draw state boundaries
+m.fillcontinents() # fill continents
+# draw parallels and meridiands
+m.drawparallels(np.arange(-90,90,30),labels=[1,0,0,1])
+m.drawmeridians(np.arange(0,360,60),labels=[1,0,0,1])
 plt.title('Mercator',y=1.1)
 print('plotting Mercator example ...')
 print(m.proj4string)
@@ -118,12 +95,14 @@ fig=plt.figure()
 m = Basemap(llcrnrlon=-6,llcrnrlat=49,urcrnrlon=4,urcrnrlat=59,\
             resolution='l',area_thresh=1000.,projection='cass',\
             lat_0=54.,lon_0=-2.)
-fig.add_axes([0.125,0.2,0.6,0.6])
+# plot image over map.
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/20000.)+1; ny = int((m.ymax-m.ymin)/20000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
+# shift data so lons go from -180 to 180 instead of 20 to 380.
+datamap,lonsmap = shiftgrid(180.,topodat,lons[0,:],start=False)
+topomap = m.transform_scalar(datamap,lonsmap,lats[:,0],nx,ny)
 # plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
+im = m.imshow(topomap,cmap)
 m.colorbar() # draw colorbar
 m.drawcoastlines()
 # draw parallels
@@ -144,12 +123,7 @@ fig=plt.figure()
 m = Basemap(llcrnrlon=-95.,llcrnrlat=-52,urcrnrlon=-35.,urcrnrlat=15.,\
             resolution='c',area_thresh=10000.,projection='gnom',\
             lat_0=-10.,lon_0=-60.)
-fig.add_axes([0.125,0.2,0.6,0.6])
-# transform to nx x ny regularly spaced native projection grid
-nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-# plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
+cs = m.contourf(lons,lats,topodat,np.arange(-6500,5000,50),cmap=cmap,extend='both',latlon=True)
 m.colorbar() # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
@@ -171,12 +145,14 @@ fig=plt.figure()
 m = Basemap(llcrnrlon=-6,llcrnrlat=49,urcrnrlon=4,urcrnrlat=59,\
             resolution='l',area_thresh=1000.,projection='tmerc',\
             lat_0=54.,lon_0=-2.)
-fig.add_axes([0.125,0.2,0.6,0.6])
+# plot image over map.
 # transform to nx x ny regularly spaced native projection grid
 nx = int((m.xmax-m.xmin)/20000.)+1; ny = int((m.ymax-m.ymin)/20000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
+# shift data so lons go from -180 to 180 instead of 20 to 380.
+datamap,lonsmap = shiftgrid(180.,topodat,lons[0,:],start=False)
+topomap = m.transform_scalar(datamap,lonsmap,lats[:,0],nx,ny)
 # plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
+im = m.imshow(topomap,cmap)
 m.colorbar() # draw colorbar
 m.drawcoastlines()
 # draw parallels
@@ -197,11 +173,8 @@ fig=plt.figure()
 m = Basemap(height=16700000,width=12000000,
             resolution='l',area_thresh=1000.,projection='omerc',\
             lon_0=-100,lat_0=15,lon_2=-120,lat_2=65,lon_1=-50,lat_1=-55)
-# transform to nx x ny regularly spaced native projection grid
-nx = int((m.xmax-m.xmin)/20000.)+1; ny = int((m.ymax-m.ymin)/20000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
+cs = m.contourf(lons,lats,topodat,np.arange(-6500,5000,50),cmap=cmap,extend='both',latlon=True)
 m.colorbar() # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
@@ -220,12 +193,8 @@ fig=plt.figure()
 m = Basemap(llcrnrlon=-35.,llcrnrlat=-30,urcrnrlon=80.,urcrnrlat=50.,\
             resolution='c',area_thresh=1000.,projection='poly',\
             lat_0=0.,lon_0=20.)
-fig.add_axes([0.125,0.2,0.6,0.6])
-# transform to nx x ny regularly spaced native projection grid
-nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
 # plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
+cs = m.contourf(lons,lats,topodat,np.arange(-6500,5000,50),cmap=cmap,extend='both',latlon=True)
 m.colorbar() # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
@@ -247,11 +216,14 @@ fig=plt.figure()
 m = Basemap(llcrnrlon=-90.,llcrnrlat=18,urcrnrlon=-70.,urcrnrlat=26.,\
             resolution='l',area_thresh=1000.,projection='eqdc',\
             lat_1=21.,lat_2=23.,lon_0=-80.)
+# plot image over map.
 # transform to nx x ny regularly spaced native projection grid
-nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
-im = m.imshow(topodat,plt.cm.jet)
+nx = int((m.xmax-m.xmin)/20000.)+1; ny = int((m.ymax-m.ymin)/20000.)+1
+# shift data so lons go from -180 to 180 instead of 20 to 380.
+datamap,lonsmap = shiftgrid(180.,topodat,lons[0,:],start=False)
+topomap = m.transform_scalar(datamap,lonsmap,lats[:,0],nx,ny)
+# plot image over map.
+im = m.imshow(topomap,cmap)
 m.colorbar() # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
@@ -275,11 +247,8 @@ fig=plt.figure()
 m = Basemap(llcrnrlon=-145.5,llcrnrlat=1,urcrnrlon=-2.566,urcrnrlat=46.352,\
             resolution='c',area_thresh=10000.,projection='lcc',\
             lat_1=50.,lon_0=-107.)
-# transform to nx x ny regularly spaced native projection grid
-nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
-im = m.imshow(topodat,plt.cm.jet)
+# plot image over map.
+cs = m.contourf(lons,lats,topodat,np.arange(-6500,5000,50),cmap=cmap,extend='both',latlon=True)
 m.colorbar(pad='10%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
@@ -304,13 +273,8 @@ fig=plt.figure()
 m = Basemap(llcrnrlon=-10.,llcrnrlat=20,urcrnrlon=55.,urcrnrlat=75,\
             resolution='l',projection='aea',\
             lat_1=40.,lat_2=60,lon_0=35.)
-# transform to nx x ny regularly spaced native projection grid
-nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
-im.set_clim(-4000.,3000.) # adjust range of colors.
+cs = m.contourf(lons,lats,topodat,np.arange(-4000,3000,50),cmap=cmap,extend='both',latlon=True)
 m.colorbar(pad='10%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
@@ -336,12 +300,8 @@ fig=plt.figure()
 # this is equivalent, but simpler.
 m = Basemap(lon_0=75.,boundinglat=-20,
             resolution='c',area_thresh=10000.,projection='spstere')
-# transform to nx x ny regularly spaced native projection grid
-nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar(pad='12%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
@@ -358,12 +318,8 @@ print(m.proj4string)
 fig=plt.figure()
 m = Basemap(lon_0=75.,boundinglat=-20,
             resolution='c',area_thresh=10000.,projection='spstere',round=True)
-# transform to nx x ny regularly spaced native projection grid
-nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar(pad='12%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
@@ -382,15 +338,8 @@ fig=plt.figure()
 #m = Basemap(llcrnrlon=-150.,llcrnrlat=-18.,urcrnrlon=30.,urcrnrlat=--18.,\
 #            resolution='c',area_thresh=10000.,projection='laea',\
 #            lat_0=90.,lon_0=-105.)
-# this is equivalent, but simpler.
-m = Basemap(lon_0=-105,boundinglat=20.,
-            resolution='c',area_thresh=10000.,projection='nplaea')
-# transform to nx x ny regularly spaced native projection grid
-nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar(pad='12%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
@@ -408,12 +357,8 @@ print(m.proj4string)
 fig=plt.figure()
 m = Basemap(lon_0=-105,boundinglat=20.,
             resolution='c',area_thresh=10000.,projection='nplaea',round=True)
-# transform to nx x ny regularly spaced native projection grid
-nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
 # plot image over map.
-im = m.imshow(topodat,plt.cm.jet)
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar(pad='12%') # draw colorbar
 m.drawcoastlines()
 m.drawcountries()
@@ -436,10 +381,8 @@ fig=plt.figure()
 # this is equivalent, but simpler.
 m = Basemap(lon_0=-105,boundinglat=55.,
             resolution='c',area_thresh=10000.,projection='npaeqd')
-# transform to nx x ny regularly spaced native projection grid
-nx = int((m.xmax-m.xmin)/40000.)+1; ny = int((m.ymax-m.ymin)/40000.)+1
-topodat = m.transform_scalar(topoin,lons,lats,nx,ny)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
+# plot image over map.
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 # plot image over map.
 im = m.imshow(topodat,plt.cm.jet)
 m.colorbar(pad='12%') # draw colorbar
@@ -463,22 +406,8 @@ fig=plt.figure()
 # setup of basemap ('ortho' = orthographic projection)
 m = Basemap(projection='ortho',
             resolution='c',area_thresh=10000.,lat_0=30,lon_0=-60)
-# transform to nx x ny regularly spaced native projection grid
-# nx and ny chosen to have roughly the same horizontal res as original image.
-dx = 2.*np.pi*m.rmajor/len(lons)
-nx = int((m.xmax-m.xmin)/dx)+1; ny = int((m.ymax-m.ymin)/dx)+1
-# interpolate to native projection grid.
-# values outside of projection limb will be masked.
-topo = m.transform_scalar(topoin,lons,lats,nx,ny,masked=True)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# set missing value in color pallette.
-palette = plt.cm.jet
-palette.set_bad(ax.get_axis_bgcolor(), 0.0)
-# plot image over map with imshow.
-# (if contourf were used, no interpolation would be necessary
-#  and values outside projection limb would be handled transparently
-#  - see contour_demo.py)
-im = m.imshow(topo,palette,norm=colors.normalize(clip=False))
+# plot image over map.
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar() # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -499,22 +428,8 @@ fig=plt.figure()
 m = Basemap(projection='geos',
             rsphere=(6378137.00,6356752.3142),\
             resolution='c',area_thresh=10000.,lon_0=0,satellite_height=35785831)
-# transform to nx x ny regularly spaced native projection grid
-# nx and ny chosen to have roughly the same horizontal res as original image.
-dx = 2.*np.pi*m.rmajor/len(lons)
-nx = int((m.xmax-m.xmin)/dx)+1; ny = int((m.ymax-m.ymin)/dx)+1
-# interpolate to native projection grid.
-# values outside of projection limb will be masked.
-topo = m.transform_scalar(topoin,lons,lats,nx,ny,masked=True)
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# set missing value in color pallette.
-palette = plt.cm.jet
-palette.set_bad(ax.get_axis_bgcolor(), 0.0)
-# plot image over map with imshow.
-# (if contourf were used, no interpolation would be necessary
-#  and values outside projection limb would be handled transparently
-#  - see contour_demo.py)
-im = m.imshow(topo,palette,norm=colors.normalize(clip=False))
+# plot image over map.
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar() # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -533,11 +448,9 @@ print(m.proj4string)
 fig=plt.figure()
 # setup of sinusoidal ('sinu' = sinusioidal projection)
 m = Basemap(projection='sinu',
-            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# plot image over map with pcolormesh.
-x,y = m(*np.meshgrid(lonsin,latsin))
-p = m.pcolormesh(x,y,topodatin,shading='flat')
+            resolution='c',area_thresh=10000.,lon_0=0)
+# plot image over map.
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar(location='bottom') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -555,11 +468,9 @@ print(m.proj4string)
 fig=plt.figure()
 # setup of basemap ('moll' = mollweide projection)
 m = Basemap(projection='moll',
-            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# plot image over map with pcolormesh.
-x,y = m(*np.meshgrid(lonsin,latsin))
-p = m.pcolormesh(x,y,topodatin,shading='flat')
+            resolution='c',area_thresh=10000.,lon_0=0)
+# plot image over map.
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar(location='bottom') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -577,11 +488,9 @@ print(m.proj4string)
 fig=plt.figure()
 # setup of basemap ('hammer' = Hammer projection)
 m = Basemap(projection='hammer',
-            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# plot image over map with pcolormesh.
-x,y = m(*np.meshgrid(lonsin,latsin))
-p = m.pcolormesh(x,y,topodatin,shading='flat')
+            resolution='c',area_thresh=10000.,lon_0=0)
+# plot image over map.
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar(location='bottom') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -599,11 +508,9 @@ print(m.proj4string)
 fig=plt.figure()
 # setup of basemap ('robin' = robinson projection)
 m = Basemap(projection='robin',
-            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# plot image over map with pcolormesh.
-x,y = m(*np.meshgrid(lonsin,latsin))
-p = m.pcolormesh(x,y,topodatin,shading='flat')
+            resolution='c',area_thresh=10000.,lon_0=0)
+# plot image over map.
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar(location='bottom',pad='10%') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -621,11 +528,9 @@ print(m.proj4string)
 fig=plt.figure()
 # setup of basemap ('kav7' = Kavrayskiy VII projection)
 m = Basemap(projection='kav7',
-            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# plot image over map with pcolormesh.
-x,y = m(*np.meshgrid(lonsin,latsin))
-p = m.pcolormesh(x,y,topodatin,shading='flat')
+            resolution='c',area_thresh=10000.,lon_0=0)
+# plot image over map.
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar(location='bottom',pad='10%') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -643,11 +548,8 @@ print(m.proj4string)
 fig=plt.figure()
 # setup of basemap ('eck4' = Eckert IV projection)
 m = Basemap(projection='eck4',
-            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# plot image over map with pcolormesh.
-x,y = m(*np.meshgrid(lonsin,latsin))
-p = m.pcolormesh(x,y,topodatin,shading='flat')
+            resolution='c',area_thresh=10000.,lon_0=0)
+cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar(location='bottom',pad='10%') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -665,11 +567,9 @@ print(m.proj4string)
 fig=plt.figure()
 # setup of basemap ('mbtfpq' = McBryde-Thomas Flat Polar Quartic projection)
 m = Basemap(projection='mbtfpq',
-            resolution='c',area_thresh=10000.,lon_0=0.5*(lonsin[0]+lonsin[-1]))
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# plot image over map with pcolormesh.
-x,y = m(*np.meshgrid(lonsin,latsin))
-p = m.pcolormesh(x,y,topodatin,shading='flat')
+            resolution='c',area_thresh=10000.,lon_0=0)
+# plot image over map.
+cs = m.contourf(lons,lats,topodat,np.arange(-6500,5000,50),cmap=cmap,extend='both',latlon=True)
 m.colorbar(location='bottom') # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
@@ -686,11 +586,9 @@ print(m.proj4string)
 # create new figure
 fig=plt.figure()
 # create Basemap instance for van der Grinten projection.
-m = Basemap(projection='vandg',lon_0=0.5*(lonsin[0]+lonsin[-1]))
-ax = fig.add_axes([0.1,0.1,0.7,0.7])
-# plot image over map with pcolormesh.
-x,y = m(*np.meshgrid(lonsin,latsin))
-p = m.pcolormesh(x,y,topodatin,shading='flat')
+m = Basemap(projection='vandg',lon_0=0)
+# plot image over map.
+cs = m.contourf(lons,lats,topodat,np.arange(-6500,5000,50),cmap=cmap,extend='both',latlon=True)
 m.colorbar() # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()

@@ -1,5 +1,14 @@
-since version 1.0.4
--------------------
+version 1.0.5 (not yet released)
+--------------------------------
+* fix further corner cases with splitting of parallels that cross
+  the dateline (issue 40).
+* add latlon keyword to plotting methods.  If latlon=True, x and y
+  values are assumed to longitudes and latitudes in degrees.  The
+  data and longitudes are shifted to the map projection region (for
+  cylindrical and pseudo-cylindrical projections) using the shiftdata
+  method, and lons/lats are converted to map projection coords. Default
+  value is False. Addresses issue 54.  New example shiftdata.py added
+  to illustrate usage.
 * fix bluemarble and warpimage methods to account for change in orientation
   of arrays returned to matplotlib's pil_to_array (issue 51)
 * fix glitch with drawing meridians and filling coastline polygons with 
