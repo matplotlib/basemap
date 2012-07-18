@@ -5,11 +5,11 @@ using matplotlib.
 
 **Requirements**
 
-python 2.4 (or higher)
+python 2.5 (or higher)
 
-matplotlib 1.0.1 (or higher)
+matplotlib
 
-numpy 1.4 (or higher)
+numpy 
 
 The GEOS (Geometry Engine - Open Source) library (version 3.1.1 or higher).
 Source code is included in the geos-3.3.3 directory.
