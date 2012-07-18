@@ -91,7 +91,7 @@ m.fillcontinents()
 # draw parallels and meridians.
 parallels = np.arange(0.,80,20.)
 m.drawparallels(parallels,labels=[0,0,1,1])
-meridians = np.arange(1-360.,360.,20.)
+meridians = np.arange(10.,360.,20.)
 m.drawmeridians(meridians,labels=[1,1,1,1])
 plt.title('Azimuthal Equidistant Filled Contour Demo',y=1.075)
 sys.stdout.write('plotting with azimuthal equidistant basemap ...\n')
