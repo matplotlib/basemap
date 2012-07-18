@@ -3066,7 +3066,7 @@ class Basemap(object):
         if h is not None:
             ax.hold(h)
         try:
-            if kwargs.get('tri', False)
+            if kwargs.get('tri', False):
                 try:
                     import matplotlib.tri as tri
                 except:
