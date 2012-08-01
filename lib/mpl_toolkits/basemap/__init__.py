@@ -1378,6 +1378,13 @@ class Basemap(object):
                     n = n + 1
                 self.boundarylonmin = lons.min()
                 self.boundarylonmax = lons.max()
+                # for circular full disk projections where boundary is
+                # a latitude circle, set boundarylonmax and boundarylonmin
+                # to cover entire world (so parallels will be drawn).
+                if self._fulldisk and \
+                   np.abs(self.boundarylonmax-self.boundarylonmin) < 1.:
+                   self.boundarylonmin = -180.
+                   self.boundarylonmax = 180.
         b = np.empty((len(lons),2),np.float64)
         b[:,0] = lons; b[:,1] = lats
         boundaryll = _geoslib.Polygon(b)
