@@ -3457,6 +3457,11 @@ class Basemap(object):
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.streamplot.
         """
+        if _matplotlib_version < '1.2':
+            msg = dedent("""
+            streamplot method requires matplotlib 1.2 or higher,
+            you have %s""" % _matplotlib_version)
+            raise NotImplementedError(msg)
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
