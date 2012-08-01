@@ -153,3 +153,6 @@ make_inset.py shows how to make an inset showing the location of the map project
 from a global perspective.
 
 utmtest.py shows how to plot a UTM zone.
+
+shiftdata.py shows how to use the 'latlon' keyword to automatically transform to map
+projection coordinates and shift the data longitudinally to fit the map projection region.
