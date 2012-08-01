@@ -3280,7 +3280,7 @@ class Basemap(object):
                 xymask = \
                 np.logical_or(np.greater(x,self.xmax),np.greater(y,self.xmax))
                 xymask = xymask + \
-                np.logical_or(np.less(x,self.xmin),np.less(y,self.xmin))
+                np.logical_or(np.less(x,self.xmin),np.less(y,self.ymin))
                 data = ma.asarray(data)
                 # combine with data mask.
                 mask = np.logical_or(ma.getmaskarray(data),xymask)
