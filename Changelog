@@ -1,5 +1,7 @@
-version 1.0.5 (not yet released)
---------------------------------
+version 1.0.5 (git tag v1.0.5rel)
+---------------------------------
+* fix error in contour method that caused a bogus mask to be applied
+  to the data (issue 58).
 * fix further corner cases with splitting of parallels that cross
   the dateline (issue 40).
 * add latlon keyword to plotting methods.  If latlon=True, x and y
