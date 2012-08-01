@@ -505,6 +505,8 @@ class Basemap(object):
         self.boundinglat = boundinglat
         # is a round pole-centered plot desired?
         self.round = round
+        # full disk projection?
+        self._fulldisk = False # default value
 
         # set up projection parameter dict.
         projparams = {}
@@ -1378,6 +1380,13 @@ class Basemap(object):
                     n = n + 1
                 self.boundarylonmin = lons.min()
                 self.boundarylonmax = lons.max()
+                # for circular full disk projections where boundary is
+                # a latitude circle, set boundarylonmax and boundarylonmin
+                # to cover entire world (so parallels will be drawn).
+                if self._fulldisk and \
+                   np.abs(self.boundarylonmax-self.boundarylonmin) < 1.:
+                   self.boundarylonmin = -180.
+                   self.boundarylonmax = 180.
         b = np.empty((len(lons),2),np.float64)
         b[:,0] = lons; b[:,1] = lats
         boundaryll = _geoslib.Polygon(b)
@@ -3083,6 +3092,8 @@ class Basemap(object):
                 x = np.compress(mask,x)
                 y = np.compress(mask,y)
                 data = np.compress(mask,data)
+                # delete this keyword so it's not pass on to pcolor.
+                del kwargs['tri']
                 if masked:
                     triang = tri.Triangulation(x, y)
                     z = data[triang.triangles]
@@ -3091,8 +3102,6 @@ class Basemap(object):
                     ret = ax.tripcolor(triang,data,**kwargs)
                 else:
                     ret = ax.tripcolor(x,y,data,**kwargs)
-                # delete this keyword so it's not pass on to pcolor.
-                del kwargs['tri']
             else:
                 # make x,y masked arrays
                 # (masked where data is outside of projection limb)
@@ -3249,6 +3258,8 @@ class Basemap(object):
                 x = np.compress(mask,x)
                 y = np.compress(mask,y)
                 data = np.compress(mask,data)
+                # delete this keyword so it's not pass on to pcolor.
+                del kwargs['tri']
                 if masked:
                     triang = tri.Triangulation(x, y)
                     z = data[triang.triangles]
@@ -3457,6 +3468,11 @@ class Basemap(object):
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.streamplot.
         """
+        if _matplotlib_version < '1.2':
+            msg = dedent("""
+            streamplot method requires matplotlib 1.2 or higher,
+            you have %s""" % _matplotlib_version)
+            raise NotImplementedError(msg)
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
         b = ax.ishold()
