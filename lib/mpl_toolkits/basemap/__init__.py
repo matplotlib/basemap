@@ -3083,6 +3083,8 @@ class Basemap(object):
                 x = np.compress(mask,x)
                 y = np.compress(mask,y)
                 data = np.compress(mask,data)
+                # delete this keyword so it's not pass on to pcolor.
+                del kwargs['tri']
                 if masked:
                     triang = tri.Triangulation(x, y)
                     z = data[triang.triangles]
@@ -3091,8 +3093,6 @@ class Basemap(object):
                     ret = ax.tripcolor(triang,data,**kwargs)
                 else:
                     ret = ax.tripcolor(x,y,data,**kwargs)
-                # delete this keyword so it's not pass on to pcolor.
-                del kwargs['tri']
             else:
                 # make x,y masked arrays
                 # (masked where data is outside of projection limb)
@@ -3249,6 +3249,8 @@ class Basemap(object):
                 x = np.compress(mask,x)
                 y = np.compress(mask,y)
                 data = np.compress(mask,data)
+                # delete this keyword so it's not pass on to pcolor.
+                del kwargs['tri']
                 if masked:
                     triang = tri.Triangulation(x, y)
                     z = data[triang.triangles]
