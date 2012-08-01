@@ -49,15 +49,15 @@ tlon = tlon-360.
 plt.figure(figsize=(6,8))
 plt.subplot(2,1,1)
 # subplot 1 just shows POP grid cells.
-map = Basemap(projection='merc', lat_ts=20, llcrnrlon=-180, \
+m = Basemap(projection='merc', lat_ts=20, llcrnrlon=-180, \
       urcrnrlon=180, llcrnrlat=-84, urcrnrlat=84, resolution='c')
 
-map.drawcoastlines()
-map.fillcontinents(color='white')
+m.drawcoastlines()
+m.fillcontinents(color='white')
 
-x, y = map(tlon,tlat)
-im = map.pcolor(x,y,ma.masked_array(np.zeros(temp.shape,'f'), temp.mask),
-                shading='faceted', antialiased=True, cmap=plt.cm.cool, 
+x, y = m(tlon,tlat)
+im = m.pcolor(x,y,ma.masked_array(np.zeros(temp.shape,'f'), temp.mask),
+                shading='faceted', antialiased=True, cmap=plt.cm.cool,
                 vmin=0, vmax=0)
 # disclaimer:  these are not really the grid cells because of the
 # way pcolor interprets the x and y args.
@@ -66,11 +66,11 @@ plt.title('(A) CCSM POP Grid Cells')
 # subplot 2 is a contour plot of surface temperature from the
 # CCSM ocean model.
 plt.subplot(2,1,2)
-map.drawcoastlines()
-map.fillcontinents(color='white')
+m.drawcoastlines()
+m.fillcontinents(color='white')
 
-CS1 = map.contourf(x,y,temp,15)
-CS2 = map.contour(x,y,temp,15,colors='black',linewidths=0.5)
+CS1 = m.contourf(x,y,temp,15)
+CS2 = m.contour(x,y,temp,15,colors='black',linewidths=0.5)
 plt.title('(B) Surface Temp contours on POP Grid')
 
 plt.show()
