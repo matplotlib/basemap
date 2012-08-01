@@ -3278,7 +3278,7 @@ class Basemap(object):
                              region (see examples/shiftdata.py)."""))
                 # mask for points outside projection limb.
                 xymask = \
-                np.logical_or(np.greater(x,self.xmax),np.greater(y,self.xmax))
+                np.logical_or(np.greater(x,self.xmax),np.greater(y,self.ymax))
                 xymask = xymask + \
                 np.logical_or(np.less(x,self.xmin),np.less(y,self.ymin))
                 data = ma.asarray(data)
