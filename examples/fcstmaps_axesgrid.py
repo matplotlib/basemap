@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import unicode_literals
 # this example reads today's numerical weather forecasts
 # from the NOAA OpenDAP servers and makes a multi-panel plot.
 # This version demonstrates the use of the AxesGrid toolkit.
@@ -100,7 +101,7 @@ for nt,fcsthr in enumerate(fcsthrs):
     ax.set_title('%d-h forecast valid '%fcsthr+verifdates[nt],fontsize=9)
 # figure title
 plt.figtext(0.5,0.95,
-            u"2-m temp (\N{DEGREE SIGN}C) forecasts from %s"%verifdates[0],
+            "2-m temp (\N{DEGREE SIGN}C) forecasts from %s"%verifdates[0],
             horizontalalignment='center',fontsize=14)
 # a single colorbar.
 cbar = fig.colorbar(cs, cax=grid.cbar_axes[0], orientation='horizontal')
