@@ -505,6 +505,8 @@ class Basemap(object):
         self.boundinglat = boundinglat
         # is a round pole-centered plot desired?
         self.round = round
+        # full disk projection?
+        self._fulldisk = False # default value
 
         # set up projection parameter dict.
         projparams = {}
