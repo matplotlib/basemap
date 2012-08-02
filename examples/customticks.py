@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,7 +16,7 @@ def lat2str(deg):
             deg += 1.0
             min -= 60.0
         dir = 'S'
-    return (u"%d\N{DEGREE SIGN} %g' %s") % (np.abs(deg),np.abs(min),dir)
+    return ("%d\N{DEGREE SIGN} %g' %s") % (np.abs(deg),np.abs(min),dir)
 
 def lon2str(deg):
     min = 60 * (deg - np.floor(deg))
@@ -26,7 +27,7 @@ def lon2str(deg):
             deg += 1.0
             min -= 60.0
         dir = 'W'
-    return (u"%d\N{DEGREE SIGN} %g' %s") % (np.abs(deg),np.abs(min),dir)
+    return ("%d\N{DEGREE SIGN} %g' %s") % (np.abs(deg),np.abs(min),dir)
 
 # (1) use matplotlib custom tick formatter
 #     instead of Basemap labelling methods.
