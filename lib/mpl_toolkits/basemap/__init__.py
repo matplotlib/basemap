@@ -3679,14 +3679,14 @@ class Basemap(object):
                     mask[j,:]=np.where(np.logical_or(xx<xmin[j],xx>xmax[j]),\
                                         255,mask[j,:])
             self.lsmask = mask
-        ny, nx = mask.shape
+        ny, nx = self.lsmask.shape
         rgba = np.ones((ny,nx,4),np.uint8)
         rgba_land = np.array(rgba_land,np.uint8)
         rgba_ocean = np.array(rgba_ocean,np.uint8)
         for k in range(4):
-            rgba[:,:,k] = np.where(mask,rgba_land[k],rgba_ocean[k])
+            rgba[:,:,k] = np.where(self.lsmask,rgba_land[k],rgba_ocean[k])
         # make points outside projection limb transparent.
-        rgba[:,:,3] = np.where(mask==255,0,rgba[:,:,3])
+        rgba[:,:,3] = np.where(self.lsmask==255,0,rgba[:,:,3])
         # plot mask as rgba image.
         im = self.imshow(rgba,interpolation='nearest',ax=ax,**kwargs)
         # clip for round polar plots.
