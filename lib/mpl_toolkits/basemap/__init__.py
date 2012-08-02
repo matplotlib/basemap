@@ -2929,8 +2929,6 @@ class Basemap(object):
             self._fulldisk) or self.round or self.projection in _pseudocyl:
             # turn off axes frame.
             ax.set_frame_on(False)
-        else: # square map, always turn on axis frame.
-             ax.set_frame_on(True)
         # make sure aspect ratio of map preserved.
         # plot is re-centered in bounding rectangle.
         # (anchor instance var determines where plot is placed)
