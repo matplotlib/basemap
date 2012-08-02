@@ -1,5 +1,6 @@
 version 1.0.5 (git tag v1.0.5rel)
 ---------------------------------
+* fix bug triggered when drawlsmask method called more than once.
 * fix error in contour method that caused a bogus mask to be applied
   to the data (issue 58).
 * fix further corner cases with splitting of parallels that cross
