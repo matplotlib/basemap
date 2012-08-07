@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>matplotlib basemap toolkit &mdash; Basemap Matplotlib Toolkit 1.0.3 documentation</title>
+    <title>matplotlib basemap toolkit &mdash; Basemap Matplotlib Toolkit 1.0.5 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.3',
+        VERSION:     '1.0.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,9 +26,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Basemap Matplotlib Toolkit 1.0.3 documentation"
+          title="Search within Basemap Matplotlib Toolkit 1.0.5 documentation"
           href="../_static/opensearch.xml"/>
-    <link rel="top" title="Basemap Matplotlib Toolkit 1.0.3 documentation" href="../index.html" />
+    <link rel="top" title="Basemap Matplotlib Toolkit 1.0.5 documentation" href="../index.html" />
     <link rel="up" title="The Matplotlib Basemap Toolkit API" href="index.html" />
     <link rel="prev" title="The Matplotlib Basemap Toolkit API" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="The Matplotlib Basemap Toolkit API"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.3 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.5 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">The Matplotlib Basemap Toolkit API</a> &raquo;</li> 
       </ul>
     </div>  
@@ -555,6 +555,12 @@ example (which does not use matplotlib.pyplot) is called &#8220;simpletest_oo.py
 <tt class="descname">barbs</tt><big>(</big><em>x</em>, <em>y</em>, <em>u</em>, <em>v</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.barbs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a wind barb plot (u, v) with on the map.
 (see matplotlib.pyplot.barbs documentation).</p>
+<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+longitude and latitude in degrees.  Data and longitudes are
+automatically shifted to match map projection region for cylindrical
+and pseudocylindrical projections, and x,y are transformed to map
+projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+are assumed to be map projection coordinates.</p>
 <p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
 <p>Other *args and **kwargs passed on to matplotlib.pyplot.barbs</p>
 <p>Returns two matplotlib.axes.Barbs instances, one for the Northern
@@ -631,6 +637,12 @@ colorbar method of the figure instance.</td>
 <tt class="descname">contour</tt><big>(</big><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.contour" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a contour plot over the map
 (see matplotlib.pyplot.contour documentation).</p>
+<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+longitude and latitude in degrees.  Data and longitudes are
+automatically shifted to match map projection region for cylindrical
+and pseudocylindrical projections, and x,y are transformed to map
+projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+are assumed to be map projection coordinates.</p>
 <p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
 <p>If <tt class="docutils literal"><span class="pre">tri</span></tt> is set to <tt class="docutils literal"><span class="pre">True</span></tt>, an unstructured grid is assumed
 (x,y,data must be 1-d) and matplotlib.pyplot.tricontour is used.</p>
@@ -643,6 +655,12 @@ colorbar method of the figure instance.</td>
 <tt class="descname">contourf</tt><big>(</big><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.contourf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a filled contour plot over the map
 (see matplotlib.pyplot.contourf documentation).</p>
+<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+longitude and latitude in degrees.  Data and longitudes are
+automatically shifted to match map projection region for cylindrical
+and pseudocylindrical projections, and x,y are transformed to map
+projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+are assumed to be map projection coordinates.</p>
 <p>If x or y are outside projection limb (i.e. they have values &gt; 1.e20),
 the corresponing data elements will be masked.</p>
 <p>Extra keyword &#8216;ax&#8217; can be used to override the default axis instance.</p>
@@ -1243,7 +1261,7 @@ histogram of the number of occurences of the observations at
 (x[i],y[i]).</p>
 <p>If C is specified, it specifies values at the coordinate (x[i],y[i]).
 These values are accumulated for each hexagonal bin and then reduced
-according to reduce_C_function, which defaults to numpy?s mean function
+according to reduce_C_function, which defaults to the numpy mean function
 (np.mean). (If C is specified, it must also be a 1-D sequence of the
 same length as x and y.)</p>
 <p>x, y and/or C may be masked arrays, in which case only unmasked points
@@ -1321,9 +1339,15 @@ map background shows through).</td>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.pcolor">
-<tt class="descname">pcolor</tt><big>(</big><em>x</em>, <em>y</em>, <em>data</em>, <em>tri=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.pcolor" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">pcolor</tt><big>(</big><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.pcolor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a pseudo-color plot over the map
 (see matplotlib.pyplot.pcolor documentation).</p>
+<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+longitude and latitude in degrees.  Data and longitudes are
+automatically shifted to match map projection region for cylindrical
+and pseudocylindrical projections, and x,y are transformed to map
+projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+are assumed to be map projection coordinates.</p>
 <p>If x or y are outside projection limb (i.e. they have values &gt; 1.e20)
 they will be convert to masked arrays with those values masked.
 As a result, those values will not be plotted.</p>
@@ -1336,9 +1360,15 @@ As a result, those values will not be plotted.</p>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.pcolormesh">
-<tt class="descname">pcolormesh</tt><big>(</big><em>x</em>, <em>y</em>, <em>data</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.pcolormesh" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">pcolormesh</tt><big>(</big><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.pcolormesh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a pseudo-color plot over the map
 (see matplotlib.pyplot.pcolormesh documentation).</p>
+<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+longitude and latitude in degrees.  Data and longitudes are
+automatically shifted to match map projection region for cylindrical
+and pseudocylindrical projections, and x,y are transformed to map
+projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+are assumed to be map projection coordinates.</p>
 <p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
 <p>Other **kwargs passed on to matplotlib.pyplot.pcolormesh.</p>
 </dd></dl>
@@ -1358,6 +1388,12 @@ As a result, those values will not be plotted.</p>
 <dd><p>Make a vector plot (u, v) with arrows on the map.
 Grid must be evenly spaced regular grid in x and y.
 (see matplotlib.pyplot.quiver documentation).</p>
+<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+longitude and latitude in degrees.  Data and longitudes are
+automatically shifted to match map projection region for cylindrical
+and pseudocylindrical projections, and x,y are transformed to map
+projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+are assumed to be map projection coordinates.</p>
 <p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
 <p>Other *args and **kwargs passed on to matplotlib.pyplot.quiver.</p>
 </dd></dl>
@@ -1532,10 +1568,65 @@ to downsample the image (<tt class="docutils literal"><span class="pre">scale=0.
 </dd></dl>
 
 <dl class="method">
+<dt id="mpl_toolkits.basemap.Basemap.shiftdata">
+<tt class="descname">shiftdata</tt><big>(</big><em>lonsin</em>, <em>datain=None</em>, <em>lon_0=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.shiftdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shift longitudes (and optionally data) so that they match map projection region.
+Only valid for cylindrical/pseudo-cylindrical global projections and data
+on regular lat/lon grids. longitudes and data can be 1-d or 2-d, if 2-d
+it is assumed longitudes are 2nd (rightmost) dimension.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Arguments</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>lonsin</td>
+<td>original 1-d or 2-d longitudes.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Keywords</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>datain</td>
+<td>original 1-d or 2-d data. Default None.</td>
+</tr>
+<tr class="row-odd"><td>lon_0</td>
+<td>center of map projection region. Defaut None,
+given by current map projection.</td>
+</tr>
+</tbody>
+</table>
+<p>if datain given, returns <tt class="docutils literal"><span class="pre">dataout,lonsout</span></tt> (data and longitudes shifted to fit in interval
+[lon_0-180,lon_0+180]), otherwise just returns longitudes.  If
+transformed longitudes lie outside map projection region, data is
+masked and longitudes are set to 1.e30.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.streamplot">
 <tt class="descname">streamplot</tt><big>(</big><em>x</em>, <em>y</em>, <em>u</em>, <em>v</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.streamplot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws streamlines of a vector flow.
 (see matplotlib.pyplot.streamplot documentation).</p>
+<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+longitude and latitude in degrees.  Data and longitudes are
+automatically shifted to match map projection region for cylindrical
+and pseudocylindrical projections, and x,y are transformed to map
+projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+are assumed to be map projection coordinates.</p>
 <p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
 <p>Other *args and **kwargs passed on to matplotlib.pyplot.streamplot.</p>
 </dd></dl>
@@ -1961,14 +2052,14 @@ longitude. Default True.</td>
         <li class="right" >
           <a href="index.html" title="The Matplotlib Basemap Toolkit API"
              >previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.3 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.5 documentation</a> &raquo;</li>
           <li><a href="index.html" >The Matplotlib Basemap Toolkit API</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on May 21, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Aug 07, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>
