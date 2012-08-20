@@ -445,6 +445,27 @@ def _transform(plotfunc):
         return plotfunc(self,x,y,data,*args,**kwargs)
     return with_transform
 
+def _transform1d(plotfunc):
+    # shift data and longitudes to map projection region, then compute
+    # transformation to map projection coordinates.
+    @functools.wraps(plotfunc)
+    def with_transform(self,x,y,*args,**kwargs):
+        x = np.asarray(x)
+        # input coordinates are latitude/longitude, not map projection coords.
+        if kwargs.pop('latlon', False):
+            # shift data to map projection region for
+            # cylindrical and pseudo-cylindrical projections.
+            if self.projection in _cylproj or self.projection in _pseudocyl:
+                if x.ndim == 1:
+                    x = self.shiftdata(x)
+                elif x.ndim == 0:
+                    if x > 180:
+                        x = x - 360.
+            # convert lat/lon coords to map projection coords.
+            x, y = self(x,y)
+        return plotfunc(self,x,y,*args,**kwargs)
+    return with_transform
+
 def _transformuv(plotfunc):
     # shift data and longitudes to map projection region, then compute
     # transformation to map projection coordinates. Works when call
