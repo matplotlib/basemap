@@ -3106,7 +3106,7 @@ class Basemap(object):
         if h is not None:
             ax.hold(h)
         try:
-            if kwargs.get('tri', False):
+            if kwargs.pop('tri', False):
                 try:
                     import matplotlib.tri as tri
                 except:
@@ -3123,8 +3123,6 @@ class Basemap(object):
                 x = np.compress(mask,x)
                 y = np.compress(mask,y)
                 data = np.compress(mask,data)
-                # delete this keyword so it's not pass on to pcolor.
-                del kwargs['tri']
                 if masked:
                     triang = tri.Triangulation(x, y)
                     z = data[triang.triangles]
@@ -3271,7 +3269,7 @@ class Basemap(object):
         if h is not None:
             ax.hold(h)
         try:
-            if kwargs.get('tri', False):
+            if kwargs.pop('tri', False):
                 try:
                     import matplotlib.tri as tri
                 except:
@@ -3289,8 +3287,6 @@ class Basemap(object):
                 x = np.compress(mask,x)
                 y = np.compress(mask,y)
                 data = np.compress(mask,data)
-                # delete this keyword so it's not pass on to pcolor.
-                del kwargs['tri']
                 if masked:
                     triang = tri.Triangulation(x, y)
                     z = data[triang.triangles]
