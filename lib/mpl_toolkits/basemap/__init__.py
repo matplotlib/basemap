@@ -435,15 +435,13 @@ def _transform(plotfunc):
     @functools.wraps(plotfunc)
     def with_transform(self,x,y,data,*args,**kwargs):
         # input coordinates are latitude/longitude, not map projection coords.
-        if kwargs.get('latlon', False):
+        if kwargs.pop('latlon', False):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
                 x, data = self.shiftdata(x, data)
             # convert lat/lon coords to map projection coords.
             x, y = self(x,y)
-            # delete this keyword so it's not passed on to matplotlib.
-            del kwargs['latlon']
         return plotfunc(self,x,y,data,*args,**kwargs)
     return with_transform
 
@@ -454,7 +452,7 @@ def _transformuv(plotfunc):
     @functools.wraps(plotfunc)
     def with_transform(self,x,y,u,v,*args,**kwargs):
         # input coordinates are latitude/longitude, not map projection coords.
-        if kwargs.get('latlon', False):
+        if kwargs.pop('latlon', False):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
@@ -462,8 +460,6 @@ def _transformuv(plotfunc):
                 x, v = self.shiftdata(x, v)
             # convert lat/lon coords to map projection coords.
             x, y = self(x,y)
-            # delete this keyword so it's not passed on to matplotlib.
-            del kwargs['latlon']
         return plotfunc(self,x,y,u,v,*args,**kwargs)
     return with_transform
 
