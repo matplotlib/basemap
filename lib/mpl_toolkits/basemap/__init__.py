@@ -2962,10 +2962,18 @@ class Basemap(object):
             import matplotlib.pyplot as plt
             plt.draw_if_interactive()
 
+    @_transform1d
     def scatter(self, *args, **kwargs):
         """
         Plot points with markers on the map
         (see matplotlib.pyplot.scatter documentation).
+
+        If ``latlon`` keyword is set to True, x,y are intrepreted as
+        longitude and latitude in degrees.  Data and longitudes are
+        automatically shifted to match map projection region for cylindrical
+        and pseudocylindrical projections, and x,y are transformed to map
+        projection coordinates. If ``latlon`` is False (default), x and y
+        are assumed to be map projection coordinates.
 
         Extra keyword ``ax`` can be used to override the default axes instance.
 
@@ -2992,10 +3000,18 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
+    @_transform1d
     def plot(self, *args, **kwargs):
         """
         Draw lines and/or markers on the map
         (see matplotlib.pyplot.plot documentation).
+
+        If ``latlon`` keyword is set to True, x,y are intrepreted as
+        longitude and latitude in degrees.  Data and longitudes are
+        automatically shifted to match map projection region for cylindrical
+        and pseudocylindrical projections, and x,y are transformed to map
+        projection coordinates. If ``latlon`` is False (default), x and y
+        are assumed to be map projection coordinates.
 
         Extra keyword ``ax`` can be used to override the default axis instance.
 
