@@ -435,16 +435,35 @@ def _transform(plotfunc):
     @functools.wraps(plotfunc)
     def with_transform(self,x,y,data,*args,**kwargs):
         # input coordinates are latitude/longitude, not map projection coords.
-        if kwargs.get('latlon', False):
+        if kwargs.pop('latlon', False):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
                 x, data = self.shiftdata(x, data)
             # convert lat/lon coords to map projection coords.
             x, y = self(x,y)
-            # delete this keyword so it's not passed on to matplotlib.
-            del kwargs['latlon']
         return plotfunc(self,x,y,data,*args,**kwargs)
+    return with_transform
+
+def _transform1d(plotfunc):
+    # shift data and longitudes to map projection region, then compute
+    # transformation to map projection coordinates.
+    @functools.wraps(plotfunc)
+    def with_transform(self,x,y,*args,**kwargs):
+        x = np.asarray(x)
+        # input coordinates are latitude/longitude, not map projection coords.
+        if kwargs.pop('latlon', False):
+            # shift data to map projection region for
+            # cylindrical and pseudo-cylindrical projections.
+            if self.projection in _cylproj or self.projection in _pseudocyl:
+                if x.ndim == 1:
+                    x = self.shiftdata(x)
+                elif x.ndim == 0:
+                    if x > 180:
+                        x = x - 360.
+            # convert lat/lon coords to map projection coords.
+            x, y = self(x,y)
+        return plotfunc(self,x,y,*args,**kwargs)
     return with_transform
 
 def _transformuv(plotfunc):
@@ -454,7 +473,7 @@ def _transformuv(plotfunc):
     @functools.wraps(plotfunc)
     def with_transform(self,x,y,u,v,*args,**kwargs):
         # input coordinates are latitude/longitude, not map projection coords.
-        if kwargs.get('latlon', False):
+        if kwargs.pop('latlon', False):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
@@ -462,8 +481,6 @@ def _transformuv(plotfunc):
                 x, v = self.shiftdata(x, v)
             # convert lat/lon coords to map projection coords.
             x, y = self(x,y)
-            # delete this keyword so it's not passed on to matplotlib.
-            del kwargs['latlon']
         return plotfunc(self,x,y,u,v,*args,**kwargs)
     return with_transform
 
@@ -2945,10 +2962,18 @@ class Basemap(object):
             import matplotlib.pyplot as plt
             plt.draw_if_interactive()
 
+    @_transform1d
     def scatter(self, *args, **kwargs):
         """
         Plot points with markers on the map
         (see matplotlib.pyplot.scatter documentation).
+
+        If ``latlon`` keyword is set to True, x,y are intrepreted as
+        longitude and latitude in degrees.  Data and longitudes are
+        automatically shifted to match map projection region for cylindrical
+        and pseudocylindrical projections, and x,y are transformed to map
+        projection coordinates. If ``latlon`` is False (default), x and y
+        are assumed to be map projection coordinates.
 
         Extra keyword ``ax`` can be used to override the default axes instance.
 
@@ -2975,10 +3000,18 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return ret
 
+    @_transform1d
     def plot(self, *args, **kwargs):
         """
         Draw lines and/or markers on the map
         (see matplotlib.pyplot.plot documentation).
+
+        If ``latlon`` keyword is set to True, x,y are intrepreted as
+        longitude and latitude in degrees.  Data and longitudes are
+        automatically shifted to match map projection region for cylindrical
+        and pseudocylindrical projections, and x,y are transformed to map
+        projection coordinates. If ``latlon`` is False (default), x and y
+        are assumed to be map projection coordinates.
 
         Extra keyword ``ax`` can be used to override the default axis instance.
 
