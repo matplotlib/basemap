@@ -1642,7 +1642,7 @@ class Basemap(object):
                 item.set_clip_path(c)
         return coll,c
 
-    def drawcoastlines(self,linewidth=1.,color='k',antialiased=1,ax=None,zorder=None):
+    def drawcoastlines(self,linewidth=1.,linestyle='solid',color='k',antialiased=1,ax=None,zorder=None):
         """
         Draw coastlines.
 
@@ -1652,6 +1652,7 @@ class Basemap(object):
         Keyword          Description
         ==============   ====================================================
         linewidth        coastline width (default 1.)
+        linestyle        coastline linestyle (default solid)
         color            coastline color (default black)
         antialiased      antialiasing switch for coastlines (default True).
         ax               axes instance (overrides default axes instance)
@@ -1668,6 +1669,7 @@ class Basemap(object):
         ax = ax or self._check_ax()
         coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
+        coastlines.set_linestyle(linestyle)
         coastlines.set_linewidth(linewidth)
         coastlines.set_label('_nolabel_')
         if zorder is not None:
@@ -1679,7 +1681,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return coastlines
 
-    def drawcountries(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
+    def drawcountries(self,linewidth=0.5,linestyle='solid',color='k',antialiased=1,ax=None,zorder=None):
         """
         Draw country boundaries.
 
@@ -1689,6 +1691,7 @@ class Basemap(object):
         Keyword          Description
         ==============   ====================================================
         linewidth        country boundary line width (default 0.5)
+        linestyle        coastline linestyle (default solid)
         color            country boundary line color (default black)
         antialiased      antialiasing switch for country boundaries (default
                          True).
@@ -1710,6 +1713,7 @@ class Basemap(object):
         ax = ax or self._check_ax()
         countries = LineCollection(self.cntrysegs,antialiaseds=(antialiased,))
         countries.set_color(color)
+        countries.set_linestyle(linestyle)
         countries.set_linewidth(linewidth)
         countries.set_label('_nolabel_')
         if zorder is not None:
@@ -1721,7 +1725,7 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return countries
 
-    def drawstates(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
+    def drawstates(self,linewidth=0.5,linestyle='solid',color='k',antialiased=1,ax=None,zorder=None):
         """
         Draw state boundaries in Americas.
 
@@ -1731,6 +1735,7 @@ class Basemap(object):
         Keyword          Description
         ==============   ====================================================
         linewidth        state boundary line width (default 0.5)
+        linestyle        coastline linestyle (default solid)
         color            state boundary line color (default black)
         antialiased      antialiasing switch for state boundaries
                          (default True).
@@ -1752,6 +1757,7 @@ class Basemap(object):
         ax = ax or self._check_ax()
         states = LineCollection(self.statesegs,antialiaseds=(antialiased,))
         states.set_color(color)
+        states.set_linestyle(linestyle)
         states.set_linewidth(linewidth)
         states.set_label('_nolabel_')
         if zorder is not None:
@@ -1763,7 +1769,46 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return states
 
-    def drawrivers(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
+    def drawcounties(self,linewidth=0.1,linestyle='solid',color='k',antialiased=1,
+                     ax=None,zorder=None,drawbounds=False):
+        """
+        Draw county boundaries in US. The county boundary shapefile
+        originates with the NOAA Coastal Geospatial Data Project
+        (http://coastalgeospatial.noaa.gov/data_gis.html).
+
+        .. tabularcolumns:: |l|L|
+
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        linewidth        county boundary line width (default 0.1)
+        linestyle        coastline linestyle (default solid)
+        color            county boundary line color (default black)
+        antialiased      antialiasing switch for county boundaries
+                         (default True).
+        ax               axes instance (overrides default axes instance)
+        zorder           sets the zorder for the county boundaries (if not
+                         specified, uses default zorder for
+                         matplotlib.patches.LineCollections).
+        ==============   ====================================================
+
+        returns a matplotlib.patches.LineCollection object.
+        """
+        ax = ax or self._check_ax()
+        gis_file = os.path.join(basemap_datadir,'UScounties')
+        county_info = self.readshapefile(gis_file,'counties',drawbounds=drawbounds)
+        counties = [coords for coords in self.counties]
+        counties = LineCollection(counties)
+        counties.set_linestyle(linestyle)
+        counties.set_linewidth(linewidth)
+        counties.set_color(color)
+        counties.set_label('counties')
+        if zorder:
+            counties.set_zorder(zorder)
+        ax.add_collection(counties)
+        return counties
+
+    def drawrivers(self,linewidth=0.5,linestyle='solid',color='k',antialiased=1,ax=None,zorder=None):
         """
         Draw major rivers.
 
@@ -1773,6 +1818,7 @@ class Basemap(object):
         Keyword          Description
         ==============   ====================================================
         linewidth        river boundary line width (default 0.5)
+        linestyle        coastline linestyle (default solid)
         color            river boundary line color (default black)
         antialiased      antialiasing switch for river boundaries (default
                          True).
@@ -1794,6 +1840,7 @@ class Basemap(object):
         ax = ax or self._check_ax()
         rivers = LineCollection(self.riversegs,antialiaseds=(antialiased,))
         rivers.set_color(color)
+        rivers.set_linestyle(linestyle)
         rivers.set_linewidth(linewidth)
         rivers.set_label('_nolabel_')
         if zorder is not None:
