@@ -4325,13 +4325,8 @@ class Basemap(object):
                 lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
                 lonsin = np.roll(lonsin,itemindex-1,axis=1)
                 if datain is not None:
-                    if ma.isMA(datain):
-                        mask = datain.mask
-                        fillval = datain.fill_value
-                        datain = np.roll(datain.filled(),itemindex-1,axis=1)
-                        datain = ma.array(datain,mask=mask,fill_value=fillval)
-                    else:
-                        datain = np.roll(datain,itemindex-1,axis=1)
+                    # np.roll works on ndarrays and on masked arrays
+                    datain = np.roll(datain,itemindex-1,axis=1)
                 # add cyclic point back at beginning.
                 if hascyclic:
                     lonsin_save[:,1:] = lonsin
@@ -4347,8 +4342,7 @@ class Basemap(object):
                 lonsin = np.where(mask,1.e30,lonsin)
                 if datain is not None and mask.any():
                     # superimpose on existing mask
-                    if ma.isMA(datain): mask = mask + datain.mask
-                    datain = ma.array(datain,mask=mask)
+                    datain = ma.masked_where(mask, datain)
         # 1-d data.
         elif lonsin.ndim == 1:
             nlons = len(lonsin)
@@ -4372,13 +4366,7 @@ class Basemap(object):
                     hascyclic = False
                 lonsin = np.roll(lonsin,itemindex-1)
                 if datain is not None:
-                    if ma.isMA(datain):
-                        mask = datain.mask
-                        fillval = datain.fill_value
-                        datain = np.roll(datain.filled(),itemindex-1)
-                        datain = ma.array(datain,mask=mask,fill_value=fillval)
-                    else:
-                        datain = np.roll(datain,itemindex-1)
+                    datain = np.roll(datain,itemindex-1)
                 # add cyclic point back at beginning.
                 if hascyclic:
                     lonsin_save[1:] = lonsin
@@ -4393,7 +4381,7 @@ class Basemap(object):
                 mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
                 lonsin = np.where(mask,1.e30,lonsin)
                 if datain is not None and mask.any():
-                    datain = ma.array(datain,mask=mask)
+                    datain = ma.masked_where(mask, datain)
         if datain is not None:
             return lonsin, datain
         else:
