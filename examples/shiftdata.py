@@ -1,10 +1,12 @@
 from mpl_toolkits.basemap import Basemap,shiftgrid
 import numpy as np
 import matplotlib.pyplot as plt
+import numpy.ma as ma
 # read in topo data (on a regular lat/lon grid)
 etopo=np.loadtxt('etopo20data.gz')
 lons=np.loadtxt('etopo20lons.gz')
 lats=np.loadtxt('etopo20lats.gz')
+etopo = ma.masked_where(etopo > 0, etopo)
 lons, lats = np.meshgrid(lons, lats)
 # create Basemap instance.
 m = Basemap(projection='kav7',lon_0=0)
