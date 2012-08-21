@@ -1763,6 +1763,43 @@ class Basemap(object):
         self.set_axes_limits(ax=ax)
         return states
 
+    def drawcounties(self,linewidth=0.1,color='k',antialiased=1,
+                     ax=None,zorder=None,drawbounds=False):
+        """
+        Draw county boundaries in US. The county boundary shapefile
+        originates with the NOAA Coastal Geospatial Data Project
+        (http://coastalgeospatial.noaa.gov/data_gis.html).
+
+        .. tabularcolumns:: |l|L|
+
+        ==============   ====================================================
+        Keyword          Description
+        ==============   ====================================================
+        linewidth        county boundary line width (default 0.1)
+        color            county boundary line color (default black)
+        antialiased      antialiasing switch for county boundaries
+                         (default True).
+        ax               axes instance (overrides default axes instance)
+        zorder           sets the zorder for the county boundaries (if not
+                         specified, uses default zorder for
+                         matplotlib.patches.LineCollections).
+        ==============   ====================================================
+
+        returns a matplotlib.patches.LineCollection object.
+        """
+        ax = ax or self._check_ax()
+        gis_file = os.path.join(basemap_datadir,'UScounties')
+        county_info = self.readshapefile(gis_file,'counties',drawbounds=drawbounds)
+        counties = [coords for coords in self.counties]
+        counties = LineCollection(counties)
+        counties.set_linewidth(linewidth)
+        counties.set_color(color)
+        counties.set_label('counties')
+        if zorder:
+            counties.set_zorder(zorder)
+        ax.add_collection(counties)
+        return counties
+
     def drawrivers(self,linewidth=0.5,color='k',antialiased=1,ax=None,zorder=None):
         """
         Draw major rivers.
