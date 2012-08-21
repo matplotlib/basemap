@@ -1,5 +1,10 @@
-since version 1.0.5
--------------------
+version 1.0.6 (not yet released)
+--------------------------------
+* fixed shiftdata method so it shifts mask along with data
+  (https://github.com/matplotlib/basemap/pull/68).
+* added linestyle keyword to all draw* methods.
+* added 'drawcounties' method (https://github.com/matplotlib/basemap/pull/65)
+  thanks to Patrick Marsh.
 * fix bug that caused plotting to fail when latlon keyword is 
   explicitly set to False (https://github.com/matplotlib/basemap/pull/66).
 * add latlon keyword to plot and scatter methods
