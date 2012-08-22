@@ -1,3 +1,4 @@
+version 1.0.6:  Added drawcounties method.
 version 1.0.5:  Added 'latlon' keyword to plotting methods (converts lat/lon to x/y
                 and shifts data in longitude (using shiftdata method) to map projection region.
 version 1.0.3:  Added streamplot method.
