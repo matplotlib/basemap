@@ -1,0 +1,69 @@
+#########################################
+# Editor temporary/working/backup files #
+.#*
+[#]*#
+*~
+*$
+*.bak
+.project
+.pydevproject
+
+# Compiled source #
+###################
+*.a
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.py[ocd]
+*.so
+
+# Python files #
+################
+# setup.py working directory
+build
+# sphinx build directory
+doc/_build
+# setup.py dist directory
+dist
+# Egg metadata
+*.egg-info
+# tox testing tool
+.tox
+
+# OS generated files #
+######################
+.gdb_history
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Things specific to this project #
+###################################
+nad2bin
+examples/*.png
+*.pickle
+
+# output of nad2bin
+lib/mpl_toolkits/basemap/data/FL
+lib/mpl_toolkits/basemap/data/MD
+lib/mpl_toolkits/basemap/data/TN
+lib/mpl_toolkits/basemap/data/WI
+lib/mpl_toolkits/basemap/data/WO
+lib/mpl_toolkits/basemap/data/alaska
+lib/mpl_toolkits/basemap/data/conus
+lib/mpl_toolkits/basemap/data/hawaii
+lib/mpl_toolkits/basemap/data/null
+lib/mpl_toolkits/basemap/data/prvi
+lib/mpl_toolkits/basemap/data/stgeorge
+lib/mpl_toolkits/basemap/data/stlrnc
+lib/mpl_toolkits/basemap/data/stpaul
+
+# Documentation generated files #
+#################################
+doc/examples
+doc/_templates/gallery.html
+doc/users/installing.rst
+doc/_static/matplotlibrc
