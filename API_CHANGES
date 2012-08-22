@@ -1,3 +1,7 @@
+version 1.0.6:  Added drawcounties method.
+version 1.0.5:  Added 'latlon' keyword to plotting methods (converts lat/lon to x/y
+                and shifts data in longitude (using shiftdata method) to map projection region.
+version 1.0.3:  Added streamplot method.
 version 1.0.2:  default value for lakes kwarg in drawlsmask changed from False to True.
                 default value for inlands kwarg in maskoceans changed from False to True.
                 NetCDFFile function removed.
