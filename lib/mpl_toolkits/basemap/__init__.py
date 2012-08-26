@@ -1278,9 +1278,7 @@ class Basemap(object):
         """
         create map boundary polygon (in lat/lon and x/y coordinates)
         """
-        nx = 100; ny = 100
-        if self.projection == 'vandg':
-            nx = 10*nx; ny = 10*ny
+        nx = 10000; ny = 10000
         maptran = self
         if self.projection in ['ortho','geos','nsper']:
             # circular region.
@@ -2098,7 +2096,7 @@ class Basemap(object):
             lons = np.arange(lon_0-90,lon_0+90.01,0.01)
         else:
             lonmin = self.boundarylonmin; lonmax = self.boundarylonmax
-            lons = np.linspace(lonmin, lonmax, 1001)
+            lons = np.linspace(lonmin, lonmax, 10001)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = list(circles)
