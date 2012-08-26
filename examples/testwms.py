@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import urllib2
 import numpy as np
 
+# blue marble image on cylindrical projection.
 plt.figure()
 lon1 = -10; lon2 = 30; lat1 = 30; lat2 = 60
 basemap_url =\
@@ -21,6 +22,7 @@ m.drawmeridians(np.arange(-5,26,5),labels=[0,0,0,1],color='y')
 m.drawparallels(np.arange(25,56,5),labels=[1,0,0,0],color='y')
 m.imshow(plt.imread(urllib2.urlopen(basemap_url)),origin='upper')
 
+# blue marble image on south polar stereographic projection.
 width = 12000.e3
 plt.figure()
 basemap_url =\
