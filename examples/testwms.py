@@ -72,8 +72,7 @@ Basemap(projection='laea',resolution='i',\
         llcrnrlat=lat1,llcrnrlon=lon1,urcrnrlon=lon2,urcrnrlat=lat2,\
         lat_0=lat_0,lon_0=lon_0,\
         rsphere=(6378137,6356752.3141))
-p = pyproj.Proj(
-    proj='laea',lat_0=lat_0,lon_0=lon_0,x_0=4321000,y_0=3210000,ellps='GRS80')
+p = pyproj.Proj(init="epsg:3035")
 x1,y1 = p(lon1,lat1)
 x2,y2 = p(lon2,lat2)
 basemap_url =\
