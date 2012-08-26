@@ -42,4 +42,25 @@ m.drawmeridians(np.arange(-180,180,30),labels=[0,0,0,1],color='y')
 m.drawparallels(np.arange(-80,-0,10),labels=[1,0,0,0],color='y')
 m.drawcoastlines()
 
+# blue marble image on north american lambert conformal projection.
+width = 8000.e3; height=8000.e3
+plt.figure()
+basemap_url =\
+"http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_Imagery_World_2D/MapServer/export?\
+bbox=%d,%d,%d,%d&\
+bboxSR=102009&\
+imageSR=102009&\
+size=800,800&\
+dpi=128&\
+format=png32&\
+f=image" % (-width/2,-height/2,width/2,height/2)
+m =\
+Basemap(projection='lcc',resolution='i',lat_1=20,lat_2=60,\
+        lat_0=40.,lon_0=-96,\
+        width=width,height=height,rsphere=(6378137,6356752.3141))
+m.imshow(plt.imread(urllib2.urlopen(basemap_url)),origin='upper')
+m.drawmeridians(np.arange(-180,180,10),labels=[0,0,0,1],color='y')
+m.drawparallels(np.arange(0,80,10),labels=[1,0,0,0],color='y')
+m.drawcoastlines()
+
 plt.show()
