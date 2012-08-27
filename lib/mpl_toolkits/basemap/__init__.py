@@ -134,7 +134,7 @@ for line in epsgf:
     l = line.split()
     code = l[0].strip("<>")
     parms = ' '.join(l[1:-1])
-    kwargs={}
+    _kw_args={}
     for s in l[1:-1]:
         try:
             k,v = s.split('=')
@@ -142,6 +142,7 @@ for line in epsgf:
             pass
         k = k.strip("+")
         if k=='proj':
+            if v == 'longlat': v = 'cyl'
             if v not in _projnames:
                 continue
             k='projection'
@@ -151,16 +152,20 @@ for line in epsgf:
                  'a','b','k_0','lat_ts','ellps']:
             if k not in ['projection','ellps']:
                 v = float(v)
-            kwargs[k]=v
-    if 'projection' in kwargs:
-        if 'a' in kwargs:
-            if 'b' in kwargs:
-                kwargs['rsphere']=(kwargs['a'],kwargs['b'])
-                del kwargs['b']
+            _kw_args[k]=v
+    if 'projection' in _kw_args:
+        if 'a' in _kw_args:
+            if 'b' in _kw_args:
+                _kw_args['rsphere']=(_kw_args['a'],_kw_args['b'])
+                del _kw_args['b']
             else:
-                kwargs['rsphere']=kwargs['a']
-            del kwargs['a']
-        epsg_dict[code]=kwargs
+                _kw_args['rsphere']=_kw_args['a']
+            del _kw_args['a']
+        # supported epsg projections.
+        # omerc not supported yet, since we can't handle
+        # alpha,gamma and lonc keywords.
+        if _kw_args['projection'] != 'omerc':
+            epsg_dict[code]=_kw_args
 epsgf.close()
 
 # The __init__ docstring is pulled out here because it is so long;
@@ -378,6 +383,7 @@ _Basemap_init_doc = """
  projection       map projection. Print the module variable
                   ``supported_projections`` to see a list of allowed
                   values.
+ epsg             EPSG code defining projection
  aspect           map aspect ratio
                   (size of y dimension / size of x dimension).
  llcrnrlon        longitude of lower left hand corner of the
@@ -548,8 +554,41 @@ class Basemap(object):
                        anchor='C',
                        celestial=False,
                        round=False,
+                       epsg=None,
                        ax=None):
         # docstring is added after __init__ method definition
+
+        # set epsg code if given, set to 4326 for projection='cyl':
+        if epsg is not None:
+            self.epsg = epsg
+        elif projection == 'cyl':
+            self.epsg = 4326
+        # replace kwarg values with those implied by epsg code,
+        # if given.
+        if hasattr(self,'epsg'):
+            if str(self.epsg) not in epsg_dict:
+                raise ValueError('%s is not a supported EPSG code' %
+                        self.epsg)
+            epsg_params = epsg_dict[str(self.epsg)]
+            for k in epsg_params:
+                if k == 'projection':
+                    projection = epsg_params[k]
+                elif k == 'rsphere':
+                    rsphere = epsg_params[k]
+                elif k == 'ellps':
+                    ellps = epsg_params[k]
+                elif k == 'lat_1':
+                    lat_1 = epsg_params[k]
+                elif k == 'lat_2':
+                    lat_2 = epsg_params[k]
+                elif k == 'lon_0':
+                    lon_0 = epsg_params[k]
+                elif k == 'lat_0':
+                    lat_0 = epsg_params[k]
+                elif k == 'lat_ts':
+                    lat_ts = epsg_params[k]
+                elif k == 'k_0':
+                    k0 = epsg_params[k]
 
         # fix aspect to ratio to match aspect ratio of map projection
         # region
