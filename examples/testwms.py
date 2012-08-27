@@ -8,6 +8,10 @@ import numpy as np
 class Basemap2(Basemap):
     def wmsmap(self,server='http://server.arcgisonline.com/ArcGIS',layer='World_Physical_Map',\
                xpixels=800,dpi=128,verbose=False,**kwargs):
+        # constructs a URL using the ArcGIS Server REST API, retrieves
+        # an image and displays it on the map. In order to use this method,
+        # the Basemap instance must be created using the epsg keyword to
+        # specify the map projection.
         if not hasattr(self,'epsg'):
             msg = dedent("""
             Basemap instance must be creating using an EPSG code
