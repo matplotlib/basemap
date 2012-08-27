@@ -125,6 +125,44 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'gnom'     : 'lon_0,lat_0',
              }
 
+# create dictionary that maps epsg codes to Basemap kwargs.
+epsgf = open(os.path.join(basemap_datadir,'epsg'))
+epsg_dict={}
+for line in epsgf:
+    if line.startswith("#"):
+        continue
+    l = line.split()
+    code = l[0].strip("<>")
+    parms = ' '.join(l[1:-1])
+    kwargs={}
+    for s in l[1:-1]:
+        try:
+            k,v = s.split('=')
+        except:
+            pass
+        k = k.strip("+")
+        if k=='proj':
+            if v not in _projnames:
+                continue
+            k='projection'
+        if k=='k':
+            k='k_0'
+        if k in ['projection','lat_1','lat_2','lon_0','lat_0',\
+                 'a','b','k_0','lat_ts','ellps']:
+            if k not in ['projection','ellps']:
+                v = float(v)
+            kwargs[k]=v
+    if 'projection' in kwargs:
+        if 'a' in kwargs:
+            if 'b' in kwargs:
+                kwargs['rsphere']=(kwargs['a'],kwargs['b'])
+                del kwargs['b']
+            else:
+                kwargs['rsphere']=kwargs['a']
+            del kwargs['a']
+        epsg_dict[code]=kwargs
+epsgf.close()
+
 # The __init__ docstring is pulled out here because it is so long;
 # Having it in the usual place makes it hard to get from the
 # __init__ argument list to the code that uses the arguments.
