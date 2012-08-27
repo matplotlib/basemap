@@ -7,7 +7,7 @@ import numpy as np
 
 class Basemap2(Basemap):
     def wmsmap(self,server='http://server.arcgisonline.com/ArcGIS',layer='World_Physical_Map',\
-               xpixels=800,dpi=128,verbose=False,**kwargs):
+               xpixels=800,dpi=96,format='png',verbose=False,**kwargs):
         # constructs a URL using the ArcGIS Server REST API, retrieves
         # an image and displays it on the map. In order to use this method,
         # the Basemap instance must be created using the epsg keyword to
@@ -28,8 +28,9 @@ bboxSR=%s&\
 imageSR=%s&\
 size=%s,%s&\
 dpi=%s&\
-format=png32&\
-f=image" % (server,layer,x1,y1,x2,y2,self.epsg,self.epsg,xpixels,ypixels,dpi)
+format=%s&\
+f=image" %\
+(server,layer,x1,y1,x2,y2,self.epsg,self.epsg,xpixels,ypixels,dpi,format)
         if verbose: print basemap_url
         return m.imshow(imread(urllib2.urlopen(basemap_url)),origin='upper')
 
