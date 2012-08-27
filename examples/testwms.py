@@ -34,7 +34,7 @@ f=image" %\
         if verbose: print basemap_url
         return m.imshow(imread(urllib2.urlopen(basemap_url)),origin='upper',**kwargs)
 
-plt.figure(figsize=(10,5))
+plt.figure(figsize=(10,6.6666))
 epsg = 2263; width=600.e3; height = 400.e3
 m=Basemap2(epsg=epsg,resolution='h',width=width,height=height)
 # default
@@ -46,6 +46,16 @@ m.wmsmap(server='http://maps.ngdc.noaa.gov',layer='etopo1',verbose=True)
 m.drawmeridians(np.arange(-180,180,2),labels=[0,0,0,1])
 m.drawparallels(np.arange(0,80,1),labels=[1,0,0,0])
 m.drawcoastlines(linewidth=0.25)
-plt.title('test WMS map background')
+plt.title('test WMS map background EPSG=%s' % epsg)
+
+plt.figure(figsize=(8,10))
+epsg = 27700; lon1 = -10.5; lat1 = 49.5; lon2 = 3.5; lat2 = 59.5
+m=Basemap2(epsg=epsg,resolution='i',llcrnrlon=lon1,llcrnrlat=lat1,\
+           urcrnrlon=lon2,urcrnrlat=lat2)
+m.wmsmap(layer='NatGeo_World_Map',verbose=True,dpi=300)
+m.drawmeridians(np.arange(-180,180,2),labels=[0,0,0,1])
+m.drawparallels(np.arange(0,80,1),labels=[1,0,0,0])
+m.drawcoastlines(linewidth=0.25)
+plt.title('test WMS map background EPSG=%s' % epsg)
 
 plt.show()
