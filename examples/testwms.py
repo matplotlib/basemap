@@ -7,7 +7,7 @@ import numpy as np
 
 class Basemap2(Basemap):
     def wmsmap(self,server='http://server.arcgisonline.com/ArcGIS',layer='World_Physical_Map',\
-               xpixels=800,dpi=96,format='png',verbose=False,**kwargs):
+               xpixels=400,dpi=96,format='png32',verbose=False,**kwargs):
         # constructs a URL using the ArcGIS Server REST API, retrieves
         # an image and displays it on the map. In order to use this method,
         # the Basemap instance must be created using the epsg keyword to
@@ -52,7 +52,8 @@ plt.figure(figsize=(8,10))
 epsg = 27700; lon1 = -10.5; lat1 = 49.5; lon2 = 3.5; lat2 = 59.5
 m=Basemap2(epsg=epsg,resolution='i',llcrnrlon=lon1,llcrnrlat=lat1,\
            urcrnrlon=lon2,urcrnrlat=lat2)
-m.wmsmap(layer='NatGeo_World_Map',verbose=True,dpi=300)
+# lowering the pixel resolution makes the place names bigger.
+m.wmsmap(layer='NatGeo_World_Map',verbose=True,xpixels=380)
 m.drawmeridians(np.arange(-180,180,2),labels=[0,0,0,1])
 m.drawparallels(np.arange(0,80,1),labels=[1,0,0,0])
 m.drawcoastlines(linewidth=0.25)
