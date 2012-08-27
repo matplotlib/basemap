@@ -32,7 +32,7 @@ format=%s&\
 f=image" %\
 (server,layer,x1,y1,x2,y2,self.epsg,self.epsg,xpixels,ypixels,dpi,format)
         if verbose: print basemap_url
-        return m.imshow(imread(urllib2.urlopen(basemap_url)),origin='upper')
+        return m.imshow(imread(urllib2.urlopen(basemap_url)),origin='upper',**kwargs)
 
 plt.figure(figsize=(10,5))
 epsg = 2263; width=600.e3; height = 400.e3
