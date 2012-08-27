@@ -1,5 +1,6 @@
 version 1.0.6 (not yet released)
 --------------------------------
+* add 'ellps' keyword (rsphere ignored if ellps given).
 * fixed shiftdata method so it shifts mask along with data
   (https://github.com/matplotlib/basemap/pull/68).
 * added linestyle keyword to all draw* methods.

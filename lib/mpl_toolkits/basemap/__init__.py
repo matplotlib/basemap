@@ -232,6 +232,10 @@ _Basemap_init_doc = """
                   The minor axis (b) can be computed from the major
                   axis (a) and the inverse flattening parameter using
                   the formula if = a/(a-b).
+ ellps            string describing ellipsoid ('GRS80' or 'WGS84',
+                  for example). If both rsphere and ellps are given,
+                  rsphere is ignored. Default None. See pyproj.pj_ellps
+                  for allowed values.
  suppress_ticks   suppress automatic drawing of axis ticks and labels
                   in map projection coordinates.  Default False,
                   so parallels and meridians can be labelled instead.
@@ -493,7 +497,7 @@ class Basemap(object):
                        width=None, height=None,
                        projection='cyl', resolution='c',
                        area_thresh=None, rsphere=6370997.0,
-                       lat_ts=None,
+                       ellps=None, lat_ts=None,
                        lat_1=None, lat_2=None,
                        lat_0=None, lon_0=None,
                        lon_1=None, lon_2=None,
@@ -528,20 +532,34 @@ class Basemap(object):
         # set up projection parameter dict.
         projparams = {}
         projparams['proj'] = projection
-        try:
-            if rsphere[0] > rsphere[1]:
-                projparams['a'] = rsphere[0]
-                projparams['b'] = rsphere[1]
+        # if ellps keyword specified, it over-rides rsphere.
+        if ellps is not None:
+            try:
+                elldict = pyproj.pj_ellps[ellps]
+            except KeyError:
+                raise ValueError(
+                'illegal ellps definition, allowed values are %s' %
+                pyproj.pj_ellps.keys())
+            projparams['a'] = elldict['a']
+            if 'b' in elldict:
+                projparams['b'] = elldict['b']
             else:
-                projparams['a'] = rsphere[1]
-                projparams['b'] = rsphere[0]
-        except:
-            if projection == 'tmerc':
-            # use bR_a instead of R because of obscure bug
-            # in proj4 for tmerc projection.
-                projparams['bR_a'] = rsphere
-            else:
-                projparams['R'] = rsphere
+                projparams['b'] = projparams['a']*(1.0-(1.0/elldict['rf']))
+        else:
+            try:
+                if rsphere[0] > rsphere[1]:
+                    projparams['a'] = rsphere[0]
+                    projparams['b'] = rsphere[1]
+                else:
+                    projparams['a'] = rsphere[1]
+                    projparams['b'] = rsphere[0]
+            except:
+                if projection == 'tmerc':
+                # use bR_a instead of R because of obscure bug
+                # in proj4 for tmerc projection.
+                    projparams['bR_a'] = rsphere
+                else:
+                    projparams['R'] = rsphere
         # set units to meters.
         projparams['units']='m'
         # check for sane values of lon_0, lat_0, lat_ts, lat_1, lat_2
