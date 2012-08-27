@@ -149,8 +149,8 @@ for line in epsgf:
         if k=='k':
             k='k_0'
         if k in ['projection','lat_1','lat_2','lon_0','lat_0',\
-                 'a','b','k_0','lat_ts','ellps']:
-            if k not in ['projection','ellps']:
+                 'a','b','k_0','lat_ts','ellps','datum']:
+            if k not in ['projection','ellps','datum']:
                 v = float(v)
             _kw_args[k]=v
     if 'projection' in _kw_args:
@@ -161,6 +161,14 @@ for line in epsgf:
             else:
                 _kw_args['rsphere']=_kw_args['a']
             del _kw_args['a']
+        if 'datum' in _kw_args:
+            if _kw_args['datum'] == 'NAD83':
+                _kw_args['ellps'] = 'GRS80'
+            elif _kw_args['datum'] == 'NAD27':
+                _kw_args['ellps'] = 'clrk66'
+            elif _kw_args['datum'] == 'WGS84':
+                _kw_args['ellps'] = 'WGS84'
+            del _kw_args['datum']
         # supported epsg projections.
         # omerc not supported yet, since we can't handle
         # alpha,gamma and lonc keywords.
