@@ -392,7 +392,9 @@ _Basemap_init_doc = """
  projection       map projection. Print the module variable
                   ``supported_projections`` to see a list of allowed
                   values.
- epsg             EPSG code defining projection
+ epsg             EPSG code defining projection (see
+                  http://spatialreference.org for a list of
+                  EPSG codes and their definitions).
  aspect           map aspect ratio
                   (size of y dimension / size of x dimension).
  llcrnrlon        longitude of lower left hand corner of the
@@ -597,7 +599,7 @@ class Basemap(object):
                 elif k == 'lat_ts':
                     lat_ts = epsg_params[k]
                 elif k == 'k_0':
-                    k0 = epsg_params[k]
+                    k_0 = epsg_params[k]
 
         # fix aspect to ratio to match aspect ratio of map projection
         # region
@@ -4088,7 +4090,8 @@ class Basemap(object):
         return im
 
     def wmsimage(self,server='http://server.arcgisonline.com/ArcGIS',\
-                 service='ESRI_Imagery_World_2D',xpixels=400,dpi=96,verbose=False,**kwargs):
+                 service='ESRI_Imagery_World_2D',xpixels=400,ypixels=None,\
+                 dpi=96,verbose=False,**kwargs):
         """
         Retrieve an image using the ArcGIS Server REST API and display it on
         the map. In order to use this method, the Basemap instance must be
@@ -4108,6 +4111,10 @@ class Basemap(object):
                          image).
         xpixels          requested number of image pixels in x-direction
                          (default 400).
+        ypixels          requested number of image pixels in y-direction.
+                         Default (None) is to infer the number from
+                         from xpixels and the aspect ratio of the
+                         map projection region.
         dpi              The device resolution of the exported image (dots per
                          inch, default 96).
         verbose          if True, print URL used to retrieve image (default
@@ -4130,8 +4137,9 @@ class Basemap(object):
         p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
         x1,y1 = p(self.llcrnrlon,self.llcrnrlat)
         x2,y2 = p(self.urcrnrlon,self.urcrnrlat)
-        # scale xpixels by plot aspect ratio to get ypixels.
-        ypixels = int(self.aspect*xpixels)
+        # ypixels not given, find by scaling xpixels by the map aspect ratio.
+        if ypixels is None:
+            ypixels = int(self.aspect*xpixels)
         # construct a URL using the ArcGIS Server REST API.
         basemap_url = \
 "%s/rest/services/%s/MapServer/export?\
