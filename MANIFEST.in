@@ -11,7 +11,7 @@ include Changelog
 include setup.py
 include nad2bin.c
 include src/*
-include examples/testwms.py
+include examples/testarcgis.py
 include examples/counties.py
 include examples/shiftdata.py
 include examples/allskymap.py
