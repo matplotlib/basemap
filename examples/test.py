@@ -73,6 +73,22 @@ print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
+# setup gall stereographic cylindrical map projection.
+m = Basemap(llcrnrlon=-180.,llcrnrlat=-90,urcrnrlon=180.,urcrnrlat=90.,\
+            resolution='c',area_thresh=10000.,lat_ts=30,projection='cea')
+# plot image over map.
+im = m.pcolormesh(lons,lats,topodat,cmap=cmap,latlon=True)
+cb = m.colorbar() # draw colorbar
+m.drawcoastlines() # draw coastlines
+# draw parallels and meridiands
+m.drawparallels(np.arange(-90,90,30),labels=[1,0,0,1])
+m.drawmeridians(np.arange(0,360,60),labels=[1,0,0,1])
+plt.title('Cylindrical Equal Area',y=1.1)
+print('plotting Cylindrical Equal Area example ...')
+print(m.proj4string)
+
+# create new figure
+fig=plt.figure()
 # setup mercator map projection (-80 to +80).
 m = Basemap(llcrnrlon=-180.,llcrnrlat=-75,urcrnrlon=180.,urcrnrlat=75.,\
             resolution='c',area_thresh=10000.,projection='merc',lat_ts=20)
@@ -411,7 +427,7 @@ cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar() # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
-# draw parallels and meridians (labelling is 
+# draw parallels and meridians (labelling is
 # not implemented for orthographic).
 parallels = np.arange(-80.,90,20.)
 m.drawparallels(parallels)
@@ -433,7 +449,7 @@ cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar() # draw colorbar
 # draw coastlines and political boundaries.
 m.drawcoastlines()
-# draw parallels and meridians (labelling is 
+# draw parallels and meridians (labelling is
 # not implemented for geostationary).
 parallels = np.arange(-80.,90,20.)
 m.drawparallels(parallels)

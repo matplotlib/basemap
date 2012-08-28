@@ -56,6 +56,7 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'omerc'    : 'Oblique Mercator',
              'mill'     : 'Miller Cylindrical',
              'gall'     : 'Gall Stereographic Cylindrical',
+             'cea'      : 'Cylindrical Equal Area',
              'lcc'      : 'Lambert Conformal',
              'laea'     : 'Lambert Azimuthal Equal Area',
              'nplaea'   : 'North-Polar Lambert Azimuthal',
@@ -88,7 +89,7 @@ for _items in _projnames.items():
     supported_projections.append(" %-17s%-40s\n" % (_items))
 supported_projections = ''.join(supported_projections)
 
-_cylproj = ['cyl','merc','mill','gall']
+_cylproj = ['cyl','merc','mill','gall','cea']
 _pseudocyl = ['moll','robin','eck4','kav7','sinu','mbtfpq','vandg','hammer']
 
 # projection specific parameters.
@@ -98,6 +99,7 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'omerc'    : 'lon_0,lat_0,lat_1,lat_2,lon_1,lon_2,no_rot,k_0',
              'mill'     : 'corners only (no width/height)',
              'gall'     : 'corners only (no width/height)',
+             'cea'      : 'corners only plus lat_ts (no width/height)',
              'lcc'      : 'lon_0,lat_0,lat_1,lat_2,k_0',
              'laea'     : 'lon_0,lat_0',
              'nplaea'   : 'bounding_lat,lon_0,lat_0,no corners or width/height',
@@ -239,7 +241,7 @@ _Basemap_init_doc = """
  (because either they are computed internally, or entire globe is
  always plotted).
 
- For the cylindrical projections (``cyl``, ``merc``, ``mill`` and ``gall``),
+ For the cylindrical projections (``cyl``, ``merc``, ``mill``, ``cea``  and ``gall``),
  the default is to use
  llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other
  projections except ``ortho``, ``geos`` and ``nsper``, either the lat/lon values of the
@@ -335,10 +337,11 @@ _Basemap_init_doc = """
  ================ ====================================================
  Keyword          Description
  ================ ====================================================
- lat_ts           latitude of true scale. Optional for stereographic
-                  and mercator projections.
+ lat_ts           latitude of true scale. Optional for stereographic,
+                  cylindrical equal area and mercator projections.
                   default is lat_0 for stereographic projection.
-                  default is 0 for mercator projection.
+                  default is 0 for mercator and cylindrical equal area
+                  projections.
  lat_1            first standard parallel for lambert conformal,
                   albers equal area and equidistant conic.
                   Latitude of one of the two points on the projection
@@ -437,7 +440,7 @@ _Basemap_init_doc = """
  For non-cylindrical projections, the inverse transformation
  always returns longitudes between -180 and 180 degrees. For
  cylindrical projections (self.projection == ``cyl``, ``mill``,
- ``gall`` or ``merc``)
+ ``cea``, ``gall`` or ``merc``)
  the inverse transformation will return longitudes between
  self.llcrnrlon and self.llcrnrlat.
 
@@ -870,7 +873,7 @@ class Basemap(object):
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection in _cylproj:
-            if projection == 'merc':
+            if projection == 'merc' or projection == 'cea':
                 if lat_ts is None:
                     lat_ts = 0.
                     projparams['lat_ts'] = lat_ts
@@ -884,7 +887,6 @@ class Basemap(object):
                     llcrnrlon = -180.
                     urcrnrlon = 180
                 if projection == 'merc':
-                    if lat_ts is None: lat_ts = 0.
                     # clip plot region to be within -89.99S to 89.99N
                     # (mercator is singular at poles)
                     if llcrnrlat < -89.99: llcrnrlat = -89.99
@@ -1086,7 +1088,7 @@ class Basemap(object):
         For non-cylindrical projections, the inverse transformation
         always returns longitudes between -180 and 180 degrees. For
         cylindrical projections (self.projection == ``cyl``,
-        ``mill``, ``gall`` or ``merc``)
+        ``cea``, ``mill``, ``gall`` or ``merc``)
         the inverse transformation will return longitudes between
         self.llcrnrlon and self.llcrnrlat.
 
@@ -1384,7 +1386,7 @@ class Basemap(object):
         """
         create map boundary polygon (in lat/lon and x/y coordinates)
         """
-        nx = 10000; ny = 10000
+        nx = 100; ny = 100
         maptran = self
         if self.projection in ['ortho','geos','nsper']:
             # circular region.
@@ -1425,6 +1427,7 @@ class Basemap(object):
             b[:,0]=x; b[:,1]=y
             boundaryxy = _geoslib.Polygon(b)
         elif self.projection in _pseudocyl:
+            nx = 10*nx; ny = 10*ny
             # quasi-elliptical region.
             lon_0 = self.projparams['lon_0']
             # left side
@@ -1446,6 +1449,7 @@ class Basemap(object):
             b[:,0]=x; b[:,1]=y
             boundaryxy = _geoslib.Polygon(b)
         else: # all other projections are rectangular.
+            nx = 100*nx; ny = 100*ny
             # left side (x = xmin, ymin <= y <= ymax)
             yy = np.linspace(self.ymin, self.ymax, ny)[:-1]
             x = len(yy)*[self.xmin]; y = yy.tolist()
@@ -2830,8 +2834,8 @@ class Basemap(object):
         lons, lats       rank-1 arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must
-                         fit within range -180 to 180.
+                         ``cyl``, ``merc``, ``cea``, ``gall`` and ``mill``) lons
+                         must fit within range -180 to 180.
         nx, ny           The size of the output regular grid in map
                          projection coordinates
         ==============   ====================================================
@@ -2902,8 +2906,8 @@ class Basemap(object):
         lons, lats       rank-1 arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must
-                         fit within range -180 to 180.
+                         ``cyl``, ``merc``, ``cea``, ``gall`` and ``mill``) lons
+                         must fit within range -180 to 180.
         nx, ny           The size of the output regular grid in map
                          projection coordinates
         ==============   ====================================================
@@ -2975,8 +2979,8 @@ class Basemap(object):
         lons, lats       Arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must
-                         fit within range -180 to 180.
+                         ``cyl``, ``merc``, ``cyl``, ``gall`` and ``mill``) lons
+                         must fit within range -180 to 180.
         ==============   ====================================================
 
         Returns ``uout, vout`` (rotated vector field).
