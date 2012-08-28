@@ -4089,7 +4089,7 @@ class Basemap(object):
         if self.round: im,c = self._clipcircle(ax,im)
         return im
 
-    def wmsimage(self,server='http://server.arcgisonline.com/ArcGIS',\
+    def arcgisimage(self,server='http://server.arcgisonline.com/ArcGIS',\
                  service='ESRI_Imagery_World_2D',xpixels=400,ypixels=None,\
                  dpi=96,verbose=False,**kwargs):
         """
