@@ -29,6 +29,7 @@ from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox
 from mpl_toolkits.basemap import pyproj
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib.image import imread
 import sys, os, math
 from .proj import Proj
 import numpy as np
@@ -4085,6 +4086,67 @@ class Basemap(object):
         # clip for round polar plots.
         if self.round: im,c = self._clipcircle(ax,im)
         return im
+
+    def wmsimage(self,server='http://server.arcgisonline.com/ArcGIS',\
+                 service='ESRI_Imagery_World_2D',xpixels=400,dpi=96,verbose=False,**kwargs):
+        """
+        Retrieve an image using the ArcGIS Server REST API and display it on
+        the map. In order to use this method, the Basemap instance must be
+        created using the ``epsg`` keyword to define the map projection, unless
+        the ``cyl`` projection is used (in which case the epsg code 4326 is
+        assumed).
+
+        .. tabularcolumns:: |l|L|
+
+        ==============   ====================================================
+        Keywords         Description
+        ==============   ====================================================
+        server           web map server URL (default
+                         http://server.arcgisonline.com/ArcGIS).
+        service          service (image type) hosted on server (default
+                         ESRI_Imagery_World_2D, which is NASA 'Blue Marble'
+                         image).
+        xpixels          requested number of image pixels in x-direction
+                         (default 400).
+        dpi              The device resolution of the exported image (dots per
+                         inch, default 96).
+        verbose          if True, print URL used to retrieve image (default
+                         False).
+        \**kwargs        extra keyword arguments passed on to
+                         :meth:`imshow`
+        ==============   ====================================================
+
+        Extra keyword ``ax`` can be used to override the default axis instance.
+
+        returns a matplotlib.image.AxesImage instance.
+        """
+        import urllib2
+        if not hasattr(self,'epsg'):
+            msg = dedent("""
+            Basemap instance must be creating using an EPSG code
+            (http://spatialreference.org) in order to use the wmsmap method""")
+            raise ValueError('no epsg code')
+        # find the x,y values at the corner points.
+        p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
+        x1,y1 = p(self.llcrnrlon,self.llcrnrlat)
+        x2,y2 = p(self.urcrnrlon,self.urcrnrlat)
+        # scale xpixels by plot aspect ratio to get ypixels.
+        ypixels = int(self.aspect*xpixels)
+        # construct a URL using the ArcGIS Server REST API.
+        basemap_url = \
+"%s/rest/services/%s/MapServer/export?\
+bbox=%d,%d,%d,%d&\
+bboxSR=%s&\
+imageSR=%s&\
+size=%s,%s&\
+dpi=%s&\
+format=png32&\
+f=image" %\
+(server,service,x1,y1,x2,y2,self.epsg,self.epsg,xpixels,ypixels,dpi)
+        # print URL?
+        if verbose: print basemap_url
+        # return AxesImage instance.
+        return self.imshow(imread(urllib2.urlopen(basemap_url)),origin='upper',**kwargs)
 
     def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\
                      units='km',fontsize=9,yoffset=None,labelstyle='simple',\

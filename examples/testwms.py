@@ -1,59 +1,35 @@
-from mpl_toolkits.basemap import Basemap, pyproj
+from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
-from matplotlib.image import imread
-from matplotlib.cbook import dedent
-import urllib2
 import numpy as np
 
-class Basemap2(Basemap):
-    def wmsmap(self,server='http://server.arcgisonline.com/ArcGIS',layer='World_Physical_Map',\
-               xpixels=400,dpi=96,format='png32',verbose=False,**kwargs):
-        # constructs a URL using the ArcGIS Server REST API, retrieves
-        # an image and displays it on the map. In order to use this method,
-        # the Basemap instance must be created using the epsg keyword to
-        # specify the map projection.
-        if not hasattr(self,'epsg'):
-            msg = dedent("""
-            Basemap instance must be creating using an EPSG code
-            (http://spatialreference.org) in order to use the wmsmap method""")
-            raise ValueError('no epsg code')
-        p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
-        x1,y1 = p(self.llcrnrlon,self.llcrnrlat)
-        x2,y2 = p(self.urcrnrlon,self.urcrnrlat)
-        ypixels = int(self.aspect*xpixels)
-        basemap_url = \
-"%s/rest/services/%s/MapServer/export?\
-bbox=%d,%d,%d,%d&\
-bboxSR=%s&\
-imageSR=%s&\
-size=%s,%s&\
-dpi=%s&\
-format=%s&\
-f=image" %\
-(server,layer,x1,y1,x2,y2,self.epsg,self.epsg,xpixels,ypixels,dpi,format)
-        if verbose: print basemap_url
-        return m.imshow(imread(urllib2.urlopen(basemap_url)),origin='upper',**kwargs)
+# test wmsimage method for retrieving images from web map servers.
+
+plt.figure(figsize=(8,8))
+epsg = 3413; width = 8000.e3; height = 8000.e3
+m=Basemap(epsg=epsg,resolution='l',width=width,height=height)
+# default 'blue marble' image.
+m.wmsimage()
+m.drawmeridians(np.arange(-180,180,30),labels=[0,0,0,1],color='y')
+m.drawparallels(np.arange(0,80,10),labels=[1,0,0,0],color='y')
+m.drawcoastlines(linewidth=0.5,color='0.5')
+plt.title('test WMS map background EPSG=%s' % epsg)
 
 plt.figure(figsize=(10,6.6666))
 epsg = 2263; width=600.e3; height = 400.e3
-m=Basemap2(epsg=epsg,resolution='h',width=width,height=height)
-# default
-#m.wmsmap()
-# specify a different layer, pixel resolution.
-#m.wmsmap(layer='NatGeo_World_Map',xpixels=1200)
+m=Basemap(epsg=epsg,resolution='h',width=width,height=height)
 # specify a different server.
-m.wmsmap(server='http://maps.ngdc.noaa.gov',layer='etopo1',verbose=True)
+m.wmsimage(server='http://maps.ngdc.noaa.gov',service='etopo1',verbose=True)
 m.drawmeridians(np.arange(-180,180,2),labels=[0,0,0,1])
 m.drawparallels(np.arange(0,80,1),labels=[1,0,0,0])
 m.drawcoastlines(linewidth=0.25)
 plt.title('test WMS map background EPSG=%s' % epsg)
 
-plt.figure(figsize=(8,10))
-epsg = 27700; lon1 = -10.5; lat1 = 49.5; lon2 = 3.5; lat2 = 59.5
-m=Basemap2(epsg=epsg,resolution='i',llcrnrlon=lon1,llcrnrlat=lat1,\
+plt.figure(figsize=(6,8))
+epsg = 3086; lon1 = -85; lat1 = 24; lon2 = -79; lat2 =32
+m=Basemap(epsg=epsg,resolution='i',llcrnrlon=lon1,llcrnrlat=lat1,\
            urcrnrlon=lon2,urcrnrlat=lat2)
-# lowering the pixel resolution makes the place names bigger.
-m.wmsmap(layer='NatGeo_World_Map',verbose=True,xpixels=380)
+# specify a different service
+m.wmsimage(service='NatGeo_World_Map',verbose=True,xpixels=600,interpolation='bicubic')
 m.drawmeridians(np.arange(-180,180,2),labels=[0,0,0,1])
 m.drawparallels(np.arange(0,80,1),labels=[1,0,0,0])
 m.drawcoastlines(linewidth=0.25)
