@@ -4136,7 +4136,7 @@ class Basemap(object):
             msg = dedent("""
             Basemap instance must be creating using an EPSG code
             (http://spatialreference.org) in order to use the wmsmap method""")
-            raise ValueError('no epsg code')
+            raise ValueError(msg)
         # find the x,y values at the corner points.
         p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
         x1,y1 = p(self.llcrnrlon,self.llcrnrlat)
