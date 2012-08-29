@@ -158,3 +158,6 @@ shiftdata.py shows how to use the 'latlon' keyword to automatically transform to
 projection coordinates and shift the data longitudinally to fit the map projection region.
 
 counties.py shows how to draw U.S. county boundaries.
+
+testarcgis.py tests using arcgisimage method to retrieve a background image from a 
+ArcGIS server using the REST API.

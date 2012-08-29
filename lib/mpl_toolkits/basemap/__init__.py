@@ -29,6 +29,7 @@ from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox
 from mpl_toolkits.basemap import pyproj
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib.image import imread
 import sys, os, math
 from .proj import Proj
 import numpy as np
@@ -55,6 +56,7 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'omerc'    : 'Oblique Mercator',
              'mill'     : 'Miller Cylindrical',
              'gall'     : 'Gall Stereographic Cylindrical',
+             'cea'      : 'Cylindrical Equal Area',
              'lcc'      : 'Lambert Conformal',
              'laea'     : 'Lambert Azimuthal Equal Area',
              'nplaea'   : 'North-Polar Lambert Azimuthal',
@@ -87,7 +89,7 @@ for _items in _projnames.items():
     supported_projections.append(" %-17s%-40s\n" % (_items))
 supported_projections = ''.join(supported_projections)
 
-_cylproj = ['cyl','merc','mill','gall']
+_cylproj = ['cyl','merc','mill','gall','cea']
 _pseudocyl = ['moll','robin','eck4','kav7','sinu','mbtfpq','vandg','hammer']
 
 # projection specific parameters.
@@ -97,6 +99,7 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'omerc'    : 'lon_0,lat_0,lat_1,lat_2,lon_1,lon_2,no_rot,k_0',
              'mill'     : 'corners only (no width/height)',
              'gall'     : 'corners only (no width/height)',
+             'cea'      : 'corners only plus lat_ts (no width/height)',
              'lcc'      : 'lon_0,lat_0,lat_1,lat_2,k_0',
              'laea'     : 'lon_0,lat_0',
              'nplaea'   : 'bounding_lat,lon_0,lat_0,no corners or width/height',
@@ -124,6 +127,57 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'mbtfpq'   : 'lon_0,lat_0,no corners or width/height',
              'gnom'     : 'lon_0,lat_0',
              }
+
+# create dictionary that maps epsg codes to Basemap kwargs.
+epsgf = open(os.path.join(basemap_datadir,'epsg'))
+epsg_dict={}
+for line in epsgf:
+    if line.startswith("#"):
+        continue
+    l = line.split()
+    code = l[0].strip("<>")
+    parms = ' '.join(l[1:-1])
+    _kw_args={}
+    for s in l[1:-1]:
+        try:
+            k,v = s.split('=')
+        except:
+            pass
+        k = k.strip("+")
+        if k=='proj':
+            if v == 'longlat': v = 'cyl'
+            if v not in _projnames:
+                continue
+            k='projection'
+        if k=='k':
+            k='k_0'
+        if k in ['projection','lat_1','lat_2','lon_0','lat_0',\
+                 'a','b','k_0','lat_ts','ellps','datum']:
+            if k not in ['projection','ellps','datum']:
+                v = float(v)
+            _kw_args[k]=v
+    if 'projection' in _kw_args:
+        if 'a' in _kw_args:
+            if 'b' in _kw_args:
+                _kw_args['rsphere']=(_kw_args['a'],_kw_args['b'])
+                del _kw_args['b']
+            else:
+                _kw_args['rsphere']=_kw_args['a']
+            del _kw_args['a']
+        if 'datum' in _kw_args:
+            if _kw_args['datum'] == 'NAD83':
+                _kw_args['ellps'] = 'GRS80'
+            elif _kw_args['datum'] == 'NAD27':
+                _kw_args['ellps'] = 'clrk66'
+            elif _kw_args['datum'] == 'WGS84':
+                _kw_args['ellps'] = 'WGS84'
+            del _kw_args['datum']
+        # supported epsg projections.
+        # omerc not supported yet, since we can't handle
+        # alpha,gamma and lonc keywords.
+        if _kw_args['projection'] != 'omerc':
+            epsg_dict[code]=_kw_args
+epsgf.close()
 
 # The __init__ docstring is pulled out here because it is so long;
 # Having it in the usual place makes it hard to get from the
@@ -187,7 +241,7 @@ _Basemap_init_doc = """
  (because either they are computed internally, or entire globe is
  always plotted).
 
- For the cylindrical projections (``cyl``, ``merc``, ``mill`` and ``gall``),
+ For the cylindrical projections (``cyl``, ``merc``, ``mill``, ``cea``  and ``gall``),
  the default is to use
  llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other
  projections except ``ortho``, ``geos`` and ``nsper``, either the lat/lon values of the
@@ -232,6 +286,10 @@ _Basemap_init_doc = """
                   The minor axis (b) can be computed from the major
                   axis (a) and the inverse flattening parameter using
                   the formula if = a/(a-b).
+ ellps            string describing ellipsoid ('GRS80' or 'WGS84',
+                  for example). If both rsphere and ellps are given,
+                  rsphere is ignored. Default None. See pyproj.pj_ellps
+                  for allowed values.
  suppress_ticks   suppress automatic drawing of axis ticks and labels
                   in map projection coordinates.  Default False,
                   so parallels and meridians can be labelled instead.
@@ -279,10 +337,11 @@ _Basemap_init_doc = """
  ================ ====================================================
  Keyword          Description
  ================ ====================================================
- lat_ts           latitude of true scale. Optional for stereographic
-                  and mercator projections.
+ lat_ts           latitude of true scale. Optional for stereographic,
+                  cylindrical equal area and mercator projections.
                   default is lat_0 for stereographic projection.
-                  default is 0 for mercator projection.
+                  default is 0 for mercator and cylindrical equal area
+                  projections.
  lat_1            first standard parallel for lambert conformal,
                   albers equal area and equidistant conic.
                   Latitude of one of the two points on the projection
@@ -336,6 +395,9 @@ _Basemap_init_doc = """
  projection       map projection. Print the module variable
                   ``supported_projections`` to see a list of allowed
                   values.
+ epsg             EPSG code defining projection (see
+                  http://spatialreference.org for a list of
+                  EPSG codes and their definitions).
  aspect           map aspect ratio
                   (size of y dimension / size of x dimension).
  llcrnrlon        longitude of lower left hand corner of the
@@ -378,7 +440,7 @@ _Basemap_init_doc = """
  For non-cylindrical projections, the inverse transformation
  always returns longitudes between -180 and 180 degrees. For
  cylindrical projections (self.projection == ``cyl``, ``mill``,
- ``gall`` or ``merc``)
+ ``cea``, ``gall`` or ``merc``)
  the inverse transformation will return longitudes between
  self.llcrnrlon and self.llcrnrlat.
 
@@ -493,7 +555,7 @@ class Basemap(object):
                        width=None, height=None,
                        projection='cyl', resolution='c',
                        area_thresh=None, rsphere=6370997.0,
-                       lat_ts=None,
+                       ellps=None, lat_ts=None,
                        lat_1=None, lat_2=None,
                        lat_0=None, lon_0=None,
                        lon_1=None, lon_2=None,
@@ -506,8 +568,41 @@ class Basemap(object):
                        anchor='C',
                        celestial=False,
                        round=False,
+                       epsg=None,
                        ax=None):
         # docstring is added after __init__ method definition
+
+        # set epsg code if given, set to 4326 for projection='cyl':
+        if epsg is not None:
+            self.epsg = epsg
+        elif projection == 'cyl':
+            self.epsg = 4326
+        # replace kwarg values with those implied by epsg code,
+        # if given.
+        if hasattr(self,'epsg'):
+            if str(self.epsg) not in epsg_dict:
+                raise ValueError('%s is not a supported EPSG code' %
+                        self.epsg)
+            epsg_params = epsg_dict[str(self.epsg)]
+            for k in epsg_params:
+                if k == 'projection':
+                    projection = epsg_params[k]
+                elif k == 'rsphere':
+                    rsphere = epsg_params[k]
+                elif k == 'ellps':
+                    ellps = epsg_params[k]
+                elif k == 'lat_1':
+                    lat_1 = epsg_params[k]
+                elif k == 'lat_2':
+                    lat_2 = epsg_params[k]
+                elif k == 'lon_0':
+                    lon_0 = epsg_params[k]
+                elif k == 'lat_0':
+                    lat_0 = epsg_params[k]
+                elif k == 'lat_ts':
+                    lat_ts = epsg_params[k]
+                elif k == 'k_0':
+                    k_0 = epsg_params[k]
 
         # fix aspect to ratio to match aspect ratio of map projection
         # region
@@ -528,20 +623,34 @@ class Basemap(object):
         # set up projection parameter dict.
         projparams = {}
         projparams['proj'] = projection
-        try:
-            if rsphere[0] > rsphere[1]:
-                projparams['a'] = rsphere[0]
-                projparams['b'] = rsphere[1]
+        # if ellps keyword specified, it over-rides rsphere.
+        if ellps is not None:
+            try:
+                elldict = pyproj.pj_ellps[ellps]
+            except KeyError:
+                raise ValueError(
+                'illegal ellps definition, allowed values are %s' %
+                pyproj.pj_ellps.keys())
+            projparams['a'] = elldict['a']
+            if 'b' in elldict:
+                projparams['b'] = elldict['b']
             else:
-                projparams['a'] = rsphere[1]
-                projparams['b'] = rsphere[0]
-        except:
-            if projection == 'tmerc':
-            # use bR_a instead of R because of obscure bug
-            # in proj4 for tmerc projection.
-                projparams['bR_a'] = rsphere
-            else:
-                projparams['R'] = rsphere
+                projparams['b'] = projparams['a']*(1.0-(1.0/elldict['rf']))
+        else:
+            try:
+                if rsphere[0] > rsphere[1]:
+                    projparams['a'] = rsphere[0]
+                    projparams['b'] = rsphere[1]
+                else:
+                    projparams['a'] = rsphere[1]
+                    projparams['b'] = rsphere[0]
+            except:
+                if projection == 'tmerc':
+                # use bR_a instead of R because of obscure bug
+                # in proj4 for tmerc projection.
+                    projparams['bR_a'] = rsphere
+                else:
+                    projparams['R'] = rsphere
         # set units to meters.
         projparams['units']='m'
         # check for sane values of lon_0, lat_0, lat_ts, lat_1, lat_2
@@ -764,7 +873,7 @@ class Basemap(object):
                 self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
                 self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection in _cylproj:
-            if projection == 'merc':
+            if projection == 'merc' or projection == 'cea':
                 if lat_ts is None:
                     lat_ts = 0.
                     projparams['lat_ts'] = lat_ts
@@ -778,7 +887,6 @@ class Basemap(object):
                     llcrnrlon = -180.
                     urcrnrlon = 180
                 if projection == 'merc':
-                    if lat_ts is None: lat_ts = 0.
                     # clip plot region to be within -89.99S to 89.99N
                     # (mercator is singular at poles)
                     if llcrnrlat < -89.99: llcrnrlat = -89.99
@@ -980,7 +1088,7 @@ class Basemap(object):
         For non-cylindrical projections, the inverse transformation
         always returns longitudes between -180 and 180 degrees. For
         cylindrical projections (self.projection == ``cyl``,
-        ``mill``, ``gall`` or ``merc``)
+        ``cea``, ``mill``, ``gall`` or ``merc``)
         the inverse transformation will return longitudes between
         self.llcrnrlon and self.llcrnrlat.
 
@@ -1279,8 +1387,6 @@ class Basemap(object):
         create map boundary polygon (in lat/lon and x/y coordinates)
         """
         nx = 100; ny = 100
-        if self.projection == 'vandg':
-            nx = 10*nx; ny = 10*ny
         maptran = self
         if self.projection in ['ortho','geos','nsper']:
             # circular region.
@@ -1321,6 +1427,7 @@ class Basemap(object):
             b[:,0]=x; b[:,1]=y
             boundaryxy = _geoslib.Polygon(b)
         elif self.projection in _pseudocyl:
+            nx = 10*nx; ny = 10*ny
             # quasi-elliptical region.
             lon_0 = self.projparams['lon_0']
             # left side
@@ -1342,6 +1449,7 @@ class Basemap(object):
             b[:,0]=x; b[:,1]=y
             boundaryxy = _geoslib.Polygon(b)
         else: # all other projections are rectangular.
+            nx = 100*nx; ny = 100*ny
             # left side (x = xmin, ymin <= y <= ymax)
             yy = np.linspace(self.ymin, self.ymax, ny)[:-1]
             x = len(yy)*[self.xmin]; y = yy.tolist()
@@ -2098,7 +2206,7 @@ class Basemap(object):
             lons = np.arange(lon_0-90,lon_0+90.01,0.01)
         else:
             lonmin = self.boundarylonmin; lonmax = self.boundarylonmax
-            lons = np.linspace(lonmin, lonmax, 1001)
+            lons = np.linspace(lonmin, lonmax, 10001)
         # make sure latmax degree parallel is drawn if projection not merc or cyl or miller
         try:
             circlesl = list(circles)
@@ -2726,8 +2834,8 @@ class Basemap(object):
         lons, lats       rank-1 arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must
-                         fit within range -180 to 180.
+                         ``cyl``, ``merc``, ``cea``, ``gall`` and ``mill``) lons
+                         must fit within range -180 to 180.
         nx, ny           The size of the output regular grid in map
                          projection coordinates
         ==============   ====================================================
@@ -2798,8 +2906,8 @@ class Basemap(object):
         lons, lats       rank-1 arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must
-                         fit within range -180 to 180.
+                         ``cyl``, ``merc``, ``cea``, ``gall`` and ``mill``) lons
+                         must fit within range -180 to 180.
         nx, ny           The size of the output regular grid in map
                          projection coordinates
         ==============   ====================================================
@@ -2871,8 +2979,8 @@ class Basemap(object):
         lons, lats       Arrays containing longitudes and latitudes
                          (in degrees) of input data in increasing order.
                          For non-cylindrical projections (those other than
-                         ``cyl``, ``merc``, ``gall`` and ``mill``) lons must
-                         fit within range -180 to 180.
+                         ``cyl``, ``merc``, ``cyl``, ``gall`` and ``mill``) lons
+                         must fit within range -180 to 180.
         ==============   ====================================================
 
         Returns ``uout, vout`` (rotated vector field).
@@ -3984,6 +4092,73 @@ class Basemap(object):
         # clip for round polar plots.
         if self.round: im,c = self._clipcircle(ax,im)
         return im
+
+    def arcgisimage(self,server='http://server.arcgisonline.com/ArcGIS',\
+                 service='ESRI_Imagery_World_2D',xpixels=400,ypixels=None,\
+                 dpi=96,verbose=False,**kwargs):
+        """
+        Retrieve an image using the ArcGIS Server REST API and display it on
+        the map. In order to use this method, the Basemap instance must be
+        created using the ``epsg`` keyword to define the map projection, unless
+        the ``cyl`` projection is used (in which case the epsg code 4326 is
+        assumed).
+
+        .. tabularcolumns:: |l|L|
+
+        ==============   ====================================================
+        Keywords         Description
+        ==============   ====================================================
+        server           web map server URL (default
+                         http://server.arcgisonline.com/ArcGIS).
+        service          service (image type) hosted on server (default
+                         ESRI_Imagery_World_2D, which is NASA 'Blue Marble'
+                         image).
+        xpixels          requested number of image pixels in x-direction
+                         (default 400).
+        ypixels          requested number of image pixels in y-direction.
+                         Default (None) is to infer the number from
+                         from xpixels and the aspect ratio of the
+                         map projection region.
+        dpi              The device resolution of the exported image (dots per
+                         inch, default 96).
+        verbose          if True, print URL used to retrieve image (default
+                         False).
+        \**kwargs        extra keyword arguments passed on to
+                         :meth:`imshow`
+        ==============   ====================================================
+
+        Extra keyword ``ax`` can be used to override the default axis instance.
+
+        returns a matplotlib.image.AxesImage instance.
+        """
+        import urllib2
+        if not hasattr(self,'epsg'):
+            msg = dedent("""
+            Basemap instance must be creating using an EPSG code
+            (http://spatialreference.org) in order to use the wmsmap method""")
+            raise ValueError(msg)
+        # find the x,y values at the corner points.
+        p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
+        x1,y1 = p(self.llcrnrlon,self.llcrnrlat)
+        x2,y2 = p(self.urcrnrlon,self.urcrnrlat)
+        # ypixels not given, find by scaling xpixels by the map aspect ratio.
+        if ypixels is None:
+            ypixels = int(self.aspect*xpixels)
+        # construct a URL using the ArcGIS Server REST API.
+        basemap_url = \
+"%s/rest/services/%s/MapServer/export?\
+bbox=%d,%d,%d,%d&\
+bboxSR=%s&\
+imageSR=%s&\
+size=%s,%s&\
+dpi=%s&\
+format=png32&\
+f=image" %\
+(server,service,x1,y1,x2,y2,self.epsg,self.epsg,xpixels,ypixels,dpi)
+        # print URL?
+        if verbose: print basemap_url
+        # return AxesImage instance.
+        return self.imshow(imread(urllib2.urlopen(basemap_url)),origin='upper',**kwargs)
 
     def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\
                      units='km',fontsize=9,yoffset=None,labelstyle='simple',\
