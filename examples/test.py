@@ -73,7 +73,7 @@ print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
-# setup gall stereographic cylindrical map projection.
+# setup cylindrical equal area map projection.
 m = Basemap(llcrnrlon=-180.,llcrnrlat=-90,urcrnrlon=180.,urcrnrlat=90.,\
             resolution='c',area_thresh=10000.,lat_ts=30,projection='cea')
 # plot image over map.
