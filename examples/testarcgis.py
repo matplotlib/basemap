@@ -5,7 +5,17 @@ import numpy as np
 # test arcgisimage method for retrieving images from web map servers.
 
 plt.figure(figsize=(8,8))
-epsg = 3413; width = 8000.e3; height = 8000.e3
+epsg=4326
+m=Basemap(projection='cyl',llcrnrlon=-90,llcrnrlat=30,urcrnrlon=-60,urcrnrlat=60,resolution='i')
+# default 'blue marble' image.
+m.arcgisimage(verbose=True)
+m.drawmeridians(np.arange(-180,180,10),labels=[0,0,0,1],color='y')
+m.drawparallels(np.arange(-90,90,10),labels=[1,0,0,0],color='y')
+m.drawcoastlines(linewidth=0.5,color='0.5')
+plt.title('test WMS map background EPSG=%s'%epsg)
+
+plt.figure(figsize=(8,8))
+epsg = 3413; width = 18000.e3; height = 18000.e3
 m=Basemap(epsg=epsg,resolution='l',width=width,height=height)
 # default 'blue marble' image.
 m.arcgisimage()
