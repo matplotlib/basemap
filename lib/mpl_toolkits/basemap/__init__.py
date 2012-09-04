@@ -4142,6 +4142,14 @@ class Basemap(object):
         x1,y1 = p(self.llcrnrlon,self.llcrnrlat)
         x2,y2 = p(self.urcrnrlon,self.urcrnrlat)
         if self.epsg == 4326:
+            Dateline =\
+            _geoslib.Point(self(180.,0.5*(self.llcrnrlat+self.urcrnrlat)))
+            hasDateline = Dateline.within(self._boundarypolyxy)
+            if hasDateline:
+                msg=dedent("""
+                arcgisimage cannot handle images that cross
+                the dateline for epsg=4326 (projection='cyl').""")
+                raise ValueError(msg)
             x1 = (180./np.pi)*x1; x2 = (180./np.pi)*x2
             y1 = (180./np.pi)*y1; y2 = (180./np.pi)*y2
         # ypixels not given, find by scaling xpixels by the map aspect ratio.
