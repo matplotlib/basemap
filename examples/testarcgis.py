@@ -13,7 +13,6 @@ m.drawmeridians(np.arange(-180,180,60),labels=[0,0,0,1],color='y')
 m.drawparallels(np.arange(-90,90,30),labels=[1,0,0,0],color='y')
 m.drawcoastlines(linewidth=0.5,color='0.5')
 plt.title('test WMS map background EPSG=%s' % epsg)
-plt.show()
 
 plt.figure(figsize=(8,8))
 epsg = 3413; width = 18000.e3; height = 18000.e3
