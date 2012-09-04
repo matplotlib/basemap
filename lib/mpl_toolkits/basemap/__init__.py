@@ -4141,15 +4141,16 @@ class Basemap(object):
         p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
         x1,y1 = p(self.llcrnrlon,self.llcrnrlat)
         x2,y2 = p(self.urcrnrlon,self.urcrnrlat)
-        if self.epsg == 4326:
+        if self.projection in _cylproj:
             Dateline =\
             _geoslib.Point(self(180.,0.5*(self.llcrnrlat+self.urcrnrlat)))
             hasDateline = Dateline.within(self._boundarypolyxy)
             if hasDateline:
                 msg=dedent("""
                 arcgisimage cannot handle images that cross
-                the dateline for epsg=4326 (projection='cyl').""")
+                the dateline for cylindrical projections.""")
                 raise ValueError(msg)
+        if self.projection == 'cyl':
             x1 = (180./np.pi)*x1; x2 = (180./np.pi)*x2
             y1 = (180./np.pi)*y1; y2 = (180./np.pi)*y2
         # ypixels not given, find by scaling xpixels by the map aspect ratio.
