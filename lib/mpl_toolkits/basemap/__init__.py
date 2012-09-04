@@ -4139,8 +4139,8 @@ class Basemap(object):
             raise ValueError(msg)
         # find the x,y values at the corner points.
         p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
-        x1,y1 = p(self.llcrnrlon,self.llcrnrlat)
-        x2,y2 = p(self.urcrnrlon,self.urcrnrlat)
+        xmin,ymin = p(self.llcrnrlon,self.llcrnrlat)
+        xmax,ymax = p(self.urcrnrlon,self.urcrnrlat)
         if self.projection in _cylproj:
             Dateline =\
             _geoslib.Point(self(180.,0.5*(self.llcrnrlat+self.urcrnrlat)))
@@ -4151,22 +4151,22 @@ class Basemap(object):
                 the dateline for cylindrical projections.""")
                 raise ValueError(msg)
         if self.projection == 'cyl':
-            x1 = (180./np.pi)*x1; x2 = (180./np.pi)*x2
-            y1 = (180./np.pi)*y1; y2 = (180./np.pi)*y2
+            xmin = (180./np.pi)*xmin; xmax = (180./np.pi)*xmax
+            ymin = (180./np.pi)*ymin; ymax = (180./np.pi)*ymax
         # ypixels not given, find by scaling xpixels by the map aspect ratio.
         if ypixels is None:
             ypixels = int(self.aspect*xpixels)
         # construct a URL using the ArcGIS Server REST API.
         basemap_url = \
 "%s/rest/services/%s/MapServer/export?\
-bbox=%d,%d,%d,%d&\
+bbox=%s,%s,%s,%s&\
 bboxSR=%s&\
 imageSR=%s&\
 size=%s,%s&\
 dpi=%s&\
 format=png32&\
 f=image" %\
-(server,service,x1,y1,x2,y2,self.epsg,self.epsg,xpixels,ypixels,dpi)
+(server,service,xmin,ymin,xmax,ymax,self.epsg,self.epsg,xpixels,ypixels,dpi)
         # print URL?
         if verbose: print basemap_url
         # return AxesImage instance.
