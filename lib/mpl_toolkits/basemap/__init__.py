@@ -4141,6 +4141,9 @@ class Basemap(object):
         p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
         x1,y1 = p(self.llcrnrlon,self.llcrnrlat)
         x2,y2 = p(self.urcrnrlon,self.urcrnrlat)
+        if self.epsg == 4326:
+            x1 = (180./np.pi)*x1; x2 = (180./np.pi)*x2
+            y1 = (180./np.pi)*y1; y2 = (180./np.pi)*y2
         # ypixels not given, find by scaling xpixels by the map aspect ratio.
         if ypixels is None:
             ypixels = int(self.aspect*xpixels)
