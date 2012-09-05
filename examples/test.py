@@ -351,9 +351,9 @@ print(m.proj4string)
 # create new figure
 fig=plt.figure()
 # setup lambert azimuthal map projection (Northern Hemisphere).
-#m = Basemap(llcrnrlon=-150.,llcrnrlat=-18.,urcrnrlon=30.,urcrnrlat=--18.,\
-#            resolution='c',area_thresh=10000.,projection='laea',\
-#            lat_0=90.,lon_0=-105.)
+m = Basemap(llcrnrlon=-150.,llcrnrlat=-18.,urcrnrlon=30.,urcrnrlat=--18.,\
+            resolution='c',area_thresh=10000.,projection='laea',\
+            lat_0=90.,lon_0=-105.)
 # plot image over map.
 cs = m.contourf(lons,lats,topodat,50,cmap=cmap,extend='both',latlon=True)
 m.colorbar(pad='12%') # draw colorbar
