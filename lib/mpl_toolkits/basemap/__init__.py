@@ -1034,28 +1034,9 @@ class Basemap(object):
             self.coastsegs, self.coastpolygontypes = self._readboundarydata('gshhs')
             # reformat for use in matplotlib.patches.Polygon.
             self.coastpolygons = []
-            # also, split coastline segments that jump across entire plot.
-            #coastsegs = []
             for seg in self.coastsegs:
                 x, y = list(zip(*seg))
                 self.coastpolygons.append((x,y))
-                #x = np.array(x,np.float64); y = np.array(y,np.float64)
-                #xd = (x[1:]-x[0:-1])**2
-                #yd = (y[1:]-y[0:-1])**2
-                #dist = np.sqrt(xd+yd)
-                #split = dist > 5000000.
-                #if np.sum(split) and self.projection not in _cylproj:
-                #    ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
-                #    iprev = 0
-                #    ind.append(len(xd))
-                #    for i in ind:
-                #        # don't add empty lists.
-                #        if len(list(range(iprev,i))):
-                #            coastsegs.append(list(zip(x[iprev:i],y[iprev:i])))
-                #        iprev = i
-                #else:
-                #    coastsegs.append(seg)
-            #self.coastsegs = coastsegs
         # create geos Polygon structures for land areas.
         # currently only used in is_land method.
         self.landpolygons=[]
@@ -1124,7 +1105,7 @@ class Basemap(object):
         """
         return self.projtran.makegrid(nx,ny,returnxy=returnxy)
 
-    def _readboundarydata(self,name):
+    def _readboundarydata(self,name,as_polygons=True):
         """
         read boundary data, clip to map projection region.
         """
@@ -1176,7 +1157,7 @@ class Basemap(object):
             if np.abs(int(lat0)) == 90: lon0=0.
             maptran = pyproj.Proj(proj='stere',lon_0=lon0,lat_0=lat0,R=re)
             # boundary polygon for ortho/gnom/nsper projection
-            # in stereographic coorindates.
+            # in stereographic coordinates.
             b = self._boundarypolyll.boundary
             blons = b[:,0]; blats = b[:,1]
             b[:,0], b[:,1] = maptran(blons, blats)
@@ -1271,7 +1252,12 @@ class Basemap(object):
                         # if polygon instersects map projection
                         # region, process it.
                         if poly.intersects(boundarypolyll):
-                            geoms = poly.intersection(boundarypolyll)
+                            if name != 'gshhs' or as_polygons:
+                                geoms = poly.intersection(boundarypolyll)
+                            else:
+                                # convert polygons to line segments
+                                poly = _geoslib.LineString(poly.boundary)
+                                geoms = poly.intersection(boundarypolyll)
                             # iterate over geometries in intersection.
                             for psub in geoms:
                                 b = psub.boundary
@@ -1295,7 +1281,12 @@ class Basemap(object):
                             # if polygon instersects map projection
                             # region, process it.
                             if poly.intersects(boundarypolyll):
-                                geoms = poly.intersection(boundarypolyll)
+                                if name != 'gshhs' or as_polygons:
+                                    geoms = poly.intersection(boundarypolyll)
+                                else:
+                                    # convert polygons to line segments
+                                    poly = _geoslib.LineString(poly.boundary)
+                                    geoms = poly.intersection(boundarypolyll)
                                 # iterate over geometries in intersection.
                                 for psub in geoms:
                                     # only coastlines are polygons,
@@ -1319,7 +1310,7 @@ class Basemap(object):
                     # to map projection coordinates.
                     # special case for ortho/gnom/nsper, compute coastline polygon
                     # vertices in stereographic coords.
-                    if name == 'gshhs' and self.projection in tostere:
+                    if name == 'gshhs' and as_polygons and self.projection in tostere:
                         b[:,0], b[:,1] = maptran(b[:,0], b[:,1])
                     else:
                         b[:,0], b[:,1] = self(b[:,0], b[:,1])
@@ -1327,22 +1318,36 @@ class Basemap(object):
                     # if less than two points are valid in
                     # map proj coords, skip this geometry.
                     if np.sum(goodmask) <= 1: continue
-                    if name != 'gshhs':
+                    if name != 'gshhs' or (name == 'gshhs' and not as_polygons):
                         # if not a polygon,
                         # just remove parts of geometry that are undefined
                         # in this map projection.
                         bx = np.compress(goodmask, b[:,0])
                         by = np.compress(goodmask, b[:,1])
-                        # for ortho/gnom/nsper projection, all points
-                        # outside map projection region are eliminated
-                        # with the above step, so we're done.
-                        if name != 'gshhs' or\
-                           (self.projection in tostere and len(bx) > 4):
+                        # split coastline segments that jump across entire plot.
+                        xd = (bx[1:]-bx[0:-1])**2
+                        yd = (by[1:]-by[0:-1])**2
+                        dist = np.sqrt(xd+yd)
+                        split = dist > 5000000.
+                        if np.sum(split) and self.projection not in _cylproj:
+                            ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
+                            iprev = 0
+                            ind.append(len(xd))
+                            for i in ind:
+                                # don't add empty lists.
+                                if len(list(range(iprev,i))):
+                                    polygons.append(list(zip(bx[iprev:i],by[iprev:i])))
+                                iprev = i
+                        else:
                             polygons.append(list(zip(bx,by)))
-                            polygon_types.append(typ)
+                        polygon_types.append(typ)
                         continue
                     # create a GEOS geometry object.
-                    poly = Shape(b)
+                    if name == 'gshhs' and not as_polygons:
+                        # convert polygons to line segments
+                        poly = _geoslib.LineString(poly.boundary)
+                    else:
+                        poly = Shape(b)
                     # this is a workaround to avoid
                     # "GEOS_ERROR: TopologyException:
                     # found non-noded intersection between ..."
@@ -1773,9 +1778,14 @@ class Basemap(object):
         """
         if self.resolution is None:
             raise AttributeError('there are no boundary datasets associated with this Basemap instance')
+        # read in coastlines as line segments, only keeping those that
+        # intersect map boundary polygon.
+        if not hasattr(self,'coastsegs2'):
+            self.coastsegs2, types =\
+            self._readboundarydata('gshhs',as_polygons=False)
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
-        coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
+        coastlines = LineCollection(self.coastsegs2,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linestyle(linestyle)
         coastlines.set_linewidth(linewidth)
