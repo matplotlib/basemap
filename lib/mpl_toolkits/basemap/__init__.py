@@ -1037,6 +1037,9 @@ class Basemap(object):
             for seg in self.coastsegs:
                 x, y = list(zip(*seg))
                 self.coastpolygons.append((x,y))
+            # replace coastsegs with line segments (instead of polygons)
+            self.coastsegs, types =\
+            self._readboundarydata('gshhs',as_polygons=False)
         # create geos Polygon structures for land areas.
         # currently only used in is_land method.
         self.landpolygons=[]
@@ -1778,14 +1781,9 @@ class Basemap(object):
         """
         if self.resolution is None:
             raise AttributeError('there are no boundary datasets associated with this Basemap instance')
-        # read in coastlines as line segments, only keeping those that
-        # intersect map boundary polygon.
-        if not hasattr(self,'coastsegs2'):
-            self.coastsegs2, types =\
-            self._readboundarydata('gshhs',as_polygons=False)
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
-        coastlines = LineCollection(self.coastsegs2,antialiaseds=(antialiased,))
+        coastlines = LineCollection(self.coastsegs,antialiaseds=(antialiased,))
         coastlines.set_color(color)
         coastlines.set_linestyle(linestyle)
         coastlines.set_linewidth(linewidth)
