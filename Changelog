@@ -1,5 +1,7 @@
 version 1.0.6 (not yet released)
 --------------------------------
+* have drawcoastlines use line segments instead of coastline polygons, to
+  avoid 'thickening' of lines around edges of map.
 * added support for cylindrical equal area ('cea') projection.
 * add 'arcgisimage' method for displaying background image retrieved from
   an ArcGIS server using the REST API (requires using 'epsg' keyword to define projection).
