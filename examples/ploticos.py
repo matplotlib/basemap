@@ -14,7 +14,7 @@ map.drawcoastlines()
 map.drawmapboundary()
 # tri=True forwards to axes.tripcolor
 #z = ma.masked_where(z < 1.e-5, z) # for testing masked arrays.
-map.pcolor(x,y,z,tri=True,shading='faceted',vmin=0,vmax=3000)
+map.pcolor(x,y,z,tri=True,shading='flat',edgecolors='k',cmap=plt.cm.hot_r,vmin=0,vmax=3000)
 #map.contourf(x,y,z,np.arange(0,3000,150),tri=True)
 #map.contour(x,y,z,np.arange(0,3000,150),tri=True)
 plt.title('pcolor plot on a global icosahedral mesh')
