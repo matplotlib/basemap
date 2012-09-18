@@ -1119,7 +1119,7 @@ class Basemap(object):
         If you are requesting a 'full' resolution dataset, you may need to
         download and install those files separately
         (see the basemap README for details).""")
-        # only gshhs coastlines can be polygons. 
+        # only gshhs coastlines can be polygons.
         if name != 'gshhs': as_polygons=False
         try:
             bdatfile = open(os.path.join(basemap_datadir,name+'_'+self.resolution+'.dat'),'rb')
@@ -3674,8 +3674,8 @@ class Basemap(object):
             ax.hold(b)
             raise
         ax.hold(b)
-        if plt is not None and ret.get_array() is not None:
-            plt.sci(ret)
+        if plt is not None and ret.lines.get_array() is not None:
+            plt.sci(ret.lines)
         # clip for round polar plots.
         # streamplot arrows not returned in matplotlib 1.1.1, so clip all
         # FancyArrow patches attached to axes instance.
