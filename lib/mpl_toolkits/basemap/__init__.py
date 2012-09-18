@@ -1119,6 +1119,8 @@ class Basemap(object):
         If you are requesting a 'full' resolution dataset, you may need to
         download and install those files separately
         (see the basemap README for details).""")
+        # only gshhs coastlines can be polygons. 
+        if name != 'gshhs': as_polygons=False
         try:
             bdatfile = open(os.path.join(basemap_datadir,name+'_'+self.resolution+'.dat'),'rb')
             bdatmetafile = open(os.path.join(basemap_datadir,name+'meta_'+self.resolution+'.dat'),'r')
