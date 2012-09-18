@@ -1288,7 +1288,9 @@ class Basemap(object):
                                     geoms = poly.intersection(boundarypolyll)
                                 else:
                                     # convert polygons to line segments
-                                    poly = _geoslib.LineString(poly.boundary)
+                                    # note: use fix method here or Eurasia
+                                    # line segments sometimes disappear.
+                                    poly = _geoslib.LineString(poly.fix().boundary)
                                     geoms = poly.intersection(boundarypolyll)
                                 # iterate over geometries in intersection.
                                 for psub in geoms:
