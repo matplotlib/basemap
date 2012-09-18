@@ -75,7 +75,7 @@ if sys.platform == 'win32':
     extensions.append(Extension("_geoslib",['src/_geoslib.c'],
                                 library_dirs=geos_library_dirs,
                                 include_dirs=geos_include_dirs,
-                                libraries=['geos_c','geos']))
+                                libraries=['geos']))
 else:
     #extensions.append(Extension("mpl_toolkits.basemap._geoslib",['src/_geoslib.c'],
     extensions.append(Extension("_geoslib",['src/_geoslib.c'],
