@@ -1382,7 +1382,7 @@ class Basemap(object):
                                 b[:,0], b[:,1] = maptran(b[:,0], b[:,1], inverse=True)
                                 # orthographic/gnomonic/nsper.
                                 b[:,0], b[:,1]= self(b[:,0], b[:,1])
-                            if not as_polygons or len(bx) > 4:
+                            if not as_polygons or len(b) > 4:
                                 polygons.append(list(zip(b[:,0],b[:,1])))
                                 polygon_types.append(typ)
         return polygons, polygon_types
