@@ -1031,7 +1031,8 @@ class Basemap(object):
         # read in coastline polygons, only keeping those that
         # intersect map boundary polygon.
         if self.resolution is not None:
-            self.coastsegs, self.coastpolygontypes = self._readboundarydata('gshhs')
+            self.coastsegs, self.coastpolygontypes =\
+            self._readboundarydata('gshhs',as_polygons=True)
             # reformat for use in matplotlib.patches.Polygon.
             self.coastpolygons = []
             for seg in self.coastsegs:
@@ -1108,7 +1109,7 @@ class Basemap(object):
         """
         return self.projtran.makegrid(nx,ny,returnxy=returnxy)
 
-    def _readboundarydata(self,name,as_polygons=True):
+    def _readboundarydata(self,name,as_polygons=False):
         """
         read boundary data, clip to map projection region.
         """
@@ -1279,7 +1280,6 @@ class Basemap(object):
                         polys = [poly1,poly,poly2]
                         for poly in polys:
                             # try to fix "non-noded intersection" errors.
-                            #if not poly.is_valid(): poly=poly.simplify(1.e-10)
                             if not poly.is_valid(): poly=poly.fix()
                             # if polygon instersects map projection
                             # region, process it.
@@ -1292,16 +1292,12 @@ class Basemap(object):
                                     geoms = poly.intersection(boundarypolyll)
                                 # iterate over geometries in intersection.
                                 for psub in geoms:
-                                    # only coastlines are polygons,
-                                    # which have a 'boundary' attribute.
-                                    # otherwise, use 'coords' attribute
-                                    # to extract coordinates.
                                     b = psub.boundary
                                     blons = b[:,0]; blats = b[:,1]
                                     # transformation from lat/lon to
                                     # map projection coordinates.
                                     bx, by = self(blons, blats)
-                                    if name != 'gshhs' or len(bx) > 4:
+                                    if not as_polygons or len(bx) > 4:
                                         polygons.append(list(zip(bx,by)))
                                         polygon_types.append(typ)
                 # if map boundary polygon is not valid in lat/lon
@@ -1354,7 +1350,6 @@ class Basemap(object):
                     # this is a workaround to avoid
                     # "GEOS_ERROR: TopologyException:
                     # found non-noded intersection between ..."
-                    #if not poly.is_valid(): poly=poly.simplify(1.e-10)
                     if not poly.is_valid(): poly=poly.fix()
                     # if geometry instersects map projection
                     # region, and doesn't have any invalid points, process it.
@@ -1385,7 +1380,7 @@ class Basemap(object):
                                 b[:,0], b[:,1] = maptran(b[:,0], b[:,1], inverse=True)
                                 # orthographic/gnomonic/nsper.
                                 b[:,0], b[:,1]= self(b[:,0], b[:,1])
-                            if name != 'gshhs' or b.shape[0] > 4:
+                            if not as_polygons or len(bx) > 4:
                                 polygons.append(list(zip(b[:,0],b[:,1])))
                                 polygon_types.append(typ)
         return polygons, polygon_types
