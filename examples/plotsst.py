@@ -1,17 +1,19 @@
 from mpl_toolkits.basemap import Basemap
-from netCDF4 import Dataset
+from netCDF4 import Dataset, date2index
 import numpy as np
 import matplotlib.pyplot as plt
-date = '20071215' # date to plot.
-# open dataset for that date.
+from datetime import datetime
+date = datetime(2007,12,15,0) # date to plot.
+# open dataset.
 dataset = \
-Dataset('http://www.ncdc.noaa.gov/thredds/dodsC/oisst/NetCDF/AVHRR-AMSR/%s/AVHRR-AMSR/amsr-avhrr-v2.%s.nc.gz'%
-       (date[0:4],date))
+Dataset('http://www.ncdc.noaa.gov/thredds/dodsC/OISST-V2-AVHRR-AMSR_agg')
+timevar = dataset.variables['time']
+timeindex = date2index(date,timevar) # find time index for desired date.
 # read sst.  Will automatically create a masked array using
 # missing_value variable attribute. 'squeeze out' singleton dimensions.
-sst = dataset.variables['sst'][:].squeeze()
+sst = dataset.variables['sst'][timeindex,:].squeeze()
 # read ice.
-ice = dataset.variables['ice'][:].squeeze()
+ice = dataset.variables['ice'][timeindex,:].squeeze()
 # read lats and lons (representing centers of grid boxes).
 lats = dataset.variables['lat'][:]
 lons = dataset.variables['lon'][:]
