@@ -1,10 +1,15 @@
 version 1.0.6 (not yet released)
 --------------------------------
+* add module variable 'latlon_default' that can be used to switch 
+  default value of latlon kwarg to True so plotting methods can be 
+  passed lats and lons (geographic coordinatsin degrees) instead
+  of x,y (projection coordinates).
 * have drawcoastlines use line segments instead of coastline polygons, to
   avoid 'thickening' of lines around edges of map.
 * added support for cylindrical equal area ('cea') projection.
 * add 'arcgisimage' method for displaying background image retrieved from
-  an ArcGIS server using the REST API (requires using 'epsg' keyword to define projection).
+  an ArcGIS server using the REST API
+  (requires using 'epsg' keyword to define projection).
 * add 'epsg' keyword for defining projections.
 * add 'ellps' keyword (rsphere ignored if ellps given).
 * fixed shiftdata method so it shifts mask along with data
