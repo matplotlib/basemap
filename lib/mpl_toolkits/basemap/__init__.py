@@ -49,6 +49,11 @@ else:
 
 __version__ = '1.0.6'
 
+# module variable that sets the default value for the 'latlon' kwarg.
+# can be set to True by user so plotting functions can take lons,lats
+# in degrees by default, instead of x,y (map projection coords in meters).
+latlon_default = False
+
 # supported map projections.
 _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'merc'     : 'Mercator',
@@ -497,7 +502,7 @@ def _transform(plotfunc):
     @functools.wraps(plotfunc)
     def with_transform(self,x,y,data,*args,**kwargs):
         # input coordinates are latitude/longitude, not map projection coords.
-        if kwargs.pop('latlon', False):
+        if kwargs.pop('latlon', latlon_default):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
@@ -514,7 +519,7 @@ def _transform1d(plotfunc):
     def with_transform(self,x,y,*args,**kwargs):
         x = np.asarray(x)
         # input coordinates are latitude/longitude, not map projection coords.
-        if kwargs.pop('latlon', False):
+        if kwargs.pop('latlon', latlon_default):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
@@ -535,7 +540,7 @@ def _transformuv(plotfunc):
     @functools.wraps(plotfunc)
     def with_transform(self,x,y,u,v,*args,**kwargs):
         # input coordinates are latitude/longitude, not map projection coords.
-        if kwargs.pop('latlon', False):
+        if kwargs.pop('latlon', latlon_default):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
