@@ -2211,11 +2211,11 @@ class Basemap(object):
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection in _cylproj + _pseudocyl:
-            lons = np.arange(self.llcrnrlon,self.urcrnrlon+0.01,0.01)
+            lons = np.linspace(self.llcrnrlon, self.urcrnrlon, 10001)
         elif self.projection in ['tmerc']:
             lon_0 = self.projparams['lon_0']
             # tmerc only defined within +/- 90 degrees of lon_0
-            lons = np.arange(lon_0-90,lon_0+90.01,0.01)
+            lons = np.linspace(lon_0-90,lon_0+90,100001)
         else:
             lonmin = self.boundarylonmin; lonmax = self.boundarylonmax
             lons = np.linspace(lonmin, lonmax, 10001)
@@ -2509,9 +2509,9 @@ class Basemap(object):
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
         if self.projection not in _cylproj + _pseudocyl:
-            lats = np.arange(-latmax,latmax+0.01,0.01)
+            lats = np.linspace(-latmax,latmax,10001)
         else:
-            lats = np.arange(-90,90.01,0.01)
+            lats = np.linspace(-90,90,100001)
         xdelta = 0.01*(self.xmax-self.xmin)
         ydelta = 0.01*(self.ymax-self.ymin)
         linecolls = {}
