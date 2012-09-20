@@ -1,5 +1,7 @@
 version 1.0.6 (not yet released)
 --------------------------------
+* fix drawing of meridians and parallels for very small map regions
+  (issue 79).
 * add module variable 'latlon_default' that can be used to switch 
   default value of latlon kwarg to True so plotting methods can be 
   passed lats and lons (geographic coordinatsin degrees) instead
