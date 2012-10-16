@@ -11,6 +11,7 @@ test_files.remove('plotsst.py')
 test_files.remove('embedding_map_in_wx.py') # requires wx
 test_files.remove('plothighsandlows.py') # requires scipy
 test_files.remove('lic_demo.py')
+test_files.remove('testwmsimage.py')
 py_path = os.environ.get('PYTHONPATH')
 if py_path is None:
     py_path = '.'
