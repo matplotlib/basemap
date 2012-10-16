@@ -20,12 +20,9 @@ img = wms.getmap(layers=['Temperature_height_above_ground'],
                  styles=['boxfill/rainbow'],
                  time=today,srs='EPSG:4326',
                  bbox=(lon_min,lat_min,lon_max,lat_max),
-                 size=(500,500),format='image/png',elevation='2')
-# add on the additional custom WMS arguments supported by ncWMS to
-# define color range, colorbands and scale type 
-url = img.url +\
-      '&COLORSCALERANGE=271.2%2C308&NUMCOLORBANDS=20&LOGSCALE=false'
-cs=m.imshow(imread(urllib2.urlopen(url)),origin='upper')
+                 size=(500,500),format='image/png',elevation='2',
+                 colorscalerange='271.2,308',numcolorbands='20',logscale=False)
+cs=m.imshow(imread(urllib2.urlopen(img.url)),origin='upper')
 m.drawcoastlines(linewidth=0.25)
 parallels = np.arange(20,36,2.)
 a=m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
