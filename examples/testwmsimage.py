@@ -15,13 +15,12 @@ m = Basemap(llcrnrlon=lon_min, urcrnrlat=lat_max, urcrnrlon=lon_max,
             llcrnrlat=lat_min,resolution='i',epsg=4326)
 urlbase='http://motherlode.ucar.edu:8080/thredds/wms/fmrc/NCEP/NAM/CONUS_12km/NCEP-NAM-CONUS_12km-noaaport_best.ncd?'
 wms = WebMapService(urlbase)
-today = datetime.utcnow().strftime('%Y-%m-%dT00:00:00.000Z')
 img = wms.getmap(layers=['Temperature_height_above_ground'],
-                 styles=['boxfill/rainbow'],
-                 time=today,srs='EPSG:4326',
-                 bbox=(lon_min,lat_min,lon_max,lat_max),
-                 size=(500,500),format='image/png',elevation='2',
-                 colorscalerange='271.2,308',numcolorbands='20',logscale=False)
+      styles=['boxfill/rainbow'],srs='EPSG:4326',
+      time=datetime.utcnow().strftime('%Y-%m-%dT00:00:00.000Z'),
+      bbox=(lon_min,lat_min,lon_max,lat_max),
+      size=(500,500),format='image/png',elevation='2',
+      colorscalerange='271.2,308',numcolorbands='20',logscale=False)
 cs=m.imshow(imread(urllib2.urlopen(img.url)),origin='upper')
 m.drawcoastlines(linewidth=0.25)
 parallels = np.arange(20,36,2.)
