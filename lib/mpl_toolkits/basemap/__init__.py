@@ -4228,6 +4228,8 @@ f=image" %\
             Basemap instance must be creating using an EPSG code
             (http://spatialreference.org) in order to use the wmsmap method""")
             raise ValueError(msg)
+        if 'layers' not in kwargs:
+            raise ValueError('no layers specified')
         # find the x,y values at the corner points.
         p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
         xmin,ymin = p(self.llcrnrlon,self.llcrnrlat)
@@ -4256,6 +4258,8 @@ f=image" %\
             (wms.identification.title,wms.identification.abstract)
             print 'available layers:'
             print list(wms.contents)
+            print 'projection options:'
+            print wms[kwargs['layers'][0]].crsOptions
         # remove keys from kwargs that are over-ridden
         for k in ['format','bbox','service','size','srs']:
             if 'format' in kwargs: del kwargs['format']

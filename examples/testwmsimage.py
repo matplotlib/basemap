@@ -4,12 +4,10 @@ from a WMS server and display it on a map (using the
 wmsimage convienence method)
 """
 from mpl_toolkits.basemap import Basemap, pyproj
-from owslib.wms import WebMapService
 from datetime import datetime
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.image import imread
-import urllib2
+
 
 serverurl='http://motherlode.ucar.edu:8080/thredds/wms/fmrc/NCEP/NAM/CONUS_12km/NCEP-NAM-CONUS_12km-noaaport_best.ncd?'
 
@@ -53,5 +51,17 @@ m.wmsimage(serverurl,xpixels=500,verbose=True,
 m.drawcoastlines(linewidth=0.25)
 a=m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
 b=m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
+
+serverurl='http://nowcoast.noaa.gov/wms/com.esri.wms.Esrimap/obs?'
+
+lon_min = -95; lon_max = -60
+lat_min = 5;  lat_max = 40.
+m = Basemap(llcrnrlon=lon_min, urcrnrlat=lat_max,
+            urcrnrlon=lon_max, llcrnrlat=lat_min,resolution='l',epsg=4326)
+plt.figure()
+m.wmsimage(serverurl,layers=['RAS_GOES_I4'],xpixels=800,verbose=True)
+m.drawcoastlines(color='k',linewidth=1)
+plt.title('GOES IR Image')
+plt.show()
 
 plt.show()
