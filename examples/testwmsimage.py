@@ -41,4 +41,17 @@ m.wmsimage(serverurl,xpixels=500,
       colorscalerange='271.2,308',numcolorbands='20',logscale=False)
 m.drawcoastlines(linewidth=0.5)
 
+# try another server that only supports jpeg.
+plt.figure()
+lon_min = -118.8; lon_max = -108.6
+lat_min = 22.15;  lat_max = 32.34
+m = Basemap(llcrnrlon=lon_min, urcrnrlat=lat_max,
+            urcrnrlon=lon_max, llcrnrlat=lat_min,resolution='i',epsg=4326)
+serverurl = 'http://osm.woc.noaa.gov/mapcache?'
+m.wmsimage(serverurl,xpixels=500,verbose=True,
+           layers=['osm'],format='image/jpeg')
+m.drawcoastlines(linewidth=0.25)
+a=m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
+b=m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
+
 plt.show()

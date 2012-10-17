@@ -4184,7 +4184,7 @@ f=image" %\
 
     def wmsimage(self,server,\
                  xpixels=400,ypixels=None,\
-                 verbose=False,**kwargs):
+                 format='png',verbose=False,**kwargs):
         """
         Retrieve an image using from a WMS server using the
         Open Geospatial Consortium (OGC) standard interface
@@ -4207,6 +4207,7 @@ f=image" %\
                          Default (None) is to infer the number from
                          from xpixels and the aspect ratio of the
                          map projection region.
+        format           desired image format (default 'png')
         verbose          if True, print WMS server info (default
                          False).
         \**kwargs        extra keyword arguments passed on to
@@ -4255,8 +4256,11 @@ f=image" %\
             (wms.identification.title,wms.identification.abstract)
             print 'available layers:'
             print list(wms.contents)
-        img = wms.getmap(bbox=(xmin,ymin,xmax,ymax),
-                         size=(xpixels,ypixels),format='image/png',
+        # remove keys from kwargs that are over-ridden
+        for k in ['format','bbox','service','size','srs']:
+            if 'format' in kwargs: del kwargs['format']
+        img = wms.getmap(service='wms',bbox=(xmin,ymin,xmax,ymax),
+                         size=(xpixels,ypixels),format='image/%s'%format,
                          srs='EPSG:%s' % self.epsg, **kwargs)
         # return AxesImage instance.
         return self.imshow(imread(urllib2.urlopen(img.url)),origin='upper')
