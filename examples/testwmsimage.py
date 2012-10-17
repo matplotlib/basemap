@@ -63,5 +63,3 @@ m.wmsimage(serverurl,layers=['RAS_GOES_I4'],xpixels=800,verbose=True)
 m.drawcoastlines(color='k',linewidth=1)
 plt.title('GOES IR Image')
 plt.show()
-
-plt.show()

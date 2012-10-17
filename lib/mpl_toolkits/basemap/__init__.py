@@ -4222,7 +4222,7 @@ f=image" %\
             from owslib.wms import WebMapService
         except ImportError:
             raise ImportError('OWSLib required to use wmsimage method')
-        import urllib2
+        import urllib2, io
         if not hasattr(self,'epsg'):
             msg = dedent("""
             Basemap instance must be creating using an EPSG code
@@ -4267,7 +4267,11 @@ f=image" %\
                          size=(xpixels,ypixels),format='image/%s'%format,
                          srs='EPSG:%s' % self.epsg, **kwargs)
         # return AxesImage instance.
-        return self.imshow(imread(urllib2.urlopen(img.url)),origin='upper')
+        # this works for png and jpeg.
+        return self.imshow(imread(io.BytesIO(urllib2.urlopen(img.url).read()),
+                           format=format),origin='upper')
+        # this works for png, but not jpeg
+        #return self.imshow(imread(urllib2.urlopen(img.url),format=format),origin='upper')
 
     def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\
                      units='km',fontsize=9,yoffset=None,labelstyle='simple',\
