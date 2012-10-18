@@ -1,5 +1,8 @@
 version 1.0.6 (not yet released)
 --------------------------------
+* added 'wmsimage' method for  displaying background image retrieved from
+  a OGC-compliant WMS server using OWSLib (http://pypi.python.org/OWSLib)
+  (requires using 'epsg' keyword to define projection).
 * fix drawing of meridians and parallels for very small map regions
   (issue 79).
 * add module variable 'latlon_default' that can be used to switch 
