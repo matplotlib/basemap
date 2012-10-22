@@ -1,5 +1,7 @@
 version 1.0.6 (not yet released)
 --------------------------------
+* allow for latitude values slightly greater than 90 to exist in shapefiles,
+  (by truncating to 90).  Still raise exception if latitude exceeds 90.01.
 * added 'wmsimage' method for  displaying background image retrieved from
   a OGC-compliant WMS server using OWSLib (http://pypi.python.org/OWSLib)
   (requires using 'epsg' keyword to define projection).
