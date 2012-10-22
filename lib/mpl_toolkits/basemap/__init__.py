@@ -2089,8 +2089,10 @@ class Basemap(object):
             verts = shp.points
             if shptype in [1,8]: # a Point or MultiPoint shape.
                 lons, lats = list(zip(*verts))
-                if max(lons) > 721. or min(lons) < -721. or max(lats) > 91. or min(lats) < -91:
+                if max(lons) > 721. or min(lons) < -721. or max(lats) > 90.01 or min(lats) < -90.01:
                     raise ValueError(msg)
+                # if latitude is slightly greater than 90, truncate to 90
+                lats = [max(min(lat, 90.0), -90.0) for lat in lats]
                 if len(verts) > 1: # MultiPoint
                     x,y = self(lons, lats)
                     coords.append(list(zip(x,y)))
