@@ -4135,8 +4135,6 @@ class Basemap(object):
                          inch, default 96).
         verbose          if True, print URL used to retrieve image (default
                          False).
-        \**kwargs        extra keyword arguments passed on to
-                         :meth:`imshow`
         ==============   ====================================================
 
         Extra keyword ``ax`` can be used to override the default axis instance.
@@ -4182,7 +4180,98 @@ f=image" %\
         # print URL?
         if verbose: print basemap_url
         # return AxesImage instance.
-        return self.imshow(imread(urllib2.urlopen(basemap_url)),origin='upper',**kwargs)
+        return self.imshow(imread(urllib2.urlopen(basemap_url)),origin='upper')
+
+    def wmsimage(self,server,\
+                 xpixels=400,ypixels=None,\
+                 format='png',verbose=False,**kwargs):
+        """
+        Retrieve an image using from a WMS server using the
+        Open Geospatial Consortium (OGC) standard interface
+        and display on the map. Requires OWSLib
+        (http://pypi.python.org/pypi/OWSLib).
+        In order to use this method, the Basemap instance must be
+        created using the ``epsg`` keyword to define the map projection, unless
+        the ``cyl`` projection is used (in which case the epsg code 4326 is
+        assumed).
+
+        .. tabularcolumns:: |l|L|
+
+        ==============   ====================================================
+        Keywords         Description
+        ==============   ====================================================
+        server           WMS server URL.
+        xpixels          requested number of image pixels in x-direction
+                         (default 400).
+        ypixels          requested number of image pixels in y-direction.
+                         Default (None) is to infer the number from
+                         from xpixels and the aspect ratio of the
+                         map projection region.
+        format           desired image format (default 'png')
+        verbose          if True, print WMS server info (default
+                         False).
+        \**kwargs        extra keyword arguments passed on to
+                         OWSLib.wms.WebMapService.getmap.
+        ==============   ====================================================
+
+        Extra keyword ``ax`` can be used to override the default axis instance.
+
+        returns a matplotlib.image.AxesImage instance.
+        """
+        try:
+            from owslib.wms import WebMapService
+        except ImportError:
+            raise ImportError('OWSLib required to use wmsimage method')
+        import urllib2, io
+        if not hasattr(self,'epsg'):
+            msg = dedent("""
+            Basemap instance must be creating using an EPSG code
+            (http://spatialreference.org) in order to use the wmsmap method""")
+            raise ValueError(msg)
+        if 'layers' not in kwargs:
+            raise ValueError('no layers specified')
+        # find the x,y values at the corner points.
+        p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
+        xmin,ymin = p(self.llcrnrlon,self.llcrnrlat)
+        xmax,ymax = p(self.urcrnrlon,self.urcrnrlat)
+        if self.projection in _cylproj:
+            Dateline =\
+            _geoslib.Point(self(180.,0.5*(self.llcrnrlat+self.urcrnrlat)))
+            hasDateline = Dateline.within(self._boundarypolyxy)
+            if hasDateline:
+                msg=dedent("""
+                wmsimage cannot handle images that cross
+                the dateline for cylindrical projections.""")
+                raise ValueError(msg)
+        if self.projection == 'cyl':
+            xmin = (180./np.pi)*xmin; xmax = (180./np.pi)*xmax
+            ymin = (180./np.pi)*ymin; ymax = (180./np.pi)*ymax
+        # ypixels not given, find by scaling xpixels by the map aspect ratio.
+        if ypixels is None:
+            ypixels = int(self.aspect*xpixels)
+        if verbose: print server
+        wms = WebMapService(server)
+        if verbose:
+            print 'id: %s, version: %s' %\
+            (wms.identification.type,wms.identification.version)
+            print 'title: %s, abstract: %s' %\
+            (wms.identification.title,wms.identification.abstract)
+            print 'available layers:'
+            print list(wms.contents)
+            print 'projection options:'
+            print wms[kwargs['layers'][0]].crsOptions
+        # remove keys from kwargs that are over-ridden
+        for k in ['format','bbox','service','size','srs']:
+            if 'format' in kwargs: del kwargs['format']
+        img = wms.getmap(service='wms',bbox=(xmin,ymin,xmax,ymax),
+                         size=(xpixels,ypixels),format='image/%s'%format,
+                         srs='EPSG:%s' % self.epsg, **kwargs)
+        # return AxesImage instance.
+        # this works for png and jpeg.
+        return self.imshow(imread(io.BytesIO(urllib2.urlopen(img.url).read()),
+                           format=format),origin='upper')
+        # this works for png, but not jpeg
+        #return self.imshow(imread(urllib2.urlopen(img.url),format=format),origin='upper')
 
     def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\
                      units='km',fontsize=9,yoffset=None,labelstyle='simple',\

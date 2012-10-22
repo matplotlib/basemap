@@ -161,3 +161,6 @@ counties.py shows how to draw U.S. county boundaries.
 
 testarcgis.py tests using arcgisimage method to retrieve a background image from a 
 ArcGIS server using the REST API.
+
+testwmsimage.py shows how to retrieve an image from a WMS server and display
+it on a map.
