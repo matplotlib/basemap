@@ -3486,10 +3486,12 @@ class Basemap(object):
                              method to adjust the data to be consistent with the map projection
                              region (see examples/shiftdata.py)."""))
                 # mask for points outside projection limb.
+                epsx = (x[:,1:]-x[:,0:-1]).max()
+                epsy = (y[1:,:]-y[0:-1,:]).max()
                 xymask = \
-                np.logical_or(np.greater(x,self.xmax),np.greater(y,self.ymax))
+                np.logical_or(np.greater(x,self.xmax+epsx),np.greater(y,self.ymax+epsy))
                 xymask = xymask + \
-                np.logical_or(np.less(x,self.xmin),np.less(y,self.ymin))
+                np.logical_or(np.less(x,self.xmin-epsx),np.less(y,self.ymin-epsy))
                 data = ma.asarray(data)
                 # combine with data mask.
                 mask = np.logical_or(ma.getmaskarray(data),xymask)
@@ -3586,8 +3588,10 @@ class Basemap(object):
                 # mask for points outside projection limb.
                 xymask = np.logical_or(np.greater(x,1.e20),np.greater(y,1.e20))
                 # mask outside projection region (workaround for contourf bug?)
-                epsx = 0.1*(self.xmax-self.xmin)
-                epsy = 0.1*(self.ymax-self.ymin)
+                epsx = (x[:,1:]-x[:,0:-1]).max()
+                epsy = (y[1:,:]-y[0:-1,:]).max()
+                epsx = epsx + self.xmax-self.xmin 
+                epsy = epsy + self.ymax-self.ymin 
                 outsidemask = np.logical_or(np.logical_or(x > self.xmax+epsx,\
                                             x < self.xmin-epsy),\
                                             np.logical_or(y > self.ymax+epsy,\
