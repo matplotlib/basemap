@@ -3485,9 +3485,11 @@ class Basemap(object):
                              (if your data is on a global lat/lon grid) use the shiftdata
                              method to adjust the data to be consistent with the map projection
                              region (see examples/shiftdata.py)."""))
-                # mask for points outside projection limb.
-                epsx = (x[:,1:]-x[:,0:-1]).max()
-                epsy = (y[1:,:]-y[0:-1,:]).max()
+                # mask for points more than one grid length outside projection limb.
+                xx = ma.masked_where(x > 1.e20, x)
+                yy = ma.masked_where(y > 1.e20, y)
+                epsx = (xx[:,1:]-xx[:,0:-1]).max()
+                epsy = (yy[1:,:]-yy[0:-1,:]).max()
                 xymask = \
                 np.logical_or(np.greater(x,self.xmax+epsx),np.greater(y,self.ymax+epsy))
                 xymask = xymask + \
@@ -3585,21 +3587,21 @@ class Basemap(object):
                              (if your data is on a global lat/lon grid) use the shiftgrid
                              function to adjust the data to be consistent with the map projection
                              region (see examples/contour_demo.py)."""))
-                # mask for points outside projection limb.
-                xymask = np.logical_or(np.greater(x,1.e20),np.greater(y,1.e20))
-                # mask outside projection region (workaround for contourf bug?)
-                epsx = (x[:,1:]-x[:,0:-1]).max()
-                epsy = (y[1:,:]-y[0:-1,:]).max()
-                epsx = epsx + self.xmax-self.xmin 
-                epsy = epsy + self.ymax-self.ymin 
-                outsidemask = np.logical_or(np.logical_or(x > self.xmax+epsx,\
-                                            x < self.xmin-epsy),\
-                                            np.logical_or(y > self.ymax+epsy,\
-                                            y < self.ymin-epsy))
+                # mask for points more than one grid length outside projection limb.
+                xx = ma.masked_where(x > 1.e20, x)
+                yy = ma.masked_where(y > 1.e20, y)
+                if self.projection != 'omerc':
+                    epsx = (xx[:,1:]-xx[:,0:-1]).max()
+                    epsy = (yy[1:,:]-yy[0:-1,:]).max()
+                else: # doesn't work for omerc (FIXME)
+                    epsx = 0.; epsy = 0
+                xymask = \
+                np.logical_or(np.greater(x,self.xmax+epsx),np.greater(y,self.ymax+epsy))
+                xymask = xymask + \
+                np.logical_or(np.less(x,self.xmin-epsx),np.less(y,self.ymin-epsy))
                 data = ma.asarray(data)
-                # combine masks.
-                mask = \
-                np.logical_or(outsidemask,np.logical_or(ma.getmaskarray(data),xymask))
+                # combine with data mask.
+                mask = np.logical_or(ma.getmaskarray(data),xymask)
                 data = ma.masked_array(data,mask=mask)
                 CS = ax.contourf(x,y,data,*args,**kwargs)
         except:
