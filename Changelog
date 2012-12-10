@@ -1,5 +1,11 @@
 version 1.0.6 (not yet released)
 --------------------------------
+* in contourf and contour, all points outside the map projection
+  region were masked. This meant that if a grid cell was partly inside and partly 
+  outside the map projection region, nothing was drawn, leaving a gap along the
+  edge of the map. This was particularly noticeable for very coarse resolution grids.
+  This commit only masks those points more than one grid length beyond the edge
+  of the map projection region.  Fixes issue 88.
 * allow for latitude values slightly greater than 90 to exist in shapefiles,
   (by truncating to 90).  Still raise exception if latitude exceeds 90.01.
 * added 'wmsimage' method for  displaying background image retrieved from
