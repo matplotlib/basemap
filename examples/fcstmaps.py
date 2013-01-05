@@ -1,6 +1,6 @@
 from __future__ import print_function
 from __future__ import unicode_literals
-# this example reads today's numerical weather forecasts 
+# this example reads today's numerical weather forecasts
 # from the NOAA OpenDAP servers and makes a multi-panel plot.
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,19 +19,15 @@ else:
 
 # set OpenDAP server URL.
 try:
-    URLbase="http://nomad1.ncep.noaa.gov:9090/dods/mrf/mrf"
-    URL=URLbase+YYYYMMDD+'/mrf'+YYYYMMDD
+    URLbase="http://nomads.ncep.noaa.gov:9090/dods/gfs/gfs"
+    URL=URLbase+YYYYMMDD+'/gfs_00z'
+    print(URL)
     data = NetCDFFile(URL)
 except:
-    try:
-        URLbase="http://nomad2.ncep.noaa.gov:9090/dods/mrf/mrf"
-        URL=URLbase+YYYYMMDD+'/mrf'+YYYYMMDD
-        data = NetCDFFile(URL)
-    except:
-        msg = """
+    msg = """
 opendap server not providing the requested data.
 Try another date by providing YYYYMMDD on command line."""
-        raise IOError(msg)
+    raise IOError(msg)
 
 
 # read lats,lons,times.
