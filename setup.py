@@ -90,7 +90,7 @@ pathout =\
 os.path.join('lib',os.path.join('mpl_toolkits',os.path.join('basemap','data')))
 if sys.argv[1] not in ['sdist','clean']:
     cc = ccompiler.new_compiler()
-    sysconfig.customize_compiler(cc)
+    #sysconfig.customize_compiler(cc) # doesn't work with python 3.3
     cc.set_include_dirs(['src'])
     objects = cc.compile(['nad2bin.c', 'src/pj_malloc.c'])
     execname = 'nad2bin'
