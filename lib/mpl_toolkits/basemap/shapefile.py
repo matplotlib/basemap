@@ -14,6 +14,7 @@ import time
 import array
 #
 # Constants for shape types
+default_encoding = 'utf-8'
 NULL = 0
 POINT = 1
 POLYLINE = 3
@@ -35,7 +36,7 @@ def b(v):
     if PYTHON3:
         if isinstance(v, str):
             # For python 3 encode str to bytes.
-            return v.encode('utf-8')
+            return v.encode(default_encoding)
         elif isinstance(v, bytes):
             # Already bytes.
             return v
@@ -50,7 +51,7 @@ def u(v):
     if PYTHON3:
         if isinstance(v, bytes):
             # For python 3 decode bytes to str.
-            return v.decode('utf-8')
+            return v.decode(default_encoding)
         elif isinstance(v, str):
             # Already str.
             return v
