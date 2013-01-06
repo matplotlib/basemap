@@ -49,6 +49,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. """
 
 from mpl_toolkits.basemap import _proj
 __version__ =  _proj.__version__
+set_datapath =  _proj.set_datapath
 from array import array
 import os, math
 #import numpy as np
@@ -238,6 +239,8 @@ pyproj_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 if not os.path.isdir(pyproj_datadir):
     msg="proj data directory not found. Expecting it at: %s"%pyproj_datadir
     raise IOError(msg)
+
+set_datapath(pyproj_datadir)
 
 class Proj(_proj.Proj):
     """
