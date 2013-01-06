@@ -1916,7 +1916,8 @@ class Basemap(object):
         """
         ax = ax or self._check_ax()
         gis_file = os.path.join(basemap_datadir,'UScounties')
-        county_info = self.readshapefile(gis_file,'counties',drawbounds=drawbounds)
+        county_info = self.readshapefile(gis_file,'counties',\
+                      default_encoding='latin-1',drawbounds=drawbounds)
         counties = [coords for coords in self.counties]
         counties = LineCollection(counties)
         counties.set_linestyle(linestyle)
@@ -1991,7 +1992,8 @@ class Basemap(object):
         return landpt and not lakept
 
     def readshapefile(self,shapefile,name,drawbounds=True,zorder=None,
-                      linewidth=0.5,color='k',antialiased=1,ax=None):
+                      linewidth=0.5,color='k',antialiased=1,ax=None,
+                      default_encoding='utf-8'):
         """
         Read in shape file, optionally draw boundaries on map.
 
@@ -2055,7 +2057,9 @@ class Basemap(object):
         vertices. If ``drawbounds=True`` a
         matplotlib.patches.LineCollection object is appended to the tuple.
         """
+        import shapefile as shp
         from .shapefile import Reader
+        shp.default_encoding = default_encoding
         if not os.path.exists('%s.shp'%shapefile):
             raise IOError('cannot locate %s.shp'%shapefile)
         if not os.path.exists('%s.shx'%shapefile):

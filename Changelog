@@ -1,5 +1,6 @@
 version 1.0.6 (not yet released)
 --------------------------------
+* fix drawcounties for Python 3.3.
 * update pyproj to version 1.9.3 (remove geographiclib python code, replace
   with C code from proj4).
 * in contourf and contour, all points outside the map projection
