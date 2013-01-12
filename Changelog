@@ -1,4 +1,4 @@
-version 1.0.6 (not yet released)
+version 1.0.6 (git tag v1.0.6rel)
 --------------------------------
 * fix drawcounties for Python 3.3.
 * update pyproj to version 1.9.3 (remove geographiclib python code, replace
@@ -11,7 +11,7 @@ version 1.0.6 (not yet released)
   of the map projection region.  Fixes issue 88.
 * allow for latitude values slightly greater than 90 to exist in shapefiles,
   (by truncating to 90).  Still raise exception if latitude exceeds 90.01.
-* added 'wmsimage' method for  displaying background image retrieved from
+* added 'wmsimage' method for displaying background image retrieved from
   a OGC-compliant WMS server using OWSLib (http://pypi.python.org/OWSLib)
   (requires using 'epsg' keyword to define projection).
 * fix drawing of meridians and parallels for very small map regions
