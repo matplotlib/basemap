@@ -89,7 +89,6 @@ include examples/rita.nc
 include examples/maskoceans.py
 include examples/utmtest.py
 include examples/README
-include lib/mpl_toolkits/__init__.py
 include lib/mpl_toolkits/basemap/__init__.py
 include lib/mpl_toolkits/basemap/proj.py
 include lib/mpl_toolkits/basemap/pyproj.py

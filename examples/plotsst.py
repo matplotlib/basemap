@@ -6,7 +6,7 @@ from datetime import datetime
 date = datetime(2007,12,15,0) # date to plot.
 # open dataset.
 dataset = \
-Dataset('http://www.ncdc.noaa.gov/thredds/dodsC/OISST-V2-AVHRR-AMSR_agg')
+Dataset('http://www.ncdc.noaa.gov/thredds/dodsC/OISST-V2-AVHRR_agg')
 timevar = dataset.variables['time']
 timeindex = date2index(date,timevar) # find time index for desired date.
 # read sst.  Will automatically create a masked array using
