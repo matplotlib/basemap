@@ -4977,16 +4977,18 @@ def shiftgrid(lon0,datain,lonsin,start=True,cyclic=360.0):
 def addcyclic(arrin,lonsin):
     """
     ``arrout, lonsout = addcyclic(arrin, lonsin)``
-    adds cyclic (wraparound) point in longitude to ``arrin`` and ``lonsin``.
+    adds cyclic (wraparound) point in longitude to ``arrin`` and ``lonsin``,
+    assumes longitude is the right-most dimension of ``arrin``.
     """
-    nlats = arrin.shape[0]
-    nlons = arrin.shape[1]
+    nlons = arrin.shape[-1]
+    newshape = list(arrin.shape)
+    newshape[-1] += 1
     if ma.isMA(arrin):
-        arrout  = ma.zeros((nlats,nlons+1),arrin.dtype)
+        arrout  = ma.zeros(newshape,arrin.dtype)
     else:
-        arrout  = np.zeros((nlats,nlons+1),arrin.dtype)
-    arrout[:,0:nlons] = arrin[:,:]
-    arrout[:,nlons] = arrin[:,0]
+        arrout  = np.zeros(newshape,arrin.dtype)
+    arrout[...,0:nlons] = arrin[:]
+    arrout[...,nlons] = arrin[...,0]
     if ma.isMA(lonsin):
         lonsout = ma.zeros(nlons+1,lonsin.dtype)
     else:
