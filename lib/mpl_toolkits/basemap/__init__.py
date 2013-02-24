@@ -3982,6 +3982,9 @@ class Basemap(object):
         except ImportError:
             raise ImportError('warpimage method requires PIL (http://www.pythonware.com/products/pil)')
         from matplotlib.image import pil_to_array
+        if self.celestial:
+            msg='warpimage does not work in celestial coordinates'
+            raise ValueError(msg)
         ax = kwargs.pop('ax', None) or self._check_ax()
         # default image file is blue marble next generation
         # from NASA (http://visibleearth.nasa.gov).
