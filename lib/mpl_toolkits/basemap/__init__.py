@@ -4089,8 +4089,8 @@ class Basemap(object):
                     # make points outside projection limb transparent.
                     self._bm_rgba_warped = self._bm_rgba_warped.filled(0.)
                 # treat pseudo-cyl projections such as mollweide, robinson and sinusoidal.
-            elif self.projection in _pseudocyl:
-                if self.projection != 'hammer':
+                elif self.projection in _pseudocyl and \
+                     self.projection != 'hammer':
                     lonsr,latsr = self(x,y,inverse=True)
                     mask = ma.zeros((ny,nx,4),np.int8)
                     lon_0 = self.projparams['lon_0']
