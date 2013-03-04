@@ -1,3 +1,7 @@
+since version 1.0.6
+-------------------
+* fix warpimage with projection = 'hammer' (issue 100).
+
 version 1.0.6 (git tag v1.0.6rel)
 --------------------------------
 * fix drawcounties for Python 3.3.

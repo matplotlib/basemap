@@ -3982,6 +3982,9 @@ class Basemap(object):
         except ImportError:
             raise ImportError('warpimage method requires PIL (http://www.pythonware.com/products/pil)')
         from matplotlib.image import pil_to_array
+        if self.celestial:
+            msg='warpimage does not work in celestial coordinates'
+            raise ValueError(msg)
         ax = kwargs.pop('ax', None) or self._check_ax()
         # default image file is blue marble next generation
         # from NASA (http://visibleearth.nasa.gov).
@@ -4089,7 +4092,8 @@ class Basemap(object):
                     # make points outside projection limb transparent.
                     self._bm_rgba_warped = self._bm_rgba_warped.filled(0.)
                 # treat pseudo-cyl projections such as mollweide, robinson and sinusoidal.
-                elif self.projection in _pseudocyl:
+                elif self.projection in _pseudocyl and \
+                     self.projection != 'hammer':
                     lonsr,latsr = self(x,y,inverse=True)
                     mask = ma.zeros((ny,nx,4),np.int8)
                     lon_0 = self.projparams['lon_0']
@@ -4112,6 +4116,12 @@ class Basemap(object):
                     self._bm_rgba_warped = self._bm_rgba_warped.filled(0.)
             # plot warped rgba image.
             im = self.imshow(self._bm_rgba_warped,ax=ax,**kwargs)
+            # for hammer projection, use clip path defined by
+            # projection limb (patch created in drawmapboundary).
+            if self.projection == 'hammer':
+                if not self._mapboundarydrawn:
+                    self.drawmapboundary(color='none',linewidth=None)
+                im.set_clip_path(self._mapboundarydrawn)
         else:
             # bmproj True, no interpolation necessary.
             im = self.imshow(self._bm_rgba,ax=ax,**kwargs)
