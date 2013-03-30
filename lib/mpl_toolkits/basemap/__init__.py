@@ -134,7 +134,7 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'vandg'    : 'lon_0,lat_0,no corners or width/height',
              'mbtfpq'   : 'lon_0,lat_0,no corners or width/height',
              'gnom'     : 'lon_0,lat_0',
-             'rotpole'  : 'lon_0,o_lat_p,o_lon_p,corner lat/lon or corner x,y'
+             'rotpole'  : 'lon_0,o_lat_p,o_lon_p,corner lat/lon or corner x,y (no width/height)'
              }
 
 # create dictionary that maps epsg codes to Basemap kwargs.
