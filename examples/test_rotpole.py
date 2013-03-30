@@ -1,5 +1,5 @@
 from netCDF4 import Dataset
-from mpl_toolkits.basemap import Basemap, pyproj
+from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -42,8 +42,6 @@ m = Basemap(projection='rotpole',lon_0=rotpole.grid_north_pole_longitude-180.,\
             o_lat_p=rotpole.grid_north_pole_latitude,\
             llcrnry = rlats[0,0], urcrnry = rlats[-1,-1],\
             llcrnrx = rlons[0,0], urcrnrx = rlons[-1,-1],resolution='c')
-print m.llcrnrlon, m.llcrnrlat
-print m.urcrnrlon, m.urcrnrlat
 x,y = m(lons,lats)
 m.drawcoastlines()
 m.contourf(x,y,data,20)
