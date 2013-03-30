@@ -1394,10 +1394,7 @@ class Basemap(object):
                         xd = (bx[1:]-bx[0:-1])**2
                         yd = (by[1:]-by[0:-1])**2
                         dist = np.sqrt(xd+yd)
-                        if self.projection == 'rotpole':
-                            split = dist > 10.
-                        else:
-                            split = dist > 5000000.
+                        split = dist > 0.5*(self.xmax-self.xmin)
                         if np.sum(split) and self.projection not in _cylproj:
                             ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                             iprev = 0
