@@ -26,11 +26,7 @@ plt.figure()
 # o_lon_p, o_lat_p: true lat/lon of pole in rotated coordinate system
 # mapping to CF metadata convention:
 # grid_north_pole_longitude = normalize180(180 + lon_0), where normalize180
-#  is a function that maps to interval [-180,180], i.e. 
-#    def normalize180(angle):
-#        if angle >  180: angle = angle+360
-#        if angle < -180: angle = angle+360
-#        return angle
+#  is a function that maps to interval [-180,180].
 # grid_north_pole_latitude = o_lat_p
 # north_pole_grid_longitude = o_lon_p (optional, assumed zero if not present)
 m = Basemap(projection='rotpole',lon_0=rotpole.grid_north_pole_longitude-180.,\
