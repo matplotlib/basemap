@@ -88,6 +88,7 @@ _projnames = {'cyl'      : 'Cylindrical Equidistant',
              'vandg'    : 'van der Grinten',
              'mbtfpq'   : 'McBryde-Thomas Flat-Polar Quartic',
              'gnom'     : 'Gnomonic',
+             'rotpole'  : 'Rotated Pole',
              }
 supported_projections = []
 for _items in _projnames.items():
@@ -96,6 +97,8 @@ supported_projections = ''.join(supported_projections)
 
 _cylproj = ['cyl','merc','mill','gall','cea']
 _pseudocyl = ['moll','robin','eck4','kav7','sinu','mbtfpq','vandg','hammer']
+_dg2rad = math.radians(1.)
+_rad2dg = math.degrees(1.)
 
 # projection specific parameters.
 projection_params = {'cyl'      : 'corners only (no width/height)',
@@ -131,6 +134,7 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              'vandg'    : 'lon_0,lat_0,no corners or width/height',
              'mbtfpq'   : 'lon_0,lat_0,no corners or width/height',
              'gnom'     : 'lon_0,lat_0',
+             'rotpole'  : 'lon_0,o_lat_p,o_lon_p,corner lat/lon or corner x,y (no width/height)'
              }
 
 # create dictionary that maps epsg codes to Basemap kwargs.
@@ -257,6 +261,11 @@ _Basemap_init_doc = """
  coordinate system of the global projection (with x=0,y=0 at the center
  of the global projection).  If the corners are not specified,
  the entire globe is plotted.
+
+ For ``rotpole``, the lat/lon values of the corners on the unrotated sphere
+ may be provided as llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat, or the lat/lon
+ values of the corners on the rotated sphere can be given as
+ llcrnrx,llcrnry,urcrnrx,urcrnry.
 
  Other keyword arguments:
 
@@ -564,6 +573,7 @@ class Basemap(object):
                        lat_1=None, lat_2=None,
                        lat_0=None, lon_0=None,
                        lon_1=None, lon_2=None,
+                       o_lon_p=None, o_lat_p=None,
                        k_0=None,
                        no_rot=False,
                        suppress_ticks=True,
@@ -906,6 +916,27 @@ class Basemap(object):
                 projparams['lon_0'] = lon_0
             else:
                 projparams['lon_0']=0.5*(llcrnrlon+urcrnrlon)
+        elif projection == 'rotpole':
+            if lon_0 is None or o_lon_p is None or o_lat_p is None:
+                msg='must specify lon_0,o_lat_p,o_lon_p for rotated pole Basemap'
+                raise ValueError(msg)
+            if width is not None or height is not None:
+                sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
+            projparams['lon_0']=lon_0
+            projparams['o_lon_p']=o_lon_p
+            projparams['o_lat_p']=o_lat_p
+            projparams['o_proj']='longlat'
+            projparams['proj']='ob_tran'
+            if not using_corners and None in [llcrnrx,llcrnry,urcrnrx,urcrnry]:
+                raise ValueError('must specify lat/lon values of corners in degrees')
+            if None not in [llcrnrx,llcrnry,urcrnrx,urcrnry]:
+                p = pyproj.Proj(projparams)
+                llcrnrx = _dg2rad*llcrnrx; llcrnry = _dg2rad*llcrnry
+                urcrnrx = _dg2rad*urcrnrx; urcrnry = _dg2rad*urcrnry
+                llcrnrlon, llcrnrlat = p(llcrnrx,llcrnry,inverse=True)
+                urcrnrlon, urcrnrlat = p(urcrnrx,urcrnry,inverse=True)
+                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         else:
             raise ValueError(_unsupported_projection % projection)
 
@@ -967,6 +998,12 @@ class Basemap(object):
             self.llcrnry = proj.llcrnry
             self.urcrnrx = proj.urcrnrx
             self.urcrnry = proj.urcrnry
+
+        if self.projection == 'rotpole':
+            lon0,lat0 = self(0.5*(self.llcrnrx + self.urcrnrx),\
+                             0.5*(self.llcrnry + self.urcrnry),\
+                             inverse=True)
+            self.projparams['lat_0']=lat0
 
         # if ax == None, pyplot.gca may be used.
         self.ax = ax
@@ -1097,12 +1134,32 @@ class Basemap(object):
                 x = 2.*lon_0-x
             except TypeError:
                 x = [2*lon_0-xx for xx in x]
+        if self.projection == 'rotpole' and inverse:
+            try:
+                x = _dg2rad*x
+            except TypeError:
+                x = [_dg2rad*xx for xx in x]
+            try:
+                y = _dg2rad*y
+            except TypeError:
+                y = [_dg2rad*yy for yy in y]
         xout,yout = self.projtran(x,y,inverse=inverse)
         if self.celestial and inverse:
             try:
                 xout = -2.*lon_0-xout
             except:
                 xout = [-2.*lon_0-xx for xx in xout]
+        if self.projection == 'rotpole' and not inverse:
+            try:
+                xout = _rad2dg*xout
+                xout = np.where(xout < 0., xout+360, xout)
+            except TypeError:
+                xout = [_rad2dg*xx for xx in xout]
+                xout = [xx+360. if xx < 0 else xx for xx in xout]
+            try:
+                yout = _rad2dg*yout
+            except TypeError:
+                yout = [_rad2dg*yy for yy in yout]
         return xout,yout
 
     def makegrid(self,nx,ny,returnxy=False):
@@ -1155,7 +1212,8 @@ class Basemap(object):
         # coordinates, then transform back. This is
         # because these projections are only defined on a hemisphere, and
         # some boundary features (like Eurasia) would be undefined otherwise.
-        tostere = ['omerc','ortho','gnom','nsper','nplaea','npaeqd','splaea','spaeqd']
+        tostere =\
+        ['omerc','ortho','gnom','nsper','nplaea','npaeqd','splaea','spaeqd']
         if self.projection in tostere and name == 'gshhs':
             containsPole = True
             lon_0=self.projparams['lon_0']
@@ -1336,7 +1394,7 @@ class Basemap(object):
                         xd = (bx[1:]-bx[0:-1])**2
                         yd = (by[1:]-by[0:-1])**2
                         dist = np.sqrt(xd+yd)
-                        split = dist > 5000000.
+                        split = dist > 0.5*(self.xmax-self.xmin)
                         if np.sum(split) and self.projection not in _cylproj:
                             ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                             iprev = 0
