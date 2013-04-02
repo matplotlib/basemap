@@ -371,6 +371,22 @@ print(m.proj4string)
 
 # create new figure
 fig=plt.figure()
+m = Basemap(projection = 'rotpole',lon_0 = -120.,\
+            o_lon_p = 180, o_lat_p = 0,\
+            llcrnry = -41.75, urcrnry = 37.75,\
+            llcrnrx = 137, urcrnrx = 222.5, resolution = 'l')
+m.drawcoastlines()
+ny,nx = lons.shape
+m.contourf(lons[ny/2:,:],lats[ny/2:,:],topodat[ny/2:,:],50,cmap=cmap,extend='both',latlon=True)
+m.drawmeridians(np.arange(-180,180,20),labels=[1,1,1,1])
+m.drawparallels(np.arange(20,80,20))
+m.colorbar()
+plt.title('Rotated Pole',y=1.075)
+print('plotting Rotated Pole example ...')
+print(m.proj4string)
+
+# create new figure
+fig=plt.figure()
 m = Basemap(lon_0=-105,boundinglat=20.,
             resolution='c',area_thresh=10000.,projection='nplaea',round=True)
 # plot image over map.

@@ -88,6 +88,8 @@ include examples/ccsm_popgrid.nc
 include examples/rita.nc
 include examples/maskoceans.py
 include examples/utmtest.py
+include examples/test_rotpole.py
+include examples/wm201_Arctic_JJA_1990-2008_moyenneDesMoyennes.nc
 include examples/README
 include lib/mpl_toolkits/basemap/__init__.py
 include lib/mpl_toolkits/basemap/proj.py

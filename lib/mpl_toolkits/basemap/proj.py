@@ -74,6 +74,11 @@ class Proj(object):
         if self.projection == 'cyl':
             llcrnrx = llcrnrlon
             llcrnry = llcrnrlat
+        elif self.projection == 'ob_tran':
+            self._proj4 = pyproj.Proj(projparams)
+            llcrnrx,llcrnry = self(llcrnrlon,llcrnrlat)
+            llcrnrx = _rad2dg*llcrnrx; llcrnry = _rad2dg*llcrnry
+            if llcrnrx < 0: llcrnrx = llcrnrx + 360
         elif self.projection in 'ortho':
             if (llcrnrlon == -180 and llcrnrlat == -90 and
                 urcrnrlon == 180 and urcrnrlat == 90):
@@ -194,14 +199,15 @@ class Proj(object):
             if self.projection == 'aeqd': self._fulldisk=False
         # compute x_0, y_0 so ll corner of domain is x=0,y=0.
         # note that for 'cyl' x,y == lon,lat
-        self.projparams['x_0']=-llcrnrx
-        self.projparams['y_0']=-llcrnry
+        if self.projection != 'ob_tran':
+            self.projparams['x_0']=-llcrnrx
+            self.projparams['y_0']=-llcrnry
         # reset with x_0, y_0.
-        if self.projection != 'cyl':
+        if self.projection not in ['cyl','ob_tran']:
             self._proj4 = pyproj.Proj(projparams)
             llcrnry = 0.
             llcrnrx = 0.
-        else:
+        elif self.projection != 'ob_tran':
             llcrnrx = llcrnrlon
             llcrnry = llcrnrlat
         if urcrnrislatlon:
@@ -209,6 +215,9 @@ class Proj(object):
             self.urcrnrlat = urcrnrlat
             if self.projection not in ['ortho','geos','nsper','aeqd'] + _pseudocyl:
                 urcrnrx,urcrnry = self(urcrnrlon,urcrnrlat)
+                if self.projection == 'ob_tran':
+                    urcrnrx = _rad2dg*urcrnrx; urcrnry = _rad2dg*urcrnry
+                    if urcrnrx < 0: urcrnrx = urcrnrx + 360
             elif self.projection in ['ortho','geos','nsper','aeqd']:
                 if self._fulldisk:
                     urcrnrx = 2.*self._width
@@ -226,6 +235,7 @@ class Proj(object):
             urcrnrlon, urcrnrlat = self(urcrnrx, urcrnry, inverse=True)
             self.urcrnrlon = urcrnrlon
             self.urcrnrlat = urcrnrlat
+
         # corners of domain.
         self.llcrnrx = llcrnrx
         self.llcrnry = llcrnry
