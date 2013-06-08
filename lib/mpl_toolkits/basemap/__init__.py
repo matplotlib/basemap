@@ -2320,7 +2320,7 @@ class Basemap(object):
                 dist = np.sqrt(xd+yd)
                 #split = dist > 500000.
                 # normalize by radius of sphere
-                split = dist > 5000000./6370997.0*self.rmajor
+                split = dist > self.rmajor/100000.
                 if np.sum(split) and self.projection not in _cylproj:
                     ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                     xl = []
@@ -2603,7 +2603,7 @@ class Basemap(object):
                 dist = np.sqrt(xd+yd)
                 #split = dist > 500000.
                 # normalize by radius of sphere
-                split = dist > 5000000./6370997.0*self.rmajor
+                split = dist > self.rmajor/1000000.
                 if np.sum(split) and self.projection not in _cylproj:
                     ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                     xl = []
