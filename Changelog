@@ -2,6 +2,8 @@ since version 1.0.6
 -------------------
 * support for rotated pole transormation (projection = 'rotpole').
 * fix warpimage with projection = 'hammer' (issue 100).
+* fix tolerances for detecting jumps in meridians and parallels for
+  cyl and rotpole projections (issue 108).
 
 version 1.0.6 (git tag v1.0.6rel)
 --------------------------------

@@ -2318,9 +2318,10 @@ class Basemap(object):
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
                 dist = np.sqrt(xd+yd)
-                #split = dist > 500000.
-                # normalize by radius of sphere
-                split = dist > 5000000./6370997.0*self.rmajor
+                if self.projection not in ['cyl','rotpole']: 
+                    split = dist > self.rmajor/10.
+                else:
+                    split = dist > 1.
                 if np.sum(split) and self.projection not in _cylproj:
                     ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                     xl = []
@@ -2601,9 +2602,10 @@ class Basemap(object):
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
                 dist = np.sqrt(xd+yd)
-                #split = dist > 500000.
-                # normalize by radius of sphere
-                split = dist > 5000000./6370997.0*self.rmajor
+                if self.projection not in ['cyl','rotpole']: 
+                    split = dist > self.rmajor/10.
+                else:
+                    split = dist > 1.
                 if np.sum(split) and self.projection not in _cylproj:
                     ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                     xl = []
