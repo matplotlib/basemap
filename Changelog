@@ -1,5 +1,6 @@
 since version 1.0.6
 -------------------
+* update pyproj (with fixes to geodesic calculations).
 * support for rotated pole transormation (projection = 'rotpole').
 * fix warpimage with projection = 'hammer' (issue 100).
 * fix tolerances for detecting jumps in meridians and parallels for
