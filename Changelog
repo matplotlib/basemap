@@ -4,6 +4,8 @@ since version 1.0.6
 * fix warpimage with projection = 'hammer' (issue 100).
 * fix tolerances for detecting jumps in meridians and parallels for
   cyl and rotpole projections (issue 108).
+* fix clipping to map projection region done in contourf and contour methods
+  so it doesn't assume x and y are increasing (issue 110).
 
 version 1.0.6 (git tag v1.0.6rel)
 --------------------------------

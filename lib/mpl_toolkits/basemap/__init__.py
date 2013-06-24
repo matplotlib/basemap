@@ -2318,7 +2318,7 @@ class Basemap(object):
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
                 dist = np.sqrt(xd+yd)
-                if self.projection not in ['cyl','rotpole']: 
+                if self.projection not in ['cyl','rotpole']:
                     split = dist > self.rmajor/10.
                 else:
                     split = dist > 1.
@@ -2602,7 +2602,7 @@ class Basemap(object):
                 xd = (x[1:]-x[0:-1])**2
                 yd = (y[1:]-y[0:-1])**2
                 dist = np.sqrt(xd+yd)
-                if self.projection not in ['cyl','rotpole']: 
+                if self.projection not in ['cyl','rotpole']:
                     split = dist > self.rmajor/10.
                 else:
                     split = dist > 1.
@@ -3552,8 +3552,8 @@ class Basemap(object):
                 # mask for points more than one grid length outside projection limb.
                 xx = ma.masked_where(x > 1.e20, x)
                 yy = ma.masked_where(y > 1.e20, y)
-                epsx = (xx[:,1:]-xx[:,0:-1]).max()
-                epsy = (yy[1:,:]-yy[0:-1,:]).max()
+                epsx = np.abs(xx[:,1:]-xx[:,0:-1]).max()
+                epsy = np.abs(yy[1:,:]-yy[0:-1,:]).max()
                 xymask = \
                 np.logical_or(np.greater(x,self.xmax+epsx),np.greater(y,self.ymax+epsy))
                 xymask = xymask + \
@@ -3655,8 +3655,8 @@ class Basemap(object):
                 xx = ma.masked_where(x > 1.e20, x)
                 yy = ma.masked_where(y > 1.e20, y)
                 if self.projection != 'omerc':
-                    epsx = (xx[:,1:]-xx[:,0:-1]).max()
-                    epsy = (yy[1:,:]-yy[0:-1,:]).max()
+                    epsx = np.abs(xx[:,1:]-xx[:,0:-1]).max()
+                    epsy = np.abs(yy[1:,:]-yy[0:-1,:]).max()
                 else: # doesn't work for omerc (FIXME)
                     epsx = 0.; epsy = 0
                 xymask = \
