@@ -8,7 +8,7 @@ cdef double _dg2rad, _rad2dg
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 _doublesize = sizeof(double)
-__version__ = "1.9.3"
+__version__ = "1.9.4"
 
 cdef extern from "math.h":
     cdef enum:
@@ -16,13 +16,13 @@ cdef extern from "math.h":
         FP_NAN
 
 cdef extern from "geodesic.h":
-  struct Geodesic:
+  struct geod_geodesic:
         pass
-  void GeodesicInit(Geodesic* g, double a, double f)
-  void Direct(Geodesic* g,\
+  void geod_init(geod_geodesic* g, double a, double f)
+  void geod_direct(geod_geodesic* g,\
               double lat1, double lon1, double azi1, double s12,\
               double* plat2, double* plon2, double* pazi2)
-  void Inverse(Geodesic* g,\
+  void geod_inverse(geod_geodesic* g,\
                double lat1, double lon1, double lat2, double lon2,\
                double* ps12, double* pazi1, double* pazi2)
 
@@ -36,9 +36,11 @@ cdef extern from "proj_api.h":
     projPJ pj_init_plus_ctx(projCtx, char *)
     projUV pj_fwd(projUV, projPJ)
     projUV pj_inv(projUV, projPJ)
+    projPJ pj_latlong_from_proj(projPJ) 
     int pj_transform(projPJ src, projPJ dst, long point_count, int point_offset,
                      double *x, double *y, double *z)
     int pj_is_latlong(projPJ)
+    char *pj_get_def( projPJ pj, int options)
     int pj_is_geocent(projPJ)
     char *pj_strerrno(int)
     void pj_ctx_free( projCtx )
@@ -58,6 +60,9 @@ def set_datapath(datapath):
     bytestr = _strencode(datapath)
     searchpath = bytestr
     pj_set_searchpath(1, &searchpath)
+
+def _createproj(projstring):
+    return Proj(projstring)
 
 cdef class Proj:
     cdef projPJ projpj
@@ -84,6 +89,15 @@ cdef class Proj:
         """destroy projection definition"""
         pj_free(self.projpj)
         pj_ctx_free(self.projctx)
+
+    def to_latlong(self):
+        """return a new Proj instance which is the geographic (lat/lon)
+        coordinate version of the current projection"""
+        cdef projPJ llpj
+        llpj = pj_latlong_from_proj(self.projpj)
+        initstring = pj_get_def(llpj, 0)
+        pj_free(llpj)
+        return _createproj(initstring)
 
     def __reduce__(self):
         """special method that allows pyproj.Proj instance to be pickled"""
@@ -351,12 +365,12 @@ cdef _strencode(pystr,encoding='ascii'):
         return pystr # already bytes?
 
 cdef class Geod:
-    cdef Geodesic _Geodesic
+    cdef geod_geodesic _geod_geodesic
     cdef public object initstring
 
     def __cinit__(self, a, f):
         self.initstring = '+a=%s +f=%s' % (a, f)
-        GeodesicInit(&self._Geodesic, <double> a, <double> f)
+        geod_init(&self._geod_geodesic, <double> a, <double> f)
 
     def __reduce__(self):
         """special method that allows pyproj.Geod instance to be pickled"""
@@ -401,13 +415,13 @@ cdef class Geod:
                 lat1 = _dg2rad*latsdata[i]
                 az1 = _dg2rad*azdata[i]
                 s12 = distdata[i]
-            Direct(&self._Geodesic, lat1, lon1, az1, s12,\
+            geod_direct(&self._geod_geodesic, lat1, lon1, az1, s12,\
                    &plat2, &plon2, &pazi2)
             # back azimuth needs to be flipped 180 degrees
             # to match what proj4 geod utility produces.
             if pazi2 > 0:
                 pazi2 = pazi2-180.
-            elif pazi2 < 0:
+            elif pazi2 <= 0:
                 pazi2 = pazi2+180.
             # check for NaN.
             if pazi2 != pazi2:
@@ -460,13 +474,13 @@ cdef class Geod:
                 lat1 = latsdata[i]
                 lon2 = azdata[i]
                 lat2 = distdata[i]
-            Inverse(&self._Geodesic, lat1, lon1, lat2, lon2,
+            geod_inverse(&self._geod_geodesic, lat1, lon1, lat2, lon2,
                     &ps12, &pazi1, &pazi2)
             # back azimuth needs to be flipped 180 degrees
             # to match what proj4 geod utility produces.
             if pazi2 > 0:
                 pazi2 = pazi2-180.
-            elif pazi2 < 0:
+            elif pazi2 <= 0:
                 pazi2 = pazi2+180.
             if ps12 != ps12: # check for NaN
                 raise ValueError('undefined inverse geodesic (may be an antipodal point)')
@@ -489,7 +503,7 @@ cdef class Geod:
             lon2 = _rad2dg*lon2
             lat2 = _rad2dg*lat2
         # do inverse computation to set azimuths, distance.
-        Inverse(&self._Geodesic, lat1, lon1,  lat2, lon2,
+        geod_inverse(&self._geod_geodesic, lat1, lon1,  lat2, lon2,
                 &ps12, &pazi1, &pazi2)
         # distance increment.
         del_s = ps12/(npts+1)
@@ -499,7 +513,7 @@ cdef class Geod:
         # loop over intermediate points, compute lat/lons.
         for i from 1 <= i < npts+1:
             s12 = i*del_s
-            Direct(&self._Geodesic, lat1, lon1, pazi1, s12,\
+            geod_direct(&self._geod_geodesic, lat1, lon1, pazi1, s12,\
                    &plat2, &plon2, &pazi2)
             if radians:
                 lats = lats + (_dg2rad*plat2,)
