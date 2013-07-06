@@ -1047,6 +1047,8 @@ class Basemap(object):
             self.lonmax = self.urcrnrlon
         else:
             lons, lats = self.makegrid(1001,1001)
+            lats = ma.masked_where(lats > 1.e20,lats)
+            lons = ma.masked_where(lons > 1.e20,lons)
             self.latmin = lats.min()
             self.latmax = lats.max()
             self.lonmin = lons.min()
