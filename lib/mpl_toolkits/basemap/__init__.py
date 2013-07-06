@@ -2575,10 +2575,11 @@ class Basemap(object):
         if xoffset is None:
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
+        lats = np.linspace(self.latmin,self.latmax,10001)
         if self.projection not in _cylproj + _pseudocyl:
-            lats = np.linspace(-latmax,latmax,10001)
-        else:
-            lats = np.linspace(-90,90,100001)
+            testlat = np.logical_and(lats>-latmax,lats<latmax)
+            lats = np.compress(testlat,lats)
+
         xdelta = 0.01*(self.xmax-self.xmin)
         ydelta = 0.01*(self.ymax-self.ymin)
         linecolls = {}
