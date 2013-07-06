@@ -1,5 +1,5 @@
-since version 1.0.6
--------------------
+version 1.0.7 (not yet released)
+-------------------------------
 * fix drawmeridians so meridians reach edge of plot when map projection region
   is *very* small (issue ???).
 * update pyproj (with fixes to geodesic calculations).
