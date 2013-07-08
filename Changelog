@@ -1,7 +1,7 @@
 version 1.0.7 (not yet released)
 -------------------------------
 * fix drawmeridians so meridians reach edge of plot when map projection region
-  is *very* small (issue ???).
+  is *very* small (issue 113).
 * update pyproj (with fixes to geodesic calculations).
 * support for rotated pole transormation (projection = 'rotpole').
 * fix warpimage with projection = 'hammer' (issue 100).
