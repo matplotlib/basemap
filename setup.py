@@ -64,11 +64,12 @@ deps.remove(os.path.join('src','_proj.c'))
 deps.remove(os.path.join('src','_geoslib.c'))
 
 packages          = ['mpl_toolkits','mpl_toolkits.basemap']
+namespace_packages = ['mpl_toolkits']
 package_dirs       = {'':'lib'}
 extensions = [Extension("mpl_toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
 # can't install _geoslib in mpl_toolkits.basemap namespace,
 # or Basemap objects won't be pickleable.
-if sys.platform == 'win32': 
+if sys.platform == 'win32':
 # don't use runtime_library_dirs on windows (workaround
 # for a distutils bug - http://bugs.python.org/issue2437).
     #extensions.append(Extension("mpl_toolkits.basemap._geoslib",['src/_geoslib.c'],
@@ -91,7 +92,7 @@ os.path.join('lib',os.path.join('mpl_toolkits',os.path.join('basemap','data')))
 if sys.argv[1] not in ['sdist','clean']:
     cc = ccompiler.new_compiler()
     sysconfig.get_config_vars()
-    sysconfig.customize_compiler(cc) 
+    sysconfig.customize_compiler(cc)
     cc.set_include_dirs(['src'])
     objects = cc.compile(['nad2bin.c', 'src/pj_malloc.c'])
     execname = 'nad2bin'
@@ -125,14 +126,15 @@ setup(
   license           = "OSI Approved",
   keywords          = ["python","plotting","plots","graphs","charts","GIS","mapping","map projections","maps"],
   classifiers       = ["Development Status :: 5 - Production/Stable",
-                       "Intended Audience :: Science/Research", 
-                       "License :: OSI Approved", 
+                       "Intended Audience :: Science/Research",
+                       "License :: OSI Approved",
                        "Programming Language :: Python",
                        "Programming Language :: Python :: 3",
                        "Topic :: Scientific/Engineering :: Visualization",
                        "Topic :: Software Development :: Libraries :: Python Modules",
                        "Operating System :: OS Independent"],
   packages          = packages,
+  namespace_packages = namespace_packages,
   package_dir       = package_dirs,
   ext_modules       = extensions,
   cmdclass = {'build_py': build_py},
