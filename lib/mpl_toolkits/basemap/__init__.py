@@ -47,7 +47,7 @@ if 'BASEMAPDATA' in os.environ:
 else:
     basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
-__version__ = '1.0.6'
+__version__ = '1.0.7'
 
 # module variable that sets the default value for the 'latlon' kwarg.
 # can be set to True by user so plotting functions can take lons,lats
@@ -1047,6 +1047,8 @@ class Basemap(object):
             self.lonmax = self.urcrnrlon
         else:
             lons, lats = self.makegrid(1001,1001)
+            lats = ma.masked_where(lats > 1.e20,lats)
+            lons = ma.masked_where(lons > 1.e20,lons)
             self.latmin = lats.min()
             self.latmax = lats.max()
             self.lonmin = lons.min()
@@ -2575,10 +2577,11 @@ class Basemap(object):
         if xoffset is None:
             xoffset = (self.urcrnrx-self.llcrnrx)/100.
 
+        lats = np.linspace(self.latmin,self.latmax,10001)
         if self.projection not in _cylproj + _pseudocyl:
-            lats = np.linspace(-latmax,latmax,10001)
-        else:
-            lats = np.linspace(-90,90,100001)
+            testlat = np.logical_and(lats>-latmax,lats<latmax)
+            lats = np.compress(testlat,lats)
+
         xdelta = 0.01*(self.xmax-self.xmin)
         ydelta = 0.01*(self.ymax-self.ymin)
         linecolls = {}
