@@ -15,7 +15,7 @@ installing basemap.
 
 matplotlib 1.0.0 (or later, `download <http://sf.net/projects/matplotlib/>`__)
 
-python 2.4 (or later but not python3)
+Python 2.4 (or later, including Python 3)
     matplotlib requires python 2.4 or later (`download <http://www.python.org/download/>`__)
 
 numpy 1.2.1 (or later)

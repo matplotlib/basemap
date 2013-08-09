@@ -53,6 +53,7 @@ time, many compromise between the two.
     poly.rst
     mill.rst
     gall.rst
+    cea.rst
     lcc.rst
     laea.rst
     stere.rst
