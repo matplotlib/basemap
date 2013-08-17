@@ -1,5 +1,5 @@
-version 1.0.7 (not yet released)
--------------------------------
+version 1.0.7 (git tag v1.0.7rel)
+---------------------------------
 * include mpl_toolkits/__init__.py, since the one installed by matplotlib
   is now inaccessible inside an egg (in 1.4.x).  Make basemap a 'namespace
   package'.  Issue 114.
