@@ -37,65 +37,41 @@ to retrieve datasets over http):
 
 * Plot contour lines on a basemap
 
-.. literalinclude:: figures/contour1.py
-
-.. image:: figures/contour1.png
+.. plot:: users/figures/contour1.py
 
 * Plot precip with filled contours
 
-.. literalinclude:: figures/plotprecip.py
-
-.. image:: figures/plotprecip.png
+.. plot:: users/figures/plotprecip.py
 
 * Plot sea-level pressure weather map with labelled highs and lows
 
-.. literalinclude:: figures/plothighsandlows.py
+.. plot:: users/figures/plothighsandlows.py
  
-.. image:: figures/plothighsandlows.png
-
 * Plot hurricane tracks from a shapefile
 
-.. literalinclude:: figures/hurrtracks.py
+.. plot:: users/figures/hurrtracks.py
  
-.. image:: figures/hurrtracks.png
-
 * Plot etopo5 topography/bathymetry data as an image (with 
   and without shading from a specified light source).
 
-.. literalinclude:: figures/plotetopo5.py
+.. plot:: users/figures/plotetopo5.py
  
-.. image:: figures/etopo5.png
-
-.. image:: figures/etopo5_shaded.png
-
 * Plot markers at locations of `ARGO <http://www.argo.ucsd.edu/>`__ floats.
 
-.. literalinclude:: figures/plotargo.py
+.. plot:: users/figures/plotargo.py
  
-.. image:: figures/plotargo.png
-
 * Pseudo-color plot of SST and sea ice analysis.
 
-.. literalinclude:: figures/plotsst.py
+.. plot:: users/figures/plotsst.py
  
-.. image:: figures/plotsst.png
-
 * Plotting wind vectors and wind barbs.
 
-.. literalinclude:: figures/plotwindvec.py
+.. plot:: users/figures/plotwindvec.py
  
-.. image:: figures/plotwindvec1.png
-
-.. image:: figures/plotwindvec2.png
-
 * Draw great circle between NY and London.
 
-.. literalinclude:: figures/plotgreatcircle.py
+.. plot:: users/figures/plotgreatcircle.py
  
-.. image:: figures/plotgreatcircle.png
-
 * Draw day-night terminator on a map.
 
-.. literalinclude:: figures/plotdaynight.py
- 
-.. image:: figures/plotdaynight.png
+.. plot:: users/figures/plotdaynight.py

@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 from netCDF4 import Dataset
 
 # read in etopo5 topography/bathymetry.
-etopodata =\
-Dataset('http://ferret.pmel.noaa.gov/thredds/dodsC/data/PMEL/etopo5.nc')
+url = 'http://ferret.pmel.noaa.gov/thredds/dodsC/data/PMEL/etopo5.nc'
+etopodata = Dataset(url)
+
 topoin = etopodata.variables['ROSE'][:]
 lons = etopodata.variables['ETOPO05_X'][:]
 lats = etopodata.variables['ETOPO05_Y'][:]
@@ -41,7 +42,7 @@ m.drawmeridians(meridians,labels=[1,0,0,1])
 # add colorbar
 cb = m.colorbar(im,"right", size="5%", pad='2%')
 ax.set_title('ETOPO5 Topography - Lambert Conformal Conic')
-fig.savefig('etopo5.png')
+plt.show()
 
 # make a shaded relief plot.
 
@@ -62,4 +63,4 @@ m.drawcoastlines()
 m.drawcountries()
 m.drawstates()
 ax.set_title('Shaded ETOPO5 Topography - Lambert Conformal Conic')
-fig.savefig('etopo5_shaded.png')
+plt.show()

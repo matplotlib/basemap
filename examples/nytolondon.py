@@ -2,6 +2,7 @@
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
 # setup lambert azimuthal map projection.
 # create new figure
@@ -31,7 +32,7 @@ m.drawparallels(circles,labels=[1,1,0,1])
 meridians = np.arange(-180,180,30)
 m.drawmeridians(meridians,labels=[1,1,0,1])
 plt.title('Great Circle from New York to London (Mercator)')
-print 'plotting Great Circle from New York to London (Mercator)'
+sys.stdout.write('plotting Great Circle from New York to London (Mercator)\n')
 
 # create new figure
 fig=plt.figure()
@@ -60,5 +61,5 @@ m.drawparallels(circles,labels=[0,1,0,0])
 meridians = np.arange(-180,180,30)
 m.drawmeridians(meridians,labels=[1,1,0,1])
 plt.title('Great Circle from New York to London (Gnomonic)')
-print 'plotting Great Circle from New York to London (Gnomonic)'
+sys.stdout.write('plotting Great Circle from New York to London (Gnomonic)\n')
 plt.show()

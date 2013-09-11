@@ -109,7 +109,7 @@ More examples of using the 'width' and 'height' keywords (instead of
 plot_tissot.py - tissot's indicatrix, shows the distorting effects of
 different map projections.
 
-pnganim.py shows how to make an animation.
+animate.py shows how to make an animation.
 
 ccsm_popgrid.py shows how to plot data on 2d grids which are not 
 rectilinear in map projection or geographic coordinates.  The NCAR
@@ -144,3 +144,25 @@ ploticos.py demonstrates plotting on unstructured grids.
 
 lic_demo.py shows how to use vectorplot scikit to visualize vector fields with
 Line Integral Convolutions (LIC).
+
+streamplot_demo.py shows how to use new matplotlib streamplot method to visualize wind fields.
+
+hexbin_demo.py shows how to plot scattered data using matplotlib hexbin function.
+
+make_inset.py shows how to make an inset showing the location of the map projection region
+from a global perspective.
+
+utmtest.py shows how to plot a UTM zone.
+
+shiftdata.py shows how to use the 'latlon' keyword to automatically transform to map
+projection coordinates and shift the data longitudinally to fit the map projection region.
+
+counties.py shows how to draw U.S. county boundaries.
+
+testarcgis.py tests using arcgisimage method to retrieve a background image from a 
+ArcGIS server using the REST API.
+
+testwmsimage.py shows how to retrieve an image from a WMS server and display
+it on a map.
+
+test_rotpole.py shows how to plot regional climate model data in the native 'rotated pole' projection.

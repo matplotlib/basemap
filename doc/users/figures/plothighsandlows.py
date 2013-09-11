@@ -4,11 +4,10 @@ plot H's and L's on a sea-level pressure map
 """
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
 from datetime import datetime
 from mpl_toolkits.basemap import Basemap, addcyclic
 from scipy.ndimage.filters import minimum_filter, maximum_filter
-from netCDF4 import Dataset 
+from netCDF4 import Dataset
 
 def extrema(mat,mode='wrap',window=10):
     """find the indices of local extrema (min and max)
@@ -20,11 +19,16 @@ def extrema(mat,mode='wrap',window=10):
     # Return the indices of the maxima, minima
     return np.nonzero(mat == mn), np.nonzero(mat == mx)
 
-# set date (today at 00 UTC)
-YYYYMMDDHH = datetime.now().strftime('%Y%m%d')+'00'
+# plot 00 UTC today.
+date = datetime.now().strftime('%Y%m%d')+'00'
 
 # open OpenDAP dataset.
-data=Dataset("http://nomad2.ncep.noaa.gov:9090/dods/gdas/rotating/gdas"+YYYYMMDDHH+".grib2")
+#data=Dataset("http://nomads.ncep.noaa.gov:9090/dods/gfs/gfs/%s/gfs_%sz_anl" %\
+#        (date[0:8],date[8:10]))
+data=Dataset("http://nomads.ncep.noaa.gov:9090/dods/gfs_hd/gfs_hd%s/gfs_hd_%sz"%\
+        (date[0:8],date[8:10]))
+
+
 
 # read lats,lons.
 lats = data.variables['lat'][:]
@@ -35,7 +39,7 @@ nlons = len(lons1)
 prmsl = 0.01*data.variables['prmslmsl'][0]
 # the window parameter controls the number of highs and lows detected.
 # (higher value, fewer highs and lows)
-local_min, local_max = extrema(prmsl, mode='wrap', window=25)
+local_min, local_max = extrema(prmsl, mode='wrap', window=50)
 # create Basemap instance.
 m =\
 Basemap(llcrnrlon=0,llcrnrlat=-80,urcrnrlon=360,urcrnrlat=80,projection='mill')
@@ -84,5 +88,5 @@ for x,y,p in zip(xhighs, yhighs, highvals):
                     ha='center',va='top',color='r',
                     bbox = dict(boxstyle="square",ec='None',fc=(1,1,1,0.5)))
             xyplotted.append((x,y))
-plt.title('Mean Sea-Level Pressure (with Highs and Lows) %s' % YYYYMMDDHH)
-plt.savefig('plothighsandlows.png')
+plt.title('Mean Sea-Level Pressure (with Highs and Lows) %s' % date)
+plt.show()

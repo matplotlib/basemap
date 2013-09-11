@@ -1,3 +1,4 @@
+from __future__ import print_function
 ######################################
 # pyplot-free version of simpletest.py
 ######################################
@@ -47,5 +48,5 @@ cb=m.colorbar(mappable=cs,location='right',size='5%',pad='2%',ticks=cs.levels[::
 # save image (width 800 pixels with dpi=100 and fig width 8 inches).
 canvas.print_figure('simpletest',dpi=100)
 # done.
-print 'image saved in simpletest.png'
+print('image saved in simpletest.png')
 

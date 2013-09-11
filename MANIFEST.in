@@ -11,6 +11,10 @@ include Changelog
 include setup.py
 include nad2bin.c
 include src/*
+include examples/testarcgis.py
+include examples/testwmsimage.py
+include examples/counties.py
+include examples/shiftdata.py
 include examples/allskymap.py
 include examples/allskymap_cr_example.py
 include examples/plothighsandlows.py
@@ -64,7 +68,9 @@ include examples/run_all.py
 include examples/polarmaps.py
 include examples/warpimage.py
 include examples/earth_lights_lrg.jpg
-include examples/pnganim.py
+include examples/animate.py
+include examples/hexbin_demo.py
+include examples/make_inset.py
 include examples/garp.py
 include examples/setwh.py
 include examples/ccsm_popgrid.py
@@ -75,11 +81,15 @@ include examples/cities.shx
 include examples/show_colormaps.py
 include examples/plotprecip.py
 include examples/lic_demo.py
+include examples/streamplot_demo.py
 include examples/nws_precip_conus_20061222.nc
 include examples/C02562.orog.nc
 include examples/ccsm_popgrid.nc
 include examples/rita.nc
 include examples/maskoceans.py
+include examples/utmtest.py
+include examples/test_rotpole.py
+include examples/wm201_Arctic_JJA_1990-2008_moyenneDesMoyennes.nc
 include examples/README
 include lib/mpl_toolkits/__init__.py
 include lib/mpl_toolkits/basemap/__init__.py
@@ -96,5 +106,5 @@ include doc/README.txt
 include doc/make.py
 include doc/conf.py
 include doc/index.rst
-recursive-include geos-3.3.1 *
+recursive-include geos-3.3.3 *
 recursive-include lib/mpl_toolkits/basemap/data *

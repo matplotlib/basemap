@@ -53,30 +53,20 @@ Here are examples of the various ways to draw a map background.
 
 1. Draw coastlines, filling ocean and land areas.
 
-.. literalinclude:: figures/background1.py
-
-.. image:: figures/background1.png
+.. plot:: users/figures/background1.py
 
 2. Draw a land-sea mask as an image.
 
-.. literalinclude:: figures/background2.py
-
-.. image:: figures/background2.png
+.. plot:: users/figures/background2.py
 
 3. Draw the NASA 'Blue Marble' image.
 
-.. literalinclude:: figures/background3.py
-
-.. image:: figures/background3.png
+.. plot:: users/figures/background3.py
 
 4. Draw a shaded relief image.
 
-.. literalinclude:: figures/background4.py
-
-.. image:: figures/background4.png
+.. plot:: users/figures/background4.py
  
 5. Draw an etopo relief image.
 
-.. literalinclude:: figures/background5.py
-
-.. image:: figures/background5.png
+.. plot:: users/figures/background5.py

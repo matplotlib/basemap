@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 """
 AllSkyMap is a subclass of Basemap, specialized for handling common plotting
 tasks for celestial data.
@@ -35,9 +36,9 @@ def angle_symbol(angle, round_to=1.0):
     """
     value = np.round(angle / round_to) * round_to
     if pl.rcParams['text.usetex'] and not pl.rcParams['text.latex.unicode']:
-        return r"$%0.0f^\circ$" % value
+        return r'$%0.0f^\circ$' % value
     else:
-        return u"%0.0f\u00b0" % value
+        return '%0.0f\N{DEGREE SIGN}' % value
 
 
 class AllSkyMap(Basemap):
@@ -72,7 +73,7 @@ class AllSkyMap(Basemap):
                        suppress_ticks=True,
                        boundinglat=None,
                        fix_aspect=True,
-                       anchor='C',
+                       anchor=str('C'),
                        ax=None):
 
         if projection != 'hammer' and projection !='moll':
@@ -224,7 +225,7 @@ class AllSkyMap(Basemap):
         # If there are multiple segments and no color args, reconcile the
         # colors, which mpl will have autoset to different values.
         # *** Does this screw up mpl's color set sequence for later lines?
-        if not kwargs.has_key('c') or kwargs.has_key('color'):
+        if 'c' not in kwargs or 'color' in kwargs:
             if len(lines) > 1:
                 c1 = lines[0].get_color()
                 for line in lines[1:]:

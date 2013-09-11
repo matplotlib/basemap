@@ -9,6 +9,4 @@ the regular mercator projection) or a longitude (as in the
 transverse mercator projection) can be an 
 arbitrary great circle (defined by specifying two points).
 
-.. literalinclude:: figures/omerc.py
-
-.. image:: figures/omerc.png
+.. plot:: users/figures/omerc.py

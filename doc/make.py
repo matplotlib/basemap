@@ -5,26 +5,10 @@ import os
 import shutil
 import sys
 
-def check_build():
-    build_dirs = ['build', 'build/doctrees', 'build/html', 'build/latex',
-                  '_static', '_templates']
-    for d in build_dirs:
-        try:
-            os.mkdir(d)
-        except OSError:
-            pass
-
-def figs():
-    os.system('cd users/figures/ && python make.py')
-
 def html():
-    check_build()
-    figs()
     os.system('sphinx-build -b html -d build/doctrees . build/html')
 
 def latex():
-    check_build()
-    figs()
     if sys.platform != 'win32':
         # LaTeX format.
         os.system('sphinx-build -b latex -d build/doctrees . build/latex')
@@ -47,12 +31,11 @@ def clean():
     shutil.rmtree('build')
 
 def all():
-    figs()
     html()
     latex()
 
 
-funcd = {'figs':figs,
+funcd = {
          'html':html,
          'latex':latex,
          'clean':clean,

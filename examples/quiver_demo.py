@@ -22,7 +22,7 @@ lons, lats = np.meshgrid(lons1, lats1)
 # plot vectors in geographical (lat/lon) coordinates.
 
 # north polar projection.
-m = Basemap(lon_0=-135,boundinglat=25,
+m = Basemap(lon_0=-135,boundinglat=25,round=True,
             resolution='c',area_thresh=10000.,projection='npstere')
 # create a figure, add an axes.
 fig=plt.figure(figsize=(8,8))
@@ -53,7 +53,7 @@ plt.title('Surface Winds Winds and Pressure (lat-lon grid)',y=1.075)
 # plot vectors in map projection coordinates.
 
 # north polar projection.
-m = Basemap(lon_0=-135,boundinglat=25,
+m = Basemap(lon_0=-135,boundinglat=25,round=True,
             resolution='c',area_thresh=10000.,projection='npstere')
 # transform from spherical to map projection coordinates (rotation
 # and interpolation).

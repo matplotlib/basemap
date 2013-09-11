@@ -10,10 +10,13 @@ nearest candidate source to each CR with geodesics.
 Created 2011-02-07 by Tom Loredo
 """
 
-from cStringIO import StringIO
+try:
+    from cStringIO import StringIO
+except:
+    from io import StringIO
 import numpy as np
 from numpy import cos, sin, arccos, deg2rad, rad2deg
-import csv, re
+import csv, re, sys
 
 import matplotlib.pyplot as plt
 from allskymap import AllSkyMap
@@ -110,7 +113,7 @@ for id, row in enumerate(AugerTable):
     # Make an integer ID from Year+Day (presumes none on same day!).
     src = Source(id, row[0], row[1], row[7], row[8], E=float(row[4]))
     CRs[src.id] = src
-print 'Parsed data for', len(CRs), 'UHE CRs...'
+sys.stdout.write('Parsed data for %s UHE CRs...\n'%len(CRs))
 
 # Partly fictitious candidate source locations.
 # src.id src.l_deg	src.b_deg	src.xProj	src.yProj
@@ -141,7 +144,7 @@ cands = {}
 for row in CandTable:
     src = Source(row[0], 0, 0, row[1], row[2])
     cands[src.id] = src
-print 'Parsed data for', len(cands), 'candidate sources...'
+sys.stdout.write('Parsed data for %s candidate sources...\n' % len(cands))
 
 # Calculate the separation matrix; track the closest candidate to each CR.
 sepn = {}

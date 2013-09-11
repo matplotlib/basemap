@@ -61,23 +61,22 @@ else:
 # proj4 and geos extensions.
 deps = glob.glob('src/*.c')
 deps.remove(os.path.join('src','_proj.c'))
-deps.remove(os.path.join('src','_geod.c'))
 deps.remove(os.path.join('src','_geoslib.c'))
 
 packages          = ['mpl_toolkits','mpl_toolkits.basemap']
+namespace_packages = ['mpl_toolkits']
 package_dirs       = {'':'lib'}
 extensions = [Extension("mpl_toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
-extensions.append(Extension("mpl_toolkits.basemap._geod",deps+['src/_geod.c'],include_dirs = ['src'],))
 # can't install _geoslib in mpl_toolkits.basemap namespace,
 # or Basemap objects won't be pickleable.
-if sys.platform == 'win32': 
+if sys.platform == 'win32':
 # don't use runtime_library_dirs on windows (workaround
 # for a distutils bug - http://bugs.python.org/issue2437).
     #extensions.append(Extension("mpl_toolkits.basemap._geoslib",['src/_geoslib.c'],
     extensions.append(Extension("_geoslib",['src/_geoslib.c'],
                                 library_dirs=geos_library_dirs,
                                 include_dirs=geos_include_dirs,
-                                libraries=['geos_c','geos']))
+                                libraries=['geos']))
 else:
     #extensions.append(Extension("mpl_toolkits.basemap._geoslib",['src/_geoslib.c'],
     extensions.append(Extension("_geoslib",['src/_geoslib.c'],
@@ -90,11 +89,12 @@ else:
 # create pyproj binary datum shift grid files.
 pathout =\
 os.path.join('lib',os.path.join('mpl_toolkits',os.path.join('basemap','data')))
-if sys.argv[1] != ['sdist','clean']:
+if sys.argv[1] not in ['sdist','clean']:
     cc = ccompiler.new_compiler()
+    sysconfig.get_config_vars()
     sysconfig.customize_compiler(cc)
     cc.set_include_dirs(['src'])
-    objects = cc.compile(['nad2bin.c'])
+    objects = cc.compile(['nad2bin.c', 'src/pj_malloc.c'])
     execname = 'nad2bin'
     cc.link_executable(objects, execname)
     llafiles = glob.glob('datumgrid/*.lla')
@@ -111,7 +111,7 @@ package_data = {'mpl_toolkits.basemap':datafiles}
 
 setup(
   name              = "basemap",
-  version           = "1.0.2",
+  version           = "1.0.7",
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data
@@ -126,14 +126,15 @@ setup(
   license           = "OSI Approved",
   keywords          = ["python","plotting","plots","graphs","charts","GIS","mapping","map projections","maps"],
   classifiers       = ["Development Status :: 5 - Production/Stable",
-                       "Intended Audience :: Science/Research", 
-                       "License :: OSI Approved", 
+                       "Intended Audience :: Science/Research",
+                       "License :: OSI Approved",
                        "Programming Language :: Python",
                        "Programming Language :: Python :: 3",
                        "Topic :: Scientific/Engineering :: Visualization",
                        "Topic :: Software Development :: Libraries :: Python Modules",
                        "Operating System :: OS Independent"],
   packages          = packages,
+  namespace_packages = namespace_packages,
   package_dir       = package_dirs,
   ext_modules       = extensions,
   cmdclass = {'build_py': build_py},

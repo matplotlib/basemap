@@ -3,8 +3,6 @@ from mpl_toolkits.basemap import Basemap, cm
 from netCDF4 import Dataset as NetCDFFile
 import numpy as np
 import matplotlib.pyplot as plt
-import copy
-from matplotlib import rcParams
 
 # plot rainfall from NWS using special precipitation
 # colormap used by the NWS, and included in basemap.
@@ -46,4 +44,4 @@ cbar = m.colorbar(cs,location='bottom',pad="5%")
 cbar.set_label('mm')
 # add title
 plt.title(prcpvar.long_name+' for period ending '+prcpvar.dateofdata)
-plt.savefig('plotprecip.png')
+plt.show()

@@ -1,3 +1,131 @@
+version 1.0.7 (git tag v1.0.7rel)
+---------------------------------
+* include mpl_toolkits/__init__.py, since the one installed by matplotlib
+  is now inaccessible inside an egg (in 1.4.x).  Make basemap a 'namespace
+  package'.  Issue 114.
+* fix drawmeridians so meridians reach edge of plot when map projection region
+  is *very* small (issue 113).
+* update pyproj (with fixes to geodesic calculations).
+* support for rotated pole transformation (projection = 'rotpole').
+* fix warpimage with projection = 'hammer' (issue 100).
+* fix tolerances for detecting jumps in meridians and parallels for
+  cyl and rotpole projections (issue 108).
+* fix clipping to map projection region done in contourf and contour methods
+  so it doesn't assume x and y are increasing (issue 110).
+
+version 1.0.6 (git tag v1.0.6rel)
+--------------------------------
+* fix drawcounties for Python 3.3.
+* update pyproj to version 1.9.3 (remove geographiclib python code, replace
+  with C code from proj4).
+* in contourf and contour, all points outside the map projection
+  region were masked. This meant that if a grid cell was partly inside and partly 
+  outside the map projection region, nothing was drawn, leaving a gap along the
+  edge of the map. This was particularly noticeable for very coarse resolution grids.
+  This commit only masks those points more than one grid length beyond the edge
+  of the map projection region.  Fixes issue 88.
+* allow for latitude values slightly greater than 90 to exist in shapefiles,
+  (by truncating to 90).  Still raise exception if latitude exceeds 90.01.
+* added 'wmsimage' method for displaying background image retrieved from
+  a OGC-compliant WMS server using OWSLib (http://pypi.python.org/OWSLib)
+  (requires using 'epsg' keyword to define projection).
+* fix drawing of meridians and parallels for very small map regions
+  (issue 79).
+* add module variable 'latlon_default' that can be used to switch 
+  default value of latlon kwarg to True so plotting methods can be 
+  passed lats and lons (geographic coordinatsin degrees) instead
+  of x,y (projection coordinates).
+* have drawcoastlines use line segments instead of coastline polygons, to
+  avoid 'thickening' of lines around edges of map.
+* added support for cylindrical equal area ('cea') projection.
+* add 'arcgisimage' method for displaying background image retrieved from
+  an ArcGIS server using the REST API
+  (requires using 'epsg' keyword to define projection).
+* add 'epsg' keyword for defining projections.
+* add 'ellps' keyword (rsphere ignored if ellps given).
+* fixed shiftdata method so it shifts mask along with data
+  (https://github.com/matplotlib/basemap/pull/68).
+* added linestyle keyword to all draw* methods.
+* added 'drawcounties' method (https://github.com/matplotlib/basemap/pull/65)
+  thanks to Patrick Marsh.
+* fix bug that caused plotting to fail when latlon keyword is 
+  explicitly set to False (https://github.com/matplotlib/basemap/pull/66).
+* add latlon keyword to plot and scatter methods
+  (https://github.com/matplotlib/basemap/pull/64).
+
+version 1.0.5 (git tag v1.0.5rel)
+---------------------------------
+* fix bug triggered when drawlsmask method called more than once.
+* fix error in contour method that caused a bogus mask to be applied
+  to the data (issue 58).
+* fix further corner cases with splitting of parallels that cross
+  the dateline (issue 40).
+* add latlon keyword to plotting methods.  If latlon=True, x and y
+  values are assumed to longitudes and latitudes in degrees.  The
+  data and longitudes are shifted to the map projection region (for
+  cylindrical and pseudo-cylindrical projections) using the shiftdata
+  method, and lons/lats are converted to map projection coords. Default
+  value is False. Addresses issue 54.  New example shiftdata.py added
+  to illustrate usage.
+* fix bluemarble and warpimage methods to account for change in orientation
+  of arrays returned to matplotlib's pil_to_array (issue 51)
+* fix glitch with drawing meridians and filling coastline polygons with 
+  omerc projection that includes pole.
+
+version 1.0.4 (git tag v1.0.4rel)
+--------------------------------
+* fix bug that caused Europe coastlines to disappear from some maps
+  (evident from nytolondon.py example).
+* fix splitting of parallels in conic projections that cross the dateline
+  (issue 40).
+
+version 1.0.3 (git tag v1.0.3rel)
+------------------------------
+* fix some more python 3 compatibility issues (all examples now
+  work with python 3.2).
+* added alpha keyword to fillcontinents (to set transparency).
+* update geos from 3.3.1 to 3.3.3.
+* upgrade proj4 source to version 4.8.0, pyproj to version 1.9.2.
+* add k_0 keyword for projection = 'tmerc' so UTM zones can be
+  created. Also can be used with 'lcc','omerc' and 'stere'.
+  Added "utmtest.py" example.
+* add streamplot method, along with streamplot_demo.py example.
+* add boundarylats, boundarylons Basemap attributes (arrays
+  describing map boundaries - useful for illustrating map projection
+  region on another map). Example illustrating usage
+  (make_inset.py) added.
+* update coastlines, rivers, political boundaries to GSHHS
+  2.2.0/GMT 4.5.7. The fillcontinents bug (filling the outside
+  instead of the inside of a coastline polygon) is now much
+  harder to trigger.    
+* add 'round' keyword keyword to Basemap.__init__ for pole-centered
+  projections to make them round (clipped at boundinglat) instead
+  of square.        
+* added hexbin method, along with hexbin_demo.py example.
+* drawmapboundary now uses axes bgcolor as default fill_color. If
+  no color fill wanted, set fill_color='none' (a string).
+* clip coastlines for nplaea,npaeqd,splaea,spaeqd in stereographic
+  coordinates to avoid S. America disappearing in some south polar
+  plots.
+* fix broken daynight terminator function.
+* added kav7 (Kavrayskiy VII) and eck4 (Eckert IV) projections
+  (https://github.com/matplotlib/basemap/issues/9).
+* update pyproj source from pyproj.googlecode.com. Includes
+  new more robust and accurate pure python code for geodesic computations
+  from geographiclib.
+* bug fixes for celestial projections, and non-standard sphere
+  radii (https://github.com/matplotlib/basemap/pull/6).
+* fix bug in drawparallels that results in 'KeyError' when drawing
+  parallels very close together (0.1 degrees).
+* fix constant in Robinson projection (update PJ_robin.c
+  from proj4 svn).
+* fix typo in setup.py (replace "!= ['sdist','clean']" with
+  "not in ['sdist','clean']").
+* make sure drawmeridians can handle wrap-around (so that
+  if projection is defined in -180 to 0 and user asks for
+  meridians from 180 to 360 to be drawn, it should work).
+  Only affects projections 'mill','gall','merc' and 'cyl'.
+
 version 1.0.2 (git tag v1.0.2)
            * update include geos from 3.2.0 to 3.3.1 so it compiles with gcc
              4.6.

@@ -23,12 +23,13 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc']
+extensions = ['sphinx.ext.autodoc',
 #extensions = ['matplotlib.sphinxext.mathmpl',
 #              'sphinx.ext.autodoc', 'matplotlib.sphinxext.only_directives',
-#              'matplotlib.sphinxext.plot_directive',
+              'matplotlib.sphinxext.plot_directive',
 #              'sphinx.ext.inheritance_diagram',
-#              'matplotlib.sphinxext.ipython_console_highlighting']
+#              'matplotlib.sphinxext.ipython_console_highlighting',
+             ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -47,9 +48,10 @@ copyright = '2011, Jeffrey Whitaker'
 # other places throughout the built documents.
 #
 # The short X.Y version.
-version = '1.0.2'
+from mpl_toolkits.basemap import __version__ as bmversion
+version = bmversion
 # The full version, including alpha/beta/rc tags.
-release = '1.0.2'
+release = bmversion
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -94,7 +96,7 @@ pygments_style = 'sphinx'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+#html_static_path = ['_static']
 
 # If nonempty, this is the file name suffix for generated HTML files.  The
 # default is ``".html"``.
@@ -164,3 +166,14 @@ latex_use_parts = True
 # Show both class-level docstring and __init__ docstring in class
 # documentation
 autoclass_content = 'both'
+
+
+
+
+################ plot directive configurations #####################
+plot_html_show_formats = False
+plot_include_source = True
+plot_rcparams = {'figure.figsize':[8, 6]}
+plot_formats = [('png', 100), # pngs for html building
+                ('pdf', 72), # pdfs for latex building
+               ]

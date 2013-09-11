@@ -1,7 +1,7 @@
 import sys
 import numpy
 
-__version__ = "0.2"
+__version__ = "0.3"
 
 # need some python C API functions for strings.
 cdef extern from "Python.h":
@@ -61,35 +61,41 @@ cdef extern from "geos_c.h":
     int GEOSCoordSeq_setY(GEOSCoordSeq* s,unsigned int idx, double val)
     int GEOSCoordSeq_getX(GEOSCoordSeq* s, unsigned int idx, double *val)
     int GEOSCoordSeq_getY(GEOSCoordSeq* s, unsigned int idx, double *val)
-    GEOSGeom  *GEOSGeom_createPoint(GEOSCoordSeq* s)
-    GEOSGeom  *GEOSGeom_createLineString(GEOSCoordSeq* s)
-    GEOSGeom  *GEOSGeom_createPolygon(GEOSGeom* shell, GEOSGeom** holes, unsigned int nholes)
-    GEOSGeom *GEOSGeom_createLinearRing(GEOSCoordSeq* s)
+    GEOSGeom *GEOSUnion(GEOSGeom* g1, GEOSGeom* g2)
+    GEOSGeom *GEOSUnaryUnion(GEOSGeom* g1)
+    GEOSGeom *GEOSEnvelope(GEOSGeom* g1)
+    GEOSGeom *GEOSConvexHull(GEOSGeom* g1)
+    GEOSGeom *GEOSGeom_createPoint(GEOSCoordSeq* s)
+    GEOSGeom *GEOSGeom_createLineString(GEOSCoordSeq* s)
+    GEOSGeom *GEOSGeom_createPolygon(GEOSGeom* shell, GEOSGeom** holes, unsigned int nholes)
+    GEOSGeom  *GEOSGeom_createLinearRing(GEOSCoordSeq* s)
     void GEOSGeom_destroy(GEOSGeom* g)
 # Topology operations - return NULL on exception.
     GEOSGeom *GEOSIntersection(GEOSGeom* g1, GEOSGeom* g2)
     GEOSGeom *GEOSSimplify(GEOSGeom* g1, double tolerance)
+    GEOSGeom *GEOSBuffer(GEOSGeom* g1, double width, int quadsegs)
+    GEOSGeom *GEOSTopologyPreserveSimplify(GEOSGeom* g1, double tolerance)
 # Binary/Unary predicate - return 2 on exception, 1 on true, 0 on false
-    char  GEOSIntersects(GEOSGeom* g1, GEOSGeom* g2)
-    char  GEOSWithin(GEOSGeom* g1, GEOSGeom* g2)
-    char  GEOSContains(GEOSGeom* g1, GEOSGeom* g2)
-    char  GEOSisEmpty(GEOSGeom* g1)
-    char  GEOSisValid(GEOSGeom* g1)
-    char  GEOSisSimple(GEOSGeom* g1)
-    char  GEOSisRing(GEOSGeom* g1)
+    char GEOSIntersects(GEOSGeom* g1, GEOSGeom* g2)
+    char GEOSWithin(GEOSGeom* g1, GEOSGeom* g2)
+    char GEOSContains(GEOSGeom* g1, GEOSGeom* g2)
+    char GEOSisEmpty(GEOSGeom* g1)
+    char GEOSisValid(GEOSGeom* g1)
+    char GEOSisSimple(GEOSGeom* g1)
+    char GEOSisRing(GEOSGeom* g1)
 #  Geometry info
-    char  *GEOSGeomType(GEOSGeom* g1)
+    char *GEOSGeomType(GEOSGeom* g1)
     int GEOSGeomTypeId(GEOSGeom* g1)
 # Functions: Return 0 on exception, 1 otherwise 
-    int  GEOSArea(GEOSGeom* g1, double *area)
-    int  GEOSLength(GEOSGeom* g1, double *length)
+    int GEOSArea(GEOSGeom* g1, double *area)
+    int GEOSLength(GEOSGeom* g1, double *length)
 # returns -1 on error and 1 for non-multi geoms
-    int  GEOSGetNumGeometries(GEOSGeom* g1)
+    int GEOSGetNumGeometries(GEOSGeom* g1)
 # Return NULL on exception, Geometry must be a Collection.
 # Returned object is a pointer to internal storage:
 # it must NOT be destroyed directly.
     GEOSGeom  *GEOSGetGeometryN(GEOSGeom* g, int n)
-    int  GEOSGetNumInteriorRings(GEOSGeom* g1)
+    int GEOSGetNumInteriorRings(GEOSGeom* g1)
 # Return NULL on exception, Geometry must be a Polygon.
 # Returned object is a pointer to internal storage:
 # it must NOT be destroyed directly.
@@ -100,13 +106,14 @@ cdef extern from "geos_c.h":
     int GEOSCoordSeq_getSize(GEOSCoordSeq *s, unsigned int *size)
 
 cdef void notice_h(char *fmt, char*msg):
-    format = PyBytes_FromString(fmt)
-    message = PyBytes_FromString(msg)
-    try:
-        warn_msg = format % message
-    except:
-        warn_msg = format
-    sys.stdout.write('GEOS_NOTICE: %s\n' % warn_msg)
+    pass
+    #format = PyBytes_FromString(fmt)
+    #message = PyBytes_FromString(msg)
+    #try:
+    #    warn_msg = format % message
+    #except:
+    #    warn_msg = format
+    #sys.stdout.write('GEOS_NOTICE: %s\n' % warn_msg)
 
 cdef void error_h(char *fmt, char*msg):
     format = PyBytes_FromString(fmt)
@@ -155,37 +162,95 @@ cdef class BaseGeometry:
         else:
             return False
 
+    def union(self, BaseGeometry geom):
+        cdef GEOSGeom *g1, *g2, *g3, *gout
+        cdef int numgeoms, i, typeid
+        g1 = self._geom
+        g2 = geom._geom
+        g3 = GEOSUnion(g1, g2)
+        typeid = GEOSGeomTypeId(g3)
+        if typeid == GEOS_POLYGON:
+            b = _get_coords(g3)
+            p = Polygon(b)
+        elif typeid == GEOS_LINESTRING:
+            b = _get_coords(g3)
+            p = LineString(b)
+        # for multi-geom structures, just return first one.
+        elif typeid == GEOS_MULTIPOLYGON:
+            numgeoms = GEOSGetNumGeometries(g3)
+            gout = GEOSGetGeometryN(g3, 0)
+            b = _get_coords(gout)
+            p = Polygon(b)
+        elif typeid == GEOS_MULTILINESTRING:
+            numgeoms = GEOSGetNumGeometries(g3)
+            gout = GEOSGetGeometryN(g3, 0)
+            b = _get_coords(gout)
+            p = LineString(b)
+        else:
+            type = PyBytes_FromString(GEOSGeomType(g3))
+            raise NotImplementedError("unions of type '%s' not yet implemented" % (type))
+        GEOSGeom_destroy(g3)
+        return p
+
     def simplify(self, tol):
         cdef GEOSGeom *g1, *g3, *gout
         cdef double tolerance
         cdef int numgeoms, i, typeid
-        if GEOS_VERSION_MAJOR > 2:
-            g1 = self._geom
-            tolerance = tol
-            g3 = GEOSSimplify(g1,tolerance)
-            typeid = GEOSGeomTypeId(g3)
-            if typeid == GEOS_POLYGON:
-                b = _get_coords(g3)
-                p = Polygon(b)
-            elif typeid == GEOS_LINESTRING:
-                b = _get_coords(g3)
-                p = LineString(b)
-            # for multi-geom structures, just return first one.
-            elif typeid == GEOS_MULTIPOLYGON:
-                numgeoms = GEOSGetNumGeometries(g3)
-                gout = GEOSGetGeometryN(g3, 0)
-                b = _get_coords(gout)
-                p = Polygon(b)
-            elif typeid == GEOS_MULTILINESTRING:
-                numgeoms = GEOSGetNumGeometries(g3)
-                gout = GEOSGetGeometryN(g3, 0)
-                b = _get_coords(gout)
-                p = LineString(b)
-            else:
-                type = PyBytes_FromString(GEOSGeomType(g3))
-                raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
-            GEOSGeom_destroy(g3)
-            return p
+        g1 = self._geom
+        tolerance = tol
+        g3 = GEOSSimplify(g1,tolerance)
+        typeid = GEOSGeomTypeId(g3)
+        if typeid == GEOS_POLYGON:
+            b = _get_coords(g3)
+            p = Polygon(b)
+        elif typeid == GEOS_LINESTRING:
+            b = _get_coords(g3)
+            p = LineString(b)
+        # for multi-geom structures, just return first one.
+        elif typeid == GEOS_MULTIPOLYGON:
+            numgeoms = GEOSGetNumGeometries(g3)
+            gout = GEOSGetGeometryN(g3, 0)
+            b = _get_coords(gout)
+            p = Polygon(b)
+        elif typeid == GEOS_MULTILINESTRING:
+            numgeoms = GEOSGetNumGeometries(g3)
+            gout = GEOSGetGeometryN(g3, 0)
+            b = _get_coords(gout)
+            p = LineString(b)
+        else:
+            type = PyBytes_FromString(GEOSGeomType(g3))
+            raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
+        GEOSGeom_destroy(g3)
+        return p
+
+    def fix(self):
+        cdef GEOSGeom *g1, *g3, *gout
+        cdef int numgeoms, i, typeid
+        g1 = self._geom
+        g3 = GEOSBuffer(g1, 0., 0)
+        typeid = GEOSGeomTypeId(g3)
+        if typeid == GEOS_POLYGON:
+            b = _get_coords(g3)
+            p = Polygon(b)
+        elif typeid == GEOS_LINESTRING:
+            b = _get_coords(g3)
+            p = LineString(b)
+        # for multi-geom structures, just return first one.
+        elif typeid == GEOS_MULTIPOLYGON:
+            numgeoms = GEOSGetNumGeometries(g3)
+            gout = GEOSGetGeometryN(g3, 0)
+            b = _get_coords(gout)
+            p = Polygon(b)
+        elif typeid == GEOS_MULTILINESTRING:
+            numgeoms = GEOSGetNumGeometries(g3)
+            gout = GEOSGetGeometryN(g3, 0)
+            b = _get_coords(gout)
+            p = LineString(b)
+        else:
+            type = PyBytes_FromString(GEOSGeomType(g3))
+            raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
+        GEOSGeom_destroy(g3)
+        return p
 
     def intersects(self, BaseGeometry geom):
         cdef GEOSGeom *g1, *g2
@@ -231,8 +296,10 @@ cdef class BaseGeometry:
                 p = LineString(b)
                 pout.append(p)
         else:
-            type = PyBytes_FromString(GEOSGeomType(g3))
-            raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
+            #type = PyBytes_FromString(GEOSGeomType(g3))
+            #raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
+            GEOSGeom_destroy(g3)
+            return []
         GEOSGeom_destroy(g3)
         return pout
 

@@ -8,4 +8,4 @@ m = Basemap(width=12000000,height=9000000,projection='lcc',
 # lakes=True means plot inland lakes with ocean color.
 m.drawlsmask(land_color='coral',ocean_color='aqua',lakes=True)
 plt.show()
-plt.savefig('background2.png')
+plt.show()
