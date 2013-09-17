@@ -703,13 +703,19 @@ class Basemap(object):
             if lat_2 is None:
                 projparams['lat_2'] = lat_1
             if not using_corners:
-                if width is None or height is None:
-                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
-                if lon_0 is None or lat_0 is None:
-                    raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
-                llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
-                self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
-                self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+                using_cornersxy = (None not in [llcrnrx,llcrnry,urcrnrx,urcrnry])
+                if using_cornersxy:
+                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecornersllur(llcrnrx,llcrnry,urcrnrx,urcrnry,**projparams)
+                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
+                else:
+                    if width is None or height is None:
+                        raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
+                    if lon_0 is None or lat_0 is None:
+                        raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
+                    llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
+                    self.llcrnrlon = llcrnrlon; self.llcrnrlat = llcrnrlat
+                    self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
         elif projection == 'stere':
             if k_0 is not None:
                 projparams['k_0']=k_0
@@ -5071,6 +5077,21 @@ def _choosecorners(width,height,**kwargs):
     p = pyproj.Proj(kwargs)
     urcrnrlon, urcrnrlat = p(0.5*width,0.5*height, inverse=True)
     llcrnrlon, llcrnrlat = p(-0.5*width,-0.5*height, inverse=True)
+    corners = llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat
+    # test for invalid projection points on output
+    if llcrnrlon > 1.e20 or urcrnrlon > 1.e20:
+        raise ValueError('width and/or height too large for this projection, try smaller values')
+    else:
+        return corners
+
+def _choosecornersllur(llcrnrx, llcrnry, urcrnrx, urcrnry,**kwargs):
+    """
+    private function to determine lat/lon values of projection region corners,
+    given width and height of projection region in meters.
+    """
+    p = pyproj.Proj(kwargs)
+    urcrnrlon, urcrnrlat = p(urcrnrx, urcrnry, inverse=True)
+    llcrnrlon, llcrnrlat = p(llcrnrx, llcrnry, inverse=True)
     corners = llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat
     # test for invalid projection points on output
     if llcrnrlon > 1.e20 or urcrnrlon > 1.e20:
