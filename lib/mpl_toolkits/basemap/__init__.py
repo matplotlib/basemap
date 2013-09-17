@@ -4379,8 +4379,8 @@ f=image" %\
                          to the styles provided by Generic Mapping Tools).
                          Default ``simple``.
         fontsize         for map scale annotations, default 9.
-        color            for map scale annotations, default black.
-        labelstype       ``simple`` (default) or ``fancy``.  For
+        fontcolor            for map scale annotations, default black.
+        labelstyle       ``simple`` (default) or ``fancy``.  For
                          ``fancy`` the map scale factor (ratio betwee
                          the actual distance and map projection distance
                          at lon0,lat0) and the value of lon0,lat0 are also
