@@ -23,7 +23,7 @@ if _matplotlib_version < _mpl_required_version:
     (_mpl_required_version,_matplotlib_version))
     raise ImportError(msg)
 from matplotlib import rcParams, is_interactive
-from matplotlib.collections import LineCollection
+from matplotlib.collections import LineCollection, PolyCollection
 from matplotlib.patches import Ellipse, Circle, Polygon, FancyArrowPatch
 from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox
@@ -1956,7 +1956,7 @@ class Basemap(object):
         return states
 
     def drawcounties(self,linewidth=0.1,linestyle='solid',color='k',antialiased=1,
-                     ax=None,zorder=None,drawbounds=False):
+                     facecolor='none',ax=None,zorder=None,drawbounds=False):
         """
         Draw county boundaries in US. The county boundary shapefile
         originates with the NOAA Coastal Geospatial Data Project
@@ -1970,6 +1970,7 @@ class Basemap(object):
         linewidth        county boundary line width (default 0.1)
         linestyle        coastline linestyle (default solid)
         color            county boundary line color (default black)
+        facecolor        fill color of county (default is no fill)
         antialiased      antialiasing switch for county boundaries
                          (default True).
         ax               axes instance (overrides default axes instance)
@@ -1985,10 +1986,11 @@ class Basemap(object):
         county_info = self.readshapefile(gis_file,'counties',\
                       default_encoding='latin-1',drawbounds=drawbounds)
         counties = [coords for coords in self.counties]
-        counties = LineCollection(counties)
+        counties = PolyCollection(counties)
         counties.set_linestyle(linestyle)
         counties.set_linewidth(linewidth)
-        counties.set_color(color)
+        counties.set_edgecolor(color)
+        counties.set_facecolor(facecolor)
         counties.set_label('counties')
         if zorder:
             counties.set_zorder(zorder)
