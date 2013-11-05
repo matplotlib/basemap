@@ -1,3 +1,8 @@
+version 1.0.8 (not yet released)
+--------------------------------
+* added 'facecolor' keyward argument to drawcounties() method; gives user
+  ability to fill counties with specified matplotlib color argument.
+
 version 1.0.7 (git tag v1.0.7rel)
 ---------------------------------
 * include mpl_toolkits/__init__.py, since the one installed by matplotlib
@@ -19,7 +24,7 @@ version 1.0.6 (git tag v1.0.6rel)
 * update pyproj to version 1.9.3 (remove geographiclib python code, replace
   with C code from proj4).
 * in contourf and contour, all points outside the map projection
-  region were masked. This meant that if a grid cell was partly inside and partly 
+  region were masked. This meant that if a grid cell was partly inside and partly
   outside the map projection region, nothing was drawn, leaving a gap along the
   edge of the map. This was particularly noticeable for very coarse resolution grids.
   This commit only masks those points more than one grid length beyond the edge
@@ -31,8 +36,8 @@ version 1.0.6 (git tag v1.0.6rel)
   (requires using 'epsg' keyword to define projection).
 * fix drawing of meridians and parallels for very small map regions
   (issue 79).
-* add module variable 'latlon_default' that can be used to switch 
-  default value of latlon kwarg to True so plotting methods can be 
+* add module variable 'latlon_default' that can be used to switch
+  default value of latlon kwarg to True so plotting methods can be
   passed lats and lons (geographic coordinatsin degrees) instead
   of x,y (projection coordinates).
 * have drawcoastlines use line segments instead of coastline polygons, to
@@ -48,7 +53,7 @@ version 1.0.6 (git tag v1.0.6rel)
 * added linestyle keyword to all draw* methods.
 * added 'drawcounties' method (https://github.com/matplotlib/basemap/pull/65)
   thanks to Patrick Marsh.
-* fix bug that caused plotting to fail when latlon keyword is 
+* fix bug that caused plotting to fail when latlon keyword is
   explicitly set to False (https://github.com/matplotlib/basemap/pull/66).
 * add latlon keyword to plot and scatter methods
   (https://github.com/matplotlib/basemap/pull/64).
@@ -69,7 +74,7 @@ version 1.0.5 (git tag v1.0.5rel)
   to illustrate usage.
 * fix bluemarble and warpimage methods to account for change in orientation
   of arrays returned to matplotlib's pil_to_array (issue 51)
-* fix glitch with drawing meridians and filling coastline polygons with 
+* fix glitch with drawing meridians and filling coastline polygons with
   omerc projection that includes pole.
 
 version 1.0.4 (git tag v1.0.4rel)
@@ -97,10 +102,10 @@ version 1.0.3 (git tag v1.0.3rel)
 * update coastlines, rivers, political boundaries to GSHHS
   2.2.0/GMT 4.5.7. The fillcontinents bug (filling the outside
   instead of the inside of a coastline polygon) is now much
-  harder to trigger.    
+  harder to trigger.
 * add 'round' keyword keyword to Basemap.__init__ for pole-centered
   projections to make them round (clipped at boundinglat) instead
-  of square.        
+  of square.
 * added hexbin method, along with hexbin_demo.py example.
 * drawmapboundary now uses axes bgcolor as default fill_color. If
   no color fill wanted, set fill_color='none' (a string).
@@ -141,7 +146,7 @@ version 1.0.2 (git tag v1.0.2)
            * change default land-sea mask (now derived directly from gshhs
              coastline data, default is 5 minutes use coastline resolution =
              'l'). Default for plotting lakes is now True.
-           * add etopo method (similar to bluemarble, but plots etopo 
+           * add etopo method (similar to bluemarble, but plots etopo
              relief image from www.ngdc.noaa.gov/mgg/global as a map background).
            * add shadedrelief method (similar to bluemarble, but plots shaded
              relief image from naturalearthdata.com as a map background).
@@ -169,7 +174,7 @@ version 1.0.1 (svn revision 8967)
              projection to proj4 src in src/PJ_hammer.c).
            * updated src/pj_mutex.c from proj4 svn to fix a threading bug
              on Windows.
-           * if you try to transform NaNs to/from map projection coords, 1.e30 
+           * if you try to transform NaNs to/from map projection coords, 1.e30
              is returned (previously, this caused a segfault for some
              projections).
            * NetCDFFile function deprecated, will be removed in 1.0.2.  Issue
@@ -207,15 +212,15 @@ version 1.0   (svn revision 8531)
              'daynight.py' example added to illustrate usage.
            * added lonmin, lonmax instance variables.
 version 0.99.4 (svn revision 7332)
-           * ax.frame replaced with ax.spines to maintain compatibility 
+           * ax.frame replaced with ax.spines to maintain compatibility
              with matplotlib spines support.
-           * added latmax kwarg to drawparallels and drawmeridians 
+           * added latmax kwarg to drawparallels and drawmeridians
              (patch from Chris Murphy).
            * added new example "plotmap_shaded.py" (shaded relief plot).
            * added new example "plothighsandlows.py".
            * add fix_aspect kwarg to Basemap.__init__, when False
              axes.set_aspect is set to 'auto' instead of default 'equal'.
-             Can be used to make plot fill whole plot region, even if the 
+             Can be used to make plot fill whole plot region, even if the
              plot region doesn't match the aspect ratio of the map region.
            * added date2index function, updated netcdftime to 0.7.1.
            * added maskoceans function.
@@ -224,20 +229,20 @@ version 0.99.4 (svn revision 7332)
              one of the shapefile components can't be found.
 version 0.99.3 (svn revision 6780)
            * if upper right/lower left corners nor width/height given for
-             azimuthal equidistant ('aeqd') the whole world is drawn in 
+             azimuthal equidistant ('aeqd') the whole world is drawn in
              a circle (only works for perfect spheres, not ellipsoids).
            * have setup.py check for already installed pyshapelib (just
              like it does for httplib2 and pydap).
            * Basemap will now look for it's data in BASEMAPDATA.
-             If that env var not set, it will fall back to it's 
+             If that env var not set, it will fall back to it's
              default location.
            * if readshapefile is called with drawbounds=True, a
              LineCollection object is appended to the returned tuple.
            * make sure drawmapscale method returns a list of objects that
              can be iterated over to remove them from the plot.
            * fillcontinents was returning just last Polygon instance.
-             Now returns a list of all Polygon instances.  
-           * bluemarble/warpimage:  pass kwargs to imshow, 
+             Now returns a list of all Polygon instances.
+           * bluemarble/warpimage:  pass kwargs to imshow,
              return Image instance.
 version 0.99.2 (svn revision 6541)
            * fix drawlsmask method so that it works for cylindrical
@@ -269,7 +274,7 @@ version 0.99.2 (svn revision 6541)
            * added "proj4string" Basemap instance variable.
            * testgdal example now uses gdal to read topo data from a raster
              DEM file and ogr to read state boundaries from a shape file.
-           * warpimage method can now handle gray-scale images, and 
+           * warpimage method can now handle gray-scale images, and
              images specifed as URLs (for example, the Blue Marble images from
              http://earthobservatory.nasa.gov/Newsroom/BlueMarble/BlueMarble_monthlies.html).
 version 0.99.1 (svn revision 5961)
@@ -295,7 +300,7 @@ version 0.99 (svn revision 5344)
            * drawcoastlines, drawcountries and friends now have
              PatchCollection return values.
            * make sure '_nolabel_' set on coastlines, countries, states,
-             rivers, parallels and meridians so they are not included in 
+             rivers, parallels and meridians so they are not included in
              a legend.
            * added drawmapscale method to create a map scale bar similar
              to that available with the GMT's psbasemap.
@@ -332,7 +337,7 @@ version 0.9.9 (svn revision 4799)
            * now automatically draws figure if running in
             interactive mode (so draw() does not need
             to be called explicitly in ipython).
-           * added num2date and date2num functions, which use 
+           * added num2date and date2num functions, which use
              included netcdftime module.
 version 0.9.8 (svn revision 4526)
            * fixes for filling continents in orthographic projection.
@@ -341,12 +346,12 @@ version 0.9.8 (svn revision 4526)
              of variable data.
            * NetCDFFile will try to use PyNIO if it installed
              and the file cannot be read with pupynere.  This
-             allows GRIB1,GRIB2,HDF4 and HDFEOS2 files to 
+             allows GRIB1,GRIB2,HDF4 and HDFEOS2 files to
              be read.
-           * 'fmt' kwarg to drawparallels and drawmeridians can 
+           * 'fmt' kwarg to drawparallels and drawmeridians can
              now be a custom string formatting function (example
              customticks.py demonstrates usage).
-           * remove 'linestyle' kwarg from drawparallels and 
+           * remove 'linestyle' kwarg from drawparallels and
              drawmeridians (it never did anything anyway since
              it was overridden by the 'dashes' kwarg).
            * modify NetCDFFile to use dap module to read remote
@@ -363,7 +368,7 @@ version 0.9.7 (svn revision 4422)
              projections.
            * added lake_color keyword to fillcontinents.
            * fixed a bug in the 'tmerc' projection.
-           * added pure python NetCDFFile reader from Roberto De Almeida 
+           * added pure python NetCDFFile reader from Roberto De Almeida
              to basemap namespace
              (from matplotlib.toolkits.basemap import NetCDFFile).
            * added support for full-resolution boundaries (will be
@@ -392,11 +397,11 @@ version 0.9.6 (svn revision 3888)
              llcrnrlon,urcrnrlat,urcrnrlon keywords for 'ortho' and 'geos'.
              (illustrated by examples/geos_demo_2.py).
            * Added "labelstyle" keyword to drawparallels and drawmeridians.
-             If set to "+/-", labels are given prefixed by "+" or "-", 
-             instead of suffixed with "N","S","E" or "W". Useful for 
+             If set to "+/-", labels are given prefixed by "+" or "-",
+             instead of suffixed with "N","S","E" or "W". Useful for
              astronomical plots, where the is no such thing and north, south
              east or west.
-           * Added support for geostationary satellite projection 
+           * Added support for geostationary satellite projection
              (projection='geos'), contributed by Scott Sinclair.
              Illustrated by examples/geos_demo.py.
            * added a bunch of extra colormaps (mostly from GMT),
@@ -405,7 +410,7 @@ version 0.9.6 (svn revision 3888)
              import cm'
            * orthographic projection only defined for perfect sphere - raise
              an error if user tries to use an ellipsoid.
-           * print a warning in contour, contourf in situations that may 
+           * print a warning in contour, contourf in situations that may
              result in a screwy looking plot (x not monotonically increasing,
              because the data wraps around the edge of the plot). The warning
              suggests using the shiftgrid function to recenter the data on
@@ -425,7 +430,7 @@ version 0.9.6 (svn revision 3888)
            * fixed examples to conform to 'one show() per script' rule.
            * intermediate coastlines now installed by default.
              basemap-data is no longer a separate package (couldn't
-             figure out how to manage the egg).  If the 'h' res 
+             figure out how to manage the egg).  If the 'h' res
              boundaries are needed, the data files must be manually
              put in place by the user. BASEMAP_DATA_PATH env var
              no longer used.
@@ -467,9 +472,9 @@ version 0.9.6 (svn revision 3888)
            Now maps will always have the correct aspect ratio.
            * if resolution keyword is set to None when Basemap
            instance is created, no boundary data sets are needed
-           (methods to draw boundaries, like drawcoastlines, will 
+           (methods to draw boundaries, like drawcoastlines, will
            raise an exception).
-           * update to proj4 module - renamed pyproj to avoid 
+           * update to proj4 module - renamed pyproj to avoid
            conflicts with proj4 module from CDAT.
            * createfigure method deprecated, since maps
            will now automatically have the correct aspect ratio.
@@ -478,7 +483,7 @@ version 0.9.6 (svn revision 3888)
            versions of the stereographic, lambert azimuthal equal area
            and azimuthal equidistant projections that don't require
            you specify the lat/lon values of the lower-left and upper-right
-           corners.  
+           corners.
            * fixed bugs in plot, scatter and mapboundary methods for
            miller, cylindrical and mercator projections.
            * 'crude' and 'low' resolution boundary datasets now installed
@@ -499,7 +504,7 @@ version 0.9.6 (svn revision 3888)
 20060203:  version 0.8.1:  Huge speedups for numpy
            (no significant differences for Numeric and numarray).
 20060114:  version 0.8: added numpy compatibility
-20051118:  version 0.7.2.1: 
+20051118:  version 0.7.2.1:
            There was a problem running examples that read pickle files.
            The pickle files were created with numarray, and the
            data would not be read correctly using Numeric.  Fixed so
@@ -512,7 +517,7 @@ version 0.9.6 (svn revision 3888)
            by contour and contourf.
            * Axes frame turned off by default for non-rectangular
            projections ('ortho','robin' and 'moll').
-           * Added createfigure method to create a figure with the 
+           * Added createfigure method to create a figure with the
            same aspect ratio as the map using pylab.figure.
            * Resets subplot.params defaults so that default
            axes rectangle will have both a width and height of 0.9
