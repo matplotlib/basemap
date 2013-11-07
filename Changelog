@@ -1,5 +1,7 @@
 version 1.0.8 (not yet released)
 --------------------------------
+* update shapefile.py to version 1.2.0 from pyshp.googlecode.com. Add back
+  in modification clobbered in upgrade to version 1.1.7 (issue 30).
 * added 'facecolor' keyward argument to drawcounties() method; gives user
   ability to fill counties with specified matplotlib color argument.
 
