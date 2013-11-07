@@ -235,7 +235,11 @@ pj_ellps={
 "sphere":       {'a':6370997.0,'b':6370997.0,'description':"Normal Sphere"},
 }
 
-pyproj_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
+if 'BASEMAPDATA' in os.environ:
+    pyproj_datadir = os.environ['BASEMAPDATA']
+else:
+    pyproj_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
+
 if not os.path.isdir(pyproj_datadir):
     msg="proj data directory not found. Expecting it at: %s"%pyproj_datadir
     raise IOError(msg)
