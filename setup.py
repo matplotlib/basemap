@@ -119,8 +119,13 @@ setup(
   on map projections with coastlines, lakes, rivers and political boundaries.
   See http://www.scipy.org/wikis/topical_software/Maps for an
   example of what it can do.""",
-  url               = "http://matplotlib.sourceforge.net/toolkits.html",
+  url               = "http://matplotlib.org/basemap",
+  # sourceforge download
   download_url      = "https://downloads.sourceforge.net/project/matplotlib/matplotlib-toolkits/basemap-{0}/basemap-{0}.tar.gz".format(__version__),
+  # github download tag
+  #download_url      = "https://github.com/matplotlib/basemap/tarball/v{0}rel".format(__version__),
+  # github download master
+  #download_url      = "https://github.com/matplotlib/basemap/tarball/master",
   author            = "Jeff Whitaker",
   author_email      = "jeffrey.s.whitaker@noaa.gov",
   platforms         = ["any"],
