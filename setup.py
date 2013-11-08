@@ -109,9 +109,10 @@ datafiles = glob.glob(os.path.join(pathout,'*'))
 datafiles = [os.path.join('data',os.path.basename(f)) for f in datafiles]
 package_data = {'mpl_toolkits.basemap':datafiles}
 
+__version__ = "1.0.8"
 setup(
   name              = "basemap",
-  version           = "1.0.8",
+  version           = __version__,
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data
@@ -119,7 +120,7 @@ setup(
   See http://www.scipy.org/wikis/topical_software/Maps for an
   example of what it can do.""",
   url               = "http://matplotlib.sourceforge.net/toolkits.html",
-  download_url      = "http://sourceforge.net/projects/matplotlib",
+  download_url      = "https://downloads.sourceforge.net/project/matplotlib/matplotlib-toolkits/basemap-{0}/basemap-{0}.tar.gz".format(__version__),
   author            = "Jeff Whitaker",
   author_email      = "jeffrey.s.whitaker@noaa.gov",
   platforms         = ["any"],
