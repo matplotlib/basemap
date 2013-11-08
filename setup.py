@@ -1,3 +1,6 @@
+# This needs to be the very first thing to use distribute
+from distribute_setup import use_setuptools
+use_setuptools()
 import sys, glob, os, numpy, subprocess
 major, minor1, minor2, s, tmp = sys.version_info
 if major==2 and minor1<4 or major<2:
@@ -109,6 +112,8 @@ datafiles = glob.glob(os.path.join(pathout,'*'))
 datafiles = [os.path.join('data',os.path.basename(f)) for f in datafiles]
 package_data = {'mpl_toolkits.basemap':datafiles}
 
+install_requires=['matplotlib']
+setup_requires=['matplotlib']
 __version__ = "1.0.8"
 setup(
   name              = "basemap",
@@ -144,5 +149,12 @@ setup(
   package_dir       = package_dirs,
   ext_modules       = extensions,
   cmdclass = {'build_py': build_py},
+  # List third-party Python packages that we require
+  install_requires=install_requires,
+  setup_requires=setup_requires,
+  # basemap has C/C++ extensions, so it's not zip safe.
+  # Telling setuptools this prevents it from doing an automatic
+  # check for zip safety.
+  zip_safe=False,
   package_data = package_data
   )
