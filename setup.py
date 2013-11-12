@@ -1,6 +1,6 @@
 # This needs to be the very first thing to use distribute
-from distribute_setup import use_setuptools
-use_setuptools()
+#from distribute_setup import use_setuptools
+#use_setuptools()
 import sys, glob, os, numpy, subprocess
 major, minor1, minor2, s, tmp = sys.version_info
 if major==2 and minor1<4 or major<2:
