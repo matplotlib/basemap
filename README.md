@@ -106,30 +106,8 @@ or require an internet connection), execute 'python run_all.py'.
 
 Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
 
+Henry Hammond <henryhhammond92@gmail.com>
 
 ##Thanks
 
-to
-
-John Hunter
-Andrew Straw
-Eric Firing
-Rob Hetland
-Scott Sinclair
-Ivan Lima
-Erik Andersen
-Michael Hearne
-Jesper Larsen
-Ryan May
-David Huard
-Mauro Cavalcanti
-Chris Murphy
-Pierre Gerard-Marchant
-Christoph Gohlke
-Eric Bruning
-Stephane Raynaud
-Tom Loredo
-Patrick Marsh
-Phil Elson
-
-for valuable contributions.
+Special thanks to John Hunter, Andrew Straw, Eric Firing, Rob Hetland, Scott Sinclair, Ivan Lima, Erik Andersen, Michael Hearne, Jesper Larsen, Ryan May, David Huard, Mauro Cavalcanti, Chris Murphy, Pierre Gerard-Marchant, Christoph Gohlke, Eric Bruning, Stephane Raynaud, Tom Loredo, Patrick Marsh, and Phil Elson for valuable contributions.
