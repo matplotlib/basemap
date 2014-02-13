@@ -382,6 +382,8 @@ _Basemap_init_doc = """
                   projections.
  lon_0            central meridian (x-axis origin) - used by all
                   projections.
+ o_lat_p          latitude of rotated pole (only used by 'rotpole')
+ o_lon_p          longitude of rotated pole (only used by 'rotpole')
  boundinglat      bounding latitude for pole-centered projections
                   (npstere,spstere,nplaea,splaea,npaeqd,spaeqd).
                   These projections are square regions centered
@@ -3344,9 +3346,9 @@ class Basemap(object):
 
         Other \**kwargs passed on to matplotlib.pyplot.pcolor (or tricolor if
         ``tri=True``).
-        
+
         Note: (taken from matplotlib.pyplot.pcolor documentation)
-        Ideally the dimensions of x and y should be one greater than those of data; 
+        Ideally the dimensions of x and y should be one greater than those of data;
         if the dimensions are the same, then the last row and column of data will be ignored.
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
@@ -3408,7 +3410,7 @@ class Basemap(object):
         """
         Make a pseudo-color plot over the map
         (see matplotlib.pyplot.pcolormesh documentation).
-               
+
         If ``latlon`` keyword is set to True, x,y are intrepreted as
         longitude and latitude in degrees.  Data and longitudes are
         automatically shifted to match map projection region for cylindrical
@@ -3419,9 +3421,9 @@ class Basemap(object):
         Extra keyword ``ax`` can be used to override the default axis instance.
 
         Other \**kwargs passed on to matplotlib.pyplot.pcolormesh.
-        
+
         Note: (taken from matplotlib.pyplot.pcolor documentation)
-        Ideally the dimensions of x and y should be one greater than those of data; 
+        Ideally the dimensions of x and y should be one greater than those of data;
         if the dimensions are the same, then the last row and column of data will be ignored.
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
