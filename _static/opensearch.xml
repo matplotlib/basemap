@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
   <ShortName>Basemap Matplotlib Toolkit</ShortName>
-  <Description>Search Basemap Matplotlib Toolkit 1.0.7 documentation</Description>
+  <Description>Search Basemap Matplotlib Toolkit 1.0.8 documentation</Description>
   <InputEncoding>utf-8</InputEncoding>
   <Url type="text/html" method="get"
        template="False/search.html?q={searchTerms}&amp;check_keywords=yes&amp;area=default"/>
-  <LongName>Basemap Matplotlib Toolkit 1.0.7 documentation</LongName>
+  <LongName>Basemap Matplotlib Toolkit 1.0.8 documentation</LongName>
   
 </OpenSearchDescription>

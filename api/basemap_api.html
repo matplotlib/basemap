@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>matplotlib basemap toolkit &mdash; Basemap Matplotlib Toolkit 1.0.7 documentation</title>
+    <title>matplotlib basemap toolkit &mdash; Basemap Matplotlib Toolkit 1.0.8 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.7',
+        VERSION:     '1.0.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,9 +24,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Basemap Matplotlib Toolkit 1.0.7 documentation"
+          title="Search within Basemap Matplotlib Toolkit 1.0.8 documentation"
           href="../_static/opensearch.xml"/>
-    <link rel="top" title="Basemap Matplotlib Toolkit 1.0.7 documentation" href="../index.html" />
+    <link rel="top" title="Basemap Matplotlib Toolkit 1.0.8 documentation" href="../index.html" />
     <link rel="up" title="The Matplotlib Basemap Toolkit API" href="index.html" />
     <link rel="prev" title="The Matplotlib Basemap Toolkit API" href="index.html" /> 
   </head>
@@ -45,7 +43,7 @@
         <li class="right" >
           <a href="index.html" title="The Matplotlib Basemap Toolkit API"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.7 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.8 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">The Matplotlib Basemap Toolkit API</a> &raquo;</li> 
       </ul>
     </div>  
@@ -432,6 +430,12 @@ projections.</td>
 <td>central meridian (x-axis origin) - used by all
 projections.</td>
 </tr>
+<tr class="row-odd"><td>o_lat_p</td>
+<td>latitude of rotated pole (only used by &#8216;rotpole&#8217;)</td>
+</tr>
+<tr class="row-even"><td>o_lon_p</td>
+<td>longitude of rotated pole (only used by &#8216;rotpole&#8217;)</td>
+</tr>
 <tr class="row-odd"><td>boundinglat</td>
 <td>bounding latitude for pole-centered projections
 (npstere,spstere,nplaea,splaea,npaeqd,spaeqd).
@@ -786,7 +790,7 @@ matplotlib.patches.LineCollections).</td>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.drawcounties">
-<tt class="descname">drawcounties</tt><big>(</big><em>linewidth=0.1</em>, <em>linestyle='solid'</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>ax=None</em>, <em>zorder=None</em>, <em>drawbounds=False</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawcounties" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">drawcounties</tt><big>(</big><em>linewidth=0.1</em>, <em>linestyle='solid'</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>facecolor='none'</em>, <em>ax=None</em>, <em>zorder=None</em>, <em>drawbounds=False</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawcounties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw county boundaries in US. The county boundary shapefile
 originates with the NOAA Coastal Geospatial Data Project
 (<a class="reference external" href="http://coastalgeospatial.noaa.gov/data_gis.html">http://coastalgeospatial.noaa.gov/data_gis.html</a>).</p>
@@ -810,14 +814,17 @@ originates with the NOAA Coastal Geospatial Data Project
 <tr class="row-even"><td>color</td>
 <td>county boundary line color (default black)</td>
 </tr>
-<tr class="row-odd"><td>antialiased</td>
+<tr class="row-odd"><td>facecolor</td>
+<td>fill color of county (default is no fill)</td>
+</tr>
+<tr class="row-even"><td>antialiased</td>
 <td>antialiasing switch for county boundaries
 (default True).</td>
 </tr>
-<tr class="row-even"><td>ax</td>
+<tr class="row-odd"><td>ax</td>
 <td>axes instance (overrides default axes instance)</td>
 </tr>
-<tr class="row-odd"><td>zorder</td>
+<tr class="row-even"><td>zorder</td>
 <td>sets the zorder for the county boundaries (if not
 specified, uses default zorder for
 matplotlib.patches.LineCollections).</td>
@@ -1039,10 +1046,10 @@ Default <tt class="docutils literal"><span class="pre">simple</span></tt>.</td>
 <tr class="row-even"><td>fontsize</td>
 <td>for map scale annotations, default 9.</td>
 </tr>
-<tr class="row-odd"><td>color</td>
+<tr class="row-odd"><td>fontcolor</td>
 <td>for map scale annotations, default black.</td>
 </tr>
-<tr class="row-even"><td>labelstype</td>
+<tr class="row-even"><td>labelstyle</td>
 <td><tt class="docutils literal"><span class="pre">simple</span></tt> (default) or <tt class="docutils literal"><span class="pre">fancy</span></tt>.  For
 <tt class="docutils literal"><span class="pre">fancy</span></tt> the map scale factor (ratio betwee
 the actual distance and map projection distance
@@ -1485,6 +1492,9 @@ As a result, those values will not be plotted.</p>
 <p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
 <p>Other **kwargs passed on to matplotlib.pyplot.pcolor (or tricolor if
 <tt class="docutils literal"><span class="pre">tri=True</span></tt>).</p>
+<p>Note: (taken from matplotlib.pyplot.pcolor documentation)
+Ideally the dimensions of x and y should be one greater than those of data;
+if the dimensions are the same, then the last row and column of data will be ignored.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1500,6 +1510,9 @@ projection coordinates. If <tt class="docutils literal"><span class="pre">latlon
 are assumed to be map projection coordinates.</p>
 <p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
 <p>Other **kwargs passed on to matplotlib.pyplot.pcolormesh.</p>
+<p>Note: (taken from matplotlib.pyplot.pcolor documentation)
+Ideally the dimensions of x and y should be one greater than those of data;
+if the dimensions are the same, then the last row and column of data will be ignored.</p>
 </dd></dl>
 
 <dl class="method">
@@ -2247,14 +2260,14 @@ longitude. Default True.</td>
         <li class="right" >
           <a href="index.html" title="The Matplotlib Basemap Toolkit API"
              >previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.7 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.8 documentation</a> &raquo;</li>
           <li><a href="index.html" >The Matplotlib Basemap Toolkit API</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Aug 12, 2013.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on Feb 13, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>
 </html>
