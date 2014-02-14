@@ -65,7 +65,8 @@ meridians = np.arange(-180,180,30)
 m.drawmeridians(meridians,labels=[1,1,0,1])
 plt.title('Great Circle from New York to London (Gnomonic)')
 sys.stdout.write('plotting Great Circle from New York to London (Gnomonic)\n')
-plt.show()
+
+fig=plt.figure()
 
 
 # Example of Great Circles which exit and reenter the map
