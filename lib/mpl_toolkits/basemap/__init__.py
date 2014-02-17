@@ -5087,7 +5087,7 @@ def shiftgrid(lon0,datain,lonsin,start=True,cyclic=360.0):
     dataout[...,i0_shift:] = datain[...,start_idx:i0+start_idx]
     return dataout,lonsout
 
-def addcyclic(a,axis=-1):
+def addcyclic(arr,axis=-1):
     """
     ``arrout, lonsout = addcyclic((arrin, lonsin),axis=-1)``
     adds cyclic (wraparound) points in longitude to one or several arrays, 
@@ -5100,10 +5100,10 @@ def addcyclic(a,axis=-1):
         idx = np.append(np.arange(aT.shape[0]),0)
         return np.swapaxes(aT[idx],axis,0)
     # process eventual list/tuple of arrays
-    if isinstance(a,list) or isinstance(a,tuple):
-        return map(_addcyclic,a)
+    if isinstance(arr,list) or isinstance(arr,tuple):
+        return map(_addcyclic,arr)
     else:
-        return _addcyclic(a)
+        return _addcyclic(arr)
 
 def _choosecorners(width,height,**kwargs):
     """
