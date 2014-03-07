@@ -108,4 +108,4 @@ Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
 
 ##Thanks
 
-Special thanks to John Hunter, Andrew Straw, Eric Firing, Rob Hetland, Scott Sinclair, Ivan Lima, Erik Andersen, Michael Hearne, Jesper Larsen, Ryan May, David Huard, Mauro Cavalcanti, Chris Murphy, Pierre Gerard-Marchant, Christoph Gohlke, Eric Bruning, Stephane Raynaud, Tom Loredo, Patrick Marsh, Jonas Bluethgen, Phil Elson, and Henry Hammond for valuable contributions.
+Special thanks to John Hunter, Andrew Straw, Eric Firing, Rob Hetland, Scott Sinclair, Ivan Lima, Erik Andersen, Michael Hearne, Jesper Larsen, Ryan May, David Huard, Mauro Cavalcanti, Chris Murphy, Pierre Gerard-Marchant, Christoph Gohlke, Eric Bruning, Stephane Raynaud, Tom Loredo, Patrick Marsh, Phil Elson, and Henry Hammond for valuable contributions.

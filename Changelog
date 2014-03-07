@@ -6,7 +6,6 @@ version 1.0.8 (not yet released)
   ability to fill counties with specified matplotlib color argument.
 * fix drawgreatcircle bug so that lines exiting and reentering a projection
   region don't draw horizontally across the map. 
-* change addcyclic so that it works for ND-arrays with an optional 'axis' parameter.
 
 version 1.0.7 (git tag v1.0.7rel)
 ---------------------------------

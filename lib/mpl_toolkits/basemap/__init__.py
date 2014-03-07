@@ -5087,25 +5087,28 @@ def shiftgrid(lon0,datain,lonsin,start=True,cyclic=360.0):
     dataout[...,i0_shift:] = datain[...,start_idx:i0+start_idx]
     return dataout,lonsout
 
-def addcyclic(*arr,**axiskwarg):
+def addcyclic(arrin,lonsin):
     """
-    ``arrout, lonsout = addcyclic(arrin,lonsin,axis=-1)``
-    adds cyclic (wraparound) points in longitude to one or several arrays, 
-    (e.g. ``arrin`` and ``lonsin``),
-    where ``axis`` sets the dimension longitude is in (optional, default: right-most).
+    ``arrout, lonsout = addcyclic(arrin, lonsin)``
+    adds cyclic (wraparound) point in longitude to ``arrin`` and ``lonsin``,
+    assumes longitude is the right-most dimension of ``arrin``.
     """
-    # get axis keyword argument (default: -1)
-    axis = axiskwarg.get('axis',-1)
-    # define function for a single grid array
-    def _addcyclic(a):
-        aT = np.swapaxes(a,0,axis)
-        idx = np.append(np.arange(aT.shape[0]),0)
-        return np.swapaxes(aT[idx],axis,0)
-    # process array(s)
-    if len(arr) == 1:
-        return _addcyclic(arr[0])
+    nlons = arrin.shape[-1]
+    newshape = list(arrin.shape)
+    newshape[-1] += 1
+    if ma.isMA(arrin):
+        arrout  = ma.zeros(newshape,arrin.dtype)
     else:
-        return map(_addcyclic,arr)
+        arrout  = np.zeros(newshape,arrin.dtype)
+    arrout[...,0:nlons] = arrin[:]
+    arrout[...,nlons] = arrin[...,0]
+    if ma.isMA(lonsin):
+        lonsout = ma.zeros(nlons+1,lonsin.dtype)
+    else:
+        lonsout = np.zeros(nlons+1,lonsin.dtype)
+    lonsout[0:nlons] = lonsin[:]
+    lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
+    return arrout,lonsout
 
 def _choosecorners(width,height,**kwargs):
     """
