@@ -1404,7 +1404,7 @@ class Basemap(object):
                         xd = (bx[1:]-bx[0:-1])**2
                         yd = (by[1:]-by[0:-1])**2
                         dist = np.sqrt(xd+yd)
-                        split = dist > 0.5*(self.xmax-self.xmin)
+                        split = dist > 0.1*(self.xmax-self.xmin)
                         if np.sum(split) and self.projection not in _cylproj:
                             ind = (np.compress(split,np.squeeze(split*np.indices(xd.shape)))+1).tolist()
                             iprev = 0
@@ -2891,10 +2891,6 @@ class Basemap(object):
                          method of Basemap instance.
         ==============   =======================================================
 
-        .. note::
-         Cannot handle situations in which the great circle intersects
-         the edge of the map projection domain, and then re-enters the domain.
-
         Returns a matplotlib.lines.Line2D object.
         """
         # use great circle formula for a perfect sphere.
@@ -2908,7 +2904,34 @@ class Basemap(object):
             lats.append(lat)
         lons.append(lon2); lats.append(lat2)
         x, y = self(lons, lats)
-        return self.plot(x,y,**kwargs)
+
+        # Correct wrap around effect of great circles
+
+        # get points
+        p = self.plot(x,y,**kwargs)[0].get_path()
+
+        # since we know the difference between any two points, we can use this to find wrap arounds on the plot
+        max_dist = 1000*del_s*2
+
+        # calculate distances and compare with max allowable distance
+        dists = np.abs(np.diff(p.vertices[:,0]))
+        cuts = np.where( dists > max_dist )[0]
+
+        # if there are any cut points, cut them and begin again at the next point
+        for i,k in enumerate(cuts):
+            # vertex to cut at
+            cut_point = cuts[i]
+
+            # create new vertices with a nan inbetween and set those as the path's vertices
+            verts = np.concatenate(
+                                       [p.vertices[:cut_point, :], 
+                                        [[np.nan, np.nan]], 
+                                        p.vertices[cut_point+1:, :]]
+                                       )
+            p.codes = None
+            p.vertices = verts
+
+        return p
 
     def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1,masked=False):
         """
@@ -4058,10 +4081,16 @@ class Basemap(object):
 
         returns a matplotlib.image.AxesImage instance.
         """
+
+        # fix PIL import on some versions of OSX and scipy
         try:
             from PIL import Image
         except ImportError:
-            raise ImportError('warpimage method requires PIL (http://www.pythonware.com/products/pil)')
+            try:
+                import Image      
+            except ImportError:
+                raise ImportError('warpimage method requires PIL (http://www.pythonware.com/products/pil)')
+
         from matplotlib.image import pil_to_array
         if self.celestial:
             msg='warpimage does not work in celestial coordinates'
