@@ -1,6 +1,3 @@
-# This needs to be the very first thing to use distribute
-#from distribute_setup import use_setuptools
-#use_setuptools()
 import sys, glob, os, numpy, subprocess
 major, minor1, minor2, s, tmp = sys.version_info
 if major==2 and minor1<4 or major<2:
@@ -86,7 +83,7 @@ else:
                                 library_dirs=geos_library_dirs,
                                 runtime_library_dirs=geos_library_dirs,
                                 include_dirs=geos_include_dirs,
-                                libraries=['geos_c','geos']))
+                                libraries=['geos_c']))
 
 # Specify all the required mpl data
 # create pyproj binary datum shift grid files.
@@ -112,8 +109,6 @@ datafiles = glob.glob(os.path.join(pathout,'*'))
 datafiles = [os.path.join('data',os.path.basename(f)) for f in datafiles]
 package_data = {'mpl_toolkits.basemap':datafiles}
 
-install_requires=['matplotlib']
-setup_requires=['matplotlib']
 __version__ = "1.0.8"
 setup(
   name              = "basemap",
@@ -124,13 +119,8 @@ setup(
   on map projections with coastlines, lakes, rivers and political boundaries.
   See http://www.scipy.org/wikis/topical_software/Maps for an
   example of what it can do.""",
-  url               = "http://matplotlib.org/basemap",
-  # sourceforge download
+  url               = "http://matplotlib.sourceforge.net/toolkits.html",
   download_url      = "https://downloads.sourceforge.net/project/matplotlib/matplotlib-toolkits/basemap-{0}/basemap-{0}.tar.gz".format(__version__),
-  # github download tag
-  #download_url      = "https://github.com/matplotlib/basemap/tarball/v{0}rel".format(__version__),
-  # github download master
-  #download_url      = "https://github.com/matplotlib/basemap/tarball/master",
   author            = "Jeff Whitaker",
   author_email      = "jeffrey.s.whitaker@noaa.gov",
   platforms         = ["any"],
@@ -149,12 +139,5 @@ setup(
   package_dir       = package_dirs,
   ext_modules       = extensions,
   cmdclass = {'build_py': build_py},
-  # List third-party Python packages that we require
-  install_requires=install_requires,
-  setup_requires=setup_requires,
-  # basemap has C/C++ extensions, so it's not zip safe.
-  # Telling setuptools this prevents it from doing an automatic
-  # check for zip safety.
-  zip_safe=False,
   package_data = package_data
   )
