@@ -29,9 +29,13 @@ else:
 # set GEOS_dir manually here if automatic detection fails.
     GEOS_dir = None
 
+user_home = os.path.expanduser('~')
+geos_search_locations = [user_home, os.path.join(user_home, 'local'),
+                         '/usr', '/usr/local', '/sw', '/opt', '/opt/local']
+
 if GEOS_dir is None:
     # if GEOS_dir not set, check a few standard locations.
-    GEOS_dirs = [os.path.expanduser('~'),'/usr','/usr/local','/sw','/opt','/opt/local']
+    GEOS_dirs = geos_search_locations
     for direc in GEOS_dirs:
         geos_version = checkversion(direc)
         sys.stdout.write('checking for GEOS lib in %s ....\n' % direc)
@@ -47,13 +51,16 @@ else:
 
 if GEOS_dir is None:
     raise SystemExit("""
-Can't find geos library . Please set the
-environment variable GEOS_DIR to point to the location
+Can't find geos library in standard locations ('%s').
+Please install the corresponding packages using your
+systems software management system (e.g. for Debian Linux do:
+'apt-get install libgeos-3.3.3 libgeos-c1 libgeos-dev' and/or
+set the environment variable GEOS_DIR to point to the location
 where geos is installed (for example, if geos_c.h
 is in /usr/local/include, and libgeos_c is in /usr/local/lib,
 set GEOS_DIR to /usr/local), or edit the setup.py script
 manually and set the variable GEOS_dir (right after the line
-that says "set GEOS_dir manually here".""")
+that says "set GEOS_dir manually here".""" % "', '".join(geos_search_locations))
 else:
     geos_include_dirs=[os.path.join(GEOS_dir,'include'),numpy.get_include()]
     geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
