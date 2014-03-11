@@ -83,7 +83,7 @@ else:
                                 library_dirs=geos_library_dirs,
                                 runtime_library_dirs=geos_library_dirs,
                                 include_dirs=geos_include_dirs,
-                                libraries=['geos_c','geos']))
+                                libraries=['geos_c']))
 
 # Specify all the required mpl data
 # create pyproj binary datum shift grid files.

@@ -7,6 +7,11 @@ version 1.0.8 (not yet released)
   ability to fill counties with specified matplotlib color argument.
 * fix drawgreatcircle bug so that lines exiting and reentering a projection
   region don't draw horizontally across the map. 
+* on non-windows platforms, only link against libgeos C API (and not against
+  C++ API anymore; issue 140). This is recommended by the authors/maintainers
+  of GEOS.  Also, this means that on e.g. Debian Linux, basemap can now be
+  installed from source simply using 'pip install basemap' when the libgeos
+  packages are installed globally using the package management.
 
 version 1.0.7 (git tag v1.0.7rel)
 ---------------------------------
