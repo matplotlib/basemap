@@ -5093,7 +5093,7 @@ def addcyclic(arrin,lonsin,cyclic_length=360):
     adds cyclic (wraparound) point in longitude to ``arrin`` and ``lonsin``,
     assumes longitude is the right-most dimension of ``arrin``.
     If length of cyclic dimension is not 360 (degrees), set with kwarg
-    ``cyclic_dimension``.
+    ``cyclic_length``.
     """
     nlons = arrin.shape[-1]
     newshape = list(arrin.shape)
