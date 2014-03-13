@@ -2220,7 +2220,7 @@ class Basemap(object):
     def drawparallels(self,circles,color='k',textcolor='k',linewidth=1.,zorder=None, \
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None, \
                       fmt='%g',xoffset=None,yoffset=None,ax=None,latmax=None,
-                      **kwargs):
+                      **text_kwargs):
         """
         Draw and label parallels (latitude lines) for values (in degrees)
         given in the sequence ``circles``.
@@ -2260,7 +2260,7 @@ class Basemap(object):
         ax               axes instance (overrides default axes instance)
         latmax           absolute value of latitude to which meridians are drawn
                          (default is 80).
-        \**kwargs        additional keyword arguments controlling text
+        \**text_kwargs   additional keyword arguments controlling text
                          for labels that are passed on to
                          the text method of the axes instance (see
                          matplotlib.pyplot.text documentation).
@@ -2272,6 +2272,7 @@ class Basemap(object):
         associated with each parallel. Deleting an item from the
         dictionary removes the corresponding parallel from the plot.
         """
+        text_kwargs['color']=textcolor # pass textcolor kwarg on to ax.text
         # if celestial=True, don't use "N" and "S" labels.
         if labelstyle is None and self.celestial:
             labelstyle="+/-"
@@ -2447,17 +2448,13 @@ class Basemap(object):
                             xlab = xlab-xoffset
                             if self.projection in _pseudocyl:
                                 if lat>0:
-                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',\
-                                             verticalalignment='bottom',color=textcolor,**kwargs)
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='bottom',**text_kwargs)
                                 elif lat<0:
-                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',\
-                                             verticalalignment='top',color=textcolor,**kwargs)
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='top',**text_kwargs)
                                 else:
-                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',\
-                                             verticalalignment='center',color=textcolor,**kwargs)
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**text_kwargs)
                             else:
-                               t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',\
-                                         verticalalignment='center',color=textcolor,**kwargs)
+                               t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**text_kwargs)
                         elif side == 'r':
                             if self.projection in _pseudocyl:
                                 if self.celestial:
@@ -2469,23 +2466,17 @@ class Basemap(object):
                             xlab = xlab+xoffset
                             if self.projection in _pseudocyl:
                                 if lat>0:
-                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='bottom',\
-                                            color=textcolor,**kwargs)
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='bottom',**text_kwargs)
                                 elif lat<0:
-                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='top',\
-                                            color=textcolor,**kwargs)
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='top',**text_kwargs)
                                 else:
-                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',\
-                                             color=textcolor,**kwargs)
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',**text_kwargs)
                             else:
-                               t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',\
-                                         color=textcolor,**kwargs)
+                               t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',**text_kwargs)
                         elif side == 'b':
-                            t = ax.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',\
-                                        color=textcolor,verticalalignment='top',**kwargs)
+                            t = ax.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',**text_kwargs)
                         else:
-                            t = ax.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',\
-                                        color=textcolor,verticalalignment='bottom',**kwargs)
+                            t = ax.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',**text_kwargs)
                         if t is not None: linecolls[lat][1].append(t)
 
         # set axes limits to fit map region.
@@ -2515,7 +2506,7 @@ class Basemap(object):
     def drawmeridians(self,meridians,color='k',textcolor='k',linewidth=1., zorder=None,\
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
                       fmt='%g',xoffset=None,yoffset=None,ax=None,latmax=None,
-                      **kwargs):
+                      **text_kwargs):
         """
         Draw and label meridians (longitude lines) for values (in degrees)
         given in the sequence ``meridians``.
@@ -2555,7 +2546,7 @@ class Basemap(object):
         ax               axes instance (overrides default axes instance)
         latmax           absolute value of latitude to which meridians are drawn
                          (default is 80).
-        \**kwargs        additional keyword arguments controlling text
+        \**text_kwargs   additional keyword arguments controlling text
                          for labels that are passed on to
                          the text method of the axes instance (see
                          matplotlib.pyplot.text documentation).
@@ -2567,6 +2558,7 @@ class Basemap(object):
         associated with each meridian. Deleting an item from the
         dictionary removes the correpsonding meridian from the plot.
         """
+        text_kwargs['color']=textcolor # pass textcolor kwarg on to ax.text
         # for cylindrical projections, try to handle wraparound (i.e. if
         # projection is defined in -180 to 0 and user asks for meridians from
         # 180 to 360 to be drawn, it should work)
@@ -2730,17 +2722,13 @@ class Basemap(object):
                     if n >= 0:
                         t = None
                         if side == 'l':
-                            t = ax.text(self.llcrnrx-xoffset,yy[n],lonlab,color=textcolor,\
-                                        horizontalalignment='right',verticalalignment='center',**kwargs)
+                            t = ax.text(self.llcrnrx-xoffset,yy[n],lonlab,horizontalalignment='right',verticalalignment='center',**text_kwargs)
                         elif side == 'r':
-                            t = ax.text(self.urcrnrx+xoffset,yy[n],lonlab,color=textcolor,\
-                                        horizontalalignment='left',verticalalignment='center',**kwargs)
+                            t = ax.text(self.urcrnrx+xoffset,yy[n],lonlab,horizontalalignment='left',verticalalignment='center',**text_kwargs)
                         elif side == 'b':
-                            t = ax.text(xx[n],self.llcrnry-yoffset,lonlab,color=textcolor,\
-                                        horizontalalignment='center',verticalalignment='top',**kwargs)
+                            t = ax.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',**text_kwargs)
                         else:
-                            t = ax.text(xx[n],self.urcrnry+yoffset,lonlab,color=textcolor,\
-                                        horizontalalignment='center',verticalalignment='bottom',**kwargs)
+                            t = ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',**text_kwargs)
 
                         if t is not None: linecolls[lon][1].append(t)
         # set axes limits to fit map region.
@@ -2829,8 +2817,7 @@ class Basemap(object):
                     if labels[1] and not labels[0] and x >=  0.5*(self.xmin+self.xmax)-xoffset: continue
                     if labels[2] and not labels[3] and y >=  0.5*(self.ymin+self.ymax)-yoffset: continue
                     if labels[3] and not labels[2] and y <=  0.5*(self.ymin+self.ymax)+yoffset: continue
-                t = ax.text(x,y,lonlab,color=textcolor,\
-                            horizontalalignment=horizalign,verticalalignment=vertalign,**kwargs)
+                t=ax.text(x,y,lonlab,horizontalalignment=horizalign,verticalalignment=vertalign,**text_kwargs)
                 meridict[merid][1].append(t)
         return meridict
 
