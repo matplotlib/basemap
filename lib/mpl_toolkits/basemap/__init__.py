@@ -2217,7 +2217,7 @@ class Basemap(object):
         self.__dict__[name+'_info']=attributes
         return info
 
-    def drawparallels(self,circles,color='k',linewidth=1.,zorder=None, \
+    def drawparallels(self,circles,color='k',textcolor='k',linewidth=1.,zorder=None, \
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None, \
                       fmt='%g',xoffset=None,yoffset=None,ax=None,latmax=None,
                       **kwargs):
@@ -2231,6 +2231,7 @@ class Basemap(object):
         Keyword          Description
         ==============   ====================================================
         color            color to draw parallels (default black).
+        textcolor        color to draw labels (default black).
         linewidth        line width for parallels (default 1.)
         zorder           sets the zorder for parallels (if not specified,
                          uses default zorder for matplotlib.lines.Line2D
@@ -2446,13 +2447,17 @@ class Basemap(object):
                             xlab = xlab-xoffset
                             if self.projection in _pseudocyl:
                                 if lat>0:
-                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='bottom',**kwargs)
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',\
+                                             verticalalignment='bottom',color=textcolor,**kwargs)
                                 elif lat<0:
-                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='top',**kwargs)
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',\
+                                             verticalalignment='top',color=textcolor,**kwargs)
                                 else:
-                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**kwargs)
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',\
+                                             verticalalignment='center',color=textcolor,**kwargs)
                             else:
-                               t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',verticalalignment='center',**kwargs)
+                               t=ax.text(xlab,yy[n],latlab,horizontalalignment='right',\
+                                         verticalalignment='center',color=textcolor,**kwargs)
                         elif side == 'r':
                             if self.projection in _pseudocyl:
                                 if self.celestial:
@@ -2464,17 +2469,23 @@ class Basemap(object):
                             xlab = xlab+xoffset
                             if self.projection in _pseudocyl:
                                 if lat>0:
-                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='bottom',**kwargs)
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='bottom',\
+                                            color=textcolor,**kwargs)
                                 elif lat<0:
-                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='top',**kwargs)
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='top',\
+                                            color=textcolor,**kwargs)
                                 else:
-                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',**kwargs)
+                                   t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',\
+                                             color=textcolor,**kwargs)
                             else:
-                               t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',**kwargs)
+                               t=ax.text(xlab,yy[n],latlab,horizontalalignment='left',verticalalignment='center',\
+                                         color=textcolor,**kwargs)
                         elif side == 'b':
-                            t = ax.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',verticalalignment='top',**kwargs)
+                            t = ax.text(xx[n],self.llcrnry-yoffset,latlab,horizontalalignment='center',\
+                                        color=textcolor,verticalalignment='top',**kwargs)
                         else:
-                            t = ax.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
+                            t = ax.text(xx[n],self.urcrnry+yoffset,latlab,horizontalalignment='center',\
+                                        color=textcolor,verticalalignment='bottom',**kwargs)
                         if t is not None: linecolls[lat][1].append(t)
 
         # set axes limits to fit map region.
@@ -2501,7 +2512,7 @@ class Basemap(object):
                     l.set_clip_path(c)
         return pardict
 
-    def drawmeridians(self,meridians,color='k',linewidth=1., zorder=None,\
+    def drawmeridians(self,meridians,color='k',textcolor='k',linewidth=1., zorder=None,\
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
                       fmt='%g',xoffset=None,yoffset=None,ax=None,latmax=None,
                       **kwargs):
@@ -2515,6 +2526,7 @@ class Basemap(object):
         Keyword          Description
         ==============   ====================================================
         color            color to draw meridians (default black).
+        textcolor        color to draw labels (default black).
         linewidth        line width for meridians (default 1.)
         zorder           sets the zorder for meridians (if not specified,
                          uses default zorder for matplotlib.lines.Line2D
@@ -2718,13 +2730,17 @@ class Basemap(object):
                     if n >= 0:
                         t = None
                         if side == 'l':
-                            t = ax.text(self.llcrnrx-xoffset,yy[n],lonlab,horizontalalignment='right',verticalalignment='center',**kwargs)
+                            t = ax.text(self.llcrnrx-xoffset,yy[n],lonlab,color=textcolor,\
+                                        horizontalalignment='right',verticalalignment='center',**kwargs)
                         elif side == 'r':
-                            t = ax.text(self.urcrnrx+xoffset,yy[n],lonlab,horizontalalignment='left',verticalalignment='center',**kwargs)
+                            t = ax.text(self.urcrnrx+xoffset,yy[n],lonlab,color=textcolor,\
+                                        horizontalalignment='left',verticalalignment='center',**kwargs)
                         elif side == 'b':
-                            t = ax.text(xx[n],self.llcrnry-yoffset,lonlab,horizontalalignment='center',verticalalignment='top',**kwargs)
+                            t = ax.text(xx[n],self.llcrnry-yoffset,lonlab,color=textcolor,\
+                                        horizontalalignment='center',verticalalignment='top',**kwargs)
                         else:
-                            t = ax.text(xx[n],self.urcrnry+yoffset,lonlab,horizontalalignment='center',verticalalignment='bottom',**kwargs)
+                            t = ax.text(xx[n],self.urcrnry+yoffset,lonlab,color=textcolor,\
+                                        horizontalalignment='center',verticalalignment='bottom',**kwargs)
 
                         if t is not None: linecolls[lon][1].append(t)
         # set axes limits to fit map region.
@@ -2813,8 +2829,8 @@ class Basemap(object):
                     if labels[1] and not labels[0] and x >=  0.5*(self.xmin+self.xmax)-xoffset: continue
                     if labels[2] and not labels[3] and y >=  0.5*(self.ymin+self.ymax)-yoffset: continue
                     if labels[3] and not labels[2] and y <=  0.5*(self.ymin+self.ymax)+yoffset: continue
-                t =\
-                ax.text(x,y,lonlab,horizontalalignment=horizalign,verticalalignment=vertalign,**kwargs)
+                t = ax.text(x,y,lonlab,color=textcolor,\
+                            horizontalalignment=horizalign,verticalalignment=vertalign,**kwargs)
                 meridict[merid][1].append(t)
         return meridict
 
