@@ -2924,8 +2924,8 @@ class Basemap(object):
 
             # create new vertices with a nan inbetween and set those as the path's vertices
             verts = np.concatenate(
-                                       [p.vertices[:cut_point, :], 
-                                        [[np.nan, np.nan]], 
+                                       [p.vertices[:cut_point, :],
+                                        [[np.nan, np.nan]],
                                         p.vertices[cut_point+1:, :]]
                                        )
             p.codes = None
@@ -4087,7 +4087,7 @@ class Basemap(object):
             from PIL import Image
         except ImportError:
             try:
-                import Image      
+                import Image
             except ImportError:
                 raise ImportError('warpimage method requires PIL (http://www.pythonware.com/products/pil)')
 
@@ -5087,11 +5087,13 @@ def shiftgrid(lon0,datain,lonsin,start=True,cyclic=360.0):
     dataout[...,i0_shift:] = datain[...,start_idx:i0+start_idx]
     return dataout,lonsout
 
-def addcyclic(arrin,lonsin):
+def addcyclic(arrin,lonsin,cyclic_length=360):
     """
     ``arrout, lonsout = addcyclic(arrin, lonsin)``
     adds cyclic (wraparound) point in longitude to ``arrin`` and ``lonsin``,
     assumes longitude is the right-most dimension of ``arrin``.
+    If length of cyclic dimension is not 360 (degrees), set with kwarg
+    ``cyclic_length``.
     """
     nlons = arrin.shape[-1]
     newshape = list(arrin.shape)
@@ -5107,8 +5109,10 @@ def addcyclic(arrin,lonsin):
     else:
         lonsout = np.zeros(nlons+1,lonsin.dtype)
     lonsout[0:nlons] = lonsin[:]
-    lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
-    return arrout,lonsout
+    # this assumes a regular grid (in longitude)
+    #lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
+    # the version below is valid for irregular grids.
+    lonsout[nlons] = lonsin[-1] + cyclic_length % (lonsin[-1]-lonsin[0])
 
 def _choosecorners(width,height,**kwargs):
     """
