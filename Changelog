@@ -1,7 +1,7 @@
 version 1.0.8 (not yet released)
 --------------------------------
 * don't assume grid is regular with adding cyclic point in addcyclic. 
-  New kwarg 'cyclic_dimension' added, with a default of 360.  Partially
+  New kwarg 'cyclic' added, with a default of 360.  Partially
   addresses issue 139.
 * fix for coastline drawing glitch (issue 123).
 * update shapefile.py to version 1.2.0 from pyshp.googlecode.com. Add back
