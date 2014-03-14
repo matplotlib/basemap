@@ -2924,8 +2924,8 @@ class Basemap(object):
 
             # create new vertices with a nan inbetween and set those as the path's vertices
             verts = np.concatenate(
-                                       [p.vertices[:cut_point, :], 
-                                        [[np.nan, np.nan]], 
+                                       [p.vertices[:cut_point, :],
+                                        [[np.nan, np.nan]],
                                         p.vertices[cut_point+1:, :]]
                                        )
             p.codes = None
@@ -4087,7 +4087,7 @@ class Basemap(object):
             from PIL import Image
         except ImportError:
             try:
-                import Image      
+                import Image
             except ImportError:
                 raise ImportError('warpimage method requires PIL (http://www.pythonware.com/products/pil)')
 
