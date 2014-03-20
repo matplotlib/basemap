@@ -5087,32 +5087,49 @@ def shiftgrid(lon0,datain,lonsin,start=True,cyclic=360.0):
     dataout[...,i0_shift:] = datain[...,start_idx:i0+start_idx]
     return dataout,lonsout
 
-def addcyclic(arrin,lonsin,cyclic_length=360):
+def addcyclic(*arr,**kwargs):
     """
-    ``arrout, lonsout = addcyclic(arrin, lonsin)``
-    adds cyclic (wraparound) point in longitude to ``arrin`` and ``lonsin``,
-    assumes longitude is the right-most dimension of ``arrin``.
-    If length of cyclic dimension is not 360 (degrees), set with kwarg
-    ``cyclic_length``.
+    Adds cyclic (wraparound) points in longitude to one or several arrays, 
+    the last array being longitudes in degrees. E.g.
+
+   ``data1out, data2out, lonsout = addcyclic(data1,data2,lons)``
+
+    ==============   ====================================================
+    Keywords         Description
+    ==============   ====================================================
+    axis             the dimension longitude is in (default right-most)
+    cyclic           width of periodic domain (default 360)
+    ==============   ====================================================
     """
-    nlons = arrin.shape[-1]
-    newshape = list(arrin.shape)
-    newshape[-1] += 1
-    if ma.isMA(arrin):
-        arrout  = ma.zeros(newshape,arrin.dtype)
+    # get (default) keyword arguments
+    axis = kwargs.get('axis',-1)
+    cyclic = kwargs.get('cyclic',360)
+    # define functions
+    def _addcyclic(a):
+        """addcyclic function for a single data array"""
+        npsel = np.ma if np.ma.is_masked(a) else np
+        slicer = [slice(None)] * np.ndim(a)
+        try:
+            slicer[axis] = slice(0, 1)
+        except IndexError:
+            raise ValueError('The specified axis does not correspond to an '
+                    'array dimension.')
+        return npsel.concatenate((a,a[slicer]),axis=axis)
+    def _addcyclic_lon(a):
+        """addcyclic function for a single longitude array"""
+        # select the right numpy functions
+        npsel = np.ma if np.ma.is_masked(a) else np
+        # get cyclic longitudes
+        clon = (np.take(a,[0],axis=axis) 
+                + cyclic * np.sign(np.diff(np.take(a,[0,-1],axis=axis),axis=axis)))
+        # ensure the values do not exceed cyclic
+        clonmod = npsel.where(clon<=cyclic,clon,np.mod(clon,cyclic))
+        return npsel.concatenate((a,clonmod),axis=axis)
+    # process array(s)
+    if len(arr) == 1:
+        return _addcyclic_lon(arr[-1])
     else:
-        arrout  = np.zeros(newshape,arrin.dtype)
-    arrout[...,0:nlons] = arrin[:]
-    arrout[...,nlons] = arrin[...,0]
-    if ma.isMA(lonsin):
-        lonsout = ma.zeros(nlons+1,lonsin.dtype)
-    else:
-        lonsout = np.zeros(nlons+1,lonsin.dtype)
-    lonsout[0:nlons] = lonsin[:]
-    # this assumes a regular grid (in longitude)
-    #lonsout[nlons]  = lonsin[-1] + lonsin[1]-lonsin[0]
-    # the version below is valid for irregular grids.
-    lonsout[nlons] = lonsin[-1] + cyclic_length % (lonsin[-1]-lonsin[0])
+        return map(_addcyclic,arr[:-1]) + [_addcyclic_lon(arr[-1])]
 
 def _choosecorners(width,height,**kwargs):
     """
