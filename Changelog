@@ -1,5 +1,6 @@
 version 1.0.8 (not yet released)
 --------------------------------
+* add 'textcolor' kwarg to drawmeridians and drawparallels (issue 145).
 * don't assume grid is regular when adding cyclic point in addcyclic. 
   New kwargs 'axis' and 'cyclic' added.  More than one array
   can be handled at a time, as long as the last one is longitude. Issue 139.
