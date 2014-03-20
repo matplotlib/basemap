@@ -5089,15 +5089,16 @@ def shiftgrid(lon0,datain,lonsin,start=True,cyclic=360.0):
 
 def addcyclic(*arr,**kwargs):
     """
-    Adds cyclic (wraparound) points in longitude to one or several arrays, 
-    the last array being longitudes in degrees. E.g.
+    Adds cyclic (wraparound) points in longitude to one or several arrays,
+    the last array being longitudes in degrees. e.g.
 
    ``data1out, data2out, lonsout = addcyclic(data1,data2,lons)``
 
     ==============   ====================================================
     Keywords         Description
     ==============   ====================================================
-    axis             the dimension longitude is in (default right-most)
+    axis             the dimension representing longitude (default -1,
+                     or right-most)
     cyclic           width of periodic domain (default 360)
     ==============   ====================================================
     """
@@ -5120,7 +5121,7 @@ def addcyclic(*arr,**kwargs):
         # select the right numpy functions
         npsel = np.ma if np.ma.is_masked(a) else np
         # get cyclic longitudes
-        clon = (np.take(a,[0],axis=axis) 
+        clon = (np.take(a,[0],axis=axis)
                 + cyclic * np.sign(np.diff(np.take(a,[0,-1],axis=axis),axis=axis)))
         # ensure the values do not exceed cyclic
         clonmod = npsel.where(clon<=cyclic,clon,np.mod(clon,cyclic))

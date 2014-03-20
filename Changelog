@@ -1,8 +1,8 @@
 version 1.0.8 (not yet released)
 --------------------------------
-* don't assume grid is regular with adding cyclic point in addcyclic. 
-  New kwarg 'cyclic' added, with a default of 360.  Partially
-  addresses issue 139.
+* don't assume grid is regular when adding cyclic point in addcyclic. 
+  New kwargs 'axis' and 'cyclic' added.  More than one array
+  can be handled at a time, as long as the last one is longitude. Issue 139.
 * fix for coastline drawing glitch (issue 123).
 * update shapefile.py to version 1.2.0 from pyshp.googlecode.com. Add back
   in modification clobbered in upgrade to version 1.1.7 (issue 30).
