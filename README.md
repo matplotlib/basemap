@@ -14,7 +14,7 @@ using matplotlib.
 * The GEOS (Geometry Engine - Open Source) library (version 3.1.1 or higher).
 Source code is included in the geos-3.3.3 directory.
 
-* PIL (http://pythonware.com/products/pil) is optional (only
+* [PIL](http://pythonware.com/products/pil) is optional (only
 needed for Basemap warpimage and bluemarble methods).
 
 * On linux, if your python was installed via a package management system, make
@@ -24,10 +24,10 @@ C extensions.
 
 ##Copyright
 
-source code from proj.4 (http://proj.maptools.org) is included in the
+source code from [proj.4](http://trac.osgeo.org/proj/) is included in the
 'src' directory under the terms given in LICENSE_proj4.
 
-source code from geographiclib (http://pypi.python.org/pypi/geographiclib)
+source code from [geographiclib](http://pypi.python.org/pypi/geographiclib)
 is included in the 'lib/mpl_toolkits/basemap' directory under the terms 
 given in LICENSE_geographiclib.
 
@@ -39,12 +39,10 @@ shapefile.py from pyshp.googlecode.com is included under the terms given
 in LICENSE_pyshp.
 
 the land-sea mask, coastline, lake, river and political boundary data are extracted
-from datasets provided with the Generic Mapping Tools
-(http://gmt.soest.hawaii.edu)
+from datasets provided with the [Generic Mapping Tools (GMT)](http://gmt.soest.hawaii.edu)
 and are included under the terms given in LICENSE_data.
 
-Everything else (including src/_proj.pyx,,
-src/_proj.c, src/_geos.c, and src/_geos.pyx):
+Everything else (including src/_proj.pyx, src/_proj.c, src/_geos.c, and src/_geos.pyx):
 
 copyright (c) 2011 by Jeffrey Whitaker.
 
