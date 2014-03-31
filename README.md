@@ -27,10 +27,6 @@ C extensions.
 source code from [proj.4](http://trac.osgeo.org/proj/) is included in the
 'src' directory under the terms given in LICENSE_proj4.
 
-source code from [geographiclib](http://pypi.python.org/pypi/geographiclib)
-is included in the 'lib/mpl_toolkits/basemap' directory under the terms 
-given in LICENSE_geographiclib.
-
 source code for the GEOS library is
 included in the 'geos-3.3.3' directory under the terms given in
 LICENSE_geos.
