@@ -1,5 +1,5 @@
 import numpy as np
-from . import pyproj # import local version
+from . import pyproj
 import math
 from matplotlib.cbook import dedent
 
