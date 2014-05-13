@@ -47,7 +47,7 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
 NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. """
 
-from mpl_toolkits.basemap import _proj
+from . import _proj # import local version
 __version__ =  _proj.__version__
 set_datapath =  _proj.set_datapath
 from array import array
