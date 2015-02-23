@@ -8,7 +8,6 @@ major, minor1, minor2, s, tmp = sys.version_info
 if major == 2 and minor1 < 4 or major < 2:
     raise SystemExit("""matplotlib and the basemap toolkit require Python 2.4 or later.""")
 from numpy.distutils.core import setup, Extension
-from distutils.util import convert_path
 from distutils import ccompiler, sysconfig
 try:
     from distutils.command.build_py import build_py_2to3 as build_py
