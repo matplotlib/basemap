@@ -1,4 +1,9 @@
-import sys, glob, os, numpy, subprocess
+import glob
+import numpy
+import os
+import subprocess
+import sys
+
 major, minor1, minor2, s, tmp = sys.version_info
 if major==2 and minor1<4 or major<2:
     raise SystemExit("""matplotlib and the basemap toolkit require Python 2.4 or later.""")
