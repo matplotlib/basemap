@@ -4,7 +4,6 @@ major, minor1, minor2, s, tmp = sys.version_info
 if major==2 and minor1<4 or major<2:
     raise SystemExit("""matplotlib and the basemap toolkit require Python 2.4 or later.""")
 
-from distutils.core import setup, Extension
 from distutils.dist import Distribution
 from distutils.util import convert_path
 from distutils import ccompiler, sysconfig
@@ -14,10 +13,12 @@ from distutils import ccompiler, sysconfig
 inc_dirs = []
 if any('--' + opt in sys.argv for opt in Distribution.display_option_names +
        ['help-commands', 'help']) or sys.argv[1] == 'egg_info':
-    pass
+    from distutils.core import setup, Extension
 else:
-    # append numpy include dir.
     import numpy
+    # Use numpy versions if they are available.
+    from numpy.distutils.core import setup, Extension
+    # append numpy include dir.
     inc_dirs.append(numpy.get_include())
 
 try:
