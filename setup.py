@@ -1,10 +1,26 @@
-import sys, glob, os, numpy, subprocess
+import sys, glob, os, subprocess
+
 major, minor1, minor2, s, tmp = sys.version_info
 if major==2 and minor1<4 or major<2:
     raise SystemExit("""matplotlib and the basemap toolkit require Python 2.4 or later.""")
-from numpy.distutils.core  import setup, Extension
+
+from distutils.dist import Distribution
 from distutils.util import convert_path
 from distutils import ccompiler, sysconfig
+
+# Do not require numpy for just querying the package
+# Taken from the netcdf-python setup file (which took it from h5py setup file).
+inc_dirs = []
+if any('--' + opt in sys.argv for opt in Distribution.display_option_names +
+       ['help-commands', 'help']) or sys.argv[1] == 'egg_info':
+    from distutils.core import setup, Extension
+else:
+    import numpy
+    # Use numpy versions if they are available.
+    from numpy.distutils.core import setup, Extension
+    # append numpy include dir.
+    inc_dirs.append(numpy.get_include())
+
 try:
     from distutils.command.build_py import build_py_2to3 as build_py
 except ImportError:
@@ -62,7 +78,7 @@ set GEOS_DIR to /usr/local), or edit the setup.py script
 manually and set the variable GEOS_dir (right after the line
 that says "set GEOS_dir manually here".""" % "', '".join(geos_search_locations))
 else:
-    geos_include_dirs=[os.path.join(GEOS_dir,'include'),numpy.get_include()]
+    geos_include_dirs=[os.path.join(GEOS_dir,'include'),inc_dirs]
     geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
 
 # proj4 and geos extensions.
@@ -130,6 +146,7 @@ setup(
   download_url      = "https://downloads.sourceforge.net/project/matplotlib/matplotlib-toolkits/basemap-{0}/basemap-{0}.tar.gz".format(__version__),
   author            = "Jeff Whitaker",
   author_email      = "jeffrey.s.whitaker@noaa.gov",
+  install_requires  = ["numpy>=1.2.1", "matplotlib>=1.0.0"],
   platforms         = ["any"],
   license           = "OSI Approved",
   keywords          = ["python","plotting","plots","graphs","charts","GIS","mapping","map projections","maps"],
