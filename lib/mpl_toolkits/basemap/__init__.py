@@ -3201,23 +3201,25 @@ class Basemap(object):
         # Take control of axis scaling:
         ax.set_autoscale_on(False)
         # update data limits for map domain.
-        corners = ((self.llcrnrx,self.llcrnry), (self.urcrnrx,self.urcrnry))
-        ax.update_datalim( corners )
+        corners = ((self.llcrnrx, self.llcrnry), (self.urcrnrx, self.urcrnry))
+        ax.update_datalim(corners)
         ax.set_xlim((self.llcrnrx, self.urcrnrx))
         ax.set_ylim((self.llcrnry, self.urcrnry))
         # if map boundary not yet drawn for elliptical maps, draw it with default values.
         if not self._mapboundarydrawn or self._mapboundarydrawn not in ax.patches:
             # elliptical map, draw boundary manually.
-            if (self.projection in ['ortho','geos','nsper','aeqd'] and
-                self._fulldisk) or self.round or self.projection in _pseudocyl:
+            if ((self.projection in ['ortho', 'geos', 'nsper', 'aeqd'] and
+                    self._fulldisk) or self.round or
+                    self.projection in _pseudocyl):
                 # first draw boundary, no fill
-                limb1 = self.drawmapboundary(fill_color='none')
+                limb1 = self.drawmapboundary(fill_color='none', ax=ax)
                 # draw another filled patch, with no boundary.
-                limb2 = self.drawmapboundary(linewidth=0)
+                limb2 = self.drawmapboundary(linewidth=0, ax=ax)
                 self._mapboundarydrawn = limb2
         # for elliptical map, always turn off axis_frame.
-        if (self.projection in ['ortho','geos','nsper','aeqd'] and
-            self._fulldisk) or self.round or self.projection in _pseudocyl:
+        if ((self.projection in ['ortho', 'geos', 'nsper', 'aeqd'] and
+                self._fulldisk) or self.round or
+                self.projection in _pseudocyl):
             # turn off axes frame.
             ax.set_frame_on(False)
         # make sure aspect ratio of map preserved.
