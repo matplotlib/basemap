@@ -246,7 +246,10 @@ class Reader:
         constructor with the file object or file name as an
         argument."""
         if shapefile:
-            (shapeName, ext) = os.path.splitext(shapefile)
+            if os.path.isfile(shapefile): 
+                (shapeName, ext) = os.path.splitext(shapefile) 
+            else: 
+                shapeName = shapefile
             self.shapeName = shapeName
             try:
                 self.shp = open("%s.shp" % shapeName, "rb")
