@@ -305,7 +305,7 @@ _Basemap_init_doc = """
                   rsphere is ignored. Default None. See pyproj.pj_ellps
                   for allowed values.
  suppress_ticks   suppress automatic drawing of axis ticks and labels
-                  in map projection coordinates.  Default False,
+                  in map projection coordinates.  Default True,
                   so parallels and meridians can be labelled instead.
                   If parallel or meridian labelling is requested
                   (using drawparallels and drawmeridians methods),
@@ -329,7 +329,7 @@ _Basemap_init_doc = """
  ax               set default axes instance
                   (default None - matplotlib.pyplot.gca() may be used
                   to get the current axes instance).
-                  If you don not want matplotlib.pyplot to be imported,
+                  If you do not want matplotlib.pyplot to be imported,
                   you can either set this to a pre-defined axes
                   instance, or use the ``ax`` keyword in each Basemap
                   method call that does drawing. In the first case,
