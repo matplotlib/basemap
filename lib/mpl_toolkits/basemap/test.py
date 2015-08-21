@@ -96,6 +96,24 @@ class TestShiftGrid(TestCase):
         assert (grid==gridout).all()
 
 
+class TestScatter(TestCase):
+
+    def get_coords(self):
+        x = [-5.435, -6.660817, -119.2511944, 17.719833]
+        y = [36.136, 4.746717, 39.4030278, -14.657583]
+        return x, y
+
+    def test_not_sorted_longitudes_robin(self):
+        m = Basemap(projection='robin', lon_0=115, resolution='c')
+        x, y = self.get_coords()
+        m.scatter(x, y, 50, marker='o', color='g', latlon=True, zorder=10)
+
+    def test_not_sorted_longitudes_mer(self):
+        m = Basemap(projection='merc', lon_0=115, resolution='c')
+        x, y = self.get_coords()
+        m.scatter(x, y, 50, marker='o', color='g', latlon=True, zorder=10)
+
+
 def test():
     """
     Run some tests.
@@ -103,9 +121,13 @@ def test():
     import unittest
     rotatevector_suite = unittest.makeSuite(TestRotateVector,'test')
     shiftgrid_suite = unittest.makeSuite(TestShiftGrid,'test')
+
+
     runner = unittest.TextTestRunner()
     runner.run(rotatevector_suite)
     runner.run(shiftgrid_suite)
+    runner.run(unittest.makeSuite(TestScatter, 'test'))
+
 
 if __name__ == '__main__':
     test()
