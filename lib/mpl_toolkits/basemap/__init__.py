@@ -534,7 +534,8 @@ def _transform1d(plotfunc):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
-                if x.ndim == 1:
+                # shiftdata assumes a regular grid, which is not always true for scatter plots
+                if x.ndim == 1 and plotfunc.__name__ != "scatter":
                     x = self.shiftdata(x)
                 elif x.ndim == 0:
                     if x > 180:
