@@ -58,7 +58,7 @@ def u(v):
     if PYTHON3:
         if isinstance(v, bytes):
             # For python 3 decode bytes to str.
-            return v.decode(default_encoding)
+            return v.decode(default_encoding, errors="replace")
         elif isinstance(v, str):
             # Already str.
             return v
