@@ -98,6 +98,10 @@ class TestShiftGrid(TestCase):
 
 class TestScatter(TestCase):
 
+    def setUp(self):
+        from mpl_toolkits import basemap
+        self.cyl_proj_list = basemap._cylproj + basemap._pseudocyl
+
     def get_coords(self):
         x = [-5.435, -6.660817, -119.2511944, 17.719833]
         y = [36.136, 4.746717, 39.4030278, -14.657583]
@@ -112,6 +116,21 @@ class TestScatter(TestCase):
         m = Basemap(projection='merc', lon_0=115, resolution='c')
         x, y = self.get_coords()
         m.scatter(x, y, 50, marker='o', color='g', latlon=True, zorder=10)
+
+    def test_2points_should_not_fail(self):
+        x, y = self.get_coords()
+        for pr in self.cyl_proj_list:
+            m1 = Basemap(projection=pr, lon_0=0)
+            m1.scatter(x[:2], y[:2], latlon=True)
+
+    def test_1point_should_not_fail(self):
+        x, y = self.get_coords()
+        for pr in self.cyl_proj_list:
+            m1 = Basemap(projection=pr, lon_0=0)
+            m1.scatter(x[:1], y[:1], latlon=True)
+
+
+
 
 
 def test():
