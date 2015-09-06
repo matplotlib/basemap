@@ -130,6 +130,31 @@ class TestScatter(TestCase):
             m1.scatter(x[:1], y[:1], latlon=True)
 
 
+class TestProj(TestCase):
+
+    def setUp(self):
+        from mpl_toolkits import basemap
+        self.all_projections = basemap._projnames
+
+    def test_should_be_invertible(self):
+        lon, lat = 30, 60
+
+        for pr in self.all_projections:
+
+            if pr in ["rotpole", "tmerc", "geos", "nsper", "laea", "ortho", "poly", "gnom"]:
+                continue
+
+            bounding_lat = 30 if pr not in ["splaea", ] else -30
+            lat = bounding_lat * lat / abs(bounding_lat)
+
+            b = Basemap(projection=pr, lon_0=0, lat_0=0, llcrnrlon=-140, llcrnrlat=40, urcrnrlon=-120, urcrnrlat=60,
+                        boundinglat=bounding_lat, lat_1=30, lat_2=60, lon_1=-180, lon_2=180)
+            x, y = b(lon, lat)
+
+            assert_almost_equal(b(x, y, inverse=True), (lon, lat), decimal=2, err_msg="{} is not invertible ({}, {}) not  <-> ({}, {})".format(pr, lon, lat, *b(x, y, inverse=True)))
+
+    def test_cyl_should_not_be_far_from_lon_0:
+        pass
 
 
 
