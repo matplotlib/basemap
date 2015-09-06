@@ -155,19 +155,6 @@ class TestProj(TestCase):
             assert_almost_equal(b(x, y, inverse=True), (lon, lat), decimal=2, err_msg="{} is not invertible ({}, {}) not  <-> ({}, {})".format(pr, lon, lat, *b(x, y, inverse=True)))
 
 
-    def test_cyl_should_not_be_far_from_lon_0(self):
-
-        lon_0 = 0
-        b = Basemap(lon_0=lon_0)
-
-        lon, lat = 450, 80
-
-        x, y = b(lon, lat)
-
-        print(b(x, y, inverse=True))
-
-        assert abs(x - lon_0) < 180, "result longitude {} is not in {} +/- 180 range".format(x, lon_0)
-
 
 
 def test():
