@@ -96,6 +96,67 @@ class TestShiftGrid(TestCase):
         assert (grid==gridout).all()
 
 
+class TestScatter(TestCase):
+
+    def setUp(self):
+        from mpl_toolkits import basemap
+        self.cyl_proj_list = basemap._cylproj + basemap._pseudocyl
+
+    def get_coords(self):
+        x = [-5.435, -6.660817, -119.2511944, 17.719833]
+        y = [36.136, 4.746717, 39.4030278, -14.657583]
+        return x, y
+
+    def test_not_sorted_longitudes_robin(self):
+        m = Basemap(projection='robin', lon_0=115, resolution='c')
+        x, y = self.get_coords()
+        m.scatter(x, y, 50, marker='o', color='g', latlon=True, zorder=10)
+
+    def test_not_sorted_longitudes_mer(self):
+        m = Basemap(projection='merc', lon_0=115, resolution='c')
+        x, y = self.get_coords()
+        m.scatter(x, y, 50, marker='o', color='g', latlon=True, zorder=10)
+
+    def test_2points_should_not_fail(self):
+        x, y = self.get_coords()
+        for pr in self.cyl_proj_list:
+            m1 = Basemap(projection=pr, lon_0=0)
+            m1.scatter(x[:2], y[:2], latlon=True)
+
+    def test_1point_should_not_fail(self):
+        x, y = self.get_coords()
+        for pr in self.cyl_proj_list:
+            m1 = Basemap(projection=pr, lon_0=0)
+            m1.scatter(x[:1], y[:1], latlon=True)
+
+
+class TestProj(TestCase):
+
+    def setUp(self):
+        from mpl_toolkits import basemap
+        self.all_projections = basemap._projnames
+        self.cyl_proj_list = basemap._cylproj + basemap._pseudocyl
+
+    def test_should_be_invertible(self):
+        lon, lat = 30, 60
+
+        for pr in self.all_projections:
+
+            if pr in ["rotpole", "tmerc", "geos", "nsper", "laea", "ortho", "poly", "gnom"]:
+                continue
+
+            bounding_lat = 30 if pr not in ["splaea", ] else -30
+            lat = bounding_lat * lat / abs(bounding_lat)
+
+            b = Basemap(projection=pr, lon_0=0, lat_0=0, llcrnrlon=-140, llcrnrlat=40, urcrnrlon=-120, urcrnrlat=60,
+                        boundinglat=bounding_lat, lat_1=30, lat_2=60, lon_1=-180, lon_2=180)
+            x, y = b(lon, lat)
+
+            assert_almost_equal(b(x, y, inverse=True), (lon, lat), decimal=2, err_msg="{} is not invertible ({}, {}) not  <-> ({}, {})".format(pr, lon, lat, *b(x, y, inverse=True)))
+
+
+
+
 def test():
     """
     Run some tests.
@@ -103,9 +164,15 @@ def test():
     import unittest
     rotatevector_suite = unittest.makeSuite(TestRotateVector,'test')
     shiftgrid_suite = unittest.makeSuite(TestShiftGrid,'test')
+
+
     runner = unittest.TextTestRunner()
     runner.run(rotatevector_suite)
     runner.run(shiftgrid_suite)
+    runner.run(unittest.makeSuite(TestScatter, 'test'))
+    runner.run(unittest.makeSuite(TestProj, 'test'))
+
+
 
 if __name__ == '__main__':
     test()

@@ -534,11 +534,25 @@ def _transform1d(plotfunc):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
-                if x.ndim == 1:
+                # shiftdata assumes a regular grid, which is not always true for scatter plots
+                if x.ndim == 1 and plotfunc.__name__ != "scatter":
                     x = self.shiftdata(x)
                 elif x.ndim == 0:
                     if x > 180:
                         x = x - 360.
+                elif plotfunc.__name__ == "scatter":
+                    # shift longitudes to be in the range lon_0 +/- 180
+                    lon_0 = self.projparams["lon_0"]
+                    try:
+                        delta = (x - lon_0) % 360
+                    except TypeError:
+                        delta = [(xx - lon_0) % 360 for xx in x]
+
+                    delta = np.asarray(delta)
+                    delta[delta > 180] -= 360
+                    delta[delta <= -180] += 360
+                    x = lon_0 + delta
+
             # convert lat/lon coords to map projection coords.
             x, y = self(x,y)
         return plotfunc(self,x,y,*args,**kwargs)
@@ -1139,6 +1153,9 @@ class Basemap(object):
                 lon_0=self.projparams['lon_0']
             else:
                 lon_0 = 0.
+
+
+
         if self.celestial and not inverse:
             try:
                 x = 2.*lon_0-x
