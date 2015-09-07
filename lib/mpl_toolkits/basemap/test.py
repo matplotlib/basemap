@@ -170,6 +170,8 @@ def test():
     runner.run(rotatevector_suite)
     runner.run(shiftgrid_suite)
     runner.run(unittest.makeSuite(TestScatter, 'test'))
+    runner.run(unittest.makeSuite(TestProj, 'test'))
+
 
 
 if __name__ == '__main__':
