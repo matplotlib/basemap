@@ -544,9 +544,9 @@ def _transform1d(plotfunc):
                     # shift longitudes to be in the range lon_0 +/- 180
                     lon_0 = self.projparams["lon_0"]
                     try:
-                        delta = (x - lon_0) % 360 + lon_0
+                        delta = (x - lon_0) % 360
                     except TypeError:
-                        delta = [(xx - lon_0) % 360 + lon_0 for xx in x]
+                        delta = [(xx - lon_0) % 360 for xx in x]
 
                     delta = np.asarray(delta)
                     delta[delta > 180] -= 360
