@@ -110,12 +110,22 @@ class TestProjectCoords(TestCase):
         """
         lons, lats, bmp = self.get_data()
         assert not lons.flags['C_CONTIGUOUS']
-
         assert isinstance(lons, np.ndarray)
-
         assert isinstance(bmp, Basemap)
 
         xx1, yy1 = bmp(lons, lats)
+
+
+    def test_results_should_be_same_for_c_and_f_order_arrays(self):
+
+        lons, lats, bmp = self.get_data()
+
+        xx1, yy1 = bmp(lons.copy(order="C"), lats.copy(order="C"))
+        xx2, yy2 = bmp(lons.copy(order="F"), lats.copy(order="F"))
+
+        assert_almost_equal(xx1, xx2)
+        assert_almost_equal(yy1, yy2)
+
 
 
 
