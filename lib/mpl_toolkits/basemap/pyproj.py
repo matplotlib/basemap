@@ -517,11 +517,13 @@ def _copytobuffer(x):
             return _copytobuffer_return_scalar(x)
         else:
             try:
+                import numpy as np
                 # typecast numpy arrays to double.
                 # (this makes a copy - which is crucial
                 #  since buffer is modified in place)
                 x.dtype.char
-                inx = x.astype('d')
+                inx = x.astype('d', order="C")
+
                 # inx,isfloat,islist,istuple
                 return inx,False,False,False
             except:
