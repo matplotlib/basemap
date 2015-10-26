@@ -13,7 +13,7 @@ class TestRotateVector(TestCase):
         u = np.ones((len(lat), len(lon)))
         v = np.zeros((len(lat), len(lon)))
         return u,v,lat,lon
-        
+
     def test_cylindrical(self):
         # Cylindrical case
         B = Basemap()
@@ -22,7 +22,7 @@ class TestRotateVector(TestCase):
         # Check that the vectors are identical.
         assert_almost_equal(ru, u)
         assert_almost_equal(rv, v)
-        
+
     def test_nan(self):
         B = Basemap()
         u,v,lat,lon=self.make_array()
@@ -32,12 +32,12 @@ class TestRotateVector(TestCase):
         assert not np.isnan(ru).any()
         assert_almost_equal(u, ru)
         assert_almost_equal(v, rv)
-        
+
     def test_npstere(self):
         # NP Stereographic case
         B=Basemap(projection='npstere', boundinglat=50., lon_0=0.)
         u,v,lat,lon=self.make_array()
-        v = np.ones((len(lat), len(lon)))    
+        v = np.ones((len(lat), len(lon)))
         ru, rv = B.rotate_vector(u,v, lon, lat)
         assert_almost_equal(ru[2, :],[1,-1,-1,1], 6)
         assert_almost_equal(rv[2, :],[1,1,-1,-1], 6)
@@ -94,6 +94,35 @@ class TestShiftGrid(TestCase):
         grid, lon = shiftgrid(lonin[len(lonin)/2], gridin, lonin, start=False)
         assert (lon==lonout).all()
         assert (grid==gridout).all()
+
+
+class TestShiftdata(TestCase):
+
+    def test_2_points_should_work(self):
+        """
+        Shiftdata should work with 2 points
+        """
+        bm = Basemap(llcrnrlon=0, llcrnrlat=-80, urcrnrlon=360, urcrnrlat=80, projection='mill')
+
+        lons_expected = [10, 15, 20]
+        lonsout = bm.shiftdata(lons_expected)
+        assert_almost_equal(lons_expected, lonsout)
+
+        lonsout_expected = bm.shiftdata([10, 361, 362])
+        lonsout = bm.shiftdata([10, 361])
+        assert_almost_equal(lonsout_expected[:len(lonsout)], lonsout)
+
+    def test_1_point_should_work(self):
+        bm = Basemap(llcrnrlon=0, llcrnrlat=-80, urcrnrlon=360, urcrnrlat=80, projection='mill')
+
+        # should not fail
+        lonsout = bm.shiftdata([361])
+        assert_almost_equal(lonsout, [1.0,])
+
+        lonsout = bm.shiftdata([10])
+        assert_almost_equal(lonsout, [10.0,])
+
+
 
 
 def test():
