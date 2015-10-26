@@ -112,7 +112,7 @@ class TestShiftdata(TestCase):
         bm = Basemap(llcrnrlon=0, llcrnrlat=-80, urcrnrlon=360, urcrnrlat=80, projection='mill')
 
         lons_expected = [10, 15, 20]
-        lonsout = bm.shiftdata(lons_expected)
+        lonsout = bm.shiftdata(lons_expected.copy())
         assert_almost_equal(lons_expected, lonsout)
 
         lonsout_expected = bm.shiftdata([10, 361, 362])
@@ -131,7 +131,7 @@ class TestShiftdata(TestCase):
 
         lonsin = np.array([361.0])
         lonsin.shape = (1, 1)
-        lonsout = bm.shiftdata(lonsin)
+        lonsout = bm.shiftdata(lonsin.copy())
         assert_almost_equal(lonsout.squeeze(), [1.0,])
 
     def test_less_than_n_by_3_points_should_work(self):
@@ -144,7 +144,7 @@ class TestShiftdata(TestCase):
 
         # shift n x 3 and n x 2 grids and compare results over overlapping region
         lonsin = self._get_2d_lons([10, 361, 362])
-        lonsout_expected = bm.shiftdata(lonsin)[:, :2]
+        lonsout_expected = bm.shiftdata(lonsin.copy())[:, :2]
         lonsout = bm.shiftdata(lonsin[:, :2])
         assert_almost_equal(lonsout_expected, lonsout)
 
