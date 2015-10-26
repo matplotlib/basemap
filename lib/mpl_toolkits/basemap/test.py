@@ -149,6 +149,40 @@ class TestShiftdata(TestCase):
         assert_almost_equal(lonsout_expected, lonsout)
 
 
+class TestProjectCoords(TestCase):
+    def get_data(self):
+        lons, lats = np.arange(-180, 180, 20), np.arange(-90, 90, 10)
+        lats, lons = np.meshgrid(lats, lons)
+        lons, lats = lons.copy(order="F"), lats.copy(order="F")
+        return lons, lats, Basemap(projection="sinu", lon_0=0)
+
+
+    def test_convert(self):
+        """
+        Should not fail on C non-contiguous arrays
+        """
+        lons, lats, bmp = self.get_data()
+        assert not lons.flags['C_CONTIGUOUS']
+        assert isinstance(lons, np.ndarray)
+        assert isinstance(bmp, Basemap)
+
+        xx1, yy1 = bmp(lons, lats)
+
+
+    def test_results_should_be_same_for_c_and_f_order_arrays(self):
+
+        lons, lats, bmp = self.get_data()
+
+        xx1, yy1 = bmp(lons.copy(order="C"), lats.copy(order="C"))
+        xx2, yy2 = bmp(lons.copy(order="F"), lats.copy(order="F"))
+
+        assert_almost_equal(xx1, xx2)
+        assert_almost_equal(yy1, yy2)
+
+
+
+
+
 def test():
     """
     Run some tests.
