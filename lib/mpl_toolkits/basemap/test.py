@@ -98,6 +98,13 @@ class TestShiftGrid(TestCase):
 
 class TestShiftdata(TestCase):
 
+    def _get_2d_lons(self, lons1d):
+        """
+        Generate a 2d grid
+        """
+        lats = [10, ] * len(lons1d)
+        return np.meshgrid(lons1d, lats)[0]
+
     def test_2_points_should_work(self):
         """
         Shiftdata should work with 2 points
@@ -122,7 +129,24 @@ class TestShiftdata(TestCase):
         lonsout = bm.shiftdata([10])
         assert_almost_equal(lonsout, [10.0,])
 
+        lonsin = np.array([361.0])
+        lonsin.shape = (1, 1)
+        lonsout = bm.shiftdata(lonsin)
+        assert_almost_equal(lonsout.squeeze(), [1.0,])
 
+    def test_less_than_n_by_3_points_should_work(self):
+        bm = Basemap(llcrnrlon=0, llcrnrlat=-80, urcrnrlon=360, urcrnrlat=80, projection='mill')
+        lons_expected = self._get_2d_lons([10, 15, 20])
+
+        # nothing should change
+        lonsout = bm.shiftdata(lons_expected)
+        assert_almost_equal(lons_expected, lonsout)
+
+        # shift n x 3 and n x 2 grids and compare results over overlapping region
+        lonsin = self._get_2d_lons([10, 361, 362])
+        lonsout_expected = bm.shiftdata(lonsin)[:, :2]
+        lonsout = bm.shiftdata(lonsin[:, :2])
+        assert_almost_equal(lonsout_expected, lonsout)
 
 
 def test():
