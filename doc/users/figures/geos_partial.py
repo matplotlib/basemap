@@ -11,7 +11,7 @@ ax = fig.add_axes([0.1,0.1,0.8,0.8],axisbg='k')
 # plot just upper right quadrant (corners determined from global map).
 # keywords llcrnrx,llcrnry,urcrnrx,urcrnry used to define the lower
 # left and upper right corners in map projection coordinates.
-# llcrnrlat,llcrnrlon,ucrnrlon,urcrnrlat could be used to define
+# llcrnrlat,llcrnrlon,urcrnrlon,urcrnrlat could be used to define
 # lat/lon values of corners - but this won't work in cases such as this
 # where one of the corners does not lie on the earth.
 m = Basemap(projection='geos',lon_0=lon_0,resolution='l',\
