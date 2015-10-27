@@ -4190,7 +4190,7 @@ class Basemap(object):
                 # to map projection coords.
                 # if masked=True, values outside of
                 # projection limb will be masked.
-                for k in range(4):
+                for k in range(self._bm_rgba.shape[2]):
                     self._bm_rgba_warped[:,:,k],x,y = \
                     self.transform_scalar(self._bm_rgba[:,:,k],\
                     self._bm_lons,self._bm_lats,nx,ny,returnxy=True)
