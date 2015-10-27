@@ -30,11 +30,12 @@ install:
     pip install --upgrade pip
     pip install --upgrade setuptools
     pip install $NUMPY
-   - cd geos-3.3.3
-     export GEOS_DIR=$HOME/.local/
-     ./configure --prefix=$GEOS_DIR
-     make; make install
-     cd ..
+  - |
+    cd geos-3.3.3
+    export GEOS_DIR=$HOME/.local/
+    ./configure --prefix=$GEOS_DIR
+    make; make install
+    cd ..
 #  - pip install pep8
   - python setup.py install
 
