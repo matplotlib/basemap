@@ -136,11 +136,12 @@ def test():
     Run some tests.
     """
     import unittest
-    rotatevector_suite = unittest.makeSuite(TestRotateVector,'test')
-    shiftgrid_suite = unittest.makeSuite(TestShiftGrid,'test')
+    from . import test
     runner = unittest.TextTestRunner()
-    runner.run(rotatevector_suite)
-    runner.run(shiftgrid_suite)
+    suite = unittest.findTestCases(test)
+    runner.run(suite)
+
 
 if __name__ == '__main__':
-    test()
+    import unittest
+    unittest.main()
