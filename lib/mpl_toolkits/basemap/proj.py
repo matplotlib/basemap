@@ -1,5 +1,5 @@
 import numpy as np
-from mpl_toolkits.basemap import pyproj
+from . import pyproj
 import math
 from matplotlib.cbook import dedent
 
