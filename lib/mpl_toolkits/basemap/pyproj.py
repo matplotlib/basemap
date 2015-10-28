@@ -521,7 +521,7 @@ def _copytobuffer(x):
                 # (this makes a copy - which is crucial
                 #  since buffer is modified in place)
                 x.dtype.char
-                inx = x.astype('d', order="C")
+                inx = x.copy(order="C").astype('d')
 
                 # inx,isfloat,islist,istuple
                 return inx,False,False,False
