@@ -4784,11 +4784,11 @@ f=image" %\
                 itemindex = nlons-np.where(londiff>=thresh)[0]
             else:
                 lonsin[0, :] = lonsin1
-                itemindex = 0
+                itemindex = []
 
             # if no shift necessary, itemindex will be
             # empty, so don't do anything
-            if itemindex:
+            if len(itemindex):
                 # check to see if cyclic (wraparound) point included
                 # if so, remove it.
                 if np.abs(lonsin1[0]-lonsin1[-1]) < 1.e-4:
@@ -4834,9 +4834,9 @@ f=image" %\
                 thresh = 360.-londiff_sort[-2] if nlons > 2 else 360.0 - londiff_sort[-1]
                 itemindex = len(lonsin)-np.where(londiff>=thresh)[0]
             else:
-                itemindex = 0
+                itemindex = []
 
-            if itemindex:
+            if len(itemindex):
                 # check to see if cyclic (wraparound) point included
                 # if so, remove it.
                 if np.abs(lonsin[0]-lonsin[-1]) < 1.e-4:
