@@ -13,7 +13,7 @@ class TestRotateVector(TestCase):
         u = np.ones((len(lat), len(lon)))
         v = np.zeros((len(lat), len(lon)))
         return u,v,lat,lon
-        
+
     def test_cylindrical(self):
         # Cylindrical case
         B = Basemap()
@@ -22,7 +22,7 @@ class TestRotateVector(TestCase):
         # Check that the vectors are identical.
         assert_almost_equal(ru, u)
         assert_almost_equal(rv, v)
-        
+
     def test_nan(self):
         B = Basemap()
         u,v,lat,lon=self.make_array()
@@ -32,12 +32,12 @@ class TestRotateVector(TestCase):
         assert not np.isnan(ru).any()
         assert_almost_equal(u, ru)
         assert_almost_equal(v, rv)
-        
+
     def test_npstere(self):
         # NP Stereographic case
         B=Basemap(projection='npstere', boundinglat=50., lon_0=0.)
         u,v,lat,lon=self.make_array()
-        v = np.ones((len(lat), len(lon)))    
+        v = np.ones((len(lat), len(lon)))
         ru, rv = B.rotate_vector(u,v, lon, lat)
         assert_almost_equal(ru[2, :],[1,-1,-1,1], 6)
         assert_almost_equal(rv[2, :],[1,1,-1,-1], 6)
@@ -96,6 +96,59 @@ class TestShiftGrid(TestCase):
         assert (grid==gridout).all()
 
 
+class TestShiftdata(TestCase):
+
+    def _get_2d_lons(self, lons1d):
+        """
+        Generate a 2d grid
+        """
+        lats = [10, ] * len(lons1d)
+        return np.meshgrid(lons1d, lats)[0]
+
+    def test_2_points_should_work(self):
+        """
+        Shiftdata should work with 2 points
+        """
+        bm = Basemap(llcrnrlon=0, llcrnrlat=-80, urcrnrlon=360, urcrnrlat=80, projection='mill')
+
+        lons_expected = [10, 15, 20]
+        lonsout = bm.shiftdata(lons_expected[:])
+        assert_almost_equal(lons_expected, lonsout)
+
+        lonsout_expected = bm.shiftdata([10, 361, 362])
+        lonsout = bm.shiftdata([10, 361])
+        assert_almost_equal(lonsout_expected[:len(lonsout)], lonsout)
+
+    def test_1_point_should_work(self):
+        bm = Basemap(llcrnrlon=0, llcrnrlat=-80, urcrnrlon=360, urcrnrlat=80, projection='mill')
+
+        # should not fail
+        lonsout = bm.shiftdata([361])
+        assert_almost_equal(lonsout, [1.0,])
+
+        lonsout = bm.shiftdata([10])
+        assert_almost_equal(lonsout, [10.0,])
+
+        lonsin = np.array([361.0])
+        lonsin.shape = (1, 1)
+        lonsout = bm.shiftdata(lonsin[:])
+        assert_almost_equal(lonsout.squeeze(), [1.0,])
+
+    def test_less_than_n_by_3_points_should_work(self):
+        bm = Basemap(llcrnrlon=0, llcrnrlat=-80, urcrnrlon=360, urcrnrlat=80, projection='mill')
+        lons_expected = self._get_2d_lons([10, 15, 20])
+
+        # nothing should change
+        lonsout = bm.shiftdata(lons_expected)
+        assert_almost_equal(lons_expected, lonsout)
+
+        # shift n x 3 and n x 2 grids and compare results over overlapping region
+        lonsin = self._get_2d_lons([10, 361, 362])
+        lonsout_expected = bm.shiftdata(lonsin[:])[:, :2]
+        lonsout = bm.shiftdata(lonsin[:, :2])
+        assert_almost_equal(lonsout_expected, lonsout)
+
+
 class TestProjectCoords(TestCase):
     def get_data(self):
         lons, lats = np.arange(-180, 180, 20), np.arange(-90, 90, 10)
@@ -125,7 +178,6 @@ class TestProjectCoords(TestCase):
 
         assert_almost_equal(xx1, xx2)
         assert_almost_equal(yy1, yy2)
-
 
 
 
