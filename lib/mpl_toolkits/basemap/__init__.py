@@ -27,7 +27,7 @@ from matplotlib.collections import LineCollection, PolyCollection
 from matplotlib.patches import Ellipse, Circle, Polygon, FancyArrowPatch
 from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox
-from mpl_toolkits.basemap import pyproj
+from . import pyproj
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.image import imread
 import sys, os, math
@@ -712,7 +712,7 @@ class Basemap(object):
                     self.urcrnrlon = urcrnrlon; self.urcrnrlat = urcrnrlat
                 else:
                     if width is None or height is None:
-                        raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
+                        raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat) in degrees or width and height in meters')
                     if lon_0 is None or lat_0 is None:
                         raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
                     llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
@@ -725,7 +725,7 @@ class Basemap(object):
                 raise ValueError('must specify lat_0 and lon_0 for Stereographic basemap (lat_ts is optional)')
             if not using_corners:
                 if width is None or height is None:
-                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
+                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat) in degrees or width and height in meters')
                 if lon_0 is None or lat_0 is None:
                     raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
@@ -762,7 +762,7 @@ class Basemap(object):
                 raise ValueError('must specify lat_0 and lon_0 for Lambert Azimuthal basemap')
             if not using_corners:
                 if width is None or height is None:
-                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
+                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat) in degrees or width and height in meters')
                 if lon_0 is None or lat_0 is None:
                     raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
@@ -777,7 +777,7 @@ class Basemap(object):
                 raise ValueError('must specify lat_0 and lon_0 for Transverse Mercator, Gnomonic, Cassini-Soldnerr and Polyconic basemap')
             if not using_corners:
                 if width is None or height is None:
-                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
+                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat) in degrees or width and height in meters')
                 if lon_0 is None or lat_0 is None:
                     raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
@@ -871,7 +871,7 @@ class Basemap(object):
             #    raise ValueError, 'cannot specify map region with width and height keywords for this projection, please specify lat/lon values of corners'
             if not using_corners:
                 if width is None or height is None:
-                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,ucrnrlon,urcrnrlat) in degrees or width and height in meters')
+                    raise ValueError('must either specify lat/lon values of corners (llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat) in degrees or width and height in meters')
                 if lon_0 is None or lat_0 is None:
                     raise ValueError('must specify lon_0 and lat_0 when using width, height to specify projection region')
                 llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat = _choosecorners(width,height,**projparams)
@@ -4190,7 +4190,7 @@ class Basemap(object):
                 # to map projection coords.
                 # if masked=True, values outside of
                 # projection limb will be masked.
-                for k in range(3):
+                for k in range(self._bm_rgba.shape[2]):
                     self._bm_rgba_warped[:,:,k],x,y = \
                     self.transform_scalar(self._bm_rgba[:,:,k],\
                     self._bm_lons,self._bm_lats,nx,ny,returnxy=True)
