@@ -4802,10 +4802,10 @@ f=image" %\
                     hascyclic = False
                 lonsin = np.where(lonsin > lon_0+180, lonsin-360 ,lonsin)
                 lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
-                lonsin = np.roll(lonsin,itemindex-1,axis=1)
+                lonsin = np.roll(lonsin,itemindex[0]-1,axis=1)
                 if datain is not None:
                     # np.roll works on ndarrays and on masked arrays
-                    datain = np.roll(datain,itemindex-1,axis=1)
+                    datain = np.roll(datain,itemindex[0]-1,axis=1)
                 # add cyclic point back at beginning.
                 if hascyclic:
                     lonsin_save[:,1:] = lonsin
@@ -4848,9 +4848,9 @@ f=image" %\
                         datain = datain[1:]
                 else:
                     hascyclic = False
-                lonsin = np.roll(lonsin,itemindex-1)
+                lonsin = np.roll(lonsin,itemindex[0]-1)
                 if datain is not None:
-                    datain = np.roll(datain,itemindex-1)
+                    datain = np.roll(datain,itemindex[0]-1)
                 # add cyclic point back at beginning.
                 if hascyclic:
                     lonsin_save[1:] = lonsin
