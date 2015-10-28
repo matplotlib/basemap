@@ -1,0 +1,44 @@
+sudo: false
+
+env:
+  global:
+    - NUMPY=numpy
+    - TEST_ARGS=--no-pep8
+
+language: python
+
+matrix:
+  include:
+    - python: 2.6
+      env: NUMPY=numpy==1.6
+    - python: 2.7
+    - python: 3.3
+    - python: 3.4
+    - python: 3.5
+#    - python: 2.7
+#      env: TEST_ARGS=--pep8
+
+before_install:
+  # Install into our own pristine virtualenv
+  - virtualenv --python=python venv
+  - source venv/bin/activate
+
+install:
+  # Upgrade pip and setuptools. Mock has issues with the default version of
+  # setuptools
+  - |
+    pip install --upgrade pip
+    pip install --upgrade setuptools
+    pip install $NUMPY
+  - |
+    cd geos-3.3.3
+    export GEOS_DIR=$HOME/.local/
+    ./configure --prefix=$GEOS_DIR
+    make; make install
+    cd ..
+#  - pip install pep8
+  - python setup.py install
+
+script:
+    - python lib/mpl_toolkits/basemap/test.py
+
