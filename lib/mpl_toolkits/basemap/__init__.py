@@ -4166,7 +4166,7 @@ class Basemap(object):
                 # stack grids side-by-side (in longitiudinal direction), so
                 # any range of longitudes may be plotted on a world map.
                 self._bm_lons = \
-                np.concatenate((self._bm_lons,self._bm_lons+360),1)
+                np.concatenate((self._bm_lons,self._bm_lons+360),0)
                 self._bm_rgba = \
                 np.concatenate((self._bm_rgba,self._bm_rgba),1)
             # convert to normalized floats.
