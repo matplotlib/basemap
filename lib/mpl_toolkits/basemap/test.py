@@ -149,6 +149,18 @@ class TestShiftdata(TestCase):
         assert_almost_equal(lonsout_expected, lonsout)
 
 
+    def test_shiftdata_truthiness(self):
+        "Tests part of problem reported in #214"
+        bm = Basemap(llcrnrlon=0, llcrnrlat=-80,
+                     urcrnrlon=360, urcrnrlat=80,
+                     projection='mill')
+        assert_almost_equal(bm.shiftdata([-30, -20, 10]), [330, 340, 10])
+        # I don't actually know if this is actually desirable,
+        # only that it exercises the relevant checks because it
+        # results in two "shifts" to be found.
+        assert_almost_equal(bm.shiftdata([-30, 10, -20]), [10, 340, 330])
+
+
 class TestProjectCoords(TestCase):
     def get_data(self):
         lons, lats = np.arange(-180, 180, 20), np.arange(-90, 90, 10)
@@ -178,9 +190,6 @@ class TestProjectCoords(TestCase):
 
         assert_almost_equal(xx1, xx2)
         assert_almost_equal(yy1, yy2)
-
-
-
 
 
 def test():
