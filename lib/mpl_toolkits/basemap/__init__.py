@@ -2128,7 +2128,13 @@ class Basemap(object):
         matplotlib.patches.LineCollection object is appended to the tuple.
         """
         import shapefile as shp
-        from .shapefile import Reader
+        try:
+            # try system version first
+            from shapefile import Reader
+        except ImportError:
+            # try bundled version as fallback
+            from .shapefile import Reader
+            
         shp.default_encoding = default_encoding
         if not os.path.exists('%s.shp'%shapefile):
             raise IOError('cannot locate %s.shp'%shapefile)
