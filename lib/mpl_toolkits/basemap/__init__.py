@@ -2131,7 +2131,7 @@ class Basemap(object):
         try:
             # try system version first
             from shapefile import Reader
-        except:
+        except ImportError:
             # try bundled version as fallback
             from .shapefile import Reader
             

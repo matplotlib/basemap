@@ -95,10 +95,10 @@ include lib/mpl_toolkits/__init__.py
 include lib/mpl_toolkits/basemap/__init__.py
 include lib/mpl_toolkits/basemap/proj.py
 include lib/mpl_toolkits/basemap/pyproj.py
-include lib/mpl_toolkits/basemap/shapefile.py
 include lib/mpl_toolkits/basemap/cm.py
 include lib/mpl_toolkits/basemap/solar.py
 include lib/mpl_toolkits/basemap/test.py
+include opt_lib/mpl_toolkits/basemap/shapefile.py
 include doc/users/figures/*py
 include doc/users/*rst
 include doc/api/*rst

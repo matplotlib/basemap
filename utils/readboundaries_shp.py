@@ -2,7 +2,7 @@ import numpy as np
 try:
     # try system version first
     from shapefile import Reader
-except:
+except ImportError:
     # try bundled version as fallback
     from mpl_toolkits.basemap.shapefile import Reader
 

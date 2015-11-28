@@ -45,8 +45,6 @@ else:
 # set GEOS_dir manually here if automatic detection fails.
     GEOS_dir = None
 
-print '1: GEOS_dir = ', GEOS_dir
-
 user_home = os.path.expanduser('~')
 geos_search_locations = [user_home, os.path.join(user_home, 'local'),
                          '/usr', '/usr/local', '/sw', '/opt', '/opt/local']
@@ -95,7 +93,7 @@ if PYSHP_dir:
         sys.path.append(PYSHP_dir)
     try:
         import shapefile
-    except:
+    except ImportError:
         raise SystemExit("""
 Could not import shapefile!'
 Please make sure the pyshp module is installed and set the PYSHP_DIR
@@ -105,10 +103,6 @@ variable, in which case the bundled copy of pyshp will be used.
 """)
 else:
     pass
-
-print '2: GEOS_dir = ', GEOS_dir
-print 'PYSHP_DIR = ', PYSHP_dir
-#sys.exit(1)
 
 # proj4 and geos extensions.
 deps = glob.glob('src/*.c')
