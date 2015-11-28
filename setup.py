@@ -45,6 +45,8 @@ else:
 # set GEOS_dir manually here if automatic detection fails.
     GEOS_dir = None
 
+print '1: GEOS_dir = ', GEOS_dir
+
 user_home = os.path.expanduser('~')
 geos_search_locations = [user_home, os.path.join(user_home, 'local'),
                          '/usr', '/usr/local', '/sw', '/opt', '/opt/local']
@@ -81,6 +83,33 @@ else:
     geos_include_dirs=[os.path.join(GEOS_dir,'include'),inc_dirs]
     geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
 
+# get location of pyshp lib from environment variable if it is set.
+if 'PYSHP_DIR' in os.environ:
+    PYSHP_dir = os.environ.get('PYSHP_DIR')
+else:
+    # set PYSHP_DIR to None if not defined by the user
+    PYSHP_dir = None
+
+if PYSHP_dir:
+    if not PYSHP_dir in sys.path:
+        sys.path.append(PYSHP_dir)
+    try:
+        import shapefile
+    except:
+        raise SystemExit("""
+Could not import shapefile!'
+Please make sure the pyshp module is installed and set the PYSHP_DIR
+environment variable to point to the proper location.
+Alternatively, you may choose to not define the PYSHP_DIR environment
+variable, in which case the bundled copy of pyshp will be used.
+""")
+else:
+    pass
+
+print '2: GEOS_dir = ', GEOS_dir
+print 'PYSHP_DIR = ', PYSHP_dir
+#sys.exit(1)
+
 # proj4 and geos extensions.
 deps = glob.glob('src/*.c')
 deps.remove(os.path.join('src','_proj.c'))
@@ -89,6 +118,13 @@ deps.remove(os.path.join('src','_geoslib.c'))
 packages          = ['mpl_toolkits','mpl_toolkits.basemap']
 namespace_packages = ['mpl_toolkits']
 package_dirs       = {'':'lib'}
+
+if PYSHP_dir is None:
+    # copy shapefile into basemap dir
+    import shutil
+    shutil.copy('opt_lib/mpl_toolkits/basemap/shapefile.py',
+                'lib/mpl_toolkits/basemap/shapefile.py')
+    
 extensions = [Extension("mpl_toolkits.basemap._proj",deps+['src/_proj.c'],include_dirs = ['src'],)]
 # can't install _geoslib in mpl_toolkits.basemap namespace,
 # or Basemap objects won't be pickleable.
@@ -165,3 +201,7 @@ setup(
   cmdclass = {'build_py': build_py},
   package_data = package_data
   )
+
+# clean up afterwards
+if PYSHP_dir is None:
+    os.remove('lib/mpl_toolkits/basemap/shapefile.py')

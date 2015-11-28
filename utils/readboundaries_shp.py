@@ -1,5 +1,10 @@
 import numpy as np
-from mpl_toolkits.basemap.shapefile import Reader
+try:
+    # try system version first
+    from shapefile import Reader
+except:
+    # try bundled version as fallback
+    from mpl_toolkits.basemap.shapefile import Reader
 
 lsd = 5
 
