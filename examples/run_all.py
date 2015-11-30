@@ -16,6 +16,7 @@ try:
     from netCDF4 import Dataset
 except ImportError:
     # remove tests requiring netCDF4
+    sys.stdout.write("Could not import netCDF4, skipping tests that require netCDF4.\n")
     test_files.remove('streamplot_demo.py')
     test_files.remove('plotprecip.py')
     test_files.remove('test_rotpole.py')
