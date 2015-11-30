@@ -1,5 +1,5 @@
 from __future__ import print_function
-from mpl_toolkits.basemap import pyproj
+import pyproj
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 # proj4 definition of UTM zone 17.
