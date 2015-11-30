@@ -12,6 +12,16 @@ test_files.remove('embedding_map_in_wx.py') # requires wx
 test_files.remove('plothighsandlows.py') # requires scipy
 test_files.remove('lic_demo.py')
 test_files.remove('testwmsimage.py')
+try:
+    from netCDF4 import Dataset
+except ImportError:
+    # remove tests requiring netCDF4
+    test_files.remove('streamplot_demo.py')
+    test_files.remove('plotprecip.py')
+    test_files.remove('test_rotpole.py')
+    test_files.remove('ccsm_popgrid.py')
+    test_files.remove('ploticos.py')
+
 py_path = os.environ.get('PYTHONPATH')
 if py_path is None:
     py_path = '.'
