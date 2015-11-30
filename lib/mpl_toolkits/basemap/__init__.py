@@ -27,7 +27,7 @@ from matplotlib.collections import LineCollection, PolyCollection
 from matplotlib.patches import Ellipse, Circle, Polygon, FancyArrowPatch
 from matplotlib.lines import Line2D
 from matplotlib.transforms import Bbox
-from . import pyproj
+port pyproj
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.image import imread
 import sys, os, math
@@ -2128,7 +2128,7 @@ class Basemap(object):
         matplotlib.patches.LineCollection object is appended to the tuple.
         """
         import shapefile as shp
-        from .shapefile import Reader
+        from shapefile import Reader
         shp.default_encoding = default_encoding
         if not os.path.exists('%s.shp'%shapefile):
             raise IOError('cannot locate %s.shp'%shapefile)
