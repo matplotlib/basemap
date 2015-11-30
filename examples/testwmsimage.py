@@ -3,7 +3,8 @@ example showing how to use OWSlib to retrieve an image
 from a WMS server and display it on a map (using the
 wmsimage convenience method)
 """
-from mpl_toolkits.basemap import Basemap, pyproj
+from mpl_toolkits.basemap import Basemap
+import pyproj
 from datetime import datetime
 import numpy as np
 import matplotlib.pyplot as plt
