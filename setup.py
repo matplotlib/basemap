@@ -84,6 +84,22 @@ packages          = ['mpl_toolkits','mpl_toolkits.basemap']
 namespace_packages = ['mpl_toolkits']
 package_dirs       = {'':'lib'}
 
+# can't install _geoslib in mpl_toolkits.basemap namespace,
+# or Basemap objects won't be pickleable.
+
+# don't use runtime_library_dirs on windows (workaround
+# for a distutils bug - http://bugs.python.org/issue2437).
+if sys.platform == 'win32':
+    runtime_lib_dirs = []
+else:
+    runtime_lib_dirs = geos_library_dirs
+
+extensions = [ Extension("_geoslib",['src/_geoslib.c'],
+                         library_dirs=geos_library_dirs,
+                         runtime_library_dirs=runtime_lib_dirs,
+                         include_dirs=geos_include_dirs,
+                         libraries=['geos_c']) ]
+
 # Specify all the required mpl data
 # create pyproj binary datum shift grid files.
 pathout =\
@@ -129,6 +145,7 @@ setup(
   packages          = packages,
   namespace_packages = namespace_packages,
   package_dir       = package_dirs,
+  ext_modules       = extensions,   
   cmdclass = {'build_py': build_py},
   package_data = package_data
   )
