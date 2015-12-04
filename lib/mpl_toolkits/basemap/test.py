@@ -5,7 +5,8 @@ import pyproj
 
 # beginnings of a test suite.
 
-from numpy.testing import TestCase, assert_almost_equal, dec
+from numpy.testing import TestCase, assert_almost_equal
+from unittest import SkipTest
 
 # For Python 3.x this will be true
 PY3 = (sys.version_info[0] == 3)
@@ -153,8 +154,7 @@ class TestShiftdata(TestCase):
         lonsout = bm.shiftdata(lonsin[:, :2])
         assert_almost_equal(lonsout_expected, lonsout)
 
-@dec.skipif( PY3 and pyproj.__version__ <= "1.9.4", 
-             "TestProjectCoords tests skipped in Python 3.x with pyproj version 1.9.4 and below." )
+
 class TestProjectCoords(TestCase):
     def get_data(self):
         lons, lats = np.arange(-180, 180, 20), np.arange(-90, 90, 10)
@@ -167,6 +167,10 @@ class TestProjectCoords(TestCase):
         """
         Should not fail on C non-contiguous arrays
         """
+        # skip test for Python 3.x and pyproj 1.9.4 or less
+        if PY3 and pyproj.__version__ <= "1.9.4":
+            raise SkipTest("Test skipped in Python 3.x with pyproj version 1.9.4 and below.")
+            
         lons, lats, bmp = self.get_data()
         assert not lons.flags['C_CONTIGUOUS']
         assert isinstance(lons, np.ndarray)
@@ -176,7 +180,10 @@ class TestProjectCoords(TestCase):
 
 
     def test_results_should_be_same_for_c_and_f_order_arrays(self):
-
+        # skip test for Python 3.x and pyproj 1.9.4 or less
+        if PY3 and pyproj.__version__ <= "1.9.4":
+            raise SkipTest("Test skipped in Python 3.x with pyproj version 1.9.4 and below.")
+            
         lons, lats, bmp = self.get_data()
 
         xx1, yy1 = bmp(lons.copy(order="C"), lats.copy(order="C"))
