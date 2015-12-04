@@ -33,6 +33,7 @@ install:
     pip install $NUMPY
     pip install $MPL
     pip install -r requirements.txt
+    pip install nose
   - |
     cd geos-3.3.3
     export GEOS_DIR=$HOME/.local/
