@@ -1,6 +1,7 @@
 import sys
 from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy as np
+import pyproj
 
 # beginnings of a test suite.
 
