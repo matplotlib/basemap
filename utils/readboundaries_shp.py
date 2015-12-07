@@ -1,5 +1,5 @@
 import numpy as np
-from mpl_toolkits.basemap.shapefile import Reader
+from shapefile import Reader
 
 lsd = 5
 

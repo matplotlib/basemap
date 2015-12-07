@@ -1,5 +1,7 @@
 version 1.0.8 (not yet released)
 --------------------------------
+* removes inline pyshp and pyproj code and uses makes these packages required
+  external dependencies (handling issue 230).
 * add 'textcolor' kwarg to drawmeridians and drawparallels (issue 145).
 * don't assume grid is regular when adding cyclic point in addcyclic. 
   New kwargs 'axis' and 'cyclic' added.  More than one array

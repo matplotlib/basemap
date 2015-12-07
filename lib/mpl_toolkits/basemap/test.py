@@ -1,9 +1,20 @@
+import sys
 from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy as np
+import pyproj
 
 # beginnings of a test suite.
 
-from numpy.testing import TestCase,assert_almost_equal
+from numpy.testing import TestCase, assert_almost_equal
+
+try:
+	from unittest import skipIf
+except ImportError:
+	# for new features, fallback to unittest backport for Python 2.4 - 2.6
+	from unittest2 import skipIf
+
+# For Python 3.x this will be true
+PY3 = (sys.version_info[0] == 3)
 
 class TestRotateVector(TestCase):
 
@@ -148,7 +159,8 @@ class TestShiftdata(TestCase):
         lonsout = bm.shiftdata(lonsin[:, :2])
         assert_almost_equal(lonsout_expected, lonsout)
 
-
+@skipIf(PY3 and pyproj.__version__ <= "1.9.4", 
+        "Test skipped in Python 3.x with pyproj version 1.9.4 and below.")
 class TestProjectCoords(TestCase):
     def get_data(self):
         lons, lats = np.arange(-180, 180, 20), np.arange(-90, 90, 10)
@@ -170,7 +182,6 @@ class TestProjectCoords(TestCase):
 
 
     def test_results_should_be_same_for_c_and_f_order_arrays(self):
-
         lons, lats, bmp = self.get_data()
 
         xx1, yy1 = bmp(lons.copy(order="C"), lats.copy(order="C"))

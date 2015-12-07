@@ -32,6 +32,10 @@ install:
     pip install --upgrade setuptools
     pip install $NUMPY
     pip install $MPL
+    pip install -r requirements.txt
+    
+  - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install -r .requirements-2.6.txt; fi
+  
   - |
     cd geos-3.3.3
     export GEOS_DIR=$HOME/.local/

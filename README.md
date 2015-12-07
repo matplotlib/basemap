@@ -11,6 +11,10 @@ using matplotlib.
 
 * numpy 
 
+* [pyproj](https://github.com/jswhit/pyproj)
+
+* [pyshp](https://github.com/GeospatialPython/pyshp)
+
 * The GEOS (Geometry Engine - Open Source) library (version 3.1.1 or higher).
 Source code is included in the geos-3.3.3 directory.
 
@@ -30,9 +34,6 @@ source code from [proj.4](http://trac.osgeo.org/proj/) is included in the
 source code for the GEOS library is
 included in the 'geos-3.3.3' directory under the terms given in
 LICENSE_geos.
-
-shapefile.py from pyshp.googlecode.com is included under the terms given
-in LICENSE_pyshp.
 
 the land-sea mask, coastline, lake, river and political boundary data are extracted
 from datasets provided with the [Generic Mapping Tools (GMT)](http://gmt.soest.hawaii.edu)

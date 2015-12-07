@@ -23,8 +23,9 @@ __init__.py module.
 from numpy import *
 import matplotlib.pyplot as pl
 from matplotlib.pyplot import *
-from mpl_toolkits.basemap import Basemap, pyproj
-from mpl_toolkits.basemap.pyproj import Geod
+from mpl_toolkits.basemap import Basemap
+import pyproj
+from pyproj import Geod
 
 __all__ = ['AllSkyMap']
 
