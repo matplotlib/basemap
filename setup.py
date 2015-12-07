@@ -1,7 +1,7 @@
 import sys, glob, os, subprocess
 
-if sys.version_info < (2, 4):
-    raise SystemExit("""matplotlib and the basemap toolkit require Python 2.4 or later.""")
+if sys.version_info < (2, 6):
+    raise SystemExit("""matplotlib and the basemap toolkit require Python 2.6 or later.""")
 
 from distutils.dist import Distribution
 from distutils.util import convert_path
@@ -101,7 +101,6 @@ extensions = [ Extension("_geoslib",['src/_geoslib.c'],
                          libraries=['geos_c']) ]
 
 # Specify all the required mpl data
-# create pyproj binary datum shift grid files.
 pathout =\
 os.path.join('lib',os.path.join('mpl_toolkits',os.path.join('basemap','data')))
 
