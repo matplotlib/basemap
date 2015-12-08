@@ -478,7 +478,7 @@ struct __pyx_obj_8_geoslib_BaseGeometry {
 };
 
 
-/* "_geoslib.pyx":317
+/* "_geoslib.pyx":329
  *         return (self.__class__,(self.boundary,))
  * 
  * cdef class Polygon(BaseGeometry):             # <<<<<<<<<<<<<<
@@ -490,7 +490,7 @@ struct __pyx_obj_8_geoslib_Polygon {
 };
 
 
-/* "_geoslib.pyx":373
+/* "_geoslib.pyx":385
  *         return area
  * 
  * cdef class LineString(BaseGeometry):             # <<<<<<<<<<<<<<
@@ -502,7 +502,7 @@ struct __pyx_obj_8_geoslib_LineString {
 };
 
 
-/* "_geoslib.pyx":405
+/* "_geoslib.pyx":417
  *         self.boundary = b
  * 
  * cdef class Point(BaseGeometry):             # <<<<<<<<<<<<<<
@@ -1265,8 +1265,8 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_2geom_type(struct __pyx_obj_8
  *         return PyBytes_FromString(GEOSGeomType(self._geom))
  * 
  *     def within(self, BaseGeometry geom):             # <<<<<<<<<<<<<<
- *         cdef GEOSGeom *g1, *g2
- *         cdef char answer
+ *         cdef GEOSGeom *g1
+ *         cdef GEOSGeom *g2
  */
 
 /* Python wrapper */
@@ -1300,8 +1300,8 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_4within(struct __pyx_obj_8_ge
   int __pyx_t_2;
   __Pyx_RefNannySetupContext("within", 0);
 
-  /* "_geoslib.pyx":157
- *         cdef GEOSGeom *g1, *g2
+  /* "_geoslib.pyx":158
+ *         cdef GEOSGeom *g2
  *         cdef char answer
  *         g1 = self._geom             # <<<<<<<<<<<<<<
  *         g2 = geom._geom
@@ -1310,7 +1310,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_4within(struct __pyx_obj_8_ge
   __pyx_t_1 = __pyx_v_self->_geom;
   __pyx_v_g1 = __pyx_t_1;
 
-  /* "_geoslib.pyx":158
+  /* "_geoslib.pyx":159
  *         cdef char answer
  *         g1 = self._geom
  *         g2 = geom._geom             # <<<<<<<<<<<<<<
@@ -1320,7 +1320,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_4within(struct __pyx_obj_8_ge
   __pyx_t_1 = __pyx_v_geom->_geom;
   __pyx_v_g2 = __pyx_t_1;
 
-  /* "_geoslib.pyx":159
+  /* "_geoslib.pyx":160
  *         g1 = self._geom
  *         g2 = geom._geom
  *         answer =  GEOSWithin(g1, g2)             # <<<<<<<<<<<<<<
@@ -1329,7 +1329,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_4within(struct __pyx_obj_8_ge
  */
   __pyx_v_answer = GEOSWithin(__pyx_v_g1, __pyx_v_g2);
 
-  /* "_geoslib.pyx":160
+  /* "_geoslib.pyx":161
  *         g2 = geom._geom
  *         answer =  GEOSWithin(g1, g2)
  *         if answer:             # <<<<<<<<<<<<<<
@@ -1339,7 +1339,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_4within(struct __pyx_obj_8_ge
   __pyx_t_2 = (__pyx_v_answer != 0);
   if (__pyx_t_2) {
 
-    /* "_geoslib.pyx":161
+    /* "_geoslib.pyx":162
  *         answer =  GEOSWithin(g1, g2)
  *         if answer:
  *             return True             # <<<<<<<<<<<<<<
@@ -1351,7 +1351,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_4within(struct __pyx_obj_8_ge
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "_geoslib.pyx":160
+    /* "_geoslib.pyx":161
  *         g2 = geom._geom
  *         answer =  GEOSWithin(g1, g2)
  *         if answer:             # <<<<<<<<<<<<<<
@@ -1360,7 +1360,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_4within(struct __pyx_obj_8_ge
  */
   }
 
-  /* "_geoslib.pyx":163
+  /* "_geoslib.pyx":164
  *             return True
  *         else:
  *             return False             # <<<<<<<<<<<<<<
@@ -1378,8 +1378,8 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_4within(struct __pyx_obj_8_ge
  *         return PyBytes_FromString(GEOSGeomType(self._geom))
  * 
  *     def within(self, BaseGeometry geom):             # <<<<<<<<<<<<<<
- *         cdef GEOSGeom *g1, *g2
- *         cdef char answer
+ *         cdef GEOSGeom *g1
+ *         cdef GEOSGeom *g2
  */
 
   /* function exit code */
@@ -1389,12 +1389,12 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_4within(struct __pyx_obj_8_ge
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":165
+/* "_geoslib.pyx":166
  *             return False
  * 
  *     def union(self, BaseGeometry geom):             # <<<<<<<<<<<<<<
- *         cdef GEOSGeom *g1, *g2, *g3, *gout
- *         cdef int numgeoms, i, typeid
+ *         cdef GEOSGeom *g1
+ *         cdef GEOSGeom *g2
  */
 
 /* Python wrapper */
@@ -1406,7 +1406,7 @@ static PyObject *__pyx_pw_8_geoslib_12BaseGeometry_7union(PyObject *__pyx_v_self
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("union (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_geom), __pyx_ptype_8_geoslib_BaseGeometry, 1, "geom", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 165; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_geom), __pyx_ptype_8_geoslib_BaseGeometry, 1, "geom", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 166; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_8_geoslib_12BaseGeometry_6union(((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_v_self), ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_v_geom));
 
   /* function exit code */
@@ -1438,8 +1438,8 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("union", 0);
 
-  /* "_geoslib.pyx":168
- *         cdef GEOSGeom *g1, *g2, *g3, *gout
+  /* "_geoslib.pyx":172
+ *         cdef GEOSGeom *gout
  *         cdef int numgeoms, i, typeid
  *         g1 = self._geom             # <<<<<<<<<<<<<<
  *         g2 = geom._geom
@@ -1448,7 +1448,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
   __pyx_t_1 = __pyx_v_self->_geom;
   __pyx_v_g1 = __pyx_t_1;
 
-  /* "_geoslib.pyx":169
+  /* "_geoslib.pyx":173
  *         cdef int numgeoms, i, typeid
  *         g1 = self._geom
  *         g2 = geom._geom             # <<<<<<<<<<<<<<
@@ -1458,7 +1458,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
   __pyx_t_1 = __pyx_v_geom->_geom;
   __pyx_v_g2 = __pyx_t_1;
 
-  /* "_geoslib.pyx":170
+  /* "_geoslib.pyx":174
  *         g1 = self._geom
  *         g2 = geom._geom
  *         g3 = GEOSUnion(g1, g2)             # <<<<<<<<<<<<<<
@@ -1467,7 +1467,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
   __pyx_v_g3 = GEOSUnion(__pyx_v_g1, __pyx_v_g2);
 
-  /* "_geoslib.pyx":171
+  /* "_geoslib.pyx":175
  *         g2 = geom._geom
  *         g3 = GEOSUnion(g1, g2)
  *         typeid = GEOSGeomTypeId(g3)             # <<<<<<<<<<<<<<
@@ -1476,7 +1476,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
   __pyx_v_typeid = GEOSGeomTypeId(__pyx_v_g3);
 
-  /* "_geoslib.pyx":172
+  /* "_geoslib.pyx":176
  *         g3 = GEOSUnion(g1, g2)
  *         typeid = GEOSGeomTypeId(g3)
  *         if typeid == GEOS_POLYGON:             # <<<<<<<<<<<<<<
@@ -1486,37 +1486,37 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
   switch (__pyx_v_typeid) {
     case GEOS_POLYGON:
 
-    /* "_geoslib.pyx":173
+    /* "_geoslib.pyx":177
  *         typeid = GEOSGeomTypeId(g3)
  *         if typeid == GEOS_POLYGON:
  *             b = _get_coords(g3)             # <<<<<<<<<<<<<<
  *             p = Polygon(b)
  *         elif typeid == GEOS_LINESTRING:
  */
-    __pyx_t_2 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_v_b = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":174
+    /* "_geoslib.pyx":178
  *         if typeid == GEOS_POLYGON:
  *             b = _get_coords(g3)
  *             p = Polygon(b)             # <<<<<<<<<<<<<<
  *         elif typeid == GEOS_LINESTRING:
  *             b = _get_coords(g3)
  */
-    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 178; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_b);
-    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 178; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":172
+    /* "_geoslib.pyx":176
  *         g3 = GEOSUnion(g1, g2)
  *         typeid = GEOSGeomTypeId(g3)
  *         if typeid == GEOS_POLYGON:             # <<<<<<<<<<<<<<
@@ -1525,7 +1525,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
     break;
 
-    /* "_geoslib.pyx":175
+    /* "_geoslib.pyx":179
  *             b = _get_coords(g3)
  *             p = Polygon(b)
  *         elif typeid == GEOS_LINESTRING:             # <<<<<<<<<<<<<<
@@ -1534,37 +1534,37 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
     case GEOS_LINESTRING:
 
-    /* "_geoslib.pyx":176
+    /* "_geoslib.pyx":180
  *             p = Polygon(b)
  *         elif typeid == GEOS_LINESTRING:
  *             b = _get_coords(g3)             # <<<<<<<<<<<<<<
  *             p = LineString(b)
  *         # for multi-geom structures, just return first one.
  */
-    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_v_b = __pyx_t_3;
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":177
+    /* "_geoslib.pyx":181
  *         elif typeid == GEOS_LINESTRING:
  *             b = _get_coords(g3)
  *             p = LineString(b)             # <<<<<<<<<<<<<<
  *         # for multi-geom structures, just return first one.
  *         elif typeid == GEOS_MULTIPOLYGON:
  */
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 181; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_b);
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 181; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":175
+    /* "_geoslib.pyx":179
  *             b = _get_coords(g3)
  *             p = Polygon(b)
  *         elif typeid == GEOS_LINESTRING:             # <<<<<<<<<<<<<<
@@ -1573,7 +1573,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
     break;
 
-    /* "_geoslib.pyx":179
+    /* "_geoslib.pyx":183
  *             p = LineString(b)
  *         # for multi-geom structures, just return first one.
  *         elif typeid == GEOS_MULTIPOLYGON:             # <<<<<<<<<<<<<<
@@ -1582,7 +1582,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
     case GEOS_MULTIPOLYGON:
 
-    /* "_geoslib.pyx":180
+    /* "_geoslib.pyx":184
  *         # for multi-geom structures, just return first one.
  *         elif typeid == GEOS_MULTIPOLYGON:
  *             numgeoms = GEOSGetNumGeometries(g3)             # <<<<<<<<<<<<<<
@@ -1591,7 +1591,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
     __pyx_v_numgeoms = GEOSGetNumGeometries(__pyx_v_g3);
 
-    /* "_geoslib.pyx":181
+    /* "_geoslib.pyx":185
  *         elif typeid == GEOS_MULTIPOLYGON:
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             gout = GEOSGetGeometryN(g3, 0)             # <<<<<<<<<<<<<<
@@ -1600,37 +1600,37 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
     __pyx_v_gout = GEOSGetGeometryN(__pyx_v_g3, 0);
 
-    /* "_geoslib.pyx":182
+    /* "_geoslib.pyx":186
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             gout = GEOSGetGeometryN(g3, 0)
  *             b = _get_coords(gout)             # <<<<<<<<<<<<<<
  *             p = Polygon(b)
  *         elif typeid == GEOS_MULTILINESTRING:
  */
-    __pyx_t_2 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 182; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_v_b = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":183
+    /* "_geoslib.pyx":187
  *             gout = GEOSGetGeometryN(g3, 0)
  *             b = _get_coords(gout)
  *             p = Polygon(b)             # <<<<<<<<<<<<<<
  *         elif typeid == GEOS_MULTILINESTRING:
  *             numgeoms = GEOSGetNumGeometries(g3)
  */
-    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 187; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_b);
-    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 187; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":179
+    /* "_geoslib.pyx":183
  *             p = LineString(b)
  *         # for multi-geom structures, just return first one.
  *         elif typeid == GEOS_MULTIPOLYGON:             # <<<<<<<<<<<<<<
@@ -1639,7 +1639,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
     break;
 
-    /* "_geoslib.pyx":184
+    /* "_geoslib.pyx":188
  *             b = _get_coords(gout)
  *             p = Polygon(b)
  *         elif typeid == GEOS_MULTILINESTRING:             # <<<<<<<<<<<<<<
@@ -1648,7 +1648,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
     case GEOS_MULTILINESTRING:
 
-    /* "_geoslib.pyx":185
+    /* "_geoslib.pyx":189
  *             p = Polygon(b)
  *         elif typeid == GEOS_MULTILINESTRING:
  *             numgeoms = GEOSGetNumGeometries(g3)             # <<<<<<<<<<<<<<
@@ -1657,7 +1657,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
     __pyx_v_numgeoms = GEOSGetNumGeometries(__pyx_v_g3);
 
-    /* "_geoslib.pyx":186
+    /* "_geoslib.pyx":190
  *         elif typeid == GEOS_MULTILINESTRING:
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             gout = GEOSGetGeometryN(g3, 0)             # <<<<<<<<<<<<<<
@@ -1666,37 +1666,37 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
     __pyx_v_gout = GEOSGetGeometryN(__pyx_v_g3, 0);
 
-    /* "_geoslib.pyx":187
+    /* "_geoslib.pyx":191
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             gout = GEOSGetGeometryN(g3, 0)
  *             b = _get_coords(gout)             # <<<<<<<<<<<<<<
  *             p = LineString(b)
  *         else:
  */
-    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 187; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 191; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_v_b = __pyx_t_3;
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":188
+    /* "_geoslib.pyx":192
  *             gout = GEOSGetGeometryN(g3, 0)
  *             b = _get_coords(gout)
  *             p = LineString(b)             # <<<<<<<<<<<<<<
  *         else:
  *             type = PyBytes_FromString(GEOSGeomType(g3))
  */
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 192; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_b);
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 192; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":184
+    /* "_geoslib.pyx":188
  *             b = _get_coords(gout)
  *             p = Polygon(b)
  *         elif typeid == GEOS_MULTILINESTRING:             # <<<<<<<<<<<<<<
@@ -1706,42 +1706,42 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
     break;
     default:
 
-    /* "_geoslib.pyx":190
+    /* "_geoslib.pyx":194
  *             p = LineString(b)
  *         else:
  *             type = PyBytes_FromString(GEOSGeomType(g3))             # <<<<<<<<<<<<<<
  *             raise NotImplementedError("unions of type '%s' not yet implemented" % (type))
  *         GEOSGeom_destroy(g3)
  */
-    __pyx_t_2 = PyBytes_FromString(GEOSGeomType(__pyx_v_g3)); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyBytes_FromString(GEOSGeomType(__pyx_v_g3)); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 194; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_v_type = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":191
+    /* "_geoslib.pyx":195
  *         else:
  *             type = PyBytes_FromString(GEOSGeomType(g3))
  *             raise NotImplementedError("unions of type '%s' not yet implemented" % (type))             # <<<<<<<<<<<<<<
  *         GEOSGeom_destroy(g3)
  *         return p
  */
-    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_unions_of_type_s_not_yet_impleme, __pyx_v_type); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 191; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_unions_of_type_s_not_yet_impleme, __pyx_v_type); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 195; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 191; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 195; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 191; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 195; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 191; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 195; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     break;
   }
 
-  /* "_geoslib.pyx":192
+  /* "_geoslib.pyx":196
  *             type = PyBytes_FromString(GEOSGeomType(g3))
  *             raise NotImplementedError("unions of type '%s' not yet implemented" % (type))
  *         GEOSGeom_destroy(g3)             # <<<<<<<<<<<<<<
@@ -1750,7 +1750,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
  */
   GEOSGeom_destroy(__pyx_v_g3);
 
-  /* "_geoslib.pyx":193
+  /* "_geoslib.pyx":197
  *             raise NotImplementedError("unions of type '%s' not yet implemented" % (type))
  *         GEOSGeom_destroy(g3)
  *         return p             # <<<<<<<<<<<<<<
@@ -1762,12 +1762,12 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
   __pyx_r = ((PyObject *)__pyx_v_p);
   goto __pyx_L0;
 
-  /* "_geoslib.pyx":165
+  /* "_geoslib.pyx":166
  *             return False
  * 
  *     def union(self, BaseGeometry geom):             # <<<<<<<<<<<<<<
- *         cdef GEOSGeom *g1, *g2, *g3, *gout
- *         cdef int numgeoms, i, typeid
+ *         cdef GEOSGeom *g1
+ *         cdef GEOSGeom *g2
  */
 
   /* function exit code */
@@ -1785,12 +1785,12 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_6union(struct __pyx_obj_8_geo
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":195
+/* "_geoslib.pyx":199
  *         return p
  * 
  *     def simplify(self, tol):             # <<<<<<<<<<<<<<
- *         cdef GEOSGeom *g1, *g3, *gout
- *         cdef double tolerance
+ *         cdef GEOSGeom *g1
+ *         cdef GEOSGeom *g3
  */
 
 /* Python wrapper */
@@ -1827,7 +1827,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("simplify", 0);
 
-  /* "_geoslib.pyx":199
+  /* "_geoslib.pyx":205
  *         cdef double tolerance
  *         cdef int numgeoms, i, typeid
  *         g1 = self._geom             # <<<<<<<<<<<<<<
@@ -1837,17 +1837,17 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
   __pyx_t_1 = __pyx_v_self->_geom;
   __pyx_v_g1 = __pyx_t_1;
 
-  /* "_geoslib.pyx":200
+  /* "_geoslib.pyx":206
  *         cdef int numgeoms, i, typeid
  *         g1 = self._geom
  *         tolerance = tol             # <<<<<<<<<<<<<<
  *         g3 = GEOSSimplify(g1,tolerance)
  *         typeid = GEOSGeomTypeId(g3)
  */
-  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_v_tol); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 200; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_v_tol); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 206; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_tolerance = __pyx_t_2;
 
-  /* "_geoslib.pyx":201
+  /* "_geoslib.pyx":207
  *         g1 = self._geom
  *         tolerance = tol
  *         g3 = GEOSSimplify(g1,tolerance)             # <<<<<<<<<<<<<<
@@ -1856,7 +1856,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
   __pyx_v_g3 = GEOSSimplify(__pyx_v_g1, __pyx_v_tolerance);
 
-  /* "_geoslib.pyx":202
+  /* "_geoslib.pyx":208
  *         tolerance = tol
  *         g3 = GEOSSimplify(g1,tolerance)
  *         typeid = GEOSGeomTypeId(g3)             # <<<<<<<<<<<<<<
@@ -1865,7 +1865,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
   __pyx_v_typeid = GEOSGeomTypeId(__pyx_v_g3);
 
-  /* "_geoslib.pyx":203
+  /* "_geoslib.pyx":209
  *         g3 = GEOSSimplify(g1,tolerance)
  *         typeid = GEOSGeomTypeId(g3)
  *         if typeid == GEOS_POLYGON:             # <<<<<<<<<<<<<<
@@ -1875,37 +1875,37 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
   switch (__pyx_v_typeid) {
     case GEOS_POLYGON:
 
-    /* "_geoslib.pyx":204
+    /* "_geoslib.pyx":210
  *         typeid = GEOSGeomTypeId(g3)
  *         if typeid == GEOS_POLYGON:
  *             b = _get_coords(g3)             # <<<<<<<<<<<<<<
  *             p = Polygon(b)
  *         elif typeid == GEOS_LINESTRING:
  */
-    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 204; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 210; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_v_b = __pyx_t_3;
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":205
+    /* "_geoslib.pyx":211
  *         if typeid == GEOS_POLYGON:
  *             b = _get_coords(g3)
  *             p = Polygon(b)             # <<<<<<<<<<<<<<
  *         elif typeid == GEOS_LINESTRING:
  *             b = _get_coords(g3)
  */
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 205; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 211; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_b);
-    __pyx_t_4 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 205; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 211; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "_geoslib.pyx":203
+    /* "_geoslib.pyx":209
  *         g3 = GEOSSimplify(g1,tolerance)
  *         typeid = GEOSGeomTypeId(g3)
  *         if typeid == GEOS_POLYGON:             # <<<<<<<<<<<<<<
@@ -1914,7 +1914,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
     break;
 
-    /* "_geoslib.pyx":206
+    /* "_geoslib.pyx":212
  *             b = _get_coords(g3)
  *             p = Polygon(b)
  *         elif typeid == GEOS_LINESTRING:             # <<<<<<<<<<<<<<
@@ -1923,37 +1923,37 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
     case GEOS_LINESTRING:
 
-    /* "_geoslib.pyx":207
+    /* "_geoslib.pyx":213
  *             p = Polygon(b)
  *         elif typeid == GEOS_LINESTRING:
  *             b = _get_coords(g3)             # <<<<<<<<<<<<<<
  *             p = LineString(b)
  *         # for multi-geom structures, just return first one.
  */
-    __pyx_t_4 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 213; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_v_b = __pyx_t_4;
     __pyx_t_4 = 0;
 
-    /* "_geoslib.pyx":208
+    /* "_geoslib.pyx":214
  *         elif typeid == GEOS_LINESTRING:
  *             b = _get_coords(g3)
  *             p = LineString(b)             # <<<<<<<<<<<<<<
  *         # for multi-geom structures, just return first one.
  *         elif typeid == GEOS_MULTIPOLYGON:
  */
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 214; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_b);
-    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 214; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":206
+    /* "_geoslib.pyx":212
  *             b = _get_coords(g3)
  *             p = Polygon(b)
  *         elif typeid == GEOS_LINESTRING:             # <<<<<<<<<<<<<<
@@ -1962,7 +1962,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
     break;
 
-    /* "_geoslib.pyx":210
+    /* "_geoslib.pyx":216
  *             p = LineString(b)
  *         # for multi-geom structures, just return first one.
  *         elif typeid == GEOS_MULTIPOLYGON:             # <<<<<<<<<<<<<<
@@ -1971,7 +1971,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
     case GEOS_MULTIPOLYGON:
 
-    /* "_geoslib.pyx":211
+    /* "_geoslib.pyx":217
  *         # for multi-geom structures, just return first one.
  *         elif typeid == GEOS_MULTIPOLYGON:
  *             numgeoms = GEOSGetNumGeometries(g3)             # <<<<<<<<<<<<<<
@@ -1980,7 +1980,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
     __pyx_v_numgeoms = GEOSGetNumGeometries(__pyx_v_g3);
 
-    /* "_geoslib.pyx":212
+    /* "_geoslib.pyx":218
  *         elif typeid == GEOS_MULTIPOLYGON:
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             gout = GEOSGetGeometryN(g3, 0)             # <<<<<<<<<<<<<<
@@ -1989,37 +1989,37 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
     __pyx_v_gout = GEOSGetGeometryN(__pyx_v_g3, 0);
 
-    /* "_geoslib.pyx":213
+    /* "_geoslib.pyx":219
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             gout = GEOSGetGeometryN(g3, 0)
  *             b = _get_coords(gout)             # <<<<<<<<<<<<<<
  *             p = Polygon(b)
  *         elif typeid == GEOS_MULTILINESTRING:
  */
-    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 213; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 219; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_v_b = __pyx_t_3;
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":214
+    /* "_geoslib.pyx":220
  *             gout = GEOSGetGeometryN(g3, 0)
  *             b = _get_coords(gout)
  *             p = Polygon(b)             # <<<<<<<<<<<<<<
  *         elif typeid == GEOS_MULTILINESTRING:
  *             numgeoms = GEOSGetNumGeometries(g3)
  */
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 214; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 220; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_b);
-    __pyx_t_4 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 214; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_3, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 220; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "_geoslib.pyx":210
+    /* "_geoslib.pyx":216
  *             p = LineString(b)
  *         # for multi-geom structures, just return first one.
  *         elif typeid == GEOS_MULTIPOLYGON:             # <<<<<<<<<<<<<<
@@ -2028,7 +2028,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
     break;
 
-    /* "_geoslib.pyx":215
+    /* "_geoslib.pyx":221
  *             b = _get_coords(gout)
  *             p = Polygon(b)
  *         elif typeid == GEOS_MULTILINESTRING:             # <<<<<<<<<<<<<<
@@ -2037,7 +2037,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
     case GEOS_MULTILINESTRING:
 
-    /* "_geoslib.pyx":216
+    /* "_geoslib.pyx":222
  *             p = Polygon(b)
  *         elif typeid == GEOS_MULTILINESTRING:
  *             numgeoms = GEOSGetNumGeometries(g3)             # <<<<<<<<<<<<<<
@@ -2046,7 +2046,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
     __pyx_v_numgeoms = GEOSGetNumGeometries(__pyx_v_g3);
 
-    /* "_geoslib.pyx":217
+    /* "_geoslib.pyx":223
  *         elif typeid == GEOS_MULTILINESTRING:
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             gout = GEOSGetGeometryN(g3, 0)             # <<<<<<<<<<<<<<
@@ -2055,37 +2055,37 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
     __pyx_v_gout = GEOSGetGeometryN(__pyx_v_g3, 0);
 
-    /* "_geoslib.pyx":218
+    /* "_geoslib.pyx":224
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             gout = GEOSGetGeometryN(g3, 0)
  *             b = _get_coords(gout)             # <<<<<<<<<<<<<<
  *             p = LineString(b)
  *         else:
  */
-    __pyx_t_4 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 224; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_v_b = __pyx_t_4;
     __pyx_t_4 = 0;
 
-    /* "_geoslib.pyx":219
+    /* "_geoslib.pyx":225
  *             gout = GEOSGetGeometryN(g3, 0)
  *             b = _get_coords(gout)
  *             p = LineString(b)             # <<<<<<<<<<<<<<
  *         else:
  *             type = PyBytes_FromString(GEOSGeomType(g3))
  */
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 219; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_b);
-    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 219; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":215
+    /* "_geoslib.pyx":221
  *             b = _get_coords(gout)
  *             p = Polygon(b)
  *         elif typeid == GEOS_MULTILINESTRING:             # <<<<<<<<<<<<<<
@@ -2095,42 +2095,42 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
     break;
     default:
 
-    /* "_geoslib.pyx":221
+    /* "_geoslib.pyx":227
  *             p = LineString(b)
  *         else:
  *             type = PyBytes_FromString(GEOSGeomType(g3))             # <<<<<<<<<<<<<<
  *             raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
  *         GEOSGeom_destroy(g3)
  */
-    __pyx_t_3 = PyBytes_FromString(GEOSGeomType(__pyx_v_g3)); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 221; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyBytes_FromString(GEOSGeomType(__pyx_v_g3)); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 227; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_v_type = __pyx_t_3;
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":222
+    /* "_geoslib.pyx":228
  *         else:
  *             type = PyBytes_FromString(GEOSGeomType(g3))
  *             raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))             # <<<<<<<<<<<<<<
  *         GEOSGeom_destroy(g3)
  *         return p
  */
-    __pyx_t_3 = __Pyx_PyString_Format(__pyx_kp_s_intersections_of_type_s_not_yet, __pyx_v_type); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyString_Format(__pyx_kp_s_intersections_of_type_s_not_yet, __pyx_v_type); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 228; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 228; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_GIVEREF(__pyx_t_3);
     PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_3);
     __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 228; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 228; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     break;
   }
 
-  /* "_geoslib.pyx":223
+  /* "_geoslib.pyx":229
  *             type = PyBytes_FromString(GEOSGeomType(g3))
  *             raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
  *         GEOSGeom_destroy(g3)             # <<<<<<<<<<<<<<
@@ -2139,7 +2139,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
  */
   GEOSGeom_destroy(__pyx_v_g3);
 
-  /* "_geoslib.pyx":224
+  /* "_geoslib.pyx":230
  *             raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
  *         GEOSGeom_destroy(g3)
  *         return p             # <<<<<<<<<<<<<<
@@ -2151,12 +2151,12 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
   __pyx_r = ((PyObject *)__pyx_v_p);
   goto __pyx_L0;
 
-  /* "_geoslib.pyx":195
+  /* "_geoslib.pyx":199
  *         return p
  * 
  *     def simplify(self, tol):             # <<<<<<<<<<<<<<
- *         cdef GEOSGeom *g1, *g3, *gout
- *         cdef double tolerance
+ *         cdef GEOSGeom *g1
+ *         cdef GEOSGeom *g3
  */
 
   /* function exit code */
@@ -2174,12 +2174,12 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_8simplify(struct __pyx_obj_8_
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":226
+/* "_geoslib.pyx":232
  *         return p
  * 
  *     def fix(self):             # <<<<<<<<<<<<<<
- *         cdef GEOSGeom *g1, *g3, *gout
- *         cdef int numgeoms, i, typeid
+ *         cdef GEOSGeom *g1
+ *         cdef GEOSGeom *g3
  */
 
 /* Python wrapper */
@@ -2214,8 +2214,8 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("fix", 0);
 
-  /* "_geoslib.pyx":229
- *         cdef GEOSGeom *g1, *g3, *gout
+  /* "_geoslib.pyx":237
+ *         cdef GEOSGeom *gout
  *         cdef int numgeoms, i, typeid
  *         g1 = self._geom             # <<<<<<<<<<<<<<
  *         g3 = GEOSBuffer(g1, 0., 0)
@@ -2224,7 +2224,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
   __pyx_t_1 = __pyx_v_self->_geom;
   __pyx_v_g1 = __pyx_t_1;
 
-  /* "_geoslib.pyx":230
+  /* "_geoslib.pyx":238
  *         cdef int numgeoms, i, typeid
  *         g1 = self._geom
  *         g3 = GEOSBuffer(g1, 0., 0)             # <<<<<<<<<<<<<<
@@ -2233,7 +2233,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
   __pyx_v_g3 = GEOSBuffer(__pyx_v_g1, 0., 0);
 
-  /* "_geoslib.pyx":231
+  /* "_geoslib.pyx":239
  *         g1 = self._geom
  *         g3 = GEOSBuffer(g1, 0., 0)
  *         typeid = GEOSGeomTypeId(g3)             # <<<<<<<<<<<<<<
@@ -2242,7 +2242,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
   __pyx_v_typeid = GEOSGeomTypeId(__pyx_v_g3);
 
-  /* "_geoslib.pyx":232
+  /* "_geoslib.pyx":240
  *         g3 = GEOSBuffer(g1, 0., 0)
  *         typeid = GEOSGeomTypeId(g3)
  *         if typeid == GEOS_POLYGON:             # <<<<<<<<<<<<<<
@@ -2252,37 +2252,37 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
   switch (__pyx_v_typeid) {
     case GEOS_POLYGON:
 
-    /* "_geoslib.pyx":233
+    /* "_geoslib.pyx":241
  *         typeid = GEOSGeomTypeId(g3)
  *         if typeid == GEOS_POLYGON:
  *             b = _get_coords(g3)             # <<<<<<<<<<<<<<
  *             p = Polygon(b)
  *         elif typeid == GEOS_LINESTRING:
  */
-    __pyx_t_2 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 233; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 241; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_v_b = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":234
+    /* "_geoslib.pyx":242
  *         if typeid == GEOS_POLYGON:
  *             b = _get_coords(g3)
  *             p = Polygon(b)             # <<<<<<<<<<<<<<
  *         elif typeid == GEOS_LINESTRING:
  *             b = _get_coords(g3)
  */
-    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 234; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 242; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_b);
-    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 234; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 242; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":232
+    /* "_geoslib.pyx":240
  *         g3 = GEOSBuffer(g1, 0., 0)
  *         typeid = GEOSGeomTypeId(g3)
  *         if typeid == GEOS_POLYGON:             # <<<<<<<<<<<<<<
@@ -2291,7 +2291,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
     break;
 
-    /* "_geoslib.pyx":235
+    /* "_geoslib.pyx":243
  *             b = _get_coords(g3)
  *             p = Polygon(b)
  *         elif typeid == GEOS_LINESTRING:             # <<<<<<<<<<<<<<
@@ -2300,37 +2300,37 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
     case GEOS_LINESTRING:
 
-    /* "_geoslib.pyx":236
+    /* "_geoslib.pyx":244
  *             p = Polygon(b)
  *         elif typeid == GEOS_LINESTRING:
  *             b = _get_coords(g3)             # <<<<<<<<<<<<<<
  *             p = LineString(b)
  *         # for multi-geom structures, just return first one.
  */
-    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 236; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 244; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_v_b = __pyx_t_3;
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":237
+    /* "_geoslib.pyx":245
  *         elif typeid == GEOS_LINESTRING:
  *             b = _get_coords(g3)
  *             p = LineString(b)             # <<<<<<<<<<<<<<
  *         # for multi-geom structures, just return first one.
  *         elif typeid == GEOS_MULTIPOLYGON:
  */
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 245; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_b);
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 245; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":235
+    /* "_geoslib.pyx":243
  *             b = _get_coords(g3)
  *             p = Polygon(b)
  *         elif typeid == GEOS_LINESTRING:             # <<<<<<<<<<<<<<
@@ -2339,7 +2339,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
     break;
 
-    /* "_geoslib.pyx":239
+    /* "_geoslib.pyx":247
  *             p = LineString(b)
  *         # for multi-geom structures, just return first one.
  *         elif typeid == GEOS_MULTIPOLYGON:             # <<<<<<<<<<<<<<
@@ -2348,7 +2348,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
     case GEOS_MULTIPOLYGON:
 
-    /* "_geoslib.pyx":240
+    /* "_geoslib.pyx":248
  *         # for multi-geom structures, just return first one.
  *         elif typeid == GEOS_MULTIPOLYGON:
  *             numgeoms = GEOSGetNumGeometries(g3)             # <<<<<<<<<<<<<<
@@ -2357,7 +2357,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
     __pyx_v_numgeoms = GEOSGetNumGeometries(__pyx_v_g3);
 
-    /* "_geoslib.pyx":241
+    /* "_geoslib.pyx":249
  *         elif typeid == GEOS_MULTIPOLYGON:
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             gout = GEOSGetGeometryN(g3, 0)             # <<<<<<<<<<<<<<
@@ -2366,37 +2366,37 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
     __pyx_v_gout = GEOSGetGeometryN(__pyx_v_g3, 0);
 
-    /* "_geoslib.pyx":242
+    /* "_geoslib.pyx":250
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             gout = GEOSGetGeometryN(g3, 0)
  *             b = _get_coords(gout)             # <<<<<<<<<<<<<<
  *             p = Polygon(b)
  *         elif typeid == GEOS_MULTILINESTRING:
  */
-    __pyx_t_2 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 242; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 250; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_v_b = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":243
+    /* "_geoslib.pyx":251
  *             gout = GEOSGetGeometryN(g3, 0)
  *             b = _get_coords(gout)
  *             p = Polygon(b)             # <<<<<<<<<<<<<<
  *         elif typeid == GEOS_MULTILINESTRING:
  *             numgeoms = GEOSGetNumGeometries(g3)
  */
-    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 243; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 251; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_b);
-    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 243; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 251; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":239
+    /* "_geoslib.pyx":247
  *             p = LineString(b)
  *         # for multi-geom structures, just return first one.
  *         elif typeid == GEOS_MULTIPOLYGON:             # <<<<<<<<<<<<<<
@@ -2405,7 +2405,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
     break;
 
-    /* "_geoslib.pyx":244
+    /* "_geoslib.pyx":252
  *             b = _get_coords(gout)
  *             p = Polygon(b)
  *         elif typeid == GEOS_MULTILINESTRING:             # <<<<<<<<<<<<<<
@@ -2414,7 +2414,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
     case GEOS_MULTILINESTRING:
 
-    /* "_geoslib.pyx":245
+    /* "_geoslib.pyx":253
  *             p = Polygon(b)
  *         elif typeid == GEOS_MULTILINESTRING:
  *             numgeoms = GEOSGetNumGeometries(g3)             # <<<<<<<<<<<<<<
@@ -2423,7 +2423,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
     __pyx_v_numgeoms = GEOSGetNumGeometries(__pyx_v_g3);
 
-    /* "_geoslib.pyx":246
+    /* "_geoslib.pyx":254
  *         elif typeid == GEOS_MULTILINESTRING:
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             gout = GEOSGetGeometryN(g3, 0)             # <<<<<<<<<<<<<<
@@ -2432,37 +2432,37 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
     __pyx_v_gout = GEOSGetGeometryN(__pyx_v_g3, 0);
 
-    /* "_geoslib.pyx":247
+    /* "_geoslib.pyx":255
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             gout = GEOSGetGeometryN(g3, 0)
  *             b = _get_coords(gout)             # <<<<<<<<<<<<<<
  *             p = LineString(b)
  *         else:
  */
-    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 247; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_v_b = __pyx_t_3;
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":248
+    /* "_geoslib.pyx":256
  *             gout = GEOSGetGeometryN(g3, 0)
  *             b = _get_coords(gout)
  *             p = LineString(b)             # <<<<<<<<<<<<<<
  *         else:
  *             type = PyBytes_FromString(GEOSGeomType(g3))
  */
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 248; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 256; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_b);
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 248; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 256; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":244
+    /* "_geoslib.pyx":252
  *             b = _get_coords(gout)
  *             p = Polygon(b)
  *         elif typeid == GEOS_MULTILINESTRING:             # <<<<<<<<<<<<<<
@@ -2472,42 +2472,42 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
     break;
     default:
 
-    /* "_geoslib.pyx":250
+    /* "_geoslib.pyx":258
  *             p = LineString(b)
  *         else:
  *             type = PyBytes_FromString(GEOSGeomType(g3))             # <<<<<<<<<<<<<<
  *             raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
  *         GEOSGeom_destroy(g3)
  */
-    __pyx_t_2 = PyBytes_FromString(GEOSGeomType(__pyx_v_g3)); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 250; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyBytes_FromString(GEOSGeomType(__pyx_v_g3)); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_v_type = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":251
+    /* "_geoslib.pyx":259
  *         else:
  *             type = PyBytes_FromString(GEOSGeomType(g3))
  *             raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))             # <<<<<<<<<<<<<<
  *         GEOSGeom_destroy(g3)
  *         return p
  */
-    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_intersections_of_type_s_not_yet, __pyx_v_type); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 251; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_intersections_of_type_s_not_yet, __pyx_v_type); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 259; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 251; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 259; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 251; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_NotImplementedError, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 259; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 251; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 259; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     break;
   }
 
-  /* "_geoslib.pyx":252
+  /* "_geoslib.pyx":260
  *             type = PyBytes_FromString(GEOSGeomType(g3))
  *             raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
  *         GEOSGeom_destroy(g3)             # <<<<<<<<<<<<<<
@@ -2516,7 +2516,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
  */
   GEOSGeom_destroy(__pyx_v_g3);
 
-  /* "_geoslib.pyx":253
+  /* "_geoslib.pyx":261
  *             raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
  *         GEOSGeom_destroy(g3)
  *         return p             # <<<<<<<<<<<<<<
@@ -2528,12 +2528,12 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
   __pyx_r = ((PyObject *)__pyx_v_p);
   goto __pyx_L0;
 
-  /* "_geoslib.pyx":226
+  /* "_geoslib.pyx":232
  *         return p
  * 
  *     def fix(self):             # <<<<<<<<<<<<<<
- *         cdef GEOSGeom *g1, *g3, *gout
- *         cdef int numgeoms, i, typeid
+ *         cdef GEOSGeom *g1
+ *         cdef GEOSGeom *g3
  */
 
   /* function exit code */
@@ -2551,12 +2551,12 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_10fix(struct __pyx_obj_8_geos
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":255
+/* "_geoslib.pyx":263
  *         return p
  * 
  *     def intersects(self, BaseGeometry geom):             # <<<<<<<<<<<<<<
- *         cdef GEOSGeom *g1, *g2
- *         cdef char answer
+ *         cdef GEOSGeom *g1
+ *         cdef GEOSGeom *g2
  */
 
 /* Python wrapper */
@@ -2568,7 +2568,7 @@ static PyObject *__pyx_pw_8_geoslib_12BaseGeometry_13intersects(PyObject *__pyx_
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("intersects (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_geom), __pyx_ptype_8_geoslib_BaseGeometry, 1, "geom", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_geom), __pyx_ptype_8_geoslib_BaseGeometry, 1, "geom", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 263; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_8_geoslib_12BaseGeometry_12intersects(((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_v_self), ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_v_geom));
 
   /* function exit code */
@@ -2590,8 +2590,8 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_12intersects(struct __pyx_obj
   int __pyx_t_2;
   __Pyx_RefNannySetupContext("intersects", 0);
 
-  /* "_geoslib.pyx":258
- *         cdef GEOSGeom *g1, *g2
+  /* "_geoslib.pyx":267
+ *         cdef GEOSGeom *g2
  *         cdef char answer
  *         g1 = self._geom             # <<<<<<<<<<<<<<
  *         g2 = geom._geom
@@ -2600,7 +2600,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_12intersects(struct __pyx_obj
   __pyx_t_1 = __pyx_v_self->_geom;
   __pyx_v_g1 = __pyx_t_1;
 
-  /* "_geoslib.pyx":259
+  /* "_geoslib.pyx":268
  *         cdef char answer
  *         g1 = self._geom
  *         g2 = geom._geom             # <<<<<<<<<<<<<<
@@ -2610,7 +2610,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_12intersects(struct __pyx_obj
   __pyx_t_1 = __pyx_v_geom->_geom;
   __pyx_v_g2 = __pyx_t_1;
 
-  /* "_geoslib.pyx":260
+  /* "_geoslib.pyx":269
  *         g1 = self._geom
  *         g2 = geom._geom
  *         answer =  GEOSIntersects(g1, g2)             # <<<<<<<<<<<<<<
@@ -2619,7 +2619,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_12intersects(struct __pyx_obj
  */
   __pyx_v_answer = GEOSIntersects(__pyx_v_g1, __pyx_v_g2);
 
-  /* "_geoslib.pyx":261
+  /* "_geoslib.pyx":270
  *         g2 = geom._geom
  *         answer =  GEOSIntersects(g1, g2)
  *         if answer:             # <<<<<<<<<<<<<<
@@ -2629,7 +2629,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_12intersects(struct __pyx_obj
   __pyx_t_2 = (__pyx_v_answer != 0);
   if (__pyx_t_2) {
 
-    /* "_geoslib.pyx":262
+    /* "_geoslib.pyx":271
  *         answer =  GEOSIntersects(g1, g2)
  *         if answer:
  *             return True             # <<<<<<<<<<<<<<
@@ -2641,7 +2641,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_12intersects(struct __pyx_obj
     __pyx_r = Py_True;
     goto __pyx_L0;
 
-    /* "_geoslib.pyx":261
+    /* "_geoslib.pyx":270
  *         g2 = geom._geom
  *         answer =  GEOSIntersects(g1, g2)
  *         if answer:             # <<<<<<<<<<<<<<
@@ -2650,7 +2650,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_12intersects(struct __pyx_obj
  */
   }
 
-  /* "_geoslib.pyx":264
+  /* "_geoslib.pyx":273
  *             return True
  *         else:
  *             return False             # <<<<<<<<<<<<<<
@@ -2664,12 +2664,12 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_12intersects(struct __pyx_obj
     goto __pyx_L0;
   }
 
-  /* "_geoslib.pyx":255
+  /* "_geoslib.pyx":263
  *         return p
  * 
  *     def intersects(self, BaseGeometry geom):             # <<<<<<<<<<<<<<
- *         cdef GEOSGeom *g1, *g2
- *         cdef char answer
+ *         cdef GEOSGeom *g1
+ *         cdef GEOSGeom *g2
  */
 
   /* function exit code */
@@ -2679,12 +2679,12 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_12intersects(struct __pyx_obj
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":266
+/* "_geoslib.pyx":275
  *             return False
  * 
  *     def intersection(self, BaseGeometry geom):             # <<<<<<<<<<<<<<
- *         cdef GEOSGeom *g1, *g2, *g3, *gout
- *         cdef char answer
+ *         cdef GEOSGeom *g1
+ *         cdef GEOSGeom *g2
  */
 
 /* Python wrapper */
@@ -2696,7 +2696,7 @@ static PyObject *__pyx_pw_8_geoslib_12BaseGeometry_15intersection(PyObject *__py
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("intersection (wrapper)", 0);
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_geom), __pyx_ptype_8_geoslib_BaseGeometry, 1, "geom", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 266; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_geom), __pyx_ptype_8_geoslib_BaseGeometry, 1, "geom", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 275; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_8_geoslib_12BaseGeometry_14intersection(((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_v_self), ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_v_geom));
 
   /* function exit code */
@@ -2731,7 +2731,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("intersection", 0);
 
-  /* "_geoslib.pyx":270
+  /* "_geoslib.pyx":282
  *         cdef char answer
  *         cdef int numgeoms, i, typeid
  *         g1 = self._geom             # <<<<<<<<<<<<<<
@@ -2741,7 +2741,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
   __pyx_t_1 = __pyx_v_self->_geom;
   __pyx_v_g1 = __pyx_t_1;
 
-  /* "_geoslib.pyx":271
+  /* "_geoslib.pyx":283
  *         cdef int numgeoms, i, typeid
  *         g1 = self._geom
  *         g2 = geom._geom             # <<<<<<<<<<<<<<
@@ -2751,7 +2751,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
   __pyx_t_1 = __pyx_v_geom->_geom;
   __pyx_v_g2 = __pyx_t_1;
 
-  /* "_geoslib.pyx":272
+  /* "_geoslib.pyx":284
  *         g1 = self._geom
  *         g2 = geom._geom
  *         g3 =  GEOSIntersection(g1, g2)             # <<<<<<<<<<<<<<
@@ -2760,7 +2760,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
   __pyx_v_g3 = GEOSIntersection(__pyx_v_g1, __pyx_v_g2);
 
-  /* "_geoslib.pyx":273
+  /* "_geoslib.pyx":285
  *         g2 = geom._geom
  *         g3 =  GEOSIntersection(g1, g2)
  *         typeid = GEOSGeomTypeId(g3)             # <<<<<<<<<<<<<<
@@ -2769,7 +2769,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
   __pyx_v_typeid = GEOSGeomTypeId(__pyx_v_g3);
 
-  /* "_geoslib.pyx":274
+  /* "_geoslib.pyx":286
  *         g3 =  GEOSIntersection(g1, g2)
  *         typeid = GEOSGeomTypeId(g3)
  *         if typeid == GEOS_POLYGON:             # <<<<<<<<<<<<<<
@@ -2779,44 +2779,44 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
   switch (__pyx_v_typeid) {
     case GEOS_POLYGON:
 
-    /* "_geoslib.pyx":275
+    /* "_geoslib.pyx":287
  *         typeid = GEOSGeomTypeId(g3)
  *         if typeid == GEOS_POLYGON:
  *             b = _get_coords(g3)             # <<<<<<<<<<<<<<
  *             p = Polygon(b)
  *             pout = [p]
  */
-    __pyx_t_2 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 275; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 287; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_v_b = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":276
+    /* "_geoslib.pyx":288
  *         if typeid == GEOS_POLYGON:
  *             b = _get_coords(g3)
  *             p = Polygon(b)             # <<<<<<<<<<<<<<
  *             pout = [p]
  *         elif typeid == GEOS_LINESTRING:
  */
-    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 276; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 288; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_b);
-    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 276; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 288; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":277
+    /* "_geoslib.pyx":289
  *             b = _get_coords(g3)
  *             p = Polygon(b)
  *             pout = [p]             # <<<<<<<<<<<<<<
  *         elif typeid == GEOS_LINESTRING:
  *             b = _get_coords(g3)
  */
-    __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 277; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyList_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 289; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(((PyObject *)__pyx_v_p));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_p));
@@ -2824,7 +2824,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
     __pyx_v_pout = ((PyObject*)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":274
+    /* "_geoslib.pyx":286
  *         g3 =  GEOSIntersection(g1, g2)
  *         typeid = GEOSGeomTypeId(g3)
  *         if typeid == GEOS_POLYGON:             # <<<<<<<<<<<<<<
@@ -2833,7 +2833,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
     break;
 
-    /* "_geoslib.pyx":278
+    /* "_geoslib.pyx":290
  *             p = Polygon(b)
  *             pout = [p]
  *         elif typeid == GEOS_LINESTRING:             # <<<<<<<<<<<<<<
@@ -2842,44 +2842,44 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
     case GEOS_LINESTRING:
 
-    /* "_geoslib.pyx":279
+    /* "_geoslib.pyx":291
  *             pout = [p]
  *         elif typeid == GEOS_LINESTRING:
  *             b = _get_coords(g3)             # <<<<<<<<<<<<<<
  *             p = LineString(b)
  *             pout = [p]
  */
-    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 279; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_g3); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 291; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_v_b = __pyx_t_3;
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":280
+    /* "_geoslib.pyx":292
  *         elif typeid == GEOS_LINESTRING:
  *             b = _get_coords(g3)
  *             p = LineString(b)             # <<<<<<<<<<<<<<
  *             pout = [p]
  *         elif typeid == GEOS_MULTIPOLYGON:
  */
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 280; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 292; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_INCREF(__pyx_v_b);
     __Pyx_GIVEREF(__pyx_v_b);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_b);
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 280; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 292; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_v_p = ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":281
+    /* "_geoslib.pyx":293
  *             b = _get_coords(g3)
  *             p = LineString(b)
  *             pout = [p]             # <<<<<<<<<<<<<<
  *         elif typeid == GEOS_MULTIPOLYGON:
  *             numgeoms = GEOSGetNumGeometries(g3)
  */
-    __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 281; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 293; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(((PyObject *)__pyx_v_p));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_p));
@@ -2887,7 +2887,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
     __pyx_v_pout = ((PyObject*)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":278
+    /* "_geoslib.pyx":290
  *             p = Polygon(b)
  *             pout = [p]
  *         elif typeid == GEOS_LINESTRING:             # <<<<<<<<<<<<<<
@@ -2896,7 +2896,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
     break;
 
-    /* "_geoslib.pyx":282
+    /* "_geoslib.pyx":294
  *             p = LineString(b)
  *             pout = [p]
  *         elif typeid == GEOS_MULTIPOLYGON:             # <<<<<<<<<<<<<<
@@ -2905,7 +2905,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
     case GEOS_MULTIPOLYGON:
 
-    /* "_geoslib.pyx":283
+    /* "_geoslib.pyx":295
  *             pout = [p]
  *         elif typeid == GEOS_MULTIPOLYGON:
  *             numgeoms = GEOSGetNumGeometries(g3)             # <<<<<<<<<<<<<<
@@ -2914,19 +2914,19 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
     __pyx_v_numgeoms = GEOSGetNumGeometries(__pyx_v_g3);
 
-    /* "_geoslib.pyx":284
+    /* "_geoslib.pyx":296
  *         elif typeid == GEOS_MULTIPOLYGON:
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             pout = []             # <<<<<<<<<<<<<<
  *             for i from 0 <= i < numgeoms:
  *                 gout = GEOSGetGeometryN(g3, i)
  */
-    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 284; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 296; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_v_pout = ((PyObject*)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":285
+    /* "_geoslib.pyx":297
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             pout = []
  *             for i from 0 <= i < numgeoms:             # <<<<<<<<<<<<<<
@@ -2936,7 +2936,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
     __pyx_t_4 = __pyx_v_numgeoms;
     for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_4; __pyx_v_i++) {
 
-      /* "_geoslib.pyx":286
+      /* "_geoslib.pyx":298
  *             pout = []
  *             for i from 0 <= i < numgeoms:
  *                 gout = GEOSGetGeometryN(g3, i)             # <<<<<<<<<<<<<<
@@ -2945,47 +2945,47 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
       __pyx_v_gout = GEOSGetGeometryN(__pyx_v_g3, __pyx_v_i);
 
-      /* "_geoslib.pyx":287
+      /* "_geoslib.pyx":299
  *             for i from 0 <= i < numgeoms:
  *                 gout = GEOSGetGeometryN(g3, i)
  *                 b = _get_coords(gout)             # <<<<<<<<<<<<<<
  *                 p = Polygon(b)
  *                 pout.append(p)
  */
-      __pyx_t_2 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 287; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 299; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_XDECREF_SET(__pyx_v_b, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "_geoslib.pyx":288
+      /* "_geoslib.pyx":300
  *                 gout = GEOSGetGeometryN(g3, i)
  *                 b = _get_coords(gout)
  *                 p = Polygon(b)             # <<<<<<<<<<<<<<
  *                 pout.append(p)
  *         elif typeid == GEOS_MULTILINESTRING:
  */
-      __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 288; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 300; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_INCREF(__pyx_v_b);
       __Pyx_GIVEREF(__pyx_v_b);
       PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_b);
-      __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 288; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_Polygon), __pyx_t_2, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 300; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_XDECREF_SET(__pyx_v_p, ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_3));
       __pyx_t_3 = 0;
 
-      /* "_geoslib.pyx":289
+      /* "_geoslib.pyx":301
  *                 b = _get_coords(gout)
  *                 p = Polygon(b)
  *                 pout.append(p)             # <<<<<<<<<<<<<<
  *         elif typeid == GEOS_MULTILINESTRING:
  *             numgeoms = GEOSGetNumGeometries(g3)
  */
-      __pyx_t_5 = __Pyx_PyList_Append(__pyx_v_pout, ((PyObject *)__pyx_v_p)); if (unlikely(__pyx_t_5 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 289; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_5 = __Pyx_PyList_Append(__pyx_v_pout, ((PyObject *)__pyx_v_p)); if (unlikely(__pyx_t_5 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 301; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
 
-    /* "_geoslib.pyx":282
+    /* "_geoslib.pyx":294
  *             p = LineString(b)
  *             pout = [p]
  *         elif typeid == GEOS_MULTIPOLYGON:             # <<<<<<<<<<<<<<
@@ -2994,7 +2994,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
     break;
 
-    /* "_geoslib.pyx":290
+    /* "_geoslib.pyx":302
  *                 p = Polygon(b)
  *                 pout.append(p)
  *         elif typeid == GEOS_MULTILINESTRING:             # <<<<<<<<<<<<<<
@@ -3003,7 +3003,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
     case GEOS_MULTILINESTRING:
 
-    /* "_geoslib.pyx":291
+    /* "_geoslib.pyx":303
  *                 pout.append(p)
  *         elif typeid == GEOS_MULTILINESTRING:
  *             numgeoms = GEOSGetNumGeometries(g3)             # <<<<<<<<<<<<<<
@@ -3012,19 +3012,19 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
     __pyx_v_numgeoms = GEOSGetNumGeometries(__pyx_v_g3);
 
-    /* "_geoslib.pyx":292
+    /* "_geoslib.pyx":304
  *         elif typeid == GEOS_MULTILINESTRING:
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             pout = []             # <<<<<<<<<<<<<<
  *             for i from 0 <= i < numgeoms:
  *                 gout = GEOSGetGeometryN(g3, i)
  */
-    __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 292; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 304; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_v_pout = ((PyObject*)__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "_geoslib.pyx":293
+    /* "_geoslib.pyx":305
  *             numgeoms = GEOSGetNumGeometries(g3)
  *             pout = []
  *             for i from 0 <= i < numgeoms:             # <<<<<<<<<<<<<<
@@ -3034,7 +3034,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
     __pyx_t_4 = __pyx_v_numgeoms;
     for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_4; __pyx_v_i++) {
 
-      /* "_geoslib.pyx":294
+      /* "_geoslib.pyx":306
  *             pout = []
  *             for i from 0 <= i < numgeoms:
  *                 gout = GEOSGetGeometryN(g3, i)             # <<<<<<<<<<<<<<
@@ -3043,47 +3043,47 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
       __pyx_v_gout = GEOSGetGeometryN(__pyx_v_g3, __pyx_v_i);
 
-      /* "_geoslib.pyx":295
+      /* "_geoslib.pyx":307
  *             for i from 0 <= i < numgeoms:
  *                 gout = GEOSGetGeometryN(g3, i)
  *                 b = _get_coords(gout)             # <<<<<<<<<<<<<<
  *                 p = LineString(b)
  *                 pout.append(p)
  */
-      __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 295; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = __pyx_f_8_geoslib__get_coords(__pyx_v_gout); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 307; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_XDECREF_SET(__pyx_v_b, __pyx_t_3);
       __pyx_t_3 = 0;
 
-      /* "_geoslib.pyx":296
+      /* "_geoslib.pyx":308
  *                 gout = GEOSGetGeometryN(g3, i)
  *                 b = _get_coords(gout)
  *                 p = LineString(b)             # <<<<<<<<<<<<<<
  *                 pout.append(p)
  *         else:
  */
-      __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 296; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 308; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_v_b);
       __Pyx_GIVEREF(__pyx_v_b);
       PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_b);
-      __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 296; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8_geoslib_LineString), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 308; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_XDECREF_SET(__pyx_v_p, ((struct __pyx_obj_8_geoslib_BaseGeometry *)__pyx_t_2));
       __pyx_t_2 = 0;
 
-      /* "_geoslib.pyx":297
+      /* "_geoslib.pyx":309
  *                 b = _get_coords(gout)
  *                 p = LineString(b)
  *                 pout.append(p)             # <<<<<<<<<<<<<<
  *         else:
  *             #type = PyBytes_FromString(GEOSGeomType(g3))
  */
-      __pyx_t_5 = __Pyx_PyList_Append(__pyx_v_pout, ((PyObject *)__pyx_v_p)); if (unlikely(__pyx_t_5 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 297; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_5 = __Pyx_PyList_Append(__pyx_v_pout, ((PyObject *)__pyx_v_p)); if (unlikely(__pyx_t_5 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 309; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
 
-    /* "_geoslib.pyx":290
+    /* "_geoslib.pyx":302
  *                 p = Polygon(b)
  *                 pout.append(p)
  *         elif typeid == GEOS_MULTILINESTRING:             # <<<<<<<<<<<<<<
@@ -3093,7 +3093,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
     break;
     default:
 
-    /* "_geoslib.pyx":301
+    /* "_geoslib.pyx":313
  *             #type = PyBytes_FromString(GEOSGeomType(g3))
  *             #raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
  *             GEOSGeom_destroy(g3)             # <<<<<<<<<<<<<<
@@ -3102,7 +3102,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
     GEOSGeom_destroy(__pyx_v_g3);
 
-    /* "_geoslib.pyx":302
+    /* "_geoslib.pyx":314
  *             #raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
  *             GEOSGeom_destroy(g3)
  *             return []             # <<<<<<<<<<<<<<
@@ -3110,7 +3110,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  *         return pout
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 302; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 314; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_r = __pyx_t_2;
     __pyx_t_2 = 0;
@@ -3118,7 +3118,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
     break;
   }
 
-  /* "_geoslib.pyx":303
+  /* "_geoslib.pyx":315
  *             GEOSGeom_destroy(g3)
  *             return []
  *         GEOSGeom_destroy(g3)             # <<<<<<<<<<<<<<
@@ -3127,7 +3127,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
  */
   GEOSGeom_destroy(__pyx_v_g3);
 
-  /* "_geoslib.pyx":304
+  /* "_geoslib.pyx":316
  *             return []
  *         GEOSGeom_destroy(g3)
  *         return pout             # <<<<<<<<<<<<<<
@@ -3139,12 +3139,12 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
   __pyx_r = __pyx_v_pout;
   goto __pyx_L0;
 
-  /* "_geoslib.pyx":266
+  /* "_geoslib.pyx":275
  *             return False
  * 
  *     def intersection(self, BaseGeometry geom):             # <<<<<<<<<<<<<<
- *         cdef GEOSGeom *g1, *g2, *g3, *gout
- *         cdef char answer
+ *         cdef GEOSGeom *g1
+ *         cdef GEOSGeom *g2
  */
 
   /* function exit code */
@@ -3162,7 +3162,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_14intersection(struct __pyx_o
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":306
+/* "_geoslib.pyx":318
  *         return pout
  * 
  *     def get_coords(self):             # <<<<<<<<<<<<<<
@@ -3192,7 +3192,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_16get_coords(struct __pyx_obj
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_coords", 0);
 
-  /* "_geoslib.pyx":307
+  /* "_geoslib.pyx":319
  * 
  *     def get_coords(self):
  *         return _get_coords(self._geom)             # <<<<<<<<<<<<<<
@@ -3200,13 +3200,13 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_16get_coords(struct __pyx_obj
  *     def __dealloc__(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_8_geoslib__get_coords(__pyx_v_self->_geom); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 307; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_8_geoslib__get_coords(__pyx_v_self->_geom); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "_geoslib.pyx":306
+  /* "_geoslib.pyx":318
  *         return pout
  * 
  *     def get_coords(self):             # <<<<<<<<<<<<<<
@@ -3225,7 +3225,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_16get_coords(struct __pyx_obj
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":309
+/* "_geoslib.pyx":321
  *         return _get_coords(self._geom)
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -3248,7 +3248,7 @@ static void __pyx_pf_8_geoslib_12BaseGeometry_18__dealloc__(struct __pyx_obj_8_g
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__dealloc__", 0);
 
-  /* "_geoslib.pyx":311
+  /* "_geoslib.pyx":323
  *     def __dealloc__(self):
  *         """destroy GEOS geometry"""
  *         GEOSGeom_destroy(self._geom)             # <<<<<<<<<<<<<<
@@ -3257,7 +3257,7 @@ static void __pyx_pf_8_geoslib_12BaseGeometry_18__dealloc__(struct __pyx_obj_8_g
  */
   GEOSGeom_destroy(__pyx_v_self->_geom);
 
-  /* "_geoslib.pyx":309
+  /* "_geoslib.pyx":321
  *         return _get_coords(self._geom)
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -3269,7 +3269,7 @@ static void __pyx_pf_8_geoslib_12BaseGeometry_18__dealloc__(struct __pyx_obj_8_g
   __Pyx_RefNannyFinishContext();
 }
 
-/* "_geoslib.pyx":313
+/* "_geoslib.pyx":325
  *         GEOSGeom_destroy(self._geom)
  * 
  *     def __reduce__(self):             # <<<<<<<<<<<<<<
@@ -3302,7 +3302,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_20__reduce__(struct __pyx_obj
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__reduce__", 0);
 
-  /* "_geoslib.pyx":315
+  /* "_geoslib.pyx":327
  *     def __reduce__(self):
  *         """special method that allows geos instance to be pickled"""
  *         return (self.__class__,(self.boundary,))             # <<<<<<<<<<<<<<
@@ -3310,14 +3310,14 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_20__reduce__(struct __pyx_obj
  * cdef class Polygon(BaseGeometry):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_class); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 315; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_class); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 327; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 315; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 327; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(__pyx_v_self->boundary);
   __Pyx_GIVEREF(__pyx_v_self->boundary);
   PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_self->boundary);
-  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 315; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 327; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
@@ -3329,7 +3329,7 @@ static PyObject *__pyx_pf_8_geoslib_12BaseGeometry_20__reduce__(struct __pyx_obj
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "_geoslib.pyx":313
+  /* "_geoslib.pyx":325
  *         GEOSGeom_destroy(self._geom)
  * 
  *     def __reduce__(self):             # <<<<<<<<<<<<<<
@@ -3445,7 +3445,7 @@ static int __pyx_pf_8_geoslib_12BaseGeometry_8boundary_4__del__(struct __pyx_obj
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":319
+/* "_geoslib.pyx":331
  * cdef class Polygon(BaseGeometry):
  * 
  *     def __init__(self, ndarray b):             # <<<<<<<<<<<<<<
@@ -3481,7 +3481,7 @@ static int __pyx_pw_8_geoslib_7Polygon_1__init__(PyObject *__pyx_v_self, PyObjec
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 1) {
       goto __pyx_L5_argtuple_error;
@@ -3492,13 +3492,13 @@ static int __pyx_pw_8_geoslib_7Polygon_1__init__(PyObject *__pyx_v_self, PyObjec
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("_geoslib.Polygon.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_b), __pyx_ptype_8_geoslib_ndarray, 1, "b", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 319; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_b), __pyx_ptype_8_geoslib_ndarray, 1, "b", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_8_geoslib_7Polygon___init__(((struct __pyx_obj_8_geoslib_Polygon *)__pyx_v_self), __pyx_v_b);
 
   /* function exit code */
@@ -3533,7 +3533,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
   __Pyx_RefNannySetupContext("__init__", 0);
   __Pyx_INCREF((PyObject *)__pyx_v_b);
 
-  /* "_geoslib.pyx":328
+  /* "_geoslib.pyx":340
  *         # make sure data is contiguous.
  *         # if not, make a local copy.
  *         if not PyArray_ISCONTIGUOUS(b):             # <<<<<<<<<<<<<<
@@ -3543,14 +3543,14 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
   __pyx_t_1 = ((!(PyArray_ISCONTIGUOUS(__pyx_v_b) != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "_geoslib.pyx":329
+    /* "_geoslib.pyx":341
  *         # if not, make a local copy.
  *         if not PyArray_ISCONTIGUOUS(b):
  *             b = b.copy()             # <<<<<<<<<<<<<<
  * 
  *         m = b.shape[0]
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_b), __pyx_n_s_copy); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_b), __pyx_n_s_copy); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_4 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
@@ -3563,18 +3563,18 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
       }
     }
     if (__pyx_t_4) {
-      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else {
-      __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_8_geoslib_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_8_geoslib_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF_SET(__pyx_v_b, ((PyArrayObject *)__pyx_t_2));
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":328
+    /* "_geoslib.pyx":340
  *         # make sure data is contiguous.
  *         # if not, make a local copy.
  *         if not PyArray_ISCONTIGUOUS(b):             # <<<<<<<<<<<<<<
@@ -3583,57 +3583,57 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
   }
 
-  /* "_geoslib.pyx":331
+  /* "_geoslib.pyx":343
  *             b = b.copy()
  * 
  *         m = b.shape[0]             # <<<<<<<<<<<<<<
  * 
  *         # Add closing coordinates to sequence?
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_b), __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_b), __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 343; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_2, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_3 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_2, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_3 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 343; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_5 = __Pyx_PyInt_As_unsigned_int(__pyx_t_3); if (unlikely((__pyx_t_5 == (unsigned int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = __Pyx_PyInt_As_unsigned_int(__pyx_t_3); if (unlikely((__pyx_t_5 == (unsigned int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 343; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_m = __pyx_t_5;
 
-  /* "_geoslib.pyx":334
+  /* "_geoslib.pyx":346
  * 
  *         # Add closing coordinates to sequence?
  *         if b[-1,0] != b[0,0] or b[-1,1] != b[0,1]:             # <<<<<<<<<<<<<<
  *             M = m + 1
  *         else:
  */
-  __pyx_t_3 = PyObject_GetItem(((PyObject *)__pyx_v_b), __pyx_tuple_); if (unlikely(__pyx_t_3 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_3 = PyObject_GetItem(((PyObject *)__pyx_v_b), __pyx_tuple_); if (unlikely(__pyx_t_3 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = PyObject_GetItem(((PyObject *)__pyx_v_b), __pyx_tuple__2); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_2 = PyObject_GetItem(((PyObject *)__pyx_v_b), __pyx_tuple__2); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyObject_RichCompare(__pyx_t_3, __pyx_t_2, Py_NE); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyObject_RichCompare(__pyx_t_3, __pyx_t_2, Py_NE); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   if (!__pyx_t_6) {
   } else {
     __pyx_t_1 = __pyx_t_6;
     goto __pyx_L5_bool_binop_done;
   }
-  __pyx_t_4 = PyObject_GetItem(((PyObject *)__pyx_v_b), __pyx_tuple__3); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_4 = PyObject_GetItem(((PyObject *)__pyx_v_b), __pyx_tuple__3); if (unlikely(__pyx_t_4 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_2 = PyObject_GetItem(((PyObject *)__pyx_v_b), __pyx_tuple__4); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_2 = PyObject_GetItem(((PyObject *)__pyx_v_b), __pyx_tuple__4); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyObject_RichCompare(__pyx_t_4, __pyx_t_2, Py_NE); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = PyObject_RichCompare(__pyx_t_4, __pyx_t_2, Py_NE); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_1 = __pyx_t_6;
   __pyx_L5_bool_binop_done:;
   if (__pyx_t_1) {
 
-    /* "_geoslib.pyx":335
+    /* "_geoslib.pyx":347
  *         # Add closing coordinates to sequence?
  *         if b[-1,0] != b[0,0] or b[-1,1] != b[0,1]:
  *             M = m + 1             # <<<<<<<<<<<<<<
@@ -3642,7 +3642,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
     __pyx_v_M = (__pyx_v_m + 1);
 
-    /* "_geoslib.pyx":334
+    /* "_geoslib.pyx":346
  * 
  *         # Add closing coordinates to sequence?
  *         if b[-1,0] != b[0,0] or b[-1,1] != b[0,1]:             # <<<<<<<<<<<<<<
@@ -3652,7 +3652,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
     goto __pyx_L4;
   }
 
-  /* "_geoslib.pyx":337
+  /* "_geoslib.pyx":349
  *             M = m + 1
  *         else:
  *             M = m             # <<<<<<<<<<<<<<
@@ -3664,7 +3664,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
   }
   __pyx_L4:;
 
-  /* "_geoslib.pyx":338
+  /* "_geoslib.pyx":350
  *         else:
  *             M = m
  *         self._npts = M             # <<<<<<<<<<<<<<
@@ -3673,7 +3673,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
   __pyx_v_self->__pyx_base._npts = __pyx_v_M;
 
-  /* "_geoslib.pyx":341
+  /* "_geoslib.pyx":353
  * 
  *         # Create a coordinate sequence
  *         cs = GEOSCoordSeq_create(M, 2)             # <<<<<<<<<<<<<<
@@ -3682,7 +3682,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
   __pyx_v_cs = GEOSCoordSeq_create(__pyx_v_M, 2);
 
-  /* "_geoslib.pyx":344
+  /* "_geoslib.pyx":356
  * 
  *         # add to coordinate sequence
  *         bbuffer = <double *>b.data             # <<<<<<<<<<<<<<
@@ -3691,7 +3691,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
   __pyx_v_bbuffer = ((double *)__pyx_v_b->data);
 
-  /* "_geoslib.pyx":345
+  /* "_geoslib.pyx":357
  *         # add to coordinate sequence
  *         bbuffer = <double *>b.data
  *         for i from 0 <= i < m:             # <<<<<<<<<<<<<<
@@ -3701,7 +3701,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
   __pyx_t_5 = __pyx_v_m;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_5; __pyx_v_i++) {
 
-    /* "_geoslib.pyx":346
+    /* "_geoslib.pyx":358
  *         bbuffer = <double *>b.data
  *         for i from 0 <= i < m:
  *             dx = bbuffer[2*i]             # <<<<<<<<<<<<<<
@@ -3710,7 +3710,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
     __pyx_v_dx = (__pyx_v_bbuffer[(2 * __pyx_v_i)]);
 
-    /* "_geoslib.pyx":347
+    /* "_geoslib.pyx":359
  *         for i from 0 <= i < m:
  *             dx = bbuffer[2*i]
  *             dy = bbuffer[2*i+1]             # <<<<<<<<<<<<<<
@@ -3719,7 +3719,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
     __pyx_v_dy = (__pyx_v_bbuffer[((2 * __pyx_v_i) + 1)]);
 
-    /* "_geoslib.pyx":350
+    /* "_geoslib.pyx":362
  *             # Because of a bug in the GEOS C API,
  *             # always set X before Y
  *             GEOSCoordSeq_setX(cs, i, dx)             # <<<<<<<<<<<<<<
@@ -3728,7 +3728,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
     GEOSCoordSeq_setX(__pyx_v_cs, __pyx_v_i, __pyx_v_dx);
 
-    /* "_geoslib.pyx":351
+    /* "_geoslib.pyx":363
  *             # always set X before Y
  *             GEOSCoordSeq_setX(cs, i, dx)
  *             GEOSCoordSeq_setY(cs, i, dy)             # <<<<<<<<<<<<<<
@@ -3738,7 +3738,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
     GEOSCoordSeq_setY(__pyx_v_cs, __pyx_v_i, __pyx_v_dy);
   }
 
-  /* "_geoslib.pyx":354
+  /* "_geoslib.pyx":366
  * 
  *         # Add closing coordinates to sequence?
  *         if M > m:             # <<<<<<<<<<<<<<
@@ -3748,7 +3748,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
   __pyx_t_1 = ((__pyx_v_M > __pyx_v_m) != 0);
   if (__pyx_t_1) {
 
-    /* "_geoslib.pyx":355
+    /* "_geoslib.pyx":367
  *         # Add closing coordinates to sequence?
  *         if M > m:
  *             dx = bbuffer[0]             # <<<<<<<<<<<<<<
@@ -3757,7 +3757,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
     __pyx_v_dx = (__pyx_v_bbuffer[0]);
 
-    /* "_geoslib.pyx":356
+    /* "_geoslib.pyx":368
  *         if M > m:
  *             dx = bbuffer[0]
  *             dy = bbuffer[1]             # <<<<<<<<<<<<<<
@@ -3766,7 +3766,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
     __pyx_v_dy = (__pyx_v_bbuffer[1]);
 
-    /* "_geoslib.pyx":357
+    /* "_geoslib.pyx":369
  *             dx = bbuffer[0]
  *             dy = bbuffer[1]
  *             GEOSCoordSeq_setX(cs, M-1, dx)             # <<<<<<<<<<<<<<
@@ -3775,7 +3775,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
     GEOSCoordSeq_setX(__pyx_v_cs, (__pyx_v_M - 1), __pyx_v_dx);
 
-    /* "_geoslib.pyx":358
+    /* "_geoslib.pyx":370
  *             dy = bbuffer[1]
  *             GEOSCoordSeq_setX(cs, M-1, dx)
  *             GEOSCoordSeq_setY(cs, M-1, dy)             # <<<<<<<<<<<<<<
@@ -3784,7 +3784,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
     GEOSCoordSeq_setY(__pyx_v_cs, (__pyx_v_M - 1), __pyx_v_dy);
 
-    /* "_geoslib.pyx":354
+    /* "_geoslib.pyx":366
  * 
  *         # Add closing coordinates to sequence?
  *         if M > m:             # <<<<<<<<<<<<<<
@@ -3793,7 +3793,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
   }
 
-  /* "_geoslib.pyx":361
+  /* "_geoslib.pyx":373
  * 
  *         # create LinearRing
  *         lr = GEOSGeom_createLinearRing(cs)             # <<<<<<<<<<<<<<
@@ -3802,7 +3802,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
   __pyx_v_lr = GEOSGeom_createLinearRing(__pyx_v_cs);
 
-  /* "_geoslib.pyx":364
+  /* "_geoslib.pyx":376
  * 
  *         # create Polygon from LinearRing (assuming no holes)
  *         self._geom = GEOSGeom_createPolygon(lr,NULL,0)             # <<<<<<<<<<<<<<
@@ -3811,7 +3811,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
  */
   __pyx_v_self->__pyx_base._geom = GEOSGeom_createPolygon(__pyx_v_lr, NULL, 0);
 
-  /* "_geoslib.pyx":365
+  /* "_geoslib.pyx":377
  *         # create Polygon from LinearRing (assuming no holes)
  *         self._geom = GEOSGeom_createPolygon(lr,NULL,0)
  *         self.boundary = b             # <<<<<<<<<<<<<<
@@ -3824,7 +3824,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
   __Pyx_DECREF(__pyx_v_self->__pyx_base.boundary);
   __pyx_v_self->__pyx_base.boundary = ((PyObject *)__pyx_v_b);
 
-  /* "_geoslib.pyx":319
+  /* "_geoslib.pyx":331
  * cdef class Polygon(BaseGeometry):
  * 
  *     def __init__(self, ndarray b):             # <<<<<<<<<<<<<<
@@ -3847,7 +3847,7 @@ static int __pyx_pf_8_geoslib_7Polygon___init__(struct __pyx_obj_8_geoslib_Polyg
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":368
+/* "_geoslib.pyx":380
  * 
  * 
  *     def area(self):             # <<<<<<<<<<<<<<
@@ -3878,7 +3878,7 @@ static PyObject *__pyx_pf_8_geoslib_7Polygon_2area(struct __pyx_obj_8_geoslib_Po
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("area", 0);
 
-  /* "_geoslib.pyx":370
+  /* "_geoslib.pyx":382
  *     def area(self):
  *         cdef double area
  *         GEOSArea(self._geom, &area)             # <<<<<<<<<<<<<<
@@ -3887,7 +3887,7 @@ static PyObject *__pyx_pf_8_geoslib_7Polygon_2area(struct __pyx_obj_8_geoslib_Po
  */
   GEOSArea(__pyx_v_self->__pyx_base._geom, (&__pyx_v_area));
 
-  /* "_geoslib.pyx":371
+  /* "_geoslib.pyx":383
  *         cdef double area
  *         GEOSArea(self._geom, &area)
  *         return area             # <<<<<<<<<<<<<<
@@ -3895,13 +3895,13 @@ static PyObject *__pyx_pf_8_geoslib_7Polygon_2area(struct __pyx_obj_8_geoslib_Po
  * cdef class LineString(BaseGeometry):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_area); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 371; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_area); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 383; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "_geoslib.pyx":368
+  /* "_geoslib.pyx":380
  * 
  * 
  *     def area(self):             # <<<<<<<<<<<<<<
@@ -3920,7 +3920,7 @@ static PyObject *__pyx_pf_8_geoslib_7Polygon_2area(struct __pyx_obj_8_geoslib_Po
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":374
+/* "_geoslib.pyx":386
  * 
  * cdef class LineString(BaseGeometry):
  *     def __init__(self, ndarray b):             # <<<<<<<<<<<<<<
@@ -3956,7 +3956,7 @@ static int __pyx_pw_8_geoslib_10LineString_1__init__(PyObject *__pyx_v_self, PyO
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 374; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 386; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 1) {
       goto __pyx_L5_argtuple_error;
@@ -3967,13 +3967,13 @@ static int __pyx_pw_8_geoslib_10LineString_1__init__(PyObject *__pyx_v_self, PyO
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 374; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 386; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("_geoslib.LineString.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_b), __pyx_ptype_8_geoslib_ndarray, 1, "b", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 374; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_b), __pyx_ptype_8_geoslib_ndarray, 1, "b", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 386; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_8_geoslib_10LineString___init__(((struct __pyx_obj_8_geoslib_LineString *)__pyx_v_self), __pyx_v_b);
 
   /* function exit code */
@@ -4005,7 +4005,7 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
   __Pyx_RefNannySetupContext("__init__", 0);
   __Pyx_INCREF((PyObject *)__pyx_v_b);
 
-  /* "_geoslib.pyx":382
+  /* "_geoslib.pyx":394
  *         # make sure data is contiguous.
  *         # if not, make a local copy.
  *         if not PyArray_ISCONTIGUOUS(b):             # <<<<<<<<<<<<<<
@@ -4015,14 +4015,14 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
   __pyx_t_1 = ((!(PyArray_ISCONTIGUOUS(__pyx_v_b) != 0)) != 0);
   if (__pyx_t_1) {
 
-    /* "_geoslib.pyx":383
+    /* "_geoslib.pyx":395
  *         # if not, make a local copy.
  *         if not PyArray_ISCONTIGUOUS(b):
  *             b = b.copy()             # <<<<<<<<<<<<<<
  * 
  *         M = b.shape[0]
  */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_b), __pyx_n_s_copy); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 383; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_b), __pyx_n_s_copy); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 395; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_4 = NULL;
     if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_3))) {
@@ -4035,18 +4035,18 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
       }
     }
     if (__pyx_t_4) {
-      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 383; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 395; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else {
-      __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 383; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_CallNoArg(__pyx_t_3); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 395; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_8_geoslib_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 383; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_8_geoslib_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 395; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF_SET(__pyx_v_b, ((PyArrayObject *)__pyx_t_2));
     __pyx_t_2 = 0;
 
-    /* "_geoslib.pyx":382
+    /* "_geoslib.pyx":394
  *         # make sure data is contiguous.
  *         # if not, make a local copy.
  *         if not PyArray_ISCONTIGUOUS(b):             # <<<<<<<<<<<<<<
@@ -4055,23 +4055,23 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
  */
   }
 
-  /* "_geoslib.pyx":385
+  /* "_geoslib.pyx":397
  *             b = b.copy()
  * 
  *         M = b.shape[0]             # <<<<<<<<<<<<<<
  *         self._npts = M
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_b), __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_b), __pyx_n_s_shape); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 397; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_2, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_3 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_2, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_3 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 397; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_5 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 397; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_M = __pyx_t_5;
 
-  /* "_geoslib.pyx":386
+  /* "_geoslib.pyx":398
  * 
  *         M = b.shape[0]
  *         self._npts = M             # <<<<<<<<<<<<<<
@@ -4080,7 +4080,7 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
  */
   __pyx_v_self->__pyx_base._npts = __pyx_v_M;
 
-  /* "_geoslib.pyx":389
+  /* "_geoslib.pyx":401
  * 
  *         # Create a coordinate sequence
  *         cs = GEOSCoordSeq_create(M, 2)             # <<<<<<<<<<<<<<
@@ -4089,7 +4089,7 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
  */
   __pyx_v_cs = GEOSCoordSeq_create(__pyx_v_M, 2);
 
-  /* "_geoslib.pyx":392
+  /* "_geoslib.pyx":404
  * 
  *         # add to coordinate sequence
  *         bbuffer = <double *>b.data             # <<<<<<<<<<<<<<
@@ -4098,7 +4098,7 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
  */
   __pyx_v_bbuffer = ((double *)__pyx_v_b->data);
 
-  /* "_geoslib.pyx":393
+  /* "_geoslib.pyx":405
  *         # add to coordinate sequence
  *         bbuffer = <double *>b.data
  *         for i from 0 <= i < M:             # <<<<<<<<<<<<<<
@@ -4108,7 +4108,7 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
   __pyx_t_5 = __pyx_v_M;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_5; __pyx_v_i++) {
 
-    /* "_geoslib.pyx":394
+    /* "_geoslib.pyx":406
  *         bbuffer = <double *>b.data
  *         for i from 0 <= i < M:
  *             dx = bbuffer[2*i]             # <<<<<<<<<<<<<<
@@ -4117,7 +4117,7 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
  */
     __pyx_v_dx = (__pyx_v_bbuffer[(2 * __pyx_v_i)]);
 
-    /* "_geoslib.pyx":395
+    /* "_geoslib.pyx":407
  *         for i from 0 <= i < M:
  *             dx = bbuffer[2*i]
  *             dy = bbuffer[2*i+1]             # <<<<<<<<<<<<<<
@@ -4126,7 +4126,7 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
  */
     __pyx_v_dy = (__pyx_v_bbuffer[((2 * __pyx_v_i) + 1)]);
 
-    /* "_geoslib.pyx":398
+    /* "_geoslib.pyx":410
  *             # Because of a bug in the GEOS C API,
  *             # always set X before Y
  *             GEOSCoordSeq_setX(cs, i, dx)             # <<<<<<<<<<<<<<
@@ -4135,7 +4135,7 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
  */
     GEOSCoordSeq_setX(__pyx_v_cs, __pyx_v_i, __pyx_v_dx);
 
-    /* "_geoslib.pyx":399
+    /* "_geoslib.pyx":411
  *             # always set X before Y
  *             GEOSCoordSeq_setX(cs, i, dx)
  *             GEOSCoordSeq_setY(cs, i, dy)             # <<<<<<<<<<<<<<
@@ -4145,7 +4145,7 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
     GEOSCoordSeq_setY(__pyx_v_cs, __pyx_v_i, __pyx_v_dy);
   }
 
-  /* "_geoslib.pyx":402
+  /* "_geoslib.pyx":414
  * 
  *         # create LineString
  *         self._geom = GEOSGeom_createLineString(cs)             # <<<<<<<<<<<<<<
@@ -4154,7 +4154,7 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
  */
   __pyx_v_self->__pyx_base._geom = GEOSGeom_createLineString(__pyx_v_cs);
 
-  /* "_geoslib.pyx":403
+  /* "_geoslib.pyx":415
  *         # create LineString
  *         self._geom = GEOSGeom_createLineString(cs)
  *         self.boundary = b             # <<<<<<<<<<<<<<
@@ -4167,7 +4167,7 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
   __Pyx_DECREF(__pyx_v_self->__pyx_base.boundary);
   __pyx_v_self->__pyx_base.boundary = ((PyObject *)__pyx_v_b);
 
-  /* "_geoslib.pyx":374
+  /* "_geoslib.pyx":386
  * 
  * cdef class LineString(BaseGeometry):
  *     def __init__(self, ndarray b):             # <<<<<<<<<<<<<<
@@ -4190,7 +4190,7 @@ static int __pyx_pf_8_geoslib_10LineString___init__(struct __pyx_obj_8_geoslib_L
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":407
+/* "_geoslib.pyx":419
  * cdef class Point(BaseGeometry):
  *     cdef public x,y
  *     def __init__(self, b):             # <<<<<<<<<<<<<<
@@ -4226,7 +4226,7 @@ static int __pyx_pw_8_geoslib_5Point_1__init__(PyObject *__pyx_v_self, PyObject 
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 407; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 419; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 1) {
       goto __pyx_L5_argtuple_error;
@@ -4237,7 +4237,7 @@ static int __pyx_pw_8_geoslib_5Point_1__init__(PyObject *__pyx_v_self, PyObject 
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 407; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 1, 1, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 419; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("_geoslib.Point.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4263,7 +4263,7 @@ static int __pyx_pf_8_geoslib_5Point___init__(struct __pyx_obj_8_geoslib_Point *
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "_geoslib.pyx":411
+  /* "_geoslib.pyx":423
  *         cdef GEOSCoordSeq *cs
  *         # Create a coordinate sequence
  *         cs = GEOSCoordSeq_create(1, 2)             # <<<<<<<<<<<<<<
@@ -4272,25 +4272,25 @@ static int __pyx_pf_8_geoslib_5Point___init__(struct __pyx_obj_8_geoslib_Point *
  */
   __pyx_v_cs = GEOSCoordSeq_create(1, 2);
 
-  /* "_geoslib.pyx":412
+  /* "_geoslib.pyx":424
  *         # Create a coordinate sequence
  *         cs = GEOSCoordSeq_create(1, 2)
  *         dx = b[0]; dy = b[1]             # <<<<<<<<<<<<<<
  *         GEOSCoordSeq_setX(cs, 0, dx)
  *         GEOSCoordSeq_setY(cs, 0, dy)
  */
-  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_b, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 412; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_b, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 424; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 412; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 424; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_dx = __pyx_t_2;
-  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_b, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 412; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_b, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(__pyx_t_1 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 424; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 412; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 424; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_dy = __pyx_t_2;
 
-  /* "_geoslib.pyx":413
+  /* "_geoslib.pyx":425
  *         cs = GEOSCoordSeq_create(1, 2)
  *         dx = b[0]; dy = b[1]
  *         GEOSCoordSeq_setX(cs, 0, dx)             # <<<<<<<<<<<<<<
@@ -4299,7 +4299,7 @@ static int __pyx_pf_8_geoslib_5Point___init__(struct __pyx_obj_8_geoslib_Point *
  */
   GEOSCoordSeq_setX(__pyx_v_cs, 0, __pyx_v_dx);
 
-  /* "_geoslib.pyx":414
+  /* "_geoslib.pyx":426
  *         dx = b[0]; dy = b[1]
  *         GEOSCoordSeq_setX(cs, 0, dx)
  *         GEOSCoordSeq_setY(cs, 0, dy)             # <<<<<<<<<<<<<<
@@ -4308,7 +4308,7 @@ static int __pyx_pf_8_geoslib_5Point___init__(struct __pyx_obj_8_geoslib_Point *
  */
   GEOSCoordSeq_setY(__pyx_v_cs, 0, __pyx_v_dy);
 
-  /* "_geoslib.pyx":415
+  /* "_geoslib.pyx":427
  *         GEOSCoordSeq_setX(cs, 0, dx)
  *         GEOSCoordSeq_setY(cs, 0, dy)
  *         self._geom = GEOSGeom_createPoint(cs)             # <<<<<<<<<<<<<<
@@ -4317,7 +4317,7 @@ static int __pyx_pf_8_geoslib_5Point___init__(struct __pyx_obj_8_geoslib_Point *
  */
   __pyx_v_self->__pyx_base._geom = GEOSGeom_createPoint(__pyx_v_cs);
 
-  /* "_geoslib.pyx":416
+  /* "_geoslib.pyx":428
  *         GEOSCoordSeq_setY(cs, 0, dy)
  *         self._geom = GEOSGeom_createPoint(cs)
  *         self._npts = 1             # <<<<<<<<<<<<<<
@@ -4326,7 +4326,7 @@ static int __pyx_pf_8_geoslib_5Point___init__(struct __pyx_obj_8_geoslib_Point *
  */
   __pyx_v_self->__pyx_base._npts = 1;
 
-  /* "_geoslib.pyx":417
+  /* "_geoslib.pyx":429
  *         self._geom = GEOSGeom_createPoint(cs)
  *         self._npts = 1
  *         self.boundary = b             # <<<<<<<<<<<<<<
@@ -4339,7 +4339,7 @@ static int __pyx_pf_8_geoslib_5Point___init__(struct __pyx_obj_8_geoslib_Point *
   __Pyx_DECREF(__pyx_v_self->__pyx_base.boundary);
   __pyx_v_self->__pyx_base.boundary = __pyx_v_b;
 
-  /* "_geoslib.pyx":407
+  /* "_geoslib.pyx":419
  * cdef class Point(BaseGeometry):
  *     cdef public x,y
  *     def __init__(self, b):             # <<<<<<<<<<<<<<
@@ -4359,7 +4359,7 @@ static int __pyx_pf_8_geoslib_5Point___init__(struct __pyx_obj_8_geoslib_Point *
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":406
+/* "_geoslib.pyx":418
  * 
  * cdef class Point(BaseGeometry):
  *     cdef public x,y             # <<<<<<<<<<<<<<
@@ -4541,7 +4541,7 @@ static int __pyx_pf_8_geoslib_5Point_1y_4__del__(struct __pyx_obj_8_geoslib_Poin
   return __pyx_r;
 }
 
-/* "_geoslib.pyx":419
+/* "_geoslib.pyx":431
  *         self.boundary = b
  * 
  * cdef _get_coords(GEOSGeom *geom):             # <<<<<<<<<<<<<<
@@ -4574,7 +4574,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_get_coords", 0);
 
-  /* "_geoslib.pyx":426
+  /* "_geoslib.pyx":438
  *     cdef ndarray b
  *     cdef double *bbuffer
  *     if GEOSGeomTypeId(geom) == GEOS_POLYGON:             # <<<<<<<<<<<<<<
@@ -4584,7 +4584,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
   __pyx_t_1 = ((GEOSGeomTypeId(__pyx_v_geom) == GEOS_POLYGON) != 0);
   if (__pyx_t_1) {
 
-    /* "_geoslib.pyx":427
+    /* "_geoslib.pyx":439
  *     cdef double *bbuffer
  *     if GEOSGeomTypeId(geom) == GEOS_POLYGON:
  *         lr = GEOSGetExteriorRing(geom)             # <<<<<<<<<<<<<<
@@ -4593,7 +4593,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
  */
     __pyx_v_lr = GEOSGetExteriorRing(__pyx_v_geom);
 
-    /* "_geoslib.pyx":428
+    /* "_geoslib.pyx":440
  *     if GEOSGeomTypeId(geom) == GEOS_POLYGON:
  *         lr = GEOSGetExteriorRing(geom)
  *         cs = GEOSGeom_getCoordSeq(lr)             # <<<<<<<<<<<<<<
@@ -4602,7 +4602,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
  */
     __pyx_v_cs = GEOSGeom_getCoordSeq(__pyx_v_lr);
 
-    /* "_geoslib.pyx":426
+    /* "_geoslib.pyx":438
  *     cdef ndarray b
  *     cdef double *bbuffer
  *     if GEOSGeomTypeId(geom) == GEOS_POLYGON:             # <<<<<<<<<<<<<<
@@ -4612,7 +4612,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
     goto __pyx_L3;
   }
 
-  /* "_geoslib.pyx":430
+  /* "_geoslib.pyx":442
  *         cs = GEOSGeom_getCoordSeq(lr)
  *     else:
  *         cs = GEOSGeom_getCoordSeq(geom)             # <<<<<<<<<<<<<<
@@ -4624,7 +4624,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
   }
   __pyx_L3:;
 
-  /* "_geoslib.pyx":431
+  /* "_geoslib.pyx":443
  *     else:
  *         cs = GEOSGeom_getCoordSeq(geom)
  *     GEOSCoordSeq_getSize(cs, &M)             # <<<<<<<<<<<<<<
@@ -4633,21 +4633,21 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
  */
   GEOSCoordSeq_getSize(__pyx_v_cs, (&__pyx_v_M));
 
-  /* "_geoslib.pyx":432
+  /* "_geoslib.pyx":444
  *         cs = GEOSGeom_getCoordSeq(geom)
  *     GEOSCoordSeq_getSize(cs, &M)
  *     b = numpy.empty((M,2), numpy.float64)             # <<<<<<<<<<<<<<
  *     bbuffer = <double *>b.data
  *     for i from 0 <= i < M:
  */
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_numpy); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 432; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_numpy); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 444; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_empty); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 432; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_empty); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 444; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyInt_From_unsigned_int(__pyx_v_M); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 432; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_From_unsigned_int(__pyx_v_M); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 444; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 432; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 444; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_3);
   PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_3);
@@ -4655,9 +4655,9 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
   __Pyx_GIVEREF(__pyx_int_2);
   PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_int_2);
   __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_numpy); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 432; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_numpy); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 444; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float64); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 432; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_float64); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 444; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = NULL;
@@ -4672,7 +4672,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
       __pyx_t_7 = 1;
     }
   }
-  __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 432; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 444; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_8);
   if (__pyx_t_3) {
     __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_3); __pyx_t_3 = NULL;
@@ -4683,15 +4683,15 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
   PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_6);
   __pyx_t_5 = 0;
   __pyx_t_6 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 432; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 444; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_8_geoslib_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 432; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_8_geoslib_ndarray))))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 444; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_b = ((PyArrayObject *)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "_geoslib.pyx":433
+  /* "_geoslib.pyx":445
  *     GEOSCoordSeq_getSize(cs, &M)
  *     b = numpy.empty((M,2), numpy.float64)
  *     bbuffer = <double *>b.data             # <<<<<<<<<<<<<<
@@ -4700,7 +4700,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
  */
   __pyx_v_bbuffer = ((double *)__pyx_v_b->data);
 
-  /* "_geoslib.pyx":434
+  /* "_geoslib.pyx":446
  *     b = numpy.empty((M,2), numpy.float64)
  *     bbuffer = <double *>b.data
  *     for i from 0 <= i < M:             # <<<<<<<<<<<<<<
@@ -4710,7 +4710,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
   __pyx_t_9 = __pyx_v_M;
   for (__pyx_v_i = 0; __pyx_v_i < __pyx_t_9; __pyx_v_i++) {
 
-    /* "_geoslib.pyx":435
+    /* "_geoslib.pyx":447
  *     bbuffer = <double *>b.data
  *     for i from 0 <= i < M:
  *         GEOSCoordSeq_getX(cs, i, &dx)             # <<<<<<<<<<<<<<
@@ -4719,7 +4719,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
  */
     GEOSCoordSeq_getX(__pyx_v_cs, __pyx_v_i, (&__pyx_v_dx));
 
-    /* "_geoslib.pyx":436
+    /* "_geoslib.pyx":448
  *     for i from 0 <= i < M:
  *         GEOSCoordSeq_getX(cs, i, &dx)
  *         GEOSCoordSeq_getY(cs, i, &dy)             # <<<<<<<<<<<<<<
@@ -4728,7 +4728,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
  */
     GEOSCoordSeq_getY(__pyx_v_cs, __pyx_v_i, (&__pyx_v_dy));
 
-    /* "_geoslib.pyx":437
+    /* "_geoslib.pyx":449
  *         GEOSCoordSeq_getX(cs, i, &dx)
  *         GEOSCoordSeq_getY(cs, i, &dy)
  *         bbuffer[2*i] = dx             # <<<<<<<<<<<<<<
@@ -4737,7 +4737,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
  */
     (__pyx_v_bbuffer[(2 * __pyx_v_i)]) = __pyx_v_dx;
 
-    /* "_geoslib.pyx":438
+    /* "_geoslib.pyx":450
  *         GEOSCoordSeq_getY(cs, i, &dy)
  *         bbuffer[2*i] = dx
  *         bbuffer[2*i+1] = dy             # <<<<<<<<<<<<<<
@@ -4746,7 +4746,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
     (__pyx_v_bbuffer[((2 * __pyx_v_i) + 1)]) = __pyx_v_dy;
   }
 
-  /* "_geoslib.pyx":439
+  /* "_geoslib.pyx":451
  *         bbuffer[2*i] = dx
  *         bbuffer[2*i+1] = dy
  *     return b             # <<<<<<<<<<<<<<
@@ -4756,7 +4756,7 @@ static PyObject *__pyx_f_8_geoslib__get_coords(GEOSGeom *__pyx_v_geom) {
   __pyx_r = ((PyObject *)__pyx_v_b);
   goto __pyx_L0;
 
-  /* "_geoslib.pyx":419
+  /* "_geoslib.pyx":431
  *         self.boundary = b
  * 
  * cdef _get_coords(GEOSGeom *geom):             # <<<<<<<<<<<<<<
@@ -5251,7 +5251,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_NotImplementedError = __Pyx_GetBuiltinName(__pyx_n_s_NotImplementedError); if (!__pyx_builtin_NotImplementedError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 191; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_NotImplementedError = __Pyx_GetBuiltinName(__pyx_n_s_NotImplementedError); if (!__pyx_builtin_NotImplementedError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 195; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -5261,23 +5261,23 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "_geoslib.pyx":334
+  /* "_geoslib.pyx":346
  * 
  *         # Add closing coordinates to sequence?
  *         if b[-1,0] != b[0,0] or b[-1,1] != b[0,1]:             # <<<<<<<<<<<<<<
  *             M = m + 1
  *         else:
  */
-  __pyx_tuple_ = PyTuple_Pack(2, __pyx_int_neg_1, __pyx_int_0); if (unlikely(!__pyx_tuple_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple_ = PyTuple_Pack(2, __pyx_int_neg_1, __pyx_int_0); if (unlikely(!__pyx_tuple_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
-  __pyx_tuple__2 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_0); if (unlikely(!__pyx_tuple__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__2 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_0); if (unlikely(!__pyx_tuple__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
-  __pyx_tuple__3 = PyTuple_Pack(2, __pyx_int_neg_1, __pyx_int_1); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__3 = PyTuple_Pack(2, __pyx_int_neg_1, __pyx_int_1); if (unlikely(!__pyx_tuple__3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__3);
   __Pyx_GIVEREF(__pyx_tuple__3);
-  __pyx_tuple__4 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_1); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__4 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_1); if (unlikely(!__pyx_tuple__4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__4);
   __Pyx_GIVEREF(__pyx_tuple__4);
   __Pyx_RefNannyFinishContext();
@@ -5390,19 +5390,19 @@ PyMODINIT_FUNC PyInit__geoslib(void)
   if (PyObject_SetAttrString(__pyx_m, "BaseGeometry", (PyObject *)&__pyx_type_8_geoslib_BaseGeometry) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_8_geoslib_BaseGeometry = &__pyx_type_8_geoslib_BaseGeometry;
   __pyx_type_8_geoslib_Polygon.tp_base = __pyx_ptype_8_geoslib_BaseGeometry;
-  if (PyType_Ready(&__pyx_type_8_geoslib_Polygon) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 317; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_8_geoslib_Polygon) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_8_geoslib_Polygon.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "Polygon", (PyObject *)&__pyx_type_8_geoslib_Polygon) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 317; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "Polygon", (PyObject *)&__pyx_type_8_geoslib_Polygon) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 329; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_8_geoslib_Polygon = &__pyx_type_8_geoslib_Polygon;
   __pyx_type_8_geoslib_LineString.tp_base = __pyx_ptype_8_geoslib_BaseGeometry;
-  if (PyType_Ready(&__pyx_type_8_geoslib_LineString) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 373; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_8_geoslib_LineString) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_8_geoslib_LineString.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "LineString", (PyObject *)&__pyx_type_8_geoslib_LineString) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 373; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "LineString", (PyObject *)&__pyx_type_8_geoslib_LineString) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_8_geoslib_LineString = &__pyx_type_8_geoslib_LineString;
   __pyx_type_8_geoslib_Point.tp_base = __pyx_ptype_8_geoslib_BaseGeometry;
-  if (PyType_Ready(&__pyx_type_8_geoslib_Point) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_8_geoslib_Point) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 417; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_8_geoslib_Point.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "Point", (PyObject *)&__pyx_type_8_geoslib_Point) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 405; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "Point", (PyObject *)&__pyx_type_8_geoslib_Point) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 417; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_8_geoslib_Point = &__pyx_type_8_geoslib_Point;
   /*--- Type import code ---*/
   /*--- Variable import code ---*/
