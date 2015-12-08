@@ -152,7 +152,8 @@ cdef class BaseGeometry:
         return PyBytes_FromString(GEOSGeomType(self._geom))
 
     def within(self, BaseGeometry geom):
-        cdef GEOSGeom *g1, *g2
+        cdef GEOSGeom *g1
+        cdef GEOSGeom *g2
         cdef char answer
         g1 = self._geom
         g2 = geom._geom
@@ -163,7 +164,10 @@ cdef class BaseGeometry:
             return False
 
     def union(self, BaseGeometry geom):
-        cdef GEOSGeom *g1, *g2, *g3, *gout
+        cdef GEOSGeom *g1
+        cdef GEOSGeom *g2
+        cdef GEOSGeom *g3
+        cdef GEOSGeom *gout
         cdef int numgeoms, i, typeid
         g1 = self._geom
         g2 = geom._geom
@@ -193,7 +197,9 @@ cdef class BaseGeometry:
         return p
 
     def simplify(self, tol):
-        cdef GEOSGeom *g1, *g3, *gout
+        cdef GEOSGeom *g1
+        cdef GEOSGeom *g3
+        cdef GEOSGeom *gout
         cdef double tolerance
         cdef int numgeoms, i, typeid
         g1 = self._geom
@@ -224,7 +230,9 @@ cdef class BaseGeometry:
         return p
 
     def fix(self):
-        cdef GEOSGeom *g1, *g3, *gout
+        cdef GEOSGeom *g1
+        cdef GEOSGeom *g3
+        cdef GEOSGeom *gout
         cdef int numgeoms, i, typeid
         g1 = self._geom
         g3 = GEOSBuffer(g1, 0., 0)
@@ -253,7 +261,8 @@ cdef class BaseGeometry:
         return p
 
     def intersects(self, BaseGeometry geom):
-        cdef GEOSGeom *g1, *g2
+        cdef GEOSGeom *g1
+        cdef GEOSGeom *g2
         cdef char answer
         g1 = self._geom
         g2 = geom._geom
@@ -264,7 +273,10 @@ cdef class BaseGeometry:
             return False
 
     def intersection(self, BaseGeometry geom):
-        cdef GEOSGeom *g1, *g2, *g3, *gout
+        cdef GEOSGeom *g1
+        cdef GEOSGeom *g2
+        cdef GEOSGeom *g3
+        cdef GEOSGeom *gout
         cdef char answer
         cdef int numgeoms, i, typeid
         g1 = self._geom
