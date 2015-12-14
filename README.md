@@ -5,7 +5,7 @@ using matplotlib.
 
 ##Requirements
 
-* python 2.5 (or higher)
+* Python 2.6 (or higher)
 
 * matplotlib
 
@@ -18,18 +18,21 @@ using matplotlib.
 * The GEOS (Geometry Engine - Open Source) library (version 3.1.1 or higher).
 Source code is included in the geos-3.3.3 directory.
 
-* [PIL](http://pythonware.com/products/pil) is optional (only
-needed for Basemap warpimage and bluemarble methods).
-
 * On linux, if your python was installed via a package management system, make
 sure the corresponding "python-dev" package is also installed.  Otherwise, you
 may not have the python header (Python.h), which is required to build python
 C extensions.
 
-##Copyright
+###Optional
 
-source code from [proj.4](http://trac.osgeo.org/proj/) is included in the
-'src' directory under the terms given in LICENSE_proj4.
+* [OWSLib](https://github.com/geopython/OWSLib) (optional) It is needed
+for the BaseMap.wmsimage function.
+
+* [Pillow](https://python-pillow.github.io/) (optional)  It is
+needed for Basemap warpimage, bluemarble, shadedrelief, and etop methods.
+PIL should work on Python 2.x.  Pillow is a maintained fork of PIL.
+
+##Copyright
 
 source code for the GEOS library is
 included in the 'geos-3.3.3' directory under the terms given in
@@ -39,7 +42,7 @@ the land-sea mask, coastline, lake, river and political boundary data are extrac
 from datasets provided with the [Generic Mapping Tools (GMT)](http://gmt.soest.hawaii.edu)
 and are included under the terms given in LICENSE_data.
 
-Everything else (including src/_proj.pyx, src/_proj.c, src/_geos.c, and src/_geos.pyx):
+Everything else (including src/_geos.c, and src/_geos.pyx):
 
 copyright (c) 2011 by Jeffrey Whitaker.
 
