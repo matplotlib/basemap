@@ -30,10 +30,10 @@ def package_versions():
         try:
             from PIL import PILLOW_VERSION as pillow_version
         except ImportError:
-            pillow_verison = 'not installed'
+            pillow_version = 'not installed'
     except ImportError:
         pil_version = 'not installed'
-        pillow_verison = 'not installed'
+        pillow_version = 'not installed'
 
     BasemapPackageVersions = namedtuple(
                                'BasemapPackageVersions',
