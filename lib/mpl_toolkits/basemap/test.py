@@ -224,7 +224,7 @@ if __name__ == '__main__':
     if VERBOSITY != None:
         pkg_vers = package_versions()
         print('Basemaps installed package versions:')
-        print('{}\n'.format(pkg_vers))
+        print('{0}\n'.format(pkg_vers))
 
     unittest.main()
 
