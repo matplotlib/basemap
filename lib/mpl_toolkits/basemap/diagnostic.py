@@ -48,7 +48,7 @@ def package_versions():
                    numpy = numpy_version,
                    pyproj = pyproj.__version__,
                    pyshp = pyshp_version,
-                   PROJ4 = pyproj.Proj(init='epsg:4326').proj_version,
+                   PROJ4 = round(pyproj.Proj(init='epsg:4326').proj_version, 2),
                    GEOS = _geoslib.__geos_version__,
                    # optional dependencies below
                    OWSLib = OWSLib_version,
