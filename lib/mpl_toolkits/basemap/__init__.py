@@ -1460,6 +1460,8 @@ class Basemap(object):
                             if not as_polygons or len(b) > 4:
                                 polygons.append(list(zip(b[:,0],b[:,1])))
                                 polygon_types.append(typ)
+        bdatfile.close()
+        bdatmetafile.close()
         return polygons, polygon_types
 
     def _getmapboundary(self):
