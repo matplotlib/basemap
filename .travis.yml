@@ -10,14 +10,26 @@ language: python
 
 matrix:
   include:
+    # use libgeos binary from apt
     - python: 2.6
       env: NUMPY=numpy==1.6
     - python: 2.7
     - python: 3.3
     - python: 3.4
     - python: 3.5
+    
+    # compile internal libgeos
+    - python: 2.7
+      env: BUILD_INTERNAL_GEOS=true
+    - python: 3.5
+      env: BUILD_INTERNAL_GEOS=true
 #    - python: 2.7
 #      env: TEST_ARGS=--pep8
+
+addons:
+  apt:
+    packages:
+    - libgeos-3.3.8
 
 before_install:
   # Install into our own pristine virtualenv
@@ -27,24 +39,28 @@ before_install:
 install:
   # Upgrade pip and setuptools. Mock has issues with the default version of
   # setuptools
-  - |
-    pip install --upgrade pip
-    pip install --upgrade setuptools
-    pip install $NUMPY
-    pip install $MPL
-    pip install -r requirements.txt
+  - pip install --upgrade pip
+  - pip install --upgrade setuptools
+
+  - pip install $NUMPY
+  - pip install $MPL
+  - pip install -r requirements.txt
     
   - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install -r .requirements-2.6.txt; fi
   
   - |
-    cd geos-3.3.3
-    export GEOS_DIR=$HOME/.local/
-    ./configure --prefix=$GEOS_DIR
-    make; make install
-    cd ..
+    if [[ $BUILD_INTERNAL_GEOS == 'true' ]]
+      then
+        cd geos-3.3.3
+        export GEOS_DIR=$HOME/.local/
+        ./configure --prefix=$GEOS_DIR
+        make; make install
+        cd ..
+    fi
 #  - pip install pep8
   - python setup.py install
 
 script:
     - python lib/mpl_toolkits/basemap/test.py --verbose
+
 
