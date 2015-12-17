@@ -206,5 +206,19 @@ def test():
 
 
 if __name__ == '__main__':
+    # When called with the -v / --verbose commandline parameter, it will
+    # give package dependent version information:
+    #   $ python test.py --verbose
+
+    import sys
     import unittest
+
+    from mpl_toolkits.basemap.diagnostic import package_versions
+    
+    if '--verbose' in sys.argv or '-v' in sys.argv:
+        pkg_vers = package_versions()
+        print('Basemaps installed package versions:')
+        print('{0}\n'.format(pkg_vers))
+
     unittest.main()
+
