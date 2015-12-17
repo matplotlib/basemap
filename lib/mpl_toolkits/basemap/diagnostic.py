@@ -34,7 +34,12 @@ def package_versions():
     except ImportError:
         pil_version = 'not installed'
         pillow_version = 'not installed'
-
+    
+    # Get PROJ.4 version info in a floating point number
+    proj_ver_num = pyproj.Proj(init='epsg:4326').proj_version
+    # reformats floating point number into string (4.90 becomes '4.9.0')
+    proj4_version = '.'.join(list(str(int(proj_ver_num*100))))
+    
     BasemapPackageVersions = namedtuple(
                                'BasemapPackageVersions',
                                """Python, basemap, matplotlib,
@@ -48,7 +53,7 @@ def package_versions():
                    numpy = numpy_version,
                    pyproj = pyproj.__version__,
                    pyshp = pyshp_version,
-                   PROJ4 = round(pyproj.Proj(init='epsg:4326').proj_version, 2),
+                   PROJ4 = proj4_version,
                    GEOS = _geoslib.__geos_version__,
                    # optional dependencies below
                    OWSLib = OWSLib_version,
