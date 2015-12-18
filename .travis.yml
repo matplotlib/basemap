@@ -8,11 +8,22 @@ env:
 
 language: python
 
+# make subsequent builds happen really fast
+cache: pip
+
+addons:
+  apt:
+    packages:
+      - libgeos-3.3.8
+      # requirements for matplotlib
+      - libpng12-dev
+      - libfreetype6-dev
+
 matrix:
   include:
     # use libgeos binary from apt
     - python: 2.6
-      env: NUMPY=numpy==1.6
+      env: NUMPY=numpy==1.6.2
     - python: 2.7
     - python: 3.3
     - python: 3.4
@@ -26,15 +37,12 @@ matrix:
 #    - python: 2.7
 #      env: TEST_ARGS=--pep8
 
-addons:
-  apt:
-    packages:
-    - libgeos-3.3.8
 
-before_install:
+
+# before_install:
   # Install into our own pristine virtualenv
-  - virtualenv --python=python venv
-  - source venv/bin/activate
+  # - virtualenv --python=python venv
+  # - source venv/bin/activate
 
 install:
   # Upgrade pip and setuptools. Mock has issues with the default version of
