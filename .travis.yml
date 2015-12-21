@@ -4,39 +4,83 @@ env:
   global:
     - NUMPY=numpy
     - MPL=matplotlib
+    - PYPROJ=pyproj
     - TEST_ARGS=--no-pep8
+    - BUILD_LIBGEOS=false
 
 language: python
 
-# make subsequent builds happen really fast
 cache: pip
 
-addons:
-  apt:
-    packages:
-      - libgeos-3.3.8
-      # requirements for matplotlib
-      - libpng12-dev
-      - libfreetype6-dev
+  # install apt binary pacakages early
+  addons:
+    apt:
+      packages:
+        - libgeos-3.3.8   
+        # matplotlib requirements
+        - libpng12-dev
+        - libfreetype6-dev
+        # helpers utilities
+        - autotools-dev
+        - wget
 
+# matrix generates 6 test cases
 matrix:
   include:
-    # use libgeos binary from apt
+    # "minimum requirements" environments
+    # test the bare minimum versions 
+    # compiles internal libgeos
+    # Notes:
+    #   numpy 1.7.0 is the first version that works out of the box for Python 2.6 and 3.3
+    #   numpy 1.5.1 is the earliest version to compile and *might* be able to work on Python 2.6,
+    #         if two unit tests are skipped due to numpy.copy(a,order) not having 'order' parameter
+    #         1.6.0-1.6.2 works out of the box for Python 2.6
+    #   matplotlib 1.2.0 was found to be the earliest version that installs
     - python: 2.6
-      env: NUMPY=numpy==1.6.2
-    - python: 2.7
+      env: 
+        - NUMPY=numpy==1.7.0
+        - MPL=matplotlib==1.2.0
+        - BUILD_LIBGEOS=internal
     - python: 3.3
-    - python: 3.4
-    - python: 3.5
-    
-    # compile internal libgeos
-    - python: 2.7
-      env: BUILD_INTERNAL_GEOS=true
-    - python: 3.5
-      env: BUILD_INTERNAL_GEOS=true
-#    - python: 2.7
-#      env: TEST_ARGS=--pep8
+      env: 
+        - NUMPY=numpy==1.7.0
+        - MPL=matplotlib==1.2.0
+        - BUILD_LIBGEOS=internal
 
+    # "middle of the road" environment
+    # use prepackaged binaries
+    # if no prepackaged binary available, use a previous stable version
+    - python: 3.4
+      env: 
+        - MPL=matplotlib==1.4.3
+#        - NUMPY="numpy>=1.9.0,<1.10.0"  # use the default install of numpy
+      
+    # "latest and greatest" stable environments
+    # this uses the current stable versions
+    # pip installs latest stable versions automatically
+    - python: 2.7
+      env:
+        - NUMPY=numpy>=1.10.0
+        - MPL=matplotlib>=1.5.0
+        - BUILD_LIBGEOS=3.5.0
+    - python: 3.5
+      env: 
+        - NUMPY=numpy>=1.10.0
+        - MPL=matplotlib>=1.5.0
+        - BUILD_LIBGEOS=3.5.0
+    
+    # "current development" environment
+    # this test is diagnostic for development versions and is not required to pass
+    - python: "3.5-dev"
+      env:
+        # these are python packages so prepend "git+" to git URL
+        - NUMPY=git+https://github.com/numpy/numpy.git
+        - MPL=git+https://github.com/matplotlib/matplotlib.git
+        - PYPROJ=git+https://github.com/jswhit/pyproj.git
+        # C lib, git URL only
+        - BUILD_LIBGEOS=https://github.com/libgeos/libgeos.git
+        # or download latest stable
+        # - BUILD_LIBGEOS=3.5.0
 
 
 # before_install:
@@ -50,23 +94,45 @@ install:
   - pip install --upgrade pip
   - pip install --upgrade setuptools
 
+  # the development version of numpy requires Cython
+  - if [[ $TRAVIS_PYTHON_VERSION == '3.5-dev' ]]; then pip install --install-option="--no-cython-compile" Cython; fi
+  # workaround to get the specified numpy version to install on Python 2.7  
+  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install --upgrade $NUMPY; fi
+  
   - pip install $NUMPY
   - pip install $MPL
+  - pip install $PYPROJ
   - pip install -r requirements.txt
-    
+  
+  # extra requirements to support Python 2.6  
   - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install -r .requirements-2.6.txt; fi
   
+  # compile GEOS internally or download external version to compile
   - |
-    if [[ $BUILD_INTERNAL_GEOS == 'true' ]]
-      then
+    if [[ $BUILD_LIBGEOS != 'false' ]]; then
+      if [[ $BUILD_LIBGEOS == 'internal' ]]; then
+        echo 'Building internal libgeos'
         cd geos-3.3.3
-        export GEOS_DIR=$HOME/.local/
-        ./configure --prefix=$GEOS_DIR
-        make; make install
-        cd ..
+      # does this string contain a "git" substring?
+      elif [[ $BUILD_LIBGEOS == *"git"* ]]; then
+        echo 'Using git to download libgeos development'
+        git clone ${BUILD_LIBGEOS}
+        cd libgeos
+        ./autogen.sh
+      else
+        echo 'Downloading and building external libgeos'
+        wget https://github.com/libgeos/libgeos/archive/${BUILD_LIBGEOS}.tar.gz
+        tar zxf ${BUILD_LIBGEOS}.tar.gz
+        cd libgeos-${BUILD_LIBGEOS}
+        ./autogen.sh
+      fi
+      export GEOS_DIR=$HOME/.local/
+      ./configure --prefix=$GEOS_DIR
+      make; make install
+      cd ..
     fi
 #  - pip install pep8
-  - python setup.py install
+  - pip install .
 
 script:
     - python lib/mpl_toolkits/basemap/test.py --verbose
