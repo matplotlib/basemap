@@ -61,18 +61,14 @@ matrix:
     # pip installs latest stable versions automatically
     - python: 2.7
       env:
-        - NUMPY=numpy>=1.10.0
-        - MPL=matplotlib>=1.5.0
         - BUILD_LIBGEOS=3.5.0
     - python: 3.5
       env: 
-        - NUMPY=numpy>=1.10.0
-        - MPL=matplotlib>=1.5.0
         - BUILD_LIBGEOS=3.5.0
     
     # "current development" environment
     # this test is diagnostic for development versions and is not required to pass
-    - python: "3.5-dev"
+    - python: "nightly"
       env:
         # these are python packages so prepend "git+" to git URL
         - NUMPY=git+https://github.com/numpy/numpy.git
@@ -82,7 +78,9 @@ matrix:
         - BUILD_LIBGEOS=https://github.com/libgeos/libgeos.git
         # or download latest stable
         # - BUILD_LIBGEOS=3.5.0
-
+        
+  allow_failures:
+    - python: "nightly"
 
 # before_install:
   # Install into our own pristine virtualenv
@@ -96,13 +94,13 @@ install:
   - pip install --upgrade setuptools
 
   # the development version of numpy requires Cython
-  - if [[ $TRAVIS_PYTHON_VERSION == '3.5-dev' ]]; then pip install --install-option="--no-cython-compile" Cython; fi
-  # workaround to get the specified numpy version to install on Python 2.7  
-  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install --upgrade $NUMPY; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 'nightly' ]]; then pip install --install-option="--no-cython-compile" Cython; fi
+
+  # workaround for "middle of the road" configuration to use pre-installed numpy, others "upgrade" numpy
+  - if [[ $TRAVIS_PYTHON_VERSION != '3.4' ]]; then pip install --upgrade $NUMPY; fi
   
-  - pip install $NUMPY
-  - pip install $MPL
-  - pip install $PYPROJ
+  - pip install --upgrade $MPL
+  - pip install --upgrade $PYPROJ
   - pip install -r requirements.txt
   
   # extra requirements to support Python 2.6  
