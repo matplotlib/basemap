@@ -8,21 +8,22 @@ env:
     - TEST_ARGS=--no-pep8
     - BUILD_LIBGEOS=false
 
+# install apt binary packages
+addons:
+  apt:
+    packages:
+      - libgeos-3.3.8   
+      # matplotlib requirements
+      - libpng12-dev
+      - libfreetype6-dev
+      # helpers utilities
+      - autotools-dev
+      - wget
+
 language: python
 
 cache: pip
 
-  # install apt binary pacakages early
-  addons:
-    apt:
-      packages:
-        - libgeos-3.3.8   
-        # matplotlib requirements
-        - libpng12-dev
-        - libfreetype6-dev
-        # helpers utilities
-        - autotools-dev
-        - wget
 
 # matrix generates 6 test cases
 matrix:
