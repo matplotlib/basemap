@@ -87,7 +87,7 @@ matrix:
   allow_failures:
     - python: "nightly"
 
-before_install:
+# before_install:
   # Install into our own pristine virtualenv
   # - virtualenv --python=python venv
   # - source venv/bin/activate
