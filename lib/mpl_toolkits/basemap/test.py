@@ -90,19 +90,19 @@ class TestShiftGrid(TestCase):
 
     def test_cyc(self):
         lonin, gridin, lonout, gridout = self.make_data_cyc()
-        grid, lon = shiftgrid(lonin[len(lonin)/2], gridin, lonin, start=False)
+        grid, lon = shiftgrid(lonin[len(lonin)//2], gridin, lonin, start=False)
         assert (lon==lonout).all()
         assert (grid==gridout).all()
 
     def test_no_cyc(self):
         lonin, gridin, lonout, gridout = self.make_data_nocyc()
-        grid, lon = shiftgrid(lonin[len(lonin)/2], gridin, lonin, start=False)
+        grid, lon = shiftgrid(lonin[len(lonin)//2], gridin, lonin, start=False)
         assert (lon==lonout).all()
         assert (grid==gridout).all()
 
     def test_no_cyc2(self):
         lonin, gridin, lonout, gridout = self.make_data_nocyc2()
-        grid, lon = shiftgrid(lonin[len(lonin)/2], gridin, lonin, start=False)
+        grid, lon = shiftgrid(lonin[len(lonin)//2], gridin, lonin, start=False)
         assert (lon==lonout).all()
         assert (grid==gridout).all()
 
@@ -221,4 +221,3 @@ if __name__ == '__main__':
         print('{0}\n'.format(pkg_vers))
 
     unittest.main()
-
