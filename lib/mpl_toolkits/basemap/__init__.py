@@ -3370,11 +3370,11 @@ class Basemap(object):
         As a result, those values will not be plotted.
 
         If ``tri`` is set to ``True``, an unstructured grid is assumed
-        (x,y,data must be 1-d) and matplotlib.pyplot.tricolor is used.
+        (x,y,data must be 1-d) and matplotlib.pyplot.tripcolor is used.
 
         Extra keyword ``ax`` can be used to override the default axis instance.
 
-        Other \**kwargs passed on to matplotlib.pyplot.pcolor (or tricolor if
+        Other \**kwargs passed on to matplotlib.pyplot.pcolor (or tripcolor if
         ``tri=True``).
 
         Note: (taken from matplotlib.pyplot.pcolor documentation)
