@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # lat_1 is first standard parallel.
 # lat_2 is second standard parallel (defaults to lat_1).
 # lon_0,lat_0 is central point.
-# rsphere=(6378137.00,6356752.3142) specifies WGS4 ellipsoid
+# rsphere=(6378137.00,6356752.3142) specifies WGS84 ellipsoid
 # area_thresh=1000 means don't plot coastline features less
 # than 1000 km^2 in area.
 m = Basemap(width=12000000,height=9000000,
