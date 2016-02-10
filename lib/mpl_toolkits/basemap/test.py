@@ -191,7 +191,16 @@ class TestProjectCoords(TestCase):
         assert_almost_equal(yy1, yy2)
 
 
-
+class TestInputValidation(TestCase):
+    def test_optional_casting(self):
+        # Test for the bug reported in gh:#260
+        d = {'llcrnrlat': 28.979408, 'urcrnrlat': 35.19622,
+             'llcrnrlon': -95.614105, 'urcrnrlon': -77.554749,
+             'lon_0': -87.0, 'resolution': 'c', 'lat_0': 32.070374,
+             'projection': 'lcc'}
+        bmap1 = Basemap(lat_1=30.0, **d)
+        bmap2 = Basemap(lat_1=np.array([30.0], dtype='float32'), **d)
+        assert bmap1.proj4string == bmap2.proj4string
 
 
 def test():
