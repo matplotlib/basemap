@@ -9,9 +9,11 @@ from distutils.version import LooseVersion
 from numpy.testing import TestCase, assert_almost_equal
 
 try:
+	import unittest
 	from unittest import skipIf
 except ImportError:
 	# for new features, fallback to unittest backport for Python 2.4 - 2.6
+	import unittest2 as unittest
 	from unittest2 import skipIf
 
 # For Python 3.x this will be true
