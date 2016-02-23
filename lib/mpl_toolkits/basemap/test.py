@@ -190,8 +190,74 @@ class TestProjectCoords(TestCase):
         assert_almost_equal(xx1, xx2)
         assert_almost_equal(yy1, yy2)
 
-
-
+@skipIf(LooseVersion(np.__version__) < LooseVersion("1.10.0")), 
+        "Test skipped if NumPy version is less than 1.10.x")
+class TestLSMask(Basemap, unittest.TestCase):
+	def make_map_object(self,**kwargs):
+		""" Create a Basemap class instance """
+		if PY3:
+			# If Python 3, use new super() syntax
+			m = super().__init__(**kwargs)
+		else:
+			# Python 2 super syntax
+			m = super(TestLSMask,self).__init__(**kwargs)
+		return m
+	
+	def test_running_drawlsmask_method_on_varying_map_objects(self):
+		""" drawlsmask method should be callable without args supplied
+		
+		as kwargs have default values. So, create a few map objects
+		with different projections and longitude extents and see if they
+		pass the test. 
+		
+		Here I'm testing to see if drawlsmask() raises and exception. 
+		If so, a try/except block catches the exception, then uses unittest.TestCase
+		assertNotIsInstance on the exception object to cause the test suite to fail
+		this test. 
+		"""
+		# Try some cases #
+		# Case: all Basemap defaults
+		m = self.make_map_object()
+		try:
+			m.drawlsmask()
+		except Exception as e:
+			# Using assertNotIsInstance because this will fail if
+			# drawlsmask fails
+			# Using assertRaises will pass if drawlsmask fails.
+			self.assertNotIsInstance(e,Exception)
+		
+		# Case: lon_0=0, projection='cyl'
+		m = self.make_map_object(lon_0=0)
+		try:
+			m.drawlsmask()
+		except Exception as e:
+			# Using assertNotIsInstance because this will fail if
+			# drawlsmask fails
+			# Using assertRaises will pass if drawlsmask fails.
+			self.assertNotIsInstance(e,Exception)
+		
+		# Case: projection='merc'
+		m = self.make_map_object(projection='merc')
+		try:
+			m.drawlsmask()
+		except Exception as e:
+			# Using assertNotIsInstance because this will fail if
+			# drawlsmask fails
+			# Using assertRaises will pass if drawlsmask fails.
+			self.assertNotIsInstance(e,Exception)
+		
+		# Case: projection='npstere', lon_0=-100(center of US), 
+		# boundinglat=40(center of US)
+		m = self.make_map_object(projection='npstere',
+								lon_0=-100,
+								boundinglat=40)
+		try:
+			m.drawlsmask()
+		except Exception as e:
+			# Using assertNotIsInstance because this will fail if
+			# drawlsmask fails
+			# Using assertRaises will pass if drawlsmask fails.
+			self.assertNotIsInstance(e,Exception)
 
 
 def test():
