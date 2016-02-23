@@ -3960,10 +3960,14 @@ class Basemap(object):
             if cylproj:
                 # stack grids side-by-side (in longitiudinal direction), so
                 # any range of longitudes may be plotted on a world map.
+                # in versions of NumPy later than 1.10.0, concatenate will
+                # not stack these arrays as expected. If axis 1 is outside
+                # the dimensions of the array, concatenate will now raise
+                # an IndexError. Using hstack instead.
                 lsmask_lons = \
-                        np.concatenate((lsmask_lons,lsmask_lons[1:]+360),1)
+                        np.hstack((lsmask_lons,lsmask_lons[1:] + 360))
                 lsmask = \
-                        np.concatenate((lsmask,lsmask[:,1:]),1)
+                        np.hstack((lsmask,lsmask[:,1:]))
         else:
             if lakes: lsmask = np.where(lsmask==2,np.array(0,np.uint8),lsmask)
 
