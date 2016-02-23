@@ -190,7 +190,7 @@ class TestProjectCoords(TestCase):
         assert_almost_equal(xx1, xx2)
         assert_almost_equal(yy1, yy2)
 
-@skipIf(LooseVersion(np.__version__) < LooseVersion("1.10.0")), 
+@skipIf(LooseVersion(np.__version__) < LooseVersion("1.10.0"), 
         "Test skipped if NumPy version is less than 1.10.x")
 class TestLSMask(Basemap, unittest.TestCase):
 	def make_map_object(self,**kwargs):
