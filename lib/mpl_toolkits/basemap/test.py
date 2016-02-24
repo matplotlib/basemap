@@ -2,15 +2,18 @@ import sys
 from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy as np
 import pyproj
+from distutils.version import LooseVersion
 
 # beginnings of a test suite.
 
 from numpy.testing import TestCase, assert_almost_equal
 
 try:
+	import unittest
 	from unittest import skipIf
 except ImportError:
 	# for new features, fallback to unittest backport for Python 2.4 - 2.6
+	import unittest2 as unittest
 	from unittest2 import skipIf
 
 # For Python 3.x this will be true
@@ -191,7 +194,36 @@ class TestProjectCoords(TestCase):
         assert_almost_equal(yy1, yy2)
 
 
-
+class TestLSMask(unittest.TestCase):
+	def test_running_drawlsmask_method_on_varying_map_objects(self):
+		""" Use two different Basemap objects to test drawlsmask method.
+		
+		Here I'm testing to see if drawlsmask() raises and exception. 
+		If so, a try/except block catches the exception, then uses unittest.TestCase
+		assertNotIsInstance on the exception object to cause the test suite to fail
+		this test. 
+		"""
+		# Try some cases #
+		# Case: all Basemap defaults
+		m = Basemap()
+		try:
+			m.drawlsmask()
+		except Exception as e:
+			# Using assertNotIsInstance because this will fail if
+			# drawlsmask fails
+			# Using assertRaises will pass if drawlsmask fails.
+			self.assertNotIsInstance(e,Exception)
+		
+		# Case: projection='npstere', lon_0=-100(center of US), 
+		# boundinglat=40(center of US)
+		m = Basemap(projection='npstere',lon_0=-100,boundinglat=40)
+		try:
+			m.drawlsmask()
+		except Exception as e:
+			# Using assertNotIsInstance because this will fail if
+			# drawlsmask fails
+			# Using assertRaises will pass if drawlsmask fails.
+			self.assertNotIsInstance(e,Exception)
 
 
 def test():
