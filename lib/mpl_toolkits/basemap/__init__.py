@@ -4432,7 +4432,7 @@ f=image" %\
                          srs='EPSG:%s' % self.epsg, **kwargs)
         # return AxesImage instance.
         # this works for png and jpeg.
-        return self.imshow(imread(io.BytesIO(urllib2.urlopen(img.url).read()),
+        return self.imshow(imread(io.BytesIO(img.read()),
                            format=format),origin='upper')
         # this works for png, but not jpeg
         #return self.imshow(imread(urllib2.urlopen(img.url),format=format),origin='upper')
