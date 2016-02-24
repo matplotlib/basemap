@@ -503,6 +503,13 @@ def _validated_ll(param, name, minval, maxval):
                                            (name, minval, maxval))
     return param
 
+
+def _validated_or_none(param, name, minval, maxval):
+    if param is None:
+        return None
+    return _validated_ll(param, name, minval, maxval)
+
+
 def _insert_validated(d, param, name, minval, maxval):
     if param is not None:
         d[name] = _validated_ll(param, name, minval, maxval)
@@ -671,6 +678,18 @@ class Basemap(object):
         # set units to meters.
         projparams['units']='m'
         # check for sane values of lon_0, lat_0, lat_ts, lat_1, lat_2
+        lat_0 = _validated_or_none(lat_0, 'lat_0', -90, 90)
+        lat_1 = _validated_or_none(lat_1, 'lat_1', -90, 90)
+        lat_2 = _validated_or_none(lat_2, 'lat_2', -90, 90)
+        lat_ts = _validated_or_none(lat_ts, 'lat_ts', -90, 90)
+        lon_0 = _validated_or_none(lon_0, 'lon_0', -360, 720)
+        lon_1 = _validated_or_none(lon_1, 'lon_1', -360, 720)
+        lon_2 = _validated_or_none(lon_2, 'lon_2', -360, 720)
+        llcrnrlon = _validated_or_none(llcrnrlon, 'llcrnrlon', -360, 720)
+        urcrnrlon = _validated_or_none(urcrnrlon, 'urcrnrlon', -360, 720)
+        llcrnrlat = _validated_or_none(llcrnrlat, 'llcrnrlat', -90, 90)
+        urcrnrlat = _validated_or_none(urcrnrlat, 'urcrnrlat', -90, 90)
+
         _insert_validated(projparams, lat_0, 'lat_0', -90, 90)
         _insert_validated(projparams, lat_1, 'lat_1', -90, 90)
         _insert_validated(projparams, lat_2, 'lat_2', -90, 90)
