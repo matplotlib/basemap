@@ -73,7 +73,7 @@ you have problems or questions.
 0. Install pre-requisite python modules numpy and matplotlib.
 
 1. Then download basemap-X.Y.Z.tar.gz (approx 100 mb) from
-the sourceforge download site, unpack and cd to basemap-X.Y.Z.
+the [GitHub Releases](https://github.com/matplotlib/basemap/releases) page, unpack and cd to basemap-X.Y.Z.
 
 2. Install the GEOS library.  If you already have it on your
 system, just set the environment variable GEOS_DIR to point to the location 
