@@ -28,7 +28,7 @@ except ImportError:
 def checkversion(GEOS_dir):
     """check geos C-API header file (geos_c.h)"""
     try:
-        f = open(os.path.join(GEOS_dir,'include/geos_c.h'))
+        f = open(os.path.join(GEOS_dir, 'include', 'geos_c.h'))
     except IOError:
         return None
     geos_version = None
