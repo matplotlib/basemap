@@ -73,13 +73,15 @@ def package_versions():
                    PIL = pil_version,
                    Pillow = pillow_version)
 
-def check_proj_inv_hammer(segfault_protection_off=False):
+def check_proj_inv_hammer(segfault_protection=True):
     """
     Check if the inverse of the hammer projection is supported by installed
     version of PROJ4.
     
-    segfault_protection_off=True  - Turns off the protection from a segfault.
-                                     BE CAREFUL setting this to True.
+    segfault_protection   True (default) - test while protecting from segfault
+                          False -  testing that might cause Python to segfault.
+                                   BE CAREFUL setting this flag to False!
+                                   If it segfaults, this the inverse hammer is not supported.
 
     returns True      - inverse hammer is supported
             False     - inverse hammer is not supported
@@ -91,9 +93,8 @@ def check_proj_inv_hammer(segfault_protection_off=False):
     if LooseVersion(proj4_version()) > LooseVersion('4.9.2'):
         return True
     
-    # pyproj_version_tup = version_str_to_tuple(pyproj_version)
     if LooseVersion(pyproj_version) > LooseVersion('1.9.5.1') \
-            or segfault_protection_off is True:
+            or segfault_protection is False:
         from pyproj import Proj
         hammer = Proj(proj='hammer')
         
