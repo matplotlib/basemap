@@ -9,14 +9,16 @@ def proj4_version():
     returns string, so proj.4 version 4.9.3 will return "4.9.3"
     """
     import pyproj
-    
-    # Get PROJ4 version in a floating point number
-    proj4_ver_num = pyproj.Proj(proj='latlong').proj_version
-    
-    # reformats floating point number into string (4.90 becomes '4.9.0')
-    # Exploits single number version numbers for proj4,
-    # This will need likely need to be change at some point as proj.4 version 4.10.0???
-    return '.'.join( str(int(proj4_ver_num*100)) )
+    try:
+        return pyproj.proj_version_str
+    except AttributeError:
+        # for pyproj versions 1.9.5.1 and before, this will run
+        # Get PROJ4 version in a floating point number
+        proj4_ver_num = pyproj.Proj(proj='latlong').proj_version
+        
+        # reformats floating point number into string (4.90 becomes '4.9.0')
+        # Exploits single number version numbers for proj4,
+        return '.'.join( str(int(proj4_ver_num*100)) )
     
     
 def package_versions():
@@ -35,6 +37,13 @@ def package_versions():
 
     import _geoslib
     from mpl_toolkits.basemap import __version__ as basemap_version
+    
+    try:
+        # geodesic is a part of proj.4 library
+        # new variable in pyproj versions greater than 1.9.5.1
+        from pyproj import geodesic_version_str as geodesic_version
+    except ImportError:
+        geodesic_version = 'Unknown'
     
     # import optional dependencies
     try:
@@ -56,8 +65,8 @@ def package_versions():
     BasemapPackageVersions = namedtuple(
                                'BasemapPackageVersions',
                                """Python, basemap, matplotlib,
-                                  numpy, pyproj, pyshp, PROJ4, GEOS,
-                                  OWSLib, PIL, Pillow""")
+                                  numpy, pyproj, pyshp, PROJ4, geodesic, 
+                                  GEOS, OWSLib, PIL, Pillow""")
 
     return BasemapPackageVersions(
                    Python = sys_version,
@@ -67,6 +76,7 @@ def package_versions():
                    pyproj = pyproj_version,
                    pyshp = pyshp_version,
                    PROJ4 = proj4_version(),
+                   geodesic = geodesic_version,
                    GEOS = _geoslib.__geos_version__,
                    # optional dependencies below
                    OWSLib = OWSLib_version,
