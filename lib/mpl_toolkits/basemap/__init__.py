@@ -4495,7 +4495,7 @@ f=image" %\
             length = length*0.3048
         elif units != 'm':
             msg = "units must be 'm' (meters), 'km' (kilometers), "\
-            "'mi' (miles) or 'nmi' (nautical miles)"
+            "'mi' (miles), 'nmi' (nautical miles), or 'ft' (feet)"
             raise KeyError(msg)
         # reference point and center of scale.
         x0,y0 = self(lon0,lat0)
