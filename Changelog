@@ -1,7 +1,15 @@
-version 1.0.8 (not yet released)
+version 1.1.0 (git tag v1.1.0rel)
 --------------------------------
-* removes inline pyshp and pyproj code and uses makes these packages required
-  external dependencies (handling issue 230).
+* pyshp/pyproj are now external dependencies (PR #234)
+* Proper clipping of plots regardless of projection (issue 175)
+* drawmapscale() supports "feet" as an input unit (PR 289)
+* nightshade() supports datetime timezone-aware datetime objects
+  as long as the timezone is UTC. Still assumes timezone-naive
+  objects are UTC as well. (issue 272)
+* Properly perform input validation/casting (issue 260)
+* Support newer versions of OWSLib (PR 259)
+* Use integer indexes (PR #246)
+* Stop ResourceWarnings for unclosed files in py3k (PR #244)
 * add 'textcolor' kwarg to drawmeridians and drawparallels (issue 145).
 * don't assume grid is regular when adding cyclic point in addcyclic. 
   New kwargs 'axis' and 'cyclic' added.  More than one array
