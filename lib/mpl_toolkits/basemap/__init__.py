@@ -12,10 +12,12 @@ heavy lifting), and the following functions:
 
 :func:`addcyclic`: Add cyclic (wraparound) point in longitude.
 """
+from distutils.version import LooseVersion
 from matplotlib import __version__ as _matplotlib_version
 from matplotlib.cbook import is_scalar, dedent
 # check to make sure matplotlib is not too old.
-_mpl_required_version = '0.98'
+_matplotlib_version = LooseVersion(_matplotlib_version)
+_mpl_required_version = LooseVersion('0.98')
 if _matplotlib_version < _mpl_required_version:
     msg = dedent("""
     your matplotlib is too old - basemap requires version %s or
@@ -1649,7 +1651,10 @@ class Basemap(object):
         # if no fill_color given, use axes background color.
         # if fill_color is string 'none', really don't fill.
         if fill_color is None:
-            fill_color = ax.get_axis_bgcolor()
+            if _matplotlib_version >= '1.5':
+                fill_color = ax.get_facecolor()
+            else:
+                fill_color = ax.get_axis_bgcolor()
         elif fill_color == 'none' or fill_color == 'None':
             fill_color = None
         limb = None
@@ -1793,7 +1798,10 @@ class Basemap(object):
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
         # get axis background color.
-        axisbgc = ax.get_axis_bgcolor()
+        if _matplotlib_version >= '1.5':
+            axisbgc = ax.get_facecolor()
+        else:
+            axisbgc = ax.get_axis_bgcolor()
         npoly = 0
         polys = []
         for x,y in self.coastpolygons:
