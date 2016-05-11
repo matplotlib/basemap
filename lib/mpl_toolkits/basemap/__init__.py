@@ -1657,20 +1657,8 @@ class Basemap(object):
            self._fulldisk):
             limb = Ellipse((self._width,self._height),2.*self._width,2.*self._height)
         if self.projection in ['ortho','geos','nsper','aeqd'] and self._fulldisk:
-            ax.set_frame_on(False)
             # elliptical region.
-            ax.add_patch(limb)
-            self._mapboundarydrawn = limb
-            if fill_color is None:
-                limb.set_fill(False)
-            else:
-                limb.set_facecolor(fill_color)
-                limb.set_zorder(0)
-            limb.set_edgecolor(color)
-            limb.set_linewidth(linewidth)
-            limb.set_clip_on(True)
-            if zorder is not None:
-                limb.set_zorder(zorder)
+            ax.set_frame_on(False)
         elif self.projection in _pseudocyl:  # elliptical region.
             ax.set_frame_on(False)
             nx = 100; ny = 100
@@ -1694,72 +1682,35 @@ class Basemap(object):
             lats = np.array(lats1+lats2+lats3+lats4,np.float64)
             x, y = self(lons,lats)
             xy = list(zip(x,y))
-            limb = Polygon(xy,edgecolor=color,linewidth=linewidth)
-            ax.add_patch(limb)
-            self._mapboundarydrawn = limb
-            if fill_color is None:
-                limb.set_fill(False)
-            else:
-                limb.set_facecolor(fill_color)
-                limb.set_zorder(0)
-            limb.set_clip_on(True)
-            if zorder is not None:
-                limb.set_zorder(zorder)
+            limb = Polygon(xy)
         elif self.round:
             ax.set_frame_on(False)
             limb = Circle((0.5*(self.xmax+self.xmin),0.5*(self.ymax+self.ymin)),
                     radius=0.5*(self.xmax-self.xmin),fc='none')
-            ax.add_patch(limb)
+        else: # all other projections are rectangular.
+            ax.set_frame_on(True)
+            for spine in ax.spines.values():
+                spine.set_linewidth(linewidth)
+                spine.set_edgecolor(color)
+                if zorder is not None:
+                    spine.set_zorder(zorder)
+            if self.projection not in ['geos','ortho','nsper']:
+                limb = ax.axesPatch
+
+        if limb is not None:
+            if limb is not ax.axesPatch:
+                ax.add_patch(limb)
             self._mapboundarydrawn = limb
             if fill_color is None:
                 limb.set_fill(False)
             else:
                 limb.set_facecolor(fill_color)
                 limb.set_zorder(0)
-            limb.set_clip_on(True)
+            limb.set_edgecolor(color)
+            limb.set_linewidth(linewidth)
             if zorder is not None:
                 limb.set_zorder(zorder)
-        else: # all other projections are rectangular.
-            # use axesPatch for fill_color, spine for border line props.
-            for spine in ax.spines.values():
-                spine.set_linewidth(linewidth)
-            if self.projection not in ['geos','ortho','nsper']:
-                limb = ax.axesPatch
-                if fill_color is not None:
-                    limb.set_facecolor(fill_color)
-                for spine in ax.spines.values():
-                    spine.set_edgecolor(color)
-                ax.set_frame_on(True)
-                # FIXME?  should zorder be set separately for edge and background?
-                if zorder is not None:
-                    limb.set_zorder(zorder)
-                    for spine in ax.spines.values():
-                        spine.set_zorder(zorder)
-            else:
-                # use axesPatch for fill_color, spine for border line props.
-                for spine in ax.spines.values():
-                    spine.set_edgecolor(color)
-                ax.set_frame_on(True)
-                # FIXME?  should zorder be set separately for edge and background?
-                if zorder is not None:
-                    ax.axesPatch.set_zorder(zorder)
-                    for spine in ax.spines.values():
-                        spine.set_zorder(zorder)
-                # for geos or ortho projections, also
-                # draw and fill map projection limb, clipped
-                # to rectangular region.
-                ax.add_patch(limb)
-                self._mapboundarydrawn = limb
-                if fill_color is None:
-                    limb.set_fill(False)
-                else:
-                    limb.set_facecolor(fill_color)
-                    limb.set_zorder(0)
-                limb.set_edgecolor(color)
-                limb.set_linewidth(linewidth)
-                if zorder is not None:
-                    limb.set_zorder(zorder)
-                limb.set_clip_on(True)
+            limb.set_clip_on(True)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         return limb
