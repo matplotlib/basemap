@@ -1651,7 +1651,7 @@ class Basemap(object):
         # if no fill_color given, use axes background color.
         # if fill_color is string 'none', really don't fill.
         if fill_color is None:
-            if _matplotlib_version >= '1.5':
+            if _matplotlib_version >= '2.0':
                 fill_color = ax.get_facecolor()
             else:
                 fill_color = ax.get_axis_bgcolor()
