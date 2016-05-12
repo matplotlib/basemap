@@ -1,3 +1,4 @@
+from distutils.version import LooseVersion
 import sys
 from mpl_toolkits.basemap import Basemap, shiftgrid
 import numpy as np
@@ -159,7 +160,7 @@ class TestShiftdata(TestCase):
         lonsout = bm.shiftdata(lonsin[:, :2])
         assert_almost_equal(lonsout_expected, lonsout)
 
-@skipIf(PY3 and pyproj.__version__ <= "1.9.4", 
+@skipIf(PY3 and LooseVersion(pyproj.__version__) <= LooseVersion("1.9.4"), 
         "Test skipped in Python 3.x with pyproj version 1.9.4 and below.")
 class TestProjectCoords(TestCase):
     def get_data(self):
