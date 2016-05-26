@@ -4801,14 +4801,15 @@ f=image" %\
             nlons = len(lonsin)
             lonsin = np.where(lonsin > lon_0+180, lonsin-360 ,lonsin)
             lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
+            londiff = np.abs(lonsin[0:-1]-lonsin[1:])
 
-            if nlons > 1:
-                londiff = np.abs(lonsin[0:-1]-lonsin[1:])
-                londiff_sort = np.sort(londiff)
-                thresh = 360.-londiff_sort[-2] if nlons > 2 else 360.0 - londiff_sort[-1]
-                itemindex = len(lonsin)-np.where(londiff>=thresh)[0]
-            else:
+
+            if len(londiff) <= 1:  # No need to roll anything, when we have only 1 or 2 points
                 itemindex = 0
+            else:
+                londiff_sort = np.sort(londiff)
+                thresh = 360.-londiff_sort[-2]
+                itemindex = len(lonsin)-np.where(londiff>=thresh)[0]
 
             if itemindex:
                 # check to see if cyclic (wraparound) point included
