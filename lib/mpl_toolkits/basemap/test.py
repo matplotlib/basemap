@@ -38,7 +38,7 @@ class TestRotateVector(TestCase):
     def test_nan(self):
         B = Basemap()
         u,v,lat,lon=self.make_array()
-        # Set one element to 0, so that the vector magnitude is 0. 
+        # Set one element to 0, so that the vector magnitude is 0.
         u[1,1] = 0.
         ru, rv = B.rotate_vector(u,v, lon, lat)
         assert not np.isnan(ru).any()
@@ -160,7 +160,62 @@ class TestShiftdata(TestCase):
         lonsout = bm.shiftdata(lonsin[:, :2])
         assert_almost_equal(lonsout_expected, lonsout)
 
-@skipIf(PY3 and LooseVersion(pyproj.__version__) <= LooseVersion("1.9.4"), 
+    def test_less_than_2_points(self):
+        import matplotlib.pyplot as plt
+        from mpl_toolkits.basemap import Basemap
+        from shapely.ops import transform
+        from shapely.geometry import Polygon, Point, MultiPolygon
+        from descartes import PolygonPatch
+
+        #setup bounds
+        minx, miny, maxx, maxy = [144.699997,-37.882599,144.7813598,-37.753114]
+
+        #width height
+        w, h = maxx - minx, maxy - miny
+
+        plt.figure(figsize=(18,12))
+        m = Basemap(
+            projection='merc',
+            ellps = 'WGS84',
+            llcrnrlon=minx - 3 * w,
+            llcrnrlat=miny - 3 * h,
+            urcrnrlon=maxx + 3 * w,
+            urcrnrlat=maxy + 3 * h,
+            resolution='h')
+        m.drawcoastlines()
+        m.drawmapboundary(fill_color='lightskyblue')
+        m.fillcontinents(color='silver',lake_color='lightskyblue', zorder=0.1)
+
+
+        point1 = [144.687,-37.751]
+        point2 = [144.793,-37.881]
+        point3 = [144.695,-37.742]
+
+
+        # =============================== Scatter tests ====== #
+
+        #single point - WORKS
+        m.scatter(point1[0],point1[1], 500, c='blue',alpha=1, zorder=0.6, latlon=True)
+
+        ##2 single points - WORKS
+        m.scatter(point1[0],point1[1], 500, c='blue',alpha=1, zorder=0.6, latlon=True)
+        m.scatter(point2[0],point2[1], 500, c='blue',alpha=1, zorder=0.6, latlon=True)
+
+        #Array of 3 elements - WORKS
+        points3 = [list(i) for i in zip(point1,point2,point3)]
+        m.scatter(points3[0],points3[1], 500, c='blue',alpha=1, zorder=0.6, latlon=True)
+
+        #array of 1 element
+        points1 = [list(i) for i in zip(point1)]
+        m.scatter(points1[0],points1[1], 500, c='blue',alpha=1, zorder=0.6, latlon=True)
+
+        #array of 2 elements
+        points2 = [list(i) for i in zip(point1,point2)]
+        m.scatter(points2[0],points2[1], 500, c='blue',alpha=1, zorder=0.6, latlon=True)
+
+
+
+@skipIf(PY3 and LooseVersion(pyproj.__version__) <= LooseVersion("1.9.4"),
         "Test skipped in Python 3.x with pyproj version 1.9.4 and below.")
 class TestProjectCoords(TestCase):
     def get_data(self):
@@ -224,7 +279,7 @@ if __name__ == '__main__':
     import unittest
 
     from mpl_toolkits.basemap.diagnostic import package_versions
-    
+
     if '--verbose' in sys.argv or '-v' in sys.argv:
         pkg_vers = package_versions()
         print('Basemaps installed package versions:')
