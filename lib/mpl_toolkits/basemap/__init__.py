@@ -4319,7 +4319,8 @@ f=image" %\
                          from xpixels and the aspect ratio of the
                          map projection region.
         format           desired image format (default 'png')
-        alpha            The alpha blending value, between 0 (transparent) and 1 (opaque)
+        alpha            The alpha blending value, 
+                         between 0 (transparent) and 1 (opaque) (default None)
         verbose          if True, print WMS server info (default
                          False).
         \**kwargs        extra keyword arguments passed on to
