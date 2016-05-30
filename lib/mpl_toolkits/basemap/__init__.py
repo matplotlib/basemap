@@ -4295,7 +4295,7 @@ f=image" %\
 
     def wmsimage(self,server,\
                  xpixels=400,ypixels=None,\
-                 format='png',verbose=False,**kwargs):
+                 format='png',alpha=None,verbose=False,**kwargs):
         """
         Retrieve an image using from a WMS server using the
         Open Geospatial Consortium (OGC) standard interface
@@ -4319,6 +4319,8 @@ f=image" %\
                          from xpixels and the aspect ratio of the
                          map projection region.
         format           desired image format (default 'png')
+        alpha            The alpha blending value, 
+                         between 0 (transparent) and 1 (opaque) (default None)
         verbose          if True, print WMS server info (default
                          False).
         \**kwargs        extra keyword arguments passed on to
@@ -4380,7 +4382,7 @@ f=image" %\
         # return AxesImage instance.
         # this works for png and jpeg.
         return self.imshow(imread(io.BytesIO(img.read()),
-                           format=format),origin='upper')
+                           format=format),origin='upper',alpha=alpha)
         # this works for png, but not jpeg
         #return self.imshow(imread(urllib2.urlopen(img.url),format=format),origin='upper')
 
