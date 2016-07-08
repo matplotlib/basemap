@@ -3551,7 +3551,7 @@ class Basemap(object):
                 # with the shiftgrid function.
                 # only do this check for global projections.
                 if self.projection in _cylproj + _pseudocyl:
-                    xx = x[x.shape[0]/2,:]
+                    xx = x[x.shape[0]//2,:]
                     condition = (xx >= self.xmin) & (xx <= self.xmax)
                     xl = xx.compress(condition).tolist()
                     xs = xl[:]
@@ -3653,7 +3653,7 @@ class Basemap(object):
                 # with the shiftgrid function.
                 # only do this check for global projections.
                 if self.projection in _cylproj + _pseudocyl:
-                    xx = x[x.shape[0]/2,:]
+                    xx = x[x.shape[0]//2,:]
                     condition = (xx >= self.xmin) & (xx <= self.xmax)
                     xl = xx.compress(condition).tolist()
                     xs = xl[:]
@@ -3956,7 +3956,7 @@ class Basemap(object):
             if self.projection in _pseudocyl:
                 lons, lats = self(x, y, inverse=True)
                 lon_0 = self.projparams['lon_0']
-                lats = lats[:,nx/2]
+                lats = lats[:,nx//2]
                 lons1 = (lon_0+180.)*np.ones(lons.shape[0],np.float64)
                 lons2 = (lon_0-180.)*np.ones(lons.shape[0],np.float64)
                 xmax,ytmp = self(lons1,lats)
@@ -4319,7 +4319,7 @@ f=image" %\
                          from xpixels and the aspect ratio of the
                          map projection region.
         format           desired image format (default 'png')
-        alpha            The alpha blending value, 
+        alpha            The alpha blending value,
                          between 0 (transparent) and 1 (opaque) (default None)
         verbose          if True, print WMS server info (default
                          False).
@@ -5198,7 +5198,7 @@ def _readlsmask(lakes=True,resolution='l',grid=5):
         nlons = 17280
     else:
         raise ValueError('grid for land/sea mask must be 10,5,2.5 or 1.25')
-    nlats = nlons/2
+    nlats = nlons//2
     import gzip
     lsmaskf =\
     gzip.open(os.path.join(basemap_datadir,'lsmask_%smin_%s.bin' %\
