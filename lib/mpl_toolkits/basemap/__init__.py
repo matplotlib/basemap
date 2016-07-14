@@ -4258,6 +4258,7 @@ class Basemap(object):
             Basemap instance must be creating using an EPSG code
             (http://spatialreference.org) in order to use the wmsmap method""")
             raise ValueError(msg)
+        ax = kwargs.pop('ax', None) or self._check_ax()
         # find the x,y values at the corner points.
         p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
         xmin,ymin = p(self.llcrnrlon,self.llcrnrlat)
@@ -4291,7 +4292,8 @@ f=image" %\
         # print URL?
         if verbose: print basemap_url
         # return AxesImage instance.
-        return self.imshow(imread(urllib2.urlopen(basemap_url)),origin='upper')
+        return self.imshow(imread(urllib2.urlopen(basemap_url)),ax=ax,
+                           origin='upper')
 
     def wmsimage(self,server,\
                  xpixels=400,ypixels=None,\
@@ -4336,6 +4338,7 @@ f=image" %\
         except ImportError:
             raise ImportError('OWSLib required to use wmsimage method')
         import urllib2, io
+        ax = kwargs.pop('ax', None) or self._check_ax()
         if not hasattr(self,'epsg'):
             msg = dedent("""
             Basemap instance must be creating using an EPSG code
@@ -4382,7 +4385,7 @@ f=image" %\
         # return AxesImage instance.
         # this works for png and jpeg.
         return self.imshow(imread(io.BytesIO(img.read()),
-                           format=format),origin='upper',alpha=alpha)
+                           format=format),origin='upper',alpha=alpha,ax=ax)
         # this works for png, but not jpeg
         #return self.imshow(imread(urllib2.urlopen(img.url),format=format),origin='upper')
 
@@ -4653,7 +4656,9 @@ f=image" %\
         from .solar import daynight_grid
         # make sure date is UTC, or naive with repect to time zones
         if date.utcoffset():
-            raise ValueError('datetime instance must be UTC, not {}'.format(date.tzname()))
+            raise ValueError('datetime instance must be UTC, not {0}'.format(date.tzname()))
+        # get current axes instance (if none specified).
+        ax = ax or self._check_ax()
         # create grid of day=0, night=1
         lons,lats,daynight = daynight_grid(date,delta,self.lonmin,self.lonmax)
         x,y = self(lons,lats)
