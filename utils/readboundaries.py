@@ -97,10 +97,10 @@ for resolution in ['c','l','i','h','f']:
     countryfile = 'countries_'+resolution+'.txt'
     statefile = 'states_'+resolution+'.txt'
     riverfile = 'rivers_'+resolution+'.txt'
-    
+
     poly, polymeta = get_coast_polygons(coastfile)
-    f = open('../lib/matplotlib/toolkits/basemap/data/gshhs_'+resolution+'.dat','wb')
-    f2 = open('../lib/matplotlib/toolkits/basemap/data/gshhsmeta_'+resolution+'.dat','w')
+    f = open('../lib/mpl_toolkits/basemap/data/gshhs_'+resolution+'.dat','wb')
+    f2 = open('../lib/mpl_toolkits/basemap/data/gshhsmeta_'+resolution+'.dat','w')
     offset = 0
     for p,pm in zip(poly,polymeta):
         bstring = p.tostring()
@@ -110,10 +110,10 @@ for resolution in ['c','l','i','h','f']:
         offset = offset + len(bstring)
     f.close()
     f2.close()
-    
+
     poly, polymeta = get_boundary_lines(countryfile)
-    f = open('../lib/matplotlib/toolkits/basemap/data/countries_'+resolution+'.dat','wb')
-    f2 = open('../lib/matplotlib/toolkits/basemap/data/countriesmeta_'+resolution+'.dat','w')
+    f = open('../lib/mpl_toolkits/basemap/data/countries_'+resolution+'.dat','wb')
+    f2 = open('../lib/mpl_toolkits/basemap/data/countriesmeta_'+resolution+'.dat','w')
     offset = 0
     for p,pm in zip(poly,polymeta):
         bstring = p.tostring()
@@ -123,10 +123,10 @@ for resolution in ['c','l','i','h','f']:
         offset = offset + len(bstring)
     f.close()
     f2.close()
-    
+
     poly, polymeta = get_boundary_lines(statefile)
-    f = open('../lib/matplotlib/toolkits/basemap/data/states_'+resolution+'.dat','wb')
-    f2 = open('../lib/matplotlib/toolkits/basemap/data/statesmeta_'+resolution+'.dat','w')
+    f = open('../lib/mpl_toolkits/basemap/data/states_'+resolution+'.dat','wb')
+    f2 = open('../lib/mpl_toolkits/basemap/data/statesmeta_'+resolution+'.dat','w')
     offset = 0
     for p,pm in zip(poly,polymeta):
         bstring = p.tostring()
@@ -136,10 +136,10 @@ for resolution in ['c','l','i','h','f']:
         offset = offset + len(bstring)
     f.close()
     f2.close()
-    
+
     poly, polymeta = get_boundary_lines(riverfile)
-    f = open('../lib/matplotlib/toolkits/basemap/data/rivers_'+resolution+'.dat','wb')
-    f2 = open('../lib/matplotlib/toolkits/basemap/data/riversmeta_'+resolution+'.dat','w')
+    f = open('../lib/mpl_toolkits/basemap/data/rivers_'+resolution+'.dat','wb')
+    f2 = open('../lib/mpl_toolkits/basemap/data/riversmeta_'+resolution+'.dat','w')
     offset = 0
     for p,pm in zip(poly,polymeta):
         bstring = p.tostring()
