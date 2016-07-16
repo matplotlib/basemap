@@ -4,14 +4,12 @@ lsd = 3
 
 def quantize(data,least_significant_digit):
     """
+    Quantize data to improve compression. data is quantized using
+    around(scale*data)/scale, where scale is 2**bits, and bits is determined
+    from the least_significant_digit. For example, if
+    least_significant_digit=1, bits will be 4.
 
-quantize data to improve compression. data is quantized using 
-around(scale*data)/scale, where scale is 2**bits, and bits is determined 
-from the least_significant_digit. For example, if 
-least_significant_digit=1, bits will be 4.
-
-This function is pure python.
-
+    This function is pure python.
     """
     precision = pow(10.,-least_significant_digit)
     exp = numpy.log10(precision)
