@@ -1,4 +1,5 @@
-import numpy, sys
+import sys
+import numpy as np
 
 lsd = 3
 
@@ -12,14 +13,14 @@ def quantize(data,least_significant_digit):
     This function is pure python.
     """
     precision = pow(10.,-least_significant_digit)
-    exp = numpy.log10(precision)
+    exp = np.log10(precision)
     if exp < 0:
-        exp = int(numpy.floor(exp))
+        exp = int(np.floor(exp))
     else:
-        exp = int(numpy.ceil(exp))
-    bits = numpy.ceil(numpy.log2(pow(10.,-exp)))
+        exp = int(np.ceil(exp))
+    bits = np.ceil(np.log2(pow(10.,-exp)))
     scale = pow(2.,bits)
-    return numpy.around(scale*data)/scale
+    return np.around(scale*data)/scale
 
 def interpolate_long_segments(coords, resolution):
     lookup_thresh = {'c': 0.5, 'l':0.1, 'i':0.05, 'h':0.01, 'f':0.005}
@@ -61,7 +62,7 @@ def get_coast_polygons(coastfile):
             polymeta.append([level,area,south,north,poly_id])
             if lons:
                 #lons.append(lons[0]); lats.append(lats[0])
-                b = numpy.empty((len(lons),2),numpy.float32)
+                b = np.empty((len(lons),2),np.float32)
                 b[:,0] = lons; b[:,1] = lats
                 if lsd is not None:
                     b = quantize(b,lsd)
@@ -72,7 +73,7 @@ def get_coast_polygons(coastfile):
         lat = float(linesplit[1])
         lons.append(lon); lats.append(lat)
     #lons.append(lons[0]); lats.append(lats[0])
-    b = numpy.empty((len(lons),2),numpy.float32)
+    b = np.empty((len(lons),2),np.float32)
     b[:,0] = lons; b[:,1] = lats
     if lsd is not None:
         b = quantize(b,lsd)
@@ -90,7 +91,7 @@ def get_boundary_lines(bdatfile, resolution):
         linesplit = line.split()
         if line.startswith('>'):
            if lons:
-               b = numpy.empty((len(lons),2),numpy.float32)
+               b = np.empty((len(lons),2),np.float32)
                b[:,0] = lons; b[:,1] = lats
                if lsd is not None:
                    b = quantize(b,lsd)
@@ -99,7 +100,7 @@ def get_boundary_lines(bdatfile, resolution):
            continue
         lon, lat = [float(val) for val in linesplit]
         lats.append(lat); lons.append(lon)
-    b = numpy.empty((len(lons),2),numpy.float32)
+    b = np.empty((len(lons),2),np.float32)
     b[:,0] = lons; b[:,1] = lats
     if lsd is not None:
         b = quantize(b,lsd)
@@ -153,7 +154,7 @@ for resolution in ['c','l','i','h','f']:
     f.close()
     f2.close()
 
-    poly, polymeta = get_boundary_lines(statefile)
+    poly, polymeta = get_boundary_lines(statefile, resolution)
     f = open('../lib/mpl_toolkits/basemap/data/states_'+resolution+'.dat','wb')
     f2 = open('../lib/mpl_toolkits/basemap/data/statesmeta_'+resolution+'.dat','w')
     offset = 0
@@ -166,7 +167,7 @@ for resolution in ['c','l','i','h','f']:
     f.close()
     f2.close()
 
-    poly, polymeta = get_boundary_lines(riverfile)
+    poly, polymeta = get_boundary_lines(riverfile, resolution)
     f = open('../lib/mpl_toolkits/basemap/data/rivers_'+resolution+'.dat','wb')
     f2 = open('../lib/mpl_toolkits/basemap/data/riversmeta_'+resolution+'.dat','w')
     offset = 0
