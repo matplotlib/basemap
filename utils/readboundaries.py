@@ -21,6 +21,32 @@ def quantize(data,least_significant_digit):
     scale = pow(2.,bits)
     return numpy.around(scale*data)/scale
 
+def interpolate_long_segments(coords, resolution):
+    lookup_thresh = {'c': 0.5, 'l':0.1, 'i':0.05, 'h':0.01, 'f':0.005}
+    thresh = lookup_thresh[resolution]
+    spacing = thresh / 5.0
+
+    lons, lats = coords.T
+    dist = np.hypot(np.diff(lons), np.diff(lats))
+
+    if np.all(dist <= thresh):
+        return coords
+
+    out_lon, out_lat = [], []
+    for i in np.arange(len(dist)):
+        if dist[i] <= thresh:
+            out_lon.append(lons[i])
+            out_lat.append(lats[i])
+        else:
+            x = [0, dist[i]]
+            new_x = np.arange(0, dist[i], spacing)
+            out_lon.extend(np.interp(new_x, x, lons[i:i+2]))
+            out_lat.extend(np.interp(new_x, x, lats[i:i+2]))
+
+    out_lon.append(lons[-1])
+    out_lat.append(lats[-1])
+    return np.column_stack([out_lon, out_lat]).astype(coords.dtype)
+
 def get_coast_polygons(coastfile):
     polymeta = []; polybounds = []
     lats = []; lons = []
@@ -57,7 +83,7 @@ def get_coast_polygons(coastfile):
         polymeta2.append(meta[:-1] + [npts] + [meta[-1]])
     return polybounds, polymeta2
 
-def get_boundary_lines(bdatfile):
+def get_boundary_lines(bdatfile, resolution):
     lons = []; lats = []; polybounds = []
     for line in open(bdatfile):
         if line.startswith('#'): continue
@@ -77,6 +103,7 @@ def get_boundary_lines(bdatfile):
     b[:,0] = lons; b[:,1] = lats
     if lsd is not None:
         b = quantize(b,lsd)
+    b = interpolate_long_segments(b, resolution)
     polybounds.append(b)
     polymeta = []
     polybounds2 = []
@@ -113,7 +140,7 @@ for resolution in ['c','l','i','h','f']:
     f.close()
     f2.close()
 
-    poly, polymeta = get_boundary_lines(countryfile)
+    poly, polymeta = get_boundary_lines(countryfile, resolution)
     f = open('../lib/mpl_toolkits/basemap/data/countries_'+resolution+'.dat','wb')
     f2 = open('../lib/mpl_toolkits/basemap/data/countriesmeta_'+resolution+'.dat','w')
     offset = 0
