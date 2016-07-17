@@ -88,6 +88,31 @@ def get_coast_polygons(resolution):
             if lsd is not None:
                 b = quantize(b,lsd)
             polybounds.append(b)
+
+        # Manual fix for incorrect Antarctica polygons at full resolution
+        # This issue is only present in the shapefile version and may be fixed
+        # in future versions of GSHHS!
+        if resolution == 'f' and level == 5:
+            i = [item[-1] for item in polymeta].index('4-E')
+            coords = polybounds[i][2:-1, :]
+            coords = np.vstack([coords,
+                                [180.0, -90.0],
+                                [0.0, -90.0]]).astype(np.float32)
+            polybounds[i] = coords
+            polymeta[i][-2] = len(coords)
+
+            j = [item[-1] for item in polymeta].index('4-W')
+            coords = polybounds[j][3:, :]
+            np.savetxt('coordinates.txt', coords)
+            coords = np.vstack([coords,
+                                [0.0, coords[-1][1]],
+                                [0.0, -90.0],
+                                [-180.0, -90.0],
+                                coords[0]]).astype(np.float32)
+
+            polybounds[j] = coords
+            polymeta[j][-2] = len(coords)
+
     return polybounds, polymeta
 
 def get_wdb_boundaries(resolution,level,rivers=False):
