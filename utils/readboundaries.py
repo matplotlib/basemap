@@ -23,7 +23,7 @@ def quantize(data,least_significant_digit):
     return np.around(scale*data)/scale
 
 def interpolate_long_segments(coords, resolution):
-    lookup_thresh = {'c': 0.5, 'l':0.1, 'i':0.05, 'h':0.01, 'f':0.005}
+    lookup_thresh = {'c': 0.5, 'l':0.3, 'i':0.2, 'h':0.1, 'f':0.05}
     thresh = lookup_thresh[resolution]
     spacing = thresh / 5.0
 

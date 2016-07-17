@@ -31,7 +31,7 @@ def quantize(data,least_significant_digit):
     return np.around(scale*data)/scale
 
 def interpolate_long_segments(coords, resolution):
-    lookup_thresh = {'c': 0.5, 'l':0.1, 'i':0.05, 'h':0.01, 'f':0.005}
+    lookup_thresh = {'c': 0.5, 'l':0.3, 'i':0.2, 'h':0.1, 'f':0.05}
     thresh = lookup_thresh[resolution]
     spacing = thresh / 5.0
 
@@ -119,7 +119,9 @@ def get_wdb_boundaries(resolution,level,rivers=False):
         b[:,0] = lons; b[:,1] = lats
         if lsd is not None:
             b = quantize(b,lsd)
-        b = interpolate_long_segments(b, resolution)
+
+        if not rivers:
+            b = interpolate_long_segments(b, resolution)
 
         polymeta.append([-1,-1,south,north,len(b),poly_id])
         polybounds.append(b)
@@ -178,7 +180,10 @@ for resolution in ['c','l','i','h','f']:
 for resolution in ['c','l','i','h','f']:
     f = open(os.path.join(OUTPUT_DIR, 'rivers_'+resolution+'.dat'), 'wb')
     f2 = open(os.path.join(OUTPUT_DIR, 'riversmeta_'+resolution+'.dat'), 'w')
-    for level in range(1,12):
+    # Levels above 5 are intermittent rivers and irrigation canals.
+    # They haven't been included in the past, as far as I can tell, so I'm
+    # not including them here...
+    for level in range(1, 6):
         poly, polymeta = get_wdb_boundaries(resolution,level,rivers=True)
         offset = 0
         for p,pm in zip(poly,polymeta):
