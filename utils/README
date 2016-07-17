@@ -1,7 +1,9 @@
-1) install GMT, download gshhs boundary data and source code
-from ftp://ftp.soest.hawaii.edu/pwessel/gshhs/.
-2) compile gshhs.c, use to create gshhs_{c,l,i,h}.txt files.
+1) Install GMT. Note that you may need to install a separate gmt-suplemental
+   package to get "gmt gshhg" on some systems.  
+2) Download gshhg native binary-formatted data from 
+   https://www.soest.hawaii.edu/pwessel/gshhg/
+   (Last updated using: ftp://ftp.soest.hawaii.edu/gshhg/gshhg-bin-2.3.5.zip)
 3) run dumpbounds.sh to create states, countries, rivers text files.
 4) run readboundaries.py to process into binary files, with metadata in
-separate text files.
-5) run plotgrdlandmask.py to generate lsmask data.
+   separate text files.
+5) run plotgrdlandmask.py to verify results.
