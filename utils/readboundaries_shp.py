@@ -24,7 +24,7 @@ def quantize(data,least_significant_digit):
 
 def get_coast_polygons(resolution):
     polymeta = []; polybounds = []
-    for level in [1,2,3,4]:
+    for level in [1,2,3,5]:
         filename = 'GSHHS_shp/%s/GSHHS_%s_L%s' % (resolution, resolution, level)
         #filename = 'WDBII_shp/%s/WDBII_border_%s_L%s' % (resolution, resolution, level)
         print filename
