@@ -117,11 +117,12 @@ def get_wdb_boundaries(resolution,level,rivers=False):
         poly_id = attdict['id']
         b = np.empty((len(lons),2),np.float32)
         b[:,0] = lons; b[:,1] = lats
-        if lsd is not None:
-            b = quantize(b,lsd)
 
         if not rivers:
             b = interpolate_long_segments(b, resolution)
+
+        if lsd is not None:
+            b = quantize(b,lsd)
 
         polymeta.append([-1,-1,south,north,len(b),poly_id])
         polybounds.append(b)

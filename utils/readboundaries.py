@@ -93,6 +93,7 @@ def get_boundary_lines(bdatfile, resolution):
            if lons:
                b = np.empty((len(lons),2),np.float32)
                b[:,0] = lons; b[:,1] = lats
+               b = interpolate_long_segments(b, resolution)
                if lsd is not None:
                    b = quantize(b,lsd)
                polybounds.append(b)
@@ -102,9 +103,9 @@ def get_boundary_lines(bdatfile, resolution):
         lats.append(lat); lons.append(lon)
     b = np.empty((len(lons),2),np.float32)
     b[:,0] = lons; b[:,1] = lats
+    b = interpolate_long_segments(b, resolution)
     if lsd is not None:
         b = quantize(b,lsd)
-    b = interpolate_long_segments(b, resolution)
     polybounds.append(b)
     polymeta = []
     polybounds2 = []
