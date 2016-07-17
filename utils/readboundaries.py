@@ -25,13 +25,14 @@ def get_coast_polygons(coastfile):
     polymeta = []; polybounds = []
     lats = []; lons = []
     for line in open(coastfile):
-        if line.startswith('#'): continue
-        linesplit = line.split()
-        if line.startswith('P'):
-            area = float(linesplit[5])
-            west,east,south,north = float(linesplit[6]),float(linesplit[7]),float(linesplit[8]),float(linesplit[9])
-            typ = int(linesplit[3])
-            polymeta.append((typ,area,south,north))
+        if line.startswith('#'):
+            continue
+        linesplit = line.strip().split()
+        if line.startswith('>'):
+            area, west, east, south, north = map(float, linesplit[5:10])
+            poly_id = linesplit[-1]
+            level = linesplit[3]
+            polymeta.append([level,area,south,north,poly_id])
             if lons:
                 #lons.append(lons[0]); lats.append(lats[0])
                 b = numpy.empty((len(lons),2),numpy.float32)
@@ -41,8 +42,8 @@ def get_coast_polygons(coastfile):
                 polybounds.append(b)
             lats = []; lons = []
             continue
-        lon = float(line[1:10])
-        lat = float(line[10:20])
+        lon = float(linesplit[0])
+        lat = float(linesplit[1])
         lons.append(lon); lats.append(lat)
     #lons.append(lons[0]); lats.append(lats[0])
     b = numpy.empty((len(lons),2),numpy.float32)
@@ -53,7 +54,7 @@ def get_coast_polygons(coastfile):
     polymeta2 = []
     for meta,bounds in zip(polymeta,polybounds):
         npts = bounds.shape[0]
-        polymeta2.append(meta+(npts,))
+        polymeta2.append(meta[:-1] + [npts] + [meta[-1]])
     return polybounds, polymeta2
 
 def get_boundary_lines(bdatfile):
@@ -106,7 +107,8 @@ for resolution in ['c','l','i','h','f']:
         bstring = p.tostring()
         f.write(bstring)
         typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
-        f2.write('%s %s %s %9.5f %9.5f %s %s\n' % (typ, area, npts, south, north, offset, len(bstring)))
+        poly_id = pm[5]
+        f2.write('%s %s %s %9.5f %9.5f %s %s %s\n' % (typ, area, npts, south, north, offset, len(bstring), poly_id))
         offset = offset + len(bstring)
     f.close()
     f2.close()
