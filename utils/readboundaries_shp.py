@@ -1,7 +1,15 @@
+import os
 import numpy as np
 from shapefile import Reader
 
 lsd = 5
+
+UTILS_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.join(UTILS_DIR, '..', 'lib', 'mpl_toolkits',
+                          'basemap', 'data')
+
+# Folder where GSHHG shapefiles were extracted. Change if needed
+GSHHS_DIR = UTILS_DIR
 
 def quantize(data,least_significant_digit):
     """
@@ -25,8 +33,8 @@ def quantize(data,least_significant_digit):
 def get_coast_polygons(resolution):
     polymeta = []; polybounds = []
     for level in [1,2,3,5]:
-        filename = 'GSHHS_shp/%s/GSHHS_%s_L%s' % (resolution, resolution, level)
-        #filename = 'WDBII_shp/%s/WDBII_border_%s_L%s' % (resolution, resolution, level)
+        filename = os.path.join(GSHHS_DIR, 'GSHHS_shp/', resolution,
+                                'GSHHS_{}_L{}'.format(resolution, level))
         print filename
         shf = Reader(filename)
         fields = shf.fields
@@ -59,9 +67,11 @@ def get_coast_polygons(resolution):
 def get_wdb_boundaries(resolution,level,rivers=False):
     polymeta = []; polybounds = []
     if rivers:
-        filename = 'WDBII_shp/%s/WDBII_river_%s_L%02i' % (resolution, resolution, level)
+        filename = os.path.join(GSHHS_DIR, 'WDBII_shp', resolution,
+                            'WDBII_river_{}_L{:02}'.format(resolution, level))
     else:
-        filename = 'WDBII_shp/%s/WDBII_border_%s_L%s' % (resolution, resolution, level)
+        filename = os.path.join(GSHHS_DIR, 'WDBII_shp', resolution,
+                            'WDBII_border_{}_L{}'.format(resolution, level))
     print filename
     shf = Reader(filename)
     fields = shf.fields
@@ -90,8 +100,8 @@ def get_wdb_boundaries(resolution,level,rivers=False):
 # read in coastline data (only those polygons whose area > area_thresh).
 for resolution in ['c','l','i','h','f']:
     poly, polymeta = get_coast_polygons(resolution)
-    f = open('gshhs_'+resolution+'.dat','wb')
-    f2 = open('gshhsmeta_'+resolution+'.dat','w')
+    f = open(os.path.join(OUTPUT_DIR, 'gshhs_'+resolution+'.dat'), 'wb')
+    f2 = open(os.path.join(OUTPUT_DIR, 'gshhsmeta_'+resolution+'.dat'), 'w')
     offset = 0
     for p,pm in zip(poly,polymeta):
         typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
@@ -106,8 +116,8 @@ for resolution in ['c','l','i','h','f']:
 
 for resolution in ['c','l','i','h','f']:
     poly, polymeta = get_wdb_boundaries(resolution,1)
-    f = open('countries_'+resolution+'.dat','wb')
-    f2 = open('countriesmeta_'+resolution+'.dat','w')
+    f = open(os.path.join(OUTPUT_DIR, 'countries_'+resolution+'.dat'), 'wb')
+    f2 = open(os.path.join(OUTPUT_DIR, 'countriesmeta_'+resolution+'.dat'), 'w')
     offset = 0
     for p,pm in zip(poly,polymeta):
         typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
@@ -122,8 +132,8 @@ for resolution in ['c','l','i','h','f']:
 
 for resolution in ['c','l','i','h','f']:
     poly, polymeta = get_wdb_boundaries(resolution,2)
-    f = open('states_'+resolution+'.dat','wb')
-    f2 = open('statesmeta_'+resolution+'.dat','w')
+    f = open(os.path.join(OUTPUT_DIR, 'states_'+resolution+'.dat'), 'wb')
+    f2 = open(os.path.join(OUTPUT_DIR, 'statesmeta_'+resolution+'.dat'), 'w')
     offset = 0
     for p,pm in zip(poly,polymeta):
         typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
@@ -137,8 +147,8 @@ for resolution in ['c','l','i','h','f']:
     f2.close()
 
 for resolution in ['c','l','i','h','f']:
-    f = open('rivers_'+resolution+'.dat','wb')
-    f2 = open('riversmeta_'+resolution+'.dat','w')
+    f = open(os.path.join(OUTPUT_DIR, 'rivers_'+resolution+'.dat'), 'wb')
+    f2 = open(os.path.join(OUTPUT_DIR, 'riversmeta_'+resolution+'.dat'), 'w')
     for level in range(1,12):
         poly, polymeta = get_wdb_boundaries(resolution,level,rivers=True)
         offset = 0
