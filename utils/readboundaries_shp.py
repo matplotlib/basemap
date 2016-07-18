@@ -132,7 +132,13 @@ def get_wdb_boundaries(resolution,level,rivers=False):
         if parts != [0]:
             print 'multipart polygon'
             raise SystemExit
+
         verts = shp.points
+        # Detect degenerate lines that are actually points...
+        if len(verts) == 2 and np.allclose(verts[0], verts[1]):
+            print 'Skipping degenerate line...'
+            continue
+
         lons, lats = list(zip(*verts))
         north = max(lats); south = min(lats)
         attdict={}
