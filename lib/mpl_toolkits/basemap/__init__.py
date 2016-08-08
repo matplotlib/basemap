@@ -3901,6 +3901,12 @@ class Basemap(object):
         # look for axes instance (as keyword, an instance variable
         # or from plt.gca().
         ax = kwargs.pop('ax', None) or self._check_ax()
+        # Clear saved lsmask if new lsmask is passed
+        if lsmask is not None or lsmask_lons is not None \
+                or lsmask_lats is not None:
+            # Make sure passed lsmask is not the same as cached mask
+            if lsmask is not self.lsmask:
+                self.lsmask = None
         # if lsmask,lsmask_lons,lsmask_lats keywords not given,
         # read default land-sea mask in from file.
         if lsmask is None or lsmask_lons is None or lsmask_lats is None:
@@ -3910,28 +3916,28 @@ class Basemap(object):
                 # read in land/sea mask.
                 lsmask_lons, lsmask_lats, lsmask =\
                 _readlsmask(lakes=lakes,resolution=resolution,grid=grid)
-            # instance variable lsmask is set on first invocation,
-            # it contains the land-sea mask interpolated to the native
-            # projection grid.  Further calls to drawlsmask will not
-            # redo the interpolation (unless a new land-sea mask is passed
-            # in via the lsmask, lsmask_lons, lsmask_lats keywords).
+                # instance variable lsmask is set on first invocation,
+                # it contains the land-sea mask interpolated to the native
+                # projection grid.  Further calls to drawlsmask will not
+                # redo the interpolation (unless a new land-sea mask is passed
+                # in via the lsmask, lsmask_lons, lsmask_lats keywords).
 
-            # is it a cylindrical projection whose limits lie
-            # outside the limits of the image?
-            cylproj =  self.projection in _cylproj and \
-                      (self.urcrnrlon > lsmask_lons[-1] or \
-                       self.llcrnrlon < lsmask_lons[0])
-            if cylproj:
-                # stack grids side-by-side (in longitiudinal direction), so
-                # any range of longitudes may be plotted on a world map.
-                # in versions of NumPy later than 1.10.0, concatenate will
-                # not stack these arrays as expected. If axis 1 is outside
-                # the dimensions of the array, concatenate will now raise
-                # an IndexError. Using hstack instead.
-                lsmask_lons = \
-                        np.hstack((lsmask_lons,lsmask_lons[1:] + 360))
-                lsmask = \
-                        np.hstack((lsmask,lsmask[:,1:]))
+                # is it a cylindrical projection whose limits lie
+                # outside the limits of the image?
+                cylproj =  self.projection in _cylproj and \
+                          (self.urcrnrlon > lsmask_lons[-1] or \
+                           self.llcrnrlon < lsmask_lons[0])
+                if cylproj:
+                    # stack grids side-by-side (in longitiudinal direction), so
+                    # any range of longitudes may be plotted on a world map.
+                    # in versions of NumPy later than 1.10.0, concatenate will
+                    # not stack these arrays as expected. If axis 1 is outside
+                    # the dimensions of the array, concatenate will now raise
+                    # an IndexError. Using hstack instead.
+                    lsmask_lons = \
+                            np.hstack((lsmask_lons,lsmask_lons[1:] + 360))
+                    lsmask = \
+                            np.hstack((lsmask,lsmask[:,1:]))
         else:
             if lakes: lsmask = np.where(lsmask==2,np.array(0,np.uint8),lsmask)
 
