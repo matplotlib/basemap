@@ -3901,11 +3901,11 @@ class Basemap(object):
         # look for axes instance (as keyword, an instance variable
         # or from plt.gca().
         ax = kwargs.pop('ax', None) or self._check_ax()
-        # Clear saved lsmask is new lsmask is passed
+        # Clear saved lsmask if new lsmask is passed
         if lsmask is not None or lsmask_lons is not None \
                 or lsmask_lats is not None:
             # Make sure passed lsmask is not the same as cached mask
-            if lsmask != self.lsmask:
+            if lsmask is not self.lsmask:
                 self.lsmask = None
         # if lsmask,lsmask_lons,lsmask_lats keywords not given,
         # read default land-sea mask in from file.
