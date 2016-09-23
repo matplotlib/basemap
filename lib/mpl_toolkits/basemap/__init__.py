@@ -1749,7 +1749,7 @@ class Basemap(object):
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
         # get axis background color.
-        if _matplotlib_version >= '1.5':
+        if _matplotlib_version >= '2.0':
             axisbgc = ax.get_facecolor()
         else:
             axisbgc = ax.get_axis_bgcolor()
