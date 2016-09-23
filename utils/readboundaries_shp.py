@@ -215,9 +215,9 @@ for resolution in ['c','l','i','h','f']:
     # Levels above 5 are intermittent rivers and irrigation canals.
     # They haven't been included in the past, as far as I can tell, so I'm
     # not including them here...
+    offset = 0
     for level in range(1, 6):
         poly, polymeta = get_wdb_boundaries(resolution,level,rivers=True)
-        offset = 0
         for p,pm in zip(poly,polymeta):
             typ = pm[0]; area = pm[1]; south = pm[2]; north = pm[3]; npts = pm[4]
             id = pm[5]
