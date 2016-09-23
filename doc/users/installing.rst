@@ -21,7 +21,9 @@ Python 2.4 (or later, including Python 3)
 numpy 1.2.1 (or later)
     array support for python (`download <http://sourceforge.net/project/showfiles.php?group_id=1369&package_id=175103>`__)
 
-**Required libraries that ship with basemap**
+`PROJ4 <http://trac.osgeo.org/proj/>`__ Cartographic Projections Library.
+
+**Required library that ship with basemap**
 
 `GEOS <http://trac.osgeo.org/geos/>`__ (Geometry Engine - Open Source) library 3.1.1 or later.
     Source code is included in the geos-3.3.3 directory. 
@@ -29,20 +31,17 @@ numpy 1.2.1 (or later)
     from basemap (see build instructions below).
     Included in Windows binary installers.
 
-`PROJ4 <http://trac.osgeo.org/proj/>`__ Cartographic Projections Library.
-    Patched version automatically built into basemap.
-
 **Optional libraries**
 
-PIL
-    Python Imaging Library (`download <http://www.pythonware.com/products/pil/>`__),
+Pillow
+    Python Imaging Library (`download <https://python-pillow.org/>`__),
     only needed for :func:`~mpl_toolkits.basemap.Basemap.bluemarble`, :func:`~mpl_toolkits.basemap.Basemap.etopo`, :func:`~mpl_toolkits.basemap.Basemap.shadedrelief` and :func:`~mpl_toolkits.basemap.Basemap.warpimage` instance methods.
 
 Installation
 ============
 
 Download either Windows binary installers or source tarballs 
-`here <http://sourceforge.net/projects/matplotlib/files/matplotlib-toolkits/>`__. 
+`here <https://github.com/matplotlib/basemap/releases/>`__. 
 
 To install from the source, follow these steps:
 
