@@ -2877,7 +2877,8 @@ class Basemap(object):
         # Correct wrap around effect of great circles
 
         # get points
-        p = self.plot(x,y,**kwargs)[0].get_path()
+        _p = self.plot(x,y,**kwargs)
+        p = _p[0].get_path()
 
         # since we know the difference between any two points, we can use this to find wrap arounds on the plot
         max_dist = 1000*del_s*2
@@ -2900,7 +2901,7 @@ class Basemap(object):
             p.codes = None
             p.vertices = verts
 
-        return p
+        return _p
 
     def transform_scalar(self,datin,lons,lats,nx,ny,returnxy=False,checkbounds=False,order=1,masked=False):
         """
