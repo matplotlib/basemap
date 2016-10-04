@@ -2860,7 +2860,8 @@ class Basemap(object):
                          method of Basemap instance.
         ==============   =======================================================
 
-        Returns a matplotlib.lines.Line2D object.
+        Returns a list with a single ``matplotlib.lines.Line2D`` object like a
+        call to ``pyplot.plot()``.
         """
         # use great circle formula for a perfect sphere.
         gc = pyproj.Geod(a=self.rmajor,b=self.rminor)
