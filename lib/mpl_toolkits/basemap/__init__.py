@@ -3702,6 +3702,7 @@ class Basemap(object):
     def quiver(self, x, y, u, v, *args, **kwargs):
         """
         Make a vector plot (u, v) with arrows on the map.
+
         Arguments may be 1-D or 2-D arrays or sequences
         (see matplotlib.pyplot.quiver documentation for details).
 
