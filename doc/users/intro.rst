@@ -36,7 +36,7 @@ Cartopy, New Management, and EoL Announcement
 Starting in 2016, Basemap came under new management. The
 `Cartopy project <http://scitools.org.uk/cartopy/>`_ will replace
 Basemap, but it hasn't yet implemented all of Basemap's features.
-All new software development should try to use CartoPy whenever possible,
+All new software development should try to use Cartopy whenever possible,
 and existing software should start the process of switching over to use
 Cartopy. All maintenance and development efforts should be focused on
 Cartopy.

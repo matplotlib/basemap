@@ -21,7 +21,7 @@ Python 2.4 (or later, including Python 3)
 numpy 1.2.1 (or later)
     array support for python (`download <http://sourceforge.net/project/showfiles.php?group_id=1369&package_id=175103>`__)
 
-`PROJ4 <http://trac.osgeo.org/proj/>`__ Cartographic Projections Library.
+`PROJ4 <https://trac.osgeo.org/proj/>`__ Cartographic Projections Library.
 
 **Required library that ship with basemap**
 
