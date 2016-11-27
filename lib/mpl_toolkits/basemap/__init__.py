@@ -3225,16 +3225,16 @@ class Basemap(object):
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
+        b = ax._hold
         h = kwargs.pop('hold',None)
         if h is not None:
-            ax.hold(h)
+            ax._hold = h
         try:
             ret =  ax.scatter(*args, **kwargs)
         except:
-            ax.hold(b)
+            ax._hold = b
             raise
-        ax.hold(b)
+        ax._hold = b
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
@@ -3263,16 +3263,16 @@ class Basemap(object):
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
         # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
+        b = ax._hold
         h = kwargs.pop('hold',None)
         if h is not None:
-            ax.hold(h)
+            ax._hold = h
         try:
             ret =  ax.plot(*args, **kwargs)
         except:
-            ax.hold(b)
+            ax._hold = b
             raise
-        ax.hold(b)
+        ax._hold = b
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         # clip to map limbs
@@ -3299,16 +3299,16 @@ class Basemap(object):
         if 'origin' not in kwargs:
             kwargs['origin']='lower'
         # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
+        b = ax._hold
         h = kwargs.pop('hold',None)
         if h is not None:
-            ax.hold(h)
+            ax._hold = h
         try:
             ret =  ax.imshow(*args, **kwargs)
         except:
-            ax.hold(b)
+            ax._hold = b
             raise
-        ax.hold(b)
+        ax._hold = b
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
@@ -3349,10 +3349,10 @@ class Basemap(object):
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
+        b = ax._hold
         h = kwargs.pop('hold',None)
         if h is not None:
-            ax.hold(h)
+            ax._hold = h
         try:
             if kwargs.pop('tri', False):
                 try:
@@ -3386,9 +3386,9 @@ class Basemap(object):
                 y = ma.masked_values(np.where(y > 1.e20,1.e20,y), 1.e20)
                 ret = ax.pcolor(x,y,data,**kwargs)
         except:
-            ax.hold(b)
+            ax._hold = b
             raise
-        ax.hold(b)
+        ax._hold = b
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
@@ -3424,16 +3424,16 @@ class Basemap(object):
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
+        b = ax._hold
         h = kwargs.pop('hold',None)
         if h is not None:
-            ax.hold(h)
+            ax._hold = h
         try:
             ret =  ax.pcolormesh(x,y,data,**kwargs)
         except:
-            ax.hold(b)
+            ax._hold = b
             raise
-        ax.hold(b)
+        ax._hold = b
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
@@ -3470,10 +3470,10 @@ class Basemap(object):
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
+        b = ax._hold
         h = kwargs.pop('hold',None)
         if h is not None:
-            ax.hold(h)
+            ax._hold = h
         try:
             # make x,y masked arrays
             # (masked where data is outside of projection limb)
@@ -3481,9 +3481,9 @@ class Basemap(object):
             y = ma.masked_values(np.where(y > 1.e20,1.e20,y), 1.e20)
             ret = ax.hexbin(x,y,**kwargs)
         except:
-            ax.hold(b)
+            ax._hold = b
             raise
-        ax.hold(b)
+        ax._hold = b
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
@@ -3516,10 +3516,10 @@ class Basemap(object):
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
+        b = ax._hold
         h = kwargs.pop('hold',None)
         if h is not None:
-            ax.hold(h)
+            ax._hold = h
         try:
             if kwargs.pop('tri', False):
                 try:
@@ -3581,9 +3581,9 @@ class Basemap(object):
                 data = ma.masked_array(data,mask=mask)
                 CS = ax.contour(x,y,data,*args,**kwargs)
         except:
-            ax.hold(b)
+            ax._hold = b
             raise
-        ax.hold(b)
+        ax._hold = b
         # reset current active image (only if pyplot is imported).
         if plt and CS.get_array() is not None:
             plt.sci(CS)
@@ -3619,10 +3619,10 @@ class Basemap(object):
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
+        b = ax._hold
         h = kwargs.pop('hold',None)
         if h is not None:
-            ax.hold(h)
+            ax._hold = h
         try:
             if kwargs.get('tri', False):
                 try:
@@ -3686,9 +3686,9 @@ class Basemap(object):
                 data = ma.masked_array(data,mask=mask)
                 CS = ax.contourf(x,y,data,*args,**kwargs)
         except:
-            ax.hold(b)
+            ax._hold = b
             raise
-        ax.hold(b)
+        ax._hold = b
         # reset current active image (only if pyplot is imported).
         if plt and CS.get_array() is not None:
             plt.sci(CS)
@@ -3718,16 +3718,16 @@ class Basemap(object):
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
+        b = ax._hold
         h = kwargs.pop('hold',None)
         if h is not None:
-            ax.hold(h)
+            ax._hold = h
         try:
             ret =  ax.quiver(x,y,u,v,*args,**kwargs)
         except:
-            ax.hold(b)
+            ax._hold = b
             raise
-        ax.hold(b)
+        ax._hold = b
         if plt is not None and ret.get_array() is not None:
             plt.sci(ret)
         # set axes limits to fit map region.
@@ -3760,16 +3760,16 @@ class Basemap(object):
             raise NotImplementedError(msg)
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
+        b = ax._hold
         h = kwargs.pop('hold',None)
         if h is not None:
-            ax.hold(h)
+            ax._hold = h
         try:
             ret =  ax.streamplot(x,y,u,v,*args,**kwargs)
         except:
-            ax.hold(b)
+            ax._hold = b
             raise
-        ax.hold(b)
+        ax._hold = b
         if plt is not None and ret.lines.get_array() is not None:
             plt.sci(ret.lines)
         # set axes limits to fit map region.
@@ -3810,10 +3810,10 @@ class Basemap(object):
             raise NotImplementedError(msg)
         ax, plt = self._ax_plt_from_kw(kwargs)
         # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
+        b = ax._hold
         h = kwargs.pop('hold',None)
         if h is not None:
-            ax.hold(h)
+            ax._hold = h
         lons, lats = self(x, y, inverse=True)
         unh = ma.masked_where(lats <= 0, u)
         vnh = ma.masked_where(lats <= 0, v)
@@ -3824,9 +3824,9 @@ class Basemap(object):
             kwargs['flip_barb']=True
             retsh =  ax.barbs(x,y,ush,vsh,*args,**kwargs)
         except:
-            ax.hold(b)
+            ax._hold = b
             raise
-        ax.hold(b)
+        ax._hold = b
         # Because there are two collections returned in general,
         # we can't set the current image...
         #if plt is not None and ret.get_array() is not None:
