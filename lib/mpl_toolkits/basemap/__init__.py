@@ -4400,7 +4400,7 @@ f=image" %\
     def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\
                      units='km',fontsize=9,yoffset=None,labelstyle='simple',\
                      fontcolor='k',fillcolor1='w',fillcolor2='k',ax=None,\
-                     format='%d',zorder=None):
+                     format='%d',zorder=None,linecolor=None,linewidth=None):
         """
         Draw a map scale at ``lon,lat`` of length ``length``
         representing distance in the map
@@ -4434,6 +4434,9 @@ f=image" %\
                          (default white and black).  Only relevant for
                          'fancy' barstyle.
         zorder           sets the zorder for the map scale.
+        linecolor        sets the color of the scale, by default, fontcolor
+                         is used
+        linewidth        linewidth for scale and ticks
         ==============   ====================================================
 
         Extra keyword ``ax`` can be used to override the default axis instance.
@@ -4502,6 +4505,9 @@ f=image" %\
         # default y offset is 2 percent of map height.
         if yoffset is None: yoffset = 0.02*(self.ymax-self.ymin)
         rets = [] # will hold all plot objects generated.
+        # set linecolor
+        if linecolor is None:
+            linecolor = fontcolor
         # 'fancy' style
         if barstyle == 'fancy':
             #we need 5 sets of x coordinates (in map units)
@@ -4518,13 +4524,13 @@ f=image" %\
             ybottom = yc-yoffset/2
             ytick = ybottom - yoffset/2
             ytext = ytick - yoffset/2
-            rets.append(self.plot([x1,x4],[ytop,ytop],color=fontcolor)[0])
+            rets.append(self.plot([x1,x4],[ytop,ytop],color=linecolor, linewidth=linewidth)[0])
             #plot bottom line
-            rets.append(self.plot([x1,x4],[ybottom,ybottom],color=fontcolor)[0])
+            rets.append(self.plot([x1,x4],[ybottom,ybottom],color=linecolor, linewidth=linewidth)[0])
             #plot left edge
-            rets.append(self.plot([x1,x1],[ybottom,ytop],color=fontcolor)[0])
+            rets.append(self.plot([x1,x1],[ybottom,ytop],color=linecolor, linewidth=linewidth)[0])
             #plot right edge
-            rets.append(self.plot([x4,x4],[ybottom,ytop],color=fontcolor)[0])
+            rets.append(self.plot([x4,x4],[ybottom,ytop],color=linecolor, linewidth=linewidth)[0])
             #make a filled black box from left edge to 1/4 way across
             rets.append(ax.fill([x1,x2,x2,x1,x1],[ytop,ytop,ybottom,ybottom,ytop],\
                         ec=fontcolor,fc=fillcolor1)[0])
@@ -4538,9 +4544,9 @@ f=image" %\
             rets.append(ax.fill([x3,x4,x4,x3,x3],[ytop,ytop,ybottom,ybottom,ytop],\
                         ec=fontcolor,fc=fillcolor2)[0])
             #plot 3 tick marks at left edge, center, and right edge
-            rets.append(self.plot([x1,x1],[ytick,ybottom],color=fontcolor)[0])
-            rets.append(self.plot([xc,xc],[ytick,ybottom],color=fontcolor)[0])
-            rets.append(self.plot([x4,x4],[ytick,ybottom],color=fontcolor)[0])
+            rets.append(self.plot([x1,x1],[ytick,ybottom],color=linecolor, linewidth=linewidth)[0])
+            rets.append(self.plot([xc,xc],[ytick,ybottom],color=linecolor, linewidth=linewidth)[0])
+            rets.append(self.plot([x4,x4],[ytick,ybottom],color=linecolor, linewidth=linewidth)[0])
             #label 3 tick marks
             rets.append(ax.text(x1,ytext,format % (0),\
             horizontalalignment='center',\
@@ -4561,9 +4567,9 @@ f=image" %\
             fontsize=fontsize,color=fontcolor))
         # 'simple' style
         elif barstyle == 'simple':
-            rets.append(self.plot([x1,x4],[yc,yc],color=fontcolor)[0])
-            rets.append(self.plot([x1,x1],[yc-yoffset,yc+yoffset],color=fontcolor)[0])
-            rets.append(self.plot([x4,x4],[yc-yoffset,yc+yoffset],color=fontcolor)[0])
+            rets.append(self.plot([x1,x4],[yc,yc],color=linecolor, linewidth=linewidth)[0])
+            rets.append(self.plot([x1,x1],[yc-yoffset,yc+yoffset],color=linecolor, linewidth=linewidth)[0])
+            rets.append(self.plot([x4,x4],[yc-yoffset,yc+yoffset],color=linecolor, linewidth=linewidth)[0])
             rets.append(ax.text(xc,yc-yoffset,format % lenlab,\
             verticalalignment='top',horizontalalignment='center',\
             fontsize=fontsize,color=fontcolor))
