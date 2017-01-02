@@ -526,7 +526,8 @@ def _transform(plotfunc):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
-                x, data = self.shiftdata(x, data)
+                x, data = self.shiftdata(x, data,
+                                         fix_wrap_around=plotfunc.__name__ not in ["scatter"])
             # convert lat/lon coords to map projection coords.
             x, y = self(x,y)
         return plotfunc(self,x,y,data,*args,**kwargs)
@@ -544,7 +545,7 @@ def _transform1d(plotfunc):
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
                 if x.ndim == 1:
-                    x = self.shiftdata(x)
+                    x = self.shiftdata(x, fix_wrap_around=plotfunc.__name__ not in ["scatter"])
                 elif x.ndim == 0:
                     if x > 180:
                         x = x - 360.
@@ -4722,7 +4723,7 @@ f=image" %\
                 _ax = plt.gca()
         return _ax, plt
 
-    def shiftdata(self,lonsin,datain=None,lon_0=None):
+    def shiftdata(self,lonsin,datain=None,lon_0=None,fix_wrap_around=True):
         """
         Shift longitudes (and optionally data) so that they match map projection region.
         Only valid for cylindrical/pseudo-cylindrical global projections and data
@@ -4745,6 +4746,10 @@ f=image" %\
         datain           original 1-d or 2-d data. Default None.
         lon_0            center of map projection region. Defaut None,
                          given by current map projection.
+        fix_wrap_around  if True try to shift longitudes (and data) to correctly
+                         display the array in the selected projection. If False
+                         do not attempt the longitudes or data fix for the
+                         wrap-around.
         ==============   ====================================================
 
         if datain given, returns ``dataout,lonsout`` (data and longitudes shifted to fit in interval
@@ -4783,7 +4788,7 @@ f=image" %\
 
             # if no shift necessary, itemindex will be
             # empty, so don't do anything
-            if itemindex:
+            if itemindex and fix_wrap_around:
                 # check to see if cyclic (wraparound) point included
                 # if so, remove it.
                 if np.abs(lonsin1[0]-lonsin1[-1]) < 1.e-4:
@@ -4825,7 +4830,7 @@ f=image" %\
             else:
                 itemindex = 0
 
-            if itemindex:
+            if itemindex and fix_wrap_around:
                 # check to see if cyclic (wraparound) point included
                 # if so, remove it.
                 if np.abs(lonsin[0]-lonsin[-1]) < 1.e-4:
@@ -4856,7 +4861,6 @@ f=image" %\
         lonsin = np.where(mask,1.e30,lonsin)
         if datain is not None and mask.any():
             datain = ma.masked_where(mask, datain)
-
 
         if datain is not None:
             return lonsin, datain
