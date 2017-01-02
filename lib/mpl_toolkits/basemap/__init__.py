@@ -4811,13 +4811,7 @@ f=image" %\
                         datain_save[:,1:] = datain
                         datain_save[:,0] = datain[:,-1]
                         datain = datain_save
-                # mask points outside
-                # map region so they don't wrap back in the domain.
-                mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
-                lonsin = np.where(mask,1.e30,lonsin)
-                if datain is not None and mask.any():
-                    # superimpose on existing mask
-                    datain = ma.masked_where(mask, datain)
+
         # 1-d data.
         elif lonsin.ndim == 1:
             nlons = len(lonsin)
@@ -4856,12 +4850,15 @@ f=image" %\
                         datain_save[1:] = datain
                         datain_save[0] = datain[-1]
                         datain = datain_save
-                # mask points outside
-                # map region so they don't wrap back in the domain.
-                mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
-                lonsin = np.where(mask,1.e30,lonsin)
-                if datain is not None and mask.any():
-                    datain = ma.masked_where(mask, datain)
+
+        # mask points outside
+        # map region so they don't wrap back in the domain.
+        mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
+        lonsin = np.where(mask,1.e30,lonsin)
+        if datain is not None and mask.any():
+            datain = ma.masked_where(mask, datain)
+
+
         if datain is not None:
             return lonsin, datain
         else:
