@@ -4747,10 +4747,13 @@ f=image" %\
         datain           original 1-d or 2-d data. Default None.
         lon_0            center of map projection region. Defaut None,
                          given by current map projection.
-        fix_wrap_around  if True try to shift longitudes (and data) to correctly
-                         display the array in the selected projection. If False
-                         do not attempt the longitudes or data fix for the
-                         wrap-around.
+        fix_wrap_around  if True reindex (if required) longitudes (and data) to
+                         avoid jumps caused by remapping of longitudes of
+                         points from outside of the (lon_0-180, lon_0+180)
+                         interval back into the interval.
+                         If False do not reindex longitudes and data, but do
+                         make sure that longitudes are in the
+                         (lon_0-180, lon_0+180) range.
         ==============   ====================================================
 
         if datain given, returns ``dataout,lonsout`` (data and longitudes shifted to fit in interval
