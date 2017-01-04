@@ -4749,11 +4749,11 @@ f=image" %\
                          given by current map projection.
         fix_wrap_around  if True reindex (if required) longitudes (and data) to
                          avoid jumps caused by remapping of longitudes of
-                         points from outside of the (lon_0-180, lon_0+180)
+                         points from outside of the [lon_0-180, lon_0+180]
                          interval back into the interval.
                          If False do not reindex longitudes and data, but do
                          make sure that longitudes are in the
-                         (lon_0-180, lon_0+180) range.
+                         [lon_0-180, lon_0+180] range.
         ==============   ====================================================
 
         if datain given, returns ``dataout,lonsout`` (data and longitudes shifted to fit in interval
