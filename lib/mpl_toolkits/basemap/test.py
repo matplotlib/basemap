@@ -125,7 +125,7 @@ class TestShiftdata(TestCase):
         lons = [179, 180, 180, 0, 290, 10, 320, -150, 350, -250, 250]
         bm = Basemap(lon_0=0)
 
-        # before having several break points would cause the exception,
+        # before, having several break points would cause the exception,
         # inside the shiftdata method called from scatter method.
         self.assertRaises(ValueError, bm.shiftdata, lons, fix_wrap_around=True)
 
