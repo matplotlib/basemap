@@ -133,8 +133,8 @@ class TestShiftdata(TestCase):
 
         # Check if the modified longitudes are inside of the projection region
         for lon in lons_new:
-            assert lon >= bm.projparms["lon_0"] - 180
-            assert lon <= bm.projparms["lon_0"] + 180
+            assert lon >= bm.projparams["lon_0"] - 180
+            assert lon <= bm.projparams["lon_0"] + 180
 
 
 
