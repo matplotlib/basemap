@@ -38,7 +38,7 @@ class TestRotateVector(TestCase):
     def test_nan(self):
         B = Basemap()
         u,v,lat,lon=self.make_array()
-        # Set one element to 0, so that the vector magnitude is 0. 
+        # Set one element to 0, so that the vector magnitude is 0.
         u[1,1] = 0.
         ru, rv = B.rotate_vector(u,v, lon, lat)
         assert not np.isnan(ru).any()
@@ -117,6 +117,27 @@ class TestShiftdata(TestCase):
         lats = [10, ] * len(lons1d)
         return np.meshgrid(lons1d, lats)[0]
 
+    def test_non_monotonous_longitudes(self):
+        """
+        when called for scatter, the longitudes passed to shiftdata are
+        not necessarily monotonous...
+        """
+        lons = [179, 180, 180, 0, 290, 10, 320, -150, 350, -250, 250]
+        bm = Basemap(lon_0=0)
+
+        # before having several break points would cause the exception,
+        # inside the shiftdata method called from scatter method.
+        self.assertRaises(ValueError, bm.shiftdata, lons, fix_wrap_around=True)
+
+        lons_new = bm.shiftdata(lons, fix_wrap_around=False)
+
+        # Check if the modified longitudes are inside of the projection region
+        for lon in lons_new:
+            assert lon >= bm.projparms["lon_0"] - 180
+            assert lon <= bm.projparms["lon_0"] + 180
+
+
+
     def test_2_points_should_work(self):
         """
         Shiftdata should work with 2 points
@@ -160,7 +181,7 @@ class TestShiftdata(TestCase):
         lonsout = bm.shiftdata(lonsin[:, :2])
         assert_almost_equal(lonsout_expected, lonsout)
 
-@skipIf(PY3 and LooseVersion(pyproj.__version__) <= LooseVersion("1.9.4"), 
+@skipIf(PY3 and LooseVersion(pyproj.__version__) <= LooseVersion("1.9.4"),
         "Test skipped in Python 3.x with pyproj version 1.9.4 and below.")
 class TestProjectCoords(TestCase):
     def get_data(self):
@@ -224,7 +245,7 @@ if __name__ == '__main__':
     import unittest
 
     from mpl_toolkits.basemap.diagnostic import package_versions
-    
+
     if '--verbose' in sys.argv or '-v' in sys.argv:
         pkg_vers = package_versions()
         print('Basemaps installed package versions:')
