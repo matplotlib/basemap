@@ -137,6 +137,21 @@ class TestShiftdata(TestCase):
             assert lon <= bm.projparams["lon_0"] + 180
 
 
+    def test_shiftdata_on_monotonous_lons(self):
+        """
+        Test that shiftdata with fix_wrap_around keyword added works as before,
+        when it is True
+        """
+
+        bm = Basemap(lon_0=0)
+
+        lons_in = [120, 140, 160, 180, 200, 220]
+        lons_out_expect = [-160, -140,  120,  140,  160,  180]
+        lons_out = bm.shiftdata(lons_in, fix_wrap_around=True)
+
+        assert_almost_equal(lons_out, lons_out_expect)
+
+
 
     def test_2_points_should_work(self):
         """
