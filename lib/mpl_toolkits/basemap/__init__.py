@@ -526,7 +526,8 @@ def _transform(plotfunc):
             # shift data to map projection region for
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
-                x, data = self.shiftdata(x, data)
+                x, data = self.shiftdata(x, data,
+                                         fix_wrap_around=plotfunc.__name__ not in ["scatter"])
             # convert lat/lon coords to map projection coords.
             x, y = self(x,y)
         return plotfunc(self,x,y,data,*args,**kwargs)
@@ -544,7 +545,7 @@ def _transform1d(plotfunc):
             # cylindrical and pseudo-cylindrical projections.
             if self.projection in _cylproj or self.projection in _pseudocyl:
                 if x.ndim == 1:
-                    x = self.shiftdata(x)
+                    x = self.shiftdata(x, fix_wrap_around=plotfunc.__name__ not in ["scatter"])
                 elif x.ndim == 0:
                     if x > 180:
                         x = x - 360.
@@ -4723,7 +4724,7 @@ f=image" %\
                 _ax = plt.gca()
         return _ax, plt
 
-    def shiftdata(self,lonsin,datain=None,lon_0=None):
+    def shiftdata(self,lonsin,datain=None,lon_0=None,fix_wrap_around=True):
         """
         Shift longitudes (and optionally data) so that they match map projection region.
         Only valid for cylindrical/pseudo-cylindrical global projections and data
@@ -4746,6 +4747,13 @@ f=image" %\
         datain           original 1-d or 2-d data. Default None.
         lon_0            center of map projection region. Defaut None,
                          given by current map projection.
+        fix_wrap_around  if True reindex (if required) longitudes (and data) to
+                         avoid jumps caused by remapping of longitudes of
+                         points from outside of the [lon_0-180, lon_0+180]
+                         interval back into the interval.
+                         If False do not reindex longitudes and data, but do
+                         make sure that longitudes are in the
+                         [lon_0-180, lon_0+180] range.
         ==============   ====================================================
 
         if datain given, returns ``dataout,lonsout`` (data and longitudes shifted to fit in interval
@@ -4784,7 +4792,7 @@ f=image" %\
 
             # if no shift necessary, itemindex will be
             # empty, so don't do anything
-            if itemindex:
+            if fix_wrap_around and itemindex:
                 # check to see if cyclic (wraparound) point included
                 # if so, remove it.
                 if np.abs(lonsin1[0]-lonsin1[-1]) < 1.e-4:
@@ -4811,13 +4819,7 @@ f=image" %\
                         datain_save[:,1:] = datain
                         datain_save[:,0] = datain[:,-1]
                         datain = datain_save
-                # mask points outside
-                # map region so they don't wrap back in the domain.
-                mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
-                lonsin = np.where(mask,1.e30,lonsin)
-                if datain is not None and mask.any():
-                    # superimpose on existing mask
-                    datain = ma.masked_where(mask, datain)
+
         # 1-d data.
         elif lonsin.ndim == 1:
             nlons = len(lonsin)
@@ -4832,7 +4834,7 @@ f=image" %\
             else:
                 itemindex = 0
 
-            if itemindex:
+            if fix_wrap_around and itemindex:
                 # check to see if cyclic (wraparound) point included
                 # if so, remove it.
                 if np.abs(lonsin[0]-lonsin[-1]) < 1.e-4:
@@ -4856,12 +4858,14 @@ f=image" %\
                         datain_save[1:] = datain
                         datain_save[0] = datain[-1]
                         datain = datain_save
-                # mask points outside
-                # map region so they don't wrap back in the domain.
-                mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
-                lonsin = np.where(mask,1.e30,lonsin)
-                if datain is not None and mask.any():
-                    datain = ma.masked_where(mask, datain)
+
+        # mask points outside
+        # map region so they don't wrap back in the domain.
+        mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
+        lonsin = np.where(mask,1.e30,lonsin)
+        if datain is not None and mask.any():
+            datain = ma.masked_where(mask, datain)
+
         if datain is not None:
             return lonsin, datain
         else:
