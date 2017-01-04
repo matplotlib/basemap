@@ -3702,8 +3702,9 @@ class Basemap(object):
     def quiver(self, x, y, u, v, *args, **kwargs):
         """
         Make a vector plot (u, v) with arrows on the map.
-        Grid must be evenly spaced regular grid in x and y.
-        (see matplotlib.pyplot.quiver documentation).
+
+        Arguments may be 1-D or 2-D arrays or sequences
+        (see matplotlib.pyplot.quiver documentation for details).
 
         If ``latlon`` keyword is set to True, x,y are intrepreted as
         longitude and latitude in degrees.  Data and longitudes are
