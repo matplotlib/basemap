@@ -4792,7 +4792,7 @@ f=image" %\
 
             # if no shift necessary, itemindex will be
             # empty, so don't do anything
-            if itemindex and fix_wrap_around:
+            if fix_wrap_around and itemindex:
                 # check to see if cyclic (wraparound) point included
                 # if so, remove it.
                 if np.abs(lonsin1[0]-lonsin1[-1]) < 1.e-4:
@@ -4834,7 +4834,7 @@ f=image" %\
             else:
                 itemindex = 0
 
-            if itemindex and fix_wrap_around:
+            if fix_wrap_around and itemindex:
                 # check to see if cyclic (wraparound) point included
                 # if so, remove it.
                 if np.abs(lonsin[0]-lonsin[-1]) < 1.e-4:
