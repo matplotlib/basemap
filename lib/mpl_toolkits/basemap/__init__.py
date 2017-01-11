@@ -3207,6 +3207,17 @@ class Basemap(object):
             import matplotlib.pyplot as plt
             plt.draw_if_interactive()
 
+
+    def _save_use_hold(self, ax, kwargs):
+        h = kwargs.pop('hold', None)
+        if hasattr(ax, '_hold'):
+            self._tmp_hold = ax._hold
+            ax._hold = h
+
+    def _restore_hold(self, ax):
+        if hasattr(ax, '_hold'):
+            ax._hold = self._tmp_hold
+
     @_transform1d
     def scatter(self, *args, **kwargs):
         """
@@ -3225,17 +3236,11 @@ class Basemap(object):
         Other \**kwargs passed on to matplotlib.pyplot.scatter.
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
-        # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
-        h = kwargs.pop('hold',None)
-        if h is not None:
-            ax.hold(h)
+        self._save_use_hold(ax, kwargs)
         try:
             ret =  ax.scatter(*args, **kwargs)
-        except:
-            ax.hold(b)
-            raise
-        ax.hold(b)
+        finally:
+            self._restore_hold(ax)
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
@@ -3263,17 +3268,11 @@ class Basemap(object):
         Other \**kwargs passed on to matplotlib.pyplot.plot.
         """
         ax = kwargs.pop('ax', None) or self._check_ax()
-        # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
-        h = kwargs.pop('hold',None)
-        if h is not None:
-            ax.hold(h)
+        self._save_use_hold(ax, kwargs)
         try:
             ret =  ax.plot(*args, **kwargs)
-        except:
-            ax.hold(b)
-            raise
-        ax.hold(b)
+        finally:
+            self._restore_hold(ax)
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         # clip to map limbs
@@ -3299,17 +3298,11 @@ class Basemap(object):
         # use origin='lower', unless overridden.
         if 'origin' not in kwargs:
             kwargs['origin']='lower'
-        # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
-        h = kwargs.pop('hold',None)
-        if h is not None:
-            ax.hold(h)
+        self._save_use_hold(ax, kwargs)
         try:
             ret =  ax.imshow(*args, **kwargs)
-        except:
-            ax.hold(b)
-            raise
-        ax.hold(b)
+        finally:
+            self._restore_hold(ax)
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
@@ -3349,11 +3342,7 @@ class Basemap(object):
         if the dimensions are the same, then the last row and column of data will be ignored.
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
-        # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
-        h = kwargs.pop('hold',None)
-        if h is not None:
-            ax.hold(h)
+        self._save_use_hold(ax, kwargs)
         try:
             if kwargs.pop('tri', False):
                 try:
@@ -3386,10 +3375,8 @@ class Basemap(object):
                 x = ma.masked_values(np.where(x > 1.e20,1.e20,x), 1.e20)
                 y = ma.masked_values(np.where(y > 1.e20,1.e20,y), 1.e20)
                 ret = ax.pcolor(x,y,data,**kwargs)
-        except:
-            ax.hold(b)
-            raise
-        ax.hold(b)
+        finally:
+            self._restore_hold(ax)
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
@@ -3424,17 +3411,11 @@ class Basemap(object):
         if the dimensions are the same, then the last row and column of data will be ignored.
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
-        # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
-        h = kwargs.pop('hold',None)
-        if h is not None:
-            ax.hold(h)
+        self._save_use_hold(ax, kwargs)
         try:
             ret =  ax.pcolormesh(x,y,data,**kwargs)
-        except:
-            ax.hold(b)
-            raise
-        ax.hold(b)
+        finally:
+            self._restore_hold(ax)
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
@@ -3470,21 +3451,15 @@ class Basemap(object):
         Other \**kwargs passed on to matplotlib.pyplot.hexbin
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
-        # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
-        h = kwargs.pop('hold',None)
-        if h is not None:
-            ax.hold(h)
+        self._save_use_hold(ax, kwargs)
         try:
             # make x,y masked arrays
             # (masked where data is outside of projection limb)
             x = ma.masked_values(np.where(x > 1.e20,1.e20,x), 1.e20)
             y = ma.masked_values(np.where(y > 1.e20,1.e20,y), 1.e20)
             ret = ax.hexbin(x,y,**kwargs)
-        except:
-            ax.hold(b)
-            raise
-        ax.hold(b)
+        finally:
+            self._restore_hold(ax)
         # reset current active image (only if pyplot is imported).
         if plt:
             plt.sci(ret)
@@ -3516,11 +3491,7 @@ class Basemap(object):
         (or tricontour if ``tri=True``).
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
-        # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
-        h = kwargs.pop('hold',None)
-        if h is not None:
-            ax.hold(h)
+        self._save_use_hold(ax, kwargs)
         try:
             if kwargs.pop('tri', False):
                 try:
@@ -3581,10 +3552,8 @@ class Basemap(object):
                 mask = np.logical_or(ma.getmaskarray(data),xymask)
                 data = ma.masked_array(data,mask=mask)
                 CS = ax.contour(x,y,data,*args,**kwargs)
-        except:
-            ax.hold(b)
-            raise
-        ax.hold(b)
+        finally:
+            self._restore_hold(ax)
         # reset current active image (only if pyplot is imported).
         if plt and CS.get_array() is not None:
             plt.sci(CS)
@@ -3619,11 +3588,7 @@ class Basemap(object):
         (or tricontourf if ``tri=True``).
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
-        # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
-        h = kwargs.pop('hold',None)
-        if h is not None:
-            ax.hold(h)
+        self._save_use_hold(ax, kwargs)
         try:
             if kwargs.get('tri', False):
                 try:
@@ -3686,10 +3651,8 @@ class Basemap(object):
                 mask = np.logical_or(ma.getmaskarray(data),xymask)
                 data = ma.masked_array(data,mask=mask)
                 CS = ax.contourf(x,y,data,*args,**kwargs)
-        except:
-            ax.hold(b)
-            raise
-        ax.hold(b)
+        finally:
+            self._restore_hold(ax)
         # reset current active image (only if pyplot is imported).
         if plt and CS.get_array() is not None:
             plt.sci(CS)
@@ -3719,17 +3682,11 @@ class Basemap(object):
         Other \*args and \**kwargs passed on to matplotlib.pyplot.quiver.
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
-        # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
-        h = kwargs.pop('hold',None)
-        if h is not None:
-            ax.hold(h)
+        self._save_use_hold(ax, kwargs)
         try:
             ret =  ax.quiver(x,y,u,v,*args,**kwargs)
-        except:
-            ax.hold(b)
-            raise
-        ax.hold(b)
+        finally:
+            self._restore_hold(ax)
         if plt is not None and ret.get_array() is not None:
             plt.sci(ret)
         # set axes limits to fit map region.
@@ -3761,17 +3718,11 @@ class Basemap(object):
             you have %s""" % _matplotlib_version)
             raise NotImplementedError(msg)
         ax, plt = self._ax_plt_from_kw(kwargs)
-        # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
-        h = kwargs.pop('hold',None)
-        if h is not None:
-            ax.hold(h)
+        self._save_use_hold(ax, kwargs)
         try:
             ret =  ax.streamplot(x,y,u,v,*args,**kwargs)
-        except:
-            ax.hold(b)
-            raise
-        ax.hold(b)
+        finally:
+            self._restore_hold(ax)
         if plt is not None and ret.lines.get_array() is not None:
             plt.sci(ret.lines)
         # set axes limits to fit map region.
@@ -3811,24 +3762,18 @@ class Basemap(object):
             you have %s""" % _matplotlib_version)
             raise NotImplementedError(msg)
         ax, plt = self._ax_plt_from_kw(kwargs)
-        # allow callers to override the hold state by passing hold=True|False
-        b = ax.ishold()
-        h = kwargs.pop('hold',None)
-        if h is not None:
-            ax.hold(h)
         lons, lats = self(x, y, inverse=True)
         unh = ma.masked_where(lats <= 0, u)
         vnh = ma.masked_where(lats <= 0, v)
         ush = ma.masked_where(lats > 0, u)
         vsh = ma.masked_where(lats > 0, v)
+        self._save_use_hold(ax, kwargs)
         try:
             retnh =  ax.barbs(x,y,unh,vnh,*args,**kwargs)
             kwargs['flip_barb']=True
             retsh =  ax.barbs(x,y,ush,vsh,*args,**kwargs)
-        except:
-            ax.hold(b)
-            raise
-        ax.hold(b)
+        finally:
+            self._restore_hold(ax)
         # Because there are two collections returned in general,
         # we can't set the current image...
         #if plt is not None and ret.get_array() is not None:
