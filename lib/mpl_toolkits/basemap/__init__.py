@@ -3212,7 +3212,8 @@ class Basemap(object):
         h = kwargs.pop('hold', None)
         if hasattr(ax, '_hold'):
             self._tmp_hold = ax._hold
-            ax._hold = h
+            if h is not None:
+                ax._hold = h
 
     def _restore_hold(self, ax):
         if hasattr(ax, '_hold'):
