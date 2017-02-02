@@ -21,14 +21,30 @@ datasets (from `Generic Mapping Tools <http://gmt.soest.hawaii.edu/>`_)
 are provided, along with methods for plotting them. The `GEOS library 
 <http://geos.refractions.net>`_ is used internally to clip the coastline and polticial boundary features to the desired map projection region.
 
-Basemap provides facilities for reading `shapefiles
-<http://en.wikipedia.org/wiki/Shapefile>`_.
-
-Basemap is geared toward the needs of earth scientists, particular 
-oceanographers and meteorologists.  I originally wrote Basemap to help in my
-research (climate and weather forecasting), since at the time 
+Basemap is geared toward the needs of earth scientists, particularly
+oceanographers and meteorologists.  Jeff Whitaker originally wrote Basemap
+to help in his research (climate and weather forecasting), since at the time 
 `CDAT <http://www-pcmdi.llnl.gov/software/cdat/support/vcs/vcs.html>`_ was 
 the only other tool in python for plotting data on map projections.  Over
 the years, the capabilities of Basemap have evolved as scientists in other
 disciplines (such as biology, geology and geophysics) requested and 
-contributed new features.  
+contributed new features.
+
+Cartopy, New Management, and EoL Announcement
+=============================================
+
+Starting in 2016, Basemap came under new management. The
+`Cartopy project <http://scitools.org.uk/cartopy/>`_ will replace
+Basemap, but it hasn't yet implemented all of Basemap's features.
+All new software development should try to use Cartopy whenever possible,
+and existing software should start the process of switching over to use
+Cartopy. All maintenance and development efforts should be focused on
+Cartopy.
+
+Ben Root has volunteered to take over maintenance of Basemap until 2020.
+Pull requests will be reviewed, and bugs will be fixed. Also, the
+maintenance will ensure compatibility with packages like NumPy and Matplotlib.
+New features will be accepted, but we stress that new development efforts
+should be focused on Cartopy. When Python 2.7 is officially EoL'ed in 2020,
+a release of Basemap will be made and support from Ben Root will end.
+

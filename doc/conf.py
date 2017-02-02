@@ -42,7 +42,7 @@ master_doc = 'index'
 
 # General substitutions.
 project = 'Basemap Matplotlib Toolkit'
-copyright = '2011, Jeffrey Whitaker'
+copyright = '2011, Jeffrey Whitaker; 2016 The matplotlib development team'
 
 # The default replacements for |version| and |release|, also used in various
 # other places throughout the built documents.

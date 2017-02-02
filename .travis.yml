@@ -47,11 +47,6 @@ matrix:
         - NUMPY=numpy==1.7.0
         - MPL=matplotlib==1.2.0
         - BUILD_LIBGEOS=internal
-    - python: 3.3
-      env: 
-        - NUMPY=numpy==1.7.0
-        - MPL=matplotlib==1.2.0
-        - BUILD_LIBGEOS=internal
 
     # "middle of the road" environment
     # use prepackaged binaries
@@ -60,6 +55,7 @@ matrix:
       env: 
         - MPL=matplotlib==1.4.3
         - NUMPY=numpy==1.9.3
+        - BUILD_LIBGEOS=internal
       
     # "latest and greatest" stable environments
     # this uses the current stable versions
@@ -70,7 +66,10 @@ matrix:
     - python: 3.5
       env: 
         - BUILD_LIBGEOS=3.5.0
-    
+    - python: 3.6
+      env: 
+        - BUILD_LIBGEOS=3.5.0
+   
     # "current development" environment
     # this test is diagnostic for development versions and is not required to pass
     - python: "nightly"

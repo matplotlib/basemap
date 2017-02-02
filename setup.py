@@ -115,7 +115,7 @@ requirements = [
   "pyshp >= 1.2.0"
 ]
 
-__version__ = "1.0.8"
+__version__ = "1.1.0"
 setup(
   name              = "basemap",
   version           = __version__,
@@ -123,12 +123,14 @@ setup(
   long_description  = """
   An add-on toolkit for matplotlib that lets you plot data
   on map projections with coastlines, lakes, rivers and political boundaries.
-  See http://www.scipy.org/wikis/topical_software/Maps for an
-  example of what it can do.""",
-  url               = "http://matplotlib.sourceforge.net/toolkits.html",
-  download_url      = "https://downloads.sourceforge.net/project/matplotlib/matplotlib-toolkits/basemap-{0}/basemap-{0}.tar.gz".format(__version__),
+  See http://matplotlib.org/basemap/users/examples.html for
+  examples of what it can do.""",
+  url               = "http://matplotlib.org/basemap/",
+  download_url      = "https://github.com/matplotlib/basemap/archive/v{0}rel.tar.gz".format(__version__),
   author            = "Jeff Whitaker",
   author_email      = "jeffrey.s.whitaker@noaa.gov",
+  maintainer        = "Ben Root",
+  maintainer_email  = "ben.v.root@gmail.com",
   install_requires  = requirements,
   platforms         = ["any"],
   license           = "OSI Approved",

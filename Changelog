@@ -1,20 +1,27 @@
-version 1.0.8 (not yet released)
+version 1.1.0 (git tag v1.1.0rel)
 --------------------------------
-* removes inline pyshp and pyproj code and uses makes these packages required
-  external dependencies (handling issue 230).
-* add 'textcolor' kwarg to drawmeridians and drawparallels (issue 145).
+* Updated packaged data to use GSHHG v2.3.6 (PR #311 & #320)
+* pyshp/pyproj are now external dependencies (PR #234)
+* Proper clipping of plots regardless of projection (issue #175)
+* drawmapscale() supports "feet" as an input unit (PR #289)
+* nightshade() supports datetime timezone-aware datetime objects
+  as long as the timezone is UTC. Still assumes timezone-naive
+  objects are UTC as well. (issue #272)
+* Properly perform input validation/casting (issue #260)
+* Support newer versions of OWSLib (PR #259)
+* Use integer indexes (PR #246)
+* Stop ResourceWarnings for unclosed files in py3k (PR #244)
+* add 'textcolor' kwarg to drawmeridians and drawparallels (issue #145).
 * don't assume grid is regular when adding cyclic point in addcyclic. 
   New kwargs 'axis' and 'cyclic' added.  More than one array
-  can be handled at a time, as long as the last one is longitude. Issue 139.
-* fix for coastline drawing glitch (issue 123).
-* update shapefile.py to version 1.2.0 from pyshp.googlecode.com. Add back
-  in modification clobbered in upgrade to version 1.1.7 (issue 30).
+  can be handled at a time, as long as the last one is longitude. (issue #139).
+* fix for coastline drawing glitch (issue #123).
 * added 'facecolor' keyward argument to drawcounties() method; gives user
   ability to fill counties with specified matplotlib color argument.
 * fix drawgreatcircle bug so that lines exiting and reentering a projection
   region don't draw horizontally across the map. 
 * on non-windows platforms, only link against libgeos C API (and not against
-  C++ API anymore; issue 140). This is recommended by the authors/maintainers
+  C++ API anymore; issue #140). This is recommended by the authors/maintainers
   of GEOS.  Also, this means that on e.g. Debian Linux, basemap can now be
   installed from source simply using 'pip install basemap' when the libgeos
   packages are installed globally using the package management.
