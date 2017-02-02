@@ -21,7 +21,7 @@ datasets (from `Generic Mapping Tools <http://gmt.soest.hawaii.edu/>`_)
 are provided, along with methods for plotting them. The `GEOS library 
 <http://geos.refractions.net>`_ is used internally to clip the coastline and polticial boundary features to the desired map projection region.
 
-Basemap is geared toward the needs of earth scientists, particular 
+Basemap is geared toward the needs of earth scientists, particularly
 oceanographers and meteorologists.  Jeff Whitaker originally wrote Basemap
 to help in his research (climate and weather forecasting), since at the time 
 `CDAT <http://www-pcmdi.llnl.gov/software/cdat/support/vcs/vcs.html>`_ was 
@@ -43,7 +43,7 @@ Cartopy.
 
 Ben Root has volunteered to take over maintenance of Basemap until 2020.
 Pull requests will be reviewed, and bugs will be fixed. Also, the
-maintenance will ensure compatibility with packages like NumPy and matplotlib.
+maintenance will ensure compatibility with packages like NumPy and Matplotlib.
 New features will be accepted, but we stress that new development efforts
 should be focused on Cartopy. When Python 2.7 is officially EoL'ed in 2020,
 a release of Basemap will be made and support from Ben Root will end.

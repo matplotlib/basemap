@@ -23,7 +23,7 @@ numpy 1.2.1 (or later)
 
 `PROJ4 <https://trac.osgeo.org/proj/>`__ Cartographic Projections Library.
 
-**Required library that ship with basemap**
+**Required library that ships with basemap**
 
 `GEOS <http://trac.osgeo.org/geos/>`__ (Geometry Engine - Open Source) library 3.1.1 or later.
     Source code is included in the geos-3.3.3 directory. 
