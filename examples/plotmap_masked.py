@@ -40,7 +40,7 @@ topodatm = ma.masked_values(topodat, 1.e10)
 palette = plt.cm.YlOrRd
 palette.set_bad('aqua', 1.0)
 # plot image over map with imshow.
-im = m.imshow(topodatm,palette,norm=colors.normalize(vmin=0.0,vmax=3000.0,clip=False))
+im = m.imshow(topodatm,palette,norm=colors.Normalize(vmin=0.0,vmax=3000.0,clip=False))
 m.colorbar(im,pad='12%') # draw colorbar
 # plot blue dot on boulder, colorado and label it as such.
 xpt,ypt = m(-104.237,40.125) 
