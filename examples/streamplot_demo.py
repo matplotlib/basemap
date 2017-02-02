@@ -15,7 +15,7 @@ udat = ncfile.variables['sfc_u'][0,:,:]
 vdat = ncfile.variables['sfc_v'][0,:,:]
 lons1 = ncfile.variables['longitude'][:]
 lats1 = ncfile.variables['latitude'][:]
-lat0 = lats1[len(lats1)/2]; lon0 = lons1[len(lons1)/2]
+lat0 = lats1[len(lats1)//2]; lon0 = lons1[len(lons1)//2]
 lons, lats = np.meshgrid(lons1,lats1)
 ncfile.close()
 
