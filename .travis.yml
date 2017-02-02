@@ -62,13 +62,13 @@ matrix:
     # pip installs latest stable versions automatically
     - python: 2.7
       env:
-        - BUILD_LIBGEOS=3.5.0
+        - BUILD_LIBGEOS=3.5.1
     - python: 3.5
       env: 
-        - BUILD_LIBGEOS=3.5.0
+        - BUILD_LIBGEOS=3.5.1
     - python: 3.6
       env: 
-        - BUILD_LIBGEOS=3.5.0
+        - BUILD_LIBGEOS=3.6.1
    
     # "current development" environment
     # this test is diagnostic for development versions and is not required to pass
