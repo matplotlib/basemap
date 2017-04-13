@@ -131,7 +131,7 @@ install:
           echo 'Downloading and building external libgeos'
           wget https://github.com/libgeos/libgeos/archive/${BUILD_LIBGEOS}.tar.gz
           tar zxf ${BUILD_LIBGEOS}.tar.gz
-          cd libgeos-${BUILD_LIBGEOS}
+          cd geos-${BUILD_LIBGEOS}
           ./autogen.sh
         fi
         ./configure --prefix=$GEOS_DIR
