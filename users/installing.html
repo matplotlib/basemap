@@ -6,56 +6,45 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installing &mdash; Basemap Matplotlib Toolkit 1.0.8 documentation</title>
+    <title>Installing &#8212; Basemap Matplotlib Toolkit 1.1.0 documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.8',
+        VERSION:     '1.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Basemap Matplotlib Toolkit 1.0.8 documentation"
+          title="Search within Basemap Matplotlib Toolkit 1.1.0 documentation"
           href="../_static/opensearch.xml"/>
-    <link rel="top" title="Basemap Matplotlib Toolkit 1.0.8 documentation" href="../index.html" />
-    <link rel="up" title="The Matplotlib Basemap Toolkit User’s Guide" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Setting up the map" href="mapsetup.html" />
-    <link rel="prev" title="Introduction" href="intro.html" /> 
+    <link rel="prev" title="Introduction" href="intro.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
   </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="mapsetup.html" title="Setting up the map"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="intro.html" title="Introduction"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.8 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li> 
-      </ul>
-    </div>  
+  <body role="document">
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="installing">
 <span id="id1"></span><h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
@@ -71,27 +60,26 @@ installing basemap.</p>
 <dt>numpy 1.2.1 (or later)</dt>
 <dd>array support for python (<a class="reference external" href="http://sourceforge.net/project/showfiles.php?group_id=1369&amp;package_id=175103">download</a>)</dd>
 </dl>
-<p><strong>Required libraries that ship with basemap</strong></p>
+<p><a class="reference external" href="https://trac.osgeo.org/proj/">PROJ4</a> Cartographic Projections Library.</p>
+<p><strong>Required library that ships with basemap</strong></p>
 <dl class="docutils">
 <dt><a class="reference external" href="http://trac.osgeo.org/geos/">GEOS</a> (Geometry Engine - Open Source) library 3.1.1 or later.</dt>
 <dd>Source code is included in the geos-3.3.3 directory.
 When building from source, must be built and installed separately
 from basemap (see build instructions below).
 Included in Windows binary installers.</dd>
-<dt><a class="reference external" href="http://trac.osgeo.org/proj/">PROJ4</a> Cartographic Projections Library.</dt>
-<dd>Patched version automatically built into basemap.</dd>
 </dl>
 <p><strong>Optional libraries</strong></p>
 <dl class="docutils">
-<dt>PIL</dt>
-<dd>Python Imaging Library (<a class="reference external" href="http://www.pythonware.com/products/pil/">download</a>),
-only needed for <a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.bluemarble" title="mpl_toolkits.basemap.Basemap.bluemarble"><tt class="xref py py-func docutils literal"><span class="pre">bluemarble()</span></tt></a>, <a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.etopo" title="mpl_toolkits.basemap.Basemap.etopo"><tt class="xref py py-func docutils literal"><span class="pre">etopo()</span></tt></a>, <a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.shadedrelief" title="mpl_toolkits.basemap.Basemap.shadedrelief"><tt class="xref py py-func docutils literal"><span class="pre">shadedrelief()</span></tt></a> and <a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.warpimage" title="mpl_toolkits.basemap.Basemap.warpimage"><tt class="xref py py-func docutils literal"><span class="pre">warpimage()</span></tt></a> instance methods.</dd>
+<dt>Pillow</dt>
+<dd>Python Imaging Library (<a class="reference external" href="https://python-pillow.org/">download</a>),
+only needed for <a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.bluemarble" title="mpl_toolkits.basemap.Basemap.bluemarble"><code class="xref py py-func docutils literal"><span class="pre">bluemarble()</span></code></a>, <a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.etopo" title="mpl_toolkits.basemap.Basemap.etopo"><code class="xref py py-func docutils literal"><span class="pre">etopo()</span></code></a>, <a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.shadedrelief" title="mpl_toolkits.basemap.Basemap.shadedrelief"><code class="xref py py-func docutils literal"><span class="pre">shadedrelief()</span></code></a> and <a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.warpimage" title="mpl_toolkits.basemap.Basemap.warpimage"><code class="xref py py-func docutils literal"><span class="pre">warpimage()</span></code></a> instance methods.</dd>
 </dl>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>Download either Windows binary installers or source tarballs
-<a class="reference external" href="http://sourceforge.net/projects/matplotlib/files/matplotlib-toolkits/">here</a>.</p>
+<a class="reference external" href="https://github.com/matplotlib/basemap/releases/">here</a>.</p>
 <p>To install from the source, follow these steps:</p>
 <ul>
 <li><p class="first">Install pre-requisite requirements.</p>
@@ -105,7 +93,7 @@ of libgeos_c and geos_c.h (if libgeos_c is in /usr/local/lib and
 geos_c.h is in /usr/local/include, set GEOS_DIR to /usr/local).
 Then go to next step.  If you don&#8217;t have it, you can build it from
 the source code included with basemap by following these steps:</p>
-<div class="highlight-python"><div class="highlight"><pre>cd geos-3.3.3
+<div class="highlight-default"><div class="highlight"><pre><span></span>cd geos-3.3.3
 export GEOS_DIR=&lt;where you want the libs and headers to go&gt;
 # A reasonable choice on a Unix-like system is /usr/local, or
 # if you don&#39;t have permission to write there, your home directory.
@@ -115,13 +103,13 @@ make; make install
 </div>
 </li>
 <li><p class="first">cd back to the top level basemap directory (basemap-X.Y.Z) and
-run the usual <tt class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></tt>.  Check your installation
-by running <tt class="docutils literal"><span class="pre">from</span> <span class="pre">mpl_toolkits.basemap</span> <span class="pre">import</span> <span class="pre">Basemap</span></tt> at the python
+run the usual <code class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></code>.  Check your installation
+by running <code class="docutils literal"><span class="pre">from</span> <span class="pre">mpl_toolkits.basemap</span> <span class="pre">import</span> <span class="pre">Basemap</span></code> at the python
 prompt.</p>
 </li>
-<li><p class="first">To test, cd to the examples directory and run <tt class="docutils literal"><span class="pre">python</span> <span class="pre">simpletest.py</span></tt>.
+<li><p class="first">To test, cd to the examples directory and run <code class="docutils literal"><span class="pre">python</span> <span class="pre">simpletest.py</span></code>.
 To run all the examples (except those that have extra dependencies
-or require an internet connection), execute <tt class="docutils literal"><span class="pre">python</span> <span class="pre">run_all.py</span></tt>.</p>
+or require an internet connection), execute <code class="docutils literal"><span class="pre">python</span> <span class="pre">run_all.py</span></code>.</p>
 </li>
 </ul>
 </div>
@@ -131,7 +119,7 @@ or require an internet connection), execute <tt class="docutils literal"><span c
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
@@ -141,58 +129,52 @@ or require an internet connection), execute <tt class="docutils literal"><span c
 </ul>
 </li>
 </ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="intro.html"
-                        title="previous chapter">Introduction</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="mapsetup.html"
-                        title="next chapter">Setting up the map</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/users/installing.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">The Matplotlib Basemap Toolkit User&#8217;s Guide</a><ul>
+      <li>Previous: <a href="intro.html" title="previous chapter">Introduction</a></li>
+      <li>Next: <a href="mapsetup.html" title="next chapter">Setting up the map</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users/installing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="mapsetup.html" title="Setting up the map"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="intro.html" title="Introduction"
-             >previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.8 documentation</a> &raquo;</li>
-          <li><a href="index.html" >The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Feb 13, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+      &copy;2011, Jeffrey Whitaker; 2016 The matplotlib development team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/users/installing.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

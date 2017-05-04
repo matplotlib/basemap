@@ -6,57 +6,45 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Azimuthal Equidistant Projection &mdash; Basemap Matplotlib Toolkit 1.0.8 documentation</title>
+    <title>Azimuthal Equidistant Projection &#8212; Basemap Matplotlib Toolkit 1.1.0 documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.8',
+        VERSION:     '1.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Basemap Matplotlib Toolkit 1.0.8 documentation"
+          title="Search within Basemap Matplotlib Toolkit 1.1.0 documentation"
           href="../_static/opensearch.xml"/>
-    <link rel="top" title="Basemap Matplotlib Toolkit 1.0.8 documentation" href="../index.html" />
-    <link rel="up" title="Setting up the map" href="mapsetup.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Gnomonic Projection" href="gnomon.html" />
-    <link rel="prev" title="Setting up the map" href="mapsetup.html" /> 
+    <link rel="prev" title="Setting up the map" href="mapsetup.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
   </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="gnomon.html" title="Gnomonic Projection"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="mapsetup.html" title="Setting up the map"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.8 documentation</a> &raquo;</li>
-          <li><a href="index.html" >The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li>
-          <li><a href="mapsetup.html" accesskey="U">Setting up the map</a> &raquo;</li> 
-      </ul>
-    </div>  
+  <body role="document">
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="azimuthal-equidistant-projection">
 <span id="aeqd"></span><h1>Azimuthal Equidistant Projection<a class="headerlink" href="#azimuthal-equidistant-projection" title="Permalink to this headline">¶</a></h1>
@@ -65,27 +53,27 @@ to any other point is a straight line in the azimuthal
 equidistant projection.
 So, for the specified point, all points that lie on a circle around
 this point are equidistant on the surface of the earth on this projection.
-The specified point <tt class="docutils literal"><span class="pre">lon_0,</span> <span class="pre">lat_0</span></tt> shows up as a black dot in the center of the map.</p>
+The specified point <code class="docutils literal"><span class="pre">lon_0,</span> <span class="pre">lat_0</span></code> shows up as a black dot in the center of the map.</p>
 <p>Here&#8217;s an example using the width and height keywords to specify the map region.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="n">width</span> <span class="o">=</span> <span class="mi">28000000</span><span class="p">;</span> <span class="n">lon_0</span> <span class="o">=</span> <span class="o">-</span><span class="mi">105</span><span class="p">;</span> <span class="n">lat_0</span> <span class="o">=</span> <span class="mi">40</span>
-<span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="o">=</span><span class="n">width</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s">&#39;aeqd&#39;</span><span class="p">,</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span><span class="n">height</span><span class="o">=</span><span class="n">width</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;aeqd&#39;</span><span class="p">,</span>
             <span class="n">lat_0</span><span class="o">=</span><span class="n">lat_0</span><span class="p">,</span><span class="n">lon_0</span><span class="o">=</span><span class="n">lon_0</span><span class="p">)</span>
-<span class="c"># fill background.</span>
-<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
-<span class="c"># draw coasts and fill continents.</span>
+<span class="c1"># fill background.</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s1">&#39;aqua&#39;</span><span class="p">)</span>
+<span class="c1"># draw coasts and fill continents.</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">fillcontinents</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;coral&#39;</span><span class="p">,</span><span class="n">lake_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
-<span class="c"># 20 degree graticule.</span>
+<span class="n">m</span><span class="o">.</span><span class="n">fillcontinents</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;coral&#39;</span><span class="p">,</span><span class="n">lake_color</span><span class="o">=</span><span class="s1">&#39;aqua&#39;</span><span class="p">)</span>
+<span class="c1"># 20 degree graticule.</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawparallels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">80</span><span class="p">,</span><span class="mi">81</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
-<span class="c"># draw a black dot at the center.</span>
+<span class="c1"># draw a black dot at the center.</span>
 <span class="n">xpt</span><span class="p">,</span> <span class="n">ypt</span> <span class="o">=</span> <span class="n">m</span><span class="p">(</span><span class="n">lon_0</span><span class="p">,</span> <span class="n">lat_0</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">xpt</span><span class="p">],[</span><span class="n">ypt</span><span class="p">],</span><span class="s">&#39;ko&#39;</span><span class="p">)</span>
-<span class="c"># draw the title.</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Azimuthal Equidistant Projection&#39;</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">xpt</span><span class="p">],[</span><span class="n">ypt</span><span class="p">],</span><span class="s1">&#39;ko&#39;</span><span class="p">)</span>
+<span class="c1"># draw the title.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Azimuthal Equidistant Projection&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -95,24 +83,24 @@ The specified point <tt class="docutils literal"><span class="pre">lon_0,</span>
 </div>
 <p>If both the width/height and corner lat/lon keywords are omitted, the whole world is
 plotted in a circle.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="n">lon_0</span> <span class="o">=</span> <span class="o">-</span><span class="mi">105</span><span class="p">;</span> <span class="n">lat_0</span> <span class="o">=</span> <span class="mi">40</span>
-<span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&#39;aeqd&#39;</span><span class="p">,</span><span class="n">lat_0</span><span class="o">=</span><span class="n">lat_0</span><span class="p">,</span><span class="n">lon_0</span><span class="o">=</span><span class="n">lon_0</span><span class="p">)</span>
-<span class="c"># fill background.</span>
-<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
-<span class="c"># draw coasts and fill continents.</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;aeqd&#39;</span><span class="p">,</span><span class="n">lat_0</span><span class="o">=</span><span class="n">lat_0</span><span class="p">,</span><span class="n">lon_0</span><span class="o">=</span><span class="n">lon_0</span><span class="p">)</span>
+<span class="c1"># fill background.</span>
+<span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">(</span><span class="n">fill_color</span><span class="o">=</span><span class="s1">&#39;aqua&#39;</span><span class="p">)</span>
+<span class="c1"># draw coasts and fill continents.</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">fillcontinents</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;coral&#39;</span><span class="p">,</span><span class="n">lake_color</span><span class="o">=</span><span class="s">&#39;aqua&#39;</span><span class="p">)</span>
-<span class="c"># 20 degree graticule.</span>
+<span class="n">m</span><span class="o">.</span><span class="n">fillcontinents</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;coral&#39;</span><span class="p">,</span><span class="n">lake_color</span><span class="o">=</span><span class="s1">&#39;aqua&#39;</span><span class="p">)</span>
+<span class="c1"># 20 degree graticule.</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawparallels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">80</span><span class="p">,</span><span class="mi">81</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
 <span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span><span class="mi">180</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
-<span class="c"># draw a black dot at the center.</span>
+<span class="c1"># draw a black dot at the center.</span>
 <span class="n">xpt</span><span class="p">,</span> <span class="n">ypt</span> <span class="o">=</span> <span class="n">m</span><span class="p">(</span><span class="n">lon_0</span><span class="p">,</span> <span class="n">lat_0</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">xpt</span><span class="p">],[</span><span class="n">ypt</span><span class="p">],</span><span class="s">&#39;ko&#39;</span><span class="p">)</span>
-<span class="c"># draw the title.</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Whole World Azimuthal Equidistant Projection&#39;</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">xpt</span><span class="p">],[</span><span class="n">ypt</span><span class="p">],</span><span class="s1">&#39;ko&#39;</span><span class="p">)</span>
+<span class="c1"># draw the title.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Whole World Azimuthal Equidistant Projection&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -126,60 +114,55 @@ plotted in a circle.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="mapsetup.html"
-                        title="previous chapter">Setting up the map</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="gnomon.html"
-                        title="next chapter">Gnomonic Projection</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/users/aeqd.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">The Matplotlib Basemap Toolkit User&#8217;s Guide</a><ul>
+  <li><a href="mapsetup.html">Setting up the map</a><ul>
+      <li>Previous: <a href="mapsetup.html" title="previous chapter">Setting up the map</a></li>
+      <li>Next: <a href="gnomon.html" title="next chapter">Gnomonic Projection</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users/aeqd.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="gnomon.html" title="Gnomonic Projection"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="mapsetup.html" title="Setting up the map"
-             >previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.8 documentation</a> &raquo;</li>
-          <li><a href="index.html" >The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li>
-          <li><a href="mapsetup.html" >Setting up the map</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Feb 13, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+      &copy;2011, Jeffrey Whitaker; 2016 The matplotlib development team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/users/aeqd.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

@@ -6,56 +6,45 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Introduction &mdash; Basemap Matplotlib Toolkit 1.0.8 documentation</title>
+    <title>Introduction &#8212; Basemap Matplotlib Toolkit 1.1.0 documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.8',
+        VERSION:     '1.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Basemap Matplotlib Toolkit 1.0.8 documentation"
+          title="Search within Basemap Matplotlib Toolkit 1.1.0 documentation"
           href="../_static/opensearch.xml"/>
-    <link rel="top" title="Basemap Matplotlib Toolkit 1.0.8 documentation" href="../index.html" />
-    <link rel="up" title="The Matplotlib Basemap Toolkit User’s Guide" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Installing" href="installing.html" />
-    <link rel="prev" title="Download" href="download.html" /> 
+    <link rel="prev" title="Download" href="download.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
   </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="installing.html" title="Installing"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="download.html" title="Download"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.8 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li> 
-      </ul>
-    </div>  
+  <body role="document">
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
@@ -75,74 +64,89 @@ in the transformed coordinates.
 Shoreline, river and political boundary
 datasets (from <a class="reference external" href="http://gmt.soest.hawaii.edu/">Generic Mapping Tools</a>)
 are provided, along with methods for plotting them. The <a class="reference external" href="http://geos.refractions.net">GEOS library</a> is used internally to clip the coastline and polticial boundary features to the desired map projection region.</p>
-<p>Basemap provides facilities for reading <a class="reference external" href="http://en.wikipedia.org/wiki/Shapefile">shapefiles</a>.</p>
-<p>Basemap is geared toward the needs of earth scientists, particular
-oceanographers and meteorologists.  I originally wrote Basemap to help in my
-research (climate and weather forecasting), since at the time
+<p>Basemap is geared toward the needs of earth scientists, particularly
+oceanographers and meteorologists.  Jeff Whitaker originally wrote Basemap
+to help in his research (climate and weather forecasting), since at the time
 <a class="reference external" href="http://www-pcmdi.llnl.gov/software/cdat/support/vcs/vcs.html">CDAT</a> was
 the only other tool in python for plotting data on map projections.  Over
 the years, the capabilities of Basemap have evolved as scientists in other
 disciplines (such as biology, geology and geophysics) requested and
 contributed new features.</p>
 </div>
+<div class="section" id="cartopy-new-management-and-eol-announcement">
+<h1>Cartopy, New Management, and EoL Announcement<a class="headerlink" href="#cartopy-new-management-and-eol-announcement" title="Permalink to this headline">¶</a></h1>
+<p>Starting in 2016, Basemap came under new management. The
+<a class="reference external" href="http://scitools.org.uk/cartopy/">Cartopy project</a> will replace
+Basemap, but it hasn&#8217;t yet implemented all of Basemap&#8217;s features.
+All new software development should try to use Cartopy whenever possible,
+and existing software should start the process of switching over to use
+Cartopy. All maintenance and development efforts should be focused on
+Cartopy.</p>
+<p>Ben Root has volunteered to take over maintenance of Basemap until 2020.
+Pull requests will be reviewed, and bugs will be fixed. Also, the
+maintenance will ensure compatibility with packages like NumPy and Matplotlib.
+New features will be accepted, but we stress that new development efforts
+should be focused on Cartopy. When Python 2.7 is officially EoL&#8217;ed in 2020,
+a release of Basemap will be made and support from Ben Root will end.</p>
+</div>
 
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="download.html"
-                        title="previous chapter">Download</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="installing.html"
-                        title="next chapter">Installing</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/users/intro.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a></li>
+<li><a class="reference internal" href="#cartopy-new-management-and-eol-announcement">Cartopy, New Management, and EoL Announcement</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">The Matplotlib Basemap Toolkit User&#8217;s Guide</a><ul>
+      <li>Previous: <a href="download.html" title="previous chapter">Download</a></li>
+      <li>Next: <a href="installing.html" title="next chapter">Installing</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users/intro.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="installing.html" title="Installing"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="download.html" title="Download"
-             >previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.8 documentation</a> &raquo;</li>
-          <li><a href="index.html" >The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Feb 13, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+      &copy;2011, Jeffrey Whitaker; 2016 The matplotlib development team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/users/intro.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

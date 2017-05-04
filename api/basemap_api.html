@@ -6,75 +6,67 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>matplotlib basemap toolkit &mdash; Basemap Matplotlib Toolkit 1.0.8 documentation</title>
+    <title>matplotlib basemap toolkit &#8212; Basemap Matplotlib Toolkit 1.1.0 documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.8',
+        VERSION:     '1.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Basemap Matplotlib Toolkit 1.0.8 documentation"
+          title="Search within Basemap Matplotlib Toolkit 1.1.0 documentation"
           href="../_static/opensearch.xml"/>
-    <link rel="top" title="Basemap Matplotlib Toolkit 1.0.8 documentation" href="../index.html" />
-    <link rel="up" title="The Matplotlib Basemap Toolkit API" href="index.html" />
-    <link rel="prev" title="The Matplotlib Basemap Toolkit API" href="index.html" /> 
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="The Matplotlib Basemap Toolkit API" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
   </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="The Matplotlib Basemap Toolkit API"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.8 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">The Matplotlib Basemap Toolkit API</a> &raquo;</li> 
-      </ul>
-    </div>  
+  <body role="document">
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="matplotlib-basemap-toolkit">
 <h1>matplotlib basemap toolkit<a class="headerlink" href="#matplotlib-basemap-toolkit" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-mpl_toolkits.basemap">
-<span id="mpl-toolkits-basemap"></span><h2><a class="reference internal" href="#module-mpl_toolkits.basemap" title="mpl_toolkits.basemap"><tt class="xref py py-mod docutils literal"><span class="pre">mpl_toolkits.basemap</span></tt></a><a class="headerlink" href="#module-mpl_toolkits.basemap" title="Permalink to this headline">¶</a></h2>
+<span id="mpl-toolkits-basemap"></span><h2><a class="reference internal" href="#module-mpl_toolkits.basemap" title="mpl_toolkits.basemap"><code class="xref py py-mod docutils literal"><span class="pre">mpl_toolkits.basemap</span></code></a><a class="headerlink" href="#module-mpl_toolkits.basemap" title="Permalink to this headline">¶</a></h2>
 <p>Module for plotting data on maps with matplotlib.</p>
-<p>Contains the <a class="reference internal" href="#mpl_toolkits.basemap.Basemap" title="mpl_toolkits.basemap.Basemap"><tt class="xref py py-class docutils literal"><span class="pre">Basemap</span></tt></a> class (which does most of the
+<p>Contains the <a class="reference internal" href="#mpl_toolkits.basemap.Basemap" title="mpl_toolkits.basemap.Basemap"><code class="xref py py-class docutils literal"><span class="pre">Basemap</span></code></a> class (which does most of the
 heavy lifting), and the following functions:</p>
-<p><a class="reference internal" href="#mpl_toolkits.basemap.interp" title="mpl_toolkits.basemap.interp"><tt class="xref py py-func docutils literal"><span class="pre">interp()</span></tt></a>:  bilinear interpolation between rectilinear grids.</p>
-<p><a class="reference internal" href="#mpl_toolkits.basemap.maskoceans" title="mpl_toolkits.basemap.maskoceans"><tt class="xref py py-func docutils literal"><span class="pre">maskoceans()</span></tt></a>:  mask &#8216;wet&#8217; points of an input array.</p>
-<p><a class="reference internal" href="#mpl_toolkits.basemap.shiftgrid" title="mpl_toolkits.basemap.shiftgrid"><tt class="xref py py-func docutils literal"><span class="pre">shiftgrid()</span></tt></a>:  shifts global lat/lon grids east or west.</p>
-<p><a class="reference internal" href="#mpl_toolkits.basemap.addcyclic" title="mpl_toolkits.basemap.addcyclic"><tt class="xref py py-func docutils literal"><span class="pre">addcyclic()</span></tt></a>: Add cyclic (wraparound) point in longitude.</p>
+<p><a class="reference internal" href="#mpl_toolkits.basemap.interp" title="mpl_toolkits.basemap.interp"><code class="xref py py-func docutils literal"><span class="pre">interp()</span></code></a>:  bilinear interpolation between rectilinear grids.</p>
+<p><a class="reference internal" href="#mpl_toolkits.basemap.maskoceans" title="mpl_toolkits.basemap.maskoceans"><code class="xref py py-func docutils literal"><span class="pre">maskoceans()</span></code></a>:  mask &#8216;wet&#8217; points of an input array.</p>
+<p><a class="reference internal" href="#mpl_toolkits.basemap.shiftgrid" title="mpl_toolkits.basemap.shiftgrid"><code class="xref py py-func docutils literal"><span class="pre">shiftgrid()</span></code></a>:  shifts global lat/lon grids east or west.</p>
+<p><a class="reference internal" href="#mpl_toolkits.basemap.addcyclic" title="mpl_toolkits.basemap.addcyclic"><code class="xref py py-func docutils literal"><span class="pre">addcyclic()</span></code></a>: Add cyclic (wraparound) point in longitude.</p>
 <dl class="class">
 <dt id="mpl_toolkits.basemap.Basemap">
-<em class="property">class </em><tt class="descclassname">mpl_toolkits.basemap.</tt><tt class="descname">Basemap</tt><big>(</big><em>llcrnrlon=None</em>, <em>llcrnrlat=None</em>, <em>urcrnrlon=None</em>, <em>urcrnrlat=None</em>, <em>llcrnrx=None</em>, <em>llcrnry=None</em>, <em>urcrnrx=None</em>, <em>urcrnry=None</em>, <em>width=None</em>, <em>height=None</em>, <em>projection='cyl'</em>, <em>resolution='c'</em>, <em>area_thresh=None</em>, <em>rsphere=6370997.0</em>, <em>ellps=None</em>, <em>lat_ts=None</em>, <em>lat_1=None</em>, <em>lat_2=None</em>, <em>lat_0=None</em>, <em>lon_0=None</em>, <em>lon_1=None</em>, <em>lon_2=None</em>, <em>o_lon_p=None</em>, <em>o_lat_p=None</em>, <em>k_0=None</em>, <em>no_rot=False</em>, <em>suppress_ticks=True</em>, <em>satellite_height=35786000</em>, <em>boundinglat=None</em>, <em>fix_aspect=True</em>, <em>anchor='C'</em>, <em>celestial=False</em>, <em>round=False</em>, <em>epsg=None</em>, <em>ax=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">mpl_toolkits.basemap.</code><code class="descname">Basemap</code><span class="sig-paren">(</span><em>llcrnrlon=None</em>, <em>llcrnrlat=None</em>, <em>urcrnrlon=None</em>, <em>urcrnrlat=None</em>, <em>llcrnrx=None</em>, <em>llcrnry=None</em>, <em>urcrnrx=None</em>, <em>urcrnry=None</em>, <em>width=None</em>, <em>height=None</em>, <em>projection='cyl'</em>, <em>resolution='c'</em>, <em>area_thresh=None</em>, <em>rsphere=6370997.0</em>, <em>ellps=None</em>, <em>lat_ts=None</em>, <em>lat_1=None</em>, <em>lat_2=None</em>, <em>lat_0=None</em>, <em>lon_0=None</em>, <em>lon_1=None</em>, <em>lon_2=None</em>, <em>o_lon_p=None</em>, <em>o_lat_p=None</em>, <em>k_0=None</em>, <em>no_rot=False</em>, <em>suppress_ticks=True</em>, <em>satellite_height=35786000</em>, <em>boundinglat=None</em>, <em>fix_aspect=True</em>, <em>anchor='C'</em>, <em>celestial=False</em>, <em>round=False</em>, <em>epsg=None</em>, <em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up a basemap with specified map projection.
 and creates the coastline data structures in map projection
 coordinates.</p>
 <p>Calling a Basemap class instance with the arguments lon, lat will
 convert lon/lat (in degrees) to x/y map projection coordinates
 (in meters). The inverse transformation is done if the optional keyword
-<tt class="docutils literal"><span class="pre">inverse</span></tt> is set to True.</p>
-<p>The desired projection is set with the projection keyword. Default is <tt class="docutils literal"><span class="pre">cyl</span></tt>.
+<code class="docutils literal"><span class="pre">inverse</span></code> is set to True.</p>
+<p>The desired projection is set with the projection keyword. Default is <code class="docutils literal"><span class="pre">cyl</span></code>.
 Supported values for the projection keyword are:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -250,22 +242,22 @@ domain (degrees).</td>
 </tr>
 </tbody>
 </table>
-<p>For <tt class="docutils literal"><span class="pre">sinu</span></tt>, <tt class="docutils literal"><span class="pre">moll</span></tt>, <tt class="docutils literal"><span class="pre">hammer</span></tt>, <tt class="docutils literal"><span class="pre">npstere</span></tt>, <tt class="docutils literal"><span class="pre">spstere</span></tt>, <tt class="docutils literal"><span class="pre">nplaea</span></tt>, <tt class="docutils literal"><span class="pre">splaea</span></tt>,
-<tt class="docutils literal"><span class="pre">npaeqd</span></tt>, <tt class="docutils literal"><span class="pre">spaeqd</span></tt>, <tt class="docutils literal"><span class="pre">robin</span></tt>, <tt class="docutils literal"><span class="pre">eck4</span></tt>, <tt class="docutils literal"><span class="pre">kav7</span></tt>, or <tt class="docutils literal"><span class="pre">mbtfpq</span></tt>, the values of
+<p>For <code class="docutils literal"><span class="pre">sinu</span></code>, <code class="docutils literal"><span class="pre">moll</span></code>, <code class="docutils literal"><span class="pre">hammer</span></code>, <code class="docutils literal"><span class="pre">npstere</span></code>, <code class="docutils literal"><span class="pre">spstere</span></code>, <code class="docutils literal"><span class="pre">nplaea</span></code>, <code class="docutils literal"><span class="pre">splaea</span></code>,
+<code class="docutils literal"><span class="pre">npaeqd</span></code>, <code class="docutils literal"><span class="pre">spaeqd</span></code>, <code class="docutils literal"><span class="pre">robin</span></code>, <code class="docutils literal"><span class="pre">eck4</span></code>, <code class="docutils literal"><span class="pre">kav7</span></code>, or <code class="docutils literal"><span class="pre">mbtfpq</span></code>, the values of
 llcrnrlon, llcrnrlat, urcrnrlon, urcrnrlat, width and height are ignored
 (because either they are computed internally, or entire globe is
 always plotted).</p>
-<p>For the cylindrical projections (<tt class="docutils literal"><span class="pre">cyl</span></tt>, <tt class="docutils literal"><span class="pre">merc</span></tt>, <tt class="docutils literal"><span class="pre">mill</span></tt>, <tt class="docutils literal"><span class="pre">cea</span></tt>  and <tt class="docutils literal"><span class="pre">gall</span></tt>),
+<p>For the cylindrical projections (<code class="docutils literal"><span class="pre">cyl</span></code>, <code class="docutils literal"><span class="pre">merc</span></code>, <code class="docutils literal"><span class="pre">mill</span></code>, <code class="docutils literal"><span class="pre">cea</span></code>  and <code class="docutils literal"><span class="pre">gall</span></code>),
 the default is to use
 llcrnrlon=-180,llcrnrlat=-90, urcrnrlon=180 and urcrnrlat=90). For all other
-projections except <tt class="docutils literal"><span class="pre">ortho</span></tt>, <tt class="docutils literal"><span class="pre">geos</span></tt> and <tt class="docutils literal"><span class="pre">nsper</span></tt>, either the lat/lon values of the
+projections except <code class="docutils literal"><span class="pre">ortho</span></code>, <code class="docutils literal"><span class="pre">geos</span></code> and <code class="docutils literal"><span class="pre">nsper</span></code>, either the lat/lon values of the
 corners or width and height must be specified by the user.</p>
-<p>For <tt class="docutils literal"><span class="pre">ortho</span></tt>, <tt class="docutils literal"><span class="pre">geos</span></tt> and <tt class="docutils literal"><span class="pre">nsper</span></tt>, the lat/lon values of the corners may be specified,
+<p>For <code class="docutils literal"><span class="pre">ortho</span></code>, <code class="docutils literal"><span class="pre">geos</span></code> and <code class="docutils literal"><span class="pre">nsper</span></code>, the lat/lon values of the corners may be specified,
 or the x/y values of the corners (llcrnrx,llcrnry,urcrnrx,urcrnry) in the
 coordinate system of the global projection (with x=0,y=0 at the center
 of the global projection).  If the corners are not specified,
 the entire globe is plotted.</p>
-<p>For <tt class="docutils literal"><span class="pre">rotpole</span></tt>, the lat/lon values of the corners on the unrotated sphere
+<p>For <code class="docutils literal"><span class="pre">rotpole</span></code>, the lat/lon values of the corners on the unrotated sphere
 may be provided as llcrnrlon,llcrnrlat,urcrnrlon,urcrnrlat, or the lat/lon
 values of the corners on the rotated sphere can be given as
 llcrnrx,llcrnry,urcrnrx,urcrnry.</p>
@@ -282,15 +274,15 @@ llcrnrx,llcrnry,urcrnrx,urcrnry.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>resolution</td>
-<td>resolution of boundary database to use. Can be <tt class="docutils literal"><span class="pre">c</span></tt>
-(crude), <tt class="docutils literal"><span class="pre">l</span></tt> (low), <tt class="docutils literal"><span class="pre">i</span></tt> (intermediate), <tt class="docutils literal"><span class="pre">h</span></tt>
-(high), <tt class="docutils literal"><span class="pre">f</span></tt> (full) or None.
+<td>resolution of boundary database to use. Can be <code class="docutils literal"><span class="pre">c</span></code>
+(crude), <code class="docutils literal"><span class="pre">l</span></code> (low), <code class="docutils literal"><span class="pre">i</span></code> (intermediate), <code class="docutils literal"><span class="pre">h</span></code>
+(high), <code class="docutils literal"><span class="pre">f</span></code> (full) or None.
 If None, no boundary data will be read in (and
 class methods such as drawcoastlines will raise an
 if invoked).
 Resolution drops off by roughly 80% between datasets.
 Higher res datasets are much slower to draw.
-Default <tt class="docutils literal"><span class="pre">c</span></tt>. Coastline data is from the GSHHS
+Default <code class="docutils literal"><span class="pre">c</span></code>. Coastline data is from the GSHHS
 (<a class="reference external" href="http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html">http://www.soest.hawaii.edu/wessel/gshhs/gshhs.html</a>).
 State, country and river datasets from the Generic
 Mapping Tools (<a class="reference external" href="http://gmt.soest.hawaii.edu">http://gmt.soest.hawaii.edu</a>).</td>
@@ -299,7 +291,7 @@ Mapping Tools (<a class="reference external" href="http://gmt.soest.hawaii.edu">
 <td>coastline or lake with an area smaller than
 area_thresh in km^2 will not be plotted.
 Default 10000,1000,100,10,1 for resolution
-<tt class="docutils literal"><span class="pre">c</span></tt>, <tt class="docutils literal"><span class="pre">l</span></tt>, <tt class="docutils literal"><span class="pre">i</span></tt>, <tt class="docutils literal"><span class="pre">h</span></tt>, <tt class="docutils literal"><span class="pre">f</span></tt>.</td>
+<code class="docutils literal"><span class="pre">c</span></code>, <code class="docutils literal"><span class="pre">l</span></code>, <code class="docutils literal"><span class="pre">i</span></code>, <code class="docutils literal"><span class="pre">h</span></code>, <code class="docutils literal"><span class="pre">f</span></code>.</td>
 </tr>
 <tr class="row-even"><td>rsphere</td>
 <td>radius of the sphere used to define map projection
@@ -321,7 +313,7 @@ for allowed values.</td>
 </tr>
 <tr class="row-even"><td>suppress_ticks</td>
 <td>suppress automatic drawing of axis ticks and labels
-in map projection coordinates.  Default False,
+in map projection coordinates.  Default True,
 so parallels and meridians can be labelled instead.
 If parallel or meridian labelling is requested
 (using drawparallels and drawmeridians methods),
@@ -338,11 +330,11 @@ of map projection region (default True).</td>
 </tr>
 <tr class="row-even"><td>anchor</td>
 <td>determines how map is placed in axes rectangle
-(passed to axes.set_aspect). Default is <tt class="docutils literal"><span class="pre">C</span></tt>,
+(passed to axes.set_aspect). Default is <code class="docutils literal"><span class="pre">C</span></code>,
 which means map is centered.
 Allowed values are
-<tt class="docutils literal"><span class="pre">C</span></tt>, <tt class="docutils literal"><span class="pre">SW</span></tt>, <tt class="docutils literal"><span class="pre">S</span></tt>, <tt class="docutils literal"><span class="pre">SE</span></tt>, <tt class="docutils literal"><span class="pre">E</span></tt>, <tt class="docutils literal"><span class="pre">NE</span></tt>,
-<tt class="docutils literal"><span class="pre">N</span></tt>, <tt class="docutils literal"><span class="pre">NW</span></tt>, and <tt class="docutils literal"><span class="pre">W</span></tt>.</td>
+<code class="docutils literal"><span class="pre">C</span></code>, <code class="docutils literal"><span class="pre">SW</span></code>, <code class="docutils literal"><span class="pre">S</span></code>, <code class="docutils literal"><span class="pre">SE</span></code>, <code class="docutils literal"><span class="pre">E</span></code>, <code class="docutils literal"><span class="pre">NE</span></code>,
+<code class="docutils literal"><span class="pre">N</span></code>, <code class="docutils literal"><span class="pre">NW</span></code>, and <code class="docutils literal"><span class="pre">W</span></code>.</td>
 </tr>
 <tr class="row-odd"><td>celestial</td>
 <td>use astronomical conventions for longitude (i.e.
@@ -353,14 +345,14 @@ Implies resolution=None.</td>
 <td>set default axes instance
 (default None - matplotlib.pyplot.gca() may be used
 to get the current axes instance).
-If you don not want matplotlib.pyplot to be imported,
+If you do not want matplotlib.pyplot to be imported,
 you can either set this to a pre-defined axes
-instance, or use the <tt class="docutils literal"><span class="pre">ax</span></tt> keyword in each Basemap
+instance, or use the <code class="docutils literal"><span class="pre">ax</span></code> keyword in each Basemap
 method call that does drawing. In the first case,
 all Basemap method calls will draw to the same axes
 instance.  In the second case, you can draw to
 different axes with the same Basemap instance.
-You can also use the <tt class="docutils literal"><span class="pre">ax</span></tt> keyword in individual
+You can also use the <code class="docutils literal"><span class="pre">ax</span></code> keyword in individual
 method calls to selectively override the default
 axes instance.</td>
 </tr>
@@ -368,7 +360,7 @@ axes instance.</td>
 </table>
 <p>The following keywords are map projection parameters which all default to
 None.  Not all parameters are used by all projections, some are ignored.
-The module variable <tt class="docutils literal"><span class="pre">projection_params</span></tt> is a dictionary which
+The module variable <code class="docutils literal"><span class="pre">projection_params</span></code> is a dictionary which
 lists which parameters apply to which projections.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -454,7 +446,7 @@ or spaeqd projections. Default False.</td>
 <tr class="row-odd"><td>satellite_height</td>
 <td>height of satellite (in m) above equator -
 only relevant for geostationary
-and near-sided perspective (<tt class="docutils literal"><span class="pre">geos</span></tt> or <tt class="docutils literal"><span class="pre">nsper</span></tt>)
+and near-sided perspective (<code class="docutils literal"><span class="pre">geos</span></code> or <code class="docutils literal"><span class="pre">nsper</span></code>)
 projections. Default 35,786 km.</td>
 </tr>
 </tbody>
@@ -473,7 +465,7 @@ projections. Default 35,786 km.</td>
 <tbody valign="top">
 <tr class="row-even"><td>projection</td>
 <td>map projection. Print the module variable
-<tt class="docutils literal"><span class="pre">supported_projections</span></tt> to see a list of allowed
+<code class="docutils literal"><span class="pre">supported_projections</span></code> to see a list of allowed
 values.</td>
 </tr>
 <tr class="row-odd"><td>epsg</td>
@@ -524,8 +516,8 @@ selected map domain in map projection coordinates.</td>
 <td>polar radius of ellipsoid used (in meters).</td>
 </tr>
 <tr class="row-odd"><td>resolution</td>
-<td>resolution of boundary dataset being used (<tt class="docutils literal"><span class="pre">c</span></tt>
-for crude, <tt class="docutils literal"><span class="pre">l</span></tt> for low, etc.).
+<td>resolution of boundary dataset being used (<code class="docutils literal"><span class="pre">c</span></code>
+for crude, <code class="docutils literal"><span class="pre">l</span></code> for low, etc.).
 If None, no boundary dataset is associated with the
 Basemap instance.</td>
 </tr>
@@ -538,38 +530,38 @@ used by PROJ.4.</td>
 <p><strong>Converting from Geographic (lon/lat) to Map Projection (x/y) Coordinates</strong></p>
 <p>Calling a Basemap class instance with the arguments lon, lat will
 convert lon/lat (in degrees) to x/y map projection
-coordinates (in meters).  If optional keyword <tt class="docutils literal"><span class="pre">inverse</span></tt> is
+coordinates (in meters).  If optional keyword <code class="docutils literal"><span class="pre">inverse</span></code> is
 True (default is False), the inverse transformation from x/y
 to lon/lat is performed.</p>
-<p>For cylindrical equidistant projection (<tt class="docutils literal"><span class="pre">cyl</span></tt>), this
+<p>For cylindrical equidistant projection (<code class="docutils literal"><span class="pre">cyl</span></code>), this
 does nothing (i.e. x,y == lon,lat).</p>
 <p>For non-cylindrical projections, the inverse transformation
 always returns longitudes between -180 and 180 degrees. For
-cylindrical projections (self.projection == <tt class="docutils literal"><span class="pre">cyl</span></tt>, <tt class="docutils literal"><span class="pre">mill</span></tt>,
-<tt class="docutils literal"><span class="pre">cea</span></tt>, <tt class="docutils literal"><span class="pre">gall</span></tt> or <tt class="docutils literal"><span class="pre">merc</span></tt>)
+cylindrical projections (self.projection == <code class="docutils literal"><span class="pre">cyl</span></code>, <code class="docutils literal"><span class="pre">mill</span></code>,
+<code class="docutils literal"><span class="pre">cea</span></code>, <code class="docutils literal"><span class="pre">gall</span></code> or <code class="docutils literal"><span class="pre">merc</span></code>)
 the inverse transformation will return longitudes between
 self.llcrnrlon and self.llcrnrlat.</p>
 <p>Input arguments lon, lat can be either scalar floats, sequences
 or numpy arrays.</p>
 <p><strong>Example Usage:</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c"># read in topo data (on a regular lat/lon grid)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">etopo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s">&#39;etopo20data.gz&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lons</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s">&#39;etopo20lons.gz&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lats</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s">&#39;etopo20lats.gz&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c"># create Basemap instance for Robinson projection.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&#39;robin&#39;</span><span class="p">,</span><span class="n">lon_0</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">lons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">lons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c"># compute map projection coordinates for lat/lon grid.</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="k">import</span> <span class="n">Basemap</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># read in topo data (on a regular lat/lon grid)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">etopo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;etopo20data.gz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lons</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;etopo20lons.gz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lats</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;etopo20lats.gz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># create Basemap instance for Robinson projection.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Basemap</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;robin&#39;</span><span class="p">,</span><span class="n">lon_0</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">lons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">lons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># compute map projection coordinates for lat/lon grid.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">m</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span><span class="n">lats</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c"># make filled contour plot.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># make filled contour plot.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cs</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">etopo</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">jet</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">()</span> <span class="c"># draw coastlines</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">()</span> <span class="c"># draw a line around the map region</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">drawparallels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">90.</span><span class="p">,</span><span class="mf">120.</span><span class="p">,</span><span class="mf">30.</span><span class="p">),</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="c"># draw parallels</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">420.</span><span class="p">,</span><span class="mf">60.</span><span class="p">),</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c"># draw meridians</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Robinson Projection&#39;</span><span class="p">)</span> <span class="c"># add a title</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">drawcoastlines</span><span class="p">()</span> <span class="c1"># draw coastlines</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">drawmapboundary</span><span class="p">()</span> <span class="c1"># draw a line around the map region</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">drawparallels</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">90.</span><span class="p">,</span><span class="mf">120.</span><span class="p">,</span><span class="mf">30.</span><span class="p">),</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># draw parallels</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">drawmeridians</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">420.</span><span class="p">,</span><span class="mf">60.</span><span class="p">),</span><span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># draw meridians</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Robinson Projection&#39;</span><span class="p">)</span> <span class="c1"># add a title</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -578,11 +570,11 @@ examples directory of source distribution.  The &#8220;OO&#8221; version of this
 example (which does not use matplotlib.pyplot) is called &#8220;simpletest_oo.py&#8221;.]</p>
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.arcgisimage">
-<tt class="descname">arcgisimage</tt><big>(</big><em>server='http://server.arcgisonline.com/ArcGIS'</em>, <em>service='ESRI_Imagery_World_2D'</em>, <em>xpixels=400</em>, <em>ypixels=None</em>, <em>dpi=96</em>, <em>verbose=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.arcgisimage" title="Permalink to this definition">¶</a></dt>
+<code class="descname">arcgisimage</code><span class="sig-paren">(</span><em>server='http://server.arcgisonline.com/ArcGIS'</em>, <em>service='ESRI_Imagery_World_2D'</em>, <em>xpixels=400</em>, <em>ypixels=None</em>, <em>dpi=96</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.arcgisimage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve an image using the ArcGIS Server REST API and display it on
 the map. In order to use this method, the Basemap instance must be
-created using the <tt class="docutils literal"><span class="pre">epsg</span></tt> keyword to define the map projection, unless
-the <tt class="docutils literal"><span class="pre">cyl</span></tt> projection is used (in which case the epsg code 4326 is
+created using the <code class="docutils literal"><span class="pre">epsg</span></code> keyword to define the map projection, unless
+the <code class="docutils literal"><span class="pre">cyl</span></code> projection is used (in which case the epsg code 4326 is
 assumed).</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -624,22 +616,22 @@ False).</td>
 </tr>
 </tbody>
 </table>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 <p>returns a matplotlib.image.AxesImage instance.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.barbs">
-<tt class="descname">barbs</tt><big>(</big><em>x</em>, <em>y</em>, <em>u</em>, <em>v</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.barbs" title="Permalink to this definition">¶</a></dt>
+<code class="descname">barbs</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>u</em>, <em>v</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.barbs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a wind barb plot (u, v) with on the map.
 (see matplotlib.pyplot.barbs documentation).</p>
-<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+<p>If <code class="docutils literal"><span class="pre">latlon</span></code> keyword is set to True, x,y are intrepreted as
 longitude and latitude in degrees.  Data and longitudes are
 automatically shifted to match map projection region for cylindrical
 and pseudocylindrical projections, and x,y are transformed to map
-projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+projection coordinates. If <code class="docutils literal"><span class="pre">latlon</span></code> is False (default), x and y
 are assumed to be map projection coordinates.</p>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 <p>Other *args and **kwargs passed on to matplotlib.pyplot.barbs</p>
 <p>Returns two matplotlib.axes.Barbs instances, one for the Northern
 Hemisphere and one for the Southern Hemisphere.</p>
@@ -647,19 +639,19 @@ Hemisphere and one for the Southern Hemisphere.</p>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.bluemarble">
-<tt class="descname">bluemarble</tt><big>(</big><em>ax=None</em>, <em>scale=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.bluemarble" title="Permalink to this definition">¶</a></dt>
+<code class="descname">bluemarble</code><span class="sig-paren">(</span><em>ax=None</em>, <em>scale=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.bluemarble" title="Permalink to this definition">¶</a></dt>
 <dd><p>display blue marble image (from <a class="reference external" href="http://visibleearth.nasa.gov">http://visibleearth.nasa.gov</a>)
 as map background.
 Default image size is 5400x2700, which can be quite slow and
-use quite a bit of memory.  The <tt class="docutils literal"><span class="pre">scale</span></tt> keyword can be used
-to downsample the image (<tt class="docutils literal"><span class="pre">scale=0.5</span></tt> downsamples to 2700x1350).</p>
-<p>**kwargs passed on to <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><tt class="xref py py-meth docutils literal"><span class="pre">imshow()</span></tt></a>.</p>
+use quite a bit of memory.  The <code class="docutils literal"><span class="pre">scale</span></code> keyword can be used
+to downsample the image (<code class="docutils literal"><span class="pre">scale=0.5</span></code> downsamples to 2700x1350).</p>
+<p>**kwargs passed on to <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><code class="xref py py-meth docutils literal"><span class="pre">imshow()</span></code></a>.</p>
 <p>returns a matplotlib.image.AxesImage instance.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.colorbar">
-<tt class="descname">colorbar</tt><big>(</big><em>mappable=None</em>, <em>location='right'</em>, <em>size='5%'</em>, <em>pad='2%'</em>, <em>fig=None</em>, <em>ax=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.colorbar" title="Permalink to this definition">¶</a></dt>
+<code class="descname">colorbar</code><span class="sig-paren">(</span><em>mappable=None</em>, <em>location='right'</em>, <em>size='5%'</em>, <em>pad='2%'</em>, <em>fig=None</em>, <em>ax=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.colorbar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add colorbar to axes associated with a map.
 The colorbar axes instance is created using the axes_grid toolkit.</p>
 <table border="1" class="docutils">
@@ -712,45 +704,45 @@ colorbar method of the figure instance.</td>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.contour">
-<tt class="descname">contour</tt><big>(</big><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.contour" title="Permalink to this definition">¶</a></dt>
+<code class="descname">contour</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.contour" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a contour plot over the map
 (see matplotlib.pyplot.contour documentation).</p>
-<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+<p>If <code class="docutils literal"><span class="pre">latlon</span></code> keyword is set to True, x,y are intrepreted as
 longitude and latitude in degrees.  Data and longitudes are
 automatically shifted to match map projection region for cylindrical
 and pseudocylindrical projections, and x,y are transformed to map
-projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+projection coordinates. If <code class="docutils literal"><span class="pre">latlon</span></code> is False (default), x and y
 are assumed to be map projection coordinates.</p>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
-<p>If <tt class="docutils literal"><span class="pre">tri</span></tt> is set to <tt class="docutils literal"><span class="pre">True</span></tt>, an unstructured grid is assumed
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
+<p>If <code class="docutils literal"><span class="pre">tri</span></code> is set to <code class="docutils literal"><span class="pre">True</span></code>, an unstructured grid is assumed
 (x,y,data must be 1-d) and matplotlib.pyplot.tricontour is used.</p>
 <p>Other *args and **kwargs passed on to matplotlib.pyplot.contour
-(or tricontour if <tt class="docutils literal"><span class="pre">tri=True</span></tt>).</p>
+(or tricontour if <code class="docutils literal"><span class="pre">tri=True</span></code>).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.contourf">
-<tt class="descname">contourf</tt><big>(</big><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.contourf" title="Permalink to this definition">¶</a></dt>
+<code class="descname">contourf</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.contourf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a filled contour plot over the map
 (see matplotlib.pyplot.contourf documentation).</p>
-<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+<p>If <code class="docutils literal"><span class="pre">latlon</span></code> keyword is set to True, x,y are intrepreted as
 longitude and latitude in degrees.  Data and longitudes are
 automatically shifted to match map projection region for cylindrical
 and pseudocylindrical projections, and x,y are transformed to map
-projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+projection coordinates. If <code class="docutils literal"><span class="pre">latlon</span></code> is False (default), x and y
 are assumed to be map projection coordinates.</p>
 <p>If x or y are outside projection limb (i.e. they have values &gt; 1.e20),
 the corresponing data elements will be masked.</p>
 <p>Extra keyword &#8216;ax&#8217; can be used to override the default axis instance.</p>
-<p>If <tt class="docutils literal"><span class="pre">tri</span></tt> is set to <tt class="docutils literal"><span class="pre">True</span></tt>, an unstructured grid is assumed
+<p>If <code class="docutils literal"><span class="pre">tri</span></code> is set to <code class="docutils literal"><span class="pre">True</span></code>, an unstructured grid is assumed
 (x,y,data must be 1-d) and matplotlib.pyplot.tricontourf is used.</p>
 <p>Other *args and **kwargs passed on to matplotlib.pyplot.contourf
-(or tricontourf if <tt class="docutils literal"><span class="pre">tri=True</span></tt>).</p>
+(or tricontourf if <code class="docutils literal"><span class="pre">tri=True</span></code>).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.drawcoastlines">
-<tt class="descname">drawcoastlines</tt><big>(</big><em>linewidth=1.0</em>, <em>linestyle='solid'</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>ax=None</em>, <em>zorder=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawcoastlines" title="Permalink to this definition">¶</a></dt>
+<code class="descname">drawcoastlines</code><span class="sig-paren">(</span><em>linewidth=1.0</em>, <em>linestyle='solid'</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>ax=None</em>, <em>zorder=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawcoastlines" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw coastlines.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -790,7 +782,7 @@ matplotlib.patches.LineCollections).</td>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.drawcounties">
-<tt class="descname">drawcounties</tt><big>(</big><em>linewidth=0.1</em>, <em>linestyle='solid'</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>facecolor='none'</em>, <em>ax=None</em>, <em>zorder=None</em>, <em>drawbounds=False</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawcounties" title="Permalink to this definition">¶</a></dt>
+<code class="descname">drawcounties</code><span class="sig-paren">(</span><em>linewidth=0.1</em>, <em>linestyle='solid'</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>facecolor='none'</em>, <em>ax=None</em>, <em>zorder=None</em>, <em>drawbounds=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawcounties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw county boundaries in US. The county boundary shapefile
 originates with the NOAA Coastal Geospatial Data Project
 (<a class="reference external" href="http://coastalgeospatial.noaa.gov/data_gis.html">http://coastalgeospatial.noaa.gov/data_gis.html</a>).</p>
@@ -836,7 +828,7 @@ matplotlib.patches.LineCollections).</td>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.drawcountries">
-<tt class="descname">drawcountries</tt><big>(</big><em>linewidth=0.5</em>, <em>linestyle='solid'</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>ax=None</em>, <em>zorder=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawcountries" title="Permalink to this definition">¶</a></dt>
+<code class="descname">drawcountries</code><span class="sig-paren">(</span><em>linewidth=0.5</em>, <em>linestyle='solid'</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>ax=None</em>, <em>zorder=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawcountries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw country boundaries.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -877,9 +869,9 @@ matplotlib.patches.LineCollections).</td>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.drawgreatcircle">
-<tt class="descname">drawgreatcircle</tt><big>(</big><em>lon1</em>, <em>lat1</em>, <em>lon2</em>, <em>lat2</em>, <em>del_s=100.0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawgreatcircle" title="Permalink to this definition">¶</a></dt>
+<code class="descname">drawgreatcircle</code><span class="sig-paren">(</span><em>lon1</em>, <em>lat1</em>, <em>lon2</em>, <em>lat2</em>, <em>del_s=100.0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawgreatcircle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw a great circle on the map from the longitude-latitude
-pair <tt class="docutils literal"><span class="pre">lon1,lat1</span></tt> to <tt class="docutils literal"><span class="pre">lon2,lat2</span></tt></p>
+pair <code class="docutils literal"><span class="pre">lon1,lat1</span></code> to <code class="docutils literal"><span class="pre">lon2,lat2</span></code></p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="20%" />
@@ -896,22 +888,18 @@ pair <tt class="docutils literal"><span class="pre">lon1,lat1</span></tt> to <tt
 (default 100).</td>
 </tr>
 <tr class="row-odd"><td>**kwargs</td>
-<td>other keyword arguments are passed on to <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.plot" title="mpl_toolkits.basemap.Basemap.plot"><tt class="xref py py-meth docutils literal"><span class="pre">plot()</span></tt></a>
+<td>other keyword arguments are passed on to <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.plot" title="mpl_toolkits.basemap.Basemap.plot"><code class="xref py py-meth docutils literal"><span class="pre">plot()</span></code></a>
 method of Basemap instance.</td>
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Cannot handle situations in which the great circle intersects
-the edge of the map projection domain, and then re-enters the domain.</p>
-</div>
-<p>Returns a matplotlib.lines.Line2D object.</p>
+<p>Returns a list with a single <code class="docutils literal"><span class="pre">matplotlib.lines.Line2D</span></code> object like a
+call to <code class="docutils literal"><span class="pre">pyplot.plot()</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.drawlsmask">
-<tt class="descname">drawlsmask</tt><big>(</big><em>land_color='0.8'</em>, <em>ocean_color='w'</em>, <em>lsmask=None</em>, <em>lsmask_lons=None</em>, <em>lsmask_lats=None</em>, <em>lakes=True</em>, <em>resolution='l'</em>, <em>grid=5</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawlsmask" title="Permalink to this definition">¶</a></dt>
+<code class="descname">drawlsmask</code><span class="sig-paren">(</span><em>land_color='0.8'</em>, <em>ocean_color='w'</em>, <em>lsmask=None</em>, <em>lsmask_lons=None</em>, <em>lsmask_lats=None</em>, <em>lakes=True</em>, <em>resolution='l'</em>, <em>grid=5</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawlsmask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw land-sea mask image.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -967,19 +955,19 @@ mask (default &#8216;l&#8217;, available &#8216;c&#8217;,&#8217;l&#8217;,&#8217;
 </tr>
 <tr class="row-even"><td>**kwargs</td>
 <td>extra keyword arguments passed on to
-<a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><tt class="xref py py-meth docutils literal"><span class="pre">imshow()</span></tt></a></td>
+<a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><code class="xref py py-meth docutils literal"><span class="pre">imshow()</span></code></a></td>
 </tr>
 </tbody>
 </table>
 <p>If any of the lsmask, lsmask_lons or lsmask_lats keywords are not
 set, the built in GSHHS land-sea mask datasets are used.</p>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 <p>returns a matplotlib.image.AxesImage instance.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.drawmapboundary">
-<tt class="descname">drawmapboundary</tt><big>(</big><em>color='k'</em>, <em>linewidth=1.0</em>, <em>fill_color=None</em>, <em>zorder=None</em>, <em>ax=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawmapboundary" title="Permalink to this definition">¶</a></dt>
+<code class="descname">drawmapboundary</code><span class="sig-paren">(</span><em>color='k'</em>, <em>linewidth=1.0</em>, <em>fill_color=None</em>, <em>zorder=None</em>, <em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawmapboundary" title="Permalink to this definition">¶</a></dt>
 <dd><p>draw boundary around map projection region, optionally
 filling interior of region.</p>
 <table border="1" class="docutils">
@@ -1020,10 +1008,10 @@ background color). If set to the string
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.drawmapscale">
-<tt class="descname">drawmapscale</tt><big>(</big><em>lon</em>, <em>lat</em>, <em>lon0</em>, <em>lat0</em>, <em>length</em>, <em>barstyle='simple'</em>, <em>units='km'</em>, <em>fontsize=9</em>, <em>yoffset=None</em>, <em>labelstyle='simple'</em>, <em>fontcolor='k'</em>, <em>fillcolor1='w'</em>, <em>fillcolor2='k'</em>, <em>ax=None</em>, <em>format='%d'</em>, <em>zorder=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawmapscale" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw a map scale at <tt class="docutils literal"><span class="pre">lon,lat</span></tt> of length <tt class="docutils literal"><span class="pre">length</span></tt>
+<code class="descname">drawmapscale</code><span class="sig-paren">(</span><em>lon</em>, <em>lat</em>, <em>lon0</em>, <em>lat0</em>, <em>length</em>, <em>barstyle='simple'</em>, <em>units='km'</em>, <em>fontsize=9</em>, <em>yoffset=None</em>, <em>labelstyle='simple'</em>, <em>fontcolor='k'</em>, <em>fillcolor1='w'</em>, <em>fillcolor2='k'</em>, <em>ax=None</em>, <em>format='%d'</em>, <em>zorder=None</em>, <em>linecolor=None</em>, <em>linewidth=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawmapscale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a map scale at <code class="docutils literal"><span class="pre">lon,lat</span></code> of length <code class="docutils literal"><span class="pre">length</span></code>
 representing distance in the map
-projection coordinates at <tt class="docutils literal"><span class="pre">lon0,lat0</span></tt>.</p>
+projection coordinates at <code class="docutils literal"><span class="pre">lon0,lat0</span></code>.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="21%" />
@@ -1039,9 +1027,9 @@ projection coordinates at <tt class="docutils literal"><span class="pre">lon0,la
 <td>the units of the length argument (Default km).</td>
 </tr>
 <tr class="row-odd"><td>barstyle</td>
-<td><tt class="docutils literal"><span class="pre">simple</span></tt> or <tt class="docutils literal"><span class="pre">fancy</span></tt> (roughly corresponding
+<td><code class="docutils literal"><span class="pre">simple</span></code> or <code class="docutils literal"><span class="pre">fancy</span></code> (roughly corresponding
 to the styles provided by Generic Mapping Tools).
-Default <tt class="docutils literal"><span class="pre">simple</span></tt>.</td>
+Default <code class="docutils literal"><span class="pre">simple</span></code>.</td>
 </tr>
 <tr class="row-even"><td>fontsize</td>
 <td>for map scale annotations, default 9.</td>
@@ -1050,12 +1038,12 @@ Default <tt class="docutils literal"><span class="pre">simple</span></tt>.</td>
 <td>for map scale annotations, default black.</td>
 </tr>
 <tr class="row-even"><td>labelstyle</td>
-<td><tt class="docutils literal"><span class="pre">simple</span></tt> (default) or <tt class="docutils literal"><span class="pre">fancy</span></tt>.  For
-<tt class="docutils literal"><span class="pre">fancy</span></tt> the map scale factor (ratio betwee
+<td><code class="docutils literal"><span class="pre">simple</span></code> (default) or <code class="docutils literal"><span class="pre">fancy</span></code>.  For
+<code class="docutils literal"><span class="pre">fancy</span></code> the map scale factor (ratio betwee
 the actual distance and map projection distance
 at lon0,lat0) and the value of lon0,lat0 are also
 displayed on the top of the scale bar. For
-<tt class="docutils literal"><span class="pre">simple</span></tt>, just the units are display on top
+<code class="docutils literal"><span class="pre">simple</span></code>, just the units are display on top
 and the distance below the scale bar.
 If equal to False, plot an empty label.</td>
 </tr>
@@ -1076,16 +1064,23 @@ the map (0.02*(self.ymax-self.ymin)).</td>
 <tr class="row-even"><td>zorder</td>
 <td>sets the zorder for the map scale.</td>
 </tr>
+<tr class="row-odd"><td>linecolor</td>
+<td>sets the color of the scale, by default, fontcolor
+is used</td>
+</tr>
+<tr class="row-even"><td>linewidth</td>
+<td>linewidth for scale and ticks</td>
+</tr>
 </tbody>
 </table>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.drawmeridians">
-<tt class="descname">drawmeridians</tt><big>(</big><em>meridians, color='k', linewidth=1.0, zorder=None, dashes=[1, 1], labels=[0, 0, 0, 0], labelstyle=None, fmt='%g', xoffset=None, yoffset=None, ax=None, latmax=None, **kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawmeridians" title="Permalink to this definition">¶</a></dt>
+<code class="descname">drawmeridians</code><span class="sig-paren">(</span><em>meridians, color='k', textcolor='k', linewidth=1.0, zorder=None, dashes=[1, 1], labels=[0, 0, 0, 0], labelstyle=None, fmt='%g', xoffset=None, yoffset=None, ax=None, latmax=None, **text_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawmeridians" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw and label meridians (longitude lines) for values (in degrees)
-given in the sequence <tt class="docutils literal"><span class="pre">meridians</span></tt>.</p>
+given in the sequence <code class="docutils literal"><span class="pre">meridians</span></code>.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="20%" />
@@ -1100,19 +1095,22 @@ given in the sequence <tt class="docutils literal"><span class="pre">meridians</
 <tr class="row-even"><td>color</td>
 <td>color to draw meridians (default black).</td>
 </tr>
-<tr class="row-odd"><td>linewidth</td>
+<tr class="row-odd"><td>textcolor</td>
+<td>color to draw labels (default black).</td>
+</tr>
+<tr class="row-even"><td>linewidth</td>
 <td>line width for meridians (default 1.)</td>
 </tr>
-<tr class="row-even"><td>zorder</td>
+<tr class="row-odd"><td>zorder</td>
 <td>sets the zorder for meridians (if not specified,
 uses default zorder for matplotlib.lines.Line2D
 objects).</td>
 </tr>
-<tr class="row-odd"><td>dashes</td>
+<tr class="row-even"><td>dashes</td>
 <td>dash pattern for meridians (default [1,1], i.e.
 1 pixel on, 1 pixel off).</td>
 </tr>
-<tr class="row-even"><td>labels</td>
+<tr class="row-odd"><td>labels</td>
 <td>list of 4 values (default [0,0,0,0]) that control
 whether meridians are labelled where they intersect
 the left, right, top or bottom of the plot. For
@@ -1120,35 +1118,35 @@ example labels=[1,0,0,1] will cause meridians
 to be labelled where they intersect the left and
 and bottom of the plot, but not the right and top.</td>
 </tr>
-<tr class="row-odd"><td>labelstyle</td>
+<tr class="row-even"><td>labelstyle</td>
 <td>if set to &#8220;+/-&#8221;, east and west longitudes are
 labelled with &#8220;+&#8221; and &#8220;-&#8221;, otherwise they are
 labelled with &#8220;E&#8221; and &#8220;W&#8221;.</td>
 </tr>
-<tr class="row-even"><td>fmt</td>
+<tr class="row-odd"><td>fmt</td>
 <td>a format string to format the meridian labels
 (default &#8216;%g&#8217;) <strong>or</strong> a function that takes a
 longitude value in degrees as it&#8217;s only argument
 and returns a formatted string.</td>
 </tr>
-<tr class="row-odd"><td>xoffset</td>
+<tr class="row-even"><td>xoffset</td>
 <td>label offset from edge of map in x-direction
 (default is 0.01 times width of map in map
 projection coordinates).</td>
 </tr>
-<tr class="row-even"><td>yoffset</td>
+<tr class="row-odd"><td>yoffset</td>
 <td>label offset from edge of map in y-direction
 (default is 0.01 times height of map in map
 projection coordinates).</td>
 </tr>
-<tr class="row-odd"><td>ax</td>
+<tr class="row-even"><td>ax</td>
 <td>axes instance (overrides default axes instance)</td>
 </tr>
-<tr class="row-even"><td>latmax</td>
+<tr class="row-odd"><td>latmax</td>
 <td>absolute value of latitude to which meridians are drawn
 (default is 80).</td>
 </tr>
-<tr class="row-odd"><td>**kwargs</td>
+<tr class="row-even"><td>**text_kwargs</td>
 <td>additional keyword arguments controlling text
 for labels that are passed on to
 the text method of the axes instance (see
@@ -1165,9 +1163,9 @@ dictionary removes the correpsonding meridian from the plot.</p>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.drawparallels">
-<tt class="descname">drawparallels</tt><big>(</big><em>circles, color='k', linewidth=1.0, zorder=None, dashes=[1, 1], labels=[0, 0, 0, 0], labelstyle=None, fmt='%g', xoffset=None, yoffset=None, ax=None, latmax=None, **kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawparallels" title="Permalink to this definition">¶</a></dt>
+<code class="descname">drawparallels</code><span class="sig-paren">(</span><em>circles, color='k', textcolor='k', linewidth=1.0, zorder=None, dashes=[1, 1], labels=[0, 0, 0, 0], labelstyle=None, fmt='%g', xoffset=None, yoffset=None, ax=None, latmax=None, **text_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawparallels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw and label parallels (latitude lines) for values (in degrees)
-given in the sequence <tt class="docutils literal"><span class="pre">circles</span></tt>.</p>
+given in the sequence <code class="docutils literal"><span class="pre">circles</span></code>.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="20%" />
@@ -1182,19 +1180,22 @@ given in the sequence <tt class="docutils literal"><span class="pre">circles</sp
 <tr class="row-even"><td>color</td>
 <td>color to draw parallels (default black).</td>
 </tr>
-<tr class="row-odd"><td>linewidth</td>
+<tr class="row-odd"><td>textcolor</td>
+<td>color to draw labels (default black).</td>
+</tr>
+<tr class="row-even"><td>linewidth</td>
 <td>line width for parallels (default 1.)</td>
 </tr>
-<tr class="row-even"><td>zorder</td>
+<tr class="row-odd"><td>zorder</td>
 <td>sets the zorder for parallels (if not specified,
 uses default zorder for matplotlib.lines.Line2D
 objects).</td>
 </tr>
-<tr class="row-odd"><td>dashes</td>
+<tr class="row-even"><td>dashes</td>
 <td>dash pattern for parallels (default [1,1], i.e.
 1 pixel on, 1 pixel off).</td>
 </tr>
-<tr class="row-even"><td>labels</td>
+<tr class="row-odd"><td>labels</td>
 <td>list of 4 values (default [0,0,0,0]) that control
 whether parallels are labelled where they intersect
 the left, right, top or bottom of the plot. For
@@ -1202,35 +1203,35 @@ example labels=[1,0,0,1] will cause parallels
 to be labelled where they intersect the left and
 and bottom of the plot, but not the right and top.</td>
 </tr>
-<tr class="row-odd"><td>labelstyle</td>
+<tr class="row-even"><td>labelstyle</td>
 <td>if set to &#8220;+/-&#8221;, north and south latitudes are
 labelled with &#8220;+&#8221; and &#8220;-&#8221;, otherwise they are
 labelled with &#8220;N&#8221; and &#8220;S&#8221;.</td>
 </tr>
-<tr class="row-even"><td>fmt</td>
+<tr class="row-odd"><td>fmt</td>
 <td>a format string to format the parallel labels
 (default &#8216;%g&#8217;) <strong>or</strong> a function that takes a
 latitude value in degrees as it&#8217;s only argument
 and returns a formatted string.</td>
 </tr>
-<tr class="row-odd"><td>xoffset</td>
+<tr class="row-even"><td>xoffset</td>
 <td>label offset from edge of map in x-direction
 (default is 0.01 times width of map in map
 projection coordinates).</td>
 </tr>
-<tr class="row-even"><td>yoffset</td>
+<tr class="row-odd"><td>yoffset</td>
 <td>label offset from edge of map in y-direction
 (default is 0.01 times height of map in map
 projection coordinates).</td>
 </tr>
-<tr class="row-odd"><td>ax</td>
+<tr class="row-even"><td>ax</td>
 <td>axes instance (overrides default axes instance)</td>
 </tr>
-<tr class="row-even"><td>latmax</td>
+<tr class="row-odd"><td>latmax</td>
 <td>absolute value of latitude to which meridians are drawn
 (default is 80).</td>
 </tr>
-<tr class="row-odd"><td>**kwargs</td>
+<tr class="row-even"><td>**text_kwargs</td>
 <td>additional keyword arguments controlling text
 for labels that are passed on to
 the text method of the axes instance (see
@@ -1247,7 +1248,7 @@ dictionary removes the corresponding parallel from the plot.</p>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.drawrivers">
-<tt class="descname">drawrivers</tt><big>(</big><em>linewidth=0.5</em>, <em>linestyle='solid'</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>ax=None</em>, <em>zorder=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawrivers" title="Permalink to this definition">¶</a></dt>
+<code class="descname">drawrivers</code><span class="sig-paren">(</span><em>linewidth=0.5</em>, <em>linestyle='solid'</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>ax=None</em>, <em>zorder=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawrivers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw major rivers.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -1288,7 +1289,7 @@ matplotlib.patches.LineCollections).</td>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.drawstates">
-<tt class="descname">drawstates</tt><big>(</big><em>linewidth=0.5</em>, <em>linestyle='solid'</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>ax=None</em>, <em>zorder=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawstates" title="Permalink to this definition">¶</a></dt>
+<code class="descname">drawstates</code><span class="sig-paren">(</span><em>linewidth=0.5</em>, <em>linestyle='solid'</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>ax=None</em>, <em>zorder=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.drawstates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw state boundaries in Americas.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -1329,20 +1330,20 @@ matplotlib.patches.LineCollections).</td>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.etopo">
-<tt class="descname">etopo</tt><big>(</big><em>ax=None</em>, <em>scale=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.etopo" title="Permalink to this definition">¶</a></dt>
+<code class="descname">etopo</code><span class="sig-paren">(</span><em>ax=None</em>, <em>scale=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.etopo" title="Permalink to this definition">¶</a></dt>
 <dd><p>display etopo relief image (from
 <a class="reference external" href="http://www.ngdc.noaa.gov/mgg/global/global.html">http://www.ngdc.noaa.gov/mgg/global/global.html</a>)
 as map background.
 Default image size is 5400x2700, which can be quite slow and
-use quite a bit of memory.  The <tt class="docutils literal"><span class="pre">scale</span></tt> keyword can be used
-to downsample the image (<tt class="docutils literal"><span class="pre">scale=0.5</span></tt> downsamples to 5400x2700).</p>
-<p>**kwargs passed on to <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><tt class="xref py py-meth docutils literal"><span class="pre">imshow()</span></tt></a>.</p>
+use quite a bit of memory.  The <code class="docutils literal"><span class="pre">scale</span></code> keyword can be used
+to downsample the image (<code class="docutils literal"><span class="pre">scale=0.5</span></code> downsamples to 5400x2700).</p>
+<p>**kwargs passed on to <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><code class="xref py py-meth docutils literal"><span class="pre">imshow()</span></code></a>.</p>
 <p>returns a matplotlib.image.AxesImage instance.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.fillcontinents">
-<tt class="descname">fillcontinents</tt><big>(</big><em>color='0.8'</em>, <em>lake_color=None</em>, <em>ax=None</em>, <em>zorder=None</em>, <em>alpha=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.fillcontinents" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fillcontinents</code><span class="sig-paren">(</span><em>color='0.8'</em>, <em>lake_color=None</em>, <em>ax=None</em>, <em>zorder=None</em>, <em>alpha=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.fillcontinents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fill continents.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -1382,15 +1383,15 @@ axis background color.</p>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.gcpoints">
-<tt class="descname">gcpoints</tt><big>(</big><em>lon1</em>, <em>lat1</em>, <em>lon2</em>, <em>lat2</em>, <em>npoints</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.gcpoints" title="Permalink to this definition">¶</a></dt>
-<dd><p>compute <tt class="docutils literal"><span class="pre">points</span></tt> points along a great circle with endpoints
-<tt class="docutils literal"><span class="pre">(lon1,lat1)</span></tt> and <tt class="docutils literal"><span class="pre">(lon2,lat2)</span></tt>.</p>
+<code class="descname">gcpoints</code><span class="sig-paren">(</span><em>lon1</em>, <em>lat1</em>, <em>lon2</em>, <em>lat2</em>, <em>npoints</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.gcpoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>compute <code class="docutils literal"><span class="pre">points</span></code> points along a great circle with endpoints
+<code class="docutils literal"><span class="pre">(lon1,lat1)</span></code> and <code class="docutils literal"><span class="pre">(lon2,lat2)</span></code>.</p>
 <p>Returns arrays x,y with map projection coordinates.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.hexbin">
-<tt class="descname">hexbin</tt><big>(</big><em>x</em>, <em>y</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.hexbin" title="Permalink to this definition">¶</a></dt>
+<code class="descname">hexbin</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.hexbin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a hexagonal binning plot of x versus y, where x, y are 1-D
 sequences of the same length, N. If C is None (the default), this is a
 histogram of the number of occurences of the observations at
@@ -1403,25 +1404,25 @@ same length as x and y.)</p>
 <p>x, y and/or C may be masked arrays, in which case only unmasked points
 will be plotted.</p>
 <p>(see matplotlib.pyplot.hexbin documentation).</p>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 <p>Other **kwargs passed on to matplotlib.pyplot.hexbin</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.imshow">
-<tt class="descname">imshow</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.imshow" title="Permalink to this definition">¶</a></dt>
+<code class="descname">imshow</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.imshow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display an image over the map
 (see matplotlib.pyplot.imshow documentation).</p>
-<p><tt class="docutils literal"><span class="pre">extent</span></tt> and <tt class="docutils literal"><span class="pre">origin</span></tt> keywords set automatically so image
+<p><code class="docutils literal"><span class="pre">extent</span></code> and <code class="docutils literal"><span class="pre">origin</span></code> keywords set automatically so image
 will be drawn over map region.</p>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 <p>Other **kwargs passed on to matplotlib.pyplot.plot.</p>
 <p>returns an matplotlib.image.AxesImage instance.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.is_land">
-<tt class="descname">is_land</tt><big>(</big><em>xpt</em>, <em>ypt</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.is_land" title="Permalink to this definition">¶</a></dt>
+<code class="descname">is_land</code><span class="sig-paren">(</span><em>xpt</em>, <em>ypt</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.is_land" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if the given x,y point (in projection coordinates) is
 over land, False otherwise.  The definition of land is based upon
 the GSHHS coastline polygons associated with the class instance.
@@ -1430,17 +1431,17 @@ Points over lakes inside land regions are not counted as land points.</p>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.makegrid">
-<tt class="descname">makegrid</tt><big>(</big><em>nx</em>, <em>ny</em>, <em>returnxy=False</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.makegrid" title="Permalink to this definition">¶</a></dt>
+<code class="descname">makegrid</code><span class="sig-paren">(</span><em>nx</em>, <em>ny</em>, <em>returnxy=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.makegrid" title="Permalink to this definition">¶</a></dt>
 <dd><p>return arrays of shape (ny,nx) containing lon,lat coordinates of
 an equally spaced native projection grid.</p>
-<p>If <tt class="docutils literal"><span class="pre">returnxy</span> <span class="pre">=</span> <span class="pre">True</span></tt>, the x,y values of the grid are returned also.</p>
+<p>If <code class="docutils literal"><span class="pre">returnxy</span> <span class="pre">=</span> <span class="pre">True</span></code>, the x,y values of the grid are returned also.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.nightshade">
-<tt class="descname">nightshade</tt><big>(</big><em>date</em>, <em>color='k'</em>, <em>delta=0.25</em>, <em>alpha=0.5</em>, <em>ax=None</em>, <em>zorder=2</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.nightshade" title="Permalink to this definition">¶</a></dt>
+<code class="descname">nightshade</code><span class="sig-paren">(</span><em>date</em>, <em>color='k'</em>, <em>delta=0.25</em>, <em>alpha=0.5</em>, <em>ax=None</em>, <em>zorder=2</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.nightshade" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shade the regions of the map that are in darkness at the time
-specifed by <tt class="docutils literal"><span class="pre">date</span></tt>.  <tt class="docutils literal"><span class="pre">date</span></tt> is a datetime instance,
+specifed by <code class="docutils literal"><span class="pre">date</span></code>.  <code class="docutils literal"><span class="pre">date</span></code> is a datetime instance,
 assumed to be UTC.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -1458,7 +1459,7 @@ assumed to be UTC.</p>
 </tr>
 <tr class="row-odd"><td>delta</td>
 <td>day/night terminator is computed with a
-a resolution of <tt class="docutils literal"><span class="pre">delta</span></tt> degrees (default 0.25).</td>
+a resolution of <code class="docutils literal"><span class="pre">delta</span></code> degrees (default 0.25).</td>
 </tr>
 <tr class="row-even"><td>alpha</td>
 <td>alpha transparency for shading (default 0.5, so
@@ -1469,29 +1470,29 @@ map background shows through).</td>
 </tr>
 </tbody>
 </table>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 <p>returns a matplotlib.contour.ContourSet instance.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.pcolor">
-<tt class="descname">pcolor</tt><big>(</big><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.pcolor" title="Permalink to this definition">¶</a></dt>
+<code class="descname">pcolor</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.pcolor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a pseudo-color plot over the map
 (see matplotlib.pyplot.pcolor documentation).</p>
-<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+<p>If <code class="docutils literal"><span class="pre">latlon</span></code> keyword is set to True, x,y are intrepreted as
 longitude and latitude in degrees.  Data and longitudes are
 automatically shifted to match map projection region for cylindrical
 and pseudocylindrical projections, and x,y are transformed to map
-projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+projection coordinates. If <code class="docutils literal"><span class="pre">latlon</span></code> is False (default), x and y
 are assumed to be map projection coordinates.</p>
 <p>If x or y are outside projection limb (i.e. they have values &gt; 1.e20)
 they will be convert to masked arrays with those values masked.
 As a result, those values will not be plotted.</p>
-<p>If <tt class="docutils literal"><span class="pre">tri</span></tt> is set to <tt class="docutils literal"><span class="pre">True</span></tt>, an unstructured grid is assumed
-(x,y,data must be 1-d) and matplotlib.pyplot.tricolor is used.</p>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
-<p>Other **kwargs passed on to matplotlib.pyplot.pcolor (or tricolor if
-<tt class="docutils literal"><span class="pre">tri=True</span></tt>).</p>
+<p>If <code class="docutils literal"><span class="pre">tri</span></code> is set to <code class="docutils literal"><span class="pre">True</span></code>, an unstructured grid is assumed
+(x,y,data must be 1-d) and matplotlib.pyplot.tripcolor is used.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
+<p>Other **kwargs passed on to matplotlib.pyplot.pcolor (or tripcolor if
+<code class="docutils literal"><span class="pre">tri=True</span></code>).</p>
 <p>Note: (taken from matplotlib.pyplot.pcolor documentation)
 Ideally the dimensions of x and y should be one greater than those of data;
 if the dimensions are the same, then the last row and column of data will be ignored.</p>
@@ -1499,16 +1500,16 @@ if the dimensions are the same, then the last row and column of data will be ign
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.pcolormesh">
-<tt class="descname">pcolormesh</tt><big>(</big><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.pcolormesh" title="Permalink to this definition">¶</a></dt>
+<code class="descname">pcolormesh</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>data</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.pcolormesh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a pseudo-color plot over the map
 (see matplotlib.pyplot.pcolormesh documentation).</p>
-<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+<p>If <code class="docutils literal"><span class="pre">latlon</span></code> keyword is set to True, x,y are intrepreted as
 longitude and latitude in degrees.  Data and longitudes are
 automatically shifted to match map projection region for cylindrical
 and pseudocylindrical projections, and x,y are transformed to map
-projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+projection coordinates. If <code class="docutils literal"><span class="pre">latlon</span></code> is False (default), x and y
 are assumed to be map projection coordinates.</p>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 <p>Other **kwargs passed on to matplotlib.pyplot.pcolormesh.</p>
 <p>Note: (taken from matplotlib.pyplot.pcolor documentation)
 Ideally the dimensions of x and y should be one greater than those of data;
@@ -1517,38 +1518,38 @@ if the dimensions are the same, then the last row and column of data will be ign
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.plot">
-<tt class="descname">plot</tt><big>(</big><em>x</em>, <em>y</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.plot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw lines and/or markers on the map
 (see matplotlib.pyplot.plot documentation).</p>
-<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+<p>If <code class="docutils literal"><span class="pre">latlon</span></code> keyword is set to True, x,y are intrepreted as
 longitude and latitude in degrees.  Data and longitudes are
 automatically shifted to match map projection region for cylindrical
 and pseudocylindrical projections, and x,y are transformed to map
-projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+projection coordinates. If <code class="docutils literal"><span class="pre">latlon</span></code> is False (default), x and y
 are assumed to be map projection coordinates.</p>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 <p>Other **kwargs passed on to matplotlib.pyplot.plot.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.quiver">
-<tt class="descname">quiver</tt><big>(</big><em>x</em>, <em>y</em>, <em>u</em>, <em>v</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.quiver" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a vector plot (u, v) with arrows on the map.
-Grid must be evenly spaced regular grid in x and y.
-(see matplotlib.pyplot.quiver documentation).</p>
-<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+<code class="descname">quiver</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>u</em>, <em>v</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.quiver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a vector plot (u, v) with arrows on the map.</p>
+<p>Arguments may be 1-D or 2-D arrays or sequences
+(see matplotlib.pyplot.quiver documentation for details).</p>
+<p>If <code class="docutils literal"><span class="pre">latlon</span></code> keyword is set to True, x,y are intrepreted as
 longitude and latitude in degrees.  Data and longitudes are
 automatically shifted to match map projection region for cylindrical
 and pseudocylindrical projections, and x,y are transformed to map
-projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+projection coordinates. If <code class="docutils literal"><span class="pre">latlon</span></code> is False (default), x and y
 are assumed to be map projection coordinates.</p>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 <p>Other *args and **kwargs passed on to matplotlib.pyplot.quiver.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.readshapefile">
-<tt class="descname">readshapefile</tt><big>(</big><em>shapefile</em>, <em>name</em>, <em>drawbounds=True</em>, <em>zorder=None</em>, <em>linewidth=0.5</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>ax=None</em>, <em>default_encoding='utf-8'</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.readshapefile" title="Permalink to this definition">¶</a></dt>
+<code class="descname">readshapefile</code><span class="sig-paren">(</span><em>shapefile</em>, <em>name</em>, <em>drawbounds=True</em>, <em>zorder=None</em>, <em>linewidth=0.5</em>, <em>color='k'</em>, <em>antialiased=1</em>, <em>ax=None</em>, <em>default_encoding='utf-8'</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.readshapefile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read in shape file, optionally draw boundaries on map.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -1636,15 +1637,15 @@ num_shapes is the number of shapes, type is the type code (one of
 the SHPT* constants defined in the shapelib module, see
 <a class="reference external" href="http://shapelib.maptools.org/shp_api.html">http://shapelib.maptools.org/shp_api.html</a>) and min and
 max are 4-element lists with the minimum and maximum values of the
-vertices. If <tt class="docutils literal"><span class="pre">drawbounds=True</span></tt> a
+vertices. If <code class="docutils literal"><span class="pre">drawbounds=True</span></code> a
 matplotlib.patches.LineCollection object is appended to the tuple.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.rotate_vector">
-<tt class="descname">rotate_vector</tt><big>(</big><em>uin</em>, <em>vin</em>, <em>lons</em>, <em>lats</em>, <em>returnxy=False</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.rotate_vector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rotate a vector field (<tt class="docutils literal"><span class="pre">uin,vin</span></tt>) on a rectilinear grid
-with longitudes = <tt class="docutils literal"><span class="pre">lons</span></tt> and latitudes = <tt class="docutils literal"><span class="pre">lats</span></tt> from
+<code class="descname">rotate_vector</code><span class="sig-paren">(</span><em>uin</em>, <em>vin</em>, <em>lons</em>, <em>lats</em>, <em>returnxy=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.rotate_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate a vector field (<code class="docutils literal"><span class="pre">uin,vin</span></code>) on a rectilinear grid
+with longitudes = <code class="docutils literal"><span class="pre">lons</span></code> and latitudes = <code class="docutils literal"><span class="pre">lats</span></code> from
 geographical (lat/lon) into map projection (x/y) coordinates.</p>
 <p>Differs from transform_vector in that no interpolation is done.
 The vector is returned on the same grid, but rotated into
@@ -1671,36 +1672,36 @@ to x and y). The magnitude of the vector is preserved.</p>
 <td>Arrays containing longitudes and latitudes
 (in degrees) of input data in increasing order.
 For non-cylindrical projections (those other than
-<tt class="docutils literal"><span class="pre">cyl</span></tt>, <tt class="docutils literal"><span class="pre">merc</span></tt>, <tt class="docutils literal"><span class="pre">cyl</span></tt>, <tt class="docutils literal"><span class="pre">gall</span></tt> and <tt class="docutils literal"><span class="pre">mill</span></tt>) lons
+<code class="docutils literal"><span class="pre">cyl</span></code>, <code class="docutils literal"><span class="pre">merc</span></code>, <code class="docutils literal"><span class="pre">cyl</span></code>, <code class="docutils literal"><span class="pre">gall</span></code> and <code class="docutils literal"><span class="pre">mill</span></code>) lons
 must fit within range -180 to 180.</td>
 </tr>
 </tbody>
 </table>
-<p>Returns <tt class="docutils literal"><span class="pre">uout,</span> <span class="pre">vout</span></tt> (rotated vector field).
+<p>Returns <code class="docutils literal"><span class="pre">uout,</span> <span class="pre">vout</span></code> (rotated vector field).
 If the optional keyword argument
-<tt class="docutils literal"><span class="pre">returnxy</span></tt> is True (default is False),
-returns <tt class="docutils literal"><span class="pre">uout,vout,x,y</span></tt> (where <tt class="docutils literal"><span class="pre">x,y</span></tt> are the map projection
-coordinates of the grid defined by <tt class="docutils literal"><span class="pre">lons,lats</span></tt>).</p>
+<code class="docutils literal"><span class="pre">returnxy</span></code> is True (default is False),
+returns <code class="docutils literal"><span class="pre">uout,vout,x,y</span></code> (where <code class="docutils literal"><span class="pre">x,y</span></code> are the map projection
+coordinates of the grid defined by <code class="docutils literal"><span class="pre">lons,lats</span></code>).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.scatter">
-<tt class="descname">scatter</tt><big>(</big><em>x</em>, <em>y</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.scatter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">scatter</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.scatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot points with markers on the map
 (see matplotlib.pyplot.scatter documentation).</p>
-<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+<p>If <code class="docutils literal"><span class="pre">latlon</span></code> keyword is set to True, x,y are intrepreted as
 longitude and latitude in degrees.  Data and longitudes are
 automatically shifted to match map projection region for cylindrical
 and pseudocylindrical projections, and x,y are transformed to map
-projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+projection coordinates. If <code class="docutils literal"><span class="pre">latlon</span></code> is False (default), x and y
 are assumed to be map projection coordinates.</p>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axes instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axes instance.</p>
 <p>Other **kwargs passed on to matplotlib.pyplot.scatter.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.set_axes_limits">
-<tt class="descname">set_axes_limits</tt><big>(</big><em>ax=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.set_axes_limits" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_axes_limits</code><span class="sig-paren">(</span><em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.set_axes_limits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Final step in Basemap method wrappers of Axes plotting methods:</p>
 <p>Set axis limits, fix aspect ratio for map domain using current
 or specified axes instance.  This is done only once per axes
@@ -1711,19 +1712,19 @@ before returning.</p>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.shadedrelief">
-<tt class="descname">shadedrelief</tt><big>(</big><em>ax=None</em>, <em>scale=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.shadedrelief" title="Permalink to this definition">¶</a></dt>
+<code class="descname">shadedrelief</code><span class="sig-paren">(</span><em>ax=None</em>, <em>scale=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.shadedrelief" title="Permalink to this definition">¶</a></dt>
 <dd><p>display shaded relief image (from <a class="reference external" href="http://www.shadedrelief.com">http://www.shadedrelief.com</a>)
 as map background.
 Default image size is 10800x5400, which can be quite slow and
-use quite a bit of memory.  The <tt class="docutils literal"><span class="pre">scale</span></tt> keyword can be used
-to downsample the image (<tt class="docutils literal"><span class="pre">scale=0.5</span></tt> downsamples to 5400x2700).</p>
-<p>**kwargs passed on to <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><tt class="xref py py-meth docutils literal"><span class="pre">imshow()</span></tt></a>.</p>
+use quite a bit of memory.  The <code class="docutils literal"><span class="pre">scale</span></code> keyword can be used
+to downsample the image (<code class="docutils literal"><span class="pre">scale=0.5</span></code> downsamples to 5400x2700).</p>
+<p>**kwargs passed on to <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><code class="xref py py-meth docutils literal"><span class="pre">imshow()</span></code></a>.</p>
 <p>returns a matplotlib.image.AxesImage instance.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.shiftdata">
-<tt class="descname">shiftdata</tt><big>(</big><em>lonsin</em>, <em>datain=None</em>, <em>lon_0=None</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.shiftdata" title="Permalink to this definition">¶</a></dt>
+<code class="descname">shiftdata</code><span class="sig-paren">(</span><em>lonsin</em>, <em>datain=None</em>, <em>lon_0=None</em>, <em>fix_wrap_around=True</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.shiftdata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shift longitudes (and optionally data) so that they match map projection region.
 Only valid for cylindrical/pseudo-cylindrical global projections and data
 on regular lat/lon grids. longitudes and data can be 1-d or 2-d, if 2-d
@@ -1744,27 +1745,7 @@ it is assumed longitudes are 2nd (rightmost) dimension.</p>
 </tr>
 </tbody>
 </table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="21%" />
-<col width="79%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Keywords</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>datain</td>
-<td>original 1-d or 2-d data. Default None.</td>
-</tr>
-<tr class="row-odd"><td>lon_0</td>
-<td>center of map projection region. Defaut None,
-given by current map projection.</td>
-</tr>
-</tbody>
-</table>
-<p>if datain given, returns <tt class="docutils literal"><span class="pre">dataout,lonsout</span></tt> (data and longitudes shifted to fit in interval
+<p>if datain given, returns <code class="docutils literal"><span class="pre">dataout,lonsout</span></code> (data and longitudes shifted to fit in interval
 [lon_0-180,lon_0+180]), otherwise just returns longitudes.  If
 transformed longitudes lie outside map projection region, data is
 masked and longitudes are set to 1.e30.</p>
@@ -1772,26 +1753,26 @@ masked and longitudes are set to 1.e30.</p>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.streamplot">
-<tt class="descname">streamplot</tt><big>(</big><em>x</em>, <em>y</em>, <em>u</em>, <em>v</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.streamplot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">streamplot</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>u</em>, <em>v</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.streamplot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws streamlines of a vector flow.
 (see matplotlib.pyplot.streamplot documentation).</p>
-<p>If <tt class="docutils literal"><span class="pre">latlon</span></tt> keyword is set to True, x,y are intrepreted as
+<p>If <code class="docutils literal"><span class="pre">latlon</span></code> keyword is set to True, x,y are intrepreted as
 longitude and latitude in degrees.  Data and longitudes are
 automatically shifted to match map projection region for cylindrical
 and pseudocylindrical projections, and x,y are transformed to map
-projection coordinates. If <tt class="docutils literal"><span class="pre">latlon</span></tt> is False (default), x and y
+projection coordinates. If <code class="docutils literal"><span class="pre">latlon</span></code> is False (default), x and y
 are assumed to be map projection coordinates.</p>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 <p>Other *args and **kwargs passed on to matplotlib.pyplot.streamplot.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.tissot">
-<tt class="descname">tissot</tt><big>(</big><em>lon_0</em>, <em>lat_0</em>, <em>radius_deg</em>, <em>npts</em>, <em>ax=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.tissot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw a polygon centered at <tt class="docutils literal"><span class="pre">lon_0,lat_0</span></tt>.  The polygon
+<code class="descname">tissot</code><span class="sig-paren">(</span><em>lon_0</em>, <em>lat_0</em>, <em>radius_deg</em>, <em>npts</em>, <em>ax=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.tissot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a polygon centered at <code class="docutils literal"><span class="pre">lon_0,lat_0</span></code>.  The polygon
 approximates a circle on the surface of the earth with radius
-<tt class="docutils literal"><span class="pre">radius_deg</span></tt> degrees latitude along longitude <tt class="docutils literal"><span class="pre">lon_0</span></tt>,
-made up of <tt class="docutils literal"><span class="pre">npts</span></tt> vertices.
+<code class="docutils literal"><span class="pre">radius_deg</span></code> degrees latitude along longitude <code class="docutils literal"><span class="pre">lon_0</span></code>,
+made up of <code class="docutils literal"><span class="pre">npts</span></code> vertices.
 The polygon represents a Tissot&#8217;s indicatrix
 (<a class="reference external" href="http://en.wikipedia.org/wiki/Tissot's_Indicatrix">http://en.wikipedia.org/wiki/Tissot&#8217;s_Indicatrix</a>),
 which when drawn on a map shows the distortion
@@ -1801,19 +1782,19 @@ inherent in the map projection.</p>
 <p class="last">Cannot handle situations in which the polygon intersects
 the edge of the map projection domain, and then re-enters the domain.</p>
 </div>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 <p>Other **kwargs passed on to matplotlib.patches.Polygon.</p>
 <p>returns a matplotlib.patches.Polygon object.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.transform_scalar">
-<tt class="descname">transform_scalar</tt><big>(</big><em>datin</em>, <em>lons</em>, <em>lats</em>, <em>nx</em>, <em>ny</em>, <em>returnxy=False</em>, <em>checkbounds=False</em>, <em>order=1</em>, <em>masked=False</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.transform_scalar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interpolate a scalar field (<tt class="docutils literal"><span class="pre">datin</span></tt>) from a lat/lon grid with
-longitudes = <tt class="docutils literal"><span class="pre">lons</span></tt> and latitudes = <tt class="docutils literal"><span class="pre">lats</span></tt> to a <tt class="docutils literal"><span class="pre">ny</span></tt> by <tt class="docutils literal"><span class="pre">nx</span></tt>
+<code class="descname">transform_scalar</code><span class="sig-paren">(</span><em>datin</em>, <em>lons</em>, <em>lats</em>, <em>nx</em>, <em>ny</em>, <em>returnxy=False</em>, <em>checkbounds=False</em>, <em>order=1</em>, <em>masked=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.transform_scalar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate a scalar field (<code class="docutils literal"><span class="pre">datin</span></code>) from a lat/lon grid with
+longitudes = <code class="docutils literal"><span class="pre">lons</span></code> and latitudes = <code class="docutils literal"><span class="pre">lats</span></code> to a <code class="docutils literal"><span class="pre">ny</span></code> by <code class="docutils literal"><span class="pre">nx</span></code>
 map projection grid.  Typically used to transform data to
 map projection coordinates for plotting on a map with
-the <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><tt class="xref py py-meth docutils literal"><span class="pre">imshow()</span></tt></a>.</p>
+the <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><code class="xref py py-meth docutils literal"><span class="pre">imshow()</span></code></a>.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="20%" />
@@ -1832,7 +1813,7 @@ the <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" ti
 <td>rank-1 arrays containing longitudes and latitudes
 (in degrees) of input data in increasing order.
 For non-cylindrical projections (those other than
-<tt class="docutils literal"><span class="pre">cyl</span></tt>, <tt class="docutils literal"><span class="pre">merc</span></tt>, <tt class="docutils literal"><span class="pre">cea</span></tt>, <tt class="docutils literal"><span class="pre">gall</span></tt> and <tt class="docutils literal"><span class="pre">mill</span></tt>) lons
+<code class="docutils literal"><span class="pre">cyl</span></code>, <code class="docutils literal"><span class="pre">merc</span></code>, <code class="docutils literal"><span class="pre">cea</span></code>, <code class="docutils literal"><span class="pre">gall</span></code> and <code class="docutils literal"><span class="pre">mill</span></code>) lons
 must fit within range -180 to 180.</td>
 </tr>
 <tr class="row-even"><td>nx, ny</td>
@@ -1874,16 +1855,16 @@ Cubic spline interpolation requires scipy.ndimage.</td>
 </tr>
 </tbody>
 </table>
-<p>Returns <tt class="docutils literal"><span class="pre">datout</span></tt> (data on map projection grid).
-If returnxy=True, returns <tt class="docutils literal"><span class="pre">data,x,y</span></tt>.</p>
+<p>Returns <code class="docutils literal"><span class="pre">datout</span></code> (data on map projection grid).
+If returnxy=True, returns <code class="docutils literal"><span class="pre">data,x,y</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.transform_vector">
-<tt class="descname">transform_vector</tt><big>(</big><em>uin</em>, <em>vin</em>, <em>lons</em>, <em>lats</em>, <em>nx</em>, <em>ny</em>, <em>returnxy=False</em>, <em>checkbounds=False</em>, <em>order=1</em>, <em>masked=False</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.transform_vector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rotate and interpolate a vector field (<tt class="docutils literal"><span class="pre">uin,vin</span></tt>) from a
-lat/lon grid with longitudes = <tt class="docutils literal"><span class="pre">lons</span></tt> and latitudes = <tt class="docutils literal"><span class="pre">lats</span></tt>
-to a <tt class="docutils literal"><span class="pre">ny</span></tt> by <tt class="docutils literal"><span class="pre">nx</span></tt> map projection grid.</p>
+<code class="descname">transform_vector</code><span class="sig-paren">(</span><em>uin</em>, <em>vin</em>, <em>lons</em>, <em>lats</em>, <em>nx</em>, <em>ny</em>, <em>returnxy=False</em>, <em>checkbounds=False</em>, <em>order=1</em>, <em>masked=False</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.transform_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate and interpolate a vector field (<code class="docutils literal"><span class="pre">uin,vin</span></code>) from a
+lat/lon grid with longitudes = <code class="docutils literal"><span class="pre">lons</span></code> and latitudes = <code class="docutils literal"><span class="pre">lats</span></code>
+to a <code class="docutils literal"><span class="pre">ny</span></code> by <code class="docutils literal"><span class="pre">nx</span></code> map projection grid.</p>
 <p>The input vector field is defined in spherical coordinates (it
 has eastward and northward components) while the output
 vector field is rotated to map projection coordinates (relative
@@ -1906,7 +1887,7 @@ to x and y). The magnitude of the vector is preserved.</p>
 <td>rank-1 arrays containing longitudes and latitudes
 (in degrees) of input data in increasing order.
 For non-cylindrical projections (those other than
-<tt class="docutils literal"><span class="pre">cyl</span></tt>, <tt class="docutils literal"><span class="pre">merc</span></tt>, <tt class="docutils literal"><span class="pre">cea</span></tt>, <tt class="docutils literal"><span class="pre">gall</span></tt> and <tt class="docutils literal"><span class="pre">mill</span></tt>) lons
+<code class="docutils literal"><span class="pre">cyl</span></code>, <code class="docutils literal"><span class="pre">merc</span></code>, <code class="docutils literal"><span class="pre">cea</span></code>, <code class="docutils literal"><span class="pre">gall</span></code> and <code class="docutils literal"><span class="pre">mill</span></code>) lons
 must fit within range -180 to 180.</td>
 </tr>
 <tr class="row-even"><td>nx, ny</td>
@@ -1948,40 +1929,40 @@ Cubic spline interpolation requires scipy.ndimage.</td>
 </tr>
 </tbody>
 </table>
-<p>Returns <tt class="docutils literal"><span class="pre">uout,</span> <span class="pre">vout</span></tt> (vector field on map projection grid).
-If returnxy=True, returns <tt class="docutils literal"><span class="pre">uout,vout,x,y</span></tt>.</p>
+<p>Returns <code class="docutils literal"><span class="pre">uout,</span> <span class="pre">vout</span></code> (vector field on map projection grid).
+If returnxy=True, returns <code class="docutils literal"><span class="pre">uout,vout,x,y</span></code>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.warpimage">
-<tt class="descname">warpimage</tt><big>(</big><em>image='bluemarble'</em>, <em>scale=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.warpimage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Display an image (filename given by <tt class="docutils literal"><span class="pre">image</span></tt> keyword) as a map background.
+<code class="descname">warpimage</code><span class="sig-paren">(</span><em>image='bluemarble'</em>, <em>scale=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.warpimage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display an image (filename given by <code class="docutils literal"><span class="pre">image</span></code> keyword) as a map background.
 If image is a URL (starts with &#8216;http&#8217;), it is downloaded to a temp
 file using urllib.urlretrieve.</p>
-<p>Default (if <tt class="docutils literal"><span class="pre">image</span></tt> not specified) is to display
+<p>Default (if <code class="docutils literal"><span class="pre">image</span></code> not specified) is to display
 &#8216;blue marble next generation&#8217; image from <a class="reference external" href="http://visibleearth.nasa.gov/">http://visibleearth.nasa.gov/</a>.</p>
 <p>Specified image must have pixels covering the whole globe in a regular
 lat/lon grid, starting and -180W and the South Pole.
 Works with the global images from
 <a class="reference external" href="http://earthobservatory.nasa.gov/Features/BlueMarble/BlueMarble_monthlies.php">http://earthobservatory.nasa.gov/Features/BlueMarble/BlueMarble_monthlies.php</a>.</p>
-<p>The <tt class="docutils literal"><span class="pre">scale</span></tt> keyword can be used to downsample (rescale) the image.
+<p>The <code class="docutils literal"><span class="pre">scale</span></code> keyword can be used to downsample (rescale) the image.
 Values less than 1.0 will speed things up at the expense of image
 resolution.</p>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
-<p>**kwargs passed on to <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><tt class="xref py py-meth docutils literal"><span class="pre">imshow()</span></tt></a>.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
+<p>**kwargs passed on to <a class="reference internal" href="#mpl_toolkits.basemap.Basemap.imshow" title="mpl_toolkits.basemap.Basemap.imshow"><code class="xref py py-meth docutils literal"><span class="pre">imshow()</span></code></a>.</p>
 <p>returns a matplotlib.image.AxesImage instance.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mpl_toolkits.basemap.Basemap.wmsimage">
-<tt class="descname">wmsimage</tt><big>(</big><em>server</em>, <em>xpixels=400</em>, <em>ypixels=None</em>, <em>format='png'</em>, <em>verbose=False</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.wmsimage" title="Permalink to this definition">¶</a></dt>
+<code class="descname">wmsimage</code><span class="sig-paren">(</span><em>server</em>, <em>xpixels=400</em>, <em>ypixels=None</em>, <em>format='png'</em>, <em>alpha=None</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.Basemap.wmsimage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve an image using from a WMS server using the
 Open Geospatial Consortium (OGC) standard interface
 and display on the map. Requires OWSLib
 (<a class="reference external" href="http://pypi.python.org/pypi/OWSLib">http://pypi.python.org/pypi/OWSLib</a>).
 In order to use this method, the Basemap instance must be
-created using the <tt class="docutils literal"><span class="pre">epsg</span></tt> keyword to define the map projection, unless
-the <tt class="docutils literal"><span class="pre">cyl</span></tt> projection is used (in which case the epsg code 4326 is
+created using the <code class="docutils literal"><span class="pre">epsg</span></code> keyword to define the map projection, unless
+the <code class="docutils literal"><span class="pre">cyl</span></code> projection is used (in which case the epsg code 4326 is
 assumed).</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -2010,17 +1991,21 @@ map projection region.</td>
 <tr class="row-odd"><td>format</td>
 <td>desired image format (default &#8216;png&#8217;)</td>
 </tr>
-<tr class="row-even"><td>verbose</td>
+<tr class="row-even"><td>alpha</td>
+<td>The alpha blending value,
+between 0 (transparent) and 1 (opaque) (default None)</td>
+</tr>
+<tr class="row-odd"><td>verbose</td>
 <td>if True, print WMS server info (default
 False).</td>
 </tr>
-<tr class="row-odd"><td>**kwargs</td>
+<tr class="row-even"><td>**kwargs</td>
 <td>extra keyword arguments passed on to
 OWSLib.wms.WebMapService.getmap.</td>
 </tr>
 </tbody>
 </table>
-<p>Extra keyword <tt class="docutils literal"><span class="pre">ax</span></tt> can be used to override the default axis instance.</p>
+<p>Extra keyword <code class="docutils literal"><span class="pre">ax</span></code> can be used to override the default axis instance.</p>
 <p>returns a matplotlib.image.AxesImage instance.</p>
 </dd></dl>
 
@@ -2028,17 +2013,40 @@ OWSLib.wms.WebMapService.getmap.</td>
 
 <dl class="function">
 <dt id="mpl_toolkits.basemap.addcyclic">
-<tt class="descclassname">mpl_toolkits.basemap.</tt><tt class="descname">addcyclic</tt><big>(</big><em>arrin</em>, <em>lonsin</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.addcyclic" title="Permalink to this definition">¶</a></dt>
-<dd><p><tt class="docutils literal"><span class="pre">arrout,</span> <span class="pre">lonsout</span> <span class="pre">=</span> <span class="pre">addcyclic(arrin,</span> <span class="pre">lonsin)</span></tt>
-adds cyclic (wraparound) point in longitude to <tt class="docutils literal"><span class="pre">arrin</span></tt> and <tt class="docutils literal"><span class="pre">lonsin</span></tt>,
-assumes longitude is the right-most dimension of <tt class="docutils literal"><span class="pre">arrin</span></tt>.</p>
+<code class="descclassname">mpl_toolkits.basemap.</code><code class="descname">addcyclic</code><span class="sig-paren">(</span><em>*arr</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.addcyclic" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>Adds cyclic (wraparound) points in longitude to one or several arrays,
+the last array being longitudes in degrees. e.g.</div></blockquote>
+<p><code class="docutils literal"><span class="pre">data1out,</span> <span class="pre">data2out,</span> <span class="pre">lonsout</span> <span class="pre">=</span> <span class="pre">addcyclic(data1,data2,lons)</span></code></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Keywords</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>axis</td>
+<td>the dimension representing longitude (default -1,
+or right-most)</td>
+</tr>
+<tr class="row-odd"><td>cyclic</td>
+<td>width of periodic domain (default 360)</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
 </dd></dl>
 
 <dl class="function">
 <dt id="mpl_toolkits.basemap.interp">
-<tt class="descclassname">mpl_toolkits.basemap.</tt><tt class="descname">interp</tt><big>(</big><em>datain</em>, <em>xin</em>, <em>yin</em>, <em>xout</em>, <em>yout</em>, <em>checkbounds=False</em>, <em>masked=False</em>, <em>order=1</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.interp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interpolate data (<tt class="docutils literal"><span class="pre">datain</span></tt>) on a rectilinear grid (with x = <tt class="docutils literal"><span class="pre">xin</span></tt>
-y = <tt class="docutils literal"><span class="pre">yin</span></tt>) to a grid with x = <tt class="docutils literal"><span class="pre">xout</span></tt>, y= <tt class="docutils literal"><span class="pre">yout</span></tt>.</p>
+<code class="descclassname">mpl_toolkits.basemap.</code><code class="descname">interp</code><span class="sig-paren">(</span><em>datain</em>, <em>xin</em>, <em>yin</em>, <em>xout</em>, <em>yout</em>, <em>checkbounds=False</em>, <em>masked=False</em>, <em>order=1</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.interp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate data (<code class="docutils literal"><span class="pre">datain</span></code>) on a rectilinear grid (with x = <code class="docutils literal"><span class="pre">xin</span></code>
+y = <code class="docutils literal"><span class="pre">yin</span></code>) to a grid with x = <code class="docutils literal"><span class="pre">xout</span></code>, y= <code class="docutils literal"><span class="pre">yout</span></code>.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="20%" />
@@ -2109,14 +2117,14 @@ This effectively uses nearest neighbor interpolation if any of the
 four surrounding points in datain are masked, and bilinear interpolation
 otherwise.</p>
 </div>
-<p>Returns <tt class="docutils literal"><span class="pre">dataout</span></tt>, the interpolated data on the grid <tt class="docutils literal"><span class="pre">xout,</span> <span class="pre">yout</span></tt>.</p>
+<p>Returns <code class="docutils literal"><span class="pre">dataout</span></code>, the interpolated data on the grid <code class="docutils literal"><span class="pre">xout,</span> <span class="pre">yout</span></code>.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="mpl_toolkits.basemap.maskoceans">
-<tt class="descclassname">mpl_toolkits.basemap.</tt><tt class="descname">maskoceans</tt><big>(</big><em>lonsin</em>, <em>latsin</em>, <em>datain</em>, <em>inlands=True</em>, <em>resolution='l'</em>, <em>grid=5</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.maskoceans" title="Permalink to this definition">¶</a></dt>
-<dd><p>mask data (<tt class="docutils literal"><span class="pre">datain</span></tt>), defined on a grid with latitudes <tt class="docutils literal"><span class="pre">latsin</span></tt>
-longitudes <tt class="docutils literal"><span class="pre">lonsin</span></tt> so that points over water will not be plotted.</p>
+<code class="descclassname">mpl_toolkits.basemap.</code><code class="descname">maskoceans</code><span class="sig-paren">(</span><em>lonsin</em>, <em>latsin</em>, <em>datain</em>, <em>inlands=True</em>, <em>resolution='l'</em>, <em>grid=5</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.maskoceans" title="Permalink to this definition">¶</a></dt>
+<dd><p>mask data (<code class="docutils literal"><span class="pre">datain</span></code>), defined on a grid with latitudes <code class="docutils literal"><span class="pre">latsin</span></code>
+longitudes <code class="docutils literal"><span class="pre">lonsin</span></code> so that points over water will not be plotted.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="21%" />
@@ -2133,8 +2141,8 @@ longitudes <tt class="docutils literal"><span class="pre">lonsin</span></tt> so 
 grid.</td>
 </tr>
 <tr class="row-odd"><td>datain</td>
-<td>rank-2 input array on grid defined by <tt class="docutils literal"><span class="pre">lonsin</span></tt> and
-<tt class="docutils literal"><span class="pre">latsin</span></tt>.</td>
+<td>rank-2 input array on grid defined by <code class="docutils literal"><span class="pre">lonsin</span></code> and
+<code class="docutils literal"><span class="pre">latsin</span></code>.</td>
 </tr>
 <tr class="row-even"><td>inlands</td>
 <td>if False, masked only ocean points and not inland
@@ -2155,7 +2163,7 @@ mask (default &#8216;l&#8217;, available &#8216;c&#8217;,&#8217;l&#8217;,&#8217;
 
 <dl class="function">
 <dt id="mpl_toolkits.basemap.shiftgrid">
-<tt class="descclassname">mpl_toolkits.basemap.</tt><tt class="descname">shiftgrid</tt><big>(</big><em>lon0</em>, <em>datain</em>, <em>lonsin</em>, <em>start=True</em>, <em>cyclic=360.0</em><big>)</big><a class="headerlink" href="#mpl_toolkits.basemap.shiftgrid" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">mpl_toolkits.basemap.</code><code class="descname">shiftgrid</code><span class="sig-paren">(</span><em>lon0</em>, <em>datain</em>, <em>lonsin</em>, <em>start=True</em>, <em>cyclic=360.0</em><span class="sig-paren">)</span><a class="headerlink" href="#mpl_toolkits.basemap.shiftgrid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shift global lat/lon grid east or west.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -2203,7 +2211,7 @@ longitude. Default True.</td>
 </tr>
 </tbody>
 </table>
-<p>returns <tt class="docutils literal"><span class="pre">dataout,lonsout</span></tt> (data and longitudes on shifted grid).</p>
+<p>returns <code class="docutils literal"><span class="pre">dataout,lonsout</span></code> (data and longitudes on shifted grid).</p>
 </dd></dl>
 
 </div>
@@ -2213,61 +2221,60 @@ longitude. Default True.</td>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">matplotlib basemap toolkit</a><ul>
-<li><a class="reference internal" href="#module-mpl_toolkits.basemap"><tt class="docutils literal"><span class="pre">mpl_toolkits.basemap</span></tt></a></li>
+<li><a class="reference internal" href="#module-mpl_toolkits.basemap"><code class="docutils literal"><span class="pre">mpl_toolkits.basemap</span></code></a></li>
 </ul>
 </li>
 </ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">The Matplotlib Basemap Toolkit API</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/api/basemap_api.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">The Matplotlib Basemap Toolkit API</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">The Matplotlib Basemap Toolkit API</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/basemap_api.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="The Matplotlib Basemap Toolkit API"
-             >previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.8 documentation</a> &raquo;</li>
-          <li><a href="index.html" >The Matplotlib Basemap Toolkit API</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Feb 13, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+      &copy;2011, Jeffrey Whitaker; 2016 The matplotlib development team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/api/basemap_api.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

@@ -6,56 +6,45 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Setting up the map &mdash; Basemap Matplotlib Toolkit 1.0.8 documentation</title>
+    <title>Setting up the map &#8212; Basemap Matplotlib Toolkit 1.1.0 documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.0.8',
+        VERSION:     '1.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Basemap Matplotlib Toolkit 1.0.8 documentation"
+          title="Search within Basemap Matplotlib Toolkit 1.1.0 documentation"
           href="../_static/opensearch.xml"/>
-    <link rel="top" title="Basemap Matplotlib Toolkit 1.0.8 documentation" href="../index.html" />
-    <link rel="up" title="The Matplotlib Basemap Toolkit User’s Guide" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Azimuthal Equidistant Projection" href="aeqd.html" />
-    <link rel="prev" title="Installing" href="installing.html" /> 
+    <link rel="prev" title="Installing" href="installing.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
   </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="aeqd.html" title="Azimuthal Equidistant Projection"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="installing.html" title="Installing"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.8 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li> 
-      </ul>
-    </div>  
+  <body role="document">
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="setting-up-the-map">
 <span id="mapsetup"></span><h1>Setting up the map<a class="headerlink" href="#setting-up-the-map" title="Permalink to this headline">¶</a></h1>
@@ -64,7 +53,7 @@ map, a map projection is needed. Since this cannot be done without
 distortion, there are many map projections, each with it&#8217;s own advantages
 and disadvantages. Basemap provides 24 different map projections.
 Some are global, some can only represent a portion of the globe. When
-a <a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap" title="mpl_toolkits.basemap.Basemap"><tt class="xref py py-class docutils literal"><span class="pre">Basemap</span></tt></a> class instance is
+a <a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap" title="mpl_toolkits.basemap.Basemap"><code class="xref py py-class docutils literal"><span class="pre">Basemap</span></code></a> class instance is
 created, the desired map projection must
 be specified, along with information about the portion of the earth&#8217;s
 surface that the map projection will describe. There are two basic
@@ -73,11 +62,11 @@ of each of the four corners of the rectangular map projection region.
 The other is to provide the lat/lon value of the center of the map
 projection region along with the width and height of the region in
 map projection coordinates.</p>
-<p>The class variable <tt class="docutils literal"><span class="pre">supported_projections</span></tt> is a dictionary containing
+<p>The class variable <code class="docutils literal"><span class="pre">supported_projections</span></code> is a dictionary containing
 information about all the projections supported by Basemap.  The keys
-are the short names (used with the <tt class="docutils literal"><span class="pre">projection</span></tt> keyword to define
-a projection when creating a <tt class="docutils literal"><span class="pre">Basemap</span></tt> class instance), and the values
-are longer, more descriptive names.  The class variable <tt class="docutils literal"><span class="pre">projection_params</span></tt>
+are the short names (used with the <code class="docutils literal"><span class="pre">projection</span></code> keyword to define
+a projection when creating a <code class="docutils literal"><span class="pre">Basemap</span></code> class instance), and the values
+are longer, more descriptive names.  The class variable <code class="docutils literal"><span class="pre">projection_params</span></code>
 is a dictionary that provides a list of parameters that can be used to
 define the properties of each projection.  Following are examples that
 illustrate how to set up each of the supported projections. Note that
@@ -125,59 +114,53 @@ time, many compromise between the two.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="installing.html"
-                        title="previous chapter">Installing</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="aeqd.html"
-                        title="next chapter">Azimuthal Equidistant Projection</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/users/mapsetup.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">The Matplotlib Basemap Toolkit User&#8217;s Guide</a><ul>
+      <li>Previous: <a href="installing.html" title="previous chapter">Installing</a></li>
+      <li>Next: <a href="aeqd.html" title="next chapter">Azimuthal Equidistant Projection</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/users/mapsetup.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="aeqd.html" title="Azimuthal Equidistant Projection"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="installing.html" title="Installing"
-             >previous</a> |</li>
-        <li><a href="../index.html">Basemap Matplotlib Toolkit 1.0.8 documentation</a> &raquo;</li>
-          <li><a href="index.html" >The Matplotlib Basemap Toolkit User&#8217;s Guide</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, Jeffrey Whitaker.
-      Last updated on Feb 13, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+      &copy;2011, Jeffrey Whitaker; 2016 The matplotlib development team.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/users/mapsetup.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>
