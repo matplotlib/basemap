@@ -102,7 +102,7 @@ or require an internet connection), execute 'python run_all.py'.
 
 ##Contact
 
-Jeff Whitaker <jeffrey.s.whitaker@noaa.gov>
+Ben Root <ben.v.root@gmail.com>
 
 ##Thanks
 
