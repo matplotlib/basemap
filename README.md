@@ -1,9 +1,9 @@
-#Basemap
+# Basemap
 
 Plot on map projections (with coastlines and political boundaries)
 using matplotlib.
 
-##Requirements
+## Requirements
 
 * Python 2.6 (or higher)
 
@@ -23,7 +23,7 @@ sure the corresponding "python-dev" package is also installed.  Otherwise, you
 may not have the python header (Python.h), which is required to build python
 C extensions.
 
-###Optional
+### Optional
 
 * [OWSLib](https://github.com/geopython/OWSLib) (optional) It is needed
 for the BaseMap.wmsimage function.
@@ -32,7 +32,7 @@ for the BaseMap.wmsimage function.
 needed for Basemap warpimage, bluemarble, shadedrelief, and etop methods.
 PIL should work on Python 2.x.  Pillow is a maintained fork of PIL.
 
-##Copyright
+## Copyright
 
 source code for the GEOS library is
 included in the 'geos-3.3.3' directory under the terms given in
@@ -59,7 +59,7 @@ USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 
-##Documentation 
+## Documentation 
 
 see http://matplotlib.github.com/basemap/
 
@@ -68,7 +68,7 @@ see scripts in 'examples' directory for example usage.
 read the FAQ and/or email the matplotlib-users mailing list if 
 you have problems or questions.
 
-##Install
+## Install
 
 0. Install pre-requisite python modules numpy and matplotlib.
 
@@ -100,10 +100,10 @@ prompt.
 To run all the examples (except those that have extra dependencies
 or require an internet connection), execute 'python run_all.py'.
 
-##Contact
+## Contact
 
 Ben Root <ben.v.root@gmail.com>
 
-##Thanks
+## Thanks
 
 Special thanks to John Hunter, Andrew Straw, Eric Firing, Rob Hetland, Scott Sinclair, Ivan Lima, Erik Andersen, Michael Hearne, Jesper Larsen, Ryan May, David Huard, Mauro Cavalcanti, Jonas Bluethgen, Chris Murphy, Pierre Gerard-Marchant, Christoph Gohlke, Eric Bruning, Stephane Raynaud, Tom Loredo, Patrick Marsh, Phil Elson, and Henry Hammond for valuable contributions.
