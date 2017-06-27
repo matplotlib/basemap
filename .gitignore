@@ -1,4 +1,7 @@
 #########################################
+# .idea
+*.iml
+
 # Editor temporary/working/backup files #
 .#*
 [#]*#
