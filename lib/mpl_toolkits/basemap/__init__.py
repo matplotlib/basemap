@@ -4246,13 +4246,13 @@ format=png32&\
 f=image" %\
 (server,service,xmin,ymin,xmax,ymax,self.epsg,self.epsg,xpixels,ypixels,dpi)
         # print URL?
-        if verbose: print basemap_url
+        if verbose: print(basemap_url)
         # return AxesImage instance.
         return self.imshow(imread(urllib2.urlopen(basemap_url)),ax=ax,
                            origin='upper')
 
-    def wmsimage(self,server,\
-                 xpixels=400,ypixels=None,\
+    def wmsimage(self,server,
+                 xpixels=400,ypixels=None,
                  format='png',alpha=None,verbose=False,**kwargs):
         """
         Retrieve an image using from a WMS server using the
@@ -4321,17 +4321,17 @@ f=image" %\
         # ypixels not given, find by scaling xpixels by the map aspect ratio.
         if ypixels is None:
             ypixels = int(self.aspect*xpixels)
-        if verbose: print server
+        if verbose: print(server)
         wms = WebMapService(server)
         if verbose:
-            print 'id: %s, version: %s' %\
-            (wms.identification.type,wms.identification.version)
-            print 'title: %s, abstract: %s' %\
-            (wms.identification.title,wms.identification.abstract)
-            print 'available layers:'
-            print list(wms.contents)
-            print 'projection options:'
-            print wms[kwargs['layers'][0]].crsOptions
+            print('id: %s, version: %s' %\
+            (wms.identification.type,wms.identification.version))
+            print('title: %s, abstract: %s' %\
+            (wms.identification.title,wms.identification.abstract))
+            print('available layers:')
+            print(list(wms.contents))
+            print('projection options:')
+            print(wms[kwargs['layers'][0]].crsOptions)
         # remove keys from kwargs that are over-ridden
         for k in ['format','bbox','service','size','srs']:
             if 'format' in kwargs: del kwargs['format']

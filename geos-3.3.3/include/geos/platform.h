@@ -21,7 +21,7 @@
 #define HAVE_ISFINITE 1
 
 /* Has isnan */
-/* #undef HAVE_ISNAN */
+#define HAVE_ISNAN 1
 
 #ifdef HAVE_IEEEFP_H
 extern "C"
