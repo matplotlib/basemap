@@ -77,7 +77,7 @@ set GEOS_DIR to /usr/local), or edit the setup.py script
 manually and set the variable GEOS_dir (right after the line
 that says "set GEOS_dir manually here".""" % "', '".join(geos_search_locations))
 else:
-    geos_include_dirs=[os.path.join(GEOS_dir,'include'),inc_dirs]
+    geos_include_dirs=[os.path.join(GEOS_dir,'include')] + inc_dirs
     geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
 
 packages          = ['mpl_toolkits','mpl_toolkits.basemap']
