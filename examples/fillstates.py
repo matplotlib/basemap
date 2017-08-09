@@ -6,6 +6,8 @@ from matplotlib.colors import rgb2hex, Normalize
 from matplotlib.patches import Polygon
 from matplotlib.colorbar import ColorbarBase
 
+fig, ax = plt.subplots()
+
 # Lambert Conformal map of lower 48 states.
 m = Basemap(llcrnrlon=-119,llcrnrlat=20,urcrnrlon=-64,urcrnrlat=49,
             projection='lcc',lat_1=33,lat_2=45,lon_0=-95)
@@ -93,9 +95,6 @@ for shapedict in m.states_info:
     statenames.append(statename)
 
 #%% ---------  cycle through state names, color each one.  --------------------
-fig = plt.gcf()  # get current figure instance
-ax = plt.gca() # get current axes instance
-
 for nshape,seg in enumerate(m.states):
     # skip DC and Puerto Rico.
     if statenames[nshape] not in ['Puerto Rico', 'District of Columbia']:
@@ -105,16 +104,21 @@ for nshape,seg in enumerate(m.states):
 
 AREA_1 = 0.005  # exclude small Hawaiian islands that are smaller than AREA_1
 AREA_2 = AREA_1 * 30.0  # exclude Alaskan islands that are smaller than AREA_2
-AK_SCALE = 0.18  # scale down Alaska to show as a map inset
+AK_SCALE = 0.19  # scale down Alaska to show as a map inset
+HI_OFFSET_X = -1900000  # X coordinate offset amount to move Hawaii "beneath" Texas
+HI_OFFSET_Y = 250000    # similar to above: Y offset for Hawaii
+AK_OFFSET_X = -250000   # X offset for Alaska (These four values are obtained
+AK_OFFSET_Y = -750000   # via manual trial and error, thus changing them is not recommended.)
 
 for nshape, shapedict in enumerate(m_.states_info):  # plot Alaska and Hawaii as map insets
     if shapedict['NAME'] in ['Alaska', 'Hawaii']:
         seg = m_.states[int(shapedict['SHAPENUM'] - 1)]
         if shapedict['NAME'] == 'Hawaii' and float(shapedict['AREA']) > AREA_1:
-            seg = list(map(lambda (x,y): (x-1900000, y+250000), seg))
+            seg = [(x + HI_OFFSET_X, y + HI_OFFSET_Y) for x, y in seg]
             color = rgb2hex(colors[statenames[nshape]])
         elif shapedict['NAME'] == 'Alaska' and float(shapedict['AREA']) > AREA_2:
-            seg = list(map(lambda (x,y): (AK_SCALE*x-200000, AK_SCALE*y-650000), seg))
+            seg = [(x*AK_SCALE + AK_OFFSET_X, y*AK_SCALE + AK_OFFSET_Y)\
+                   for x, y in seg]
             color = rgb2hex(colors[statenames[nshape]])
         poly = Polygon(seg, facecolor=color, edgecolor='gray', linewidth=.45)
         ax.add_patch(poly)
@@ -123,20 +127,10 @@ ax.set_title('United states population density by state')
 
 #%% ---------  Plot bounding boxes for Alaska and Hawaii insets  --------------
 light_gray = [0.8]*3  # define light gray color RGB
-m_.plot(np.linspace(170,177),np.linspace(29,29),linewidth=1.,
-        color=light_gray,latlon=True)
-m_.plot(np.linspace(177,180),np.linspace(29,26),linewidth=1.,
-        color=light_gray,latlon=True)
-m_.plot(np.linspace(180,180),np.linspace(26,23),linewidth=1.,
-        color=light_gray,latlon=True)
-m_.plot(np.linspace(-180,-177),np.linspace(23,20),linewidth=1.,
-        color=light_gray,latlon=True)
-m_.plot(np.linspace(-180,-175),np.linspace(26,26),linewidth=1.,
-        color=light_gray,latlon=True)
-m_.plot(np.linspace(-175,-171),np.linspace(26,22),linewidth=1.,
-        color=light_gray,latlon=True)
-m_.plot(np.linspace(-171,-171),np.linspace(22,20),linewidth=1.,
-        color=light_gray,latlon=True)
+x1,y1 = m_([-190,-183,-180,-180,-175,-171,-171],[29,29,26,26,26,22,20])
+x2,y2 = m_([-180,-180,-177],[26,23,20])  # these numbers are fine-tuned manually
+m_.plot(x1,y1,color=light_gray,linewidth=0.8)  # do not change them drastically
+m_.plot(x2,y2,color=light_gray,linewidth=0.8)
 
 #%% ---------   Show color bar  ---------------------------------------
 ax_c = fig.add_axes([0.9, 0.1, 0.03, 0.8])
