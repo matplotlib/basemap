@@ -12,7 +12,7 @@ env:
 addons:
   apt:
     packages:
-      - libgeos
+      - libgeos-3.4.2
       # matplotlib requirements
       - libpng12-dev
       - libfreetype6-dev
