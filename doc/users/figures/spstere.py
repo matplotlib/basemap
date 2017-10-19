@@ -1,7 +1,7 @@
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
-# setup north polar stereographic basemap.
+# setup south polar stereographic basemap.
 # The longitude lon_0 is at 6-o'clock, and the
 # latitude circle boundinglat is tangent to the edge  
 # of the map at lon_0. Default value of lat_ts
