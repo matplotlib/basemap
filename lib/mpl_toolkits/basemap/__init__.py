@@ -1701,10 +1701,10 @@ class Basemap(object):
                 if zorder is not None:
                     spine.set_zorder(zorder)
             if self.projection not in ['geos','ortho','nsper']:
-                limb = ax.axesPatch
+                limb = ax.patch
 
         if limb is not None:
-            if limb is not ax.axesPatch:
+            if limb is not ax.patch:
                 ax.add_patch(limb)
             self._mapboundarydrawn = limb
             if fill_color is None:
