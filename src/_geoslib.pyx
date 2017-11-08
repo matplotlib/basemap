@@ -335,15 +335,17 @@ cdef class Polygon(BaseGeometry):
         cdef GEOSCoordSeq *cs
         cdef GEOSGeom *lr
 
+
+
         # make sure data is contiguous.
         # if not, make a local copy.
         if not PyArray_ISCONTIGUOUS(b):
             b = b.copy()
 
         m = b.shape[0]
-
+       
         # Add closing coordinates to sequence?
-        if b[-1,0] != b[0,0] or b[-1,1] != b[0,1]:
+        if m > 0 and (b[-1,0] != b[0,0] or b[-1,1] != b[0,1]):
             M = m + 1
         else:
             M = m
