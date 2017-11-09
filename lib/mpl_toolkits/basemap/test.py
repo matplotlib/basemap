@@ -240,6 +240,13 @@ class TestInputValidation(TestCase):
         assert bmap1.proj4string == bmap2.proj4string
 
 
+class TestOrthoProjPolygons(TestCase):
+    def test_basemapcreation_should_not_fail(self):
+        # different resolutions should work 
+        for r in ['c', 'l', 'i', 'h', 'f']:
+            m = Basemap(projection='ortho',resolution=r,lat_1=45.,lat_2=55,lat_0=50,lon_0=-107.)
+        pass
+
 def test():
     """
     Run some tests.
