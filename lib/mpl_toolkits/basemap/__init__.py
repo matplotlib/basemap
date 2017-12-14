@@ -4243,6 +4243,7 @@ imageSR=%s&\
 size=%s,%s&\
 dpi=%s&\
 format=png32&\
+transparent=true&\
 f=image" %\
 (server,service,xmin,ymin,xmax,ymax,self.epsg,self.epsg,xpixels,ypixels,dpi)
         # print URL?
