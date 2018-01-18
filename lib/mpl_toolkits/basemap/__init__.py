@@ -1296,7 +1296,7 @@ class Basemap(object):
                 # numpy array (first column is lons, second is lats).
                 polystring = bdatfile.read(bytecount)
                 # binary data is little endian.
-                b = np.array(np.fromstring(polystring,dtype='<f4'),'f8')
+                b = np.array(np.frombuffer(polystring,dtype='<f4'),'f8')
                 b.shape = (npts,2)
                 b2 = b.copy()
                 # merge polygons that cross dateline.
@@ -5175,7 +5175,7 @@ def _readlsmask(lakes=True,resolution='l',grid=5):
     gzip.open(os.path.join(basemap_datadir,'lsmask_%smin_%s.bin' %\
         (grid,resolution)), 'rb')
     lsmask =\
-    np.reshape(np.fromstring(lsmaskf.read(),dtype=np.uint8),(nlats,nlons))
+    np.reshape(np.frombuffer(lsmaskf.read(),dtype=np.uint8),(nlats,nlons))
     if lakes:
         lsmask =\
         np.where(lsmask==2,np.array(0,dtype=np.uint8),lsmask)
