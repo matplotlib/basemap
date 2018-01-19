@@ -4020,7 +4020,9 @@ class Basemap(object):
             try:
                 import Image
             except ImportError:
-                raise ImportError('warpimage method requires PIL (http://www.pythonware.com/products/pil)')
+                msg = ('warpimage method requires PIL '
+                       '(http://pillow.readthedocs.io)')
+                raise ImportError(msg)
 
         from matplotlib.image import pil_to_array
         if self.celestial:
