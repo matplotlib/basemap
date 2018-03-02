@@ -3729,7 +3729,8 @@ class Basemap(object):
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         # clip to map limbs
-        ret,c = self._cliplimb(ax,ret)
+        ret.lines,c = self._cliplimb(ax,ret.lines)
+        ret.arrows,c = self._cliplimb(ax,ret.arrows)
         # streamplot arrows not returned in matplotlib 1.1.1, so clip all
         # FancyArrow patches attached to axes instance.
         if c is not None:
