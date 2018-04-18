@@ -52,13 +52,8 @@ def package_versions():
         OWSLib_version = 'not installed'
 
     try:
-        from PIL import VERSION as pil_version
-        try:
-            from PIL import PILLOW_VERSION as pillow_version
-        except ImportError:
-            pillow_version = 'not installed'
+        from PIL import __version__ as pillow_version
     except ImportError:
-        pil_version = 'not installed'
         pillow_version = 'not installed'
     
     
@@ -66,7 +61,7 @@ def package_versions():
                                'BasemapPackageVersions',
                                """Python, basemap, matplotlib,
                                   numpy, pyproj, pyshp, PROJ4, geodesic, 
-                                  GEOS, OWSLib, PIL, Pillow""")
+                                  GEOS, OWSLib, Pillow""")
 
     return BasemapPackageVersions(
                    Python = sys_version,
@@ -80,7 +75,6 @@ def package_versions():
                    GEOS = _geoslib.__geos_version__,
                    # optional dependencies below
                    OWSLib = OWSLib_version,
-                   PIL = pil_version,
                    Pillow = pillow_version)
 
 def check_proj_inv_hammer(segfault_protection=True):
