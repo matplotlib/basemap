@@ -10,20 +10,20 @@ Dependencies
 **Requirements**
 
 These are external packages which you will need to install before
-installing basemap. 
+installing Basemap. 
 
 
-matplotlib 1.0.0 (or later, `download <http://sf.net/projects/matplotlib/>`__)
+Matplotlib 1.0.0 (or later, `download <http://sf.net/projects/matplotlib/>`__)
 
 Python 2.6 (or later, including Python 3)
-    matplotlib requires python 3.5 or later (`download <http://www.python.org/download/>`__)
+    Matplotlib requires Python 3.5 or later (`download <http://www.python.org/download/>`__)
 
-numpy 1.2.1 (or later)
-    array support for python (`download <http://sourceforge.net/project/showfiles.php?group_id=1369&package_id=175103>`__)
+NumPy 1.2.1 (or later)
+    Array support for Python (`download <http://sourceforge.net/project/showfiles.php?group_id=1369&package_id=175103>`__)
 
 `PROJ4 <https://trac.osgeo.org/proj/>`__ Cartographic Projections Library.
 
-**Required library that ships with basemap**
+**Required library that ships with Basemap**
 
 `GEOS <http://trac.osgeo.org/geos/>`__ (Geometry Engine - Open Source) library 3.1.1 or later.
     Source code is included in the geos-3.3.3 directory. 
@@ -67,7 +67,7 @@ To install from the source, follow these steps:
 
 * cd back to the top level basemap directory (basemap-X.Y.Z) and
   run the usual ``python setup.py install``.  Check your installation
-  by running ``from mpl_toolkits.basemap import Basemap`` at the python
+  by running ``from mpl_toolkits.basemap import Basemap`` at the Python
   prompt.
 
 * To test, cd to the examples directory and run ``python simpletest.py``.
