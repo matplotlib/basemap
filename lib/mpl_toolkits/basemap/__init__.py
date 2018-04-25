@@ -14,7 +14,7 @@ heavy lifting), and the following functions:
 """
 from distutils.version import LooseVersion
 from matplotlib import __version__ as _matplotlib_version
-from matplotlib.cbook import is_scalar, dedent
+from matplotlib.cbook import dedent
 # check to make sure matplotlib is not too old.
 _matplotlib_version = LooseVersion(_matplotlib_version)
 _mpl_required_version = LooseVersion('0.98')
@@ -4984,12 +4984,11 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         dataout = map_coordinates(datain,coords,order=3,mode='nearest')
     else:
         raise ValueError('order keyword must be 0, 1 or 3')
-    if masked and isinstance(masked,bool):
-        dataout = ma.masked_array(dataout)
+    if masked:
         newmask = ma.mask_or(ma.getmask(dataout), xymask)
-        dataout = ma.masked_array(dataout,mask=newmask)
-    elif masked and is_scalar(masked):
-        dataout = np.where(xymask,masked,dataout)
+        dataout = ma.masked_array(dataout, mask=newmask)
+        if not isinstance(masked, bool):
+            dataout = dataout.filled(masked)
     return dataout
 
 def shiftgrid(lon0,datain,lonsin,start=True,cyclic=360.0):
