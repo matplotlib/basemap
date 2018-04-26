@@ -377,7 +377,7 @@ m = Basemap(projection = 'rotpole',lon_0 = -120.,\
             llcrnrx = 137, urcrnrx = 222.5, resolution = 'l')
 m.drawcoastlines()
 ny,nx = lons.shape
-m.contourf(lons[ny/2:,:],lats[ny/2:,:],topodat[ny/2:,:],50,cmap=cmap,extend='both',latlon=True)
+m.contourf(lons[ny//2:,:],lats[ny//2:,:],topodat[ny//2:,:],50,cmap=cmap,extend='both',latlon=True)
 m.drawmeridians(np.arange(-180,180,20),labels=[1,1,1,1])
 m.drawparallels(np.arange(20,80,20))
 m.colorbar()

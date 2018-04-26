@@ -37,7 +37,7 @@ m.drawcoastlines()
 m.drawmeridians(np.arange(-120,-60,2),labels=[0,0,0,1])
 m.drawparallels(np.arange(0,30,2),labels=[1,0,0,0])
 
-m.streamplot(x,y,udat,vdat,color=speed,linewidth=2,density=2,cmap=plt.cm.spectral)
+m.streamplot(x,y,udat,vdat,color=speed,linewidth=2,density=2,cmap=plt.cm.Spectral)
 m.colorbar()
 
 plt.title('Hurricane Rita flow field visualized with streamlines',\

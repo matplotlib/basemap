@@ -48,7 +48,7 @@ fig=plt.figure(figsize=(8,8))
 
 # add an axes.
 ax = fig.add_axes([0.1,0.1,0.8,0.8])
-ax.set_axis_bgcolor('lightgrey')
+ax.set_facecolor('lightgrey')
 # associate this axes with the Basemap instance.
 m.ax = ax
 

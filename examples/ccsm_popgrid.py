@@ -56,7 +56,7 @@ m.drawcoastlines()
 m.fillcontinents(color='white')
 
 x, y = m(tlon,tlat)
-im = m.pcolor(x,y,ma.masked_array(np.zeros(temp.shape,'f'), temp.mask),
+im = m.pcolormesh(x,y,ma.masked_array(np.zeros(temp.shape,'f'), temp.mask),
                 shading='faceted', antialiased=True, cmap=plt.cm.cool,
                 vmin=0, vmax=0)
 # disclaimer:  these are not really the grid cells because of the

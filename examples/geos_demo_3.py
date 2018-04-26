@@ -6,7 +6,7 @@ fig = plt.figure()
 lon_0=57
 # global geos map
 m1 = Basemap(projection='geos',lon_0=lon_0,rsphere=(6378137.00,6356752.3142),resolution=None)
-ax = fig.add_axes([0.1,0.1,0.8,0.8],axisbg='k')
+ax = fig.add_axes([0.1,0.1,0.8,0.8], facecolor='k')
 # plot just upper right quadrant (coordinates determined from global map).
 m = Basemap(projection='geos',lon_0=lon_0,rsphere=(6378137.00,6356752.3142),resolution='l',llcrnrx=0.,llcrnry=0.,urcrnrx=m1.urcrnrx/2.,urcrnry=m1.urcrnry/2.)
 m.drawcoastlines()
@@ -22,7 +22,7 @@ fig = plt.figure()
 # global ortho map
 lat_0=10.
 m1 = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0,resolution=None)
-ax = fig.add_axes([0.1,0.1,0.8,0.8],axisbg='k')
+ax = fig.add_axes([0.1,0.1,0.8,0.8], facecolor='k')
 # plot just upper right quadrant (corners determined from global map).
 m = Basemap(projection='ortho',lon_0=lon_0,lat_0=lat_0,resolution='l',llcrnrx=0.,llcrnry=0.,urcrnrx=m1.urcrnrx/2.,urcrnry=m1.urcrnry/2.)
 m.drawcoastlines()

@@ -28,7 +28,7 @@ plt.figure(figsize=(10,6.6666))
 epsg = 2263; width=600.e3; height = 400.e3
 m=Basemap(epsg=epsg,resolution='h',width=width,height=height)
 # specify a different server.
-m.arcgisimage(server='http://maps.ngdc.noaa.gov',service='etopo1',verbose=True)
+m.arcgisimage(server='https://gis.ngdc.noaa.gov/arcgis',service='etopo1',verbose=True)
 m.drawmeridians(np.arange(-180,180,2),labels=[0,0,0,1])
 m.drawparallels(np.arange(0,80,1),labels=[1,0,0,0])
 m.drawcoastlines(linewidth=0.25)
