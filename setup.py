@@ -1,6 +1,10 @@
 from __future__ import (absolute_import, division, print_function)
 
-import sys, glob, os, subprocess
+import glob
+import io
+import os
+import sys
+from setuptools.dist import Distribution
 
 if sys.version_info < (2, 6):
     raise SystemExit("""matplotlib and the basemap toolkit require Python 2.6 or later.""")
@@ -19,6 +23,21 @@ else:
     from numpy.distutils.core import setup, Extension
     # append numpy include dir.
     inc_dirs.append(numpy.get_include())
+
+
+def read(path, encoding='utf-8'):
+    path = os.path.join(os.path.dirname(__file__), path)
+    with io.open(path, encoding=encoding) as fp:
+        return fp.read()
+
+
+def get_install_requirements(path):
+    content = read(path)
+    return [
+        req
+        for req in content.split("\n")
+        if req != '' and not req.startswith('#')
+    ]
 
 
 def checkversion(GEOS_dir):
@@ -104,13 +123,7 @@ datafiles = glob.glob(os.path.join(pathout,'*'))
 datafiles = [os.path.join('data',os.path.basename(f)) for f in datafiles]
 package_data = {'mpl_toolkits.basemap':datafiles}
 
-requirements = [
-  "numpy>=1.2.1", 
-  "matplotlib>=1.0.0",
-  "pyproj >= 1.9.3", 
-  "pyshp >= 1.2.0",
-  "six",
-]
+install_requires = get_install_requirements("requirements.txt")
 
 __version__ = "1.1.0"
 setup(
@@ -128,7 +141,7 @@ setup(
   author_email      = "jeffrey.s.whitaker@noaa.gov",
   maintainer        = "Ben Root",
   maintainer_email  = "ben.v.root@gmail.com",
-  install_requires  = requirements,
+  install_requires  = install_requires,
   platforms         = ["any"],
   license           = "OSI Approved",
   keywords          = ["python","plotting","plots","graphs","charts","GIS","mapping","map projections","maps"],
@@ -143,6 +156,6 @@ setup(
   packages          = packages,
   namespace_packages = namespace_packages,
   package_dir       = package_dirs,
-  ext_modules       = extensions,   
+  ext_modules       = extensions,
   package_data = package_data
   )
