@@ -5,16 +5,14 @@ import sys, glob, os, subprocess
 if sys.version_info < (2, 6):
     raise SystemExit("""matplotlib and the basemap toolkit require Python 2.6 or later.""")
 
-from distutils.dist import Distribution
-from distutils.util import convert_path
-from distutils import ccompiler, sysconfig
+from setuptools.dist import Distribution
 
 # Do not require numpy for just querying the package
 # Taken from the netcdf-python setup file (which took it from h5py setup file).
 inc_dirs = []
 if any('--' + opt in sys.argv for opt in Distribution.display_option_names +
        ['help-commands', 'help']) or sys.argv[1] == 'egg_info':
-    from distutils.core import setup, Extension
+    from setuptools import setup, Extension
 else:
     import numpy
     # Use numpy versions if they are available.
