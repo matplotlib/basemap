@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 # example demonstrating how to draw a great circle on a map.
 from mpl_toolkits.basemap import Basemap
 import numpy as np

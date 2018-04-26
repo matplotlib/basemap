@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 from mpl_toolkits.basemap import Basemap
 from matplotlib import rcParams
 from matplotlib.ticker import MultipleLocator

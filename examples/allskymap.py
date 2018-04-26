@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 from __future__ import unicode_literals
 """
 AllSkyMap is a subclass of Basemap, specialized for handling common plotting

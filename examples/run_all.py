@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 import glob, os, sys
 test_files = glob.glob('*.py')
 test_files.remove('run_all.py')

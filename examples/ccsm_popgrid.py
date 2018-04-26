@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 """
 This example shows how to plot data on rectangular 2D grids
 (grids that are not rectlinear in geographic or native map projection

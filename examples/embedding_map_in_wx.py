@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 #!/usr/bin/env python
 """
 An example of how to use wx or wxagg in an application with the Basemap module

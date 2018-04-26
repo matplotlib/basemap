@@ -1,4 +1,5 @@
-from __future__ import print_function
+from __future__ import (absolute_import, division, print_function)
+
 # exercise all the projections by plotting
 # etopo bathymetry/topography over them, plus
 # drawing coastlines, state and

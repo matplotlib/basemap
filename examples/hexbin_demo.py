@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 # example showing how to plot scattered data with hexbin.
 from numpy.random import uniform
 import matplotlib.pyplot as plt

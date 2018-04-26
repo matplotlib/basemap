@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 # example showing how to use streamlines to visualize a vector
 # flow field (from Hurricane Earl).  
 # Requires matplotlib 1.1.1 or newer.

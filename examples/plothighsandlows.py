@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 """
 plot H's and L's on a sea-level pressure map
 (uses scipy.ndimage.filters and netcdf4-python)
