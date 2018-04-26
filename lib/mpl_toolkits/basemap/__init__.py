@@ -4351,8 +4351,6 @@ f=image" %\
         # this works for png and jpeg.
         return self.imshow(imread(io.BytesIO(img.read()),
                            format=format),origin='upper',alpha=alpha,ax=ax)
-        # this works for png, but not jpeg
-        #return self.imshow(imread(urlopen(img.url),format=format),origin='upper')
 
     def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\
                      units='km',fontsize=9,yoffset=None,labelstyle='simple',\
