@@ -81,7 +81,7 @@ def _revcmap(data):
         data_r[key]=valnew
     return data_r
 
-_cmapnames = datad.keys()
+_cmapnames = list(datad.keys())
 for _cmapname in _cmapnames:
     _cmapname_r = _cmapname+'_r'
     _cmapdat_r = _revcmap(datad[_cmapname])
