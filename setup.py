@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 import sys, glob, os, subprocess
 
 if sys.version_info < (2, 6):
@@ -20,10 +22,6 @@ else:
     # append numpy include dir.
     inc_dirs.append(numpy.get_include())
 
-try:
-    from distutils.command.build_py import build_py_2to3 as build_py
-except ImportError:
-    from distutils.command.build_py import build_py
 
 def checkversion(GEOS_dir):
     """check geos C-API header file (geos_c.h)"""
@@ -112,7 +110,8 @@ requirements = [
   "numpy>=1.2.1", 
   "matplotlib>=1.0.0",
   "pyproj >= 1.9.3", 
-  "pyshp >= 1.2.0"
+  "pyshp >= 1.2.0",
+  "six",
 ]
 
 __version__ = "1.1.0"
@@ -147,6 +146,5 @@ setup(
   namespace_packages = namespace_packages,
   package_dir       = package_dirs,
   ext_modules       = extensions,   
-  cmdclass = {'build_py': build_py},
   package_data = package_data
   )

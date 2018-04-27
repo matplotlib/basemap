@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 # some simple functions to calculate solar position, day-night terminator
 import numpy as np
 from numpy import ma

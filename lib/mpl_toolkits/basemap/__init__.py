@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 """
 Module for plotting data on maps with matplotlib.
 
@@ -13,6 +15,13 @@ heavy lifting), and the following functions:
 :func:`addcyclic`: Add cyclic (wraparound) point in longitude.
 """
 from distutils.version import LooseVersion
+
+try:
+    from urllib import urlretrieve
+    from urllib2 import urlopen
+except ImportError:
+    from urllib.request import urlretrieve, urlopen
+
 from matplotlib import __version__ as _matplotlib_version
 from matplotlib.cbook import is_scalar, dedent
 # check to make sure matplotlib is not too old.
@@ -4051,7 +4060,6 @@ class Basemap(object):
         else:
             newfile = False
         if file.startswith('http'):
-            from urllib import urlretrieve
             self._bm_file, headers = urlretrieve(file)
         else:
             self._bm_file = file
@@ -4211,7 +4219,6 @@ class Basemap(object):
 
         returns a matplotlib.image.AxesImage instance.
         """
-        import urllib2
         if not hasattr(self,'epsg'):
             msg = dedent("""
             Basemap instance must be creating using an EPSG code
@@ -4250,9 +4257,9 @@ transparent=true&\
 f=image" %\
 (server,service,xmin,ymin,xmax,ymax,self.epsg,self.epsg,xpixels,ypixels,dpi)
         # print URL?
-        if verbose: print basemap_url
+        if verbose: print(basemap_url)
         # return AxesImage instance.
-        return self.imshow(imread(urllib2.urlopen(basemap_url)),ax=ax,
+        return self.imshow(imread(urlopen(basemap_url)),ax=ax,
                            origin='upper')
 
     def wmsimage(self,server,\
@@ -4297,7 +4304,7 @@ f=image" %\
             from owslib.wms import WebMapService
         except ImportError:
             raise ImportError('OWSLib required to use wmsimage method')
-        import urllib2, io
+        import io
         ax = kwargs.pop('ax', None) or self._check_ax()
         if not hasattr(self,'epsg'):
             msg = dedent("""
@@ -4325,17 +4332,17 @@ f=image" %\
         # ypixels not given, find by scaling xpixels by the map aspect ratio.
         if ypixels is None:
             ypixels = int(self.aspect*xpixels)
-        if verbose: print server
+        if verbose: print(server)
         wms = WebMapService(server)
         if verbose:
-            print 'id: %s, version: %s' %\
-            (wms.identification.type,wms.identification.version)
-            print 'title: %s, abstract: %s' %\
-            (wms.identification.title,wms.identification.abstract)
-            print 'available layers:'
-            print list(wms.contents)
-            print 'projection options:'
-            print wms[kwargs['layers'][0]].crsOptions
+            print('id: %s, version: %s' %
+            (wms.identification.type,wms.identification.version))
+            print('title: %s, abstract: %s' %
+            (wms.identification.title,wms.identification.abstract))
+            print('available layers:')
+            print(list(wms.contents))
+            print('projection options:')
+            print(wms[kwargs['layers'][0]].crsOptions)
         # remove keys from kwargs that are over-ridden
         for k in ['format','bbox','service','size','srs']:
             if 'format' in kwargs: del kwargs['format']
@@ -4346,8 +4353,6 @@ f=image" %\
         # this works for png and jpeg.
         return self.imshow(imread(io.BytesIO(img.read()),
                            format=format),origin='upper',alpha=alpha,ax=ax)
-        # this works for png, but not jpeg
-        #return self.imshow(imread(urllib2.urlopen(img.url),format=format),origin='upper')
 
     def drawmapscale(self,lon,lat,lon0,lat0,length,barstyle='simple',\
                      units='km',fontsize=9,yoffset=None,labelstyle='simple',\
@@ -5095,7 +5100,7 @@ def addcyclic(*arr,**kwargs):
     if len(arr) == 1:
         return _addcyclic_lon(arr[-1])
     else:
-        return map(_addcyclic,arr[:-1]) + [_addcyclic_lon(arr[-1])]
+        return list(map(_addcyclic,arr[:-1]) + [_addcyclic_lon(arr[-1])])
 
 def _choosecorners(width,height,**kwargs):
     """

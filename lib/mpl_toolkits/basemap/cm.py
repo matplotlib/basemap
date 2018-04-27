@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 """
 extra colormaps:
 
@@ -10,6 +12,8 @@ GMT_wysiwyg
 
 run examples/show_colormaps.py to see what these colormaps look like.
 """
+
+from six import iteritems
 
 from matplotlib import rcParams, colors
 _LUTSIZE = rcParams['image.lut']
@@ -70,7 +74,7 @@ datad['sstanom']=_sstanom_data
 
 def _revcmap(data):
     data_r = {}
-    for key,val in data.iteritems():
+    for key,val in iteritems(data):
         val = list(val)
         valrev = val[::-1]
         valnew = []
@@ -79,7 +83,7 @@ def _revcmap(data):
         data_r[key]=valnew
     return data_r
 
-_cmapnames = datad.keys()
+_cmapnames = list(datad.keys())
 for _cmapname in _cmapnames:
     _cmapname_r = _cmapname+'_r'
     _cmapdat_r = _revcmap(datad[_cmapname])
