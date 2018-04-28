@@ -1,4 +1,5 @@
-from __future__ import print_function
+from __future__ import (absolute_import, division, print_function)
+
 from mpl_toolkits.basemap import Basemap, cm
 from netCDF4 import Dataset as NetCDFFile
 import numpy as np

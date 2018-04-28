@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 # example using matplotlib.animation to create a movie
 # reads data over http - needs an active internet connection.
 

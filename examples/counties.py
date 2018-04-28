@@ -1,8 +1,10 @@
+from __future__ import (absolute_import, division, print_function)
+
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
 def draw_map_background(m, ax):
-    ax.set_axis_bgcolor('#729FCF')
+    ax.set_facecolor('#729FCF')
     m.fillcontinents(color='#FAFAFA', ax=ax, zorder=0)
     m.drawcounties(ax=ax)
     m.drawstates(ax=ax)

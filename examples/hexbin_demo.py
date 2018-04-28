@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 # example showing how to plot scattered data with hexbin.
 from numpy.random import uniform
 import matplotlib.pyplot as plt
@@ -54,7 +56,7 @@ H, xedges, yedges = np.histogram2d(x, y, bins=bins, weights=z)
 H = np.ma.masked_where(mask, H/bincount)
 # set color of masked values to axes background (hexbin does this by default)
 palette = plt.cm.jet
-palette.set_bad(ax.get_axis_bgcolor(), 1.0)
+palette.set_bad(ax.get_facecolor(), 1.0)
 CS = m.pcolormesh(xedges,yedges,H.T,shading='flat',cmap=palette)
 # draw coastlines, lat/lon lines.
 m.drawcoastlines()

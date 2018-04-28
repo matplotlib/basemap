@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 # examples of using the 'width' and 'height' keywords
 # to the Basemap constructor.
 

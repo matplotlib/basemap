@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 # make shaded relief plot of etopo bathymetry/topography data on
 # lambert conformal conic map projection.
 

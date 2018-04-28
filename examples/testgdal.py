@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 """
 example showing how to plot data from a DEM file and an ESRI shape file using 
 gdal (http://pypi.python.org/pypi/GDAL).

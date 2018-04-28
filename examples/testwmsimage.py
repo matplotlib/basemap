@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 """
 example showing how to use OWSlib to retrieve an image
 from a WMS server and display it on a map (using the

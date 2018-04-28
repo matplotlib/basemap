@@ -1,4 +1,5 @@
-from __future__ import print_function
+from __future__ import (absolute_import, division, print_function)
+
 # make plots of etopo bathymetry/topography data on
 # various map projections, drawing coastlines, state and
 # country boundaries, filling continents and drawing

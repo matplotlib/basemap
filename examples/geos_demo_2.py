@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 """geos_demo_2.py
 
 This script shows how to plot data onto the Geostationary Satellite projection

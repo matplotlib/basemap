@@ -1,0 +1,2 @@
+netCDF4
+pillow

@@ -1,4 +1,5 @@
-from __future__ import print_function
+from __future__ import (absolute_import, division, print_function)
+
 import pyproj
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt

@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 # example showing how to use Line Integral Convolution to visualize a vector
 # flow field (from Hurricane Earl).  Produces something akin to streamlines.
 # Requires vectorplot scikit (http://scikits.appspot.com/vectorplot).

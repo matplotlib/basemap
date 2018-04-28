@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division, print_function)
+
 """
 Example of astronomical use of AllSkyMap class in allskymap.py module
 
