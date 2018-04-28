@@ -9,8 +9,6 @@ from setuptools.dist import Distribution
 if sys.version_info < (2, 6):
     raise SystemExit("""matplotlib and the basemap toolkit require Python 2.6 or later.""")
 
-from setuptools.dist import Distribution
-
 # Do not require numpy for just querying the package
 # Taken from the netcdf-python setup file (which took it from h5py setup file).
 inc_dirs = []
@@ -25,19 +23,12 @@ else:
     inc_dirs.append(numpy.get_include())
 
 
-def read(path, encoding='utf-8'):
-    path = os.path.join(os.path.dirname(__file__), path)
-    with io.open(path, encoding=encoding) as fp:
-        return fp.read()
-
-
 def get_install_requirements(path):
-    content = read(path)
-    return [
-        req
-        for req in content.split("\n")
-        if req != '' and not req.startswith('#')
-    ]
+    path = os.path.join(os.path.dirname(__file__), path)
+    with io.open(path, encoding='utf-8') as fp:
+        content = fp.read()
+    return [req for req in content.split("\n")
+                if req != '' and not req.startswith('#')]
 
 
 def checkversion(GEOS_dir):
