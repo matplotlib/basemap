@@ -1,3 +1,7 @@
+version 1.2.0
+-------------
+* Mostly compatibility bugfixes
+
 version 1.1.0 (git tag v1.1.0rel)
 --------------------------------
 * Updated packaged data to use GSHHG v2.3.6 (PR #311 & #320)
