@@ -103,11 +103,8 @@ or require an internet connection), execute 'python run_all.py'.
 An alternative method is using `pip`:
 
 ```
-pip install git+https://github.com/matplotlib/basemap.git
+pip install --user git+https://github.com/matplotlib/basemap.git
 ```
-
-You migh want to run pip with administrative privilegies (e.g. `sudo pip`) or
-perform an user only installation (e.g. `pip install --user`).
 
 ## Contact
 
