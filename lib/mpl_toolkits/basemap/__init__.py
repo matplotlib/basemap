@@ -5099,7 +5099,7 @@ def addcyclic(*arr,**kwargs):
     if len(arr) == 1:
         return _addcyclic_lon(arr[-1])
     else:
-        return list(map(_addcyclic,arr[:-1]) + [_addcyclic_lon(arr[-1])])
+        return list(map(_addcyclic,arr[:-1])) + [_addcyclic_lon(arr[-1])]
 
 def _choosecorners(width,height,**kwargs):
     """
