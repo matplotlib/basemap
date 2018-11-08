@@ -13,7 +13,7 @@ are other libraries that provide similar capabilities in Python.
 
 Basemap does not do any plotting on it's own, but provides the facilities to transform coordinates to one of 25 different map projections (using the 
 `PROJ.4 <http://trac.osgeo.org/proj/>`_ C library).  `Matplotlib
-<http://matplotlib.sourceforge.net>`_ is then
+<https://matplotlib.org>`_ is then
 used to plot contours, images, vectors, lines or points
 in the transformed coordinates.
 Shoreline, river and political boundary
@@ -30,6 +30,8 @@ the years, the capabilities of Basemap have evolved as scientists in other
 disciplines (such as biology, geology and geophysics) requested and 
 contributed new features.
 
+.. _deprecation_notice:
+
 Cartopy, New Management, and EoL Announcement
 =============================================
 
@@ -42,7 +44,7 @@ Cartopy. All maintenance and development efforts should be focused on
 Cartopy.
 
 Ben Root has volunteered to take over maintenance of Basemap until 2020.
-Pull requests will be reviewed, and bugs will be fixed. Also, the
+Pull requests will be reviewed, and regressions will be fixed. Also, this
 maintenance will ensure compatibility with packages like NumPy and Matplotlib.
 New features will be accepted, but we stress that new development efforts
 should be focused on Cartopy. When Python 2.7 is officially EoL'ed in 2020,

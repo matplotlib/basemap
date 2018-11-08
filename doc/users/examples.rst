@@ -20,19 +20,19 @@ There are a number of Basemap instance methods for plotting data:
 * :func:`~mpl_toolkits.basemap.Basemap.drawgreatcircle`: draw a `great circle <http://en.wikipedia.org/wiki/Great_circle>`__.
 
 Many of these instances methods simply forward to the corresponding matplotlib
-`Axes <http://matplotlib.sourceforge.net/api/axes_api.html>`__ instance method, 
+`Axes <https://matplotlib.org/api/axes_api.html>`__ instance method, 
 with some extra pre/post processing and argument checking. 
 You can also plot on the map directly with the matplotlib 
-`pyplot <http://matplotlib.sourceforge.net/api/pyplot_api.html>`__ interface,
-or the `OO api <http://matplotlib.sourceforge.net/examples/api/index.html>`__, 
-using the `Axes <http://matplotlib.sourceforge.net/api/axes_api.html>`__ instance 
+`pyplot <https://matplotlib.org/api/pyplot_api.html>`__ interface,
+or the `OO api <https://matplotlib.org/examples/api/index.html>`__, 
+using the `Axes <https://matplotlib.org/api/axes_api.html>`__ instance 
 associated with the Basemap.
 
 For more specifics of how to use the Basemap instance methods,
 see :ref:`api-index`.
 
 Here are the examples (many of which utilize the 
-`netcdf4-python <http://netcdf4-python.googlecode.com>`__ module
+`netcdf4-python <http://unidata.github.io/netcdf4-python/>`__ module
 to retrieve datasets over http):
 
 * Plot contour lines on a basemap

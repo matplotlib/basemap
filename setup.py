@@ -126,7 +126,7 @@ setup(
   on map projections with coastlines, lakes, rivers and political boundaries.
   See http://matplotlib.org/basemap/users/examples.html for
   examples of what it can do.""",
-  url               = "http://matplotlib.org/basemap/",
+  url               = "https://matplotlib.org/basemap/",
   download_url      = "https://github.com/matplotlib/basemap/archive/v{0}rel.tar.gz".format(__version__),
   author            = "Jeff Whitaker",
   author_email      = "jeffrey.s.whitaker@noaa.gov",
