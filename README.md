@@ -3,6 +3,9 @@
 Plot on map projections (with coastlines and political boundaries)
 using matplotlib.
 
+**Warning**: this package is being deprecated in favour of
+[cartopy](https://scitools.org.uk/cartopy/docs/latest/).
+
 ## Requirements
 
 * Python 2.6 (or higher)
@@ -99,6 +102,12 @@ prompt.
 4. To test, cd to the examples directory and run 'python simpletest.py'.
 To run all the examples (except those that have extra dependencies
 or require an internet connection), execute 'python run_all.py'.
+
+An alternative method is using `pip`:
+
+```
+pip install --user git+https://github.com/matplotlib/basemap.git
+```
 
 ## Contact
 
