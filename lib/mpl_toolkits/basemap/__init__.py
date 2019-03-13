@@ -152,20 +152,23 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
 if hasattr(pyproj, 'datadir'):  # pyproj version 2+
     epsgf = os.path.join(pyproj.datadir.get_data_dir(), 'epsg')
     if not os.path.isfile(epsgf):
+        raise_exception = (
+            FileNotFoundError if sys.version_info[0] == 3 else RuntimeError
+        )
         if os.name == 'posix':
             epsgf = os.environ.get('PROJ_LIB', '/usr/share/proj')
         elif 'PROJ_LIB' in os.environ:
             epsgf = os.environ['PROJ_LIB']
         else:
-            raise FileNotFoundError(
-                ("Cannot find '%s'" % epsgf)
-                + "and PROJ_LIB environment variable is not set."
+            raise raise_exception(
+                ("Cannot find '%s'," % epsgf)
+                + " and PROJ_LIB environment variable is not set."
             )
         epsgf = os.path.join(epsgf, 'epsg')
         if not os.path.isfile(epsgf):
-            raise FileNotFoundError(
-                ("Cannot find '%s'" % epsgf)
-                + "nor epsg file under pyproj's internal datadir."
+            raise raise_exception(
+                ("Cannot find '%s'," % epsgf)
+                + " nor epsg file under pyproj's internal datadir."
             )
 else:  # older versions of pyproj
     epsgf = os.path.join(pyproj.pyproj_datadir, 'epsg')
