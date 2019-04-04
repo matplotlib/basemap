@@ -149,30 +149,7 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              }
 
 # create dictionary that maps epsg codes to Basemap kwargs.
-if hasattr(pyproj, 'datadir'):  # pyproj version 2+
-    epsgf = os.path.join(pyproj.datadir.get_data_dir(), 'epsg')
-    if not os.path.isfile(epsgf):
-        raise_exception = (
-            FileNotFoundError if sys.version_info[0] == 3 else RuntimeError
-        )
-        if os.name == 'posix':
-            epsgf = os.environ.get('PROJ_LIB', '/usr/share/proj')
-        elif 'PROJ_LIB' in os.environ:
-            epsgf = os.environ['PROJ_LIB']
-        else:
-            raise raise_exception(
-                ("Cannot find '%s'," % epsgf)
-                + " and PROJ_LIB environment variable is not set."
-            )
-        epsgf = os.path.join(epsgf, 'epsg')
-        if not os.path.isfile(epsgf):
-            raise raise_exception(
-                ("Cannot find '%s'," % epsgf)
-                + " nor epsg file under pyproj's internal datadir."
-            )
-else:  # older versions of pyproj
-    epsgf = os.path.join(pyproj.pyproj_datadir, 'epsg')
-epsgf = open(epsgf)
+epsgf = open(os.path.join(basemap_datadir, 'epsg'))
 epsg_dict={}
 for line in epsgf:
     if line.startswith("#"):
