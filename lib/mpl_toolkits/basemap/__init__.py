@@ -149,7 +149,7 @@ projection_params = {'cyl'      : 'corners only (no width/height)',
              }
 
 # create dictionary that maps epsg codes to Basemap kwargs.
-epsgf = open(os.path.join(pyproj.pyproj_datadir,'epsg'))
+epsgf = open(os.path.join(basemap_datadir, 'epsg'))
 epsg_dict={}
 for line in epsgf:
     if line.startswith("#"):
