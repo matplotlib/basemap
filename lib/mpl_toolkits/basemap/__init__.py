@@ -2130,7 +2130,7 @@ class Basemap(object):
         # open shapefile, read vertices for each object, convert
         # to map projection coordinates (only works for 2D shape types).
         try:
-            shf = Reader(shapefile)
+            shf = Reader(shapefile, encoding=default_encoding)
         except:
             raise IOError('error reading shapefile %s.shp' % shapefile)
         fields = shf.fields
