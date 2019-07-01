@@ -23,7 +23,12 @@ except ImportError:
     from urllib.request import urlretrieve, urlopen
 
 from matplotlib import __version__ as _matplotlib_version
-from matplotlib.cbook import dedent
+try:
+    from inspect import cleandoc as dedent
+except ImportError:
+    # Deprecated as of version 3.1. Not quite the same
+    # as textwrap.dedent.
+    from matplotlib.cbook import dedent
 # check to make sure matplotlib is not too old.
 _matplotlib_version = LooseVersion(_matplotlib_version)
 _mpl_required_version = LooseVersion('0.98')
