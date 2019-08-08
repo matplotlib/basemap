@@ -1,3 +1,9 @@
+version 1.2.1
+-------------
+* More compatibility bugfixes
+* Fix a bug introduced in v1.1.0 in addcyclic()
+* Some documentation updates
+
 version 1.2.0
 -------------
 * Mostly compatibility bugfixes
