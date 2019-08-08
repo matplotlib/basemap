@@ -1,31 +1,21 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Drawing and Labelling Parallels and Meridians &#8212; Basemap Matplotlib Toolkit 1.1.0 documentation</title>
-    
+    <title>Drawing and Labelling Parallels and Meridians &#8212; Basemap Matplotlib Toolkit 1.2.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '1.1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Basemap Matplotlib Toolkit 1.1.0 documentation"
+          title="Search within Basemap Matplotlib Toolkit 1.2.1 documentation"
           href="../_static/opensearch.xml"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -37,36 +27,37 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body role="document">
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="drawing-and-labelling-parallels-and-meridians">
 <span id="graticule"></span><h1>Drawing and Labelling Parallels and Meridians<a class="headerlink" href="#drawing-and-labelling-parallels-and-meridians" title="Permalink to this headline">¶</a></h1>
 <p>Most maps include a graticule grid, a reference network of labelled
 latitude and longitude lines. Basemap does this with the
-<a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.drawparallels" title="mpl_toolkits.basemap.Basemap.drawparallels"><code class="xref py py-func docutils literal"><span class="pre">drawparallels()</span></code></a> and
-<a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.drawmeridians" title="mpl_toolkits.basemap.Basemap.drawmeridians"><code class="xref py py-func docutils literal"><span class="pre">drawmeridians()</span></code></a> instance methods.
+<a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.drawparallels" title="mpl_toolkits.basemap.Basemap.drawparallels"><code class="xref py py-func docutils literal notranslate"><span class="pre">drawparallels()</span></code></a> and
+<a class="reference internal" href="../api/basemap_api.html#mpl_toolkits.basemap.Basemap.drawmeridians" title="mpl_toolkits.basemap.Basemap.drawmeridians"><code class="xref py py-func docutils literal notranslate"><span class="pre">drawmeridians()</span></code></a> instance methods.
 The longitude and latitude lines can be labelled where they intersect
 the map projection boundary.  There are a few exceptions:  meridians
 and parallels cannot be labelled on maps with
-<code class="docutils literal"><span class="pre">proj</span></code> set to <code class="docutils literal"><span class="pre">ortho</span></code> (orthographic), <code class="docutils literal"><span class="pre">geos</span></code> (geostationary),
-<code class="docutils literal"><span class="pre">vandg</span></code> (van der Grinten) or <code class="docutils literal"><span class="pre">nsper</span></code> (near-sided perspective),
+<code class="docutils literal notranslate"><span class="pre">proj</span></code> set to <code class="docutils literal notranslate"><span class="pre">ortho</span></code> (orthographic), <code class="docutils literal notranslate"><span class="pre">geos</span></code> (geostationary),
+<code class="docutils literal notranslate"><span class="pre">vandg</span></code> (van der Grinten) or <code class="docutils literal notranslate"><span class="pre">nsper</span></code> (near-sided perspective),
 and meridians cannot be labelled on maps with
-<code class="docutils literal"><span class="pre">proj</span></code> set to <code class="docutils literal"><span class="pre">ortho</span></code> (orthographic), <code class="docutils literal"><span class="pre">geos</span></code> (geostationary),
-<code class="docutils literal"><span class="pre">vandg</span></code> (van der Grinten), <code class="docutils literal"><span class="pre">nsper</span></code> (near-sided perspective),
-<code class="docutils literal"><span class="pre">moll</span></code> (Mollweide), <code class="docutils literal"><span class="pre">hammer</span></code> (Hammer), or <code class="docutils literal"><span class="pre">sinu</span></code>
+<code class="docutils literal notranslate"><span class="pre">proj</span></code> set to <code class="docutils literal notranslate"><span class="pre">ortho</span></code> (orthographic), <code class="docutils literal notranslate"><span class="pre">geos</span></code> (geostationary),
+<code class="docutils literal notranslate"><span class="pre">vandg</span></code> (van der Grinten), <code class="docutils literal notranslate"><span class="pre">nsper</span></code> (near-sided perspective),
+<code class="docutils literal notranslate"><span class="pre">moll</span></code> (Mollweide), <code class="docutils literal notranslate"><span class="pre">hammer</span></code> (Hammer), or <code class="docutils literal notranslate"><span class="pre">sinu</span></code>
 (sinusoidal).  This is because the lines can be very close
 together where they intersect the boundary on these maps, so that
 they really need to be labelled manually on the interior of the plot.
-Here&#8217;s an example that shows how to draw parallels and meridians
+Here’s an example that shows how to draw parallels and meridians
 and label them on different sides of the plot.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mpl_toolkits.basemap</span> <span class="kn">import</span> <span class="n">Basemap</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="c1"># setup Lambert Conformal basemap.</span>
@@ -101,37 +92,68 @@ and label them on different sides of the plot.</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Basemap Matplotlib Toolkit</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">The Matplotlib Basemap Toolkit User’s Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="download.html">Download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#cartopy-new-management-and-eol-announcement">Cartopy, New Management, and EoL Announcement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installing.html">Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapsetup.html">Setting up the map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geography.html">Drawing a Map Background</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Drawing and Labelling Parallels and Meridians</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mapcoords.html">Converting to and from map projection coordinates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html">Plotting data on a map (Example Gallery)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">The Matplotlib Basemap Toolkit API</a></li>
+</ul>
+
+<div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">The Matplotlib Basemap Toolkit User&#8217;s Guide</a><ul>
+  <li><a href="index.html">The Matplotlib Basemap Toolkit User’s Guide</a><ul>
       <li>Previous: <a href="geography.html" title="previous chapter">Drawing a Map Background</a></li>
       <li>Next: <a href="mapcoords.html" title="next chapter">Converting to and from map projection coordinates</a></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/users/graticule.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -140,8 +162,8 @@ and label them on different sides of the plot.</p>
       &copy;2011, Jeffrey Whitaker; 2016 The matplotlib development team.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.5.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/users/graticule.rst.txt"
