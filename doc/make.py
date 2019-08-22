@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import fileinput
 import glob
 import os
@@ -25,7 +26,7 @@ def latex():
 
         os.chdir('../..')
     else:
-        print 'latex build has not been tested on windows'
+        print('latex build has not been tested on windows')
 
 def clean():
     shutil.rmtree('build')
@@ -48,7 +49,7 @@ if len(sys.argv)>1:
         func = funcd.get(arg)
         if func is None:
             raise SystemExit('Do not know how to handle %s; valid args are'%(
-                    arg, funcd.keys()))
+                    arg, list(funcd.keys())))
         func()
 else:
     all()
