@@ -1459,6 +1459,10 @@ class Basemap(object):
                         # convert polygons to line segments
                         poly = _geoslib.LineString(poly.boundary)
                     else:
+                        # this is a workaround to avoid
+                        # GEOS_ERROR: CGAlgorithmsDD::orientationIndex encountered NaN/Inf numbers
+                        b[np.isposinf(b)] = 1e20
+                        b[np.isneginf(b)] = -1e20
                         poly = Shape(b)
                     # this is a workaround to avoid
                     # "GEOS_ERROR: TopologyException:
