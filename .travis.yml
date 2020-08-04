@@ -12,7 +12,7 @@ env:
 addons:
   apt:
     packages:
-      - libgeos-3.4.2
+      - libgeos-3.5.0
       # matplotlib requirements
       - libpng12-dev
       - libfreetype6-dev
@@ -33,40 +33,19 @@ cache:
 # matrix generates 6 test cases
 matrix:
   include:
-    # "minimum requirements" environments
-    # test the bare minimum versions 
-    # compiles internal libgeos
-    # Notes:
-    #   numpy 1.7.0 is the first version that works out of the box for Python 2.6 and 3.3
-    #   numpy 1.5.1 is the earliest version to compile and *might* be able to work on Python 2.6,
-    #         if two unit tests are skipped due to numpy.copy(a,order) not having 'order' parameter
-    #         1.6.0-1.6.2 works out of the box for Python 2.6
-    #   matplotlib 1.2.0 was found to be the earliest version that installs
-    - python: 2.6
-      env: 
-        - NUMPY=numpy==1.7.0
-        - MPL=matplotlib==1.2.0
-        - BUILD_LIBGEOS=internal
-
-    # "middle of the road" environment
-    # use prepackaged binaries
-    # if no prepackaged binary available, use a previous stable version
-    - python: 3.4
-      env: 
-        - MPL=matplotlib==1.4.3
-        - NUMPY=numpy==1.9.3
-        - BUILD_LIBGEOS=internal
-      
     # "latest and greatest" stable environments
     # this uses the current stable versions
     # pip installs latest stable versions automatically
     - python: 2.7
       env:
         - BUILD_LIBGEOS=3.5.1
-    - python: 3.5
-      env: 
-        - BUILD_LIBGEOS=3.5.1
     - python: 3.6
+      env: 
+        - BUILD_LIBGEOS=3.6.1
+    - python: 3.7
+      env: 
+        - BUILD_LIBGEOS=3.6.1
+    - python: 3.8
       env: 
         - BUILD_LIBGEOS=3.6.1
    
@@ -105,9 +84,6 @@ install:
   - pip install $MPL
   - pip install $PYPROJ
   - pip install -r requirements.txt
-  
-  # extra requirements to support Python 2.6  
-  - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install -r .requirements-2.6.txt; fi
   
   - |
     # Is libgeos suppose to be built?
