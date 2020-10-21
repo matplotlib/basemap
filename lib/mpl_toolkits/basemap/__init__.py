@@ -4237,7 +4237,7 @@ class Basemap(object):
             try:
                 import Image
             except ImportError:
-                msg = ('warpimage method requires PIL '
+                msg = ('arcgisimage method requires PIL '
                        '(http://pillow.readthedocs.io)')
                 raise ImportError(msg)
 
