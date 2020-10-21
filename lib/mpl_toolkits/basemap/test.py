@@ -249,6 +249,7 @@ class TestOrthoProjPolygons(TestCase):
             m = Basemap(projection='ortho',resolution=r,lat_1=45.,lat_2=55,lat_0=50,lon_0=-107.)
         pass
 
+@skipIf(not PY3, "Test skipped for Python 2.x as it requires PIL installed")
 class TestArcgisimage(TestCase):
 	def test_cyl_proj_should_not_fail(self):
 		m = Basemap(projection='cyl',
