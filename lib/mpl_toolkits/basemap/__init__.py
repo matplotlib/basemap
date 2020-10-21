@@ -4228,6 +4228,21 @@ class Basemap(object):
 
         returns a matplotlib.image.AxesImage instance.
         """
+
+
+        # fix PIL import on some versions of OSX and scipy
+        try:
+            from PIL import Image
+        except ImportError:
+            try:
+                import Image
+            except ImportError:
+                msg = ('warpimage method requires PIL '
+                       '(http://pillow.readthedocs.io)')
+                raise ImportError(msg)
+
+
+
         if not hasattr(self,'epsg'):
             msg = dedent("""
             Basemap instance must be creating using an EPSG code
@@ -4247,7 +4262,7 @@ class Basemap(object):
                 arcgisimage cannot handle images that cross
                 the dateline for cylindrical projections.""")
                 raise ValueError(msg)
-        if self.projection == 'cyl':
+        if self.projection != 'cyl':
             xmin = (180./np.pi)*xmin; xmax = (180./np.pi)*xmax
             ymin = (180./np.pi)*ymin; ymax = (180./np.pi)*ymax
         # ypixels not given, find by scaling xpixels by the map aspect ratio.
@@ -4268,8 +4283,8 @@ f=image" %\
         # print URL?
         if verbose: print(basemap_url)
         # return AxesImage instance.
-        return self.imshow(imread(urlopen(basemap_url)),ax=ax,
-                           origin='upper')
+        img = Image.open(urlopen(basemap_url))
+        return self.imshow(img, ax=ax, origin='upper')
 
     def wmsimage(self,server,\
                  xpixels=400,ypixels=None,\
