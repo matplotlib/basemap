@@ -135,12 +135,16 @@ install_requires = get_install_requirements("requirements.txt")
 
 # Filter the data files depending on the mode (normal, lite, data, extras).
 if mode:
+    version, vbuild = (__version__.split("+") + [""])[:2]
+    data_vbuild = "{0}{1}".format("+" if vbuild else "", vbuild)
+    data_version = "{0}.0{1}".format(version.rsplit(".", 1)[0], data_vbuild)
     regex = re.compile("(UScounties|_[ihf]\\.dat$)")
     if mode == "lite":
         packages.remove("mpl_toolkits.basemap.data")
         package_data.pop("mpl_toolkits.basemap.data")
-        install_requires.append("basemap-data")
+        install_requires.append("basemap-data == {0}".format(data_version))
     else:
+        __version__ = data_version
         extensions = []
         packages.remove("mpl_toolkits.basemap")
         if mode == "data":
