@@ -1,5 +1,6 @@
 from __future__ import (absolute_import, division, print_function)
 
+import re
 import glob
 import io
 import os
@@ -87,10 +88,6 @@ else:
     geos_include_dirs=[os.path.join(GEOS_dir,'include')] + inc_dirs
     geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
 
-packages          = ['mpl_toolkits','mpl_toolkits.basemap']
-namespace_packages = ['mpl_toolkits']
-package_dirs       = {'':'lib'}
-
 # can't install _geoslib in mpl_toolkits.basemap namespace,
 # or Basemap objects won't be pickleable.
 
@@ -107,19 +104,53 @@ extensions = [ Extension("_geoslib",['src/_geoslib.c'],
                          include_dirs=geos_include_dirs,
                          libraries=['geos_c']) ]
 
-# Specify all the required mpl data
-pathout =\
-os.path.join('lib',os.path.join('mpl_toolkits',os.path.join('basemap','data')))
+# Define the build mode (normal, lite, data or extras).
+mode_arg = [item for item in sys.argv[1:] if item.startswith("--mode")]
+if len(mode_arg):
+    sys.argv.remove(mode_arg[0])
+    if len(mode_arg) > 1:
+        raise ValueError("setup option --mode given multiple times")
+mode = (mode_arg or [""])[0].lstrip("--mode").strip("=")
+if mode not in ("", "lite", "data", "extras"):
+    raise ValueError("invalid setup mode: {0}".format(mode))
 
-datafiles = glob.glob(os.path.join(pathout,'*'))
-datafiles = [os.path.join('data',os.path.basename(f)) for f in datafiles]
-package_data = {'mpl_toolkits.basemap':datafiles}
+# Get the basemap data files.
+data_pattern = os.path.join("lib", "mpl_toolkits", "basemap", "data", "*")
+data_files = sorted(map(os.path.basename, glob.glob(data_pattern)))
 
+# Define default setup parameters.
+namespace_packages = [
+    "mpl_toolkits",
+]
+packages = [
+    "mpl_toolkits.basemap",
+    "mpl_toolkits.basemap.data",
+]
+package_dirs = {"": "lib"}
+package_data = {
+    "mpl_toolkits.basemap.data":
+        data_files,
+}
 install_requires = get_install_requirements("requirements.txt")
 
+# Filter the data files depending on the mode (normal, lite, data, extras).
+if mode:
+    regex = re.compile("(UScounties|_[ihf]\\.dat$)")
+    if mode == "lite":
+        packages.remove("mpl_toolkits.basemap.data")
+        package_data.pop("mpl_toolkits.basemap.data")
+        install_requires.append("basemap-data")
+    else:
+        extensions = []
+        packages.remove("mpl_toolkits.basemap")
+        if mode == "data":
+            data_files = [f for f in data_files if not regex.search(f)]
+        elif mode == "extras":
+            data_files = [f for f in data_files if regex.search(f)]
+        package_data["mpl_toolkits.basemap.data"] = data_files
 
 setup(
-  name              = "basemap",
+  name              = "basemap{0}{1}".format("-" if mode else "", mode),
   version           = __version__,
   description       = "Plot data on map projections with matplotlib",
   long_description  = """
