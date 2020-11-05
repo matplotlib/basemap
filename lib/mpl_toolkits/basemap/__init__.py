@@ -63,7 +63,7 @@ if 'BASEMAPDATA' in os.environ:
 else:
     basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 
 # module variable that sets the default value for the 'latlon' kwarg.
 # can be set to True by user so plotting functions can take lons,lats
