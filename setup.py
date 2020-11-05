@@ -1,3 +1,6 @@
+#! /usr/bin/env python
+# -*- coding: utf8 -*-
+# flake8: noqa: E122
 from __future__ import (absolute_import, division, print_function)
 
 import re
@@ -30,7 +33,7 @@ def get_install_requirements(path):
     with io.open(path, encoding='utf-8') as fp:
         content = fp.read()
     return [req for req in content.split("\n")
-                if req != '' and not req.startswith('#')]
+            if req != '' and not req.startswith('#')]
 
 
 def checkversion(GEOS_dir):
@@ -45,11 +48,12 @@ def checkversion(GEOS_dir):
             geos_version = line.split()[2]
     return geos_version
 
+
 # get location of geos lib from environment variable if it is set.
 if 'GEOS_DIR' in os.environ:
     GEOS_dir = os.environ.get('GEOS_DIR')
-else:
 # set GEOS_dir manually here if automatic detection fails.
+else:
     GEOS_dir = None
 
 user_home = os.path.expanduser('~')
@@ -65,8 +69,8 @@ if GEOS_dir is None:
         if geos_version is None or geos_version < '"3.1.1"':
             continue
         else:
-            sys.stdout.write('GEOS lib (version %s) found in %s\n' %\
-                    (geos_version[1:-1],direc))
+            sys.stdout.write('GEOS lib (version %s) found in %s\n' %
+                             (geos_version[1:-1], direc))
             GEOS_dir = direc
             break
 else:
@@ -85,8 +89,8 @@ set GEOS_DIR to /usr/local), or edit the setup.py script
 manually and set the variable GEOS_dir (right after the line
 that says "set GEOS_dir manually here".""" % "', '".join(geos_search_locations))
 else:
-    geos_include_dirs=[os.path.join(GEOS_dir,'include')] + inc_dirs
-    geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
+    geos_include_dirs = [os.path.join(GEOS_dir, 'include')] + inc_dirs
+    geos_library_dirs = [os.path.join(GEOS_dir, 'lib'), os.path.join(GEOS_dir, 'lib64')]
 
 # can't install _geoslib in mpl_toolkits.basemap namespace,
 # or Basemap objects won't be pickleable.
@@ -98,11 +102,11 @@ if sys.platform == 'win32':
 else:
     runtime_lib_dirs = geos_library_dirs
 
-extensions = [ Extension("_geoslib",['src/_geoslib.c'],
-                         library_dirs=geos_library_dirs,
-                         runtime_library_dirs=runtime_lib_dirs,
-                         include_dirs=geos_include_dirs,
-                         libraries=['geos_c']) ]
+extensions = [Extension("_geoslib", ['src/_geoslib.c'],
+                        library_dirs=geos_library_dirs,
+                        runtime_library_dirs=runtime_lib_dirs,
+                        include_dirs=geos_include_dirs,
+                        libraries=['geos_c'])]
 
 # Define the build mode (normal, lite, data or extras).
 mode_arg = [item for item in sys.argv[1:] if item.startswith("--mode")]
