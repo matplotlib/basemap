@@ -153,36 +153,67 @@ if mode:
             data_files = [f for f in data_files if regex.search(f)]
         package_data["mpl_toolkits.basemap.data"] = data_files
 
-setup(
-  name              = "basemap{0}{1}".format("-" if mode else "", mode),
-  version           = __version__,
-  description       = "Plot data on map projections with matplotlib",
-  long_description  = """
-  An add-on toolkit for matplotlib that lets you plot data
-  on map projections with coastlines, lakes, rivers and political boundaries.
-  See http://matplotlib.org/basemap/users/examples.html for
-  examples of what it can do.""",
-  url               = "https://matplotlib.org/basemap/",
-  download_url      = "https://github.com/matplotlib/basemap/archive/v{0}rel.tar.gz".format(__version__),
-  author            = "Jeff Whitaker",
-  author_email      = "jeffrey.s.whitaker@noaa.gov",
-  maintainer        = "Ben Root",
-  maintainer_email  = "ben.v.root@gmail.com",
-  install_requires  = install_requires,
-  platforms         = ["any"],
-  license           = "OSI Approved",
-  keywords          = ["python","plotting","plots","graphs","charts","GIS","mapping","map projections","maps"],
-  classifiers       = ["Development Status :: 5 - Production/Stable",
-                       "Intended Audience :: Science/Research",
-                       "License :: OSI Approved",
-                       "Programming Language :: Python",
-                       "Programming Language :: Python :: 3",
-                       "Topic :: Scientific/Engineering :: Visualization",
-                       "Topic :: Software Development :: Libraries :: Python Modules",
-                       "Operating System :: OS Independent"],
-  packages          = packages,
-  namespace_packages = namespace_packages,
-  package_dir       = package_dirs,
-  ext_modules       = extensions,
-  package_data = package_data
-  )
+
+setup(**{
+    "name":
+        "basemap{0}{1}".format("-" if mode else "", mode),
+    "version":
+        __version__,
+    "description":
+        "Plot data on map projections with matplotlib",
+    "long_description": """
+An add-on toolkit for matplotlib that lets you plot data on map
+projections with coastlines, lakes, rivers and political boundaries.
+See http://matplotlib.org/basemap/users/examples.html for
+examples of what it can do.""",
+    "url":
+        "https://matplotlib.org/basemap/",
+    "download_url":
+        "https://github.com/matplotlib/basemap/archive/v{0}rel.tar.gz".format(__version__),
+    "author":
+        "Jeff Whitaker",
+    "author_email":
+        "jeffrey.s.whitaker@noaa.gov",
+    "maintainer":
+        "Ben Root",
+    "maintainer_email":
+        "ben.v.root@gmail.com",
+    "install_requires":
+        install_requires,
+    "platforms": [
+        "any",
+    ],
+    "license":
+        "OSI Approved",
+    "keywords": [
+        "python",
+        "plotting",
+        "plots",
+        "graphs",
+        "charts",
+        "GIS",
+        "mapping",
+        "map projections",
+        "maps",
+    ],
+    "classifiers": [
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Topic :: Scientific/Engineering :: Visualization",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
+    "namespace_packages":
+        namespace_packages,
+    "packages":
+        packages,
+    "package_dir":
+        package_dirs,
+    "package_data":
+        package_data,
+    "ext_modules":
+        extensions,
+})
