@@ -5,6 +5,7 @@ import io
 import os
 import sys
 from setuptools.dist import Distribution
+from lib.mpl_toolkits.basemap import __version__
 
 if sys.version_info < (2, 6):
     raise SystemExit("""matplotlib and the basemap toolkit require Python 2.6 or later.""")
@@ -116,7 +117,7 @@ package_data = {'mpl_toolkits.basemap':datafiles}
 
 install_requires = get_install_requirements("requirements.txt")
 
-__version__ = "1.2.2"
+
 setup(
   name              = "basemap",
   version           = __version__,
