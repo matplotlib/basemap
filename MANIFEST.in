@@ -7,7 +7,7 @@ include LICENSE_epsg
 include LICENSE_geos
 include API_CHANGES
 include KNOWN_BUGS
-include Changelog
+include CHANGELOG
 include setup.py
 include nad2bin.c
 include src/*
