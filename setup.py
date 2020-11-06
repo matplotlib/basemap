@@ -117,6 +117,8 @@ if len(mode_arg):
 mode = (mode_arg or [""])[0].lstrip("--mode").strip("=")
 if mode not in ("", "lite", "data", "extras"):
     raise ValueError("invalid setup mode: {0}".format(mode))
+if mode and "sdist" in sys.argv[1:]:
+    raise ValueError("setup option --mode incompatible with sdist")
 
 # Get the basemap data files.
 data_pattern = os.path.join("lib", "mpl_toolkits", "basemap", "data", "*")
