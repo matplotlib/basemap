@@ -1,6 +1,7 @@
 include FAQ
 include README.md
 include MANIFEST.in
+include LICENSE
 include LICENSE_data
 include LICENSE_epsg
 include LICENSE_geos

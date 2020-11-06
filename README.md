@@ -45,15 +45,17 @@ The land-sea mask, coastline, lake, river and political boundary data are extrac
 from datasets provided with the [Generic Mapping Tools (GMT)](http://gmt.soest.hawaii.edu)
 and are included under the terms given in LICENSE_data.
 
-Everything else (including `src/_geos.c`, and `src/_geos.pyx`):
+Everything else (including `src/_geos.c`, and `src/_geos.pyx`) is licensed
+under the terms given in LICENSE:
 
-copyright (c) 2011 by Jeffrey Whitaker.
+Copyright (C) 2011 Jeffrey Whitaker
 
 Permission to use, copy, modify, and distribute this software and its
 documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notices appear in all copies and that
 both the copyright notices and this permission notice appear in
 supporting documentation.
+
 THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
 INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
 EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR
