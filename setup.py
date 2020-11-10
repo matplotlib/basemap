@@ -1,5 +1,9 @@
+#! /usr/bin/env python
+# -*- coding: utf8 -*-
+# flake8: noqa: E122
 from __future__ import (absolute_import, division, print_function)
 
+import re
 import glob
 import io
 import os
@@ -29,7 +33,7 @@ def get_install_requirements(path):
     with io.open(path, encoding='utf-8') as fp:
         content = fp.read()
     return [req for req in content.split("\n")
-                if req != '' and not req.startswith('#')]
+            if req != '' and not req.startswith('#')]
 
 
 def checkversion(GEOS_dir):
@@ -44,11 +48,12 @@ def checkversion(GEOS_dir):
             geos_version = line.split()[2]
     return geos_version
 
+
 # get location of geos lib from environment variable if it is set.
 if 'GEOS_DIR' in os.environ:
     GEOS_dir = os.environ.get('GEOS_DIR')
-else:
 # set GEOS_dir manually here if automatic detection fails.
+else:
     GEOS_dir = None
 
 user_home = os.path.expanduser('~')
@@ -64,8 +69,8 @@ if GEOS_dir is None:
         if geos_version is None or geos_version < '"3.1.1"':
             continue
         else:
-            sys.stdout.write('GEOS lib (version %s) found in %s\n' %\
-                    (geos_version[1:-1],direc))
+            sys.stdout.write('GEOS lib (version %s) found in %s\n' %
+                             (geos_version[1:-1], direc))
             GEOS_dir = direc
             break
 else:
@@ -84,12 +89,8 @@ set GEOS_DIR to /usr/local), or edit the setup.py script
 manually and set the variable GEOS_dir (right after the line
 that says "set GEOS_dir manually here".""" % "', '".join(geos_search_locations))
 else:
-    geos_include_dirs=[os.path.join(GEOS_dir,'include')] + inc_dirs
-    geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
-
-packages          = ['mpl_toolkits','mpl_toolkits.basemap']
-namespace_packages = ['mpl_toolkits']
-package_dirs       = {'':'lib'}
+    geos_include_dirs = [os.path.join(GEOS_dir, 'include')] + inc_dirs
+    geos_library_dirs = [os.path.join(GEOS_dir, 'lib'), os.path.join(GEOS_dir, 'lib64')]
 
 # can't install _geoslib in mpl_toolkits.basemap namespace,
 # or Basemap objects won't be pickleable.
@@ -101,53 +102,124 @@ if sys.platform == 'win32':
 else:
     runtime_lib_dirs = geos_library_dirs
 
-extensions = [ Extension("_geoslib",['src/_geoslib.c'],
-                         library_dirs=geos_library_dirs,
-                         runtime_library_dirs=runtime_lib_dirs,
-                         include_dirs=geos_include_dirs,
-                         libraries=['geos_c']) ]
+extensions = [Extension("_geoslib", ['src/_geoslib.c'],
+                        library_dirs=geos_library_dirs,
+                        runtime_library_dirs=runtime_lib_dirs,
+                        include_dirs=geos_include_dirs,
+                        libraries=['geos_c'])]
 
-# Specify all the required mpl data
-pathout =\
-os.path.join('lib',os.path.join('mpl_toolkits',os.path.join('basemap','data')))
+# Define the build mode (normal, lite, data or extras).
+mode_arg = [item for item in sys.argv[1:] if item.startswith("--mode")]
+if len(mode_arg):
+    sys.argv.remove(mode_arg[0])
+    if len(mode_arg) > 1:
+        raise ValueError("setup option --mode given multiple times")
+mode = (mode_arg or [""])[0].lstrip("--mode").strip("=")
+if mode not in ("", "lite", "data", "extras"):
+    raise ValueError("invalid setup mode: {0}".format(mode))
+if mode and "sdist" in sys.argv[1:]:
+    raise ValueError("setup option --mode incompatible with sdist")
 
-datafiles = glob.glob(os.path.join(pathout,'*'))
-datafiles = [os.path.join('data',os.path.basename(f)) for f in datafiles]
-package_data = {'mpl_toolkits.basemap':datafiles}
+# Get the basemap data files.
+data_pattern = os.path.join("lib", "mpl_toolkits", "basemap", "data", "*")
+data_files = sorted(map(os.path.basename, glob.glob(data_pattern)))
 
+# Define default setup parameters.
+namespace_packages = [
+    "mpl_toolkits",
+]
+packages = [
+    "mpl_toolkits.basemap",
+    "mpl_toolkits.basemap.data",
+]
+package_dirs = {"": "lib"}
+package_data = {
+    "mpl_toolkits.basemap.data":
+        data_files,
+}
 install_requires = get_install_requirements("requirements.txt")
 
+# Filter the data files depending on the mode (normal, lite, data, extras).
+if mode:
+    version, vbuild = (__version__.split("+") + [""])[:2]
+    data_vbuild = "{0}{1}".format("+" if vbuild else "", vbuild)
+    data_version = "{0}.0{1}".format(version.rsplit(".", 1)[0], data_vbuild)
+    regex = re.compile("(UScounties|_[ihf]\\.dat$)")
+    if mode == "lite":
+        packages.remove("mpl_toolkits.basemap.data")
+        package_data.pop("mpl_toolkits.basemap.data")
+        install_requires.append("basemap-data == {0}".format(data_version))
+    else:
+        __version__ = data_version
+        extensions = []
+        packages.remove("mpl_toolkits.basemap")
+        if mode == "data":
+            data_files = [f for f in data_files if not regex.search(f)]
+        elif mode == "extras":
+            data_files = [f for f in data_files if regex.search(f)]
+        package_data["mpl_toolkits.basemap.data"] = data_files
 
-setup(
-  name              = "basemap",
-  version           = __version__,
-  description       = "Plot data on map projections with matplotlib",
-  long_description  = """
-  An add-on toolkit for matplotlib that lets you plot data
-  on map projections with coastlines, lakes, rivers and political boundaries.
-  See http://matplotlib.org/basemap/users/examples.html for
-  examples of what it can do.""",
-  url               = "https://matplotlib.org/basemap/",
-  download_url      = "https://github.com/matplotlib/basemap/archive/v{0}rel.tar.gz".format(__version__),
-  author            = "Jeff Whitaker",
-  author_email      = "jeffrey.s.whitaker@noaa.gov",
-  maintainer        = "Ben Root",
-  maintainer_email  = "ben.v.root@gmail.com",
-  install_requires  = install_requires,
-  platforms         = ["any"],
-  license           = "OSI Approved",
-  keywords          = ["python","plotting","plots","graphs","charts","GIS","mapping","map projections","maps"],
-  classifiers       = ["Development Status :: 5 - Production/Stable",
-                       "Intended Audience :: Science/Research",
-                       "License :: OSI Approved",
-                       "Programming Language :: Python",
-                       "Programming Language :: Python :: 3",
-                       "Topic :: Scientific/Engineering :: Visualization",
-                       "Topic :: Software Development :: Libraries :: Python Modules",
-                       "Operating System :: OS Independent"],
-  packages          = packages,
-  namespace_packages = namespace_packages,
-  package_dir       = package_dirs,
-  ext_modules       = extensions,
-  package_data = package_data
-  )
+
+setup(**{
+    "name":
+        "basemap{0}{1}".format("-" if mode else "", mode),
+    "version":
+        __version__,
+    "description":
+        "Plot data on map projections with matplotlib",
+    "long_description": """
+An add-on toolkit for matplotlib that lets you plot data on map
+projections with coastlines, lakes, rivers and political boundaries.
+See http://matplotlib.org/basemap/users/examples.html for
+examples of what it can do.""",
+    "url":
+        "https://matplotlib.org/basemap/",
+    "download_url":
+        "https://github.com/matplotlib/basemap/archive/v{0}rel.tar.gz".format(__version__),
+    "author":
+        "Jeff Whitaker",
+    "author_email":
+        "jeffrey.s.whitaker@noaa.gov",
+    "maintainer":
+        "Ben Root",
+    "maintainer_email":
+        "ben.v.root@gmail.com",
+    "install_requires":
+        install_requires,
+    "platforms": [
+        "any",
+    ],
+    "license":
+        "OSI Approved",
+    "keywords": [
+        "python",
+        "plotting",
+        "plots",
+        "graphs",
+        "charts",
+        "GIS",
+        "mapping",
+        "map projections",
+        "maps",
+    ],
+    "classifiers": [
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Topic :: Scientific/Engineering :: Visualization",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
+    "namespace_packages":
+        namespace_packages,
+    "packages":
+        packages,
+    "package_dir":
+        package_dirs,
+    "package_data":
+        package_data,
+    "ext_modules":
+        extensions,
+})
