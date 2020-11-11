@@ -63,7 +63,7 @@ if 'BASEMAPDATA' in os.environ:
 else:
     basemap_datadir = os.sep.join([os.path.dirname(__file__), 'data'])
 
-__version__ = '1.2.2'
+__version__ = '1.3.0'
 
 # module variable that sets the default value for the 'latlon' kwarg.
 # can be set to True by user so plotting functions can take lons,lats
@@ -1222,11 +1222,10 @@ class Basemap(object):
         read boundary data, clip to map projection region.
         """
         msg = dedent("""
-        Unable to open boundary dataset file. Only the 'crude', 'low',
-        'intermediate' and 'high' resolution datasets are installed by default.
-        If you are requesting a 'full' resolution dataset, you may need to
-        download and install those files separately
-        (see the basemap README for details).""")
+        Unable to open boundary dataset file. Only the 'crude' and 'low'
+        resolution datasets are installed by default.
+        If you are requesting an 'intermediate', 'high' or 'full', you may need
+        to download and install those files separately from basemap-extras.""")
         # only gshhs coastlines can be polygons.
         if name != 'gshhs': as_polygons=False
         try:
@@ -1983,8 +1982,12 @@ class Basemap(object):
 
         returns a matplotlib.patches.LineCollection object.
         """
-        ax = ax or self._check_ax()
         gis_file = os.path.join(basemap_datadir,'UScounties')
+        if not os.path.isfile(gis_file + '.shp'):
+            raise IOError(("Cannot find '{0}.shp'. You may need to to "
+                           "download and install those files separately "
+                           "from basemap-extras".format(gis_file)))
+        ax = ax or self._check_ax()
         county_info = self.readshapefile(gis_file,'counties',\
                       default_encoding='latin-1',drawbounds=drawbounds)
         counties = [coords for coords in self.counties]

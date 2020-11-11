@@ -1,13 +1,13 @@
 include FAQ
-include README
+include README.md
 include MANIFEST.in
-include LICENSE_proj4
-include LICENSE_pyshp
+include LICENSE
 include LICENSE_data
+include LICENSE_epsg
 include LICENSE_geos
 include API_CHANGES
 include KNOWN_BUGS
-include Changelog
+include CHANGELOG
 include setup.py
 include nad2bin.c
 include src/*
@@ -94,8 +94,6 @@ include examples/README
 include lib/mpl_toolkits/__init__.py
 include lib/mpl_toolkits/basemap/__init__.py
 include lib/mpl_toolkits/basemap/proj.py
-include lib/mpl_toolkits/basemap/pyproj.py
-include lib/mpl_toolkits/basemap/shapefile.py
 include lib/mpl_toolkits/basemap/cm.py
 include lib/mpl_toolkits/basemap/solar.py
 include lib/mpl_toolkits/basemap/test.py
