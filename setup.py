@@ -175,7 +175,7 @@ examples of what it can do.""",
     "url":
         "https://matplotlib.org/basemap/",
     "download_url":
-        "https://github.com/matplotlib/basemap/archive/v{0}rel.tar.gz".format(__version__),
+        "https://github.com/matplotlib/basemap/archive/v{0}.tar.gz".format(__version__),
     "author":
         "Jeff Whitaker",
     "author_email":
