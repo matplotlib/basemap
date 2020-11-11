@@ -8,7 +8,9 @@ import glob
 import io
 import os
 import sys
+from setuptools import setup
 from setuptools.dist import Distribution
+from setuptools.extension import Extension
 __version__ = "1.3.0"
 
 if sys.version_info < (2, 6):
@@ -17,13 +19,9 @@ if sys.version_info < (2, 6):
 # Do not require numpy for just querying the package
 # Taken from the netcdf-python setup file (which took it from h5py setup file).
 inc_dirs = []
-if any('--' + opt in sys.argv for opt in Distribution.display_option_names +
-       ['help-commands', 'help']) or sys.argv[1] == 'egg_info':
-    from setuptools import setup, Extension
-else:
+if not (any('--' + opt in sys.argv for opt in Distribution.display_option_names +
+            ['help-commands', 'help']) or sys.argv[1] == 'egg_info'):
     import numpy
-    # Use numpy versions if they are available.
-    from numpy.distutils.core import setup, Extension
     # append numpy include dir.
     inc_dirs.append(numpy.get_include())
 
@@ -102,11 +100,13 @@ if sys.platform == 'win32':
 else:
     runtime_lib_dirs = geos_library_dirs
 
-extensions = [Extension("_geoslib", ['src/_geoslib.c'],
-                        library_dirs=geos_library_dirs,
-                        runtime_library_dirs=runtime_lib_dirs,
-                        include_dirs=geos_include_dirs,
-                        libraries=['geos_c'])]
+extensions = [
+    Extension("_geoslib", ["src/_geoslib.pyx"],
+              library_dirs=geos_library_dirs,
+              runtime_library_dirs=runtime_lib_dirs,
+              include_dirs=geos_include_dirs,
+              libraries=["geos_c"]),
+]
 
 # Define the build mode (normal, lite, data or extras).
 mode_arg = [item for item in sys.argv[1:] if item.startswith("--mode")]
