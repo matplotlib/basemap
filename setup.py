@@ -116,7 +116,7 @@ package_data = {'mpl_toolkits.basemap':datafiles}
 
 install_requires = get_install_requirements("requirements.txt")
 
-__version__ = "1.2.2"
+__version__ = "1.2.2+dev"
 setup(
   name              = "basemap",
   version           = __version__,
