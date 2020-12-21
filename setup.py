@@ -86,10 +86,6 @@ else:
     geos_include_dirs=[os.path.join(GEOS_dir,'include')] + inc_dirs
     geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
 
-packages          = ['mpl_toolkits','mpl_toolkits.basemap']
-namespace_packages = ['mpl_toolkits']
-package_dirs       = {'':'lib'}
-
 # can't install _geoslib in mpl_toolkits.basemap namespace,
 # or Basemap objects won't be pickleable.
 
@@ -106,14 +102,28 @@ extensions = [ Extension("_geoslib",['src/_geoslib.c'],
                          include_dirs=geos_include_dirs,
                          libraries=['geos_c']) ]
 
-# Specify all the required mpl data
-pathout =\
-os.path.join('lib',os.path.join('mpl_toolkits',os.path.join('basemap','data')))
+# Get the basemap data files.
+data_folder = os.path.join("lib", "mpl_toolkits", "basemap_data")
+data_pattern = os.path.join(data_folder, "*")
+data_files = sorted(map(os.path.basename, glob.glob(data_pattern)))
+data_files = [item for item in data_files if not item.endswith(".py")]
 
-datafiles = glob.glob(os.path.join(pathout,'*'))
-datafiles = [os.path.join('data',os.path.basename(f)) for f in datafiles]
-package_data = {'mpl_toolkits.basemap':datafiles}
-
+# Define package directories.
+namespace_packages = [
+    "mpl_toolkits",
+]
+packages = [
+    "mpl_toolkits.basemap",
+    "mpl_toolkits.basemap_data",
+]
+package_dirs = {
+    "mpl_toolkits.basemap": "lib/mpl_toolkits/basemap",
+    "mpl_toolkits.basemap_data": data_folder,
+}
+package_data = {
+    "mpl_toolkits.basemap_data":
+        data_files,
+}
 install_requires = get_install_requirements("requirements.txt")
 
 __version__ = "1.2.2+dev"
