@@ -3432,13 +3432,13 @@ class Basemap(object):
         """
         ax, plt = self._ax_plt_from_kw(kwargs)
         # fix for invalid grid points
-        if ((np.any(x > 1e20) or np.any (y > 1e20)) and
-            len(x.shape) == 2 and len(y.shape) == 2):
-            if not x.shape == y.shape:
-                raise Exception('pcolormesh: x and y need same dimension')
+        if ((np.any(x > 1e20) or np.any(y > 1e20)) and
+            x.ndim == 2 and y.ndim == 2):
+            if x.shape != y.shape:
+                raise ValueError('pcolormesh: x and y need same dimension')
             nx,ny = x.shape
             if nx < data.shape[0] or ny < data.shape[1]:
-                raise Exception('pcolormesh: data dimension needs to be at least that of x and y.')
+                raise ValueError('pcolormesh: data dimension needs to be at least that of x and y.')
             mask = (
                 (x[:-1,:-1] > 1e20) |
                 (x[1:,:-1] > 1e20) |
