@@ -66,7 +66,7 @@ PERFORMANCE OF THIS SOFTWARE.
 
 ## Documentation
 
-See http://matplotlib.github.com/basemap/
+See http://matplotlib.github.io/basemap/
 
 See scripts in `examples` directory for example usage.
 
