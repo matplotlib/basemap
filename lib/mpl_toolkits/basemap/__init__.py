@@ -1979,23 +1979,32 @@ class Basemap(object):
         ax               axes instance (overrides default axes instance)
         zorder           sets the zorder for the county boundaries (if not
                          specified, uses default zorder for
-                         matplotlib.patches.LineCollections).
+                         `matplotlib.patches.LineCollections`).
         ==============   ====================================================
 
-        returns a matplotlib.patches.LineCollection object.
+        returns a matplotlib.collections.PolyCollection object.
+
+        .. note::
+            Returning a `PolyCollection` for this method deviates from
+            other functions like :func:`drawstates` which return
+            `LineCollection` objects. However, to ensure that counties
+            will typically appear in front, the default zorder of
+            `LineCollection` is used as the default here.
+
         """
         ax = ax or self._check_ax()
         gis_file = os.path.join(basemap_datadir,'UScounties')
         county_info = self.readshapefile(gis_file,'counties',\
                       default_encoding='latin-1',drawbounds=drawbounds)
         counties = [coords for coords in self.counties]
-        counties = PolyCollection(counties)
+        # Hard-coding a default zorder to keep counties in front
+        counties = PolyCollection(counties, zorder=2)
         counties.set_linestyle(linestyle)
         counties.set_linewidth(linewidth)
         counties.set_edgecolor(color)
         counties.set_facecolor(facecolor)
         counties.set_label('counties')
-        if zorder:
+        if zorder is not None:
             counties.set_zorder(zorder)
         ax.add_collection(counties)
         return counties
