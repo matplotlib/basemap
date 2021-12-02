@@ -35,7 +35,7 @@ https://matplotlib.org/
 [`basemap`]:
 https://matplotlib.org/basemap/
 [`COPYING`]:
-./COPYING
+https://github.com/molinav/basemap/blob/develop/packages/basemap_data/COPYING
 [Generic Mapping Tools (GMT)]:
 http://gmt.soest.hawaii.edu
 [Historical Permission Notice and Disclaimer (HPND)]:
