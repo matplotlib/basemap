@@ -1,9 +1,10 @@
 from __future__ import (absolute_import, division, print_function)
 
-import glob
 import io
 import os
 import sys
+from setuptools import setup
+from setuptools import find_packages
 from setuptools.dist import Distribution
 
 if sys.version_info < (2, 6):
@@ -12,10 +13,8 @@ if sys.version_info < (2, 6):
 # Do not require numpy for just querying the package
 # Taken from the netcdf-python setup file (which took it from h5py setup file).
 inc_dirs = []
-if any('--' + opt in sys.argv for opt in Distribution.display_option_names +
-       ['help-commands', 'help']) or sys.argv[1] == 'egg_info':
-    from setuptools import setup, Extension
-else:
+if not any('--' + opt in sys.argv for opt in Distribution.display_option_names +
+           ['help-commands', 'help']) or sys.argv[1] == 'egg_info':
     import numpy
     # Use numpy versions if they are available.
     from numpy.distutils.core import setup, Extension
@@ -23,12 +22,16 @@ else:
     inc_dirs.append(numpy.get_include())
 
 
-def get_install_requirements(path):
-    path = os.path.join(os.path.dirname(__file__), path)
-    with io.open(path, encoding='utf-8') as fp:
-        content = fp.read()
-    return [req for req in content.split("\n")
-                if req != '' and not req.startswith('#')]
+def get_content(name, splitlines=False):
+    """Return the file contents with project root as root folder."""
+
+    here = os.path.abspath(os.path.dirname(__file__))
+    path = os.path.join(here, name)
+    with io.open(path, encoding="utf-8") as fd:
+        content = fd.read()
+    if splitlines:
+        content = [row for row in content.splitlines() if row]
+    return content
 
 
 def checkversion(GEOS_dir):
@@ -102,61 +105,74 @@ extensions = [ Extension("_geoslib",['src/_geoslib.c'],
                          include_dirs=geos_include_dirs,
                          libraries=['geos_c']) ]
 
-# Get the basemap data files.
-data_folder = os.path.join("lib", "mpl_toolkits", "basemap_data")
-data_pattern = os.path.join(data_folder, "*")
-data_files = sorted(map(os.path.basename, glob.glob(data_pattern)))
-data_files = [item for item in data_files if not item.endswith(".py")]
-
-# Define package directories.
-namespace_packages = [
-    "mpl_toolkits",
-]
-packages = [
-    "mpl_toolkits.basemap",
-    "mpl_toolkits.basemap_data",
-]
-package_dirs = {
-    "mpl_toolkits.basemap": "lib/mpl_toolkits/basemap",
-    "mpl_toolkits.basemap_data": data_folder,
-}
-package_data = {
-    "mpl_toolkits.basemap_data":
-        data_files,
-}
-install_requires = get_install_requirements("requirements.txt")
-
-__version__ = "1.2.2+dev"
-setup(
-  name              = "basemap",
-  version           = __version__,
-  description       = "Plot data on map projections with matplotlib",
-  long_description  = """
-  An add-on toolkit for matplotlib that lets you plot data
-  on map projections with coastlines, lakes, rivers and political boundaries.
-  See http://matplotlib.org/basemap/users/examples.html for
-  examples of what it can do.""",
-  url               = "https://matplotlib.org/basemap/",
-  download_url      = "https://github.com/matplotlib/basemap/archive/v{0}rel.tar.gz".format(__version__),
-  author            = "Jeff Whitaker",
-  author_email      = "jeffrey.s.whitaker@noaa.gov",
-  maintainer        = "Ben Root",
-  maintainer_email  = "ben.v.root@gmail.com",
-  install_requires  = install_requires,
-  platforms         = ["any"],
-  license           = "OSI Approved",
-  keywords          = ["python","plotting","plots","graphs","charts","GIS","mapping","map projections","maps"],
-  classifiers       = ["Development Status :: 5 - Production/Stable",
-                       "Intended Audience :: Science/Research",
-                       "License :: OSI Approved",
-                       "Programming Language :: Python",
-                       "Programming Language :: Python :: 3",
-                       "Topic :: Scientific/Engineering :: Visualization",
-                       "Topic :: Software Development :: Libraries :: Python Modules",
-                       "Operating System :: OS Independent"],
-  packages          = packages,
-  namespace_packages = namespace_packages,
-  package_dir       = package_dirs,
-  ext_modules       = extensions,
-  package_data = package_data
-  )
+# To create the source .tar.gz file:  python setup.py sdist
+# To create the universal wheel file: python setup.py bdist_wheel --universal
+setup(**{
+    "name":
+        "basemap",
+    "version":
+        "1.2.2+dev",
+    "license":
+        "OSI Approved",
+    "description":
+        "Plot data on map projections with matplotlib",
+    "long_description": """
+An add-on toolkit for matplotlib that lets you plot data on map
+projections with coastlines, lakes, rivers and political boundaries.
+See http://matplotlib.org/basemap/users/examples.html for examples of
+what it can do.""",
+    "long_description_content_type":
+        "text/markdown",
+    "url":
+        "https://matplotlib.org/basemap",
+    "author":
+        "Jeff Whitaker",
+    "author_email":
+        "jeffrey.s.whitaker@noaa.gov",
+    "maintainer":
+        "Víctor Molina García",
+    "maintainer_email":
+        "molinav@users.noreply.github.com",
+    "classifiers": [
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Education",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
+        "Topic :: Scientific/Engineering :: Visualization",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
+    "keywords": [
+        "GIS",
+        "maps",
+        "plots",
+    ],
+    "namespace_packages": [
+        "mpl_toolkits",
+    ],
+    "package_dir":
+        {"": "lib"},
+    "packages":
+        find_packages(where="lib"),
+    "ext_modules":
+        extensions,
+    "python_requires":
+        ", ".join([
+            ">=2.6",
+            "!=3.0.*",
+            "!=3.1.*",
+            "<4",
+        ]),
+    "install_requires":
+        get_content("requirements.txt", splitlines=True),
+    "project_urls": {
+        "Bug Tracker":
+            "https://github.com/matplotlib/basemap/issues",
+        "Documentation":
+            "https://matplotlib.org/basemap/",
+        "Source":
+            "https://github.com/matplotlib/basemap",
+    },
+})
