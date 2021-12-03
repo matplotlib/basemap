@@ -92,9 +92,10 @@ else:
     geos_include_dirs=[os.path.join(GEOS_dir,'include')] + inc_dirs
     geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
 
-# don't use runtime_library_dirs on windows (workaround
-# for a distutils bug - http://bugs.python.org/issue2437).
-if sys.platform == 'win32':
+# Define runtime library dirs.
+# Don't use runtime_library_dirs on windows (workaround for a distutils bug):
+#     http://bugs.python.org/issue2437)
+if sys.platform == "win32":
     runtime_lib_dirs = []
 else:
     runtime_lib_dirs = geos_library_dirs
