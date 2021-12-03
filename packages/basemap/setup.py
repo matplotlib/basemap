@@ -192,6 +192,8 @@ what it can do.""",
             "!=3.1.*",
             "<4",
         ]),
+    "setup_requires":
+        get_content("requirements-setup.txt", splitlines=True),
     "install_requires":
         get_content("requirements.txt", splitlines=True),
     "project_urls": {

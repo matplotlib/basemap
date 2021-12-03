@@ -58,3 +58,80 @@ jobs:
         with:
           name: artifacts-geos
           path: ${{ env.PKGDIR }}/extern
+
+  build:
+    needs: build-geos
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version:
+          [
+            "2.7",
+            "3.5",
+            "3.6",
+            "3.7",
+            "3.8",
+            "3.9",
+          ]
+      max-parallel: 6
+      fail-fast: false
+    container: "tinybases/python:${{ matrix.python_version }}-debian-4"
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v1
+      -
+        name: Download GEOS artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-geos
+          path: ${{ env.PKGDIR }}/extern
+      -
+        name: Print environment
+        run: |
+          set -e
+          . /etc/profile
+          python -V
+      -
+        name: Install compilers
+        run: |
+          set -e
+          . /etc/profile
+          apt-get update && apt-get install -y gcc g++ make
+          gcc --version
+          g++ --version
+      -
+        name: Generate NumPy headers
+        run: |
+          set -e
+          . /etc/profile
+          case "${{ matrix.python_version }}" in
+              2.[67]|3.[0123456])  pkgvers=1.11.3;;
+              *)                   pkgvers=1.16.6;;
+          esac
+          pkgname=numpy-${pkgvers}
+          wget https://github.com/numpy/numpy/releases/download/v${pkgvers}/${pkgname}.tar.gz
+          tar -xf ${pkgname}.tar.gz
+          rm -f ${pkgname}.tar.gz
+          cd ${pkgname}
+          python setup.py build -j 16
+          cp build/src*/numpy/core/include/numpy/*.h numpy/core/include/numpy/
+          cd ..
+          cp -R ${pkgname}/numpy/core/include ${{ env.PKGDIR }}/extern
+          rm -rf ${pkgname}
+      -
+        name: Build wheel
+        run: |
+          set -e
+          . /etc/profile
+          cd ${{ env.PKGDIR }}
+          export GEOS_DIR=extern
+          export NUMPY_INCLUDE_PATH=extern/include
+          pip install -r requirements-setup.txt
+          python setup.py sdist bdist_wheel
+      -
+        name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: artifacts-build-${{ matrix.python_version }}
+          path: ${{ env.PKGDIR }}/dist
