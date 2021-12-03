@@ -92,9 +92,6 @@ else:
     geos_include_dirs=[os.path.join(GEOS_dir,'include')] + inc_dirs
     geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
 
-# can't install _geoslib in mpl_toolkits.basemap namespace,
-# or Basemap objects won't be pickleable.
-
 # don't use runtime_library_dirs on windows (workaround
 # for a distutils bug - http://bugs.python.org/issue2437).
 if sys.platform == 'win32':
@@ -102,11 +99,26 @@ if sys.platform == 'win32':
 else:
     runtime_lib_dirs = geos_library_dirs
 
-extensions = [ Extension("_geoslib",['src/_geoslib.c'],
-                         library_dirs=geos_library_dirs,
-                         runtime_library_dirs=runtime_lib_dirs,
-                         include_dirs=geos_include_dirs,
-                         libraries=['geos_c']) ]
+# Define `_geoslib` extension module. It cannot be installed in the
+# `mpl_toolkits.basemap` namespace or `Basemap` objects will not be pickleable.
+ext_modules = [
+    Extension(**{
+        "name":
+            "_geoslib",
+        "sources": [
+            "src/_geoslib.c",
+        ],
+        "libraries": [
+            "geos_c",
+        ],
+        "library_dirs":
+            geos_library_dirs,
+        "include_dirs":
+            geos_include_dirs,
+        "runtime_library_dirs":
+            runtime_lib_dirs,
+    }),
+]
 
 # To create the source .tar.gz file:  python setup.py sdist
 # To create the universal wheel file: python setup.py bdist_wheel --universal
@@ -160,7 +172,7 @@ what it can do.""",
     "packages":
         find_packages(where="lib"),
     "ext_modules":
-        extensions,
+        ext_modules,
     "python_requires":
         ", ".join([
             ">=2.6",
