@@ -1,3 +1,6 @@
+#! /usr/bin/env python
+# -*- coding: utf8 -*-
+# flake8: noqa: E122
 from __future__ import (absolute_import, division, print_function)
 
 import io
