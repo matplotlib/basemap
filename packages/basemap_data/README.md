@@ -10,6 +10,9 @@ The land-sea mask, coastline, lake, river and political boundary data are
 extracted from datasets provided with the [Generic Mapping Tools (GMT)] and
 are included under the terms given in [`COPYING`].
 
+The EPSG file belongs to the PROJ.4 package and is licensed here under the
+[MIT license] as stated in [`LICENSE.epsg`].
+
 Everything else is licensed under the [Historical Permission Notice and
 Disclaimer (HPND)], as indicated below:
 ```
@@ -36,7 +39,11 @@ https://matplotlib.org/
 https://matplotlib.org/basemap/
 [`COPYING`]:
 https://github.com/molinav/basemap/blob/develop/packages/basemap_data/COPYING
+[`LICENSE.epsg`]:
+https://github.com/molinav/basemap/blob/develop/packages/basemap_data/LICENSE.epsg
 [Generic Mapping Tools (GMT)]:
 http://gmt.soest.hawaii.edu
 [Historical Permission Notice and Disclaimer (HPND)]:
 https://opensource.org/licenses/HPND
+[MIT license]:
+https://opensource.org/licenses/MIT
