@@ -122,35 +122,42 @@ class GeosLibrary(object):
             for line in lines:
                 fd.write(line.replace(oldtext, newtext).encode())
 
-    def build(self, njobs=1, installdir=None):
+    def build(self, installdir=None):
         """Build and install GEOS from source."""
 
         # Download and decompress zip file if not present.
         zipfold = os.path.join(self.root, "geos-{0}".format(self.version))
         self.decompress(overwrite=True)
 
+        # Define build directory.
+        builddir = os.path.join(zipfold, "build")
+
         # Define installation directory.
         if installdir is None:
             installdir = os.path.expanduser("~/.local/share/libgeos")
         installdir = os.path.abspath(installdir)
 
-        # Create installation directory if not present.
-        try:
-            os.makedirs(installdir)
-        except OSError:
-            pass
-
         # Now move to the GEOS source code folder and build with CMake.
         cwd = os.getcwd()
         try:
-            os.chdir(zipfold)
-            subprocess.call(["cmake",
-                             "-S", ".",
-                             "-B", "build",
+            # Ensure that the build directory exists.
+            try:
+                os.makedirs(builddir)
+            except OSError:
+                pass
+            os.chdir(builddir)
+            # Call cmake configure.
+            subprocess.call(["cmake", "..",
                              "-DCMAKE_BUILD_TYPE=Release",
                              "-DCMAKE_INSTALL_PREFIX={0}".format(installdir)])
+            # Ensure that the install directory exists.
+            try:
+                os.makedirs(installdir)
+            except OSError:
+                pass
+            # Call cmake build and install.
             subprocess.call(["cmake",
-                             "--build", "build", "-j", str(int(njobs)),
+                             "--build", ".",
                              "--target", "install"])
         finally:
             os.chdir(cwd)
