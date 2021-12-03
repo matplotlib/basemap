@@ -108,6 +108,10 @@ class GeosLibrary(object):
         with contextlib.closing(ZipFile(zippath, "r")) as fd:
             fd.extractall(self.root)
 
+        # Ensure that GEOS internal sh scripts can be executed.
+        for path in sorted(glob.glob(os.path.join(zipfold, "tools", "*.sh"))):
+            os.chmod(path, 0o755)
+
         # Patch CMakeLists so that libgeos_c.so does not depend on libgeos.so.
         cmakefile = os.path.join(zipfold, "capi", "CMakeLists.txt")
         with io.open(cmakefile, "r", encoding="utf-8") as fd:
@@ -140,8 +144,6 @@ class GeosLibrary(object):
         cwd = os.getcwd()
         try:
             os.chdir(zipfold)
-            for path in sorted(glob.glob("tools/*.sh")):
-                os.chmod(path, 0o755)
             subprocess.call(["cmake",
                              "-S", ".",
                              "-B", "build",
