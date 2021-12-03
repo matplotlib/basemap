@@ -1,0 +1,60 @@
+name: ci-basemap
+
+env:
+  PKGDIR: "packages/basemap"
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+
+  build-geos:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version:
+          [
+            "3.6",
+          ]
+      max-parallel: 1
+    container: "tinybases/python:${{ matrix.python_version }}-debian-4"
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v1
+      -
+        name: Install CMake 2.8.6
+        run: |
+          set -e
+          . /etc/profile
+          cd /usr/bin
+          wget https://raw.githubusercontent.com/minos-org/minos-static/master/static-get
+          chmod +x static-get
+          cd /tmp
+          static-get cmake
+          cd /
+          tar -xf /tmp/cmake-*.tar.gz
+          cmake --version
+      -
+        name: Install compilers
+        run: |
+          set -e
+          . /etc/profile
+          apt-get update && apt-get install -y gcc g++ make
+          gcc --version
+          g++ --version
+      -
+        name: Build GEOS from source
+        run: |
+          set -e
+          . /etc/profile
+          cd ${{ env.PKGDIR }}
+          export MAKEFLAGS="-j 16"
+          python -c "from utils import GeosLibrary; GeosLibrary('3.3.3').build('extern')"
+      -
+        name: Upload GEOS artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: artifacts-geos
+          path: ${{ env.PKGDIR }}/extern
