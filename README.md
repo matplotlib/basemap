@@ -38,7 +38,7 @@ work on Python 2.x. Pillow is a maintained fork of PIL.
 ## Copyright
 
 Source code for the GEOS library is included in the `geos-3.3.3` directory
-under the terms given in `LICENSE_geos`.
+under the terms given in [`LICENSE.geos`].
 
 The land-sea mask, coastline, lake, river and political boundary data are
 extracted from datasets provided with the
@@ -122,3 +122,7 @@ Sinclair, Ivan Lima, Erik Andersen, Michael Hearne, Jesper Larsen, Ryan May,
 David Huard, Mauro Cavalcanti, Jonas Bluethgen, Chris Murphy, Pierre
 Gerard-Marchant, Christoph Gohlke, Eric Bruning, Stephane Raynaud, Tom Loredo,
 Patrick Marsh, Phil Elson, and Henry Hammond for valuable contributions.
+
+
+[`LICENSE.geos`]:
+packages/basemap/LICENSE.geos
