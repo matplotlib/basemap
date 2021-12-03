@@ -42,24 +42,8 @@ Thumbs.db
 
 # Things specific to this project #
 ###################################
-nad2bin
 examples/*.png
 *.pickle
-
-# output of nad2bin
-lib/mpl_toolkits/basemap/data/FL
-lib/mpl_toolkits/basemap/data/MD
-lib/mpl_toolkits/basemap/data/TN
-lib/mpl_toolkits/basemap/data/WI
-lib/mpl_toolkits/basemap/data/WO
-lib/mpl_toolkits/basemap/data/alaska
-lib/mpl_toolkits/basemap/data/conus
-lib/mpl_toolkits/basemap/data/hawaii
-lib/mpl_toolkits/basemap/data/null
-lib/mpl_toolkits/basemap/data/prvi
-lib/mpl_toolkits/basemap/data/stgeorge
-lib/mpl_toolkits/basemap/data/stlrnc
-lib/mpl_toolkits/basemap/data/stpaul
 
 # Documentation generated files #
 #################################
