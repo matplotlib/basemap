@@ -130,6 +130,101 @@ jobs:
           pip install -r requirements-setup.txt
           python setup.py sdist bdist_wheel
       -
+        name: Upload build artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: artifacts-build-${{ matrix.python_version }}
+          path: ${{ env.PKGDIR }}/dist
+
+  repair:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version:
+          [
+            "2.7",
+            "3.5",
+            "3.6",
+            "3.7",
+            "3.8",
+            "3.9",
+          ]
+      max-parallel: 6
+      fail-fast: false
+    container: "tinybases/python:3.6-debian-5"
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v1
+      -
+        name: Download GEOS artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-geos
+          path: ${{ env.PKGDIR }}/extern
+      -
+        name: Download build artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-build-${{ matrix.python_version }}
+          path: ${{ env.PKGDIR }}/dist
+      -
+        name: Print environment
+        run: |
+          set -e
+          . /etc/profile
+          python -V
+      -
+        name: Install compilers
+        run: |
+          set -e
+          . /etc/profile
+          apt-get update && apt-get install -y gcc g++ make
+          gcc --version
+          g++ --version
+      -
+        name: Install unzip
+        run: |
+          set -e
+          . /etc/profile
+          apt-get update
+          apt-get install -y unzip
+          gcc --version
+          g++ --version
+      -
+        name: Install patchelf
+        run: |
+          set -e
+          . /etc/profile
+          pkgvers=0.9
+          pkgname=patchelf-${pkgvers}
+          cd /tmp
+          wget https://releases.nixos.org/patchelf/${pkgname}/${pkgname}.tar.gz
+          tar -xf ${pkgname}.tar.gz
+          rm -f ${pkgname}.tar.gz
+          cd ${pkgname}
+          ./configure
+          make
+          make check
+          make install
+          cd ..
+          rm -rf ${pkgname}
+      -
+        name: Install auditwheel
+        run: |
+          set -e
+          . /etc/profile
+          pip install "auditwheel < 4.0"
+      -
+        name: Repair wheel
+        run: |
+          set -e
+          . /etc/profile
+          cd ${{ env.PKGDIR }}
+          export LD_LIBRARY_PATH="$(readlink -f extern/lib)"
+          auditwheel repair -w dist --plat manylinux1_x86_64 dist/*.whl
+      -
         name: Upload artifacts
         uses: actions/upload-artifact@v1
         with:
