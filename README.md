@@ -43,7 +43,7 @@ under the terms given in [`LICENSE.geos`].
 The land-sea mask, coastline, lake, river and political boundary data are
 extracted from datasets provided with the
 [Generic Mapping Tools (GMT)](http://gmt.soest.hawaii.edu) and are included
-under the terms given in `LICENSE_data`.
+under the terms given in [`COPYING`].
 
 Everything else (including `src/_geos.c` and `src/_geos.pyx`) is licensed under
 the terms given in `LICENSE`:
@@ -126,3 +126,5 @@ Patrick Marsh, Phil Elson, and Henry Hammond for valuable contributions.
 
 [`LICENSE.geos`]:
 packages/basemap/LICENSE.geos
+[`COPYING`]:
+packages/basemap_data/COPYING
