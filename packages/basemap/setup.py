@@ -9,20 +9,7 @@ import sys
 from setuptools import setup
 from setuptools import find_packages
 from setuptools.dist import Distribution
-
-if sys.version_info < (2, 6):
-    raise SystemExit("""matplotlib and the basemap toolkit require Python 2.6 or later.""")
-
-# Do not require numpy for just querying the package
-# Taken from the netcdf-python setup file (which took it from h5py setup file).
-inc_dirs = []
-if not any('--' + opt in sys.argv for opt in Distribution.display_option_names +
-           ['help-commands', 'help']) or sys.argv[1] == 'egg_info':
-    import numpy
-    # Use numpy versions if they are available.
-    from numpy.distutils.core import setup, Extension
-    # append numpy include dir.
-    inc_dirs.append(numpy.get_include())
+from setuptools.extension import Extension
 
 
 def get_content(name, splitlines=False):
@@ -88,9 +75,22 @@ is in /usr/local/include, and libgeos_c is in /usr/local/lib,
 set GEOS_DIR to /usr/local), or edit the setup.py script
 manually and set the variable GEOS_dir (right after the line
 that says "set GEOS_dir manually here".""" % "', '".join(geos_search_locations))
-else:
-    geos_include_dirs=[os.path.join(GEOS_dir,'include')] + inc_dirs
-    geos_library_dirs=[os.path.join(GEOS_dir,'lib'),os.path.join(GEOS_dir,'lib64')]
+
+# Define include dirs.
+include_dirs = [
+    os.path.join(GEOS_dir, "include")
+]
+if not any("--" + opt in sys.argv for opt in Distribution.display_option_names +
+           ["help-commands", "help"]) or sys.argv[1] == "egg_info":
+    # Do not import numpy for just querying the package (taken from h5py setup).
+    import numpy
+    include_dirs.append(numpy.get_include())
+
+# Define library dirs.
+library_dirs = [
+    os.path.join(GEOS_dir, "lib"),
+    os.path.join(GEOS_dir, "lib64"),
+]
 
 # Define runtime library dirs.
 # Don't use runtime_library_dirs on windows (workaround for a distutils bug):
@@ -98,7 +98,7 @@ else:
 if sys.platform == "win32":
     runtime_lib_dirs = []
 else:
-    runtime_lib_dirs = geos_library_dirs
+    runtime_lib_dirs = library_dirs
 
 # Define `_geoslib` extension module. It cannot be installed in the
 # `mpl_toolkits.basemap` namespace or `Basemap` objects will not be pickleable.
@@ -112,10 +112,10 @@ ext_modules = [
         "libraries": [
             "geos_c",
         ],
-        "library_dirs":
-            geos_library_dirs,
         "include_dirs":
-            geos_include_dirs,
+            include_dirs,
+        "library_dirs":
+            library_dirs,
         "runtime_library_dirs":
             runtime_lib_dirs,
     }),
