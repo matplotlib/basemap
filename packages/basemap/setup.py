@@ -36,49 +36,46 @@ def checkversion(GEOS_dir):
             geos_version = line.split()[2]
     return geos_version
 
-# get location of geos lib from environment variable if it is set.
-if 'GEOS_DIR' in os.environ:
-    GEOS_dir = os.environ.get('GEOS_DIR')
+
+# Define GEOS install directory (from environment variable or trying to guess).
+geos_installdir = os.environ.get("GEOS_DIR", None)
+if geos_installdir is not None:
+    geos_version = checkversion(geos_installdir)
 else:
-# set GEOS_dir manually here if automatic detection fails.
-    GEOS_dir = None
-
-user_home = os.path.expanduser('~')
-geos_search_locations = [user_home, os.path.join(user_home, 'local'),
-                         '/usr', '/usr/local', '/sw', '/opt', '/opt/local']
-
-if GEOS_dir is None:
-    # if GEOS_dir not set, check a few standard locations.
-    GEOS_dirs = geos_search_locations
-    for direc in GEOS_dirs:
-        geos_version = checkversion(direc)
-        sys.stdout.write('checking for GEOS lib in %s ....\n' % direc)
-        if geos_version is None or geos_version < '"3.1.1"':
-            continue
-        else:
-            sys.stdout.write('GEOS lib (version %s) found in %s\n' %\
-                    (geos_version[1:-1],direc))
-            GEOS_dir = direc
+    # Define some default locations to find GEOS.
+    geos_search_locations = [
+        os.path.expanduser("~/local"),
+        os.path.expanduser("~"),
+        "/usr/local",
+        "/usr",
+        "/opt/local",
+        "/opt",
+        "/sw"
+    ]
+    # Loop over the default locations to see if we find something.
+    for folder in geos_search_locations:
+        # sys.stdout.write('checking for GEOS lib in %s ....\n' % folder)
+        geos_version = checkversion(folder)
+        if geos_version is not None and geos_version >= '"3.1.1"':
+            # sys.stdout.write(
+            #     "GEOS lib (version %s) found in %s\n" %
+            #     (geos_version[1:-1], folder))
+            geos_installdir = folder
             break
-else:
-    geos_version = checkversion(GEOS_dir)
-
-if GEOS_dir is None:
-    raise SystemExit("""
-Can't find geos library in standard locations ('%s').
-Please install the corresponding packages using your
-systems software management system (e.g. for Debian Linux do:
-'apt-get install libgeos-3.3.3 libgeos-c1 libgeos-dev' and/or
-set the environment variable GEOS_DIR to point to the location
-where geos is installed (for example, if geos_c.h
-is in /usr/local/include, and libgeos_c is in /usr/local/lib,
-set GEOS_DIR to /usr/local), or edit the setup.py script
-manually and set the variable GEOS_dir (right after the line
-that says "set GEOS_dir manually here".""" % "', '".join(geos_search_locations))
+    if geos_installdir is None:
+        raise OSError("\n".join([
+            "Cannot find GEOS library in standard locations ('{0}').",
+            "Please install the corresponding packages using your",
+            "software management system or set the environment variable",
+            "GEOS_DIR to point to the location where GEOS is installed",
+            "(for example, if 'geos_c.h' is in '/usr/local/include'",
+            "and 'libgeos_c' is in '/usr/local/lib', then you need to",
+            "set GEOS_DIR to '/usr/local'",
+        ]).format("', '".join(geos_search_locations)))
 
 # Define include dirs.
 include_dirs = [
-    os.path.join(GEOS_dir, "include")
+    os.path.join(geos_installdir, "include")
 ]
 if not any("--" + opt in sys.argv for opt in Distribution.display_option_names +
            ["help-commands", "help"]) or sys.argv[1] == "egg_info":
@@ -88,8 +85,8 @@ if not any("--" + opt in sys.argv for opt in Distribution.display_option_names +
 
 # Define library dirs.
 library_dirs = [
-    os.path.join(GEOS_dir, "lib"),
-    os.path.join(GEOS_dir, "lib64"),
+    os.path.join(geos_installdir, "lib"),
+    os.path.join(geos_installdir, "lib64"),
 ]
 
 # Define runtime library dirs.
