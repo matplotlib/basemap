@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf8 -*-
 # flake8: noqa: E122
-from __future__ import (absolute_import, division, print_function)
+"""basemap -- Plot data on map projections with matplotlib."""
 
 import io
 import os
@@ -24,17 +24,20 @@ def get_content(name, splitlines=False):
     return content
 
 
-def checkversion(GEOS_dir):
-    """check geos C-API header file (geos_c.h)"""
+def checkversion(directory):
+    """Return GEOS version from GEOS C-API header file (geos_c.h)."""
+
+    version = None
     try:
-        f = open(os.path.join(GEOS_dir, 'include', 'geos_c.h'))
+        header_path = os.path.join(directory, "include", "geos_c.h")
+        with io.open(header_path, "r", encoding="utf-8") as fd:
+            for line in fd:
+                if line.startswith("#define GEOS_VERSION"):
+                    version = line.split()[2]
+                    break
     except IOError:
-        return None
-    geos_version = None
-    for line in f:
-        if line.startswith('#define GEOS_VERSION'):
-            geos_version = line.split()[2]
-    return geos_version
+        pass
+    return version
 
 
 # Define GEOS install directory (from environment variable or trying to guess).
