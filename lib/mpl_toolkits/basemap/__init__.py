@@ -62,7 +62,7 @@ if 'BASEMAPDATA' in os.environ:
         raise RuntimeError('Path in environment BASEMAPDATA not a directory')
 else:
     from mpl_toolkits import basemap_data
-    basemap_datadir = os.path.dirname(basemap_data.__file__)
+    basemap_datadir = os.path.abspath(list(basemap_data.__path__)[0])
 
 __version__ = '1.2.2+dev'
 
