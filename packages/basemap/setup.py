@@ -80,11 +80,22 @@ else:
 include_dirs = [
     os.path.join(geos_installdir, "include")
 ]
-if not any("--" + opt in sys.argv for opt in Distribution.display_option_names +
+
+# Define include dirs for NumPy.
+# Do not import numpy for querying the package (taken from h5py setup).
+if not any("--" + opt in sys.argv
+           for opt in Distribution.display_option_names +
            ["help-commands", "help"]) or sys.argv[1] == "egg_info":
-    # Do not import numpy for just querying the package (taken from h5py setup).
-    import numpy
-    include_dirs.append(numpy.get_include())
+    # Try to read NumPy include path from environment variable.
+    numpy_include_path = os.environ.get("NUMPY_INCLUDE_PATH", None)
+    if numpy_include_path is None:
+        try:
+            import numpy
+            numpy_include_path = numpy.get_include()
+        except ImportError as err:
+            err.args = ("unable to locate NumPy headers",)
+            raise
+    include_dirs.append(numpy_include_path)
 
 # Define library dirs.
 library_dirs = [
