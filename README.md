@@ -8,61 +8,57 @@ using matplotlib.
 
 ## Requirements
 
+Basic requirements are the following:
+
 * Python 2.6 (or higher)
-
 * matplotlib
-
 * numpy
-
-* [pyproj](https://github.com/jswhit/pyproj)
-
+* [pyproj](https://github.com/pyproj4/pyproj)
 * [pyshp](https://github.com/GeospatialPython/pyshp)
+* The GEOS (Geometry Engine - Open Source) library (version 3.1.1 or
+  higher). Source code is included in the `geos-3.3.3` directory.
+* On Linux, if your Python was installed via a package management
+  system, make sure the corresponding `python-dev` package is also
+  installed. Otherwise, you may not have the Python header (`Python.h`),
+  which is required to build Python C extensions.
 
-* The GEOS (Geometry Engine - Open Source) library (version 3.1.1 or higher).
-Source code is included in the `geos-3.3.3` directory.
+Optional requirements include:
 
-* On Linux, if your Python was installed via a package management system, make
-sure the corresponding `python-dev` package is also installed. Otherwise, you
-may not have the Python header (`Python.h`), which is required to build Python
-C extensions.
+* [OWSLib](https://github.com/geopython/OWSLib). It is needed for the
+  `BaseMap.wmsimage` function.
 
-### Optional
+* [Pillow](https://python-pillow.github.io/). It is needed for Basemap
+  warpimage, bluemarble, shadedrelief, and etop methods. PIL should work
+  on Python 2.x. Pillow is a maintained fork of PIL.
 
-* [OWSLib](https://github.com/geopython/OWSLib) (optional) It is needed for
-the `BaseMap.wmsimage` function.
+## License
 
-* [Pillow](https://python-pillow.github.io/) (optional) It is needed for
-Basemap warpimage, bluemarble, shadedrelief, and etop methods. PIL should
-work on Python 2.x. Pillow is a maintained fork of PIL.
+The source code and data assets are under the following licenses:
 
-## Copyright
+* `basemap`:
+  * [HPND]: Python source code and Python wrapper for GEOS.
+  * [LGPL-2.1-only]: GEOS source code and dynamic library.
+* `basemap-data`:
+  * [GPL-2.0-or-later]: land-sea mask, coastline, lake, river and
+    political boundary data derived from GMT.
+  * [MIT]: EPSG file.
+  * [HPND]: remaining data files.
+* `basemap-data-hires`:
+  * [GPL-2.0-or-later]: land-sea mask, coastline, lake, river and
+    political boundary data derived from GMT.
 
-Source code for the GEOS library is included in the `geos-3.3.3` directory
-under the terms given in [`LICENSE.geos`].
+For a full description, please visit the README and LICENSE files of
+each package in the corresponding package folders.
 
-The land-sea mask, coastline, lake, river and political boundary data are
-extracted from datasets provided with the
-[Generic Mapping Tools (GMT)](http://gmt.soest.hawaii.edu) and are included
-under the terms given in [`COPYING`].
+[MIT]:
+https://spdx.org/licenses/MIT.html
+[HPND]:
+https://spdx.org/licenses/HPND.html
+[LGPL-2.1-only]:
+https://spdx.org/licenses/LGPL-2.1-only.html
+[GPL-2.0-or-later]:
+https://spdx.org/licenses/GPL-2.0-or-later.html
 
-Everything else (including `src/_geos.c` and `src/_geos.pyx`) is licensed under
-the terms given in `LICENSE`:
-
-Copyright (C) 2011 Jeffrey Whitaker
-
-Permission to use, copy, modify, and distribute this software and its
-documentation for any purpose and without fee is hereby granted,
-provided that the above copyright notices appear in all copies and that
-both the copyright notices and this permission notice appear in
-supporting documentation.
-
-THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
-INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO
-EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR
-CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
-USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
 
 ## Documentation
 
@@ -82,33 +78,33 @@ problems or questions.
 unpack and `cd` to `basemap-X.Y.Z`.
 
 2. Install the GEOS library. If you already have it on your system, just
-set the environment variable `GEOS_DIR` to point to the location of `libgeos_c`
-and `geos_c.h` (if `libgeos_c` is in `/usr/local/lib` and `geos_c.h` is in
-`/usr/local/include`, set `GEOS_DIR` to `/usr/local`). Then go to step (3).
-If you don't have it, you can build it from the source code included with
-basemap by following these steps:
+   set the environment variable `GEOS_DIR` to point to the location of
+   `libgeos_c` and `geos_c.h` (if `libgeos_c` is in `/usr/local/lib` and
+   `geos_c.h` is in `/usr/local/include`, set `GEOS_DIR` to
+   `/usr/local`). Then go to step (3). If you don't have it, you can
+   build it from the source code included with basemap by following
+   these steps:
+   ```sh
+   cd geos-3.3.3
+   export GEOS_DIR=<where you want the libs and headers to go>
+   # A reasonable choice on a Unix-like system is /usr/local, or
+   # if you don't have permission to write there, your home directory.
+   ./configure --prefix=$GEOS_DIR
+   make; make install
+   ```
 
-	```
-	 > cd geos-3.3.3
-	 > export GEOS_DIR=<where you want the libs and headers to go>
-	   A reasonable choice on a Unix-like system is /usr/local, or
-	   if you don't have permission to write there, your home directory.
-	 > ./configure --prefix=$GEOS_DIR
-	 > make; make install
-	```
+3. `cd` back to the top level basemap directory (`basemap-X.Y.Z`) and
+   run the usual `python setup.py install`. Check your installation by
+   running ``"from mpl_toolkits.basemap import Basemap"`` at the Python
+   prompt.
 
-3. `cd` back to the top level basemap directory (`basemap-X.Y.Z`) and run
-the usual `python setup.py install`. Check your installation by running
-``"from mpl_toolkits.basemap import Basemap"`` at the Python prompt.
-
-4. To test, `cd` to the examples directory and run `python simpletest.py`.
-To run all the examples (except those that have extra dependencies
-or require an internet connection), execute `python run_all.py`.
+4. To test, `cd` to the examples folder and run `python simpletest.py`.
+   To run all the examples (except those that have extra dependencies or
+   require an internet connection), execute `python run_all.py`.
 
 An alternative method is using `pip`:
-
 ```
-pip install --user git+https://github.com/matplotlib/basemap.git
+python -m pip install --user git+https://github.com/matplotlib/basemap.git
 ```
 
 ## Contact
@@ -117,14 +113,9 @@ Ben Root <ben.v.root@gmail.com>
 
 ## Thanks
 
-Special thanks to John Hunter, Andrew Straw, Eric Firing, Rob Hetland, Scott
-Sinclair, Ivan Lima, Erik Andersen, Michael Hearne, Jesper Larsen, Ryan May,
-David Huard, Mauro Cavalcanti, Jonas Bluethgen, Chris Murphy, Pierre
-Gerard-Marchant, Christoph Gohlke, Eric Bruning, Stephane Raynaud, Tom Loredo,
-Patrick Marsh, Phil Elson, and Henry Hammond for valuable contributions.
-
-
-[`LICENSE.geos`]:
-packages/basemap/LICENSE.geos
-[`COPYING`]:
-packages/basemap_data/COPYING
+Special thanks to John Hunter, Andrew Straw, Eric Firing, Rob Hetland,
+Scott Sinclair, Ivan Lima, Erik Andersen, Michael Hearne, Jesper Larsen,
+Ryan May, David Huard, Mauro Cavalcanti, Jonas Bluethgen, Chris Murphy,
+Pierre Gerard-Marchant, Christoph Gohlke, Eric Bruning, Stephane
+Raynaud, Tom Loredo, Patrick Marsh, Phil Elson, and Henry Hammond for
+valuable contributions.

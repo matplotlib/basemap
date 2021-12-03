@@ -3,9 +3,9 @@
 Plot on map projections (with coastlines and political boundaries) using
 [`matplotlib`].
 
-This package depends on the support package `basemap-data` with the
-basic [`basemap`] data assets, and optionally on the package
-`basemap-data-hires` with high-resolution data assets.
+This package depends on the support package [`basemap-data`] with the
+basic [`basemap`] data assets, and optionally on the support package
+[`basemap-data-hires`] with high-resolution data assets.
 
 ## License
 
@@ -20,6 +20,10 @@ as given in [`LICENSE.geos`].
 https://matplotlib.org/
 [`basemap`]:
 https://matplotlib.org/basemap/
+[`basemap-data`]:
+https://pypi.org/project/basemap-data
+[`basemap-data-hires`]:
+https://pypi.org/project/basemap-data-hires
 [`LICENSE`]:
 https://github.com/molinav/basemap/blob/develop/packages/basemap/LICENSE
 [`LICENSE.geos`]:
