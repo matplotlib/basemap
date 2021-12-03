@@ -18,5 +18,3 @@ https://matplotlib.org/basemap/
 https://github.com/molinav/basemap/blob/develop/packages/basemap_data_hires/COPYING
 [Generic Mapping Tools (GMT)]:
 http://gmt.soest.hawaii.edu
-[Historical Permission Notice and Disclaimer (HPND)]:
-https://opensource.org/licenses/HPND
