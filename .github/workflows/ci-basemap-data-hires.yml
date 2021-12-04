@@ -104,7 +104,7 @@ jobs:
           ]
       max-parallel: 1
     container: "tinybases/python:${{ matrix.python_version }}-debian-5"
-    environment: PyPI
+    environment: Test PyPI
     steps:
       -
         name: Checkout
