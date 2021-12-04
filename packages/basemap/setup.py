@@ -118,7 +118,7 @@ ext_modules = [
         "name":
             "_geoslib",
         "sources": [
-            "src/_geoslib.pyx",
+            "lib/_geoslib/_geoslib.pyx",
         ],
         "libraries": [
             "geos_c",
