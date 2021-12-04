@@ -166,7 +166,8 @@ class GeosLibrary(object):
             # Call cmake configure.
             subprocess.call(["cmake", "..",
                              "-DCMAKE_BUILD_TYPE=Release",
-                             "-DCMAKE_INSTALL_PREFIX={0}".format(installdir)])
+                             "-DCMAKE_INSTALL_PREFIX={0}".format(installdir),
+                             "-DGEOS_ENABLE_TESTS=OFF"])
             # Ensure that the install directory exists.
             try:
                 os.makedirs(installdir)
