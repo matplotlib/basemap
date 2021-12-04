@@ -143,11 +143,8 @@ setup(**{
         "OSI Approved",
     "description":
         "Plot data on map projections with matplotlib",
-    "long_description": """
-An add-on toolkit for matplotlib that lets you plot data on map
-projections with coastlines, lakes, rivers and political boundaries.
-See http://matplotlib.org/basemap/users/examples.html for examples of
-what it can do.""",
+    "long_description":
+        get_content("README.md"),
     "long_description_content_type":
         "text/markdown",
     "url":
