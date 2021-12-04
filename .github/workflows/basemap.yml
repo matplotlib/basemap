@@ -115,8 +115,8 @@ jobs:
           set -e
           . /etc/profile
           case "${{matrix.python_version}}" in
-              2.[67]|3.[0123456])  pkgvers=1.11.3;;
-              *)                   pkgvers=1.16.6;;
+              2.[67]|3.[01234])  pkgvers=1.11.3;;
+              *)                 pkgvers=1.16.6;;
           esac
           pkgname=numpy
           pkgcode=numpy-${pkgvers}
@@ -124,7 +124,7 @@ jobs:
           tar -xf ${pkgcode}.tar.gz
           rm -f ${pkgcode}.tar.gz
           cd ${pkgcode}
-          python setup.py build -j 16
+          python setup.py build -j 2
           cp build/src*/numpy/core/include/numpy/*.h numpy/core/include/numpy/
           cd ..
           cp -R ${pkgcode}/numpy/core/include ${{env.PKGDIR}}/extern
