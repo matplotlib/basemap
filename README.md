@@ -31,45 +31,7 @@ Optional requirements include:
   warpimage, bluemarble, shadedrelief, and etop methods. PIL should work
   on Python 2.x. Pillow is a maintained fork of PIL.
 
-## License
-
-The source code and data assets are under the following licenses:
-
-* `basemap`:
-  * [HPND]: Python source code and Python wrapper for GEOS.
-  * [LGPL-2.1-only]: GEOS source code and dynamic library.
-* `basemap-data`:
-  * [GPL-2.0-or-later]: land-sea mask, coastline, lake, river and
-    political boundary data derived from GMT.
-  * [MIT]: EPSG file.
-  * [HPND]: remaining data files.
-* `basemap-data-hires`:
-  * [GPL-2.0-or-later]: land-sea mask, coastline, lake, river and
-    political boundary data derived from GMT.
-
-For a full description, please visit the README and LICENSE files of
-each package in the corresponding package folders.
-
-[MIT]:
-https://spdx.org/licenses/MIT.html
-[HPND]:
-https://spdx.org/licenses/HPND.html
-[LGPL-2.1-only]:
-https://spdx.org/licenses/LGPL-2.1-only.html
-[GPL-2.0-or-later]:
-https://spdx.org/licenses/GPL-2.0-or-later.html
-
-
-## Documentation
-
-See http://matplotlib.github.io/basemap/
-
-See scripts in `examples` directory for example usage.
-
-Read the FAQ and/or email the matplotlib-users mailing list if you have
-problems or questions.
-
-## Install
+## Installation
 
 0. Install pre-requisite Python modules numpy and matplotlib.
 
@@ -106,6 +68,43 @@ An alternative method is using `pip`:
 ```
 python -m pip install --user git+https://github.com/matplotlib/basemap.git
 ```
+
+## License
+
+The source code and data assets are under the following licenses:
+
+* `basemap`:
+  * [HPND]: Python source code and Python wrapper for GEOS.
+  * [LGPL-2.1-only]: GEOS source code and dynamic library.
+* `basemap-data`:
+  * [GPL-2.0-or-later]: land-sea mask, coastline, lake, river and
+    political boundary data derived from GMT.
+  * [MIT]: EPSG file.
+  * [HPND]: remaining data files.
+* `basemap-data-hires`:
+  * [GPL-2.0-or-later]: land-sea mask, coastline, lake, river and
+    political boundary data derived from GMT.
+
+For a full description, please visit the README and LICENSE files of
+each package in the corresponding package folders.
+
+[MIT]:
+https://spdx.org/licenses/MIT.html
+[HPND]:
+https://spdx.org/licenses/HPND.html
+[LGPL-2.1-only]:
+https://spdx.org/licenses/LGPL-2.1-only.html
+[GPL-2.0-or-later]:
+https://spdx.org/licenses/GPL-2.0-or-later.html
+
+## Documentation
+
+See http://matplotlib.github.io/basemap/
+
+See scripts in `examples` directory for example usage.
+
+Read the FAQ and/or email the matplotlib-users mailing list if you have
+problems or questions.
 
 ## Contact
 
