@@ -6,6 +6,7 @@
 import io
 import os
 import sys
+import warnings
 from setuptools import setup
 from setuptools import find_packages
 from setuptools.dist import Distribution
@@ -40,11 +41,24 @@ def checkversion(directory):
     return version
 
 
+# Initialise include and library dirs.
+include_dirs = []
+library_dirs = []
+
+# Define NumPy include dirs.
+numpy_include_path = os.environ.get("NUMPY_INCLUDE_PATH", None)
+if numpy_include_path is not None:
+    include_dirs.append(numpy_include_path)
+else:
+    try:
+        import numpy
+        include_dirs.append(numpy.get_include())
+    except ImportError as err:
+        warnings.warn("unable to locate NumPy headers", RuntimeWarning)
+
 # Define GEOS install directory (from environment variable or trying to guess).
 geos_installdir = os.environ.get("GEOS_DIR", None)
-if geos_installdir is not None:
-    geos_version = checkversion(geos_installdir)
-else:
+if geos_installdir is None:
     # Define some default locations to find GEOS.
     geos_search_locations = [
         os.path.expanduser("~/local"),
@@ -57,56 +71,31 @@ else:
     ]
     # Loop over the default locations to see if we find something.
     for folder in geos_search_locations:
-        # sys.stdout.write('checking for GEOS lib in %s ....\n' % folder)
         geos_version = checkversion(folder)
         if geos_version is not None and geos_version >= '"3.1.1"':
-            # sys.stdout.write(
-            #     "GEOS lib (version %s) found in %s\n" %
-            #     (geos_version[1:-1], folder))
             geos_installdir = folder
             break
-    if geos_installdir is None:
-        raise OSError("\n".join([
-            "Cannot find GEOS library in standard locations ('{0}').",
-            "Please install the corresponding packages using your",
-            "software management system or set the environment variable",
-            "GEOS_DIR to point to the location where GEOS is installed",
-            "(for example, if 'geos_c.h' is in '/usr/local/include'",
-            "and 'libgeos_c' is in '/usr/local/lib', then you need to",
-            "set GEOS_DIR to '/usr/local'",
-        ]).format("', '".join(geos_search_locations)))
 
-# Define include dirs.
-include_dirs = [
-    os.path.join(geos_installdir, "include")
-]
-
-# Define include dirs for NumPy.
-# Do not import numpy for querying the package (taken from h5py setup).
-if not any("--" + opt in sys.argv
-           for opt in Distribution.display_option_names +
-           ["help-commands", "help"]) or sys.argv[1] == "egg_info":
-    # Try to read NumPy include path from environment variable.
-    numpy_include_path = os.environ.get("NUMPY_INCLUDE_PATH", None)
-    if numpy_include_path is None:
-        try:
-            import numpy
-            numpy_include_path = numpy.get_include()
-        except ImportError as err:
-            err.args = ("unable to locate NumPy headers",)
-            raise
-    include_dirs.append(numpy_include_path)
-
-# Define library dirs.
-library_dirs = [
-    os.path.join(geos_installdir, "lib"),
-    os.path.join(geos_installdir, "lib64"),
-]
+# Define GEOS include and library dirs.
+if geos_installdir is None:
+    warnings.warn("\n".join([
+        "Cannot find GEOS library in standard locations ('{0}').",
+        "Please install the corresponding packages using your",
+        "software management system or set the environment variable",
+        "GEOS_DIR to point to the location where GEOS is installed",
+        "(for example, if 'geos_c.h' is in '/usr/local/include'",
+        "and 'libgeos_c' is in '/usr/local/lib', then you need to",
+        "set GEOS_DIR to '/usr/local'",
+    ]).format("', '".join(geos_search_locations)), RuntimeWarning)
+else:
+    include_dirs.append(os.path.join(geos_installdir, "include"))
+    library_dirs.append(os.path.join(geos_installdir, "lib"))
+    library_dirs.append(os.path.join(geos_installdir, "lib64"))
 
 # Define runtime library dirs.
 # Don't use runtime_library_dirs on windows (workaround for a distutils bug):
 #     http://bugs.python.org/issue2437)
-if sys.platform == "win32":
+if sys.platform != "win32":
     runtime_lib_dirs = []
 else:
     runtime_lib_dirs = library_dirs
@@ -131,6 +120,27 @@ ext_modules = [
             runtime_lib_dirs,
     }),
 ]
+
+# Define all the different requirements.
+dev_requires = get_content("requirements-dev.txt", splitlines=True)
+doc_requires = get_content("requirements-doc.txt", splitlines=True)
+setup_requires = get_content("requirements-setup.txt", splitlines=True)
+install_requires = get_content("requirements.txt", splitlines=True)
+if sys.version_info[:2] == (3, 2):
+    # Hack for Python 3.2 because pip < 8 cannot handle version markers.
+    marker = '; python_version == "3.2"'
+    dev_requires = [
+        item.replace(marker, "") for item in dev_requires
+        if item.endswith(marker) or "python_version" not in item]
+    doc_requires = [
+        item.replace(marker, "") for item in doc_requires
+        if item.endswith(marker) or "python_version" not in item]
+    setup_requires = [
+        item.replace(marker, "") for item in setup_requires
+        if item.endswith(marker) or "python_version" not in item]
+    install_requires = [
+        item.replace(marker, "") for item in install_requires
+        if item.endswith(marker) or "python_version" not in item]
 
 # To create the source .tar.gz file:  python setup.py sdist
 # To create the universal wheel file: python setup.py bdist_wheel --universal
@@ -190,9 +200,15 @@ setup(**{
             "<4",
         ]),
     "setup_requires":
-        get_content("requirements-setup.txt", splitlines=True),
+        setup_requires,
     "install_requires":
-        get_content("requirements.txt", splitlines=True),
+        install_requires,
+    "extras_require": {
+        "dev":
+            dev_requires,
+        "doc":
+            doc_requires,
+    },
     "project_urls": {
         "Bug Tracker":
             "https://github.com/matplotlib/basemap/issues",
