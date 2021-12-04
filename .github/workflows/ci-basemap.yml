@@ -11,14 +11,7 @@ jobs:
 
   build-geos:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python_version:
-          [
-            "3.6",
-          ]
-      max-parallel: 1
-    container: "tinybases/python:${{ matrix.python_version }}-debian-4"
+    container: "tinybases/python:3.6-debian-4"
     steps:
       -
         name: Checkout
@@ -37,11 +30,12 @@ jobs:
           tar -xf /tmp/cmake-*.tar.gz
           cmake --version
       -
-        name: Install compilers
+        name: Install GCC toolchain
         run: |
           set -e
           . /etc/profile
-          apt-get update && apt-get install -y gcc g++ make
+          apt-get update
+          apt-get install -y gcc g++ make
           gcc --version
           g++ --version
       -
@@ -51,7 +45,7 @@ jobs:
           . /etc/profile
           cd ${{ env.PKGDIR }}
           export MAKEFLAGS="-j 16"
-          python -c "from utils import GeosLibrary; GeosLibrary('3.3.3').build('extern')"
+          python -c "import utils; utils.GeosLibrary('3.3.3').build('extern')"
       -
         name: Upload GEOS artifacts
         uses: actions/upload-artifact@v1
@@ -87,19 +81,20 @@ jobs:
           name: artifacts-geos
           path: ${{ env.PKGDIR }}/extern
       -
+        name: Install GCC toolchain
+        run: |
+          set -e
+          . /etc/profile
+          apt-get update
+          apt-get install -y gcc g++ make
+          gcc --version
+          g++ --version
+      -
         name: Print environment
         run: |
           set -e
           . /etc/profile
           python -V
-      -
-        name: Install compilers
-        run: |
-          set -e
-          . /etc/profile
-          apt-get update && apt-get install -y gcc g++ make
-          gcc --version
-          g++ --version
       -
         name: Generate NumPy headers
         run: |
@@ -109,16 +104,17 @@ jobs:
               2.[67]|3.[0123456])  pkgvers=1.11.3;;
               *)                   pkgvers=1.16.6;;
           esac
-          pkgname=numpy-${pkgvers}
-          wget https://github.com/numpy/numpy/releases/download/v${pkgvers}/${pkgname}.tar.gz
-          tar -xf ${pkgname}.tar.gz
-          rm -f ${pkgname}.tar.gz
-          cd ${pkgname}
+          pkgname=numpy
+          pkgcode=numpy-${pkgvers}
+          wget https://github.com/numpy/${pkgname}/releases/download/v${pkgvers}/${pkgcode}.tar.gz
+          tar -xf ${pkgcode}.tar.gz
+          rm -f ${pkgcode}.tar.gz
+          cd ${pkgcode}
           python setup.py build -j 16
           cp build/src*/numpy/core/include/numpy/*.h numpy/core/include/numpy/
           cd ..
-          cp -R ${pkgname}/numpy/core/include ${{ env.PKGDIR }}/extern
-          rm -rf ${pkgname}
+          cp -R ${pkgcode}/numpy/core/include ${{ env.PKGDIR }}/extern
+          rm -rf ${pkgcode}
       -
         name: Build wheel
         run: |
@@ -170,17 +166,12 @@ jobs:
           name: artifacts-build-${{ matrix.python_version }}
           path: ${{ env.PKGDIR }}/dist
       -
-        name: Print environment
+        name: Install GCC toolchain
         run: |
           set -e
           . /etc/profile
-          python -V
-      -
-        name: Install compilers
-        run: |
-          set -e
-          . /etc/profile
-          apt-get update && apt-get install -y gcc g++ make
+          apt-get update
+          apt-get install -y gcc g++ make
           gcc --version
           g++ --version
       -
@@ -193,23 +184,30 @@ jobs:
           gcc --version
           g++ --version
       -
-        name: Install patchelf
+        name: Install patchelf from source
         run: |
           set -e
           . /etc/profile
           pkgvers=0.9
-          pkgname=patchelf-${pkgvers}
+          pkgname=patchelf
+          pkgcode=${pkgname}-${pkgvers}
           cd /tmp
-          wget https://releases.nixos.org/patchelf/${pkgname}/${pkgname}.tar.gz
-          tar -xf ${pkgname}.tar.gz
-          rm -f ${pkgname}.tar.gz
-          cd ${pkgname}
+          wget https://releases.nixos.org/${pkgname}/${pkgcode}/${pkgcode}.tar.gz
+          tar -xf ${pkgcode}.tar.gz
+          rm -f ${pkgcode}.tar.gz
+          cd ${pkgcode}
           ./configure
           make
           make check
           make install
           cd ..
-          rm -rf ${pkgname}
+          rm -rf ${pkgcode}
+      -
+        name: Print environment
+        run: |
+          set -e
+          . /etc/profile
+          python -V
       -
         name: Install auditwheel
         run: |
