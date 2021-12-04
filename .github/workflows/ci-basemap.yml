@@ -228,3 +228,59 @@ jobs:
         with:
           name: artifacts-build-${{ matrix.python_version }}
           path: ${{ env.PKGDIR }}/dist
+
+  upload:
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: repair
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version:
+          [
+            "2.7",
+            "3.5",
+            "3.6",
+            "3.7",
+            "3.8",
+            "3.9",
+          ]
+      max-parallel: 1
+    container: "tinybases/python:${{ matrix.python_version }}-debian-5"
+    environment: PyPI
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v1
+      -
+        name: Download build artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-build-${{ matrix.python_version }}
+          path: ${{ env.PKGDIR }}/dist
+      -
+        name: Print environment
+        run: |
+          set -e
+          . /etc/profile
+          python -V
+      -
+        name: Install requirements
+        run: |
+          set -e
+          . /etc/profile
+          pip install --prefer-binary twine
+      -
+        name: Upload distributables
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
+          TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
+        run: |
+          set -e
+          . /etc/profile
+          python -m twine check                                               \
+              ${{ env.PKGDIR }}/dist/*.tar.gz                                 \
+              ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
+          python -m twine upload --skip-existing                              \
+              ${{ env.PKGDIR }}/dist/*.tar.gz                                 \
+              ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
