@@ -73,29 +73,21 @@ python -m pip install --user git+https://github.com/matplotlib/basemap.git
 
 The source code and data assets are under the following licenses:
 
-* `basemap`:
-  * [HPND]: Python source code and Python wrapper for GEOS.
-  * [LGPL-2.1-only]: GEOS source code and dynamic library.
-* `basemap-data`:
-  * [GPL-2.0-or-later]: land-sea mask, coastline, lake, river and
-    political boundary data derived from GMT.
-  * [MIT]: EPSG file.
-  * [HPND]: remaining data files.
-* `basemap-data-hires`:
-  * [GPL-2.0-or-later]: land-sea mask, coastline, lake, river and
-    political boundary data derived from GMT.
+* `basemap`: [MIT].
+  * GEOS source code and dynamic library are under the [LGPL-2.1-only] license.
+* `basemap-data`: [LGPL-3.0-or-later].
+  * The EPSG file and the JPG images are also under the [MIT] license.
+* `basemap-data-hires`: [LGPL-3.0-or-later].
 
 For a full description, please visit the README and LICENSE files of
 each package in the corresponding package folders.
 
 [MIT]:
 https://spdx.org/licenses/MIT.html
-[HPND]:
-https://spdx.org/licenses/HPND.html
 [LGPL-2.1-only]:
 https://spdx.org/licenses/LGPL-2.1-only.html
-[GPL-2.0-or-later]:
-https://spdx.org/licenses/GPL-2.0-or-later.html
+[LGPL-3.0-or-later]:
+https://spdx.org/licenses/LGPL-3.0-or-later.html
 
 ## Documentation
 
@@ -109,6 +101,8 @@ problems or questions.
 ## Contact
 
 Ben Root <ben.v.root@gmail.com>
+
+Víctor Molina García ([@molinav](https://github.com/molinav))
 
 ## Thanks
 
