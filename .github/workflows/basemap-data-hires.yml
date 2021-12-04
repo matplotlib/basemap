@@ -1,7 +1,7 @@
-name: ci-basemap-data
+name: basemap-data-hires
 
 env:
-  PKGDIR: "packages/basemap_data"
+  PKGDIR: "packages/basemap_data_hires"
 
 on:
   push:

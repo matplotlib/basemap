@@ -1,4 +1,4 @@
-name: ci-basemap
+name: basemap
 
 env:
   PKGDIR: "packages/basemap"
