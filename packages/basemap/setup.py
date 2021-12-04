@@ -138,7 +138,7 @@ setup(**{
     "name":
         "basemap",
     "version":
-        "1.3.0a3",
+        "1.3.0a3+dev",
     "license":
         "OSI Approved",
     "description":
