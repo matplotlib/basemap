@@ -77,7 +77,7 @@ setup(**{
     "version":
         "1.3.0a3+dev",
     "license":
-        "GNU General Public License v2 or later (GPLv2+)",
+        "GNU Lesser General Public License v3 or later (LGPLv3+)",
     "description":
         "Data assets for matplotlib basemap",
     "long_description":
@@ -98,7 +98,7 @@ setup(**{
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Education",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+        "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
