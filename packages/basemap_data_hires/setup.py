@@ -53,7 +53,7 @@ setup(**{
     "name":
         "basemap_data_hires",
     "version":
-        "1.3.0a1",
+        "1.3.0a2",
     "license":
         "GNU General Public License v2 or later (GPLv2+)",
     "description":
