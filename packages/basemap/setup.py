@@ -140,7 +140,7 @@ setup(**{
     "version":
         "1.3.0a3+dev",
     "license":
-        "OSI Approved",
+        "MIT",
     "description":
         "Plot data on map projections with matplotlib",
     "long_description":
@@ -161,7 +161,7 @@ setup(**{
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Education",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
