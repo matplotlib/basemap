@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf8 -*-
 # flake8: noqa: E122
-"""basemap_data_hires -- Data high-resolution assets for matplotlib basemap."""
+"""basemap_data_hires -- High-resolution data assets for matplotlib basemap."""
 
 import io
 import os
@@ -55,9 +55,9 @@ setup(**{
     "version":
         "1.3.0a3+dev",
     "license":
-        "GNU General Public License v2 or later (GPLv2+)",
+        "GNU Lesser General Public License v3 or later (LGPLv3+)",
     "description":
-        "Data high-resolution assets for matplotlib basemap",
+        "High-resolution data assets for matplotlib basemap",
     "long_description":
         get_content("README.md"),
     "long_description_content_type":
@@ -76,7 +76,7 @@ setup(**{
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Education",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+        "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
