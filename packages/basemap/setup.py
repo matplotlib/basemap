@@ -118,7 +118,7 @@ ext_modules = [
         "name":
             "_geoslib",
         "sources": [
-            "lib/_geoslib/_geoslib.pyx",
+            "src/_geoslib/_geoslib.pyx",
         ],
         "libraries": [
             "geos_c",
@@ -177,9 +177,9 @@ setup(**{
         "mpl_toolkits",
     ],
     "package_dir":
-        {"": "lib"},
+        {"": "src"},
     "packages":
-        find_packages(where="lib"),
+        find_packages(where="src"),
     "ext_modules":
         ext_modules,
     "python_requires":
