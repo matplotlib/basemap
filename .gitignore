@@ -1,5 +1,24 @@
-#########################################
-# Editor temporary/working/backup files #
+build
+dist
+*.egg-info
+*.pyc
+*.pyd
+*.so
+
+doc/build
+doc/source/_autosummary
+
+htmlcov
+.coverage
+.pytest_cache
+
+.gdb_history
+.DS_Store
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+
 .#*
 [#]*#
 *~
@@ -7,49 +26,12 @@
 *.bak
 .project
 .pydevproject
+.vscode
 
-# Compiled source #
-###################
-*.a
-*.com
-*.class
-*.dll
-*.exe
-*.o
-*.py[ocd]
-*.so
-
-# Python files #
-################
-# setup.py working directory
-build
-# sphinx build directory
-doc/_build
-# setup.py dist directory
-dist
-# Egg metadata
-*.egg-info
-# tox testing tool
-.tox
-
-# OS generated files #
-######################
-.gdb_history
-.DS_Store?
-ehthumbs.db
-Icon?
-Thumbs.db
-
-# Things specific to this project #
-###################################
+# Things specific to this project.
 examples/*.png
 *.pickle
-
-# Documentation generated files #
-#################################
 doc/examples
 doc/_templates/gallery.html
 doc/users/installing.rst
 doc/_static/matplotlibrc
-
-.DS_Store
