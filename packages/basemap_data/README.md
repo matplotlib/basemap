@@ -43,10 +43,10 @@ https://spdx.org/licenses/LGPL-3.0-or-later.html
 https://spdx.org/licenses/MIT.html
 
 [`COPYING`]:
-https://github.com/molinav/basemap/blob/develop/packages/basemap_data/COPYING
+https://github.com/matplotlib/basemap/blob/develop/packages/basemap_data/COPYING
 [`COPYING.LESSER`]:
-https://github.com/molinav/basemap/blob/develop/packages/basemap_data_hires/COPYING.LESSER
+https://github.com/matplotlib/basemap/blob/develop/packages/basemap_data_hires/COPYING.LESSER
 [`LICENSE.epsg`]:
-https://github.com/molinav/basemap/blob/develop/packages/basemap_data/LICENSE.epsg
+https://github.com/matplotlib/basemap/blob/develop/packages/basemap_data/LICENSE.epsg
 [`LICENSE.mit`]:
-https://github.com/molinav/basemap/blob/develop/packages/basemap_data/LICENSE.mit
+https://github.com/matplotlib/basemap/blob/develop/packages/basemap_data/LICENSE.mit

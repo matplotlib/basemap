@@ -30,6 +30,6 @@ https://spdx.org/licenses/LGPL-2.1-only.html
 https://spdx.org/licenses/MIT.html
 
 [`LICENSE`]:
-https://github.com/molinav/basemap/blob/develop/packages/basemap/LICENSE
+https://github.com/matplotlib/basemap/blob/develop/packages/basemap/LICENSE
 [`LICENSE.geos`]:
-https://github.com/molinav/basemap/blob/develop/packages/basemap/LICENSE.geos
+https://github.com/matplotlib/basemap/blob/develop/packages/basemap/LICENSE.geos

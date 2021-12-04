@@ -36,6 +36,6 @@ http://gmt.soest.hawaii.edu
 [LGPLv3+]:
 https://spdx.org/licenses/LGPL-3.0-or-later.html
 [`COPYING`]:
-https://github.com/molinav/basemap/blob/develop/packages/basemap_data_hires/COPYING
+https://github.com/matplotlib/basemap/blob/develop/packages/basemap_data_hires/COPYING
 [`COPYING.LESSER`]:
-https://github.com/molinav/basemap/blob/develop/packages/basemap_data_hires/COPYING.LESSER
+https://github.com/matplotlib/basemap/blob/develop/packages/basemap_data_hires/COPYING.LESSER
