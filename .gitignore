@@ -1,9 +1,11 @@
 build
 dist
+.eggs
 *.egg-info
 *.pyc
 *.pyd
 *.so
+*.c
 
 doc/build
 doc/source/_autosummary
