@@ -1,0 +1,140 @@
+name: basemap-data
+
+env:
+  PKGDIR: "packages/basemap_data"
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version:
+          [
+            "2.7",
+          ]
+      max-parallel: 1
+    container: "tinybases/python:${{ matrix.python_version }}-debian-4"
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v1
+      -
+        name: Print environment
+        run: |
+          set -e
+          . /etc/profile
+          python -V
+      -
+        name: Build wheel
+        run: |
+          set -e
+          . /etc/profile
+          cd ${{ env.PKGDIR }}
+          python setup.py sdist bdist_wheel --universal
+      -
+        name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: artifacts-build
+          path: ${{ env.PKGDIR }}/dist
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version:
+          [
+            "2.6",
+            "2.7",
+            "3.2",
+            "3.3",
+            "3.4",
+            "3.5",
+            "3.6",
+            "3.7",
+            "3.8",
+            "3.9",
+          ]
+      max-parallel: 5
+    container: "tinybases/python:${{ matrix.python_version }}-debian-5"
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v1
+      -
+        name: Download artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-build
+          path: ${{ env.PKGDIR }}/dist
+      -
+        name: Print environment
+        run: |
+          set -e
+          . /etc/profile
+          python -V
+      -
+        name: Install package
+        run: |
+          set -e
+          . /etc/profile
+          pip install ${{ env.PKGDIR }}/dist/*.whl
+      -
+        name: Test package
+        run: |
+          set -e
+          . /etc/profile
+          python -c "from mpl_toolkits import basemap_data; print(basemap_data)"
+
+  upload:
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version:
+          [
+            "2.7",
+          ]
+      max-parallel: 1
+    container: "tinybases/python:${{ matrix.python_version }}-debian-5"
+    environment: PyPI
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v1
+      -
+        name: Download artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-build
+          path: ${{ env.PKGDIR }}/dist
+      -
+        name: Print environment
+        run: |
+          set -e
+          . /etc/profile
+          python -V
+      -
+        name: Install requirements
+        run: |
+          set -e
+          . /etc/profile
+          pip install --prefer-binary twine
+      -
+        name: Upload distributables
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
+          TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
+        run: |
+          set -e
+          . /etc/profile
+          python -m twine check ${{ env.PKGDIR }}/dist/*
+          python -m twine upload --skip-existing ${{ env.PKGDIR }}/dist/*

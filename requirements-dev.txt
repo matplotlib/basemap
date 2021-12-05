@@ -1,3 +1,0 @@
-unittest2
-netCDF4
-pillow
