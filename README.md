@@ -15,8 +15,7 @@ Basic requirements are the following:
 * numpy
 * [pyproj](https://github.com/pyproj4/pyproj)
 * [pyshp](https://github.com/GeospatialPython/pyshp)
-* The GEOS (Geometry Engine - Open Source) library (version 3.1.1 or
-  higher). Source code is included in the `geos-3.3.3` directory.
+* GEOS library (Geometry Engine, Open Source) version 3.1.1 or higher.
 * On Linux, if your Python was installed via a package management
   system, make sure the corresponding `python-dev` package is also
   installed. Otherwise, you may not have the Python header (`Python.h`),
@@ -28,53 +27,64 @@ Optional requirements include:
   `BaseMap.wmsimage` function.
 
 * [Pillow](https://python-pillow.github.io/). It is needed for Basemap
-  warpimage, bluemarble, shadedrelief, and etop methods. PIL should work
-  on Python 2.x. Pillow is a maintained fork of PIL.
+  warpimage, bluemarble, shadedrelief, and etopo methods. PIL should
+  work on Python 2.x. Pillow is a maintained fork of PIL.
 
 ## Installation
 
-0. Install pre-requisite Python modules numpy and matplotlib.
+The `basemap-data` and `basemap-data-hires` packages are available in
+PyPI and can be installed with [`pip`](https:/pip.pypa.io/):
+```sh
+python -m pip install basemap-data
+python -m pip install basemap-data-hires
+```
 
-1. Then download `basemap-X.Y.Z.tar.gz` (approx 100 MB) from the
-[GitHub Releases](https://github.com/matplotlib/basemap/releases) page,
-unpack and `cd` to `basemap-X.Y.Z`.
+Precompiled binaries for GNU/Linux are also available in PyPI:
+```sh
+python -m pip install basemap
+```
 
-2. Install the GEOS library. If you already have it on your system, just
-   set the environment variable `GEOS_DIR` to point to the location of
-   `libgeos_c` and `geos_c.h` (if `libgeos_c` is in `/usr/local/lib` and
-   `geos_c.h` is in `/usr/local/include`, set `GEOS_DIR` to
-   `/usr/local`). Then go to step (3). If you don't have it, you can
-   build it from the source code included with basemap by following
-   these steps:
+Otherwise, you will need to install `basemap` from source as follows:
+
+1. Install pre-requisite Python modules:
+   - `cython`.
+   - `numpy`.
+
+2. Download the `basemap` source code and move to the `packages/basemap`
+   folder:
    ```sh
-   cd geos-3.3.3
-   export GEOS_DIR=<where you want the libs and headers to go>
-   # A reasonable choice on a Unix-like system is /usr/local, or
-   # if you don't have permission to write there, your home directory.
-   ./configure --prefix=$GEOS_DIR
-   make; make install
+   git clone https://github.com/matplotlib/basemap.git
+   cd basemap/packages/basemap
    ```
 
-3. `cd` back to the top level basemap directory (`basemap-X.Y.Z`) and
-   run the usual `python setup.py install`. Check your installation by
-   running ``"from mpl_toolkits.basemap import Basemap"`` at the Python
-   prompt.
+3. Build the GEOS library. You may use the helper provided in `utils`, i.e.
+   ```sh
+   export GEOS_DIR=<your desired location>
+   python -c "import utils; utils.GeosLibrary('3.6.5').build(installdir='${GEOS_DIR}')"
+   ```
+   or you can link directly to the system library if it is already installed.
+   `GEOS_DIR` must point to the GEOS installation prefix; e.g. if `libgeos_c.so`
+   is located in `/usr/lib` and `geos_c.h` is located in `/usr/include`, then
+   you must set `GEOS_DIR` to `/usr`.
 
-4. To test, `cd` to the examples folder and run `python simpletest.py`.
-   To run all the examples (except those that have extra dependencies or
-   require an internet connection), execute `python run_all.py`.
+4. Build the basemap wheel from the `packages/basemap` folder and install it:
+   ```sh
+   python setup.py bdist_wheel
+   python -m pip install dist/*.whl
+   ```
 
-An alternative method is using `pip`:
-```
-python -m pip install --user git+https://github.com/matplotlib/basemap.git
-```
+5. Check that the package installed correctly by executing in the terminal:
+   ```sh
+   python -c "from mpl_toolkits.basemap import Basemap"
+   ```
+   You can also test the `basemap` examples available in the `examples` folder.
 
 ## License
 
 The source code and data assets are under the following licenses:
 
 * `basemap`: [MIT].
-  * GEOS source code and dynamic library are under the [LGPL-2.1-only] license.
+  * GEOS bundled dynamic library is under the [LGPL-2.1-only] license.
 * `basemap-data`: [LGPL-3.0-or-later].
   * The EPSG file and the JPG images are also under the [MIT] license.
 * `basemap-data-hires`: [LGPL-3.0-or-later].

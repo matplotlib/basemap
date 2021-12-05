@@ -10,9 +10,9 @@ basic [`basemap`] data assets, and optionally on the support package
 ## License
 
 The library is licensed under the terms of the [MIT] license (see
-[`LICENSE`]). Source code for the GEOS library is included in the
-`geos-3.3.3` directory under the terms of the [LGPLv2.1] license as
-given in [`LICENSE.geos`].
+[`LICENSE`]). The GEOS dynamic library bundled with the package wheels
+is provided under the terms of the [LGPLv2.1] license as given in
+[`LICENSE.geos`].
 
 
 [`matplotlib`]:
