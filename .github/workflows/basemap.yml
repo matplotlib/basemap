@@ -26,17 +26,22 @@ jobs:
         name: Checkout
         uses: actions/checkout@v1
       -
-        name: Install CMake 2.8.6
+        name: Install CMake 3.6.2
         run: |
           set -e
           . /etc/profile
-          cd /usr/bin
-          wget https://raw.githubusercontent.com/minos-org/minos-static/master/static-get
-          chmod +x static-get
-          cd /tmp
-          static-get cmake
-          cd /
-          tar -xf /tmp/cmake-*.tar.gz
+          apt-get update
+          apt-get install -y libidn11
+          pkgvers=3.6.2
+          pkgname=cmake
+          pkgcode=cmake-${pkgvers}
+          case "${{matrix.arch}}" in
+              amd64)  pkgfile=${pkgcode}-Linux-x86_64.tar.gz;;
+              *)      pkgfile=${pkgcode}-Linux-i386.tar.gz;;
+          esac
+          wget https://github.com/Kitware/CMake/releases/download/v${pkgvers}/${pkgfile} -P /tmp
+          tar -xf /tmp/${pkgfile} --strip-components=1 -C /usr
+          rm -rf /tmp/${pkgfile}
           cmake --version
       -
         name: Install GCC toolchain
