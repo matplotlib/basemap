@@ -105,7 +105,7 @@ class GeosLibrary(object):
             if date is not None:
                 os.utime(zippath, (date, date))
 
-    def decompress(self, overwrite=True):
+    def extract(self, overwrite=True):
         """Decompress GEOS zip source code into :class:`GeosLibrary` root."""
 
         # Download zip file if not present.
@@ -142,9 +142,9 @@ class GeosLibrary(object):
     def build(self, installdir=None):
         """Build and install GEOS from source."""
 
-        # Download and decompress zip file if not present.
+        # Download and extract zip file if not present.
         zipfold = os.path.join(self.root, "geos-{0}".format(self.version))
-        self.decompress(overwrite=True)
+        self.extract(overwrite=True)
 
         # Define build directory.
         builddir = os.path.join(zipfold, "build")
@@ -153,6 +153,17 @@ class GeosLibrary(object):
         if installdir is None:
             installdir = os.path.expanduser("~/.local/share/libgeos")
         installdir = os.path.abspath(installdir)
+
+        # Define configure options.
+        config_opts = [
+            "-DCMAKE_INSTALL_PREFIX={0}".format(installdir),
+            "-DGEOS_ENABLE_TESTS=OFF",
+        ]
+        if os.name == "nt":
+            config_opts.append("-DCMAKE_GENERATOR_PLATFORM=x64")
+            config_opts.append("-DCMAKE_GENERATOR_TOOLSET=host=x64")
+        else:
+            config_opts.append("-DCMAKE_BUILD_TYPE=Release")
 
         # Now move to the GEOS source code folder and build with CMake.
         cwd = os.getcwd()
@@ -164,10 +175,7 @@ class GeosLibrary(object):
                 pass
             os.chdir(builddir)
             # Call cmake configure.
-            subprocess.call(["cmake", "..",
-                             "-DCMAKE_BUILD_TYPE=Release",
-                             "-DCMAKE_INSTALL_PREFIX={0}".format(installdir),
-                             "-DGEOS_ENABLE_TESTS=OFF"])
+            subprocess.call(["cmake", ".."] + config_opts)
             # Ensure that the install directory exists.
             try:
                 os.makedirs(installdir)
@@ -176,6 +184,7 @@ class GeosLibrary(object):
             # Call cmake build and install.
             subprocess.call(["cmake",
                              "--build", ".",
+                             "--config", "Release",
                              "--target", "install"])
         finally:
             os.chdir(cwd)

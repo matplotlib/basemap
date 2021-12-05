@@ -6,6 +6,7 @@
 import io
 import os
 import sys
+import glob
 import warnings
 from setuptools import setup
 from setuptools import find_packages
@@ -76,9 +77,9 @@ if geos_installdir is None:
             geos_installdir = folder
             break
 
-# Define GEOS include and library dirs.
+# Define GEOS include, library and runtime dirs.
 if geos_installdir is None:
-    warnings.warn("\n".join([
+    warnings.warn(" ".join([
         "Cannot find GEOS library in standard locations ('{0}').",
         "Please install the corresponding packages using your",
         "software management system or set the environment variable",
@@ -91,14 +92,19 @@ else:
     include_dirs.append(os.path.join(geos_installdir, "include"))
     library_dirs.append(os.path.join(geos_installdir, "lib"))
     library_dirs.append(os.path.join(geos_installdir, "lib64"))
-
-# Define runtime library dirs.
-# Don't use runtime_library_dirs on windows (workaround for a distutils bug):
-#     http://bugs.python.org/issue2437)
-if sys.platform == "win32":
-    runtime_lib_dirs = []
-else:
-    runtime_lib_dirs = library_dirs
+    runtime_library_dirs = library_dirs
+    data_files = []
+    if os.name == "nt":
+        # On Windows:
+        # - DLLs get installed under `bin`.
+        # - We need to inject the DLL in the wheel using `data_files`.
+        # - We do not use `runtime_library_dirs` as workaround for a
+        #   `distutils` bug (http://bugs.python.org/issue2437).
+        library_dirs.append(os.path.join(geos_installdir, "bin"))
+        runtime_library_dirs = []
+        dlls = glob.glob(os.path.join(geos_installdir, "*", "geos_c.dll"))
+        if dlls:
+            data_files.append(("../..", sorted(dlls)))
 
 # Define `_geoslib` extension module. It cannot be installed in the
 # `mpl_toolkits.basemap` namespace or `Basemap` objects will not be pickleable.
@@ -117,7 +123,7 @@ ext_modules = [
         "library_dirs":
             library_dirs,
         "runtime_library_dirs":
-            runtime_lib_dirs,
+            runtime_library_dirs,
     }),
 ]
 
@@ -192,6 +198,8 @@ setup(**{
         find_packages(where="src"),
     "ext_modules":
         ext_modules,
+    "data_files":
+        data_files,
     "python_requires":
         ", ".join([
             ">=2.6",
