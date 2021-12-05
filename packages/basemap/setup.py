@@ -95,7 +95,7 @@ else:
 # Define runtime library dirs.
 # Don't use runtime_library_dirs on windows (workaround for a distutils bug):
 #     http://bugs.python.org/issue2437)
-if sys.platform != "win32":
+if sys.platform == "win32":
     runtime_lib_dirs = []
 else:
     runtime_lib_dirs = library_dirs
