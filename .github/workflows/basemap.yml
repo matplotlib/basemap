@@ -275,7 +275,7 @@ jobs:
     needs: repair
     runs-on: ubuntu-latest
     container: "tinybases/${{matrix.arch}}-python:${{matrix.python_version}}-debian-5"
-    environment: Test PyPI
+    environment: PyPI
     steps:
       -
         name: Checkout
