@@ -125,7 +125,7 @@ jobs:
           esac
           pkgname=numpy
           pkgcode=numpy-${pkgvers}
-          wget https://github.com/numpy/${pkgname}/releases/download/v${pkgvers}/${pkgcode}.tar.gz
+          python -m pip download --no-binary=:all: "numpy == ${pkgvers}"
           tar -xf ${pkgcode}.tar.gz
           rm -f ${pkgcode}.tar.gz
           cd ${pkgcode}
