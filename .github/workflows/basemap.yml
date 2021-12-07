@@ -14,8 +14,8 @@ jobs:
       matrix:
         arch:
           [
-            "i386",
-            "amd64",
+            "x64",
+            "x86",
           ]
       max-parallel: 2
       fail-fast: false
@@ -36,8 +36,8 @@ jobs:
           pkgname=cmake
           pkgcode=cmake-${pkgvers}
           case "${{ matrix.arch }}" in
-              amd64)  pkgfile=${pkgcode}-Linux-x86_64.tar.gz;;
-              *)      pkgfile=${pkgcode}-Linux-i386.tar.gz;;
+              x86)  pkgfile=${pkgcode}-Linux-i386.tar.gz;;
+              *)    pkgfile=${pkgcode}-Linux-x86_64.tar.gz;;
           esac
           wget https://github.com/Kitware/CMake/releases/download/v${pkgvers}/${pkgfile} -P /tmp
           tar -xf /tmp/${pkgfile} --strip-components=1 -C /usr
@@ -72,8 +72,8 @@ jobs:
       matrix:
         arch:
           [
-            "i386",
-            "amd64",
+            "x64",
+            "x86",
           ]
         python-version:
           [
@@ -156,8 +156,8 @@ jobs:
       matrix:
         arch:
           [
-            "i386",
-            "amd64",
+            "x64",
+            "x86",
           ]
         python-version:
           [
@@ -258,8 +258,8 @@ jobs:
       matrix:
         arch:
           [
-            "i386",
-            "amd64",
+            "x64",
+            "x86",
           ]
         python-version:
           [
