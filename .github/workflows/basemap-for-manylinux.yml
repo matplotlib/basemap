@@ -1,4 +1,4 @@
-name: basemap
+name: basemap-for-manylinux
 
 env:
   PKGDIR: "packages/basemap"
