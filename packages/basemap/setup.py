@@ -10,6 +10,7 @@ import glob
 import warnings
 from setuptools import setup
 from setuptools import find_packages
+from setuptools.command.sdist import sdist
 from setuptools.dist import Distribution
 from setuptools.extension import Extension
 
@@ -40,6 +41,18 @@ def checkversion(directory):
     except IOError:
         pass
     return version
+
+
+class basemap_sdist(sdist):
+    """Custom `sdist` so that it will not pack DLLs on Windows if present."""
+
+    def finalize_options(self):
+        """Call `finalize_options` after cleaning `data_files` and reset."""
+
+        orig_data_files = self.distribution.data_files
+        self.distribution.data_files = []
+        sdist.finalize_options(self)
+        self.distribution.data_files = orig_data_files
 
 
 # Initialise include and library dirs.
@@ -98,7 +111,7 @@ else:
     if os.name == "nt":
         # On Windows:
         # - DLLs get installed under `bin`.
-        # - We need to inject the DLL in the wheel using `data_files`.
+        # - We need to inject later the DLL in the wheel using `data_files`.
         # - We do not use `runtime_library_dirs` as workaround for a
         #   `distutils` bug (http://bugs.python.org/issue2437).
         library_dirs.append(os.path.join(geos_installdir, "bin"))
@@ -217,6 +230,9 @@ setup(**{
             dev_requires,
         "doc":
             doc_requires,
+    },
+    "cmdclass": {
+        "sdist": basemap_sdist,
     },
     "project_urls": {
         "Bug Tracker":
