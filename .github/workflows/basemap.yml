@@ -17,7 +17,7 @@ jobs:
             "i386",
             "amd64",
           ]
-      max-parallel: 6
+      max-parallel: 2
       fail-fast: false
     runs-on: ubuntu-latest
     container: "tinybases/${{matrix.arch}}-python:3.6-debian-4"
@@ -75,7 +75,7 @@ jobs:
             "i386",
             "amd64",
           ]
-        python_version:
+        python-version:
           [
             "2.7",
             "3.5",
@@ -88,7 +88,7 @@ jobs:
       fail-fast: false
     needs: build-geos
     runs-on: ubuntu-latest
-    container: "tinybases/${{matrix.arch}}-python:${{matrix.python_version}}-debian-4"
+    container: "tinybases/${{matrix.arch}}-python:${{matrix.python-version}}-debian-4"
     steps:
       -
         name: Checkout
@@ -119,7 +119,7 @@ jobs:
         run: |
           set -e
           . /etc/profile
-          case "${{matrix.python_version}}" in
+          case "${{matrix.python-version}}" in
               2.[67]|3.[01234])  pkgvers=1.11.3;;
               *)                 pkgvers=1.16.6;;
           esac
@@ -148,7 +148,7 @@ jobs:
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: artifacts-build-${{matrix.arch}}-${{matrix.python_version}}
+          name: artifacts-build-${{matrix.arch}}-${{matrix.python-version}}
           path: ${{env.PKGDIR}}/dist
 
   repair:
@@ -159,7 +159,7 @@ jobs:
             "i386",
             "amd64",
           ]
-        python_version:
+        python-version:
           [
             "2.7",
             "3.5",
@@ -187,7 +187,7 @@ jobs:
         name: Download build artifacts
         uses: actions/download-artifact@v1
         with:
-          name: artifacts-build-${{matrix.arch}}-${{matrix.python_version}}
+          name: artifacts-build-${{matrix.arch}}-${{matrix.python-version}}
           path: ${{env.PKGDIR}}/dist
       -
         name: Install GCC toolchain
@@ -250,7 +250,7 @@ jobs:
         name: Upload artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: artifacts-build-${{matrix.arch}}-${{matrix.python_version}}
+          name: artifacts-build-${{matrix.arch}}-${{matrix.python-version}}
           path: ${{env.PKGDIR}}/dist
 
   upload:
@@ -261,7 +261,7 @@ jobs:
             "i386",
             "amd64",
           ]
-        python_version:
+        python-version:
           [
             "2.7",
             "3.5",
@@ -274,7 +274,7 @@ jobs:
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: repair
     runs-on: ubuntu-latest
-    container: "tinybases/${{matrix.arch}}-python:${{matrix.python_version}}-debian-5"
+    container: "tinybases/${{matrix.arch}}-python:${{matrix.python-version}}-debian-5"
     environment: PyPI
     steps:
       -
@@ -284,7 +284,7 @@ jobs:
         name: Download build artifacts
         uses: actions/download-artifact@v1
         with:
-          name: artifacts-build-${{matrix.arch}}-${{matrix.python_version}}
+          name: artifacts-build-${{matrix.arch}}-${{matrix.python-version}}
           path: ${{env.PKGDIR}}/dist
       -
         name: Print environment
