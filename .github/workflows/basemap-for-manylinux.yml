@@ -104,6 +104,13 @@ jobs:
           apt-get update
           apt-get install -y gcc g++ make
       -
+        name: Install unzip
+        run: |
+          set -e
+          . /etc/profile
+          apt-get update
+          apt-get install -y unzip
+      -
         name: Generate NumPy headers
         run: |
           set -e
@@ -115,8 +122,8 @@ jobs:
           pkgname=numpy
           pkgcode=numpy-${pkgvers}
           python -m pip download --no-binary=:all: "numpy == ${pkgvers}"
-          tar -xf ${pkgcode}.tar.gz
-          rm -f ${pkgcode}.tar.gz
+          unzip ${pkgcode}.zip
+          rm -f ${pkgcode}.zip
           cd ${pkgcode}
           python setup.py build
           cp build/src*/numpy/core/include/numpy/*.h numpy/core/include/numpy/
