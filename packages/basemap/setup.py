@@ -45,6 +45,7 @@ def checkversion(directory):
 # Initialise include and library dirs.
 include_dirs = []
 library_dirs = []
+runtime_library_dirs = []
 
 # Define NumPy include dirs.
 numpy_include_path = os.environ.get("NUMPY_INCLUDE_PATH", None)
