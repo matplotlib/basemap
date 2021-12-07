@@ -88,10 +88,22 @@ jobs:
           python-version: "${{ matrix.python-version }}"
           architecture: ${{ matrix.arch }}
       -
+        name: Define MSVC toolchain version
+        run: |
+          if ("${{ matrix.python-version }}" -lt "3.3") {
+              Set-Variable -Name "vcversion" -Value "9.0"
+          } elseif ("${{ matrix.python-version }}" -lt "3.5") {
+              Set-Variable -Name "vcversion" -Value "10.0"
+          } else {
+              Set-Variable -Name "vcversion" -Value "14.x"
+          }
+          echo "VCVERSION=${vcversion}" >> ${GITHUB_ENV}
+      -
         name: Install MSVC toolchain
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
+          toolset: ${{ env.VCVERSION }}
       -
         name: Install Python base packages
         run: |
