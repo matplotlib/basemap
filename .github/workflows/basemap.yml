@@ -129,7 +129,7 @@ jobs:
           tar -xf ${pkgcode}.tar.gz
           rm -f ${pkgcode}.tar.gz
           cd ${pkgcode}
-          python setup.py build -j 2
+          python setup.py build
           cp build/src*/numpy/core/include/numpy/*.h numpy/core/include/numpy/
           cd ..
           cp -R ${pkgcode}/numpy/core/include ${{ env.PKGDIR }}/extern
