@@ -27,20 +27,38 @@ def get_content(name, splitlines=False):
     return content
 
 
-def checkversion(directory):
-    """Return GEOS version from GEOS C-API header file (geos_c.h)."""
+def get_geos_install_prefix():
+    """Return GEOS installation prefix or None if not found."""
 
-    version = None
-    try:
-        header_path = os.path.join(directory, "include", "geos_c.h")
-        with io.open(header_path, "r", encoding="utf-8") as fd:
-            for line in fd:
-                if line.startswith("#define GEOS_VERSION"):
-                    version = line.split()[2]
-                    break
-    except IOError:
-        pass
-    return version
+    env_candidate = os.environ.get("GEOS_DIR", None)
+    if env_candidate is not None:
+        candidates = [env_candidate]
+    else:
+        candidates = [os.path.expanduser("~/local"), os.path.expanduser("~"),
+                    "/usr/local", "/usr", "/opt/local", "/opt", "/sw"]
+
+    for prefix in candidates:
+        libfiles = []
+        libdirs = ["bin", "lib", "lib64"]
+        libext = "dll" if os.name == "nt" else "so"
+        libcode = "{0}geos_c".format("" if os.name == "nt" else "lib")
+        libname = "{0}*.{1}*".format(libcode, libext)
+        for libdir in libdirs:
+            libfiles.extend(glob.glob(os.path.join(prefix, libdir, libname)))
+        hfile = os.path.join(prefix, "include", "geos_c.h")
+        if os.path.isfile(hfile) and libfiles:
+            return prefix
+
+    warnings.warn(" ".join([
+        "Cannot find GEOS library and/or headers in standard locations",
+        "('{0}'). Please install the corresponding packages using your",
+        "software management system or set the environment variable",
+        "GEOS_DIR to point to the location where GEOS is installed",
+        "(for example, if 'geos_c.h' is in '/usr/local/include'",
+        "and 'libgeos_c' is in '/usr/local/lib', then you need to",
+        "set GEOS_DIR to '/usr/local'",
+    ]).format("', '".join(candidates)), RuntimeWarning)
+    return None
 
 
 class basemap_sdist(sdist):
@@ -56,6 +74,7 @@ class basemap_sdist(sdist):
 
 
 # Initialise include and library dirs.
+data_files = []
 include_dirs = []
 library_dirs = []
 runtime_library_dirs = []
@@ -71,52 +90,22 @@ else:
     except ImportError as err:
         warnings.warn("unable to locate NumPy headers", RuntimeWarning)
 
-# Define GEOS install directory (from environment variable or trying to guess).
-geos_installdir = os.environ.get("GEOS_DIR", None)
-if geos_installdir is None:
-    # Define some default locations to find GEOS.
-    geos_search_locations = [
-        os.path.expanduser("~/local"),
-        os.path.expanduser("~"),
-        "/usr/local",
-        "/usr",
-        "/opt/local",
-        "/opt",
-        "/sw"
-    ]
-    # Loop over the default locations to see if we find something.
-    for folder in geos_search_locations:
-        geos_version = checkversion(folder)
-        if geos_version is not None and geos_version >= '"3.1.1"':
-            geos_installdir = folder
-            break
-
 # Define GEOS include, library and runtime dirs.
-if geos_installdir is None:
-    warnings.warn(" ".join([
-        "Cannot find GEOS library in standard locations ('{0}').",
-        "Please install the corresponding packages using your",
-        "software management system or set the environment variable",
-        "GEOS_DIR to point to the location where GEOS is installed",
-        "(for example, if 'geos_c.h' is in '/usr/local/include'",
-        "and 'libgeos_c' is in '/usr/local/lib', then you need to",
-        "set GEOS_DIR to '/usr/local'",
-    ]).format("', '".join(geos_search_locations)), RuntimeWarning)
-else:
-    include_dirs.append(os.path.join(geos_installdir, "include"))
-    library_dirs.append(os.path.join(geos_installdir, "lib"))
-    library_dirs.append(os.path.join(geos_installdir, "lib64"))
+geos_install_prefix = get_geos_install_prefix()
+if geos_install_prefix is not None:
+    include_dirs.append(os.path.join(geos_install_prefix, "include"))
+    library_dirs.append(os.path.join(geos_install_prefix, "lib"))
+    library_dirs.append(os.path.join(geos_install_prefix, "lib64"))
     runtime_library_dirs = library_dirs
-    data_files = []
     if os.name == "nt":
         # On Windows:
         # - DLLs get installed under `bin`.
         # - We need to inject later the DLL in the wheel using `data_files`.
         # - We do not use `runtime_library_dirs` as workaround for a
         #   `distutils` bug (http://bugs.python.org/issue2437).
-        library_dirs.append(os.path.join(geos_installdir, "bin"))
+        library_dirs.append(os.path.join(geos_install_prefix, "bin"))
         runtime_library_dirs = []
-        dlls = glob.glob(os.path.join(geos_installdir, "*", "geos_c.dll"))
+        dlls = glob.glob(os.path.join(geos_install_prefix, "*", "geos_c.dll"))
         if dlls:
             data_files.append(("../..", sorted(dlls)))
 
