@@ -24,12 +24,6 @@ jobs:
         name: Checkout
         uses: actions/checkout@v1
       -
-        name: Print environment
-        run: |
-          set -e
-          . /etc/profile
-          python -V
-      -
         name: Build wheel
         run: |
           set -e
@@ -74,12 +68,6 @@ jobs:
           name: artifacts-build
           path: ${{ env.PKGDIR }}/dist
       -
-        name: Print environment
-        run: |
-          set -e
-          . /etc/profile
-          python -V
-      -
         name: Install package
         run: |
           set -e
@@ -115,12 +103,6 @@ jobs:
         with:
           name: artifacts-build
           path: ${{ env.PKGDIR }}/dist
-      -
-        name: Print environment
-        run: |
-          set -e
-          . /etc/profile
-          python -V
       -
         name: Install requirements
         run: |
