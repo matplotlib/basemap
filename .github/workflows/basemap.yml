@@ -20,7 +20,7 @@ jobs:
       max-parallel: 2
       fail-fast: false
     runs-on: ubuntu-latest
-    container: "tinybases/${{matrix.arch}}-python:3.6-debian-4"
+    container: "tinybases/${{ matrix.arch }}-python:3.6-debian-4"
     steps:
       -
         name: Checkout
@@ -35,7 +35,7 @@ jobs:
           pkgvers=3.6.2
           pkgname=cmake
           pkgcode=cmake-${pkgvers}
-          case "${{matrix.arch}}" in
+          case "${{ matrix.arch }}" in
               amd64)  pkgfile=${pkgcode}-Linux-x86_64.tar.gz;;
               *)      pkgfile=${pkgcode}-Linux-i386.tar.gz;;
           esac
@@ -57,15 +57,15 @@ jobs:
         run: |
           set -e
           . /etc/profile
-          cd ${{env.PKGDIR}}
+          cd ${{ env.PKGDIR }}
           export MAKEFLAGS="-j 16"
           python -c "import utils; utils.GeosLibrary('3.6.5').build('extern')"
       -
         name: Upload GEOS artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: artifacts-geos-${{matrix.arch}}
-          path: ${{env.PKGDIR}}/extern
+          name: artifacts-geos-${{ matrix.arch }}
+          path: ${{ env.PKGDIR }}/extern
 
   build:
     strategy:
@@ -88,7 +88,7 @@ jobs:
       fail-fast: false
     needs: build-geos
     runs-on: ubuntu-latest
-    container: "tinybases/${{matrix.arch}}-python:${{matrix.python-version}}-debian-4"
+    container: "tinybases/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-4"
     steps:
       -
         name: Checkout
@@ -97,8 +97,8 @@ jobs:
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
         with:
-          name: artifacts-geos-${{matrix.arch}}
-          path: ${{env.PKGDIR}}/extern
+          name: artifacts-geos-${{ matrix.arch }}
+          path: ${{ env.PKGDIR }}/extern
       -
         name: Install GCC toolchain
         run: |
@@ -119,7 +119,7 @@ jobs:
         run: |
           set -e
           . /etc/profile
-          case "${{matrix.python-version}}" in
+          case "${{ matrix.python-version }}" in
               2.[67]|3.[01234])  pkgvers=1.11.3;;
               *)                 pkgvers=1.16.6;;
           esac
@@ -132,14 +132,14 @@ jobs:
           python setup.py build -j 2
           cp build/src*/numpy/core/include/numpy/*.h numpy/core/include/numpy/
           cd ..
-          cp -R ${pkgcode}/numpy/core/include ${{env.PKGDIR}}/extern
+          cp -R ${pkgcode}/numpy/core/include ${{ env.PKGDIR }}/extern
           rm -rf ${pkgcode}
       -
         name: Build wheel
         run: |
           set -e
           . /etc/profile
-          cd ${{env.PKGDIR}}
+          cd ${{ env.PKGDIR }}
           export GEOS_DIR=extern
           export NUMPY_INCLUDE_PATH=extern/include
           pip install -r requirements-setup.txt
@@ -148,8 +148,8 @@ jobs:
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: artifacts-build-${{matrix.arch}}-${{matrix.python-version}}
-          path: ${{env.PKGDIR}}/dist
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
 
   repair:
     strategy:
@@ -172,7 +172,7 @@ jobs:
       fail-fast: false
     needs: build
     runs-on: ubuntu-latest
-    container: "tinybases/${{matrix.arch}}-python:3.6-debian-5"
+    container: "tinybases/${{ matrix.arch }}-python:3.6-debian-5"
     steps:
       -
         name: Checkout
@@ -181,14 +181,14 @@ jobs:
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
         with:
-          name: artifacts-geos-${{matrix.arch}}
-          path: ${{env.PKGDIR}}/extern
+          name: artifacts-geos-${{ matrix.arch }}
+          path: ${{ env.PKGDIR }}/extern
       -
         name: Download build artifacts
         uses: actions/download-artifact@v1
         with:
-          name: artifacts-build-${{matrix.arch}}-${{matrix.python-version}}
-          path: ${{env.PKGDIR}}/dist
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
       -
         name: Install GCC toolchain
         run: |
@@ -243,15 +243,15 @@ jobs:
         run: |
           set -e
           . /etc/profile
-          cd ${{env.PKGDIR}}
+          cd ${{ env.PKGDIR }}
           export LD_LIBRARY_PATH="$(readlink -f extern/lib)"
           auditwheel repair -w dist dist/*.whl
       -
-        name: Upload artifacts
+        name: Upload build artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: artifacts-build-${{matrix.arch}}-${{matrix.python-version}}
-          path: ${{env.PKGDIR}}/dist
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
 
   upload:
     strategy:
@@ -274,7 +274,7 @@ jobs:
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: repair
     runs-on: ubuntu-latest
-    container: "tinybases/${{matrix.arch}}-python:${{matrix.python-version}}-debian-5"
+    container: "tinybases/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-5"
     environment: PyPI
     steps:
       -
@@ -284,8 +284,8 @@ jobs:
         name: Download build artifacts
         uses: actions/download-artifact@v1
         with:
-          name: artifacts-build-${{matrix.arch}}-${{matrix.python-version}}
-          path: ${{env.PKGDIR}}/dist
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
       -
         name: Print environment
         run: |
@@ -302,14 +302,14 @@ jobs:
         name: Upload distributables
         env:
           TWINE_USERNAME: __token__
-          TWINE_PASSWORD: "${{secrets.PYPI_TOKEN}}"
-          TWINE_REPOSITORY_URL: "${{secrets.PYPI_REPOSITORY_URL}}"
+          TWINE_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
+          TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
         run: |
           set -e
           . /etc/profile
           python -m twine check                                               \
-              ${{env.PKGDIR}}/dist/*.tar.gz                                   \
-              ${{env.PKGDIR}}/dist/*-manylinux1*.whl
+              ${{ env.PKGDIR }}/dist/*.tar.gz                                 \
+              ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
           python -m twine upload --skip-existing                              \
-              ${{env.PKGDIR}}/dist/*.tar.gz                                   \
-              ${{env.PKGDIR}}/dist/*-manylinux1*.whl
+              ${{ env.PKGDIR }}/dist/*.tar.gz                                 \
+              ${{ env.PKGDIR }}/dist/*-manylinux1*.whl

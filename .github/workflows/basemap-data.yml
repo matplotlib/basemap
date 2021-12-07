@@ -10,7 +10,6 @@ on:
 jobs:
 
   build:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version:
@@ -18,6 +17,7 @@ jobs:
             "2.7",
           ]
       max-parallel: 1
+    runs-on: ubuntu-latest
     container: "pylegacy/python:${{ matrix.python-version }}-debian-4"
     steps:
       -
@@ -37,15 +37,13 @@ jobs:
           cd ${{ env.PKGDIR }}
           python setup.py sdist bdist_wheel --universal
       -
-        name: Upload artifacts
+        name: Upload build artifacts
         uses: actions/upload-artifact@v1
         with:
           name: artifacts-build
           path: ${{ env.PKGDIR }}/dist
 
   test:
-    needs: build
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version:
@@ -62,13 +60,15 @@ jobs:
             "3.9",
           ]
       max-parallel: 5
+    needs: build
+    runs-on: ubuntu-latest
     container: "pylegacy/python:${{ matrix.python-version }}-debian-5"
     steps:
       -
         name: Checkout
         uses: actions/checkout@v1
       -
-        name: Download artifacts
+        name: Download build artifacts
         uses: actions/download-artifact@v1
         with:
           name: artifacts-build
@@ -93,9 +93,6 @@ jobs:
           python -c "from mpl_toolkits import basemap_data; print(basemap_data)"
 
   upload:
-    if: startsWith(github.event.ref, 'refs/tags/v')
-    needs: test
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version:
@@ -103,6 +100,9 @@ jobs:
             "2.7",
           ]
       max-parallel: 1
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: test
+    runs-on: ubuntu-latest
     container: "pylegacy/python:${{ matrix.python-version }}-debian-5"
     environment: PyPI
     steps:
@@ -110,7 +110,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v1
       -
-        name: Download artifacts
+        name: Download build artifacts
         uses: actions/download-artifact@v1
         with:
           name: artifacts-build
@@ -136,5 +136,9 @@ jobs:
         run: |
           set -e
           . /etc/profile
-          python -m twine check ${{ env.PKGDIR }}/dist/*
-          python -m twine upload --skip-existing ${{ env.PKGDIR }}/dist/*
+          python -m twine check                                               \
+              ${{ env.PKGDIR }}/dist/*.tar.gz                                 \
+              ${{ env.PKGDIR }}/dist/*.whl
+          python -m twine upload --skip-existing                              \
+              ${{ env.PKGDIR }}/dist/*.tar.gz                                 \
+              ${{ env.PKGDIR }}/dist/*.whl
