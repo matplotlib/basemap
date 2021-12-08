@@ -94,7 +94,7 @@ jobs:
           } elseif ("${{ matrix.python-version }}" -lt "3.5") {
               Set-Variable -Name "vcversion" -Value "10.0"
           } else {
-              Set-Variable -Name "vcversion" -Value "14.x"
+              Set-Variable -Name "vcversion" -Value "16"
           }
           echo "VCVERSION=${vcversion}" >> $env:GITHUB_ENV
       -
