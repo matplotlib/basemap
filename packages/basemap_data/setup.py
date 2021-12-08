@@ -86,7 +86,7 @@ setup(**{
     "name":
         "basemap_data",
     "version":
-        "1.3.0b2",
+        "1.3.0b2+dev",
     "license":
         "GNU Lesser General Public License v3 or later (LGPLv3+)",
     "description":
