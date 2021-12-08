@@ -260,7 +260,7 @@ jobs:
     needs: repair
     runs-on: ubuntu-latest
     container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-5"
-    environment: PyPI
+    environment: Test PyPI
     steps:
       -
         name: Checkout
