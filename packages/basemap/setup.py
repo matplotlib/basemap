@@ -67,6 +67,8 @@ class basemap_sdist(sdist):
     def finalize_options(self):
         """Call `finalize_options` after cleaning `data_files` and reset."""
 
+        self.formats = ["zip"]
+
         orig_data_files = self.distribution.data_files
         self.distribution.data_files = []
         sdist.finalize_options(self)
