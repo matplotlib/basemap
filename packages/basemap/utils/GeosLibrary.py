@@ -139,7 +139,7 @@ class GeosLibrary(object):
             for line in lines:
                 fd.write(line.replace(oldtext, newtext).encode())
 
-    def build(self, installdir=None):
+    def build(self, installdir=None, njobs=1):
         """Build and install GEOS from source."""
 
         # Download and extract zip file if not present.
@@ -165,6 +165,17 @@ class GeosLibrary(object):
         else:
             config_opts.append("-DCMAKE_BUILD_TYPE=Release")
 
+        # Define build options.
+        build_env = os.environ.copy()
+        build_opts = [
+            "--config", "Release",
+            "--target", "install",
+        ]
+        if os.name == "nt":
+            build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
+        else:
+            build_env["MAKEFLAGS"] = "-j {0:d}".format(njobs)
+
         # Now move to the GEOS source code folder and build with CMake.
         cwd = os.getcwd()
         try:
@@ -182,9 +193,7 @@ class GeosLibrary(object):
             except OSError:
                 pass
             # Call cmake build and install.
-            subprocess.call(["cmake",
-                             "--build", ".",
-                             "--config", "Release",
-                             "--target", "install"])
+            subprocess.call(["cmake", "--build", "."] + build_opts,
+                            env=build_env)
         finally:
             os.chdir(cwd)

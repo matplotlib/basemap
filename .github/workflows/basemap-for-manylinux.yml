@@ -55,8 +55,7 @@ jobs:
           set -e
           . /etc/profile
           cd ${{ env.PKGDIR }}
-          export MAKEFLAGS="-j 16"
-          python -c "import utils; utils.GeosLibrary('3.6.5').build('extern')"
+          python -c "import utils; utils.GeosLibrary('3.6.5').build('extern', njobs=16)"
       -
         name: Upload GEOS artifacts
         uses: actions/upload-artifact@v1
