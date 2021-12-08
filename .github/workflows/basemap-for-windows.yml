@@ -23,7 +23,7 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v1
-      - 
+      -
         name: Set Python
         uses: actions/setup-python@v2
         with:
@@ -75,17 +75,17 @@ jobs:
         name: Checkout
         uses: actions/checkout@v1
       -
-        name: Download GEOS artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: artifacts-geos-${{ matrix.arch }}
-          path: ${{ env.PKGDIR }}/extern
-      - 
         name: Set Python
         uses: actions/setup-python@v2
         with:
           python-version: "${{ matrix.python-version }}"
           architecture: ${{ matrix.arch }}
+      -
+        name: Download GEOS artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-geos-${{ matrix.arch }}
+          path: ${{ env.PKGDIR }}/extern
       -
         name: Define MSVC toolchain version
         run: |
@@ -141,3 +141,58 @@ jobs:
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
+
+  upload:
+    strategy:
+      matrix:
+        arch:
+          [
+            "x64",
+            "x86",
+          ]
+        python-version:
+          [
+            "3.5",
+            "3.6",
+            "3.7",
+            "3.8",
+            "3.9",
+          ]
+      max-parallel: 1
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: build
+    runs-on: windows-latest
+    environment: PyPI
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v1
+      -
+        name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "${{ matrix.python-version }}"
+          architecture: ${{ matrix.arch }}
+      -
+        name: Download build artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
+      -
+        name: Install requirements
+        run: |
+          pip install --prefer-binary twine
+      -
+        name: Upload distributables
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
+          TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
+        run: |
+          python -m twine check                                               \
+              ${{ env.PKGDIR }}/dist/*.zip                                    \
+              ${{ env.PKGDIR }}/dist/*-win*.whl
+          python -m twine upload --skip-existing                              \
+              ${{ env.PKGDIR }}/dist/*.zip                                    \
+              ${{ env.PKGDIR }}/dist/*-win*.whl
