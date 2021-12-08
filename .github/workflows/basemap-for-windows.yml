@@ -97,7 +97,7 @@ jobs:
           } else {
               Set-Variable -Name "vcversion" -Value "14.x"
           }
-          echo "VCVERSION=${vcversion}" >> ${GITHUB_ENV}
+          echo "VCVERSION=${vcversion}" >> $env:GITHUB_ENV
       -
         name: Install MSVC toolchain
         uses: ilammy/msvc-dev-cmd@v1
