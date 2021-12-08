@@ -119,8 +119,8 @@ jobs:
           set -e
           . /etc/profile
           python -m twine check                                               \
-              ${{ env.PKGDIR }}/dist/*.tar.gz                                 \
+              ${{ env.PKGDIR }}/dist/*.zip                                    \
               ${{ env.PKGDIR }}/dist/*.whl
           python -m twine upload --skip-existing                              \
-              ${{ env.PKGDIR }}/dist/*.tar.gz                                 \
+              ${{ env.PKGDIR }}/dist/*.zip                                    \
               ${{ env.PKGDIR }}/dist/*.whl

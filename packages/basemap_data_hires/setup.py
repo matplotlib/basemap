@@ -8,6 +8,7 @@ import os
 import itertools
 from setuptools import setup
 from setuptools import find_packages
+from setuptools.command.sdist import sdist
 
 
 def get_content(name, splitlines=False):
@@ -20,6 +21,16 @@ def get_content(name, splitlines=False):
     if splitlines:
         content = [row for row in content.splitlines() if row]
     return content
+
+
+class basemap_data_hires_sdist(sdist):
+    """Custom `sdist` so that it will force to save in zip format."""
+
+    def finalize_options(self):
+        """Enforce zip format before calling `finalize_options`."""
+
+        self.formats = ["zip"]
+        sdist.finalize_options(self)
 
 
 # Define some helper lists.
@@ -106,6 +117,9 @@ setup(**{
             "!=3.1.*",
             "<4",
         ]),
+    "cmdclass": {
+        "sdist": basemap_data_hires_sdist,
+    },
     "project_urls": {
         "Bug Tracker":
             "https://github.com/matplotlib/basemap/issues",
