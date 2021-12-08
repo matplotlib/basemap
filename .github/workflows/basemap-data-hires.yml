@@ -10,25 +10,19 @@ on:
 jobs:
 
   build:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python_version:
+        python-version:
           [
             "2.7",
           ]
       max-parallel: 1
-    container: "tinybases/python:${{ matrix.python_version }}-debian-4"
+    runs-on: ubuntu-latest
+    container: "pylegacy/python:${{ matrix.python-version }}-debian-4"
     steps:
       -
         name: Checkout
         uses: actions/checkout@v1
-      -
-        name: Print environment
-        run: |
-          set -e
-          . /etc/profile
-          python -V
       -
         name: Build wheel
         run: |
@@ -37,18 +31,16 @@ jobs:
           cd ${{ env.PKGDIR }}
           python setup.py sdist bdist_wheel --universal
       -
-        name: Upload artifacts
+        name: Upload build artifacts
         uses: actions/upload-artifact@v1
         with:
           name: artifacts-build
           path: ${{ env.PKGDIR }}/dist
 
   test:
-    needs: build
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python_version:
+        python-version:
           [
             "2.6",
             "2.7",
@@ -62,23 +54,19 @@ jobs:
             "3.9",
           ]
       max-parallel: 5
-    container: "tinybases/python:${{ matrix.python_version }}-debian-5"
+    needs: build
+    runs-on: ubuntu-latest
+    container: "pylegacy/python:${{ matrix.python-version }}-debian-5"
     steps:
       -
         name: Checkout
         uses: actions/checkout@v1
       -
-        name: Download artifacts
+        name: Download build artifacts
         uses: actions/download-artifact@v1
         with:
           name: artifacts-build
           path: ${{ env.PKGDIR }}/dist
-      -
-        name: Print environment
-        run: |
-          set -e
-          . /etc/profile
-          python -V
       -
         name: Install package
         run: |
@@ -93,34 +81,28 @@ jobs:
           python -c "from mpl_toolkits import basemap_data; print(basemap_data)"
 
   upload:
-    if: startsWith(github.event.ref, 'refs/tags/v')
-    needs: test
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python_version:
+        python-version:
           [
             "2.7",
           ]
       max-parallel: 1
-    container: "tinybases/python:${{ matrix.python_version }}-debian-5"
-    environment: PyPI
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: test
+    runs-on: ubuntu-latest
+    container: "pylegacy/python:${{ matrix.python-version }}-debian-5"
+    environment: Test PyPI
     steps:
       -
         name: Checkout
         uses: actions/checkout@v1
       -
-        name: Download artifacts
+        name: Download build artifacts
         uses: actions/download-artifact@v1
         with:
           name: artifacts-build
           path: ${{ env.PKGDIR }}/dist
-      -
-        name: Print environment
-        run: |
-          set -e
-          . /etc/profile
-          python -V
       -
         name: Install requirements
         run: |
@@ -136,5 +118,9 @@ jobs:
         run: |
           set -e
           . /etc/profile
-          python -m twine check ${{ env.PKGDIR }}/dist/*
-          python -m twine upload --skip-existing ${{ env.PKGDIR }}/dist/*
+          python -m twine check                                               \
+              ${{ env.PKGDIR }}/dist/*.zip                                    \
+              ${{ env.PKGDIR }}/dist/*.whl
+          python -m twine upload --skip-existing                              \
+              ${{ env.PKGDIR }}/dist/*.zip                                    \
+              ${{ env.PKGDIR }}/dist/*.whl

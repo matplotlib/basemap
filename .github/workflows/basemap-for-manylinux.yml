@@ -1,4 +1,4 @@
-name: basemap
+name: basemap-for-manylinux
 
 env:
   PKGDIR: "packages/basemap"
@@ -14,13 +14,13 @@ jobs:
       matrix:
         arch:
           [
-            "i386",
-            "amd64",
+            "x64",
+            "x86",
           ]
-      max-parallel: 6
+      max-parallel: 2
       fail-fast: false
     runs-on: ubuntu-latest
-    container: "tinybases/${{matrix.arch}}-python:3.6-debian-4"
+    container: "pylegacy/${{ matrix.arch }}-python:3.6-debian-4"
     steps:
       -
         name: Checkout
@@ -35,14 +35,13 @@ jobs:
           pkgvers=3.6.2
           pkgname=cmake
           pkgcode=cmake-${pkgvers}
-          case "${{matrix.arch}}" in
-              amd64)  pkgfile=${pkgcode}-Linux-x86_64.tar.gz;;
-              *)      pkgfile=${pkgcode}-Linux-i386.tar.gz;;
+          case "${{ matrix.arch }}" in
+              x86)  pkgfile=${pkgcode}-Linux-i386.tar.gz;;
+              *)    pkgfile=${pkgcode}-Linux-x86_64.tar.gz;;
           esac
           wget https://github.com/Kitware/CMake/releases/download/v${pkgvers}/${pkgfile} -P /tmp
           tar -xf /tmp/${pkgfile} --strip-components=1 -C /usr
           rm -rf /tmp/${pkgfile}
-          cmake --version
       -
         name: Install GCC toolchain
         run: |
@@ -50,32 +49,29 @@ jobs:
           . /etc/profile
           apt-get update
           apt-get install -y gcc g++ make
-          gcc --version
-          g++ --version
       -
         name: Build GEOS from source
         run: |
           set -e
           . /etc/profile
-          cd ${{env.PKGDIR}}
-          export MAKEFLAGS="-j 16"
-          python -c "import utils; utils.GeosLibrary('3.6.5').build('extern')"
+          cd ${{ env.PKGDIR }}
+          python -c "import utils; utils.GeosLibrary('3.6.5').build('extern', njobs=16)"
       -
         name: Upload GEOS artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: artifacts-geos-${{matrix.arch}}
-          path: ${{env.PKGDIR}}/extern
+          name: artifacts-geos-${{ matrix.arch }}
+          path: ${{ env.PKGDIR }}/extern
 
   build:
     strategy:
       matrix:
         arch:
           [
-            "i386",
-            "amd64",
+            "x64",
+            "x86",
           ]
-        python_version:
+        python-version:
           [
             "2.7",
             "3.5",
@@ -88,7 +84,7 @@ jobs:
       fail-fast: false
     needs: build-geos
     runs-on: ubuntu-latest
-    container: "tinybases/${{matrix.arch}}-python:${{matrix.python_version}}-debian-4"
+    container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-4"
     steps:
       -
         name: Checkout
@@ -97,8 +93,8 @@ jobs:
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
         with:
-          name: artifacts-geos-${{matrix.arch}}
-          path: ${{env.PKGDIR}}/extern
+          name: artifacts-geos-${{ matrix.arch }}
+          path: ${{ env.PKGDIR }}/extern
       -
         name: Install GCC toolchain
         run: |
@@ -106,40 +102,39 @@ jobs:
           . /etc/profile
           apt-get update
           apt-get install -y gcc g++ make
-          gcc --version
-          g++ --version
       -
-        name: Print environment
+        name: Install unzip
         run: |
           set -e
           . /etc/profile
-          python -V
+          apt-get update
+          apt-get install -y unzip
       -
         name: Generate NumPy headers
         run: |
           set -e
           . /etc/profile
-          case "${{matrix.python_version}}" in
+          case "${{ matrix.python-version }}" in
               2.[67]|3.[01234])  pkgvers=1.11.3;;
               *)                 pkgvers=1.16.6;;
           esac
           pkgname=numpy
           pkgcode=numpy-${pkgvers}
-          wget https://github.com/numpy/${pkgname}/releases/download/v${pkgvers}/${pkgcode}.tar.gz
-          tar -xf ${pkgcode}.tar.gz
-          rm -f ${pkgcode}.tar.gz
+          python -m pip download --no-binary=:all: "numpy == ${pkgvers}"
+          unzip ${pkgcode}.zip
+          rm -f ${pkgcode}.zip
           cd ${pkgcode}
-          python setup.py build -j 2
+          python setup.py build
           cp build/src*/numpy/core/include/numpy/*.h numpy/core/include/numpy/
           cd ..
-          cp -R ${pkgcode}/numpy/core/include ${{env.PKGDIR}}/extern
+          cp -R ${pkgcode}/numpy/core/include ${{ env.PKGDIR }}/extern
           rm -rf ${pkgcode}
       -
         name: Build wheel
         run: |
           set -e
           . /etc/profile
-          cd ${{env.PKGDIR}}
+          cd ${{ env.PKGDIR }}
           export GEOS_DIR=extern
           export NUMPY_INCLUDE_PATH=extern/include
           pip install -r requirements-setup.txt
@@ -148,18 +143,18 @@ jobs:
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: artifacts-build-${{matrix.arch}}-${{matrix.python_version}}
-          path: ${{env.PKGDIR}}/dist
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
 
   repair:
     strategy:
       matrix:
         arch:
           [
-            "i386",
-            "amd64",
+            "x64",
+            "x86",
           ]
-        python_version:
+        python-version:
           [
             "2.7",
             "3.5",
@@ -172,7 +167,7 @@ jobs:
       fail-fast: false
     needs: build
     runs-on: ubuntu-latest
-    container: "tinybases/${{matrix.arch}}-python:3.6-debian-5"
+    container: "pylegacy/${{ matrix.arch }}-python:3.6-debian-5"
     steps:
       -
         name: Checkout
@@ -181,14 +176,14 @@ jobs:
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
         with:
-          name: artifacts-geos-${{matrix.arch}}
-          path: ${{env.PKGDIR}}/extern
+          name: artifacts-geos-${{ matrix.arch }}
+          path: ${{ env.PKGDIR }}/extern
       -
         name: Download build artifacts
         uses: actions/download-artifact@v1
         with:
-          name: artifacts-build-${{matrix.arch}}-${{matrix.python_version}}
-          path: ${{env.PKGDIR}}/dist
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
       -
         name: Install GCC toolchain
         run: |
@@ -196,8 +191,6 @@ jobs:
           . /etc/profile
           apt-get update
           apt-get install -y gcc g++ make
-          gcc --version
-          g++ --version
       -
         name: Install unzip
         run: |
@@ -205,8 +198,6 @@ jobs:
           . /etc/profile
           apt-get update
           apt-get install -y unzip
-          gcc --version
-          g++ --version
       -
         name: Install patchelf from source
         run: |
@@ -227,12 +218,6 @@ jobs:
           cd ..
           rm -rf ${pkgcode}
       -
-        name: Print environment
-        run: |
-          set -e
-          . /etc/profile
-          python -V
-      -
         name: Install auditwheel
         run: |
           set -e
@@ -243,25 +228,25 @@ jobs:
         run: |
           set -e
           . /etc/profile
-          cd ${{env.PKGDIR}}
+          cd ${{ env.PKGDIR }}
           export LD_LIBRARY_PATH="$(readlink -f extern/lib)"
           auditwheel repair -w dist dist/*.whl
       -
-        name: Upload artifacts
+        name: Upload build artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: artifacts-build-${{matrix.arch}}-${{matrix.python_version}}
-          path: ${{env.PKGDIR}}/dist
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
 
   upload:
     strategy:
       matrix:
         arch:
           [
-            "i386",
-            "amd64",
+            "x64",
+            "x86",
           ]
-        python_version:
+        python-version:
           [
             "2.7",
             "3.5",
@@ -274,8 +259,8 @@ jobs:
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: repair
     runs-on: ubuntu-latest
-    container: "tinybases/${{matrix.arch}}-python:${{matrix.python_version}}-debian-5"
-    environment: PyPI
+    container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-5"
+    environment: Test PyPI
     steps:
       -
         name: Checkout
@@ -284,14 +269,8 @@ jobs:
         name: Download build artifacts
         uses: actions/download-artifact@v1
         with:
-          name: artifacts-build-${{matrix.arch}}-${{matrix.python_version}}
-          path: ${{env.PKGDIR}}/dist
-      -
-        name: Print environment
-        run: |
-          set -e
-          . /etc/profile
-          python -V
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
       -
         name: Install requirements
         run: |
@@ -302,14 +281,14 @@ jobs:
         name: Upload distributables
         env:
           TWINE_USERNAME: __token__
-          TWINE_PASSWORD: "${{secrets.PYPI_TOKEN}}"
-          TWINE_REPOSITORY_URL: "${{secrets.PYPI_REPOSITORY_URL}}"
+          TWINE_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
+          TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
         run: |
           set -e
           . /etc/profile
           python -m twine check                                               \
-              ${{env.PKGDIR}}/dist/*.tar.gz                                   \
-              ${{env.PKGDIR}}/dist/*-manylinux1*.whl
+              ${{ env.PKGDIR }}/dist/*.zip                                    \
+              ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
           python -m twine upload --skip-existing                              \
-              ${{env.PKGDIR}}/dist/*.tar.gz                                   \
-              ${{env.PKGDIR}}/dist/*-manylinux1*.whl
+              ${{ env.PKGDIR }}/dist/*.zip                                    \
+              ${{ env.PKGDIR }}/dist/*-manylinux1*.whl

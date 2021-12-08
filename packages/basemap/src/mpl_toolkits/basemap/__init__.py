@@ -64,7 +64,7 @@ else:
     from mpl_toolkits import basemap_data
     basemap_datadir = os.path.abspath(list(basemap_data.__path__)[0])
 
-__version__ = '1.3.0b1'
+__version__ = '1.3.0b2'
 
 # module variable that sets the default value for the 'latlon' kwarg.
 # can be set to True by user so plotting functions can take lons,lats
