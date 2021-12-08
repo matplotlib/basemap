@@ -191,8 +191,6 @@ jobs:
           TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
         run: |
           python -m twine check                                               \
-              ${{ env.PKGDIR }}/dist/*.zip                                    \
               ${{ env.PKGDIR }}/dist/*-win*.whl
           python -m twine upload --skip-existing                              \
-              ${{ env.PKGDIR }}/dist/*.zip                                    \
               ${{ env.PKGDIR }}/dist/*-win*.whl
