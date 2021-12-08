@@ -159,10 +159,7 @@ class GeosLibrary(object):
             "-DCMAKE_INSTALL_PREFIX={0}".format(installdir),
             "-DGEOS_ENABLE_TESTS=OFF",
         ]
-        if os.name == "nt":
-            config_opts.append("-DCMAKE_GENERATOR_PLATFORM=x64")
-            config_opts.append("-DCMAKE_GENERATOR_TOOLSET=host=x64")
-        else:
+        if os.name != "nt":
             config_opts.append("-DCMAKE_BUILD_TYPE=Release")
 
         # Define build options.

@@ -15,8 +15,9 @@ jobs:
         arch:
           [
             "x64",
+            "x86",
           ]
-      max-parallel: 1
+      max-parallel: 2
       fail-fast: false
     runs-on: windows-latest
     steps:
@@ -30,15 +31,15 @@ jobs:
           python-version: "3.6"
           architecture: ${{ matrix.arch }}
       -
-        name: Install CMake
-        uses: jwlawson/actions-setup-cmake@v1.9
-        with:
-          cmake-version: "3.16.x"
-      -
-        name: Install MSVC toolchain
+        name: Set MSVC toolchain
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
+      -
+        name: Install CMake
+        uses: jwlawson/actions-setup-cmake@v1.9
+        with:
+          cmake-version: "3.13.x"
       -
         name: Build GEOS from source
         run: |
@@ -57,6 +58,7 @@ jobs:
         arch:
           [
             "x64",
+            "x86",
           ]
         python-version:
           [
@@ -66,7 +68,7 @@ jobs:
             "3.8",
             "3.9",
           ]
-      max-parallel: 6
+      max-parallel: 5
       fail-fast: false
     needs: build-geos
     runs-on: windows-latest
@@ -81,28 +83,22 @@ jobs:
           python-version: "${{ matrix.python-version }}"
           architecture: ${{ matrix.arch }}
       -
-        name: Download GEOS artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: artifacts-geos-${{ matrix.arch }}
-          path: ${{ env.PKGDIR }}/extern
-      -
-        name: Define MSVC toolchain version
+        name: Set MSVC toolset
         run: |
           if ("${{ matrix.python-version }}" -lt "3.3") {
-              Set-Variable -Name "vcversion" -Value "9.0"
+              Set-Variable -Name "msvc_toolset" -Value "9.0"
           } elseif ("${{ matrix.python-version }}" -lt "3.5") {
-              Set-Variable -Name "vcversion" -Value "10.0"
+              Set-Variable -Name "msvc_toolset" -Value "10.0"
           } else {
-              Set-Variable -Name "vcversion" -Value "16"
+              Set-Variable -Name "msvc_toolset" -Value "16"
           }
-          echo "VCVERSION=${vcversion}" >> $env:GITHUB_ENV
+          echo "MSVC_TOOLSET=${msvc_toolset}" >> $env:GITHUB_ENV
       -
-        name: Install MSVC toolchain
+        name: Set MSVC toolchain
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
-          toolset: ${{ env.VCVERSION }}
+          toolset: ${{ env.MSVC_TOOLSET }}
       -
         name: Install Python base packages
         run: |
@@ -128,6 +124,12 @@ jobs:
           cp -R "${pkgcode}/${includedir}/numpy" "${{ env.PKGDIR }}/extern/include/numpy"
           rm -r "${pkgcode}"
       -
+        name: Download GEOS artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-geos-${{ matrix.arch }}
+          path: ${{ env.PKGDIR }}/extern
+      -
         name: Build wheel
         run: |
           cd ${{ env.PKGDIR }}
@@ -148,6 +150,7 @@ jobs:
         arch:
           [
             "x64",
+            "x86",
           ]
         python-version:
           [
