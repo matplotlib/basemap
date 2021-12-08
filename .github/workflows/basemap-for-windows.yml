@@ -134,7 +134,7 @@ jobs:
           $env:GEOS_DIR = "extern"
           $env:NUMPY_INCLUDE_PATH = "extern/include"
           pip install -r requirements-setup.txt
-          python setup.py sdist bdist_wheel
+          python setup.py bdist_wheel
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
