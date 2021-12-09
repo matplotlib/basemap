@@ -12,11 +12,11 @@ jobs:
   build-geos:
     strategy:
       matrix:
-        arch:
-          [
-            "x64",
-            "x86",
-          ]
+        include:
+          - arch: "x64"
+            cmake-version: "3.14.7"
+          - arch: "x86"
+            cmake-version: "3.13.2"
       max-parallel: 2
       fail-fast: false
     runs-on: windows-latest
@@ -39,7 +39,7 @@ jobs:
         name: Install CMake
         uses: jwlawson/actions-setup-cmake@v1.9
         with:
-          cmake-version: "3.13.x"
+          cmake-version: ${{ matrix.cmake-version }}
       -
         name: Build GEOS from source
         run: |
