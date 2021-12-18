@@ -173,10 +173,9 @@ class GeosLibrary(object):
         config_opts = [
             "-DCMAKE_INSTALL_PREFIX={0}".format(installdir),
             "-DGEOS_ENABLE_TESTS=OFF",
+            "-DCMAKE_BUILD_TYPE=Release",
         ]
-        if os.name != "nt":
-            config_opts.append("-DCMAKE_BUILD_TYPE=Release")
-        elif self.version_tuple < (3, 6, 0):
+        if os.name == "nt" and self.version_tuple < (3, 6, 0):
             config_opts = ["-G", "NMake Makefiles"] + config_opts
 
         # Define build options.
