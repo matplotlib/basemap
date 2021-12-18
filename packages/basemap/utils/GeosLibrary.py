@@ -139,6 +139,13 @@ class GeosLibrary(object):
             for line in lines:
                 fd.write(line.replace(oldtext, newtext).encode())
 
+        # The SVN revision file is not created on the fly before 3.6.0.
+        svn_hfile = os.path.join(zipfold, "geos_svn_revision.h")
+        if not os.path.exists(svn_hfile):
+            with io.open(svn_hfile, "wb") as fd:
+                text = "#define GEOS_SVN_REVISION 0"
+                fd.write(text.encode())
+
     def build(self, installdir=None, njobs=1):
         """Build and install GEOS from source."""
 
