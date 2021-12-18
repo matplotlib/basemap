@@ -14,10 +14,18 @@ jobs:
       matrix:
         include:
           - arch: "x64"
+            msvc-toolset: "16"
             cmake-version: "3.14.7"
           - arch: "x86"
+            msvc-toolset: "16"
             cmake-version: "3.13.2"
-      max-parallel: 2
+          - arch: "x64"
+            msvc-toolset: "9"
+            cmake-version: "3.14.7"
+          - arch: "x86"
+            msvc-toolset: "9"
+            cmake-version: "3.13.2"
+      max-parallel: 4
       fail-fast: false
     runs-on: windows-latest
     steps:
@@ -31,10 +39,35 @@ jobs:
           python-version: "3.6"
           architecture: ${{ matrix.arch }}
       -
-        name: Set MSVC toolchain
+        name: Set MSVC toolchain (v9)
+        run: |
+          Invoke-WebRequest ${{ secrets.VS090URL }} -OutFile VCForPython27.msi
+          $msi_process = Start-Process "msiexec" -ArgumentList "/i VCForPython27.msi /qn /l*! output.log" -NoNewWindow -PassThru
+          $msi_process.WaitForExit()
+          if ("${{ matrix.arch }}" -eq "x64") {
+              $vcsubdir = "amd64"
+              $winsdksubdir = "${{ matrix.arch }}"
+          } else {
+              $vcsubdir = ""
+              $winsdksubdir = ""
+          }
+          $MSVCROOT = "C:\Users\$env:UserName\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0"
+          $VCINSTALLDIR = "$MSVCROOT\VC"
+          $WindowsSdkDir = "$MSVCROOT\WinSDK"
+          echo VCINSTALLDIR="$VCINSTALLDIR" >> $env:GITHUB_ENV
+          echo WindowsSdkDir="$WindowsSdkDir" >> $env:GITHUB_ENV
+          echo PATH="$VCINSTALLDIR\Bin\$vcsubdir;$WindowsSdkDir\Bin\$winsdksubdir;$WindowsSdkDir\Bin;$env:PATH" >> $env:GITHUB_ENV
+          echo LIB="$VCINSTALLDIR\Lib\$vcsubdir;$WindowsSdkDir\Lib\$winsdksubdir;$env:LIB" >> $env:GITHUB_ENV
+          echo LIBPATH="$VCINSTALLDIR\Lib\$vcsubdir;$WindowsSdkDir\Lib\$winsdksubdir;$env:LIBPATH" >> $env:GITHUB_ENV
+          echo INCLUDE="$VCINSTALLDIR\Include;$WindowsSdkDir\Include;$env:INCLUDE" >> $env:GITHUB_ENV
+        if: matrix.msvc-toolset == '9'
+      -
+        name: Set MSVC toolchain (v16)
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
+          toolset: ${{ env.msvc-toolset }}
+        if: matrix.msvc-toolset == '16'
       -
         name: Install CMake
         uses: jwlawson/actions-setup-cmake@v1.9
@@ -49,7 +82,7 @@ jobs:
         name: Upload GEOS artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: artifacts-geos-${{ matrix.arch }}
+          name: artifacts-geos-${{ matrix.arch }}-msvc${{ matrix.msvc-toolset }}
           path: ${{ env.PKGDIR }}/extern
 
   build:
@@ -83,22 +116,43 @@ jobs:
           python-version: "${{ matrix.python-version }}"
           architecture: ${{ matrix.arch }}
       -
-        name: Set MSVC toolset
+        name: Set MSVC toolset version
         run: |
-          if ("${{ matrix.python-version }}" -lt "3.3") {
-              Set-Variable -Name "msvc_toolset" -Value "9.0"
-          } elseif ("${{ matrix.python-version }}" -lt "3.5") {
-              Set-Variable -Name "msvc_toolset" -Value "10.0"
+          if ("${{ matrix.python-version }}" -eq "2.7") {
+              echo "msvc-toolset=9" >> $env:GITHUB_ENV
           } else {
-              Set-Variable -Name "msvc_toolset" -Value "16"
+              echo "msvc-toolset=16" >> $env:GITHUB_ENV
           }
-          echo "MSVC_TOOLSET=${msvc_toolset}" >> $env:GITHUB_ENV
       -
-        name: Set MSVC toolchain
+        name: Set MSVC toolchain (v9)
+        run: |
+          Invoke-WebRequest ${{ secrets.VS090URL }} -OutFile VCForPython27.msi
+          $msi_process = Start-Process "msiexec" -ArgumentList "/i VCForPython27.msi /qn /l*! output.log" -NoNewWindow -PassThru
+          $msi_process.WaitForExit()
+          if ("${{ matrix.arch }}" -eq "x64") {
+              $vcsubdir = "amd64"
+              $winsdksubdir = "${{ matrix.arch }}"
+          } else {
+              $vcsubdir = ""
+              $winsdksubdir = ""
+          }
+          $MSVCROOT = "C:\Users\$env:UserName\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0"
+          $VCINSTALLDIR = "$MSVCROOT\VC"
+          $WindowsSdkDir = "$MSVCROOT\WinSDK"
+          echo VCINSTALLDIR="$VCINSTALLDIR" >> $env:GITHUB_ENV
+          echo WindowsSdkDir="$WindowsSdkDir" >> $env:GITHUB_ENV
+          echo PATH="$VCINSTALLDIR\Bin\$vcsubdir;$WindowsSdkDir\Bin\$winsdksubdir;$WindowsSdkDir\Bin;$env:PATH" >> $env:GITHUB_ENV
+          echo LIB="$VCINSTALLDIR\Lib\$vcsubdir;$WindowsSdkDir\Lib\$winsdksubdir;$env:LIB" >> $env:GITHUB_ENV
+          echo LIBPATH="$VCINSTALLDIR\Lib\$vcsubdir;$WindowsSdkDir\Lib\$winsdksubdir;$env:LIBPATH" >> $env:GITHUB_ENV
+          echo INCLUDE="$VCINSTALLDIR\Include;$WindowsSdkDir\Include;$env:INCLUDE" >> $env:GITHUB_ENV
+        if: env.msvc-toolset == '9'
+      -
+        name: Set MSVC toolchain (v16)
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
-          toolset: ${{ env.MSVC_TOOLSET }}
+          toolset: ${{ env.msvc-toolset }}
+        if: env.msvc-toolset == '16'
       -
         name: Install Python base packages
         run: |
@@ -127,7 +181,7 @@ jobs:
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
         with:
-          name: artifacts-geos-${{ matrix.arch }}
+          name: artifacts-geos-${{ matrix.arch }}-msvc${{ env.msvc-toolset }}
           path: ${{ env.PKGDIR }}/extern
       -
         name: Build wheel
