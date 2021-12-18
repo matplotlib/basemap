@@ -23,6 +23,7 @@ import os
 import ssl
 import glob
 import shutil
+import struct
 import tempfile
 import contextlib
 import subprocess
@@ -44,7 +45,8 @@ class GeosLibrary(object):
     def __init__(self, version, root=None):
         """Initialise a new :class:`GeosLibrary` instance."""
 
-        self.version = version
+        self.version_tuple = tuple(map(int, version.split(".")))
+
         if root is None:
             self.temp = True
             self.root = tempfile.mkdtemp(prefix="tmp_geoslibrary_")
@@ -64,6 +66,12 @@ class GeosLibrary(object):
                 shutil.rmtree(self.root)
             except OSError:
                 pass
+
+    @property
+    def version(self):
+        """GEOS library version in string format."""
+
+        return ".".join(map(str, self.version_tuple))
 
     def download(self):
         """Download GEOS zip source code into :class:`GeosLibrary` root."""
@@ -141,7 +149,7 @@ class GeosLibrary(object):
 
         # The SVN revision file is not created on the fly before 3.6.0.
         svn_hfile = os.path.join(zipfold, "geos_svn_revision.h")
-        if not os.path.exists(svn_hfile):
+        if self.version_tuple < (3, 6, 0) and not os.path.exists(svn_hfile):
             with io.open(svn_hfile, "wb") as fd:
                 text = "#define GEOS_SVN_REVISION 0"
                 fd.write(text.encode())
@@ -168,6 +176,8 @@ class GeosLibrary(object):
         ]
         if os.name != "nt":
             config_opts.append("-DCMAKE_BUILD_TYPE=Release")
+        elif self.version_tuple < (3, 6, 0):
+            config_opts = ["-G", "NMake Makefiles"] + config_opts
 
         # Define build options.
         build_env = os.environ.copy()
@@ -175,10 +185,17 @@ class GeosLibrary(object):
             "--config", "Release",
             "--target", "install",
         ]
-        if os.name == "nt":
-            build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
-        else:
+        if os.name != "nt":
             build_env["MAKEFLAGS"] = "-j {0:d}".format(njobs)
+        elif self.version_tuple < (3, 6, 0):
+            win64 = (8 * struct.calcsize("P") == 64)
+            build_opts.extend([
+                "--",
+                "WIN64={0}".format("YES" if win64 else "NO"),
+                "BUILD_BATCH={0}".format("YES" if njobs > 1 else "NO")
+            ])
+        else:
+            build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
 
         # Now move to the GEOS source code folder and build with CMake.
         cwd = os.getcwd()
