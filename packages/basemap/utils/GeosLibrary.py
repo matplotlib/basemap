@@ -86,7 +86,7 @@ class GeosLibrary(object):
             # Fallback if `urlopen` does not accept context.
             conn = urlopen(link)
 
-        with conn:
+        with contextlib.closing(conn):
             # Try to get the file timestamp from the HTTP request header.
             date = conn.headers.get("Last-Modified")
             if date is not None:
