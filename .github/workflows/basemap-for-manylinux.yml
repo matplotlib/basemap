@@ -28,8 +28,6 @@ jobs:
       -
         name: Install CMake 3.6.2
         run: |
-          set -e
-          . /etc/profile
           apt-get update
           apt-get install -y libidn11
           pkgvers=3.6.2
@@ -45,15 +43,11 @@ jobs:
       -
         name: Install GCC toolchain
         run: |
-          set -e
-          . /etc/profile
           apt-get update
           apt-get install -y gcc g++ make
       -
         name: Build GEOS from source
         run: |
-          set -e
-          . /etc/profile
           cd ${{ env.PKGDIR }}
           python -c "import utils; utils.GeosLibrary('3.5.1').build('extern', njobs=16)"
       -
@@ -98,22 +92,16 @@ jobs:
       -
         name: Install GCC toolchain
         run: |
-          set -e
-          . /etc/profile
           apt-get update
           apt-get install -y gcc g++ make
       -
         name: Install unzip
         run: |
-          set -e
-          . /etc/profile
           apt-get update
           apt-get install -y unzip
       -
         name: Generate NumPy headers
         run: |
-          set -e
-          . /etc/profile
           case "${{ matrix.python-version }}" in
               2.[67]|3.[01234])  pkgvers=1.11.3;;
               *)                 pkgvers=1.16.6;;
@@ -132,8 +120,6 @@ jobs:
       -
         name: Build wheel
         run: |
-          set -e
-          . /etc/profile
           cd ${{ env.PKGDIR }}
           export GEOS_DIR=extern
           export NUMPY_INCLUDE_PATH=extern/include
@@ -187,22 +173,16 @@ jobs:
       -
         name: Install GCC toolchain
         run: |
-          set -e
-          . /etc/profile
           apt-get update
           apt-get install -y gcc g++ make
       -
         name: Install unzip
         run: |
-          set -e
-          . /etc/profile
           apt-get update
           apt-get install -y unzip
       -
         name: Install patchelf from source
         run: |
-          set -e
-          . /etc/profile
           pkgvers=0.9
           pkgname=patchelf
           pkgcode=${pkgname}-${pkgvers}
@@ -220,14 +200,10 @@ jobs:
       -
         name: Install auditwheel
         run: |
-          set -e
-          . /etc/profile
           pip install "auditwheel < 4.0"
       -
         name: Repair wheel
         run: |
-          set -e
-          . /etc/profile
           cd ${{ env.PKGDIR }}
           export LD_LIBRARY_PATH="$(readlink -f extern/lib)"
           auditwheel repair -w dist dist/*.whl
@@ -274,8 +250,6 @@ jobs:
       -
         name: Install requirements
         run: |
-          set -e
-          . /etc/profile
           pip install --prefer-binary twine
       -
         name: Upload distributables
@@ -284,8 +258,6 @@ jobs:
           TWINE_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
           TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
         run: |
-          set -e
-          . /etc/profile
           python -m twine check                                               \
               ${{ env.PKGDIR }}/dist/*.zip                                    \
               ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
