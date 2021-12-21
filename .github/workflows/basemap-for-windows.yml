@@ -39,35 +39,13 @@ jobs:
           architecture: ${{ matrix.arch }}
           python-version: "3.6"
       -
-        name: Set MSVC toolchain (v9)
-        run: |
-          Invoke-WebRequest ${{ secrets.VS090URL }} -OutFile VCForPython27.msi
-          $msi_process = Start-Process "msiexec" -ArgumentList "/i VCForPython27.msi /qn /l*! output.log" -NoNewWindow -PassThru
-          $msi_process.WaitForExit()
-          if ("${{ matrix.arch }}" -eq "x64") {
-              $vcsubdir = "amd64"
-              $winsdksubdir = "${{ matrix.arch }}"
-          } else {
-              $vcsubdir = ""
-              $winsdksubdir = ""
-          }
-          $MSVCROOT = "C:\Users\$env:UserName\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0"
-          $VCINSTALLDIR = "$MSVCROOT\VC"
-          $WindowsSdkDir = "$MSVCROOT\WinSDK"
-          echo VCINSTALLDIR="$VCINSTALLDIR" >> $env:GITHUB_ENV
-          echo WindowsSdkDir="$WindowsSdkDir" >> $env:GITHUB_ENV
-          echo PATH="$VCINSTALLDIR\Bin\$vcsubdir;$WindowsSdkDir\Bin\$winsdksubdir;$WindowsSdkDir\Bin;$env:PATH" >> $env:GITHUB_ENV
-          echo LIB="$VCINSTALLDIR\Lib\$vcsubdir;$WindowsSdkDir\Lib\$winsdksubdir;$env:LIB" >> $env:GITHUB_ENV
-          echo LIBPATH="$VCINSTALLDIR\Lib\$vcsubdir;$WindowsSdkDir\Lib\$winsdksubdir;$env:LIBPATH" >> $env:GITHUB_ENV
-          echo INCLUDE="$VCINSTALLDIR\Include;$WindowsSdkDir\Include;$env:INCLUDE" >> $env:GITHUB_ENV
-        if: matrix.msvc-toolset == '9'
-      -
-        name: Set MSVC toolchain (v16)
-        uses: ilammy/msvc-dev-cmd@v1
+        name: Setup MSVC toolset
+        uses: ./.github/actions/setup-msvc
         with:
           arch: ${{ matrix.arch }}
-          toolset: ${{ env.msvc-toolset }}
-        if: matrix.msvc-toolset == '16'
+          version: ${{ matrix.msvc-toolset }}
+        env:
+          VS090URL: ${{ secrets.VS090URL }}
       -
         name: Install CMake
         uses: jwlawson/actions-setup-cmake@v1.9
@@ -125,35 +103,13 @@ jobs:
               echo "msvc-toolset=16" >> $env:GITHUB_ENV
           }
       -
-        name: Set MSVC toolchain (v9)
-        run: |
-          Invoke-WebRequest ${{ secrets.VS090URL }} -OutFile VCForPython27.msi
-          $msi_process = Start-Process "msiexec" -ArgumentList "/i VCForPython27.msi /qn /l*! output.log" -NoNewWindow -PassThru
-          $msi_process.WaitForExit()
-          if ("${{ matrix.arch }}" -eq "x64") {
-              $vcsubdir = "amd64"
-              $winsdksubdir = "${{ matrix.arch }}"
-          } else {
-              $vcsubdir = ""
-              $winsdksubdir = ""
-          }
-          $MSVCROOT = "C:\Users\$env:UserName\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0"
-          $VCINSTALLDIR = "$MSVCROOT\VC"
-          $WindowsSdkDir = "$MSVCROOT\WinSDK"
-          echo VCINSTALLDIR="$VCINSTALLDIR" >> $env:GITHUB_ENV
-          echo WindowsSdkDir="$WindowsSdkDir" >> $env:GITHUB_ENV
-          echo PATH="$VCINSTALLDIR\Bin\$vcsubdir;$WindowsSdkDir\Bin\$winsdksubdir;$WindowsSdkDir\Bin;$env:PATH" >> $env:GITHUB_ENV
-          echo LIB="$VCINSTALLDIR\Lib\$vcsubdir;$WindowsSdkDir\Lib\$winsdksubdir;$env:LIB" >> $env:GITHUB_ENV
-          echo LIBPATH="$VCINSTALLDIR\Lib\$vcsubdir;$WindowsSdkDir\Lib\$winsdksubdir;$env:LIBPATH" >> $env:GITHUB_ENV
-          echo INCLUDE="$VCINSTALLDIR\Include;$WindowsSdkDir\Include;$env:INCLUDE" >> $env:GITHUB_ENV
-        if: env.msvc-toolset == '9'
-      -
-        name: Set MSVC toolchain (v16)
-        uses: ilammy/msvc-dev-cmd@v1
+        name: Setup MSVC toolset
+        uses: ./.github/actions/setup-msvc
         with:
           arch: ${{ matrix.arch }}
-          toolset: ${{ env.msvc-toolset }}
-        if: env.msvc-toolset == '16'
+          version: ${{ env.msvc-toolset }}
+        env:
+          VS090URL: ${{ secrets.VS090URL }}
       -
         name: Install Python base packages
         run: |

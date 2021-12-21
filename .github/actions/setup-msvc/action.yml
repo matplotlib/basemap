@@ -1,0 +1,51 @@
+name: "Setup MSVC"
+description: "Setup Microsoft Visual C++ compiler"
+
+inputs:
+  arch:
+    description: "Hardware architecture"
+    required: true
+    default: "x64"
+  version:
+    description: "Toolset version"
+    required: true
+    default: "16"
+
+runs:
+  using: "composite"
+  steps:
+    -
+      name: Set MSVC toolchain (v9)
+      shell: pwsh
+      run: |
+        if (-not "${{ env.VS090URL }}") {
+            echo "Missing environment variable VS090URL"
+            exit 1;
+        }
+        Invoke-WebRequest ${{ env.VS090URL }} -OutFile VCForPython27.msi
+        $msi_process = Start-Process "msiexec" -ArgumentList "/i VCForPython27.msi /qn /l*! output.log" -NoNewWindow -PassThru
+        $msi_process.WaitForExit()
+        if ("${{ inputs.arch }}" -eq "x64") {
+            $vcsubdir = "amd64"
+            $winsdksubdir = "${{ inputs.arch }}"
+        } else {
+            $vcsubdir = ""
+            $winsdksubdir = ""
+        }
+        $MSVCROOT = "C:\Users\$env:UserName\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0"
+        $VCINSTALLDIR = "$MSVCROOT\VC"
+        $WindowsSdkDir = "$MSVCROOT\WinSDK"
+        echo VCINSTALLDIR="$VCINSTALLDIR" >> $env:GITHUB_ENV
+        echo WindowsSdkDir="$WindowsSdkDir" >> $env:GITHUB_ENV
+        echo PATH="$VCINSTALLDIR\Bin\$vcsubdir;$WindowsSdkDir\Bin\$winsdksubdir;$WindowsSdkDir\Bin;$env:PATH" >> $env:GITHUB_ENV
+        echo LIB="$VCINSTALLDIR\Lib\$vcsubdir;$WindowsSdkDir\Lib\$winsdksubdir;$env:LIB" >> $env:GITHUB_ENV
+        echo LIBPATH="$VCINSTALLDIR\Lib\$vcsubdir;$WindowsSdkDir\Lib\$winsdksubdir;$env:LIBPATH" >> $env:GITHUB_ENV
+        echo INCLUDE="$VCINSTALLDIR\Include;$WindowsSdkDir\Include;$env:INCLUDE" >> $env:GITHUB_ENV
+      if: inputs.version == '9'
+    -
+      name: Set MSVC toolchain (v14+)
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{ inputs.arch }}
+        toolset: ${{ inputs.version }}
+      if: inputs.version != '9'
