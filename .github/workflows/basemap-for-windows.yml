@@ -147,7 +147,7 @@ jobs:
           $env:GEOS_DIR = "extern"
           $env:NUMPY_INCLUDE_PATH = "extern/include"
           pip install -r requirements-setup.txt
-          python setup.py bdist_wheel
+          python setup.py sdist bdist_wheel
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
@@ -205,6 +205,7 @@ jobs:
           TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
         run: |
           python -m twine check                                               `
+              ${{ env.PKGDIR }}/dist/*.zip                                    `
               ${{ env.PKGDIR }}/dist/*-win*.whl
           python -m twine upload --skip-existing                              `
               ${{ env.PKGDIR }}/dist/*-win*.whl
