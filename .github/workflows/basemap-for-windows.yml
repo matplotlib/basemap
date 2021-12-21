@@ -36,8 +36,8 @@ jobs:
         name: Set Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.6"
           architecture: ${{ matrix.arch }}
+          python-version: "3.6"
       -
         name: Set MSVC toolchain (v9)
         run: |
@@ -114,8 +114,8 @@ jobs:
         name: Set Python
         uses: actions/setup-python@v2
         with:
-          python-version: "${{ matrix.python-version }}"
           architecture: ${{ matrix.arch }}
+          python-version: ${{ matrix.python-version }}
       -
         name: Set MSVC toolset version
         run: |
@@ -229,8 +229,8 @@ jobs:
         name: Set Python
         uses: actions/setup-python@v2
         with:
-          python-version: "${{ matrix.python-version }}"
           architecture: ${{ matrix.arch }}
+          python-version: ${{ matrix.python-version }}
       -
         name: Download build artifacts
         uses: actions/download-artifact@v1
