@@ -23,16 +23,14 @@ runs:
             exit 1;
         }
         Invoke-WebRequest ${{ env.VS090URL }} -OutFile VCForPython27.msi
-        $msi_process = Start-Process "msiexec" -NoNewWindow -PassThru         `
-            -ArgumentList "/i VCForPython27.msi /qn /l*! output.log"
-        $msi_process.WaitForExit()
+        (Start-Process "msiexec" -NoNewWindow -PassThru -ArgumentList         `
+            "/i VCForPython27.msi /qn /l*! output.log").WaitForExit()
         $MSVCVARS = "VCINSTALLDIR", "WindowsSdkDir", "PATH", "LIB", "LIBPATH", "INCLUDE"
-        $env:MSVCROOT = "C:\Users\$env:UserName\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0"
-        cmd.exe /c '"%MSVCROOT%\vcvarsall.bat" ${{ inputs.arch }} && set' |
-        foreach-object {
+        $MSVCROOT = "C:\Users\$env:UserName\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0"
+        cmd.exe /c "`"${MSVCROOT}\vcvarsall.bat`" ${{ inputs.arch }} && set" |
+        ForEach-Object {
             $name, $value = $_ -split '=', 2
-            if ($MSVCVARS -contains $name) {
-                echo $name $value
+            if (${MSVCVARS} -contains $name) {
                 echo $_ >> $env:GITHUB_ENV
             }
         }
