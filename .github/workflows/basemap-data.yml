@@ -4,7 +4,6 @@ env:
   PKGDIR: "packages/basemap_data"
 
 on:
-  push:
   workflow_dispatch:
 
 jobs:
