@@ -226,6 +226,10 @@ since version 1.3.0.
   `scikit.vectorplot`).
 - Remove deprecated `NetCDFFile`.
 - Add `"zorder"` keyword to `drawmapscale`.
+- Change default value for `"lakes"` kwarg in `drawlsmask` from False to True
+  (**API change**).
+- Change default value for `"inlands"` kwarg in `maskoceans` from False to
+  True (**API change**).
 
 ## 1.0.1 (svn revision 8967)
 
@@ -371,10 +375,10 @@ since version 1.3.0.
   and meridians so they are not included in a legend.
 - Add `drawmapscale` method to create a map scale bar similar to that available
   with the GMT's psbasemap.
-- Now lives in `mpl_toolkits.basemap`. Instead of
+- Now lives in `mpl_toolkits.basemap` (**API change**). Instead of
   `from matplotlib.toolkits.basemap import Basemap`, use
   `from mpl_toolkits.basemap import Basemap`. All examples changed. Uses
-  `matplotlib mpl_toolkits`  namespace package, so `basemap` can now be
+  `matplotlib mpl_toolkits` namespace package, so `basemap` can now be
   installed if `matplotlib` is installed as an egg. Python 2.3 support
   re-enabled.
 - Change `_geos` to `_geoslib`, so as not to conflict with the Python module
@@ -515,9 +519,9 @@ since version 1.3.0.
 - Fix several bugs in `drawlsmask` method.
 - Remove buggy optimizations for cylindrical projections not crossing the
   Greenwich meridian.
-- Can now specify map projection region by setting width and height in
-  projection coordinates (in meters) instead of specifying lat/lon of
-  upper-right and lower-left corners.
+- Can now specify map projection region in `Basemap.__init__` by setting
+  width and height in projection coordinates (in meters) instead of
+  specifying lat/lon of upper-right and lower-left corners (**API change**).
 
 ## 0.9.1 - 2006-07-27
 
@@ -586,7 +590,8 @@ since version 1.3.0.
 ## 0.7.2 - 2005-10-18
 
 - No longer requires `numarray` (`interp` function no longer uses
-  `numarray.nd_image`).
+  `numarray.nd_image`). This means that `interp` does not accept `"mode"` and
+  `"cval"` any longer (**API change**). `"order"` keyword must be 0 or 1.
 - Modify to work with the new `ContourSet` returned by `contour` and
   `contourf`.
 - Turn off axes frame by default for non-rectangular projections (`"ortho"`,
@@ -649,16 +654,18 @@ since version 1.3.0.
 ## 0.5.2 - 2005-06-28
 
 - Fix bug in meridian labelling when lon > 360 or lon < -180.
-- Now fully "pylab-free" if `"ax"` keyword is used in `Basemap.__init__` or
-  all of the `Basemap` methods that do drawing.
+- Add `"ax"` keyword to `Basemap.__init__`. This will set default axis
+  instance, which can be overridden by using `"ax"` keyword in method calls
+  (**API change**).
 
 ## 0.5.1 - 2005-06-26
 
-- Add ability to specify an existing axis instance in all `Basemap` methods
-  (instead of just using current one). Default is still to use the current
-  axis instance.
+- Add `"ax"` keyword to most `Basemap` methods to allow use of a pre-existing
+  `Axes` instance. Default is still to use the current instance.
 - Full control of font properties for parallel and meridian labels (now uses
-  unicode instead of mathtext for degree symbol).
+  unicode instead of mathtext for degree symbol). Replace `"font"` and
+  `"fontsize"` keyword args for `drawparallels` and `drawmeridians` replaced by
+  `**kwargs`, which is passed directly to `Axes.text` method (**API change**).
 
 ## 0.5.0 - 2005-06-02
 
@@ -675,6 +682,8 @@ since version 1.3.0.
 - `drawparallels` and `drawmeridians` methods now take optional keyword
   arguments `"xoffset"` and `"yoffset"`, which control how far from the edge of
   the map labels are drawn.
+- Make `llcrnrlon`, `llcrnrlat`, `urcrnrlon` and `urcrnrlat` optional
+  keyword arguments in `Basemap.__init__` (**API change**).
 
 ## 0.4.3 - 2005-05-11
 
@@ -683,9 +692,9 @@ since version 1.3.0.
 
 ## 0.4.2 - 2005-05-10
 
-- `transform_vector` now does a simple rotation of the vector from geographic
-  to map coordinates, preserving the vector magnitude (removed
-  `"preserve_magnitude"` keyword).
+- Remove `"preserve_magnitude"` keyword from `transform_vector`. Now
+  `transform_vector` does a simple rotation of the vector from geographic
+  to map coordinates, preserving the vector magnitude (**API change**).
 - Fix minor bugs in Miller and Mercator projections.
 - Add Gnomonic, Cassini-Soldner and Polyconic projections (now 13 projections
   supported).
@@ -729,7 +738,8 @@ since version 1.3.0.
 - Fix aspect ratio of mercator plots.
 - Add `set_axes_limits`, `plot`, `scatter`, `contourf`, `contour`, `pcolor` and
   `quiver` methods.
-- `axes` instance no longer a method argument (API change).
+- `axes` instance no longer a method argument to any `Basemap` method,
+  `gca` is called to obtain the current axes instance instead (**API change**).
 
 ## 0.2.1 - 2005-04-10
 
