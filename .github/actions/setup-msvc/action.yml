@@ -1,0 +1,44 @@
+name: "Setup MSVC"
+description: "Setup Microsoft Visual C++ compiler"
+
+inputs:
+  arch:
+    description: "Hardware architecture"
+    required: true
+    default: "x64"
+  version:
+    description: "Toolset version"
+    required: true
+    default: "16"
+
+runs:
+  using: "composite"
+  steps:
+    -
+      name: Set MSVC toolchain (v9)
+      shell: pwsh
+      run: |
+        if (-not "${{ env.VS090URL }}") {
+            echo "Missing environment variable VS090URL"
+            exit 1;
+        }
+        Invoke-WebRequest ${{ env.VS090URL }} -OutFile VCForPython27.msi
+        (Start-Process "msiexec" -NoNewWindow -PassThru -ArgumentList         `
+            "/i VCForPython27.msi /qn /l*! output.log").WaitForExit()
+        $MSVCVARS = "VCINSTALLDIR", "WindowsSdkDir", "PATH", "LIB", "LIBPATH", "INCLUDE"
+        $MSVCROOT = "C:\Users\$env:UserName\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0"
+        cmd.exe /c "`"${MSVCROOT}\vcvarsall.bat`" ${{ inputs.arch }} && set" |
+        ForEach-Object {
+            $name, $value = $_ -split '=', 2
+            if (${MSVCVARS} -contains $name) {
+                echo $_ >> $env:GITHUB_ENV
+            }
+        }
+      if: inputs.version == '9'
+    -
+      name: Set MSVC toolchain (v14+)
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{ inputs.arch }}
+        toolset: ${{ inputs.version }}
+      if: inputs.version != '9'

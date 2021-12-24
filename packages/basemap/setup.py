@@ -64,15 +64,28 @@ def get_geos_install_prefix():
 class basemap_sdist(sdist):
     """Custom `sdist` so that it will not pack DLLs on Windows if present."""
 
-    def finalize_options(self):
-        """Call `finalize_options` after cleaning `data_files` and reset."""
+    def run(self):
+        """Custom `run` command."""
 
-        self.formats = ["zip"]
-
+        # Replace DLL data files and add GEOS build script.
         orig_data_files = self.distribution.data_files
-        self.distribution.data_files = []
-        sdist.finalize_options(self)
-        self.distribution.data_files = orig_data_files
+        self.distribution.data_files = [
+            (".", glob.glob(os.path.join("utils", "*.py")))]
+
+        # Run the original `run` method and leave `data_files` as it was found.
+        try:
+            sdist.run(self)
+        finally:
+            self.distribution.data_files = orig_data_files
+
+    def initialize_options(self):
+        """Call `initialize_options` and then set zip as default format."""
+
+        sdist.initialize_options(self)
+        self._default_to_zip()
+
+    def _default_to_zip(self):
+        self.formats = ["zip"]
 
 
 # Initialise include and library dirs.
@@ -159,7 +172,7 @@ setup(**{
     "name":
         "basemap",
     "version":
-        "1.3.0b2",
+        "1.3.0rc1",
     "license":
         "MIT",
     "description":

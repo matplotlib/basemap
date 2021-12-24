@@ -26,8 +26,6 @@ jobs:
       -
         name: Build wheel
         run: |
-          set -e
-          . /etc/profile
           cd ${{ env.PKGDIR }}
           python setup.py sdist bdist_wheel --universal
       -
@@ -53,7 +51,8 @@ jobs:
             "3.8",
             "3.9",
           ]
-      max-parallel: 5
+      max-parallel: 6
+      fail-fast: false
     needs: build
     runs-on: ubuntu-latest
     container: "pylegacy/python:${{ matrix.python-version }}-debian-5"
@@ -70,14 +69,10 @@ jobs:
       -
         name: Install package
         run: |
-          set -e
-          . /etc/profile
           pip install ${{ env.PKGDIR }}/dist/*.whl
       -
         name: Test package
         run: |
-          set -e
-          . /etc/profile
           python -c "from mpl_toolkits import basemap_data; print(basemap_data)"
 
   upload:
@@ -92,7 +87,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     container: "pylegacy/python:${{ matrix.python-version }}-debian-5"
-    environment: Test PyPI
+    environment: PyPI
     steps:
       -
         name: Checkout
@@ -106,8 +101,6 @@ jobs:
       -
         name: Install requirements
         run: |
-          set -e
-          . /etc/profile
           pip install --prefer-binary twine
       -
         name: Upload distributables
@@ -116,8 +109,6 @@ jobs:
           TWINE_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
           TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
         run: |
-          set -e
-          . /etc/profile
           python -m twine check                                               \
               ${{ env.PKGDIR }}/dist/*.zip                                    \
               ${{ env.PKGDIR }}/dist/*.whl

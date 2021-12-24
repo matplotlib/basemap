@@ -12,11 +12,20 @@ jobs:
   build-geos:
     strategy:
       matrix:
-        arch:
-          [
-            "x64",
-          ]
-      max-parallel: 1
+        include:
+          - arch: "x64"
+            msvc-toolset: "16"
+            cmake-version: "3.14.7"
+          - arch: "x86"
+            msvc-toolset: "16"
+            cmake-version: "3.13.2"
+          - arch: "x64"
+            msvc-toolset: "9"
+            cmake-version: "3.14.7"
+          - arch: "x86"
+            msvc-toolset: "9"
+            cmake-version: "3.13.2"
+      max-parallel: 4
       fail-fast: false
     runs-on: windows-latest
     steps:
@@ -27,28 +36,31 @@ jobs:
         name: Set Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.6"
           architecture: ${{ matrix.arch }}
+          python-version: "3.6"
+      -
+        name: Setup MSVC toolset
+        uses: ./.github/actions/setup-msvc
+        with:
+          arch: ${{ matrix.arch }}
+          version: ${{ matrix.msvc-toolset }}
+        env:
+          VS090URL: ${{ secrets.VS090URL }}
       -
         name: Install CMake
         uses: jwlawson/actions-setup-cmake@v1.9
         with:
-          cmake-version: "3.16.x"
-      -
-        name: Install MSVC toolchain
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: ${{ matrix.arch }}
+          cmake-version: ${{ matrix.cmake-version }}
       -
         name: Build GEOS from source
         run: |
           cd ${{ env.PKGDIR }}
-          python -c "import utils; utils.GeosLibrary('3.6.5').build('extern', njobs=16)"
+          python -c "import utils; utils.GeosLibrary('3.5.1').build('extern', njobs=16)"
       -
         name: Upload GEOS artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: artifacts-geos-${{ matrix.arch }}
+          name: artifacts-geos-${{ matrix.arch }}-msvc${{ matrix.msvc-toolset }}
           path: ${{ env.PKGDIR }}/extern
 
   build:
@@ -57,9 +69,11 @@ jobs:
         arch:
           [
             "x64",
+            "x86",
           ]
         python-version:
           [
+            "2.7",
             "3.5",
             "3.6",
             "3.7",
@@ -78,31 +92,24 @@ jobs:
         name: Set Python
         uses: actions/setup-python@v2
         with:
-          python-version: "${{ matrix.python-version }}"
           architecture: ${{ matrix.arch }}
+          python-version: ${{ matrix.python-version }}
       -
-        name: Download GEOS artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: artifacts-geos-${{ matrix.arch }}
-          path: ${{ env.PKGDIR }}/extern
-      -
-        name: Define MSVC toolchain version
+        name: Set MSVC toolset version
         run: |
-          if ("${{ matrix.python-version }}" -lt "3.3") {
-              Set-Variable -Name "vcversion" -Value "9.0"
-          } elseif ("${{ matrix.python-version }}" -lt "3.5") {
-              Set-Variable -Name "vcversion" -Value "10.0"
+          if ("${{ matrix.python-version }}" -eq "2.7") {
+              echo "msvc-toolset=9" >> $env:GITHUB_ENV
           } else {
-              Set-Variable -Name "vcversion" -Value "16"
+              echo "msvc-toolset=16" >> $env:GITHUB_ENV
           }
-          echo "VCVERSION=${vcversion}" >> $env:GITHUB_ENV
       -
-        name: Install MSVC toolchain
-        uses: ilammy/msvc-dev-cmd@v1
+        name: Setup MSVC toolset
+        uses: ./.github/actions/setup-msvc
         with:
           arch: ${{ matrix.arch }}
-          toolset: ${{ env.VCVERSION }}
+          version: ${{ env.msvc-toolset }}
+        env:
+          VS090URL: ${{ secrets.VS090URL }}
       -
         name: Install Python base packages
         run: |
@@ -128,13 +135,19 @@ jobs:
           cp -R "${pkgcode}/${includedir}/numpy" "${{ env.PKGDIR }}/extern/include/numpy"
           rm -r "${pkgcode}"
       -
+        name: Download GEOS artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-geos-${{ matrix.arch }}-msvc${{ env.msvc-toolset }}
+          path: ${{ env.PKGDIR }}/extern
+      -
         name: Build wheel
         run: |
           cd ${{ env.PKGDIR }}
           $env:GEOS_DIR = "extern"
           $env:NUMPY_INCLUDE_PATH = "extern/include"
           pip install -r requirements-setup.txt
-          python setup.py bdist_wheel
+          python setup.py sdist bdist_wheel
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
@@ -148,9 +161,11 @@ jobs:
         arch:
           [
             "x64",
+            "x86",
           ]
         python-version:
           [
+            "2.7",
             "3.5",
             "3.6",
             "3.7",
@@ -161,7 +176,7 @@ jobs:
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: build
     runs-on: windows-latest
-    environment: Test PyPI
+    environment: PyPI
     steps:
       -
         name: Checkout
@@ -170,8 +185,8 @@ jobs:
         name: Set Python
         uses: actions/setup-python@v2
         with:
-          python-version: "${{ matrix.python-version }}"
           architecture: ${{ matrix.arch }}
+          python-version: ${{ matrix.python-version }}
       -
         name: Download build artifacts
         uses: actions/download-artifact@v1
@@ -190,6 +205,7 @@ jobs:
           TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
         run: |
           python -m twine check                                               `
+              ${{ env.PKGDIR }}/dist/*.zip                                    `
               ${{ env.PKGDIR }}/dist/*-win*.whl
           python -m twine upload --skip-existing                              `
               ${{ env.PKGDIR }}/dist/*-win*.whl

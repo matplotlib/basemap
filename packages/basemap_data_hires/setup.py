@@ -26,11 +26,14 @@ def get_content(name, splitlines=False):
 class basemap_data_hires_sdist(sdist):
     """Custom `sdist` so that it will force to save in zip format."""
 
-    def finalize_options(self):
-        """Enforce zip format before calling `finalize_options`."""
+    def initialize_options(self):
+        """Call `initialize_options` and then set zip as default format."""
 
+        sdist.initialize_options(self)
+        self._default_to_zip()
+
+    def _default_to_zip(self):
         self.formats = ["zip"]
-        sdist.finalize_options(self)
 
 
 # Define some helper lists.
@@ -64,7 +67,7 @@ setup(**{
     "name":
         "basemap_data_hires",
     "version":
-        "1.3.0b2",
+        "1.3.0rc1",
     "license":
         "GNU Lesser General Public License v3 or later (LGPLv3+)",
     "description":

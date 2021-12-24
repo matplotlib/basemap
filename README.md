@@ -122,3 +122,13 @@ Ryan May, David Huard, Mauro Cavalcanti, Jonas Bluethgen, Chris Murphy,
 Pierre Gerard-Marchant, Christoph Gohlke, Eric Bruning, Stephane
 Raynaud, Tom Loredo, Patrick Marsh, Phil Elson, and Henry Hammond for
 valuable contributions.
+
+## Known bugs
+
+The `Basemap.fillcontinents` method doesn't always do the right thing.
+Matplotlib always tries to fill the inside of a polygon. Under certain
+situations, what is the inside of a coastline polygon can be ambiguous,
+and the outside may be filled instead of the inside. A workaround is to
+change the map projection region slightly or mask the land areas with
+the `Basemap.drawlsmask` method instead of filling the coastline
+polygons (this is illustrated in the `ortho_demo.py` example). 
