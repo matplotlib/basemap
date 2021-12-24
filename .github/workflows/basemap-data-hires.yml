@@ -87,7 +87,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     container: "pylegacy/python:${{ matrix.python-version }}-debian-5"
-    environment: Test PyPI
+    environment: PyPI
     steps:
       -
         name: Checkout

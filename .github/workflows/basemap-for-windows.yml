@@ -176,7 +176,7 @@ jobs:
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: build
     runs-on: windows-latest
-    environment: Test PyPI
+    environment: PyPI
     steps:
       -
         name: Checkout
