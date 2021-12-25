@@ -155,6 +155,52 @@ jobs:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
 
+  test:
+    strategy:
+      matrix:
+        arch:
+          [
+            "x64",
+            "x86",
+          ]
+        python-version:
+          [
+            "2.7",
+            "3.5",
+            "3.6",
+            "3.7",
+            "3.8",
+            "3.9",
+          ]
+      max-parallel: 6
+      fail-fast: false
+    needs: build
+    runs-on: windows-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v1
+      -
+        name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          architecture: ${{ matrix.arch }}
+          python-version: ${{ matrix.python-version }}
+      -
+        name: Download build artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
+      -
+        name: Install package
+        run: |
+          pip install (Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)
+      -
+        name: Test package
+        run: |
+          python -c "from mpl_toolkits.basemap import Basemap"
+
   upload:
     strategy:
       matrix:
@@ -174,7 +220,7 @@ jobs:
           ]
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
-    needs: build
+    needs: test
     runs-on: windows-latest
     environment: PyPI
     steps:
