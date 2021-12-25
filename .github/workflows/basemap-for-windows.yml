@@ -195,6 +195,7 @@ jobs:
       -
         name: Install package
         run: |
+          pip install "basemap-data == 1.3.0rc1"
           pip install (Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)
       -
         name: Test package
