@@ -156,9 +156,6 @@ jobs:
     container: "pylegacy/${{ matrix.arch }}-python:3.6-debian-5"
     steps:
       -
-        name: Checkout
-        uses: actions/checkout@v1
-      -
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
         with:
@@ -285,9 +282,6 @@ jobs:
     container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-5"
     environment: PyPI
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v1
       -
         name: Download build artifacts
         uses: actions/download-artifact@v1

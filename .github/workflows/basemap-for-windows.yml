@@ -226,9 +226,6 @@ jobs:
     environment: PyPI
     steps:
       -
-        name: Checkout
-        uses: actions/checkout@v1
-      -
         name: Set Python
         uses: actions/setup-python@v2
         with:

@@ -90,9 +90,6 @@ jobs:
     environment: PyPI
     steps:
       -
-        name: Checkout
-        uses: actions/checkout@v1
-      -
         name: Download build artifacts
         uses: actions/download-artifact@v1
         with:
