@@ -74,7 +74,7 @@ jobs:
             "3.8",
             "3.9",
           ]
-      max-parallel: 6
+      max-parallel: 3
       fail-fast: false
     needs: build-geos
     runs-on: ubuntu-latest
@@ -149,7 +149,7 @@ jobs:
             "3.8",
             "3.9",
           ]
-      max-parallel: 6
+      max-parallel: 3
       fail-fast: false
     needs: build
     runs-on: ubuntu-latest
@@ -228,7 +228,7 @@ jobs:
             "3.8",
             "3.9",
           ]
-      max-parallel: 6
+      max-parallel: 3
       fail-fast: false
     needs: repair
     runs-on: ubuntu-latest
