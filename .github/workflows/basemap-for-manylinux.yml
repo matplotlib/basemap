@@ -247,6 +247,11 @@ jobs:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
       -
+        name: Install GCC toolchain
+        run: |
+          apt-get update
+          apt-get install -y gcc g++ make
+      -
         name: Install package
         run: |
           pip install "basemap-data == 1.3.0rc1"
