@@ -255,6 +255,26 @@ jobs:
           apt-get install -y libfreetype6-dev libpng12-dev
         if: matrix.arch == 'x86' && matrix.python-version == '3.5'
       -
+        name: Install pyproj manually
+        run: |
+          apt-get update
+          apt-get install -y proj-bin libproj-dev
+          python -m pip install cython
+          pkgname=pyproj
+          pkgvers=${{ env.pyproj-version }}
+          pkgcode=${pkgname}-${pkgvers}
+          python -m pip download "pyproj == ${pkgvers}"
+          tar -xf ${pkgcode}.tar.gz
+          rm -rf ${pkgcode}.tar.gz
+          cd ${pkgcode}
+          rm _proj.c
+          python -m pip install .
+          cd ..
+          rm -rf ${pkgcode}
+        if: matrix.python-version == '3.9'
+        env:
+          pyproj-version: 1.9.6
+      -
         name: Install package
         run: |
           pip install --prefer-binary "basemap-data == 1.3.0rc1"
