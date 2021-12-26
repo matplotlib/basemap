@@ -9,6 +9,19 @@ on:
 
 jobs:
 
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Upload checkout
+        uses: actions/upload-artifact@v1
+        with:
+          name: checkout
+          path: .
+
   build:
     strategy:
       matrix:
@@ -17,12 +30,16 @@ jobs:
             "2.7",
           ]
       max-parallel: 1
+    needs: checkout
     runs-on: ubuntu-latest
     container: "pylegacy/python:${{ matrix.python-version }}-debian-4"
     steps:
       -
-        name: Checkout
-        uses: actions/checkout@v1
+        name: Download checkout
+        uses: actions/download-artifact@v1
+        with:
+          name: checkout
+          path: .
       -
         name: Build wheel
         run: |
@@ -58,8 +75,11 @@ jobs:
     container: "pylegacy/python:${{ matrix.python-version }}-debian-5"
     steps:
       -
-        name: Checkout
-        uses: actions/checkout@v1
+        name: Download checkout
+        uses: actions/download-artifact@v1
+        with:
+          name: checkout
+          path: .
       -
         name: Download build artifacts
         uses: actions/download-artifact@v1

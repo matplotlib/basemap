@@ -9,6 +9,19 @@ on:
 
 jobs:
 
+  checkout:
+    runs-on: windows-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Upload checkout
+        uses: actions/upload-artifact@v1
+        with:
+          name: checkout
+          path: .
+
   build-geos:
     strategy:
       matrix:
@@ -27,11 +40,15 @@ jobs:
             cmake-version: "3.13.2"
       max-parallel: 4
       fail-fast: false
+    needs: checkout
     runs-on: windows-latest
     steps:
       -
-        name: Checkout
-        uses: actions/checkout@v2
+        name: Download checkout
+        uses: actions/download-artifact@v1
+        with:
+          name: checkout
+          path: .
       -
         name: Set Python
         uses: actions/setup-python@v2
@@ -86,8 +103,11 @@ jobs:
     runs-on: windows-latest
     steps:
       -
-        name: Checkout
-        uses: actions/checkout@v2
+        name: Download checkout
+        uses: actions/download-artifact@v1
+        with:
+          name: checkout
+          path: .
       -
         name: Set Python
         uses: actions/setup-python@v2
@@ -178,8 +198,11 @@ jobs:
     runs-on: windows-latest
     steps:
       -
-        name: Checkout
-        uses: actions/checkout@v2
+        name: Download checkout
+        uses: actions/download-artifact@v1
+        with:
+          name: checkout
+          path: .
       -
         name: Set Python
         uses: actions/setup-python@v2
