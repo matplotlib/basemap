@@ -170,7 +170,7 @@ setup(**{
     "name":
         "basemap",
     "version":
-        "1.3.0",
+        "1.3.0+dev",
     "license":
         "MIT",
     "description":
