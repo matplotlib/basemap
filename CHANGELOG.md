@@ -5,7 +5,38 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 since version 1.3.0.
 
-## [Unreleased]
+## [1.3.0] - 2020-12-28
+
+### Added
+- Precompiled binary wheels available in PyPI.
+- Complete workflow to build the project wheels for Windows and GNU/Linux
+  using GitHub Actions.
+
+### Changed
+- Reorganise the package structure. In summary, the former `basemap` package
+  is split in three:
+  - `basemap` itself contains the Python modules.
+  - `basemap-data` contains the mandatory data assets required by `basemap`
+    to provide minimal functionality.
+  - `basemap-data-hires` contains the high-resolution data assets.
+- Upgrade default GEOS library dependency to 3.5.1.
+- Update and clarify licenses. In summary:
+  - `basemap`: MIT license.
+    - GEOS bundled dynamic library is under the LGPL-2.1-only license.
+  - `basemap-data`: LGPL-3.0-or-later.
+    - The EPSG file and the JPG images are also under the MIT license.
+  - `basemap-data-hires`: LGPL-3.0-or-later.
+
+### Fixed
+- Fix `Basemap.pcolormesh` for `"ortho"` projection (PR [#476]).
+- Fix `Basemap.arcgisimage` for cylindrical coordinates (PR [#505]).
+- Force `setup.py` to cythonize `_geoslib.pyx` at compile time (issues [#518]
+  and [#521]).
+
+### Removed
+- Bundled GEOS source code. The same source code can be downloaded using the
+  `GeosLibrary` class in `utils`.
+- Precompiled `_geoslib.c` file.
 
 ## [1.2.2] - 2020-08-04
 
@@ -791,8 +822,19 @@ since version 1.3.0.
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#521]:
+https://github.com/matplotlib/basemap/issues/521
+[#518]:
+https://github.com/matplotlib/basemap/issues/518
+[#505]:
+https://github.com/matplotlib/basemap/pull/505
+[#476]:
+https://github.com/matplotlib/basemap/pull/476
+
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.2.2rel...develop
+https://github.com/matplotlib/basemap/compare/v1.3.0...develop
+[1.3.0]:
+https://github.com/matplotlib/basemap/compare/v1.2.2rel...v1.3.0
 [1.2.2]:
 https://github.com/matplotlib/basemap/compare/v1.2.1rel...v1.2.2rel
 [1.2.1]:
