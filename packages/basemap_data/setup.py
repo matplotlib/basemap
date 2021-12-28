@@ -83,8 +83,6 @@ data_other_files = [
 
 data_files = data_dat_files + data_bin_files + data_usc_files + data_other_files
 
-# To create the source .tar.gz file:  python setup.py sdist
-# To create the universal wheel file: python setup.py bdist_wheel --universal
 setup(**{
     "name":
         "basemap_data",

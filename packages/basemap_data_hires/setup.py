@@ -61,8 +61,6 @@ data_files = [
     for basename, res in itertools.product(basenames, resolutions[3:])
 ]
 
-# To create the source .tar.gz file:  python setup.py sdist
-# To create the universal wheel file: python setup.py bdist_wheel --universal
 setup(**{
     "name":
         "basemap_data_hires",
