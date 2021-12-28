@@ -9,6 +9,19 @@ on:
 
 jobs:
 
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Upload checkout
+        uses: actions/upload-artifact@v1
+        with:
+          name: checkout
+          path: .
+
   build-geos:
     strategy:
       matrix:
@@ -19,12 +32,16 @@ jobs:
           ]
       max-parallel: 2
       fail-fast: false
+    needs: checkout
     runs-on: ubuntu-latest
     container: "pylegacy/${{ matrix.arch }}-python:3.6-debian-4"
     steps:
       -
-        name: Checkout
-        uses: actions/checkout@v1
+        name: Download checkout
+        uses: actions/download-artifact@v1
+        with:
+          name: checkout
+          path: .
       -
         name: Install CMake 3.6.2
         run: |
@@ -74,15 +91,18 @@ jobs:
             "3.8",
             "3.9",
           ]
-      max-parallel: 6
+      max-parallel: 3
       fail-fast: false
     needs: build-geos
     runs-on: ubuntu-latest
     container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-4"
     steps:
       -
-        name: Checkout
-        uses: actions/checkout@v1
+        name: Download checkout
+        uses: actions/download-artifact@v1
+        with:
+          name: checkout
+          path: .
       -
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
@@ -149,15 +169,12 @@ jobs:
             "3.8",
             "3.9",
           ]
-      max-parallel: 6
+      max-parallel: 3
       fail-fast: false
     needs: build
     runs-on: ubuntu-latest
     container: "pylegacy/${{ matrix.arch }}-python:3.6-debian-5"
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v1
       -
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
@@ -214,6 +231,81 @@ jobs:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
 
+  test:
+    strategy:
+      matrix:
+        arch:
+          [
+            "x64",
+            "x86",
+          ]
+        python-version:
+          [
+            "2.7",
+            "3.5",
+            "3.6",
+            "3.7",
+            "3.8",
+            "3.9",
+          ]
+      max-parallel: 3
+      fail-fast: false
+    needs: repair
+    runs-on: ubuntu-latest
+    container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-5"
+    steps:
+      -
+        name: Download checkout
+        uses: actions/download-artifact@v1
+        with:
+          name: checkout
+          path: .
+      -
+        name: Download build artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
+      -
+        name: Install GCC toolchain
+        run: |
+          apt-get update
+          apt-get install -y gcc g++ make
+      -
+        name: Install matplotlib dependencies
+        run: |
+          apt-get update
+          apt-get install -y libfreetype6-dev libpng12-dev
+        if: matrix.arch == 'x86' && matrix.python-version == '3.5'
+      -
+        name: Install pyproj manually
+        run: |
+          apt-get update
+          apt-get install -y proj-bin libproj-dev
+          python -m pip install cython
+          pkgname=pyproj
+          pkgvers=${{ env.pyproj-version }}
+          pkgcode=${pkgname}-${pkgvers}
+          python -m pip download "pyproj == ${pkgvers}"
+          tar -xf ${pkgcode}.tar.gz
+          rm -rf ${pkgcode}.tar.gz
+          cd ${pkgcode}
+          rm _proj.c
+          python -m pip install .
+          cd ..
+          rm -rf ${pkgcode}
+        if: matrix.python-version == '3.9'
+        env:
+          pyproj-version: 1.9.6
+      -
+        name: Install package
+        run: |
+          pip install --prefer-binary ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
+      -
+        name: Test package
+        run: |
+          python -c "from mpl_toolkits.basemap import Basemap"
+
   upload:
     strategy:
       matrix:
@@ -233,14 +325,11 @@ jobs:
           ]
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
-    needs: repair
+    needs: test
     runs-on: ubuntu-latest
     container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-5"
     environment: PyPI
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v1
       -
         name: Download build artifacts
         uses: actions/download-artifact@v1
