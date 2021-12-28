@@ -35,7 +35,7 @@ https://pip.pypa.io/
 [GSHHG]:
 https://www.soest.hawaii.edu/pwessel/gshhg
 [GMT]:
-http://gmt.soest.hawaii.edu
+https://www.generic-mapping-tools.org/
 
 [LGPLv3+]:
 https://spdx.org/licenses/LGPL-3.0-or-later.html
@@ -43,10 +43,10 @@ https://spdx.org/licenses/LGPL-3.0-or-later.html
 https://spdx.org/licenses/MIT.html
 
 [`COPYING`]:
-https://github.com/matplotlib/basemap/blob/develop/packages/basemap_data/COPYING
+https://github.com/matplotlib/basemap/blob/v1.3.0rc1/packages/basemap_data/COPYING
 [`COPYING.LESSER`]:
-https://github.com/matplotlib/basemap/blob/develop/packages/basemap_data_hires/COPYING.LESSER
+https://github.com/matplotlib/basemap/blob/v1.3.0rc1/packages/basemap_data/COPYING.LESSER
 [`LICENSE.epsg`]:
-https://github.com/matplotlib/basemap/blob/develop/packages/basemap_data/LICENSE.epsg
+https://github.com/matplotlib/basemap/blob/v1.3.0rc1/packages/basemap_data/LICENSE.epsg
 [`LICENSE.mit`]:
-https://github.com/matplotlib/basemap/blob/develop/packages/basemap_data/LICENSE.mit
+https://github.com/matplotlib/basemap/blob/v1.3.0rc1/packages/basemap_data/LICENSE.mit
