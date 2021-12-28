@@ -166,13 +166,11 @@ if sys.version_info[:2] == (3, 2):
         item.replace(marker, "") for item in install_requires
         if item.endswith(marker) or "python_version" not in item]
 
-# To create the source .tar.gz file:  python setup.py sdist
-# To create the universal wheel file: python setup.py bdist_wheel --universal
 setup(**{
     "name":
         "basemap",
     "version":
-        "1.3.0rc1+dev",
+        "1.3.0",
     "license":
         "MIT",
     "description":
