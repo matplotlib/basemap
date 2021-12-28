@@ -44,8 +44,8 @@ python -m pip install basemap
 Otherwise, you will need to install `basemap` from source as follows:
 
 1. Install pre-requisite Python modules:
-   - [cython](https://github.com/cython/cython).
-   - [numpy](https://github.com/numpy/numpy).
+   - [cython](https://github.com/cython/cython)
+   - [numpy](https://github.com/numpy/numpy)
 
 2. Download the `basemap` source code and move to the `packages/basemap`
    folder:
