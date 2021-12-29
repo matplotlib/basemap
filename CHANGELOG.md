@@ -21,6 +21,10 @@ since version 1.3.0.
   - `basemap-data` contains the mandatory data assets required by `basemap`
     to provide minimal functionality.
   - `basemap-data-hires` contains the high-resolution data assets.
+
+  This change together with the precompiled binary wheels in PyPI should solve
+  most of the former installation problems (see issues [#436], [#445], [#456],
+  [#461], [#488], [#489], [#491], [#510], [#525] and [#526]).
 - Upgrade default GEOS library dependency to 3.5.1.
 - Update and clarify licenses. In summary:
   - `basemap`: MIT license.
@@ -32,8 +36,8 @@ since version 1.3.0.
 ### Fixed
 - Fix `Basemap.pcolormesh` for `"ortho"` projection (PR [#476]).
 - Fix `Basemap.arcgisimage` for cylindrical coordinates (PR [#505]).
-- Force `setup.py` to cythonize `_geoslib.pyx` at compile time (issues [#518]
-  and [#521]).
+- Force `setup.py` to cythonize `_geoslib.pyx` at compile time (issues [#487],
+  [#518] and [#521]).
 
 ### Removed
 - Bundled GEOS source code. The same source code can be downloaded using the
@@ -824,14 +828,36 @@ since version 1.3.0.
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#526]:
+https://github.com/matplotlib/basemap/issues/526
+[#525]:
+https://github.com/matplotlib/basemap/issues/525
 [#521]:
 https://github.com/matplotlib/basemap/issues/521
 [#518]:
 https://github.com/matplotlib/basemap/issues/518
+[#510]:
+https://github.com/matplotlib/basemap/issues/510
 [#505]:
 https://github.com/matplotlib/basemap/pull/505
+[#491]:
+https://github.com/matplotlib/basemap/issues/491
+[#489]:
+https://github.com/matplotlib/basemap/issues/489
+[#488]:
+https://github.com/matplotlib/basemap/issues/488
+[#487]:
+https://github.com/matplotlib/basemap/issues/487
 [#476]:
 https://github.com/matplotlib/basemap/pull/476
+[#461]:
+https://github.com/matplotlib/basemap/issues/461
+[#456]:
+https://github.com/matplotlib/basemap/issues/456
+[#445]:
+https://github.com/matplotlib/basemap/issues/445
+[#436]:
+https://github.com/matplotlib/basemap/issues/436
 
 [Unreleased]:
 https://github.com/matplotlib/basemap/compare/v1.3.0...develop
