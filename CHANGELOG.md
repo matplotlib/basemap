@@ -7,7 +7,7 @@ since version 1.3.0.
 
 ## [Unreleased]
 
-## [1.3.0] - 2020-12-28
+## [1.3.0] - 2021-12-28
 
 ### Added
 - Precompiled binary wheels available in PyPI.
