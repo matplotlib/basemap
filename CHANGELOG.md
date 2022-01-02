@@ -23,8 +23,9 @@ since version 1.3.0.
   - `basemap-data-hires` contains the high-resolution data assets.
 
   This change together with the precompiled binary wheels in PyPI should solve
-  most of the former installation problems (see issues [#436], [#445], [#456],
-  [#461], [#488], [#489], [#491], [#510], [#525] and [#526]).
+  most of the former installation problems (see issues [#403], [#405], [#422],
+  [#436], [#445], [#456], [#461], [#488], [#489], [#491], [#510], [#525] and
+  [#526]).
 - Upgrade default GEOS library dependency to 3.5.1.
 - Update and clarify licenses. In summary:
   - `basemap`: MIT license.
@@ -38,10 +39,12 @@ since version 1.3.0.
 - Fix `Basemap.arcgisimage` for cylindrical coordinates (PR [#505]).
 - Force `setup.py` to cythonize `_geoslib.pyx` at compile time (issues [#487],
   [#518] and [#521]).
+- Update `README` files and apply corrections and changes to outdated content
+  (issue [#179]).
 
 ### Removed
 - Bundled GEOS source code. The same source code can be downloaded using the
-  `GeosLibrary` class in `utils`.
+  `GeosLibrary` class in `utils` (issue [#228]).
 - Precompiled `_geoslib.c` file.
 
 ## [1.2.2] - 2020-08-04
@@ -858,6 +861,16 @@ https://github.com/matplotlib/basemap/issues/456
 https://github.com/matplotlib/basemap/issues/445
 [#436]:
 https://github.com/matplotlib/basemap/issues/436
+[#422]:
+https://github.com/matplotlib/basemap/issues/422
+[#405]:
+https://github.com/matplotlib/basemap/issues/405
+[#403]:
+https://github.com/matplotlib/basemap/issues/403
+[#228]:
+https://github.com/matplotlib/basemap/issues/228
+[#179]:
+https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
 https://github.com/matplotlib/basemap/compare/v1.3.0...develop
