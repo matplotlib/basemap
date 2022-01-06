@@ -195,32 +195,15 @@ jobs:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
       -
-        name: Install GCC toolchain
-        run: |
-          apt-get update
-          apt-get install -y gcc g++ make
-      -
         name: Install unzip
         run: |
           apt-get update
           apt-get install -y unzip
       -
-        name: Install patchelf from source
+        name: Install patchelf
         run: |
-          pkgvers=0.9
-          pkgname=patchelf
-          pkgcode=${pkgname}-${pkgvers}
-          cd /tmp
-          wget https://releases.nixos.org/${pkgname}/${pkgcode}/${pkgcode}.tar.gz
-          tar -xf ${pkgcode}.tar.gz
-          rm -f ${pkgcode}.tar.gz
-          cd ${pkgcode}
-          ./configure
-          make
-          make check
-          make install
-          cd ..
-          rm -rf ${pkgcode}
+          pip install patchelf
+          alias patchelf="python -m patchelf"
       -
         name: Install auditwheel
         run: |
