@@ -27,16 +27,16 @@ jobs:
       matrix:
         include:
           - arch: "x64"
-            msvc-toolset: "16"
+            msvc-toolset: "14.16"
             cmake-version: "3.14.7"
           - arch: "x86"
-            msvc-toolset: "16"
+            msvc-toolset: "14.16"
             cmake-version: "3.13.2"
           - arch: "x64"
-            msvc-toolset: "9"
+            msvc-toolset: "9.0"
             cmake-version: "3.14.7"
           - arch: "x86"
-            msvc-toolset: "9"
+            msvc-toolset: "9.0"
             cmake-version: "3.13.2"
       max-parallel: 4
       fail-fast: false
@@ -57,12 +57,10 @@ jobs:
           python-version: "3.6"
       -
         name: Setup MSVC toolset
-        uses: ./.github/actions/setup-msvc
+        uses: pylegacy/actions/setup-msvc@v1
         with:
-          arch: ${{ matrix.arch }}
+          architecture: ${{ matrix.arch }}
           version: ${{ matrix.msvc-toolset }}
-        env:
-          VS090URL: ${{ secrets.VS090URL }}
       -
         name: Install CMake
         uses: jwlawson/actions-setup-cmake@v1.9
@@ -118,18 +116,16 @@ jobs:
         name: Set MSVC toolset version
         run: |
           if ("${{ matrix.python-version }}" -eq "2.7") {
-              echo "msvc-toolset=9" >> $env:GITHUB_ENV
+              echo "msvc-toolset=9.0" >> $env:GITHUB_ENV
           } else {
-              echo "msvc-toolset=16" >> $env:GITHUB_ENV
+              echo "msvc-toolset=14.16" >> $env:GITHUB_ENV
           }
       -
         name: Setup MSVC toolset
-        uses: ./.github/actions/setup-msvc
+        uses: pylegacy/actions/setup-msvc@v1
         with:
-          arch: ${{ matrix.arch }}
+          architecture: ${{ matrix.arch }}
           version: ${{ env.msvc-toolset }}
-        env:
-          VS090URL: ${{ secrets.VS090URL }}
       -
         name: Install Python base packages
         run: |
