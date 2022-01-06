@@ -5,6 +5,13 @@ env:
 
 on:
   push:
+    paths:
+      - ".github/workflows/basemap-data.yml"
+      - "packages/basemap_data"
+  pull_request:
+    paths:
+      - ".github/workflows/basemap-data.yml"
+      - "packages/basemap_data"
   workflow_dispatch:
 
 jobs:

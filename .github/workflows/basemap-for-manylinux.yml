@@ -5,6 +5,13 @@ env:
 
 on:
   push:
+    paths:
+      - ".github/workflows/basemap-for-manylinux.yml"
+      - "packages/basemap"
+  pull_request:
+    paths:
+      - ".github/workflows/basemap-for-manylinux.yml"
+      - "packages/basemap"
   workflow_dispatch:
 
 jobs:
