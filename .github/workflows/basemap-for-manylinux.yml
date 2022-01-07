@@ -7,11 +7,11 @@ on:
   push:
     paths:
       - ".github/workflows/basemap-for-manylinux.yml"
-      - "packages/basemap"
+      - "packages/basemap/**"
   pull_request:
     paths:
       - ".github/workflows/basemap-for-manylinux.yml"
-      - "packages/basemap"
+      - "packages/basemap/**"
   workflow_dispatch:
 
 jobs:
@@ -33,10 +33,7 @@ jobs:
     strategy:
       matrix:
         arch:
-          [
-            "x64",
-            "x86",
-          ]
+          ["x64", "x86"]
       max-parallel: 2
       fail-fast: false
     needs: checkout
@@ -85,19 +82,9 @@ jobs:
     strategy:
       matrix:
         arch:
-          [
-            "x64",
-            "x86",
-          ]
+          ["x64", "x86"]
         python-version:
-          [
-            "2.7",
-            "3.5",
-            "3.6",
-            "3.7",
-            "3.8",
-            "3.9",
-          ]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9"]
       max-parallel: 3
       fail-fast: false
     needs: build-geos
@@ -163,19 +150,9 @@ jobs:
     strategy:
       matrix:
         arch:
-          [
-            "x64",
-            "x86",
-          ]
+          ["x64", "x86"]
         python-version:
-          [
-            "2.7",
-            "3.5",
-            "3.6",
-            "3.7",
-            "3.8",
-            "3.9",
-          ]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9"]
       max-parallel: 3
       fail-fast: false
     needs: build
@@ -225,19 +202,9 @@ jobs:
     strategy:
       matrix:
         arch:
-          [
-            "x64",
-            "x86",
-          ]
+          ["x64", "x86"]
         python-version:
-          [
-            "2.7",
-            "3.5",
-            "3.6",
-            "3.7",
-            "3.8",
-            "3.9",
-          ]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9"]
       max-parallel: 3
       fail-fast: false
     needs: repair
@@ -300,19 +267,9 @@ jobs:
     strategy:
       matrix:
         arch:
-          [
-            "x64",
-            "x86",
-          ]
+          ["x64", "x86"]
         python-version:
-          [
-            "2.7",
-            "3.5",
-            "3.6",
-            "3.7",
-            "3.8",
-            "3.9",
-          ]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9"]
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test

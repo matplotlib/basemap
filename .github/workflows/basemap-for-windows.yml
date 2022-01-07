@@ -7,11 +7,11 @@ on:
   push:
     paths:
       - ".github/workflows/basemap-for-windows.yml"
-      - "packages/basemap"
+      - "packages/basemap/**"
   pull_request:
     paths:
       - ".github/workflows/basemap-for-windows.yml"
-      - "packages/basemap"
+      - "packages/basemap/**"
   workflow_dispatch:
 
 jobs:
@@ -33,16 +33,20 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: "x64"
+          - 
+            arch: "x64"
             msvc-toolset: "14.16"
             cmake-version: "3.14.7"
-          - arch: "x86"
+          - 
+            arch: "x86"
             msvc-toolset: "14.16"
             cmake-version: "3.13.2"
-          - arch: "x64"
+          - 
+            arch: "x64"
             msvc-toolset: "9.0"
             cmake-version: "3.14.7"
-          - arch: "x86"
+          - 
+            arch: "x86"
             msvc-toolset: "9.0"
             cmake-version: "3.13.2"
       max-parallel: 4
@@ -89,19 +93,9 @@ jobs:
     strategy:
       matrix:
         arch:
-          [
-            "x64",
-            "x86",
-          ]
+          ["x64", "x86"]
         python-version:
-          [
-            "2.7",
-            "3.5",
-            "3.6",
-            "3.7",
-            "3.8",
-            "3.9",
-          ]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9"]
       max-parallel: 3
       fail-fast: false
     needs: build-geos
@@ -182,19 +176,9 @@ jobs:
     strategy:
       matrix:
         arch:
-          [
-            "x64",
-            "x86",
-          ]
+          ["x64", "x86"]
         python-version:
-          [
-            "2.7",
-            "3.5",
-            "3.6",
-            "3.7",
-            "3.8",
-            "3.9",
-          ]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9"]
       max-parallel: 3
       fail-fast: false
     needs: build
@@ -231,19 +215,9 @@ jobs:
     strategy:
       matrix:
         arch:
-          [
-            "x64",
-            "x86",
-          ]
+          ["x64", "x86"]
         python-version:
-          [
-            "2.7",
-            "3.5",
-            "3.6",
-            "3.7",
-            "3.8",
-            "3.9",
-          ]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9"]
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
@@ -275,6 +249,6 @@ jobs:
         run: |
           python -m twine check                                               `
               ${{ env.PKGDIR }}/dist/*.zip                                    `
-              ${{ env.PKGDIR }}/dist/*-win*.whl
+              ${{ env.PKGDIR }}/dist/*.whl
           python -m twine upload --skip-existing                              `
-              ${{ env.PKGDIR }}/dist/*-win*.whl
+              ${{ env.PKGDIR }}/dist/*.whl

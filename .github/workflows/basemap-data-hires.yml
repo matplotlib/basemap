@@ -7,11 +7,11 @@ on:
   push:
     paths:
       - ".github/workflows/basemap-data-hires.yml"
-      - "packages/basemap_data_hires"
+      - "packages/basemap_data_hires/**"
   pull_request:
     paths:
       - ".github/workflows/basemap-data-hires.yml"
-      - "packages/basemap_data_hires"
+      - "packages/basemap_data_hires/**"
   workflow_dispatch:
 
 jobs:
@@ -33,13 +33,11 @@ jobs:
     strategy:
       matrix:
         python-version:
-          [
-            "2.7",
-          ]
+          ["2.7"]
       max-parallel: 1
     needs: checkout
     runs-on: ubuntu-latest
-    container: "pylegacy/python:${{ matrix.python-version }}-debian-4"
+    container: "pylegacy/python:${{ matrix.python-version }}-debian-5"
     steps:
       -
         name: Download checkout
@@ -63,18 +61,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          [
-            "2.6",
-            "2.7",
-            "3.2",
-            "3.3",
-            "3.4",
-            "3.5",
-            "3.6",
-            "3.7",
-            "3.8",
-            "3.9",
-          ]
+          ["2.6", "2.7", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9"]
       max-parallel: 3
       fail-fast: false
     needs: build
@@ -106,9 +93,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          [
-            "2.7",
-          ]
+          ["2.7"]
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
