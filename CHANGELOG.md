@@ -67,6 +67,7 @@ since version 1.3.0.
 
 ### Fixed
 - Mostly compatibility bugfixes.
+- Fix build using `zsh` as shell instead of `bash` (issues [#362] and [#383]).
 
 ## [1.1.0] - 2017-05-04
 
@@ -867,6 +868,10 @@ https://github.com/matplotlib/basemap/issues/422
 https://github.com/matplotlib/basemap/issues/405
 [#403]:
 https://github.com/matplotlib/basemap/issues/403
+[#383]:
+https://github.com/matplotlib/basemap/issues/383
+[#362]:
+https://github.com/matplotlib/basemap/issues/362
 [#228]:
 https://github.com/matplotlib/basemap/issues/228
 [#179]:
