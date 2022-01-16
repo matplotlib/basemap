@@ -84,7 +84,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
       max-parallel: 3
       fail-fast: false
     needs: build-geos
@@ -117,8 +117,9 @@ jobs:
         name: Generate NumPy headers
         run: |
           case "${{ matrix.python-version }}" in
-              2.[67]|3.[01234])  pkgvers=1.11.3;;
-              *)                 pkgvers=1.16.6;;
+              2.6|3.[23])   pkgvers=1.11.3;;
+              2.7|3.[456])  pkgvers=1.16.6;;
+              *)            pkgvers=1.21.5;;
           esac
           pkgname=numpy
           pkgcode=numpy-${pkgvers}
@@ -152,7 +153,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
       max-parallel: 3
       fail-fast: false
     needs: build
@@ -204,7 +205,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
       max-parallel: 3
       fail-fast: false
     needs: repair
@@ -251,7 +252,7 @@ jobs:
           python -m pip install .
           cd ..
           rm -rf ${pkgcode}
-        if: matrix.python-version == '3.9'
+        if: matrix.python-version == '3.9' || matrix.python-version == '3.10'
         env:
           pyproj-version: 1.9.6
       -
@@ -269,7 +270,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
