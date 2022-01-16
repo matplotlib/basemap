@@ -134,15 +134,18 @@ jobs:
       -
         name: Generate NumPy headers
         run: |
-          if ("${{ matrix.python-version }}" -lt "3.5") {
+          if ("${{ matrix.python-version }}" -In "2.6", "3.2", "3.3") {
               Set-Variable -Name "pkgvers" -Value "1.11.3"
-          } else {
+          } elseif ("${{ matrix.python-version }}" -In "2.7", "3.4", "3.5", "3.6") {
               Set-Variable -Name "pkgvers" -Value "1.16.6"
+          } else {
+              Set-Variable -Name "pkgvers" -Value "1.21.5"
           }
           Set-Variable -Name "pkgname" -Value "numpy"
           Set-Variable -Name "pkgcode" -Value "numpy-${pkgvers}"
           Set-Variable -Name "includedir" -Value "numpy/core/include"
-          python -m pip download --no-binary=:all: "numpy == ${pkgvers}"
+          python -m pip install cython
+          python -m pip download --no-binary=numpy "numpy == ${pkgvers}"
           tar -xf "${pkgcode}.zip"
           rm "${pkgcode}.zip"
           cd "${pkgcode}"
