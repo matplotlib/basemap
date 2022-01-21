@@ -8,6 +8,7 @@ since version 1.3.0.
 ## [Unreleased]
 
 ## Changed
+- Upgrade `numpy` upper pin to 1.23.
 - Upgrade development requirements for Python 3.10.
 
 ## [1.3.0] - 2021-12-28

@@ -117,13 +117,14 @@ jobs:
         name: Generate NumPy headers
         run: |
           case "${{ matrix.python-version }}" in
-              2.6|3.[23])   pkgvers=1.11.3;;
-              2.7|3.[456])  pkgvers=1.16.6;;
-              *)            pkgvers=1.21.5;;
+              2.6|3.[23])      pkgvers=1.11.3;;
+              2.7|3.[456789])  pkgvers=1.16.6;;
+              *)               pkgvers=1.21.4;;
           esac
           pkgname=numpy
           pkgcode=numpy-${pkgvers}
-          python -m pip download --no-binary=:all: "numpy == ${pkgvers}"
+          python -m pip install cython
+          python -m pip download --no-binary=numpy "numpy == ${pkgvers}"
           unzip ${pkgcode}.zip
           rm -f ${pkgcode}.zip
           cd ${pkgcode}
