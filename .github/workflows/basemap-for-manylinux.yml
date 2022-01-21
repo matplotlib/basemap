@@ -159,7 +159,7 @@ jobs:
       fail-fast: false
     needs: build
     runs-on: ubuntu-latest
-    container: "pylegacy/${{ matrix.arch }}-python:3.6-debian-5"
+    container: "pylegacy/${{ matrix.arch }}-python:3.6-debian-8"
     steps:
       -
         name: Download GEOS artifacts
@@ -211,7 +211,7 @@ jobs:
       fail-fast: false
     needs: repair
     runs-on: ubuntu-latest
-    container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-5"
+    container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-8"
     steps:
       -
         name: Download checkout
@@ -226,36 +226,19 @@ jobs:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
       -
-        name: Install GCC toolchain
-        run: |
-          apt-get update
-          apt-get install -y gcc g++ make
-      -
         name: Install matplotlib dependencies
         run: |
           apt-get update
-          apt-get install -y libfreetype6-dev libpng12-dev
+          apt-get install -y gcc g++ make
+          apt-get install -y pkg-config libfreetype6-dev libpng12-dev
         if: matrix.arch == 'x86' && matrix.python-version == '3.5'
       -
-        name: Install pyproj manually
+        name: Install numpy from source
         run: |
           apt-get update
-          apt-get install -y proj-bin libproj-dev
-          python -m pip install cython
-          pkgname=pyproj
-          pkgvers=${{ env.pyproj-version }}
-          pkgcode=${pkgname}-${pkgvers}
-          python -m pip download "pyproj == ${pkgvers}"
-          tar -xf ${pkgcode}.tar.gz
-          rm -rf ${pkgcode}.tar.gz
-          cd ${pkgcode}
-          rm _proj.c
-          python -m pip install .
-          cd ..
-          rm -rf ${pkgcode}
-        if: matrix.python-version == '3.9' || matrix.python-version == '3.10'
-        env:
-          pyproj-version: 1.9.6
+          apt-get install -y gcc g++ make
+          pip install "numpy < 1.21.5"
+        if: matrix.arch == 'x86' && matrix.python-version == '3.10'
       -
         name: Install package
         run: |
@@ -276,7 +259,7 @@ jobs:
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
     runs-on: ubuntu-latest
-    container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-5"
+    container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-8"
     environment: PyPI
     steps:
       -
