@@ -7,6 +7,9 @@ since version 1.3.0.
 
 ## [Unreleased]
 
+## Changed
+- Upgrade development requirements for Python 3.10.
+
 ## [1.3.0] - 2021-12-28
 
 ### Added
