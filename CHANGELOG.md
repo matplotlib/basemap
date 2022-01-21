@@ -7,9 +7,14 @@ since version 1.3.0.
 
 ## [Unreleased]
 
-## Changed
+### Added
+- Support for Python 3.10 (issues [#530] and [#531]).
+
+### Changed
 - Upgrade `numpy` upper pin to 1.23.
+- Upgrade `matplotlib` upper pin to 3.6.
 - Upgrade development requirements for Python 3.10.
+- Move `doc` folder into `packages/basemap`.
 
 ## [1.3.0] - 2021-12-28
 
@@ -836,6 +841,10 @@ since version 1.3.0.
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#531]:
+https://github.com/matplotlib/basemap/issues/531
+[#530]:
+https://github.com/matplotlib/basemap/issues/530
 [#526]:
 https://github.com/matplotlib/basemap/issues/526
 [#525]:
