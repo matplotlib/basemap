@@ -29,24 +29,3 @@ the only other tool in python for plotting data on map projections.  Over
 the years, the capabilities of Basemap have evolved as scientists in other
 disciplines (such as biology, geology and geophysics) requested and 
 contributed new features.
-
-.. _deprecation_notice:
-
-Cartopy, New Management, and EoL Announcement
-=============================================
-
-Starting in 2016, Basemap came under new management. The
-`Cartopy project <http://scitools.org.uk/cartopy/>`_ will replace
-Basemap, but it hasn't yet implemented all of Basemap's features.
-All new software development should try to use Cartopy whenever possible,
-and existing software should start the process of switching over to use
-Cartopy. All maintenance and development efforts should be focused on
-Cartopy.
-
-Ben Root has volunteered to take over maintenance of Basemap until 2020.
-Pull requests will be reviewed, and regressions will be fixed. Also, this
-maintenance will ensure compatibility with packages like NumPy and Matplotlib.
-New features will be accepted, but we stress that new development efforts
-should be focused on Cartopy. When Python 2.7 is officially EoL'ed in 2020,
-a release of Basemap will be made and support from Ben Root will end.
-
