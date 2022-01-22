@@ -5,7 +5,7 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 since version 1.3.0.
 
-## [Unreleased]
+## [1.3.1] - 2022-01-22
 
 ### Added
 - Support for Python 3.10 (issues [#530] and [#531]).
@@ -15,6 +15,10 @@ since version 1.3.0.
 - Upgrade `matplotlib` upper pin to 3.6.
 - Upgrade development requirements for Python 3.10.
 - Move `doc` folder into `packages/basemap`.
+
+### Fixed
+- Fix error message when trying to load high- and full-resolution datasets
+  without installing the `basemap-data-hires` package.
 
 ## [1.3.0] - 2021-12-28
 
@@ -891,7 +895,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.0...develop
+https://github.com/matplotlib/basemap/compare/v1.3.1...develop
+[1.3.1]:
+https://github.com/matplotlib/basemap/compare/v1.3.0...v1.3.1
 [1.3.0]:
 https://github.com/matplotlib/basemap/compare/v1.2.2rel...v1.3.0
 [1.2.2]:
