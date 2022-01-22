@@ -1223,11 +1223,10 @@ class Basemap(object):
         read boundary data, clip to map projection region.
         """
         msg = dedent("""
-        Unable to open boundary dataset file. Only the 'crude', 'low',
-        'intermediate' and 'high' resolution datasets are installed by default.
-        If you are requesting a 'full' resolution dataset, you may need to
-        download and install those files separately
-        (see the basemap README for details).""")
+        Unable to open boundary dataset file. Only the 'crude', 'low' and
+        'intermediate' resolution datasets are installed by default. If you
+        are requesting a 'high' or 'full' resolution dataset, you need to
+        install the `basemap-data-hires` package.""")
         # only gshhs coastlines can be polygons.
         if name != 'gshhs': as_polygons=False
         try:

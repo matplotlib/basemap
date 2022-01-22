@@ -16,6 +16,10 @@ since version 1.3.0.
 - Upgrade development requirements for Python 3.10.
 - Move `doc` folder into `packages/basemap`.
 
+### Fixed
+- Fix error message when trying to load high- and full-resolution datasets
+  without installing the `basemap-data-hires` package.
+
 ## [1.3.0] - 2021-12-28
 
 ### Added
