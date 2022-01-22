@@ -5,7 +5,22 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 since version 1.3.0.
 
-## [1.3.0] - 2020-12-28
+## [1.3.1] - 2022-01-22
+
+### Added
+- Support for Python 3.10 (issues [#530] and [#531]).
+
+### Changed
+- Upgrade `numpy` upper pin to 1.23.
+- Upgrade `matplotlib` upper pin to 3.6.
+- Upgrade development requirements for Python 3.10.
+- Move `doc` folder into `packages/basemap`.
+
+### Fixed
+- Fix error message when trying to load high- and full-resolution datasets
+  without installing the `basemap-data-hires` package.
+
+## [1.3.0] - 2021-12-28
 
 ### Added
 - Precompiled binary wheels available in PyPI.
@@ -19,6 +34,11 @@ since version 1.3.0.
   - `basemap-data` contains the mandatory data assets required by `basemap`
     to provide minimal functionality.
   - `basemap-data-hires` contains the high-resolution data assets.
+
+  This change together with the precompiled binary wheels in PyPI should solve
+  most of the former installation problems (see issues [#403], [#405], [#422],
+  [#436], [#445], [#456], [#461], [#488], [#489], [#491], [#510], [#525] and
+  [#526]).
 - Upgrade default GEOS library dependency to 3.5.1.
 - Update and clarify licenses. In summary:
   - `basemap`: MIT license.
@@ -30,12 +50,14 @@ since version 1.3.0.
 ### Fixed
 - Fix `Basemap.pcolormesh` for `"ortho"` projection (PR [#476]).
 - Fix `Basemap.arcgisimage` for cylindrical coordinates (PR [#505]).
-- Force `setup.py` to cythonize `_geoslib.pyx` at compile time (issues [#518]
-  and [#521]).
+- Force `setup.py` to cythonize `_geoslib.pyx` at compile time (issues [#487],
+  [#518] and [#521]).
+- Update `README` files and apply corrections and changes to outdated content
+  (issue [#179]).
 
 ### Removed
 - Bundled GEOS source code. The same source code can be downloaded using the
-  `GeosLibrary` class in `utils`.
+  `GeosLibrary` class in `utils` (issue [#228]).
 - Precompiled `_geoslib.c` file.
 
 ## [1.2.2] - 2020-08-04
@@ -58,6 +80,7 @@ since version 1.3.0.
 
 ### Fixed
 - Mostly compatibility bugfixes.
+- Fix build using `zsh` as shell instead of `bash` (issues [#362] and [#383]).
 
 ## [1.1.0] - 2017-05-04
 
@@ -822,17 +845,59 @@ since version 1.3.0.
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#531]:
+https://github.com/matplotlib/basemap/issues/531
+[#530]:
+https://github.com/matplotlib/basemap/issues/530
+[#526]:
+https://github.com/matplotlib/basemap/issues/526
+[#525]:
+https://github.com/matplotlib/basemap/issues/525
 [#521]:
 https://github.com/matplotlib/basemap/issues/521
 [#518]:
 https://github.com/matplotlib/basemap/issues/518
+[#510]:
+https://github.com/matplotlib/basemap/issues/510
 [#505]:
 https://github.com/matplotlib/basemap/pull/505
+[#491]:
+https://github.com/matplotlib/basemap/issues/491
+[#489]:
+https://github.com/matplotlib/basemap/issues/489
+[#488]:
+https://github.com/matplotlib/basemap/issues/488
+[#487]:
+https://github.com/matplotlib/basemap/issues/487
 [#476]:
 https://github.com/matplotlib/basemap/pull/476
+[#461]:
+https://github.com/matplotlib/basemap/issues/461
+[#456]:
+https://github.com/matplotlib/basemap/issues/456
+[#445]:
+https://github.com/matplotlib/basemap/issues/445
+[#436]:
+https://github.com/matplotlib/basemap/issues/436
+[#422]:
+https://github.com/matplotlib/basemap/issues/422
+[#405]:
+https://github.com/matplotlib/basemap/issues/405
+[#403]:
+https://github.com/matplotlib/basemap/issues/403
+[#383]:
+https://github.com/matplotlib/basemap/issues/383
+[#362]:
+https://github.com/matplotlib/basemap/issues/362
+[#228]:
+https://github.com/matplotlib/basemap/issues/228
+[#179]:
+https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.0...develop
+https://github.com/matplotlib/basemap/compare/v1.3.1...develop
+[1.3.1]:
+https://github.com/matplotlib/basemap/compare/v1.3.0...v1.3.1
 [1.3.0]:
 https://github.com/matplotlib/basemap/compare/v1.2.2rel...v1.3.0
 [1.2.2]:
