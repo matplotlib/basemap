@@ -43,8 +43,8 @@ since version 1.3.0.
 
   This change together with the precompiled binary wheels in PyPI should solve
   most of the former installation problems (see issues [#403], [#405], [#422],
-  [#436], [#445], [#456], [#461], [#488], [#489], [#491], [#510], [#525] and
-  [#526]).
+  [#436], [#445], [#456], [#461], [#488], [#489], [#491], [#510], [#513],
+  [#525] and [#526]).
 - Upgrade default GEOS library dependency to 3.5.1.
 - Update and clarify licenses. In summary:
   - `basemap`: MIT license.
@@ -863,6 +863,8 @@ https://github.com/matplotlib/basemap/issues/525
 https://github.com/matplotlib/basemap/issues/521
 [#518]:
 https://github.com/matplotlib/basemap/issues/518
+[#513]
+https://github.com/matplotlib/basemap/issues/513
 [#510]:
 https://github.com/matplotlib/basemap/issues/510
 [#505]:
