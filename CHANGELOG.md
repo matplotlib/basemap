@@ -10,6 +10,7 @@ since version 1.3.0.
 ### Fixed
 - Enforce dependency `numpy >= 1.21` for Python >= 3.7 due to `numpy`
   vulnerability CVE-2021-33430.
+- Fix wrong marker for `unittest2` in development requirements.
 
 ## [1.3.1] - 2022-01-22
 
