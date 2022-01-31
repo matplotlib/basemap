@@ -49,6 +49,9 @@ jobs:
         name: Build wheel
         run: |
           cd ${{ env.PKGDIR }}
+          pip install build
+          python -m build
+          rm -f dist/*.whl
           python setup.py sdist bdist_wheel --universal
       -
         name: Upload build artifacts

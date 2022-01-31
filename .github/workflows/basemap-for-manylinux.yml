@@ -139,8 +139,9 @@ jobs:
           cd ${{ env.PKGDIR }}
           export GEOS_DIR=extern
           export NUMPY_INCLUDE_PATH=extern/include
+          pip install build
           pip install -r requirements-setup.txt
-          python setup.py sdist bdist_wheel
+          python -m build
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1

@@ -130,7 +130,7 @@ jobs:
       -
         name: Install Python base packages
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip setuptools wheel build
       -
         name: Generate NumPy headers
         run: |
@@ -167,7 +167,7 @@ jobs:
           $env:GEOS_DIR = "extern"
           $env:NUMPY_INCLUDE_PATH = "extern/include"
           pip install -r requirements-setup.txt
-          python setup.py sdist bdist_wheel
+          python -m build
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
