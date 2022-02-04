@@ -1,0 +1,13 @@
+unittest2; python_version <= "3.9"
+
+flake8 >= 2.6, < 3.0; python_version == "2.6"
+flake8 >= 2.6, < 4.0; python_version == "2.7"
+flake8 >= 2.6, < 3.0; python_version == "3.2"
+flake8 >= 2.6, < 3.0; python_version == "3.3"
+flake8 >= 2.6, < 3.9; python_version == "3.4"
+flake8 >= 2.6, < 4.1; python_version >= "3.5"
+
+astroid >= 1.6, < 2.0; python_version == "2.7"
+astroid >= 2.4, < 3.0; python_version >= "3.5"
+pylint >= 1.9, < 2.0; python_version == "2.7"
+pylint >= 2.6, < 3.0; python_version >= "3.5"
