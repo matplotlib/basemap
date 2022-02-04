@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 # flake8: noqa: E122
 """basemap_data -- Data assets for matplotlib basemap."""
 
@@ -23,8 +23,8 @@ def get_content(name, splitlines=False):
     return content
 
 
-class basemap_data_sdist(sdist):
-    """Custom `sdist` so that it will force to save in zip format."""
+class sdist_zip(sdist):
+    """Custom `sdist` that saves source distributions in zip format."""
 
     def initialize_options(self):
         """Call `initialize_options` and then set zip as default format."""
@@ -87,7 +87,7 @@ setup(**{
     "name":
         "basemap_data",
     "version":
-        "1.3.0",
+        "1.3.0+dev",
     "license":
         "GNU Lesser General Public License v3 or later (LGPLv3+)",
     "description":
@@ -141,7 +141,7 @@ setup(**{
             "<4",
         ]),
     "cmdclass": {
-        "sdist": basemap_data_sdist,
+        "sdist": sdist_zip,
     },
     "project_urls": {
         "Bug Tracker":
