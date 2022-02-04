@@ -139,6 +139,7 @@ jobs:
           cd ${{ env.PKGDIR }}
           export GEOS_DIR="${GITHUB_WORKSPACE}/${{ env.PKGDIR }}/extern"
           export NUMPY_INCLUDE_PATH="${GITHUB_WORKSPACE}/${{ env.PKGDIR }}/extern/include"
+          export CFLAGS="-std=c99"
           pip install build
           pip install -r requirements-setup.txt
           python -m build
