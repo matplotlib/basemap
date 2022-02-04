@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 # flake8: noqa: E122
 """basemap -- Plot data on map projections with matplotlib."""
 
