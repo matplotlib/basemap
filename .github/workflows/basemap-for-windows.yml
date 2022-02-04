@@ -130,7 +130,7 @@ jobs:
       -
         name: Install Python base packages
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip setuptools wheel build
       -
         name: Generate NumPy headers
         run: |
@@ -164,8 +164,8 @@ jobs:
         name: Build wheel
         run: |
           cd ${{ env.PKGDIR }}
-          $env:GEOS_DIR = "extern"
-          $env:NUMPY_INCLUDE_PATH = "extern/include"
+          $env:GEOS_DIR = "$env:GITHUB_WORKSPACE/${{ env.PKGDIR }}/extern"
+          $env:NUMPY_INCLUDE_PATH = "$env:GITHUB_WORKSPACE/${{ env.PKGDIR }}/extern/include"
           pip install -r requirements-setup.txt
           python setup.py sdist bdist_wheel
       -
