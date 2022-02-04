@@ -65,7 +65,7 @@ setup(**{
     "name":
         "basemap_data_hires",
     "version":
-        "1.3.0",
+        "1.3.0+dev",
     "license":
         "GNU Lesser General Public License v3 or later (LGPLv3+)",
     "description":
