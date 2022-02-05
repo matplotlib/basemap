@@ -78,15 +78,6 @@ class basemap_sdist(sdist):
         finally:
             self.distribution.data_files = orig_data_files
 
-    def initialize_options(self):
-        """Call `initialize_options` and then set zip as default format."""
-
-        sdist.initialize_options(self)
-        self._default_to_zip()
-
-    def _default_to_zip(self):
-        self.formats = ["zip"]
-
 
 # Initialise include and library dirs.
 data_files = []
