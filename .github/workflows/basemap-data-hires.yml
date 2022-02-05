@@ -49,8 +49,8 @@ jobs:
         name: Build wheel
         run: |
           cd ${{ env.PKGDIR }}
-          python -m pip install build
-          python -m build
+          python setup.py sdist
+          pip wheel -w dist/ --no-deps dist/*.zip
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
