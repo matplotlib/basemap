@@ -151,6 +151,10 @@ if sys.version_info[:2] == (3, 2):
         item.replace(marker1, "").replace(marker2, "") for item in install_requires
         if item.endswith(marker1) or item.endswith(marker2)
         or "python_version" not in item]
+else:
+    marker1 = '; python_version == "3.2"'
+    setup_requires = [item for item in setup_requires if not item.endswith(marker1)]
+    install_requires = [item for item in install_requires if not item.endswith(marker1)]
 
 setup(**{
     "name":
