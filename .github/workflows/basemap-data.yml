@@ -49,8 +49,7 @@ jobs:
         name: Build wheel
         run: |
           cd ${{ env.PKGDIR }}
-          python setup.py sdist
-          pip wheel -w dist --no-deps dist/*.zip
+          python setup.py sdist bdist_wheel
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
@@ -83,12 +82,14 @@ jobs:
           name: artifacts-build
           path: ${{ env.PKGDIR }}/dist
       -
-        name: Install package
+        name: Install and test wheel package
         run: |
-          pip install ${{ env.PKGDIR }}/dist/*.whl
+          pip install --ignore-installed ${{ env.PKGDIR }}/dist/*.whl
+          python -c "from mpl_toolkits import basemap_data; print(basemap_data)"
       -
-        name: Test package
+        name: Install and test sdist package
         run: |
+          pip install --ignore-installed ${{ env.PKGDIR }}/dist/*.zip
           python -c "from mpl_toolkits import basemap_data; print(basemap_data)"
 
   upload:
