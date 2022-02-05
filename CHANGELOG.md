@@ -13,8 +13,13 @@ since version 1.3.0.
 ### Fixed
 - Fix setup encoding comment to deal with corner case under PowerShell.
 - Enforce dependency `numpy >= 1.21` for Python >= 3.7 due to `numpy`
-  vulnerability CVE-2021-33430.
+  vulnerability [CVE-2021-33430].
 - Fix wrong marker for `unittest2` in development requirements.
+- Fix `sdist` so that packages can be built from source distributions
+  (PR [#532] by @DWesl).
+
+### Removed
+- Remove deprecation notices (issue [#527]).
 
 ## [1.3.1] - 2022-01-22
 
@@ -856,10 +861,14 @@ since version 1.3.0.
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#532]:
+https://github.com/matplotlib/basemap/pull/532
 [#531]:
 https://github.com/matplotlib/basemap/issues/531
 [#530]:
 https://github.com/matplotlib/basemap/issues/530
+[#527]:
+https://github.com/matplotlib/basemap/issues/527
 [#526]:
 https://github.com/matplotlib/basemap/issues/526
 [#525]:
@@ -868,7 +877,7 @@ https://github.com/matplotlib/basemap/issues/525
 https://github.com/matplotlib/basemap/issues/521
 [#518]:
 https://github.com/matplotlib/basemap/issues/518
-[#513]
+[#513]:
 https://github.com/matplotlib/basemap/issues/513
 [#510]:
 https://github.com/matplotlib/basemap/issues/510
@@ -931,3 +940,6 @@ https://github.com/matplotlib/basemap/compare/v1.0.4rel...v1.0.5rel
 https://github.com/matplotlib/basemap/compare/v1.0.3rel...v1.0.4rel
 [1.0.3]:
 https://github.com/matplotlib/basemap/tree/v1.0.3rel
+
+[CVE-2021-33430]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-33430
