@@ -20,7 +20,7 @@ def get_content(name, splitlines=False):
 
     here = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(here, name)
-    with io.open(path, encoding="utf-8") as fd:
+    with io.open(path, "r", encoding="utf-8") as fd:
         content = fd.read()
     if splitlines:
         content = [row for row in content.splitlines() if row]
