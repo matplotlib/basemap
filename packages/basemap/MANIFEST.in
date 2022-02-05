@@ -6,4 +6,3 @@ recursive-include utils *.py
 recursive-exclude **/__pycache__ *
 exclude **/*.pyc
 exclude **/.gitkeep
-include setup.cfg
