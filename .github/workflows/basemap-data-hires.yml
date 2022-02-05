@@ -120,5 +120,9 @@ jobs:
           TWINE_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
           TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
         run: |
-          python -m twine check ${{ env.PKGDIR }}/dist/*
-          python -m twine upload --skip-existing ${{ env.PKGDIR }}/dist/*
+          python -m twine check                                               \
+              ${{ env.PKGDIR }}/dist/*.zip                                    \
+              ${{ env.PKGDIR }}/dist/*.whl
+          python -m twine upload --skip-existing                              \
+              ${{ env.PKGDIR }}/dist/*.zip                                    \
+              ${{ env.PKGDIR }}/dist/*.whl
