@@ -164,10 +164,12 @@ jobs:
         name: Build wheel
         run: |
           cd ${{ env.PKGDIR }}
-          $env:GEOS_DIR = "extern"
-          $env:NUMPY_INCLUDE_PATH = "extern/include"
+          $env:GEOS_DIR = "$env:GITHUB_WORKSPACE/${{ env.PKGDIR }}/extern"
+          $env:NUMPY_INCLUDE_PATH = "$env:GITHUB_WORKSPACE/${{ env.PKGDIR }}/extern/include"
+          $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
           pip install -r requirements-setup.txt
-          python setup.py sdist bdist_wheel
+          python setup.py sdist
+          pip wheel -w dist --no-deps (Get-Item dist/*.zip)
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1

@@ -137,10 +137,12 @@ jobs:
         name: Build wheel
         run: |
           cd ${{ env.PKGDIR }}
-          export GEOS_DIR=extern
-          export NUMPY_INCLUDE_PATH=extern/include
+          export GEOS_DIR="${GITHUB_WORKSPACE}/${{ env.PKGDIR }}/extern"
+          export NUMPY_INCLUDE_PATH="${GITHUB_WORKSPACE}/${{ env.PKGDIR }}/extern/include"
+          export CFLAGS="-std=c99"
           pip install -r requirements-setup.txt
-          python setup.py sdist bdist_wheel
+          python setup.py sdist
+          pip wheel -w dist --no-deps dist/*.zip
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
