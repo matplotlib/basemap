@@ -142,7 +142,7 @@ jobs:
           export CFLAGS="-std=c99"
           pip install -r requirements-setup.txt
           python setup.py sdist
-          pip wheel -w dist --no-deps dist/basemap*.zip
+          pip wheel -w dist --no-deps dist/*.zip
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
