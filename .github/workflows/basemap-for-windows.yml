@@ -166,6 +166,7 @@ jobs:
           cd ${{ env.PKGDIR }}
           $env:GEOS_DIR = "$env:GITHUB_WORKSPACE/${{ env.PKGDIR }}/extern"
           $env:NUMPY_INCLUDE_PATH = "$env:GITHUB_WORKSPACE/${{ env.PKGDIR }}/extern/include"
+          $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
           pip install -r requirements-setup.txt
           python setup.py sdist
           pip wheel -w dist --no-deps (Get-Item dist/*.zip)
