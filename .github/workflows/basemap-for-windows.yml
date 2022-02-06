@@ -132,28 +132,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools wheel
       -
-        name: Generate NumPy headers
+        name: Build old numpy from source
         run: |
-          if ("${{ matrix.python-version }}" -In "2.6", "3.2", "3.3") {
-              Set-Variable -Name "pkgvers" -Value "1.11.3"
-          } elseif ("${{ matrix.python-version }}" -In "2.7", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9") {
-              Set-Variable -Name "pkgvers" -Value "1.16.6"
-          } else {
-              Set-Variable -Name "pkgvers" -Value "1.21.4"
+          Switch -regex ("${{ matrix.python-version }}") {
+              "^2\.6|3\.[123]$"     { Set-Variable -Name "pkgvers" -Value "1.11.3" }
+              "^2\.7|3\.[456789]$"  { Set-Variable -Name "pkgvers" -Value "1.16.6" }
+              default               { Set-Variable -Name "pkgvers" -Value "1.21.4" }
           }
-          Set-Variable -Name "pkgname" -Value "numpy"
-          Set-Variable -Name "pkgcode" -Value "numpy-${pkgvers}"
-          Set-Variable -Name "includedir" -Value "numpy/core/include"
-          python -m pip install cython
-          python -m pip download --no-binary=numpy "numpy == ${pkgvers}"
-          tar -xf "${pkgcode}.zip"
-          rm "${pkgcode}.zip"
-          cd "${pkgcode}"
-          python setup.py build
-          cp -R build/src.*/${includedir}/numpy/*.h ${includedir}/numpy
-          cd ..
-          cp -R "${pkgcode}/${includedir}/numpy" "${{ env.PKGDIR }}/extern/include/numpy"
-          rm -r "${pkgcode}"
+          $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
+          python -m pip install "numpy == ${pkgvers}"
       -
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
@@ -161,12 +148,10 @@ jobs:
           name: artifacts-geos-${{ matrix.arch }}-msvc${{ env.msvc-toolset }}
           path: ${{ env.PKGDIR }}/extern
       -
-        name: Build wheel
+        name: Build sdist and wheel
         run: |
           cd ${{ env.PKGDIR }}
           $env:GEOS_DIR = "$env:GITHUB_WORKSPACE/${{ env.PKGDIR }}/extern"
-          $env:NUMPY_INCLUDE_PATH = "$env:GITHUB_WORKSPACE/${{ env.PKGDIR }}/extern/include"
-          $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
           pip install -r requirements-setup.txt
           python setup.py sdist
           pip wheel -w dist --no-deps (Get-Item dist/*.zip)
