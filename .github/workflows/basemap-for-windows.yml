@@ -175,12 +175,6 @@ jobs:
     runs-on: windows-latest
     steps:
       -
-        name: Download checkout
-        uses: actions/download-artifact@v1
-        with:
-          name: checkout
-          path: .
-      -
         name: Set Python
         uses: actions/setup-python@v2
         with:
