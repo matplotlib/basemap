@@ -109,38 +109,21 @@ jobs:
           apt-get update
           apt-get install -y gcc g++ make
       -
-        name: Install unzip
-        run: |
-          apt-get update
-          apt-get install -y unzip
-      -
-        name: Generate NumPy headers
+        name: Build old numpy from source
         run: |
           case "${{ matrix.python-version }}" in
               2.6|3.[23])      pkgvers=1.11.3;;
               2.7|3.[456789])  pkgvers=1.16.6;;
               *)               pkgvers=1.21.4;;
           esac
-          pkgname=numpy
-          pkgcode=numpy-${pkgvers}
-          python -m pip install cython
-          python -m pip download --no-binary=numpy "numpy == ${pkgvers}"
-          unzip ${pkgcode}.zip
-          rm -f ${pkgcode}.zip
-          cd ${pkgcode}
-          python setup.py build
-          cp build/src*/numpy/core/include/numpy/*.h numpy/core/include/numpy/
-          cd ..
-          cp -R ${pkgcode}/numpy/core/include ${{ env.PKGDIR }}/extern
-          rm -rf ${pkgcode}
+          pip install "numpy == ${pkgvers}"
       -
         name: Build wheel
         run: |
-          cd ${{ env.PKGDIR }}
+          sitepkgdir=$(pip show numpy 2>/dev/null | grep Location: | cut -d' ' -f2)
           export GEOS_DIR="${GITHUB_WORKSPACE}/${{ env.PKGDIR }}/extern"
-          export NUMPY_INCLUDE_PATH="${GITHUB_WORKSPACE}/${{ env.PKGDIR }}/extern/include"
-          export CFLAGS="-std=c99"
-          pip install -r requirements-setup.txt
+          export NUMPY_INCLUDE_PATH=${sitepkgdir}/numpy/core/include
+          cd ${{ env.PKGDIR }}
           python setup.py sdist
           pip wheel -w dist --no-deps dist/*.zip
       -
