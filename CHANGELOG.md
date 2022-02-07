@@ -21,6 +21,7 @@ since version 1.3.0.
 - Fix wrong marker for `unittest2` in development requirements.
 - Fix `sdist` so that packages can be built from source distributions
   (PR [#532] by @DWesl).
+- Specify Cython language level for `_geoslib` extension explicitly.
 
 ### Removed
 - Remove deprecation notices (issue [#527]).

@@ -135,6 +135,10 @@ ext_modules = [
             runtime_library_dirs,
     }),
 ]
+for ext in ext_modules:
+    ext.cython_directives = [
+        ("language_level", str(sys.version_info[0])),
+    ]
 
 # Define all the different requirements.
 setup_requires = get_content("requirements-setup.txt", splitlines=True)
