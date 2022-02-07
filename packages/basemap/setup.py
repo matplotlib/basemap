@@ -35,11 +35,11 @@ def get_geos_install_prefix():
         candidates = [env_candidate]
     else:
         candidates = [os.path.expanduser("~/local"), os.path.expanduser("~"),
-                    "/usr/local", "/usr", "/opt/local", "/opt", "/sw"]
+                      "/usr/local", "/usr", "/opt/local", "/opt", "/sw"]
 
     for prefix in candidates:
         libfiles = []
-        libdirs = ["bin", "lib", "lib64"]
+        libdirs = ["bin", "lib", "lib/x86_64-linux-gnu", "lib64"]
         libext = "dll" if os.name == "nt" else "so"
         libcode = "{0}geos_c".format("" if os.name == "nt" else "lib")
         libname = "{0}*.{1}*".format(libcode, libext)

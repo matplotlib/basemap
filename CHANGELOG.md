@@ -7,6 +7,10 @@ since version 1.3.0.
 
 ## [Unreleased]
 
+### Added
+- Add `"/usr/lib/x86_64-linux-gnu"` to list of candidate locations to
+  search the GEOS library during installation.
+
 ### Changed
 - Split lint and test requirements into two separate files.
 
