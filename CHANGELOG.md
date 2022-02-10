@@ -5,7 +5,7 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 since version 1.3.0.
 
-## [Unreleased]
+## [1.3.2] - 2022-02-10
 
 ### Added
 - Add `"/usr/lib/x86_64-linux-gnu"` to list of candidate locations to
@@ -938,7 +938,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.1...develop
+https://github.com/matplotlib/basemap/compare/v1.3.2...develop
+[1.3.2]:
+https://github.com/matplotlib/basemap/compare/v1.3.1...v1.3.2
 [1.3.1]:
 https://github.com/matplotlib/basemap/compare/v1.3.0...v1.3.1
 [1.3.0]:
