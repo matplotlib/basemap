@@ -46,10 +46,11 @@ jobs:
           name: checkout
           path: .
       -
-        name: Build wheel
+        name: Build sdist and wheel
         run: |
           cd ${{ env.PKGDIR }}
-          python setup.py sdist bdist_wheel --universal
+          python setup.py sdist
+          pip wheel -w dist --no-deps dist/*.zip
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1

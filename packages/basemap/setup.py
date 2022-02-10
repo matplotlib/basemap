@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 # flake8: noqa: E122
 """basemap -- Plot data on map projections with matplotlib."""
 
@@ -20,7 +20,7 @@ def get_content(name, splitlines=False):
 
     here = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(here, name)
-    with io.open(path, encoding="utf-8") as fd:
+    with io.open(path, "r", encoding="utf-8") as fd:
         content = fd.read()
     if splitlines:
         content = [row for row in content.splitlines() if row]
@@ -35,11 +35,11 @@ def get_geos_install_prefix():
         candidates = [env_candidate]
     else:
         candidates = [os.path.expanduser("~/local"), os.path.expanduser("~"),
-                    "/usr/local", "/usr", "/opt/local", "/opt", "/sw"]
+                      "/usr/local", "/usr", "/opt/local", "/opt", "/sw"]
 
     for prefix in candidates:
         libfiles = []
-        libdirs = ["bin", "lib", "lib64"]
+        libdirs = ["bin", "lib", "lib/x86_64-linux-gnu", "lib64"]
         libext = "dll" if os.name == "nt" else "so"
         libcode = "{0}geos_c".format("" if os.name == "nt" else "lib")
         libname = "{0}*.{1}*".format(libcode, libext)
@@ -77,15 +77,6 @@ class basemap_sdist(sdist):
             sdist.run(self)
         finally:
             self.distribution.data_files = orig_data_files
-
-    def initialize_options(self):
-        """Call `initialize_options` and then set zip as default format."""
-
-        sdist.initialize_options(self)
-        self._default_to_zip()
-
-    def _default_to_zip(self):
-        self.formats = ["zip"]
 
 
 # Initialise include and library dirs.
@@ -144,33 +135,36 @@ ext_modules = [
             runtime_library_dirs,
     }),
 ]
+for ext in ext_modules:
+    ext.cython_directives = [
+        ("language_level", str(sys.version_info[0])),
+    ]
 
 # Define all the different requirements.
-dev_requires = get_content("requirements-dev.txt", splitlines=True)
-doc_requires = get_content("requirements-doc.txt", splitlines=True)
 setup_requires = get_content("requirements-setup.txt", splitlines=True)
 install_requires = get_content("requirements.txt", splitlines=True)
 if sys.version_info[:2] == (3, 2):
     # Hack for Python 3.2 because pip < 8 cannot handle version markers.
-    marker = '; python_version == "3.2"'
-    dev_requires = [
-        item.replace(marker, "") for item in dev_requires
-        if item.endswith(marker) or "python_version" not in item]
-    doc_requires = [
-        item.replace(marker, "") for item in doc_requires
-        if item.endswith(marker) or "python_version" not in item]
+    marker1 = '; python_version == "3.2"'
+    marker2 = '; python_version >= "2.7"'
     setup_requires = [
-        item.replace(marker, "") for item in setup_requires
-        if item.endswith(marker) or "python_version" not in item]
+        item.replace(marker1, "").replace(marker2, "") for item in setup_requires
+        if item.endswith(marker1) or item.endswith(marker2)
+        or "python_version" not in item]
     install_requires = [
-        item.replace(marker, "") for item in install_requires
-        if item.endswith(marker) or "python_version" not in item]
+        item.replace(marker1, "").replace(marker2, "") for item in install_requires
+        if item.endswith(marker1) or item.endswith(marker2)
+        or "python_version" not in item]
+else:
+    marker1 = '; python_version == "3.2"'
+    setup_requires = [item for item in setup_requires if not item.endswith(marker1)]
+    install_requires = [item for item in install_requires if not item.endswith(marker1)]
 
 setup(**{
     "name":
         "basemap",
     "version":
-        "1.3.1",
+        "1.3.2",
     "license":
         "MIT",
     "description":
@@ -228,10 +222,12 @@ setup(**{
     "install_requires":
         install_requires,
     "extras_require": {
-        "dev":
-            dev_requires,
         "doc":
-            doc_requires,
+            get_content("requirements-doc.txt", splitlines=True),
+        "lint":
+            get_content("requirements-lint.txt", splitlines=True),
+        "test":
+            get_content("requirements-test.txt", splitlines=True),
     },
     "cmdclass": {
         "sdist": basemap_sdist,

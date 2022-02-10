@@ -1,19 +1,17 @@
+.eggs
 build
 dist
-.eggs
 *.egg-info
 *.pyc
 *.pyd
 *.so
-*.c
-
-doc/build
-doc/source/_autosummary
 
 htmlcov
+.cache
 .coverage
 .pytest_cache
 
+# File manager files.
 .gdb_history
 .DS_Store
 .DS_Store?
@@ -21,19 +19,22 @@ ehthumbs.db
 Icon?
 Thumbs.db
 
+# Temporary files.
 .#*
 [#]*#
 *~
 *$
 *.bak
+
+# IDE files.
 .project
 .pydevproject
 .vscode
 
 # Things specific to this project.
-examples/*.png
 *.pickle
-doc/examples
-doc/_templates/gallery.html
-doc/users/installing.rst
-doc/_static/matplotlibrc
+examples/*.png
+packages/basemap/doc/examples
+packages/basemap/doc/users/installing.rst
+packages/basemap/doc/_static/matplotlibrc
+packages/basemap/doc/_templates/gallery.html

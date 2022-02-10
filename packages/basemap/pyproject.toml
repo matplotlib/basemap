@@ -1,0 +1,11 @@
+[build-system]
+requires = [
+    'setuptools',
+    'wheel',
+    'numpy == 1.21.4; python_version >= "3.10"',
+    'numpy == 1.16.6; python_version == "2.7" or (python_version >= "3.4" and python_version <= "3.9")',
+    'numpy == 1.11.3; python_version == "2.6" or (python_version >= "3.2" and python_version <= "3.3")',
+    'cython >= 0.29, < 3.1; python_version >= "3.3" or python_version < "3.0"',
+    'cython >= 0.26, < 0.27; python_version == "3.2"'
+]
+build-backend = "setuptools.build_meta"

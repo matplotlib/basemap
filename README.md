@@ -3,9 +3,6 @@
 Plot on map projections (with coastlines and political boundaries)
 using matplotlib.
 
-:warning: **Warning**: this package is being deprecated in favour of
-[cartopy](https://scitools.org.uk/cartopy/docs/latest/).
-
 ## Requirements
 
 Basic requirements are the following:

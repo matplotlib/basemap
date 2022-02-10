@@ -5,6 +5,43 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 since version 1.3.0.
 
+## [1.3.2] - 2022-02-10
+
+### Added
+- Add `"/usr/lib/x86_64-linux-gnu"` to list of candidate locations to
+  search the GEOS library during installation.
+
+### Changed
+- Split lint and test requirements into two separate files.
+
+### Fixed
+- Fix setup encoding comment to deal with corner case under PowerShell.
+- Enforce dependency `numpy >= 1.21` for Python >= 3.7 due to `numpy`
+  vulnerability [CVE-2021-33430].
+- Fix wrong marker for `unittest2` in development requirements.
+- Fix `sdist` so that packages can be built from source distributions
+  (PR [#532] by @DWesl).
+- Specify Cython language level for `_geoslib` extension explicitly.
+- Enforce up-to-date `pillow` dependency when possible:
+  - `pillow >= 9.0.0` for Python >= 3.7 due to `pillow` vulnerabilities
+    [CVE-2022-22815], [CVE-2022-22816] and [CVE-2022-22817].
+  - `pillow >= 8.3.2` for Python >= 3.6 due to `pillow` vulnerabilities
+    [CVE-2020-35653], [CVE-2020-35654], [CVE-2020-35655],
+    [CVE-2021-23437], [CVE-2021-25287], [CVE-2021-25288],
+    [CVE-2021-25290], [CVE-2021-25291], [CVE-2021-25292],
+    [CVE-2021-25293], [CVE-2021-27921], [CVE-2021-27922],
+    [CVE-2021-27923], [CVE-2021-28675], [CVE-2021-28676],
+    [CVE-2021-28677], [CVE-2021-28678] and [CVE-2021-34552].
+  - `pillow >= 7.1.0` for Python >= 3.5 due to `pillow` vulnerabilities
+    [CVE-2020-10177], [CVE-2020-10378], [CVE-2020-10379],
+    [CVE-2020-10994] and [CVE-2020-11538].
+  - `pillow >= 6.2.2` For Python == 2.7 due to `pillow` vulnerabilities
+    [CVE-2019-16865], [CVE-2019-19911], [CVE-2020-5310], [CVE-2020-5312]
+    and [CVE-2020-5313].
+
+### Removed
+- Remove deprecation notices (issue [#527]).
+
 ## [1.3.1] - 2022-01-22
 
 ### Added
@@ -37,8 +74,8 @@ since version 1.3.0.
 
   This change together with the precompiled binary wheels in PyPI should solve
   most of the former installation problems (see issues [#403], [#405], [#422],
-  [#436], [#445], [#456], [#461], [#488], [#489], [#491], [#510], [#525] and
-  [#526]).
+  [#436], [#445], [#456], [#461], [#488], [#489], [#491], [#510], [#513],
+  [#525] and [#526]).
 - Upgrade default GEOS library dependency to 3.5.1.
 - Update and clarify licenses. In summary:
   - `basemap`: MIT license.
@@ -845,10 +882,14 @@ since version 1.3.0.
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#532]:
+https://github.com/matplotlib/basemap/pull/532
 [#531]:
 https://github.com/matplotlib/basemap/issues/531
 [#530]:
 https://github.com/matplotlib/basemap/issues/530
+[#527]:
+https://github.com/matplotlib/basemap/issues/527
 [#526]:
 https://github.com/matplotlib/basemap/issues/526
 [#525]:
@@ -857,6 +898,8 @@ https://github.com/matplotlib/basemap/issues/525
 https://github.com/matplotlib/basemap/issues/521
 [#518]:
 https://github.com/matplotlib/basemap/issues/518
+[#513]:
+https://github.com/matplotlib/basemap/issues/513
 [#510]:
 https://github.com/matplotlib/basemap/issues/510
 [#505]:
@@ -895,7 +938,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.1...develop
+https://github.com/matplotlib/basemap/compare/v1.3.2...develop
+[1.3.2]:
+https://github.com/matplotlib/basemap/compare/v1.3.1...v1.3.2
 [1.3.1]:
 https://github.com/matplotlib/basemap/compare/v1.3.0...v1.3.1
 [1.3.0]:
@@ -918,3 +963,68 @@ https://github.com/matplotlib/basemap/compare/v1.0.4rel...v1.0.5rel
 https://github.com/matplotlib/basemap/compare/v1.0.3rel...v1.0.4rel
 [1.0.3]:
 https://github.com/matplotlib/basemap/tree/v1.0.3rel
+
+[CVE-2022-22817]:
+https://nvd.nist.gov/vuln/detail/CVE-2022-22817
+[CVE-2022-22816]:
+https://nvd.nist.gov/vuln/detail/CVE-2022-22816
+[CVE-2022-22815]:
+https://nvd.nist.gov/vuln/detail/CVE-2022-22815
+[CVE-2021-34552]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-34552
+[CVE-2021-33430]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-33430
+[CVE-2021-28678]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-28678
+[CVE-2021-28677]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-28677
+[CVE-2021-28676]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-28676
+[CVE-2021-28675]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-28675
+[CVE-2021-27923]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-27923
+[CVE-2021-27922]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-27922
+[CVE-2021-27921]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-27921
+[CVE-2021-25293]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-25293
+[CVE-2021-25292]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-25292
+[CVE-2021-25291]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-25291
+[CVE-2021-25290]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-25290
+[CVE-2021-25288]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-25288
+[CVE-2021-25287]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-25287
+[CVE-2021-23437]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-23437
+[CVE-2020-35655]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-35655
+[CVE-2020-35654]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-35654
+[CVE-2020-35653]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-35653
+[CVE-2020-11538]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-11538
+[CVE-2020-10994]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-10994
+[CVE-2020-10379]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-10379
+[CVE-2020-10378]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-10378
+[CVE-2020-10177]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-10177
+[CVE-2020-5313]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-5313
+[CVE-2020-5312]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-5312
+[CVE-2020-5310]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-5310
+[CVE-2019-19911]:
+https://nvd.nist.gov/vuln/detail/CVE-2019-19911
+[CVE-2019-16865]:
+https://nvd.nist.gov/vuln/detail/CVE-2019-16865

@@ -61,22 +61,22 @@ jobs:
           name: checkout
           path: .
       -
-        name: Set Python
-        uses: actions/setup-python@v2
-        with:
-          architecture: ${{ matrix.arch }}
-          python-version: "3.6"
-      -
-        name: Setup MSVC toolset
+        name: Set MSVC toolset
         uses: pylegacy/actions/setup-msvc@v1
         with:
           architecture: ${{ matrix.arch }}
           version: ${{ matrix.msvc-toolset }}
       -
-        name: Install CMake
+        name: Set CMake
         uses: jwlawson/actions-setup-cmake@v1.9
         with:
           cmake-version: ${{ matrix.cmake-version }}
+      -
+        name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          architecture: ${{ matrix.arch }}
+          python-version: "3.6"
       -
         name: Build GEOS from source
         run: |
@@ -108,12 +108,6 @@ jobs:
           name: checkout
           path: .
       -
-        name: Set Python
-        uses: actions/setup-python@v2
-        with:
-          architecture: ${{ matrix.arch }}
-          python-version: ${{ matrix.python-version }}
-      -
         name: Set MSVC toolset version
         run: |
           if ("${{ matrix.python-version }}" -eq "2.7") {
@@ -122,38 +116,31 @@ jobs:
               echo "msvc-toolset=14.16" >> $env:GITHUB_ENV
           }
       -
-        name: Setup MSVC toolset
+        name: Set MSVC toolset
         uses: pylegacy/actions/setup-msvc@v1
         with:
           architecture: ${{ matrix.arch }}
           version: ${{ env.msvc-toolset }}
       -
-        name: Install Python base packages
+        name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          architecture: ${{ matrix.arch }}
+          python-version: ${{ matrix.python-version }}
+      -
+        name: Set Python base packages
         run: |
           python -m pip install --upgrade pip setuptools wheel
       -
-        name: Generate NumPy headers
+        name: Build old numpy from source
         run: |
-          if ("${{ matrix.python-version }}" -In "2.6", "3.2", "3.3") {
-              Set-Variable -Name "pkgvers" -Value "1.11.3"
-          } elseif ("${{ matrix.python-version }}" -In "2.7", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9") {
-              Set-Variable -Name "pkgvers" -Value "1.16.6"
-          } else {
-              Set-Variable -Name "pkgvers" -Value "1.21.4"
+          Switch -regex ("${{ matrix.python-version }}") {
+              "^2\.6|3\.[123]$"     { Set-Variable -Name "pkgvers" -Value "1.11.3" }
+              "^2\.7|3\.[456789]$"  { Set-Variable -Name "pkgvers" -Value "1.16.6" }
+              default               { Set-Variable -Name "pkgvers" -Value "1.21.4" }
           }
-          Set-Variable -Name "pkgname" -Value "numpy"
-          Set-Variable -Name "pkgcode" -Value "numpy-${pkgvers}"
-          Set-Variable -Name "includedir" -Value "numpy/core/include"
-          python -m pip install cython
-          python -m pip download --no-binary=numpy "numpy == ${pkgvers}"
-          tar -xf "${pkgcode}.zip"
-          rm "${pkgcode}.zip"
-          cd "${pkgcode}"
-          python setup.py build
-          cp -R build/src.*/${includedir}/numpy/*.h ${includedir}/numpy
-          cd ..
-          cp -R "${pkgcode}/${includedir}/numpy" "${{ env.PKGDIR }}/extern/include/numpy"
-          rm -r "${pkgcode}"
+          $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
+          python -m pip install "numpy == ${pkgvers}"
       -
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
@@ -161,13 +148,13 @@ jobs:
           name: artifacts-geos-${{ matrix.arch }}-msvc${{ env.msvc-toolset }}
           path: ${{ env.PKGDIR }}/extern
       -
-        name: Build wheel
+        name: Build sdist and wheel
         run: |
           cd ${{ env.PKGDIR }}
-          $env:GEOS_DIR = "extern"
-          $env:NUMPY_INCLUDE_PATH = "extern/include"
+          $env:GEOS_DIR = "$env:GITHUB_WORKSPACE/${{ env.PKGDIR }}/extern"
           pip install -r requirements-setup.txt
-          python setup.py sdist bdist_wheel
+          python setup.py sdist
+          pip wheel -w dist --no-deps (Get-Item dist/*.zip)
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
@@ -187,12 +174,6 @@ jobs:
     needs: build
     runs-on: windows-latest
     steps:
-      -
-        name: Download checkout
-        uses: actions/download-artifact@v1
-        with:
-          name: checkout
-          path: .
       -
         name: Set Python
         uses: actions/setup-python@v2

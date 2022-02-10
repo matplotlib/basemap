@@ -1,0 +1,8 @@
+include requirements*.txt
+recursive-include doc *
+recursive-exclude doc/build *
+recursive-include test *
+recursive-include utils *.py
+recursive-exclude **/__pycache__ *
+exclude **/*.pyc
+exclude **/.gitkeep

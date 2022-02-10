@@ -15,7 +15,7 @@ ignore-patterns=
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
-init-hook="import sys; sys.setrecursionlimit(8 * sys.getrecursionlimit())"
+init-hook="import sys; sys.path.insert(0, 'src'); sys.setrecursionlimit(8 * sys.getrecursionlimit())"
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use.
@@ -60,16 +60,24 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
-disable=assignment-from-no-return,
-        undefined-all-variable,
-        global-statement,
-        global-variable-not-assigned,
-        global-variable-undefined,
-        import-outside-toplevel,
-        useless-object-inheritance,
-        super-with-arguments,
-        raise-missing-from,
-        consider-using-f-string
+disable=
+    # Allow freedom with imports.
+    import-outside-toplevel,
+    # Allow freedom with globals.
+    global-statement,
+    global-variable-not-assigned,
+    global-variable-undefined,
+    undefined-all-variable,
+    # Allow freedom with inheritance.
+    useless-object-inheritance,
+    super-with-arguments,
+    # Allow assigning to returned None.
+    assignment-from-no-return,
+    assignment-from-none,
+    # Allow freedom with error raises.
+    raise-missing-from,
+    # Allow freedom with string formatting.
+    consider-using-f-string
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -199,7 +207,7 @@ method-naming-style=snake_case
 
 # Regular expression matching correct module names. Overrides module-naming-
 # style.
-module-rgx=^(test_)?((?P<snake>_?[a-z][a-z0-9_]{1,29})|(?P<Pascal>_?[A-Z][a-zA-Z0-9]{1,29}))$
+module-rgx=^(test_)?((?P<snake>_{0,2}[a-z][a-z0-9_]{1,29}_{0,2})|(?P<Pascal>_?[A-Z][a-zA-Z0-9]{1,29}_{0,2}))$
 
 # Colon-delimited sets of names that determine each other's naming style when
 # the name regexes allow several styles.
@@ -289,7 +297,7 @@ ignore-docstrings=yes
 ignore-imports=no
 
 # Minimum lines number of a similarity.
-min-similarity-lines=12
+min-similarity-lines=16
 
 
 [SPELLING]
@@ -456,7 +464,7 @@ max-locals=24
 max-parents=18
 
 # Maximum number of public methods for a class (see R0904).
-max-public-methods=24
+max-public-methods=90
 
 # Maximum number of return / yield for function / method body.
 max-returns=6

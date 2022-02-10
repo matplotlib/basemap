@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 # flake8: noqa: E122
 """basemap_data -- Data assets for matplotlib basemap."""
 
@@ -8,7 +8,6 @@ import os
 import itertools
 from setuptools import setup
 from setuptools import find_packages
-from setuptools.command.sdist import sdist
 
 
 def get_content(name, splitlines=False):
@@ -16,24 +15,11 @@ def get_content(name, splitlines=False):
 
     here = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(here, name)
-    with io.open(path, encoding="utf-8") as fd:
+    with io.open(path, "r", encoding="utf-8") as fd:
         content = fd.read()
     if splitlines:
         content = [row for row in content.splitlines() if row]
     return content
-
-
-class basemap_data_sdist(sdist):
-    """Custom `sdist` so that it will force to save in zip format."""
-
-    def initialize_options(self):
-        """Call `initialize_options` and then set zip as default format."""
-
-        sdist.initialize_options(self)
-        self._default_to_zip()
-
-    def _default_to_zip(self):
-        self.formats = ["zip"]
 
 
 # Define some helper lists.
@@ -87,7 +73,7 @@ setup(**{
     "name":
         "basemap_data",
     "version":
-        "1.3.0",
+        "1.3.2",
     "license":
         "GNU Lesser General Public License v3 or later (LGPLv3+)",
     "description":
@@ -140,9 +126,6 @@ setup(**{
             "!=3.1.*",
             "<4",
         ]),
-    "cmdclass": {
-        "sdist": basemap_data_sdist,
-    },
     "project_urls": {
         "Bug Tracker":
             "https://github.com/matplotlib/basemap/issues",

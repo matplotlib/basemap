@@ -36,6 +36,6 @@ https://www.generic-mapping-tools.org/
 [LGPLv3+]:
 https://spdx.org/licenses/LGPL-3.0-or-later.html
 [`COPYING`]:
-https://github.com/matplotlib/basemap/blob/v1.3.0/packages/basemap_data_hires/COPYING
+https://github.com/matplotlib/basemap/blob/v1.3.2/packages/basemap_data_hires/COPYING
 [`COPYING.LESSER`]:
-https://github.com/matplotlib/basemap/blob/v1.3.0/packages/basemap_data_hires/COPYING.LESSER
+https://github.com/matplotlib/basemap/blob/v1.3.2/packages/basemap_data_hires/COPYING.LESSER
