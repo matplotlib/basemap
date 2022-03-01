@@ -1,9 +1,14 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. The format
-is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the
-project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
-since version 1.3.0.
+All notable changes to this project will be documented in this file.
+The format is based on [Keep a Changelog], and the project adheres to
+[Semantic Versioning] since version 1.3.0.
+
+[Keep a Changelog]:
+https://keepachangelog.com/en/1.0.0/
+[Semantic Versioning]:
+https://semver.org/spec/v2.0.0.html
+
 
 ## [Unreleased]
 
@@ -22,7 +27,7 @@ since version 1.3.0.
   vulnerability [CVE-2021-33430].
 - Fix wrong marker for `unittest2` in development requirements.
 - Fix `sdist` so that packages can be built from source distributions
-  (PR [#532] by @DWesl).
+  (PR [#532] by @DWesl, fixes [#533]).
 - Specify Cython language level for `_geoslib` extension explicitly.
 - Enforce up-to-date `pillow` dependency when possible:
   - `pillow >= 9.0.0` for Python >= 3.7 due to `pillow` vulnerabilities
@@ -884,6 +889,8 @@ since version 1.3.0.
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#533]:
+https://github.com/matplotlib/basemap/issues/533
 [#532]:
 https://github.com/matplotlib/basemap/pull/532
 [#531]:
