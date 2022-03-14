@@ -1,14 +1,17 @@
-"""
-extra colormaps:
+"""Module with extra colormaps.
 
-* Generic Mapping Tools colormaps: GMT_drywet,GMT_gebco,GMT_globe,GMT_haxby
-GMT_no_green,GMT_ocean,GMT_polar,GMT_red2green,GMT_relief,GMT_split,
-GMT_wysiwyg
-* Stepped-sequential scheme: StepSeq
-* A nonlinear precipitation colormap:  s3pcpn
-* A linear version of the precip colormap: s3pcpn_l
+The module provides additional colormaps to those provided with
+:mod:`matplotlib`:
 
-run examples/show_colormaps.py to see what these colormaps look like.
+* Generic Mapping Tools colormaps: GMT_drywet, GMT_gebco, GMT_globe,
+  GMT_haxby, GMT_no_green, GMT_ocean, GMT_polar, GMT_red2green,
+  GMT_relief, GMT_seis, GMT_split, GMT_wysiwyg.
+* A nonlinear precipitation colormap: s3pcpn.
+* A linear version of the precipitation colormap: s3pcpn_l.
+* A sea surface temperature anomaly colormap: sstanom.
+* A stepped-sequential scheme: StepSeq.
+
+Run `examples/show_colormaps.py` to see what these colormaps look like.
 """
 
 from six import iteritems
