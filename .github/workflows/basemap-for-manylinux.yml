@@ -29,6 +29,48 @@ jobs:
           name: checkout
           path: .
 
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+      max-parallel: 3
+      fail-fast: false
+    needs: checkout
+    container: "pylegacy/python:${{ matrix.python-version }}-debian-8"
+    steps:
+      -
+        name: Download checkout
+        uses: actions/download-artifact@v1
+        with:
+          name: checkout
+          path: .
+      -
+        name: Install lint requirements
+        run: |
+          cd ${{ env.PKGDIR }}
+          pip install -r requirements-lint.txt
+      -
+        name: Install library requirements
+        run: |
+          cd ${{ env.PKGDIR }}
+          pip install --prefer-binary -r requirements.txt
+      -
+        name: Run Flake8
+        run: |
+          cd ${{ env.PKGDIR }}
+          if [ -x "$(command -v flake8)" ]; then
+              flake8 src/mpl_toolkits/basemap/cm.py;
+          fi
+      -
+        name: Run PyLint
+        run: |
+          cd ${{ env.PKGDIR }}
+          if [ -x "$(command -v pylint)" ]; then
+              pylint src/mpl_toolkits/basemap/cm.py;
+          fi
+
   build-geos:
     strategy:
       matrix:
@@ -36,7 +78,7 @@ jobs:
           ["x64", "x86"]
       max-parallel: 2
       fail-fast: false
-    needs: checkout
+    needs: lint
     runs-on: ubuntu-latest
     container: "pylegacy/${{ matrix.arch }}-python:3.6-debian-4"
     steps:
