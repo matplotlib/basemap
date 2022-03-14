@@ -14,8 +14,6 @@ The module provides additional colormaps to those provided with
 Run `examples/show_colormaps.py` to see what these colormaps look like.
 """
 
-from six import iteritems
-
 from matplotlib import rcParams, colors
 _LUTSIZE = rcParams['image.lut']
 
@@ -76,7 +74,7 @@ datad['sstanom'] = _sstanom_data
 def _revcmap(data):
 
     data_r = {}
-    for key, val in iteritems(data):
+    for key, val in data.items():
         val = list(val)
         valrev = val[::-1]
         valnew = []
