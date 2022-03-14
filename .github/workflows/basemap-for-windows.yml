@@ -247,6 +247,7 @@ jobs:
         name: Test package
         run: |
           python -c "from mpl_toolkits.basemap import Basemap"
+          python -c "from mpl_toolkits.basemap import cm"
 
   upload:
     strategy:
