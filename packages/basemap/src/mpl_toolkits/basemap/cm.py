@@ -26,13 +26,14 @@ def _revcmap(data):
         val = list(val)
         valrev = val[::-1]
         valnew = []
-        for a, b, c in valrev:
-            valnew.append((1.0 - a, b, c))
+        for xval, color0, color1 in valrev:
+            valnew.append((1.0 - xval, color0, color1))
         data_r[key] = valnew
     return data_r
 
 
 # Create the dictionaries of segment data for each colormap.
+# pylint: disable=too-many-lines
 _GMT_drywet_data = {
     "blue": [
         (0.0, 0.164705887437, 0.164705887437),
