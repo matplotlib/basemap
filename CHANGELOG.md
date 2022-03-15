@@ -13,7 +13,7 @@ https://semver.org/spec/v2.0.0.html
 ## [Unreleased]
 
 ### Removed
-- Remove dependency on `six` (solves issue [#536]).
+- Remove dependency on `six` (PR [#537], fixes issue [#536]).
 
 ## [1.3.2] - 2022-02-10
 
@@ -85,7 +85,7 @@ https://semver.org/spec/v2.0.0.html
   This change together with the precompiled binary wheels in PyPI should solve
   most of the former installation problems (see issues [#403], [#405], [#422],
   [#436], [#445], [#456], [#461], [#488], [#489], [#491], [#510], [#513],
-  [#525] and [#526]).
+  [#525], [#526] and [#535]).
 - Upgrade default GEOS library dependency to 3.5.1.
 - Update and clarify licenses. In summary:
   - `basemap`: MIT license.
@@ -892,8 +892,12 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#537]:
+https://github.com/matplotlib/basemap/pull/537
 [#536]:
 https://github.com/matplotlib/basemap/issues/536
+[#535]:
+https://github.com/matplotlib/basemap/issues/535
 [#533]:
 https://github.com/matplotlib/basemap/issues/533
 [#532]:
