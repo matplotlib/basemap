@@ -12,7 +12,6 @@ Basic requirements are the following:
 * [numpy](https://github.com/numpy/numpy)
 * [pyproj](https://github.com/pyproj4/pyproj)
 * [pyshp](https://github.com/GeospatialPython/pyshp)
-* [six](https://github.com/benjaminp/six)
 
 Optional requirements include:
 

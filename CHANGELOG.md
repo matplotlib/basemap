@@ -12,6 +12,9 @@ https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Removed
+- Remove dependency on `six` (solves issue [#536]).
+
 ## [1.3.2] - 2022-02-10
 
 ### Added
@@ -889,6 +892,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#536]:
+https://github.com/matplotlib/basemap/issues/536
 [#533]:
 https://github.com/matplotlib/basemap/issues/533
 [#532]:
