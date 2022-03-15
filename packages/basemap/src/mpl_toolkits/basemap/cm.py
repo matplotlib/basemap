@@ -1006,14 +1006,10 @@ GMT_drywet = colors.LinearSegmentedColormap("GMT_drywet", _GMT_drywet_data, _LUT
 GMT_gebco = colors.LinearSegmentedColormap("GMT_gebco", _GMT_gebco_data, _LUTSIZE)
 GMT_globe = colors.LinearSegmentedColormap("GMT_globe", _GMT_globe_data, _LUTSIZE)
 GMT_haxby = colors.LinearSegmentedColormap("GMT_haxby", _GMT_haxby_data, _LUTSIZE)
-GMT_no_green = colors.LinearSegmentedColormap(
-    "GMT_no_green", _GMT_no_green_data, _LUTSIZE
-)
+GMT_no_green = colors.LinearSegmentedColormap("GMT_no_green", _GMT_no_green_data, _LUTSIZE)
 GMT_ocean = colors.LinearSegmentedColormap("GMT_ocean", _GMT_ocean_data, _LUTSIZE)
 GMT_polar = colors.LinearSegmentedColormap("GMT_polar", _GMT_polar_data, _LUTSIZE)
-GMT_red2green = colors.LinearSegmentedColormap(
-    "GMT_red2green", _GMT_red2green_data, _LUTSIZE
-)
+GMT_red2green = colors.LinearSegmentedColormap("GMT_red2green", _GMT_red2green_data, _LUTSIZE)
 GMT_relief = colors.LinearSegmentedColormap("GMT_relief", _GMT_relief_data, _LUTSIZE)
 GMT_seis = colors.LinearSegmentedColormap("GMT_seis", _GMT_seis_data, _LUTSIZE)
 GMT_split = colors.LinearSegmentedColormap("GMT_split", _GMT_split_data, _LUTSIZE)
@@ -1048,6 +1044,4 @@ for _cmapname in _cmapnames:
     _cmapname_r = _cmapname + "_r"
     _cmapdat_r = _revcmap(datad[_cmapname])
     datad[_cmapname_r] = _cmapdat_r
-    locals()[_cmapname_r] = colors.LinearSegmentedColormap(
-        _cmapname_r, _cmapdat_r, _LUTSIZE
-    )
+    locals()[_cmapname_r] = colors.LinearSegmentedColormap(_cmapname_r, _cmapdat_r, _LUTSIZE)
