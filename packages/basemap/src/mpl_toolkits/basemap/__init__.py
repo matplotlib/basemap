@@ -1130,6 +1130,7 @@ class Basemap(object):
             # replace coastsegs with line segments (instead of polygons)
             self.coastsegs, types =\
             self._readboundarydata('gshhs',as_polygons=False)
+            self.coastsegs = [sg for sg in self.coastsegs if len(sg) > 0]
         # create geos Polygon structures for land areas.
         # currently only used in is_land method.
         self.landpolygons=[]
