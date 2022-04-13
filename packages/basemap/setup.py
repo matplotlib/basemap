@@ -37,12 +37,14 @@ def get_geos_install_prefix():
         candidates = [os.path.expanduser("~/local"), os.path.expanduser("~"),
                       "/usr/local", "/usr", "/opt/local", "/opt", "/sw"]
 
+    # Prepare filename pattern to find the GEOS library.
+    extensions = {"win32": "dll", "cygwin": "dll", "darwin": "dylib"}
+    libext = extensions.get(sys.platform, "so*")
+    libname = "*geos_c*.{0}".format(libext)
+    libdirs = ["bin", "lib", "lib/x86_64-linux-gnu", "lib64"]
+
     for prefix in candidates:
         libfiles = []
-        libdirs = ["bin", "lib", "lib/x86_64-linux-gnu", "lib64"]
-        libext = "dll" if os.name == "nt" else "so"
-        libcode = "{0}geos_c".format("" if os.name == "nt" else "lib")
-        libname = "{0}*.{1}*".format(libcode, libext)
         for libdir in libdirs:
             libfiles.extend(glob.glob(os.path.join(prefix, libdir, libname)))
         hfile = os.path.join(prefix, "include", "geos_c.h")
@@ -111,7 +113,7 @@ if geos_install_prefix is not None:
         #   `distutils` bug (http://bugs.python.org/issue2437).
         library_dirs.append(os.path.join(geos_install_prefix, "bin"))
         runtime_library_dirs = []
-        dlls = glob.glob(os.path.join(geos_install_prefix, "*", "geos_c.dll"))
+        dlls = glob.glob(os.path.join(geos_install_prefix, "*", "*geos_c.dll"))
         if dlls:
             data_files.append(("../..", sorted(dlls)))
 
