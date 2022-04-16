@@ -119,7 +119,7 @@ if geos_install_prefix is not None:
         #   `distutils` bug (http://bugs.python.org/issue2437).
         library_dirs.append(os.path.join(geos_install_prefix, "bin"))
         runtime_library_dirs = []
-        dlls = glob.glob(os.path.join(geos_install_prefix, "*", "*geos_c.dll"))
+        dlls = glob.glob(os.path.join(geos_install_prefix, "*", "geos_c.dll"))
         if dlls:
             data_files.append(("../..", sorted(dlls)))
 
