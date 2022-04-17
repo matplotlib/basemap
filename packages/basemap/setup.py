@@ -37,27 +37,33 @@ def get_geos_install_prefix():
         candidates = [os.path.expanduser("~/local"), os.path.expanduser("~"),
                       "/usr/local", "/usr", "/opt/local", "/opt", "/sw"]
 
+    # Prepare filename pattern to find the GEOS library.
+    extensions = {"win32": "dll", "cygwin": "dll", "darwin": "dylib"}
+    libext = extensions.get(sys.platform, "so*")
+    libname = "*geos_c*.{0}".format(libext)
+    libdirs = ["bin", "lib", "lib/x86_64-linux-gnu", "lib64"]
+
     for prefix in candidates:
         libfiles = []
-        libdirs = ["bin", "lib", "lib/x86_64-linux-gnu", "lib64"]
-        libext = "dll" if os.name == "nt" else "so"
-        libcode = "{0}geos_c".format("" if os.name == "nt" else "lib")
-        libname = "{0}*.{1}*".format(libcode, libext)
         for libdir in libdirs:
             libfiles.extend(glob.glob(os.path.join(prefix, libdir, libname)))
         hfile = os.path.join(prefix, "include", "geos_c.h")
         if os.path.isfile(hfile) and libfiles:
             return prefix
 
-    warnings.warn(" ".join([
-        "Cannot find GEOS library and/or headers in standard locations",
-        "('{0}'). Please install the corresponding packages using your",
-        "software management system or set the environment variable",
-        "GEOS_DIR to point to the location where GEOS is installed",
-        "(for example, if 'geos_c.h' is in '/usr/local/include'",
-        "and 'libgeos_c' is in '/usr/local/lib', then you need to",
-        "set GEOS_DIR to '/usr/local'",
-    ]).format("', '".join(candidates)), RuntimeWarning)
+    # At this point, the GEOS library was not found, so we throw a warning if
+    # the user is trying to build the library.
+    build_cmds = ("bdist_wheel", "build", "install")
+    if any(cmd in sys.argv[1:] for cmd in build_cmds):
+        warnings.warn(" ".join([
+            "Cannot find GEOS library and/or headers in standard locations",
+            "('{0}'). Please install the corresponding packages using your",
+            "software management system or set the environment variable",
+            "GEOS_DIR to point to the location where GEOS is installed",
+            "(for example, if 'geos_c.h' is in '/usr/local/include'",
+            "and 'libgeos_c' is in '/usr/local/lib', then you need to",
+            "set GEOS_DIR to '/usr/local'",
+        ]).format("', '".join(candidates)), RuntimeWarning)
     return None
 
 
@@ -94,7 +100,9 @@ else:
         import numpy
         include_dirs.append(numpy.get_include())
     except ImportError as err:
-        warnings.warn("unable to locate NumPy headers", RuntimeWarning)
+        build_cmds = ("bdist_wheel", "build", "install")
+        if any(cmd in sys.argv[1:] for cmd in build_cmds):
+            warnings.warn("unable to locate NumPy headers", RuntimeWarning)
 
 # Define GEOS include, library and runtime dirs.
 geos_install_prefix = get_geos_install_prefix()
