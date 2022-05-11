@@ -64,7 +64,7 @@ else:
     from mpl_toolkits import basemap_data
     basemap_datadir = os.path.abspath(list(basemap_data.__path__)[0])
 
-__version__ = "1.3.2"
+__version__ = "1.3.3"
 
 # module variable that sets the default value for the 'latlon' kwarg.
 # can be set to True by user so plotting functions can take lons,lats
@@ -1130,6 +1130,7 @@ class Basemap(object):
             # replace coastsegs with line segments (instead of polygons)
             self.coastsegs, types =\
             self._readboundarydata('gshhs',as_polygons=False)
+            self.coastsegs = [sg for sg in self.coastsegs if len(sg) > 0]
         # create geos Polygon structures for land areas.
         # currently only used in is_land method.
         self.landpolygons=[]

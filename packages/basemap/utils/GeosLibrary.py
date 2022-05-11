@@ -147,12 +147,24 @@ class GeosLibrary(object):
             for line in lines:
                 fd.write(line.replace(oldtext, newtext).encode())
 
-        # The SVN revision file is not created on the fly before 3.6.0.
-        svn_hfile = os.path.join(zipfold, "geos_svn_revision.h")
-        if self.version_tuple < (3, 6, 0) and not os.path.exists(svn_hfile):
-            with io.open(svn_hfile, "wb") as fd:
-                text = "#define GEOS_SVN_REVISION 0"
-                fd.write(text.encode())
+        # Apply specific patches for GEOS < 3.6.0.
+        if self.version_tuple < (3, 6, 0):
+            # The SVN revision file is not created on the fly before 3.6.0.
+            svn_hfile = os.path.join(zipfold, "geos_svn_revision.h")
+            if not os.path.exists(svn_hfile):
+                with io.open(svn_hfile, "wb") as fd:
+                    text = "#define GEOS_SVN_REVISION 0"
+                    fd.write(text.encode())
+            # Reduce warnings when compiling with `nmake` on Windows.
+            cmakefile = os.path.join(zipfold, "CMakeLists.txt")
+            if os.path.exists(cmakefile):
+                with io.open(cmakefile, "r", encoding="utf-8") as fd:
+                    lines = fd.readlines()
+                with io.open(cmakefile, "wb") as fd:
+                    oldtext = 'string(REGEX REPLACE "/W[0-9]" "/W4"'
+                    newtext = oldtext.replace("W4", "W1")
+                    for line in lines:
+                        fd.write(line.replace(oldtext, newtext).encode())
 
     def build(self, installdir=None, njobs=1):
         """Build and install GEOS from source."""
@@ -191,7 +203,7 @@ class GeosLibrary(object):
             build_opts.extend([
                 "--",
                 "WIN64={0}".format("YES" if win64 else "NO"),
-                "BUILD_BATCH={0}".format("YES" if njobs > 1 else "NO")
+                "BUILD_BATCH={0}".format("YES" if njobs > 1 else "NO"),
             ])
         else:
             build_opts = ["-j", "{0:d}".format(njobs)] + build_opts

@@ -1,0 +1,18 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto eol=lf
+
+# Explicitly declare text files you want to always be normalised and
+# converted to native line endings on checkout.
+*.py text
+*.pyx text
+
+# Denote all files that are truly binary and should not be modified.
+*.bin binary
+*.dat binary
+*.dbf binary
+*.dem binary
+*.gz binary
+*.jpg binary
+*.nc binary
+*.shp binary
+*.shx binary

@@ -29,6 +29,59 @@ jobs:
           name: checkout
           path: .
 
+  lint:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version:
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+      max-parallel: 3
+      fail-fast: false
+    needs: checkout
+    steps:
+      -
+        name: Download checkout
+        uses: actions/download-artifact@v1
+        with:
+          name: checkout
+          path: .
+      -
+        name: Set Python
+        uses: actions/setup-python@v2
+        with:
+          architecture: ${{ matrix.arch }}
+          python-version: ${{ matrix.python-version }}
+      -
+        name: Set Python base packages
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+      -
+        name: Install lint requirements
+        run: |
+          cd ${{ env.PKGDIR }}
+          python -m pip install -r requirements-lint.txt
+      -
+        name: Install library requirements
+        run: |
+          cd ${{ env.PKGDIR }}
+          pip install --prefer-binary -r requirements.txt
+      -
+        name: Run Flake8
+        run: |
+          cd ${{ env.PKGDIR }}
+          if (Get-Command flake8 -errorAction SilentlyContinue)
+          {
+              flake8 src/mpl_toolkits/basemap/cm.py;
+          }
+      -
+        name: Run PyLint
+        run: |
+          cd ${{ env.PKGDIR }}
+          if (Get-Command pylint -errorAction SilentlyContinue)
+          {
+              pylint src/mpl_toolkits/basemap/cm.py;
+          }
+
   build-geos:
     strategy:
       matrix:
@@ -51,7 +104,7 @@ jobs:
             cmake-version: "3.13.2"
       max-parallel: 4
       fail-fast: false
-    needs: checkout
+    needs: lint
     runs-on: windows-latest
     steps:
       -
@@ -194,6 +247,7 @@ jobs:
         name: Test package
         run: |
           python -c "from mpl_toolkits.basemap import Basemap"
+          python -c "from mpl_toolkits.basemap import cm"
 
   upload:
     strategy:

@@ -1,9 +1,29 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. The format
-is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the
-project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
-since version 1.3.0.
+All notable changes to this project will be documented in this file.
+The format is based on [Keep a Changelog], and the project adheres to
+[Semantic Versioning] since version 1.3.0.
+
+[Keep a Changelog]:
+https://keepachangelog.com/en/1.0.0/
+[Semantic Versioning]:
+https://semver.org/spec/v2.0.0.html
+
+
+## [1.3.3] - 2022-05-11
+
+### Changed
+- Reformat `basemap.cm` using `flake8` and `black`.
+
+### Fixed
+- Fix issue in `drawcoastlines` with shape of vertices array
+  (PR [#538] by @guziy, fixes issue [#512]).
+- Fix setup to identify GEOS dylib on MacOS correctly (PR [#541],
+  fixes issue [#539], thanks to @ronaldbradford and @CaffreyR for
+  testing).
+
+### Removed
+- Remove dependency on `six` (PR [#537], fixes issue [#536]).
 
 ## [1.3.2] - 2022-02-10
 
@@ -20,7 +40,7 @@ since version 1.3.0.
   vulnerability [CVE-2021-33430].
 - Fix wrong marker for `unittest2` in development requirements.
 - Fix `sdist` so that packages can be built from source distributions
-  (PR [#532] by @DWesl).
+  (PR [#532] by @DWesl, fixes [#533]).
 - Specify Cython language level for `_geoslib` extension explicitly.
 - Enforce up-to-date `pillow` dependency when possible:
   - `pillow >= 9.0.0` for Python >= 3.7 due to `pillow` vulnerabilities
@@ -75,7 +95,7 @@ since version 1.3.0.
   This change together with the precompiled binary wheels in PyPI should solve
   most of the former installation problems (see issues [#403], [#405], [#422],
   [#436], [#445], [#456], [#461], [#488], [#489], [#491], [#510], [#513],
-  [#525] and [#526]).
+  [#525], [#526] and [#535]).
 - Upgrade default GEOS library dependency to 3.5.1.
 - Update and clarify licenses. In summary:
   - `basemap`: MIT license.
@@ -882,6 +902,20 @@ since version 1.3.0.
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#541]:
+https://github.com/matplotlib/basemap/pull/541
+[#539]:
+https://github.com/matplotlib/basemap/issues/539
+[#538]:
+https://github.com/matplotlib/basemap/pull/538
+[#537]:
+https://github.com/matplotlib/basemap/pull/537
+[#536]:
+https://github.com/matplotlib/basemap/issues/536
+[#535]:
+https://github.com/matplotlib/basemap/issues/535
+[#533]:
+https://github.com/matplotlib/basemap/issues/533
 [#532]:
 https://github.com/matplotlib/basemap/pull/532
 [#531]:
@@ -900,6 +934,8 @@ https://github.com/matplotlib/basemap/issues/521
 https://github.com/matplotlib/basemap/issues/518
 [#513]:
 https://github.com/matplotlib/basemap/issues/513
+[#512]:
+https://github.com/matplotlib/basemap/issues/512
 [#510]:
 https://github.com/matplotlib/basemap/issues/510
 [#505]:
@@ -938,7 +974,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.2...develop
+https://github.com/matplotlib/basemap/compare/v1.3.3...develop
+[1.3.3]:
+https://github.com/matplotlib/basemap/compare/v1.3.2...v1.3.3
 [1.3.2]:
 https://github.com/matplotlib/basemap/compare/v1.3.1...v1.3.2
 [1.3.1]:
