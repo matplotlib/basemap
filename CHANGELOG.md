@@ -10,7 +10,17 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
-## [Unreleased]
+## [1.3.3] - 2022-05-11
+
+### Changed
+- Reformat `basemap.cm` using `flake8` and `black`.
+
+### Fixed
+- Fix issue in `drawcoastlines` with shape of vertices array
+  (PR [#538] by @guziy, fixes issue [#512]).
+- Fix setup to identify GEOS dylib on MacOS correctly (PR [#541],
+  fixes issue [#539], thanks to @ronaldbradford and @CaffreyR for
+  testing).
 
 ### Removed
 - Remove dependency on `six` (PR [#537], fixes issue [#536]).
@@ -892,6 +902,12 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#541]:
+https://github.com/matplotlib/basemap/pull/541
+[#539]:
+https://github.com/matplotlib/basemap/issues/539
+[#538]:
+https://github.com/matplotlib/basemap/pull/538
 [#537]:
 https://github.com/matplotlib/basemap/pull/537
 [#536]:
@@ -918,6 +934,8 @@ https://github.com/matplotlib/basemap/issues/521
 https://github.com/matplotlib/basemap/issues/518
 [#513]:
 https://github.com/matplotlib/basemap/issues/513
+[#512]:
+https://github.com/matplotlib/basemap/issues/512
 [#510]:
 https://github.com/matplotlib/basemap/issues/510
 [#505]:
@@ -956,7 +974,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.2...develop
+https://github.com/matplotlib/basemap/compare/v1.3.3...develop
+[1.3.3]:
+https://github.com/matplotlib/basemap/compare/v1.3.2...v1.3.3
 [1.3.2]:
 https://github.com/matplotlib/basemap/compare/v1.3.1...v1.3.2
 [1.3.1]:
