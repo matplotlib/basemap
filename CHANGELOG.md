@@ -12,6 +12,16 @@ https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Changed
+- Reformat `basemap.cm` using `flake8` and `black`.
+
+### Fixed
+- Fix issue in `drawcoastlines` with shape of vertices array
+  (PR [#538] by @guziy, fixes issue [#512]).
+- Fix setup to identify GEOS dylib on MacOS correctly (PR [#541],
+  fixes issue [#539], thanks to @ronaldbradford and @CaffreyR for
+  testing).
+
 ### Removed
 - Remove dependency on `six` (PR [#537], fixes issue [#536]).
 
@@ -892,6 +902,12 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#541]:
+https://github.com/matplotlib/basemap/pull/541
+[#539]:
+https://github.com/matplotlib/basemap/issues/539
+[#538]:
+https://github.com/matplotlib/basemap/pull/538
 [#537]:
 https://github.com/matplotlib/basemap/pull/537
 [#536]:
@@ -918,6 +934,8 @@ https://github.com/matplotlib/basemap/issues/521
 https://github.com/matplotlib/basemap/issues/518
 [#513]:
 https://github.com/matplotlib/basemap/issues/513
+[#512]:
+https://github.com/matplotlib/basemap/issues/512
 [#510]:
 https://github.com/matplotlib/basemap/issues/510
 [#505]:
