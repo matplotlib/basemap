@@ -12,6 +12,9 @@ https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Changed
+- Upgrade `numpy` upper pin to 1.24.
+
 ### Fixed
 - Relax `numpy` build dependency to ensure that builds work on MacOS.
 
