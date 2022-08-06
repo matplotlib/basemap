@@ -12,6 +12,9 @@ https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Fixed
+- Relax `numpy` build dependency to ensure that builds work on MacOS.
+
 ## [1.3.3] - 2022-05-11
 
 ### Changed
