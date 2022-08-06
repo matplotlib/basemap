@@ -19,7 +19,8 @@ https://semver.org/spec/v2.0.0.html
   build the docs.
 
 ### Fixed
-- Relax `numpy` build dependency to ensure that builds work on MacOS.
+- Update `numpy` build dependency to ensure that builds also work on
+  MacOS (fixes issue [#547], thanks to @SongJaeIn for testing).
 
 ## [1.3.3] - 2022-05-11
 
@@ -913,6 +914,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#547]:
+https://github.com/matplotlib/basemap/issues/547
 [#541]:
 https://github.com/matplotlib/basemap/pull/541
 [#539]:
