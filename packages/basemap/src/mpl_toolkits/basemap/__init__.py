@@ -4215,7 +4215,7 @@ class Basemap(object):
         return im
 
     def arcgisimage(self,server='http://server.arcgisonline.com/ArcGIS',\
-                 service='ESRI_Imagery_World_2D',xpixels=400,ypixels=None,\
+                 service='World_Imagery',xpixels=400,ypixels=None,\
                  dpi=96,verbose=False,**kwargs):
         """
         Retrieve an image using the ArcGIS Server REST API and display it on
@@ -4232,7 +4232,7 @@ class Basemap(object):
         server           web map server URL (default
                          http://server.arcgisonline.com/ArcGIS).
         service          service (image type) hosted on server (default
-                         ESRI_Imagery_World_2D, which is NASA 'Blue Marble'
+                         'World_Imagery', which is NASA 'Blue Marble'
                          image).
         xpixels          requested number of image pixels in x-direction
                          (default 400).
