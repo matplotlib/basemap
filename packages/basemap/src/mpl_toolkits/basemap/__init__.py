@@ -4284,9 +4284,6 @@ class Basemap(object):
                 arcgisimage cannot handle images that cross
                 the dateline for cylindrical projections.""")
                 raise ValueError(msg)
-        if self.projection != 'cyl':
-            xmin = (180./np.pi)*xmin; xmax = (180./np.pi)*xmax
-            ymin = (180./np.pi)*ymin; ymax = (180./np.pi)*ymax
         # ypixels not given, find by scaling xpixels by the map aspect ratio.
         if ypixels is None:
             ypixels = int(self.aspect*xpixels)
