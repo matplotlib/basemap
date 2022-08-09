@@ -21,6 +21,8 @@ https://semver.org/spec/v2.0.0.html
 ### Fixed
 - Update `numpy` build dependency to ensure that builds also work on
   MacOS (fixes issue [#547], thanks to @SongJaeIn for testing).
+- Fix broken implementation of `Basemap.arcgisimage` (PR [#548], solves
+  issue [#546]).
 - Enforce up-to-date `numpy` dependency when possible:
   - Set `numpy >= 1.19` for Python == 3.6 due to `numpy` vulnerabilities
     [CVE-2021-41495] and [CVE-2021-41496].
@@ -922,8 +924,12 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#548]:
+https://github.com/matplotlib/basemap/pull/548
 [#547]:
 https://github.com/matplotlib/basemap/issues/547
+[#546]:
+https://github.com/matplotlib/basemap/issues/546
 [#541]:
 https://github.com/matplotlib/basemap/pull/541
 [#539]:
