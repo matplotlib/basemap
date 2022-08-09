@@ -21,6 +21,11 @@ https://semver.org/spec/v2.0.0.html
 ### Fixed
 - Update `numpy` build dependency to ensure that builds also work on
   MacOS (fixes issue [#547], thanks to @SongJaeIn for testing).
+- Enforce up-to-date `numpy` dependency when possible:
+  - Set `numpy >= 1.19` for Python == 3.6 due to `numpy` vulnerabilities
+    [CVE-2021-41495] and [CVE-2021-41496].
+  - Set `numpy >= 1.22` for Python >= 3.8 due to `numpy` vulnerability
+    [CVE-2021-34141].
 
 ## [1.3.3] - 2022-05-11
 
@@ -1022,8 +1027,14 @@ https://nvd.nist.gov/vuln/detail/CVE-2022-22817
 https://nvd.nist.gov/vuln/detail/CVE-2022-22816
 [CVE-2022-22815]:
 https://nvd.nist.gov/vuln/detail/CVE-2022-22815
+[CVE-2021-41496]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-41496
+[CVE-2021-41495]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-41495
 [CVE-2021-34552]:
 https://nvd.nist.gov/vuln/detail/CVE-2021-34552
+[CVE-2021-34141]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-34141
 [CVE-2021-33430]:
 https://nvd.nist.gov/vuln/detail/CVE-2021-33430
 [CVE-2021-28678]:
