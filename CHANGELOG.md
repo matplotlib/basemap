@@ -26,6 +26,9 @@ https://semver.org/spec/v2.0.0.html
     [CVE-2021-41495] and [CVE-2021-41496].
   - Set `numpy >= 1.22` for Python >= 3.8 due to `numpy` vulnerability
     [CVE-2021-34141].
+- Enforce up-to-date `pillow` dependency when possible:
+  - Set `pillow >= 9.0.1` for Python >= 3.7 due to `pillow`
+    vulnerability [CVE-2022-24303].
 
 ## [1.3.3] - 2022-05-11
 
@@ -1021,6 +1024,8 @@ https://github.com/matplotlib/basemap/compare/v1.0.3rel...v1.0.4rel
 [1.0.3]:
 https://github.com/matplotlib/basemap/tree/v1.0.3rel
 
+[CVE-2022-24303]:
+https://nvd.nist.gov/vuln/detail/CVE-2022-24303
 [CVE-2022-22817]:
 https://nvd.nist.gov/vuln/detail/CVE-2022-22817
 [CVE-2022-22816]:
