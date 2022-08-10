@@ -24,7 +24,7 @@ https://semver.org/spec/v2.0.0.html
 - Update `numpy` build dependency to ensure that builds also work on
   MacOS (fixes issue [#547], thanks to @SongJaeIn for testing).
 - Fix broken implementation of `Basemap.arcgisimage` (PR [#548], solves
-  issue [#546]).
+  issues [#481] and [#546]).
 - Enforce up-to-date `numpy` dependency when possible:
   - Set `numpy >= 1.19` for Python == 3.6 due to `numpy` vulnerabilities
     [CVE-2021-41495] and [CVE-2021-41496].
@@ -64,7 +64,7 @@ https://semver.org/spec/v2.0.0.html
   vulnerability [CVE-2021-33430].
 - Fix wrong marker for `unittest2` in development requirements.
 - Fix `sdist` so that packages can be built from source distributions
-  (PR [#532] by @DWesl, fixes [#533]).
+  (PR [#532] by @DWesl, fixes [#444] and [#533]).
 - Specify Cython language level for `_geoslib` extension explicitly.
 - Enforce up-to-date `pillow` dependency when possible:
   - `pillow >= 9.0.0` for Python >= 3.7 due to `pillow` vulnerabilities
@@ -139,7 +139,7 @@ https://semver.org/spec/v2.0.0.html
 ### Removed
 - Bundled GEOS source code. The same source code can be downloaded using the
   `GeosLibrary` class in `utils` (issue [#228]).
-- Precompiled `_geoslib.c` file.
+- Precompiled `_geoslib.c` file (issue [#437]).
 
 ## [1.2.2] - 2020-08-04
 
@@ -978,6 +978,8 @@ https://github.com/matplotlib/basemap/issues/489
 https://github.com/matplotlib/basemap/issues/488
 [#487]:
 https://github.com/matplotlib/basemap/issues/487
+[#481]:
+https://github.com/matplotlib/basemap/issues/481
 [#476]:
 https://github.com/matplotlib/basemap/pull/476
 [#461]:
@@ -986,6 +988,10 @@ https://github.com/matplotlib/basemap/issues/461
 https://github.com/matplotlib/basemap/issues/456
 [#445]:
 https://github.com/matplotlib/basemap/issues/445
+[#444]:
+https://github.com/matplotlib/basemap/issues/444
+[#437]:
+https://github.com/matplotlib/basemap/issues/437
 [#436]:
 https://github.com/matplotlib/basemap/issues/436
 [#422]:
