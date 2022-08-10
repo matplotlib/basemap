@@ -10,7 +10,7 @@ except ImportError:
     # as textwrap.dedent.
     from matplotlib.cbook import dedent
 
-__version__ = "1.3.4"
+__version__ = "1.3.4+dev"
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 
