@@ -264,8 +264,8 @@ jobs:
         run: |
           apt-get update
           apt-get install -y gcc g++ make
-          pip install "numpy < 1.21.5"
-        if: matrix.arch == 'x86' && matrix.python-version == '3.10'
+          pip install "numpy < 1.24"
+        if: matrix.arch == 'x86' && (matrix.python-version >= '3.8' || matrix.python-version >= '3.10')
       -
         name: Install package
         run: |

@@ -64,7 +64,7 @@ else:
     from mpl_toolkits import basemap_data
     basemap_datadir = os.path.abspath(list(basemap_data.__path__)[0])
 
-__version__ = "1.3.3"
+__version__ = "1.3.4"
 
 # module variable that sets the default value for the 'latlon' kwarg.
 # can be set to True by user so plotting functions can take lons,lats
@@ -4215,7 +4215,7 @@ class Basemap(object):
         return im
 
     def arcgisimage(self,server='http://server.arcgisonline.com/ArcGIS',\
-                 service='ESRI_Imagery_World_2D',xpixels=400,ypixels=None,\
+                 service='World_Imagery',xpixels=400,ypixels=None,\
                  dpi=96,verbose=False,**kwargs):
         """
         Retrieve an image using the ArcGIS Server REST API and display it on
@@ -4232,7 +4232,7 @@ class Basemap(object):
         server           web map server URL (default
                          http://server.arcgisonline.com/ArcGIS).
         service          service (image type) hosted on server (default
-                         ESRI_Imagery_World_2D, which is NASA 'Blue Marble'
+                         'World_Imagery', which is NASA 'Blue Marble'
                          image).
         xpixels          requested number of image pixels in x-direction
                          (default 400).
@@ -4284,9 +4284,6 @@ class Basemap(object):
                 arcgisimage cannot handle images that cross
                 the dateline for cylindrical projections.""")
                 raise ValueError(msg)
-        if self.projection != 'cyl':
-            xmin = (180./np.pi)*xmin; xmax = (180./np.pi)*xmax
-            ymin = (180./np.pi)*ymin; ymax = (180./np.pi)*ymax
         # ypixels not given, find by scaling xpixels by the map aspect ratio.
         if ypixels is None:
             ypixels = int(self.aspect*xpixels)
