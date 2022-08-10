@@ -10,7 +10,27 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
-## [Unreleased]
+## [1.3.4] - 2022-08-10
+
+### Changed
+- Upgrade `numpy` upper pin to 1.24.
+- Upgrade `pyshp` upper pin to 2.4.
+- Upgrade `sphinx` upper pin to 5.0 and require at least Python 3.6 to
+  build the docs.
+
+### Fixed
+- Update `numpy` build dependency to ensure that builds also work on
+  MacOS (fixes issue [#547], thanks to @SongJaeIn for testing).
+- Fix broken implementation of `Basemap.arcgisimage` (PR [#548], solves
+  issue [#546]).
+- Enforce up-to-date `numpy` dependency when possible:
+  - Set `numpy >= 1.19` for Python == 3.6 due to `numpy` vulnerabilities
+    [CVE-2021-41495] and [CVE-2021-41496].
+  - Set `numpy >= 1.22` for Python >= 3.8 due to `numpy` vulnerability
+    [CVE-2021-34141].
+- Enforce up-to-date `pillow` dependency when possible:
+  - Set `pillow >= 9.0.1` for Python >= 3.7 due to `pillow`
+    vulnerability [CVE-2022-24303].
 
 ## [1.3.3] - 2022-05-11
 
@@ -904,6 +924,12 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#548]:
+https://github.com/matplotlib/basemap/pull/548
+[#547]:
+https://github.com/matplotlib/basemap/issues/547
+[#546]:
+https://github.com/matplotlib/basemap/issues/546
 [#541]:
 https://github.com/matplotlib/basemap/pull/541
 [#539]:
@@ -976,7 +1002,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.3...develop
+https://github.com/matplotlib/basemap/compare/v1.3.4...develop
+[1.3.4]:
+https://github.com/matplotlib/basemap/compare/v1.3.3...v1.3.4
 [1.3.3]:
 https://github.com/matplotlib/basemap/compare/v1.3.2...v1.3.3
 [1.3.2]:
@@ -1004,14 +1032,22 @@ https://github.com/matplotlib/basemap/compare/v1.0.3rel...v1.0.4rel
 [1.0.3]:
 https://github.com/matplotlib/basemap/tree/v1.0.3rel
 
+[CVE-2022-24303]:
+https://nvd.nist.gov/vuln/detail/CVE-2022-24303
 [CVE-2022-22817]:
 https://nvd.nist.gov/vuln/detail/CVE-2022-22817
 [CVE-2022-22816]:
 https://nvd.nist.gov/vuln/detail/CVE-2022-22816
 [CVE-2022-22815]:
 https://nvd.nist.gov/vuln/detail/CVE-2022-22815
+[CVE-2021-41496]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-41496
+[CVE-2021-41495]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-41495
 [CVE-2021-34552]:
 https://nvd.nist.gov/vuln/detail/CVE-2021-34552
+[CVE-2021-34141]:
+https://nvd.nist.gov/vuln/detail/CVE-2021-34141
 [CVE-2021-33430]:
 https://nvd.nist.gov/vuln/detail/CVE-2021-33430
 [CVE-2021-28678]:
