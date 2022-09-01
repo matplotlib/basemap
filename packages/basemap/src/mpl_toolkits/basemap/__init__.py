@@ -2064,7 +2064,7 @@ class Basemap(object):
 
     def readshapefile(self,shapefile,name,drawbounds=True,zorder=None,
                       linewidth=0.5,color='k',antialiased=1,ax=None,
-                      default_encoding='utf-8'):
+                      default_encoding='utf-8',encoding_errors='strict'):
         """
         Read in shape file, optionally draw boundaries on map.
 
@@ -2117,6 +2117,10 @@ class Basemap(object):
         antialiased      antialiasing switch for shape boundaries
                          (default True).
         ax               axes instance (overrides default axes instance)
+        default_encoding encoding used to parse properties from .dbf files
+                         (default utf-8)
+        encoding_errors  encoding error handling (default strict), other
+                         possible values: ignore, replace and backslashreplace
         ==============   ====================================================
 
         A tuple (num_shapes, type, min, max) containing shape file info
@@ -2140,7 +2144,8 @@ class Basemap(object):
         # open shapefile, read vertices for each object, convert
         # to map projection coordinates (only works for 2D shape types).
         try:
-            shf = Reader(shapefile, encoding=default_encoding)
+            shf = Reader(shapefile, encoding=default_encoding,
+                         encodingErrors=encoding_errors)
         except:
             raise IOError('error reading shapefile %s.shp' % shapefile)
         fields = shf.fields
