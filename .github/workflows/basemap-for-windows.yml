@@ -86,22 +86,22 @@ jobs:
     strategy:
       matrix:
         include:
-          - 
+          -
             arch: "x64"
             msvc-toolset: "14.16"
             cmake-version: "3.14.7"
-          - 
+          -
             arch: "x86"
             msvc-toolset: "14.16"
-            cmake-version: "3.13.2"
-          - 
+            cmake-version: "3.14.7"
+          -
             arch: "x64"
             msvc-toolset: "9.0"
             cmake-version: "3.14.7"
-          - 
+          -
             arch: "x86"
             msvc-toolset: "9.0"
-            cmake-version: "3.13.2"
+            cmake-version: "3.14.7"
       max-parallel: 4
       fail-fast: false
     needs: lint
