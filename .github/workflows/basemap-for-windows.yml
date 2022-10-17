@@ -85,23 +85,10 @@ jobs:
   build-geos:
     strategy:
       matrix:
-        include:
-          -
-            arch: "x64"
-            msvc-toolset: "14.16"
-            cmake-version: "3.14.7"
-          -
-            arch: "x86"
-            msvc-toolset: "14.16"
-            cmake-version: "3.14.7"
-          -
-            arch: "x64"
-            msvc-toolset: "9.0"
-            cmake-version: "3.14.7"
-          -
-            arch: "x86"
-            msvc-toolset: "9.0"
-            cmake-version: "3.14.7"
+        arch:
+          ["x64", "x86"]
+        msvc-toolset:
+          ["9.0", "14.16"]
       max-parallel: 4
       fail-fast: false
     needs: lint
@@ -123,7 +110,7 @@ jobs:
         name: Set CMake
         uses: jwlawson/actions-setup-cmake@v1.9
         with:
-          cmake-version: ${{ matrix.cmake-version }}
+          cmake-version: "3.14.7"
       -
         name: Set Python
         uses: actions/setup-python@v2
