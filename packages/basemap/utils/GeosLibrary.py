@@ -166,6 +166,11 @@ class GeosLibrary(object):
                     for line in lines:
                         fd.write(line.replace(oldtext, newtext).encode())
 
+        # Apply specific patches for 3.6.0 <= GEOS < 3.7.0 on Windows.
+        if (3, 6, 0) <= self.version_tuple < (3, 7, 0) and os.name == "nt":
+            autogen_file = os.path.join(zipfold, "autogen.bat")
+            subprocess.call([autogen_file], cwd=zipfold)
+
     def build(self, installdir=None, njobs=1):
         """Build and install GEOS from source."""
 
