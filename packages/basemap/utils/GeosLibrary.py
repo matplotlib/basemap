@@ -127,8 +127,7 @@ class GeosLibrary(object):
         if os.path.exists(zipfold):
             if not overwrite:
                 raise OSError("folder '{0}' already exists".format(zipfold))
-            else:
-                shutil.rmtree(zipfold)
+            shutil.rmtree(zipfold)
 
         # Decompress zip file.
         with contextlib.closing(ZipFile(zippath, "r")) as fd:
