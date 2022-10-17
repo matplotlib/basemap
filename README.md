@@ -54,7 +54,7 @@ Otherwise, you will need to install `basemap` from source as follows:
    use the helper provided in `utils`, i.e.
    ```sh
    export GEOS_DIR=<your desired location>
-   python -c "import utils; utils.GeosLibrary('3.5.1').build(installdir='${GEOS_DIR}')"
+   python -c "import utils; utils.GeosLibrary('3.6.5').build(installdir='${GEOS_DIR}')"
    ```
    or you can link directly to the system library if it is already
    installed. `GEOS_DIR` must point to the GEOS installation prefix;

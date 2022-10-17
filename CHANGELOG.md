@@ -12,6 +12,9 @@ https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Changed
+- Upgrade default GEOS library dependency to 3.6.5.
+
 ## [1.3.4] - 2022-08-10
 
 ### Changed
