@@ -12,8 +12,12 @@ https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Added
+- Optional argument `encoding_errors` for `Basemap.readshapefile` method
+  (PR [#554] by @guziy, implements request [#552]).
+
 ### Changed
-- Upgrade default GEOS library dependency to 3.6.5.
+- Upgrade bundled GEOS library to 3.6.5.
 
 ## [1.3.4] - 2022-08-10
 
@@ -929,6 +933,10 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#554]:
+https://github.com/matplotlib/basemap/pull/554
+[#552]:
+https://github.com/matplotlib/basemap/issues/552
 [#548]:
 https://github.com/matplotlib/basemap/pull/548
 [#547]:
