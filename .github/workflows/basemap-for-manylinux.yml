@@ -2,6 +2,7 @@ name: basemap-for-manylinux
 
 env:
   PKGDIR: "packages/basemap"
+  PYTHONWARNINGS: "ignore:DEPRECATION"
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
 
 on:
