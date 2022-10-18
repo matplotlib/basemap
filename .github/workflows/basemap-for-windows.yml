@@ -110,7 +110,7 @@ jobs:
           version: ${{ matrix.msvc-toolset }}
       -
         name: Set CMake
-        uses: jwlawson/actions-setup-cmake@v1.9
+        uses: jwlawson/actions-setup-cmake@v1.13
         with:
           cmake-version: "3.14.7"
       -
