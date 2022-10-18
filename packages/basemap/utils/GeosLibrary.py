@@ -20,6 +20,7 @@
 
 import io
 import os
+import sys
 import ssl
 import glob
 import shutil
@@ -126,8 +127,7 @@ class GeosLibrary(object):
         if os.path.exists(zipfold):
             if not overwrite:
                 raise OSError("folder '{0}' already exists".format(zipfold))
-            else:
-                shutil.rmtree(zipfold)
+            shutil.rmtree(zipfold)
 
         # Decompress zip file.
         with contextlib.closing(ZipFile(zippath, "r")) as fd:
@@ -166,6 +166,27 @@ class GeosLibrary(object):
                     for line in lines:
                         fd.write(line.replace(oldtext, newtext).encode())
 
+        # Apply specific patches for 3.6.0 <= GEOS < 3.7.0 on Windows.
+        if (3, 6, 0) <= self.version_tuple < (3, 7, 0) and os.name == "nt":
+            autogen_file = os.path.join(zipfold, "autogen.bat")
+            subprocess.call([autogen_file], cwd=zipfold)
+            cppfile = os.path.join(zipfold, "src", "geomgraph", "DirectedEdgeStar.cpp")
+            with io.open(cppfile, "r", encoding="utf-8") as fd:
+                lines = fd.readlines()
+            with io.open(cppfile, "wb") as fd:
+                oldtext = "DirectedEdgeStar::print() const"
+                newtext = oldtext.replace(" const", "")
+                for line in lines:
+                    fd.write(line.replace(oldtext, newtext).encode())
+            hfile = os.path.join(zipfold, "include", "geos", "geomgraph", "DirectedEdgeStar.h")
+            with io.open(hfile, "r", encoding="utf-8") as fd:
+                lines = fd.readlines()
+            with io.open(hfile, "wb") as fd:
+                oldtext = "virtual std::string print() const;"
+                newtext = oldtext.replace(" const", "")
+                for line in lines:
+                    fd.write(line.replace(oldtext, newtext).encode())
+
     def build(self, installdir=None, njobs=1):
         """Build and install GEOS from source."""
 
@@ -181,29 +202,29 @@ class GeosLibrary(object):
             installdir = os.path.expanduser("~/.local/share/libgeos")
         installdir = os.path.abspath(installdir)
 
-        # Define configure options.
+        # Define generic configure and build options.
         config_opts = [
             "-DCMAKE_INSTALL_PREFIX={0}".format(installdir),
             "-DGEOS_ENABLE_TESTS=OFF",
             "-DCMAKE_BUILD_TYPE=Release",
         ]
-        if os.name == "nt" and self.version_tuple < (3, 6, 0):
-            config_opts = ["-G", "NMake Makefiles"] + config_opts
-
-        # Define build options.
         build_env = os.environ.copy()
         build_opts = [
             "--config", "Release",
             "--target", "install",
         ]
+
+        # Define custom configure and build options.
         if os.name != "nt":
             build_env["MAKEFLAGS"] = "-j {0:d}".format(njobs)
-        elif self.version_tuple < (3, 6, 0):
+        elif self.version_tuple < (3, 6, 0) or sys.version_info < (3, 3):
             win64 = (8 * struct.calcsize("P") == 64)
+            config_opts = ["-G", "NMake Makefiles"] + config_opts
             build_opts.extend([
                 "--",
                 "WIN64={0}".format("YES" if win64 else "NO"),
                 "BUILD_BATCH={0}".format("YES" if njobs > 1 else "NO"),
+                "MSVC_VER=1400",
             ])
         else:
             build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
