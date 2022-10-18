@@ -48,7 +48,7 @@ jobs:
           path: .
       -
         name: Set Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           architecture: ${{ matrix.arch }}
           python-version: ${{ matrix.python-version }}
@@ -114,7 +114,7 @@ jobs:
           cmake-version: "3.14.7"
       -
         name: Set Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           architecture: ${{ matrix.arch }}
           python-version: "3.6"
@@ -164,7 +164,7 @@ jobs:
           version: ${{ env.msvc-toolset }}
       -
         name: Set Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           architecture: ${{ matrix.arch }}
           python-version: ${{ matrix.python-version }}
@@ -217,7 +217,7 @@ jobs:
     steps:
       -
         name: Set Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           architecture: ${{ matrix.arch }}
           python-version: ${{ matrix.python-version }}
@@ -252,7 +252,7 @@ jobs:
     steps:
       -
         name: Set Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           architecture: ${{ matrix.arch }}
           python-version: ${{ matrix.python-version }}
