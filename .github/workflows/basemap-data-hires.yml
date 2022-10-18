@@ -2,6 +2,7 @@ name: basemap-data-hires
 
 env:
   PKGDIR: "packages/basemap_data_hires"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
 
 on:
   push:
