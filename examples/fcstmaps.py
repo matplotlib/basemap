@@ -1,90 +1,113 @@
-from __future__ import (absolute_import, division, print_function)
+"""Make a multi-panel plot from numerical weather forecast in NOAA OPeNDAP."""
+from __future__ import print_function
 
-from __future__ import unicode_literals
-# this example reads today's numerical weather forecasts
-# from the NOAA OpenDAP servers and makes a multi-panel plot.
-import datetime as dt
+import netCDF4
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
-import numpy.ma as ma
-from mpl_toolkits.basemap import Basemap, addcyclic
-from netCDF4 import Dataset as NetCDFFile, num2date
+from mpl_toolkits.basemap import Basemap
+from mpl_toolkits.basemap import addcyclic
 
 
-# today's date is default.
-if len(sys.argv) > 1:
-    date = dt.datetime.strptime(sys.argv[1], "%Y%m%d")
-else:
-    date = dt.datetime.today()
+def main(date, verbose=True):
+    """Main function."""
 
-# set OpenDAP server URL.
-try:
-    urlbase = "http://nomads.ncep.noaa.gov/dods/gfs_0p25/gfs%Y%m%d/gfs_0p25_00z"
-    data = NetCDFFile(date.strftime(urlbase))
-except:
-    msg = """
-opendap server not providing the requested data.
-Try another date by providing YYYYMMDD on command line."""
-    raise IOError(msg)
+    # Open dataset from OPeNDAP URL.
+    url = "http://nomads.ncep.noaa.gov/dods/gfs_0p25/gfs%Y%m%d/gfs_0p25_00z"
+    try:
+        data = netCDF4.Dataset(date.strftime(url), "r")
+        if verbose:
+            print("Data variables:")
+            print(sorted(data.variables))
+    except OSError as err:
+        err.args = (err.args[0], "date not found in OPeNDAP server")
+        raise
+
+    # Read lats, lons, and times.
+    latitudes = data.variables["lat"]
+    longitudes = data.variables["lon"]
+    fcsttimes = data.variables["time"]
+    times = fcsttimes[0:6]  # First 6 forecast times.
+    ntimes = len(times)
+
+    # Convert times for datetime instances.
+    fdates = netCDF4.num2date(
+        times, units=fcsttimes.units, calendar="standard")
+
+    # Make a list of YYYYMMDDHH strings.
+    verifdates = [fdate.strftime("%Y%m%d%H") for fdate in fdates]
+    if verbose:
+        print("Forecast datetime strings:")
+        print(verifdates)
+
+    # Convert times to forecast hours.
+    fcsthrs = []
+    for fdate in fdates:
+        fdiff = fdate - fdates[0]
+        fcsthrs.append(fdiff.days * 24. + fdiff.seconds / 3600.)
+    if verbose:
+        print("Forecast datetime hours:")
+        print(fcsthrs)
+
+    # Unpack 2-meter temp forecast data.
+    lats = latitudes[:]
+    nlats = len(lats)
+    lons1 = longitudes[:]
+    nlons = len(lons1)
+    t2mvar = data.variables["tmp2m"]
+
+    # Create Basemap instance for orthographic projection.
+    bmap = Basemap(lon_0=-90, lat_0=60, projection="ortho")
+
+    # Add wrap-around point in longitude.
+    t2m = np.zeros((ntimes, nlats, nlons + 1), np.float32)
+    for nt in range(ntimes):
+        t2m[nt, :, :], lons = addcyclic(t2mvar[nt, :, :], lons1)
+
+    # Convert to Celsius.
+    t2m = t2m - 273.15
+
+    # Define contour levels.
+    clevs = np.arange(-30, 30.1, 2.0)
+    lons, lats = np.meshgrid(lons, lats)
+    x, y = bmap(lons, lats)
+
+    # Create figure.
+    fig = plt.figure(figsize=(6, 8))
+
+    # Make subplots.
+    for nt, fcsthr in enumerate(fcsthrs):
+        fig.add_subplot(321 + nt)
+        cs = bmap.contourf(x, y, t2m[nt, :, :], clevs,
+                           cmap=plt.cm.jet, extend="both")
+        bmap.drawcoastlines(linewidth=0.5)
+        bmap.drawcountries()
+        bmap.drawparallels(np.arange(-80, 81, 20))
+        bmap.drawmeridians(np.arange(0, 360, 20))
+        # Set panel title.
+        plt.title(
+            "%d-h forecast valid " % fcsthr + verifdates[nt], fontsize=9)
+
+    # Set figure title.
+    plt.figtext(
+        0.5, 0.95,
+        "2-m temp (\N{DEGREE SIGN}C) forecasts from %s" % verifdates[0],
+        horizontalalignment="center", fontsize=14)
+
+    # Draw a single colorbar.
+    cax = plt.axes([0.1, 0.05, 0.8, 0.025])
+    plt.colorbar(cs, cax=cax, orientation="horizontal")
+    plt.show()
 
 
-# read lats,lons,times.
+if __name__ == "__main__":
 
-print(data.variables.keys())
-latitudes = data.variables['lat']
-longitudes = data.variables['lon']
-fcsttimes = data.variables['time']
-times = fcsttimes[0:6] # first 6 forecast times.
-ntimes = len(times)
-# convert times for datetime instances.
-fdates = num2date(times,units=fcsttimes.units,calendar='standard')
-# make a list of YYYYMMDDHH strings.
-verifdates = [fdate.strftime('%Y%m%d%H') for fdate in fdates]
-# convert times to forecast hours.
-fcsthrs = []
-for fdate in fdates:
-    fdiff = fdate-fdates[0]
-    fcsthrs.append(fdiff.days*24. + fdiff.seconds/3600.)
-print(fcsthrs)
-print(verifdates)
-lats = latitudes[:]
-nlats = len(lats)
-lons1 = longitudes[:]
-nlons = len(lons1)
+    import sys
+    import datetime as dt
 
-# unpack 2-meter temp forecast data.
+    # Parse input date (default: today).
+    if len(sys.argv) > 1:
+        dateobj = dt.datetime.strptime(sys.argv[1], "%Y%m%d")
+    else:
+        dateobj = dt.datetime.today()
 
-t2mvar = data.variables['tmp2m']
-t2m = np.zeros((ntimes,nlats,nlons+1),np.float32)
-# create Basemap instance for Orthographic projection.
-m = Basemap(lon_0=-90,lat_0=60,projection='ortho')
-# add wrap-around point in longitude.
-for nt in range(ntimes):
-    t2m[nt,:,:], lons = addcyclic(t2mvar[nt,:,:], lons1)
-# convert to celsius.
-t2m = t2m-273.15
-# contour levels
-clevs = np.arange(-30,30.1,2.)
-lons, lats = np.meshgrid(lons, lats)
-x, y = m(lons, lats)
-# create figure.
-fig=plt.figure(figsize=(6,8))
-# make subplots.
-for nt,fcsthr in enumerate(fcsthrs):
-    ax = fig.add_subplot(321+nt)
-    cs = m.contourf(x,y,t2m[nt,:,:],clevs,cmap=plt.cm.jet,extend='both')
-    m.drawcoastlines(linewidth=0.5)
-    m.drawcountries()
-    m.drawparallels(np.arange(-80,81,20))
-    m.drawmeridians(np.arange(0,360,20))
-    # panel title
-    plt.title('%d-h forecast valid '%fcsthr+verifdates[nt],fontsize=9)
-# figure title
-plt.figtext(0.5,0.95,
-            "2-m temp (\N{DEGREE SIGN}C) forecasts from %s"%verifdates[0],
-            horizontalalignment='center',fontsize=14)
-# a single colorbar.
-cax = plt.axes([0.1, 0.05, 0.8, 0.025])
-plt.colorbar(cax=cax, orientation='horizontal')
-plt.show()
+    sys.exit(main(dateobj, verbose=True))
