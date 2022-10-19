@@ -10,6 +10,12 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
+## [1.3.5]
+
+### Fixed
+- Fix broken array slicing inside `addcyclic` (PR [#559], solves issue
+  [#555], thanks to @fragkoul).
+
 ## [1.3.4] - 2022-08-10
 
 ### Changed
@@ -924,6 +930,10 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#559]:
+https://github.com/matplotlib/basemap/pull/559
+[#555]:
+https://github.com/matplotlib/basemap/issues/555
 [#548]:
 https://github.com/matplotlib/basemap/pull/548
 [#547]:
