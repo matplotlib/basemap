@@ -109,5 +109,4 @@ if __name__ == "__main__":
         dateobj = dt.datetime.strptime(sys.argv[1], "%Y%m%d")
     else:
         dateobj = dt.datetime.today()
-
-    sys.exit(main(dateobj, verbose=True))
+    main(dateobj, verbose=True)
