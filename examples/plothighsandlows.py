@@ -4,9 +4,9 @@ from __future__ import (absolute_import, division, print_function)
 plot H's and L's on a sea-level pressure map
 (uses scipy.ndimage.filters and netcdf4-python)
 """
+import datetime as dt
 import numpy as np
 import matplotlib.pyplot as plt
-from datetime import datetime
 from mpl_toolkits.basemap import Basemap, addcyclic
 from scipy.ndimage.filters import minimum_filter, maximum_filter
 from netCDF4 import Dataset
@@ -22,15 +22,11 @@ def extrema(mat,mode='wrap',window=10):
     return np.nonzero(mat == mn), np.nonzero(mat == mx)
 
 # plot 00 UTC today.
-date = datetime.now().strftime('%Y%m%d')+'00'
+urlbase = "http://nomads.ncep.noaa.gov/dods/gfs_0p25/gfs%Y%m%d/gfs_0p25_00z"
+date = dt.datetime.now()
 
 # open OpenDAP dataset.
-#data=Dataset("http://nomads.ncep.noaa.gov:9090/dods/gfs/gfs/%s/gfs_%sz_anl" %\
-#        (date[0:8],date[8:10]))
-data=Dataset("http://nomads.ncep.noaa.gov:9090/dods/gfs_hd/gfs_hd%s/gfs_hd_%sz"%\
-        (date[0:8],date[8:10]))
-
-
+data = Dataset(date.strftime(urlbase))
 
 # read lats,lons.
 lats = data.variables['lat'][:]

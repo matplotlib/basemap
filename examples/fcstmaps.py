@@ -3,27 +3,25 @@ from __future__ import (absolute_import, division, print_function)
 from __future__ import unicode_literals
 # this example reads today's numerical weather forecasts
 # from the NOAA OpenDAP servers and makes a multi-panel plot.
+import datetime as dt
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import numpy.ma as ma
-import datetime
 from mpl_toolkits.basemap import Basemap, addcyclic
 from netCDF4 import Dataset as NetCDFFile, num2date
 
 
 # today's date is default.
 if len(sys.argv) > 1:
-    YYYYMMDD = sys.argv[1]
+    date = dt.datetime.strptime(sys.argv[1], "%Y%m%d")
 else:
-    YYYYMMDD = datetime.datetime.today().strftime('%Y%m%d')
+    date = dt.datetime.today()
 
 # set OpenDAP server URL.
 try:
-    URLbase="http://nomads.ncep.noaa.gov:9090/dods/gfs/gfs"
-    URL=URLbase+YYYYMMDD+'/gfs_00z'
-    print(URL)
-    data = NetCDFFile(URL)
+    urlbase = "http://nomads.ncep.noaa.gov/dods/gfs_0p25/gfs%Y%m%d/gfs_0p25_00z"
+    data = NetCDFFile(date.strftime(urlbase))
 except:
     msg = """
 opendap server not providing the requested data.
