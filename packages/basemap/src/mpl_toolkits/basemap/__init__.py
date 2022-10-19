@@ -5127,7 +5127,7 @@ def addcyclic(*arr,**kwargs):
         except IndexError:
             raise ValueError('The specified axis does not correspond to an '
                     'array dimension.')
-        return npsel.concatenate((a,a[slicer]),axis=axis)
+        return npsel.concatenate((a,a[tuple(slicer)]),axis=axis)
     def _addcyclic_lon(a):
         """addcyclic function for a single longitude array"""
         # select the right numpy functions
