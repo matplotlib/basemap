@@ -1336,7 +1336,7 @@ class Basemap(object):
                     b2 = b.copy()
                     # fix Antartica.
                     if name == 'gshhs' and south < -89:
-                        b = b[4:,:]
+                        b = b[3:,:]
                         b2 = b.copy()
                         poly = Shape(b)
                 # if map boundary polygon is a valid one in lat/lon
