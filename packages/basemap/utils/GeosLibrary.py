@@ -138,13 +138,24 @@ class GeosLibrary(object):
             os.chmod(path, 0o755)
 
         # Patch CMakeLists so that libgeos_c.so does not depend on libgeos.so.
-        cmakefile = os.path.join(zipfold, "capi", "CMakeLists.txt")
+        if self.version_tuple < (3, 8, 0):
+            cmakefile = os.path.join(zipfold, "capi", "CMakeLists.txt")
+            oldtext = "target_link_libraries(geos_c geos)"
+            newtext = "target_link_libraries(geos_c geos-static)"
+        else:
+            cmakefile = os.path.join(zipfold, "CMakeLists.txt")
+            oldtext = 'add_library(geos "")'
+            newtext = 'add_library(geos STATIC "")'
         with io.open(cmakefile, "r", encoding="utf-8") as fd:
             lines = fd.readlines()
         with io.open(cmakefile, "wb") as fd:
-            oldtext = "target_link_libraries(geos_c geos)"
-            newtext = "target_link_libraries(geos_c geos-static)"
+            found_sharedline = False
+            shared_oldtext = "if(BUILD_SHARED_LIBS)"
+            shared_newtext = "if(FALSE)"
             for line in lines:
+                if not found_sharedline and shared_oldtext in line:
+                    line = line.replace(shared_oldtext, shared_newtext)
+                    found_sharedline = True
                 fd.write(line.replace(oldtext, newtext).encode())
 
         # Apply specific patches for GEOS < 3.6.0.
@@ -184,9 +195,12 @@ class GeosLibrary(object):
         # Define configure options.
         config_opts = [
             "-DCMAKE_INSTALL_PREFIX={0}".format(installdir),
-            "-DGEOS_ENABLE_TESTS=OFF",
             "-DCMAKE_BUILD_TYPE=Release",
         ]
+        if self.version_tuple < (3, 8, 0):
+            config_opts += ["-DGEOS_ENABLE_TESTS=OFF"]
+        else:
+            config_opts += ["-DBUILD_TESTING=OFF"]
         if os.name == "nt" and self.version_tuple < (3, 6, 0):
             config_opts = ["-G", "NMake Makefiles"] + config_opts
 
