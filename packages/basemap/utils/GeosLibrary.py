@@ -137,7 +137,26 @@ class GeosLibrary(object):
         for path in sorted(glob.glob(os.path.join(zipfold, "tools", "*.sh"))):
             os.chmod(path, 0o755)
 
-        # Patch CMakeLists so that libgeos_c.so does not depend on libgeos.so.
+        # Apply specific patches for GEOS < 3.6.0.
+        if self.version_tuple < (3, 6, 0):
+            # The SVN revision file is not created on the fly before 3.6.0.
+            svn_hfile = os.path.join(zipfold, "geos_svn_revision.h")
+            if not os.path.exists(svn_hfile):
+                with io.open(svn_hfile, "wb") as fd:
+                    text = "#define GEOS_SVN_REVISION 0"
+                    fd.write(text.encode())
+            # Reduce warnings when compiling with `nmake` on Windows.
+            cmakefile = os.path.join(zipfold, "CMakeLists.txt")
+            if os.path.exists(cmakefile):
+                with io.open(cmakefile, "r", encoding="utf-8") as fd:
+                    lines = fd.readlines()
+                with io.open(cmakefile, "wb") as fd:
+                    oldtext = 'string(REGEX REPLACE "/W[0-9]" "/W4"'
+                    newtext = oldtext.replace("W4", "W1")
+                    for line in lines:
+                        fd.write(line.replace(oldtext, newtext).encode())
+
+        # Patch CMakeLists to link shared geos_c with static geos.
         if self.version_tuple < (3, 8, 0):
             cmakefile = os.path.join(zipfold, "capi", "CMakeLists.txt")
             oldtext = "target_link_libraries(geos_c geos)"
@@ -158,24 +177,20 @@ class GeosLibrary(object):
                     found_sharedline = True
                 fd.write(line.replace(oldtext, newtext).encode())
 
-        # Apply specific patches for GEOS < 3.6.0.
-        if self.version_tuple < (3, 6, 0):
-            # The SVN revision file is not created on the fly before 3.6.0.
-            svn_hfile = os.path.join(zipfold, "geos_svn_revision.h")
-            if not os.path.exists(svn_hfile):
-                with io.open(svn_hfile, "wb") as fd:
-                    text = "#define GEOS_SVN_REVISION 0"
-                    fd.write(text.encode())
-            # Reduce warnings when compiling with `nmake` on Windows.
-            cmakefile = os.path.join(zipfold, "CMakeLists.txt")
-            if os.path.exists(cmakefile):
-                with io.open(cmakefile, "r", encoding="utf-8") as fd:
-                    lines = fd.readlines()
-                with io.open(cmakefile, "wb") as fd:
-                    oldtext = 'string(REGEX REPLACE "/W[0-9]" "/W4"'
-                    newtext = oldtext.replace("W4", "W1")
-                    for line in lines:
-                        fd.write(line.replace(oldtext, newtext).encode())
+        # Patch doc CMakeLists in GEOS 3.8.x series.
+        if (3, 8, 0) <= self.version_tuple < (3, 9, 0):
+            cmakefile = os.path.join(zipfold, "doc", "CMakeLists.txt")
+            oldtext1 = "target_include_directories(test_geos_unit\n"
+            newtext1 = "if(BUILD_TESTING)\n    {0}".format(oldtext1)
+            oldtext2 = "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)\n"
+            newtext2 = "{0}endif()\n".format(oldtext2)
+            with io.open(cmakefile, "r", encoding="utf-8") as fd:
+                lines = fd.readlines()
+            with io.open(cmakefile, "wb") as fd:
+                for line in lines:
+                    line = line.replace(oldtext1, newtext1)
+                    line = line.replace(oldtext2, newtext2)
+                    fd.write(line.encode())
 
     def build(self, installdir=None, njobs=1):
         """Build and install GEOS from source."""
@@ -205,18 +220,21 @@ class GeosLibrary(object):
         build_env = os.environ.copy()
 
         # Define custom configure and build options.
-        if os.name != "nt":
-            build_env["MAKEFLAGS"] = "-j {0:d}".format(njobs)
-        elif version < (3, 6, 0):
-            win64 = (8 * struct.calcsize("P") == 64)
-            config_opts = ["-G", "NMake Makefiles"] + config_opts
-            build_opts.extend([
-                "--",
-                "WIN64={0}".format("YES" if win64 else "NO"),
-                "BUILD_BATCH={0}".format("YES" if njobs > 1 else "NO"),
-            ])
+        if os.name == "nt":
+            if version < (3, 6, 0):
+                win64 = (8 * struct.calcsize("P") == 64)
+                config_opts = ["-G", "NMake Makefiles"] + config_opts
+                build_opts.extend([
+                    "--",
+                    "WIN64={0}".format("YES" if win64 else "NO"),
+                    "BUILD_BATCH={0}".format("YES" if njobs > 1 else "NO"),
+                ])
+            else:
+                build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
         else:
-            build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
+            build_env["MAKEFLAGS"] = "-j {0:d}".format(njobs)
+            if version >= (3, 7, 0):
+                config_opts += ["-DCMAKE_CXX_FLAGS=-fPIC"]
 
         # Call cmake configure after ensuring that the build directory exists.
         try:
