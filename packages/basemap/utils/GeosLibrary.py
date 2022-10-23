@@ -252,8 +252,9 @@ class GeosLibrary(object):
                     "--",
                     "WIN64={0}".format("YES" if win64 else "NO"),
                     "BUILD_BATCH={0}".format("YES" if njobs > 1 else "NO"),
-                    "MSVC_VER=1400",
                 ])
+                if sys.version_info[:2] < (3, 3):
+                    build_opts += ["MSVC_VER=1500"]
         else:
             build_env["MAKEFLAGS"] = "-j {0:d}".format(njobs)
             if version >= (3, 7, 0):
