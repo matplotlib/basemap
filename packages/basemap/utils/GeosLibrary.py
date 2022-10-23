@@ -218,24 +218,17 @@ class GeosLibrary(object):
         else:
             build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
 
-        # Now move to the GEOS source code folder and build with CMake.
-        cwd = os.getcwd()
+        # Call cmake configure after ensuring that the build directory exists.
         try:
-            # Ensure that the build directory exists.
-            try:
-                os.makedirs(builddir)
-            except OSError:
-                pass
-            os.chdir(builddir)
-            # Call cmake configure.
-            subprocess.call(["cmake", ".."] + config_opts)
-            # Ensure that the install directory exists.
-            try:
-                os.makedirs(installdir)
-            except OSError:
-                pass
-            # Call cmake build and install.
-            subprocess.call(["cmake", "--build", "."] + build_opts,
-                            env=build_env)
-        finally:
-            os.chdir(cwd)
+            os.makedirs(builddir)
+        except OSError:
+            pass
+        subprocess.call(["cmake", ".."] + config_opts, cwd=builddir)
+
+        # Call cmake build after ensuring that the install directory exists.
+        try:
+            os.makedirs(installdir)
+        except OSError:
+            pass
+        subprocess.call(["cmake", "--build", "."] + build_opts,
+                        cwd=builddir, env=build_env)
