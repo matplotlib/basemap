@@ -183,37 +183,33 @@ class GeosLibrary(object):
         # Download and extract zip file if not present.
         zipfold = os.path.join(self.root, "geos-{0}".format(self.version))
         self.extract(overwrite=True)
+        version = self.version_tuple
 
-        # Define build directory.
+        # Define build and install directory.
         builddir = os.path.join(zipfold, "build")
-
-        # Define installation directory.
         if installdir is None:
             installdir = os.path.expanduser("~/.local/share/libgeos")
         installdir = os.path.abspath(installdir)
 
-        # Define configure options.
+        # Define generic configure and build options.
         config_opts = [
-            "-DCMAKE_INSTALL_PREFIX={0}".format(installdir),
             "-DCMAKE_BUILD_TYPE=Release",
+            "-DCMAKE_INSTALL_PREFIX={0}".format(installdir),
+            "-D{0}=OFF".format("GEOS_ENABLE_TESTS" if version < (3, 8, 0)
+                               else "BUILD_TESTING")
         ]
-        if self.version_tuple < (3, 8, 0):
-            config_opts += ["-DGEOS_ENABLE_TESTS=OFF"]
-        else:
-            config_opts += ["-DBUILD_TESTING=OFF"]
-        if os.name == "nt" and self.version_tuple < (3, 6, 0):
-            config_opts = ["-G", "NMake Makefiles"] + config_opts
-
-        # Define build options.
-        build_env = os.environ.copy()
         build_opts = [
             "--config", "Release",
             "--target", "install",
         ]
+        build_env = os.environ.copy()
+
+        # Define custom configure and build options.
         if os.name != "nt":
             build_env["MAKEFLAGS"] = "-j {0:d}".format(njobs)
-        elif self.version_tuple < (3, 6, 0):
+        elif version < (3, 6, 0):
             win64 = (8 * struct.calcsize("P") == 64)
+            config_opts = ["-G", "NMake Makefiles"] + config_opts
             build_opts.extend([
                 "--",
                 "WIN64={0}".format("YES" if win64 else "NO"),
