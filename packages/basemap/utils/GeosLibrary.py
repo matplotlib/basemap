@@ -242,6 +242,7 @@ class GeosLibrary(object):
 
         # Define custom configure and build options.
         if os.name == "nt":
+            config_opts += ["-DCMAKE_CXX_FLAGS='/wd4251 /wd4458 /wd4530'"]
             if version >= (3, 6, 0) and sys.version_info[:2] >= (3, 3):
                 build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
             else:
@@ -256,7 +257,7 @@ class GeosLibrary(object):
         else:
             build_env["MAKEFLAGS"] = "-j {0:d}".format(njobs)
             if version >= (3, 7, 0):
-                config_opts += ["-DCMAKE_CXX_FLAGS=-fPIC"]
+                config_opts += ["-DCMAKE_CXX_FLAGS='-fPIC'"]
 
         # Call cmake configure after ensuring that the build directory exists.
         try:
