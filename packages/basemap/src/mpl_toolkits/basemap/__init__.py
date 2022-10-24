@@ -53,6 +53,9 @@ import numpy.ma as ma
 import _geoslib
 import functools
 
+
+__version__ = "1.3.5"
+
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 # check to see if environment variable BASEMAPDATA set to a directory,
 # and if so look for the data there.
@@ -63,8 +66,6 @@ if 'BASEMAPDATA' in os.environ:
 else:
     from mpl_toolkits import basemap_data
     basemap_datadir = os.path.abspath(list(basemap_data.__path__)[0])
-
-__version__ = "1.3.4"
 
 # module variable that sets the default value for the 'latlon' kwarg.
 # can be set to True by user so plotting functions can take lons,lats
