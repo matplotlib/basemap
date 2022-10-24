@@ -15,6 +15,8 @@ https://semver.org/spec/v2.0.0.html
 ### Fixed
 - Fix broken array slicing inside `addcyclic` (PR [#559], solves issue
   [#555], thanks to @fragkoul).
+- Fix `GeosLibrary` wrapper to also work with GEOS >= 3.7.0 on Windows
+  and GNU/Linux.
 - Fix wrong Antarctica coastline boundary with GEOS >= 3.9.0 (PR [#560],
   solves issue [#522]).
 
