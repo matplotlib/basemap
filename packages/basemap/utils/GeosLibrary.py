@@ -20,6 +20,7 @@
 
 import io
 import os
+import sys
 import ssl
 import glob
 import shutil
@@ -126,8 +127,7 @@ class GeosLibrary(object):
         if os.path.exists(zipfold):
             if not overwrite:
                 raise OSError("folder '{0}' already exists".format(zipfold))
-            else:
-                shutil.rmtree(zipfold)
+            shutil.rmtree(zipfold)
 
         # Decompress zip file.
         with contextlib.closing(ZipFile(zippath, "r")) as fd:
@@ -136,16 +136,6 @@ class GeosLibrary(object):
         # Ensure that GEOS internal sh scripts can be executed.
         for path in sorted(glob.glob(os.path.join(zipfold, "tools", "*.sh"))):
             os.chmod(path, 0o755)
-
-        # Patch CMakeLists so that libgeos_c.so does not depend on libgeos.so.
-        cmakefile = os.path.join(zipfold, "capi", "CMakeLists.txt")
-        with io.open(cmakefile, "r", encoding="utf-8") as fd:
-            lines = fd.readlines()
-        with io.open(cmakefile, "wb") as fd:
-            oldtext = "target_link_libraries(geos_c geos)"
-            newtext = "target_link_libraries(geos_c geos-static)"
-            for line in lines:
-                fd.write(line.replace(oldtext, newtext).encode())
 
         # Apply specific patches for GEOS < 3.6.0.
         if self.version_tuple < (3, 6, 0):
@@ -166,66 +156,121 @@ class GeosLibrary(object):
                     for line in lines:
                         fd.write(line.replace(oldtext, newtext).encode())
 
+        # Apply specific patches for 3.6.0 <= GEOS < 3.7.0 on Windows.
+        if (3, 6, 0) <= self.version_tuple < (3, 7, 0) and os.name == "nt":
+            autogen_file = os.path.join(zipfold, "autogen.bat")
+            subprocess.call([autogen_file], cwd=zipfold)
+            cppfile = os.path.join(zipfold, "src", "geomgraph", "DirectedEdgeStar.cpp")
+            with io.open(cppfile, "r", encoding="utf-8") as fd:
+                lines = fd.readlines()
+            with io.open(cppfile, "wb") as fd:
+                oldtext = "DirectedEdgeStar::print() const"
+                newtext = oldtext.replace(" const", "")
+                for line in lines:
+                    fd.write(line.replace(oldtext, newtext).encode())
+            hfile = os.path.join(zipfold, "include", "geos", "geomgraph", "DirectedEdgeStar.h")
+            with io.open(hfile, "r", encoding="utf-8") as fd:
+                lines = fd.readlines()
+            with io.open(hfile, "wb") as fd:
+                oldtext = "virtual std::string print() const;"
+                newtext = oldtext.replace(" const", "")
+                for line in lines:
+                    fd.write(line.replace(oldtext, newtext).encode())
+
+        # Patch CMakeLists to link shared geos_c with static geos.
+        if self.version_tuple < (3, 8, 0):
+            cmakefile = os.path.join(zipfold, "capi", "CMakeLists.txt")
+            oldtext = "target_link_libraries(geos_c geos)"
+            newtext = "target_link_libraries(geos_c geos-static)"
+        else:
+            cmakefile = os.path.join(zipfold, "CMakeLists.txt")
+            oldtext = 'add_library(geos "")'
+            newtext = 'add_library(geos STATIC "")'
+        with io.open(cmakefile, "r", encoding="utf-8") as fd:
+            lines = fd.readlines()
+        with io.open(cmakefile, "wb") as fd:
+            found_sharedline = False
+            shared_oldtext = "if(BUILD_SHARED_LIBS)"
+            shared_newtext = "if(FALSE)"
+            for line in lines:
+                if not found_sharedline and shared_oldtext in line:
+                    line = line.replace(shared_oldtext, shared_newtext)
+                    found_sharedline = True
+                fd.write(line.replace(oldtext, newtext).encode())
+
+        # Patch doc CMakeLists in GEOS 3.8.x series.
+        if (3, 8, 0) <= self.version_tuple < (3, 9, 0):
+            cmakefile = os.path.join(zipfold, "doc", "CMakeLists.txt")
+            oldtext1 = "target_include_directories(test_geos_unit\n"
+            newtext1 = "if(BUILD_TESTING)\n    {0}".format(oldtext1)
+            oldtext2 = "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)\n"
+            newtext2 = "{0}endif()\n".format(oldtext2)
+            with io.open(cmakefile, "r", encoding="utf-8") as fd:
+                lines = fd.readlines()
+            with io.open(cmakefile, "wb") as fd:
+                for line in lines:
+                    line = line.replace(oldtext1, newtext1)
+                    line = line.replace(oldtext2, newtext2)
+                    fd.write(line.encode())
+
     def build(self, installdir=None, njobs=1):
         """Build and install GEOS from source."""
 
         # Download and extract zip file if not present.
         zipfold = os.path.join(self.root, "geos-{0}".format(self.version))
         self.extract(overwrite=True)
+        version = self.version_tuple
 
-        # Define build directory.
+        # Define build and install directory.
         builddir = os.path.join(zipfold, "build")
-
-        # Define installation directory.
         if installdir is None:
             installdir = os.path.expanduser("~/.local/share/libgeos")
         installdir = os.path.abspath(installdir)
 
-        # Define configure options.
+        # Define generic configure and build options.
         config_opts = [
-            "-DCMAKE_INSTALL_PREFIX={0}".format(installdir),
-            "-DGEOS_ENABLE_TESTS=OFF",
             "-DCMAKE_BUILD_TYPE=Release",
+            "-DCMAKE_INSTALL_PREFIX={0}".format(installdir),
+            "-D{0}=OFF".format("GEOS_ENABLE_TESTS" if version < (3, 8, 0)
+                               else "BUILD_TESTING")
         ]
-        if os.name == "nt" and self.version_tuple < (3, 6, 0):
-            config_opts = ["-G", "NMake Makefiles"] + config_opts
-
-        # Define build options.
-        build_env = os.environ.copy()
         build_opts = [
             "--config", "Release",
             "--target", "install",
         ]
-        if os.name != "nt":
-            build_env["MAKEFLAGS"] = "-j {0:d}".format(njobs)
-        elif self.version_tuple < (3, 6, 0):
-            win64 = (8 * struct.calcsize("P") == 64)
-            build_opts.extend([
-                "--",
-                "WIN64={0}".format("YES" if win64 else "NO"),
-                "BUILD_BATCH={0}".format("YES" if njobs > 1 else "NO"),
-            ])
-        else:
-            build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
+        build_env = os.environ.copy()
 
-        # Now move to the GEOS source code folder and build with CMake.
-        cwd = os.getcwd()
+        # Define custom configure and build options.
+        if os.name == "nt":
+            config_opts += ["-DCMAKE_CXX_FLAGS='/wd4251 /wd4458 /wd4530'"]
+            if version >= (3, 6, 0) and sys.version_info[:2] >= (3, 3):
+                build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
+            else:
+                win64 = (8 * struct.calcsize("P") == 64)
+                config_opts = ["-G", "NMake Makefiles"] + config_opts
+                build_opts.extend([
+                    "--",
+                    "WIN64={0}".format("YES" if win64 else "NO"),
+                    "BUILD_BATCH={0}".format("YES" if njobs > 1 else "NO"),
+                ])
+                if sys.version_info[:2] < (3, 3):
+                    build_opts += ["MSVC_VER=1500"]
+        else:
+            build_env["MAKEFLAGS"] = "-j {0:d}".format(njobs)
+            if version >= (3, 7, 0):
+                config_opts += ["-DCMAKE_CXX_FLAGS='-fPIC'"]
+
+        # Call cmake configure after ensuring that the build directory exists.
         try:
-            # Ensure that the build directory exists.
-            try:
-                os.makedirs(builddir)
-            except OSError:
-                pass
-            os.chdir(builddir)
-            # Call cmake configure.
-            subprocess.call(["cmake", ".."] + config_opts)
-            # Ensure that the install directory exists.
-            try:
-                os.makedirs(installdir)
-            except OSError:
-                pass
-            # Call cmake build and install.
-            subprocess.call(["cmake", "--build", "."] + build_opts,
-                            env=build_env)
-        finally:
-            os.chdir(cwd)
+            os.makedirs(builddir)
+        except OSError:
+            pass
+        subprocess.call(["cmake", ".."] + config_opts, cwd=builddir)
+
+        # Call cmake build after ensuring that the install directory exists.
+        try:
+            os.makedirs(installdir)
+        except OSError:
+            pass
+        subprocess.call(["cmake", "--build", "."] + build_opts,
+                        cwd=builddir, env=build_env)
