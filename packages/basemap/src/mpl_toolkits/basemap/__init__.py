@@ -53,6 +53,9 @@ import numpy.ma as ma
 import _geoslib
 import functools
 
+
+__version__ = "1.3.5+dev"
+
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 # check to see if environment variable BASEMAPDATA set to a directory,
 # and if so look for the data there.
@@ -63,8 +66,6 @@ if 'BASEMAPDATA' in os.environ:
 else:
     from mpl_toolkits import basemap_data
     basemap_datadir = os.path.abspath(list(basemap_data.__path__)[0])
-
-__version__ = "1.3.4+dev"
 
 # module variable that sets the default value for the 'latlon' kwarg.
 # can be set to True by user so plotting functions can take lons,lats
@@ -1336,7 +1337,7 @@ class Basemap(object):
                     b2 = b.copy()
                     # fix Antartica.
                     if name == 'gshhs' and south < -89:
-                        b = b[4:,:]
+                        b = b[3:,:]
                         b2 = b.copy()
                         poly = Shape(b)
                 # if map boundary polygon is a valid one in lat/lon
@@ -5132,7 +5133,7 @@ def addcyclic(*arr,**kwargs):
         except IndexError:
             raise ValueError('The specified axis does not correspond to an '
                     'array dimension.')
-        return npsel.concatenate((a,a[slicer]),axis=axis)
+        return npsel.concatenate((a,a[tuple(slicer)]),axis=axis)
     def _addcyclic_lon(a):
         """addcyclic function for a single longitude array"""
         # select the right numpy functions

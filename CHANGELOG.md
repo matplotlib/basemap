@@ -19,6 +19,16 @@ https://semver.org/spec/v2.0.0.html
 ### Changed
 - Upgrade bundled GEOS library to 3.6.5.
 
+## [1.3.5] - 2022-10-25
+
+### Fixed
+- Fix broken array slicing inside `addcyclic` (PR [#559], solves issue
+  [#555], thanks to @fragkoul).
+- Fix `GeosLibrary` wrapper to also work with GEOS >= 3.7.0 on Windows
+  and GNU/Linux.
+- Fix wrong Antarctica coastline boundary with GEOS >= 3.9.0 (PR [#560],
+  solves issue [#522]).
+
 ## [1.3.4] - 2022-08-10
 
 ### Changed
@@ -933,6 +943,12 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#560]:
+https://github.com/matplotlib/basemap/pull/560
+[#559]:
+https://github.com/matplotlib/basemap/pull/559
+[#555]:
+https://github.com/matplotlib/basemap/issues/555
 [#554]:
 https://github.com/matplotlib/basemap/pull/554
 [#552]:
@@ -969,6 +985,8 @@ https://github.com/matplotlib/basemap/issues/527
 https://github.com/matplotlib/basemap/issues/526
 [#525]:
 https://github.com/matplotlib/basemap/issues/525
+[#522]:
+https://github.com/matplotlib/basemap/issues/522
 [#521]:
 https://github.com/matplotlib/basemap/issues/521
 [#518]:
@@ -1021,7 +1039,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.4...develop
+https://github.com/matplotlib/basemap/compare/v1.3.5...develop
+[1.3.5]:
+https://github.com/matplotlib/basemap/compare/v1.3.4...v1.3.5
 [1.3.4]:
 https://github.com/matplotlib/basemap/compare/v1.3.3...v1.3.4
 [1.3.3]:
