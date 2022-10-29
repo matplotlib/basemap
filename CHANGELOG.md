@@ -10,6 +10,11 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
+## [1.3.6]
+
+### Changed
+- Upgrade `pyproj` upper pin to 3.5.
+
 ## [1.3.5] - 2022-10-25
 
 ### Fixed
@@ -1020,7 +1025,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.5...develop
+https://github.com/matplotlib/basemap/compare/v1.3.6...develop
+[1.3.6]:
+https://github.com/matplotlib/basemap/compare/v1.3.5...v1.3.6
 [1.3.5]:
 https://github.com/matplotlib/basemap/compare/v1.3.4...v1.3.5
 [1.3.4]:
