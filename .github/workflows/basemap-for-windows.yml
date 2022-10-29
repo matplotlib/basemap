@@ -36,7 +36,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
       max-parallel: 3
       fail-fast: false
     needs: checkout
@@ -137,7 +137,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
       max-parallel: 3
       fail-fast: false
     needs: build-geos
@@ -210,7 +210,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
       max-parallel: 3
       fail-fast: false
     needs: build
@@ -244,7 +244,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
