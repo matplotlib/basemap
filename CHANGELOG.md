@@ -13,6 +13,7 @@ https://semver.org/spec/v2.0.0.html
 ## [1.3.6]
 
 ### Changed
+- Upgrade `matplotlib` upper pin to 3.7.
 - Upgrade `pyproj` upper pin to 3.5.
 
 ## [1.3.5] - 2022-10-25
