@@ -158,7 +158,7 @@ jobs:
           case "${{ matrix.python-version }}" in
               2.6|3.[23])      pkgvers=1.11.3;;
               2.7|3.[456789])  pkgvers=1.16.6;;
-              *)               pkgvers=1.21.4;;
+              *)               pkgvers=1.21.1;;
           esac
           pip install "numpy == ${pkgvers}"
       -

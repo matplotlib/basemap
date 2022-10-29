@@ -179,7 +179,7 @@ jobs:
           Switch -regex ("${{ matrix.python-version }}") {
               "^2\.6|3\.[123]$"     { Set-Variable -Name "pkgvers" -Value "1.11.3" }
               "^2\.7|3\.[456789]$"  { Set-Variable -Name "pkgvers" -Value "1.16.6" }
-              default               { Set-Variable -Name "pkgvers" -Value "1.21.4" }
+              default               { Set-Variable -Name "pkgvers" -Value "1.21.1" }
           }
           $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
           python -m pip install "numpy == ${pkgvers}"
