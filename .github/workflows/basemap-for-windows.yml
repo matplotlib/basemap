@@ -233,11 +233,15 @@ jobs:
         name: Install package
         run: |
           pip install --prefer-binary (Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)
+        # We need to skip Py311 x86 because of missing pyproj wheels.
+        if: matrix.arch != 'x86' || matrix.python-version != '3.11'
       -
         name: Test package
         run: |
           python -c "from mpl_toolkits.basemap import Basemap"
           python -c "from mpl_toolkits.basemap import cm"
+        # We need to skip Py311 x86 because of missing pyproj wheels.
+        if: matrix.arch != 'x86' || matrix.python-version != '3.11'
 
   upload:
     strategy:
