@@ -267,13 +267,6 @@ jobs:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
       -
-        name: Install matplotlib dependencies
-        run: |
-          apt-get update
-          apt-get install -y gcc g++ make
-          apt-get install -y pkg-config libfreetype6-dev libpng12-dev
-        if: matrix.arch == 'x86' && matrix.python-version == '3.5'
-      -
         name: Install numpy from source
         run: |
           apt-get update
