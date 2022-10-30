@@ -4217,7 +4217,7 @@ class Basemap(object):
 
     def arcgisimage(self,server='http://server.arcgisonline.com/ArcGIS',\
                  service='World_Imagery',xpixels=400,ypixels=None,\
-                 dpi=96,verbose=False,**kwargs):
+                 dpi=96,cachedir=None,verbose=False,**kwargs):
         """
         Retrieve an image using the ArcGIS Server REST API and display it on
         the map. In order to use this method, the Basemap instance must be
@@ -4243,6 +4243,7 @@ class Basemap(object):
                          map projection region.
         dpi              The device resolution of the exported image (dots per
                          inch, default 96).
+        cachedir         An optional directory to use as cache folder for the retrieved images.
         verbose          if True, print URL used to retrieve image (default
                          False).
         ==============   ====================================================
@@ -4302,8 +4303,31 @@ f=image" %\
 (server,service,xmin,ymin,xmax,ymax,self.epsg,self.epsg,xpixels,ypixels,dpi)
         # print URL?
         if verbose: print(basemap_url)
+            
+        if cachedir != None:
+            # Generate a filename for the cached file.
+            filename = "%s-bbox-%s-%s-%s-%s-bboxsr%s-imagesr%s-size-%s-%s-dpi%s.png" %\
+            (service,xmin,ymin,xmax,ymax,self.epsg,self.epsg,xpixels,ypixels,dpi)
+            
+             # Check if the cache directory exists, if not create it.
+            if not os.path.exists(cachedir):
+                os.makedirs(cachedir)
+                
+            # Check if the image is already in the cachedir folder.
+            cache_path = cachedir + filename
+                
+            if os.path.isfile(cache_path):
+                print('Image already in cache')
+                img = Image.open(cache_path)
+                return basemap.imshow(img, ax=ax, origin='upper')
+            else:
+                # Retrieve and save image
+                img = Image.open(urlopen(basemap_url))
+                img.save(cache_path)
+        else:
+            img = Image.open(urlopen(basemap_url))   
+            
         # return AxesImage instance.
-        img = Image.open(urlopen(basemap_url))
         return self.imshow(img, ax=ax, origin='upper')
 
     def wmsimage(self,server,\
