@@ -161,20 +161,21 @@ jobs:
               3.10)            pkgvers=1.21.4;;
               *)               pkgvers=1.23.3;;
           esac
-          if [ "${pkgvers}" = "1.23.3" ]; then
-              # Dirty solution to get NumPy headers for Python 3.11.
+          # Dirty solution to get NumPy headers for Python 3.11.
+          if [ "${{ matrix.python-version }}" = "3.11" ]; then
               case "${{ matrix.arch }}" in
-                  x64) kwds="--plat=manylinux_2_17_x86_64" ;;
-                  x86) kwds="--plat=manylinux_2_17_i686"   ;;
+                  x64)  kwds="--plat=manylinux_2_17_x86_64" ;;
+                  x86)  kwds="--plat=manylinux_2_17_i686"   ;;
               esac
-              pip download --no-deps ${kwds} "numpy==1.23.3"
+              pip download --no-deps ${kwds} "numpy==${pkgvers}"
               oldpkgfile=$(ls *.whl | head -n1)
               newpkgfile=$(echo "${oldpkgfile}" | sed 's/manylinux_2_17/linux/')
               mv "${oldpkgfile}" "${newpkgfile}"
               pip install "${newpkgfile}"
               rm "${newpkgfile}"
+          else
+              pip install "numpy == ${pkgvers}"
           fi
-          pip install "numpy == ${pkgvers}"
       -
         name: Build wheel
         run: |
