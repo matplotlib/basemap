@@ -15,6 +15,8 @@ https://semver.org/spec/v2.0.0.html
 ### Added
 - Optional argument `encoding_errors` for `Basemap.readshapefile` method
   (PR [#554] by @guziy, implements request [#552]).
+- Optional argument `cachedir` for `Basemap.arcgisimage` method to allow
+  caching of ArcGIS image downloads (PR [#562] by @JoepdeJong).
 
 ### Changed
 - Upgrade bundled GEOS library to 3.6.5.
@@ -943,6 +945,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#562]:
+https://github.com/matplotlib/basemap/pull/562
 [#560]:
 https://github.com/matplotlib/basemap/pull/560
 [#559]:
