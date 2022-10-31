@@ -11,7 +11,7 @@ except ImportError:
     from matplotlib.cbook import dedent
 
 
-__version__ = "1.3.5"
+__version__ = "1.3.6"
 
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)

@@ -3,7 +3,9 @@ name: basemap-data
 env:
   PKGDIR: "packages/basemap_data"
   PYTHONWARNINGS: "ignore:DEPRECATION"
-  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PIP_DISABLE_PIP_VERSION_CHECK: 1
+  PIP_TIMEOUT: 10
+  PIP_RETRIES: 0
 
 on:
   push:
@@ -65,7 +67,7 @@ jobs:
       matrix:
         python-version:
           ["2.6", "2.7", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8",
-           "3.9", "3.10"]
+           "3.9", "3.10", "3.11"]
       max-parallel: 3
       fail-fast: false
     needs: build

@@ -10,6 +10,20 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
+## [1.3.6] - 2022-10-31
+
+### Added
+- Support for Python 3.11 (PR [#563], solves issue [#561]).
+- Optional argument `toolset` in `GeosLibrary.build` method.
+
+### Changed
+- Upgrade `matplotlib` upper pin to 3.7.
+- Upgrade `pyproj` upper pin to 3.5.
+
+### Fixed
+- Set MSVC 14.0 (VS2015) to build the precompiled Windows wheels in
+  GitHub workflows (PR [#564]).
+
 ## [1.3.5] - 2022-10-25
 
 ### Fixed
@@ -934,6 +948,12 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#564]:
+https://github.com/matplotlib/basemap/pull/564
+[#563]:
+https://github.com/matplotlib/basemap/pull/563
+[#561]:
+https://github.com/matplotlib/basemap/issues/561
 [#560]:
 https://github.com/matplotlib/basemap/pull/560
 [#559]:
@@ -1020,7 +1040,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.5...develop
+https://github.com/matplotlib/basemap/compare/v1.3.6...develop
+[1.3.6]:
+https://github.com/matplotlib/basemap/compare/v1.3.5...v1.3.6
 [1.3.5]:
 https://github.com/matplotlib/basemap/compare/v1.3.4...v1.3.5
 [1.3.4]:
