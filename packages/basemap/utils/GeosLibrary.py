@@ -213,7 +213,7 @@ class GeosLibrary(object):
                     line = line.replace(oldtext2, newtext2)
                     fd.write(line.encode())
 
-    def build(self, installdir=None, njobs=1):
+    def build(self, installdir=None, toolset=None, njobs=1):
         """Build and install GEOS from source."""
 
         # Download and extract zip file if not present.
@@ -244,6 +244,8 @@ class GeosLibrary(object):
         if os.name == "nt":
             config_opts += ["-DCMAKE_CXX_FLAGS='/wd4251 /wd4458 /wd4530 /EHsc'"]
             if version >= (3, 6, 0) and sys.version_info[:2] >= (3, 3):
+                if toolset is not None:
+                    config_opts += ["-DCMAKE_GENERATOR_TOOLSET={0}".format(toolset)]
                 build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
             else:
                 win64 = (8 * struct.calcsize("P") == 64)

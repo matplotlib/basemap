@@ -12,6 +12,9 @@ https://semver.org/spec/v2.0.0.html
 
 ## [1.3.6]
 
+### Added
+- Optional argument `toolset` in `GeosLibrary.build` method.
+
 ### Changed
 - Upgrade `matplotlib` upper pin to 3.7.
 - Upgrade `pyproj` upper pin to 3.5.
