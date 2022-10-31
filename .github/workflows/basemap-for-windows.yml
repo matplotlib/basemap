@@ -19,7 +19,7 @@ on:
 jobs:
 
   checkout:
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       -
         name: Checkout
@@ -32,7 +32,7 @@ jobs:
           path: .
 
   lint:
-    runs-on: windows-latest
+    runs-on: windows-2019
     strategy:
       matrix:
         python-version:
@@ -90,11 +90,11 @@ jobs:
         arch:
           ["x64", "x86"]
         msvc-toolset:
-          ["9.0", "14.16"]
+          ["9.0", "14.0"]
       max-parallel: 4
       fail-fast: false
     needs: lint
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       -
         name: Download checkout
@@ -141,7 +141,7 @@ jobs:
       max-parallel: 3
       fail-fast: false
     needs: build-geos
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       -
         name: Download checkout
@@ -155,7 +155,7 @@ jobs:
           if ("${{ matrix.python-version }}" -eq "2.7") {
               echo "msvc-toolset=9.0" >> $env:GITHUB_ENV
           } else {
-              echo "msvc-toolset=14.16" >> $env:GITHUB_ENV
+              echo "msvc-toolset=14.0" >> $env:GITHUB_ENV
           }
       -
         name: Set MSVC toolset
@@ -215,7 +215,7 @@ jobs:
       max-parallel: 3
       fail-fast: false
     needs: build
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       -
         name: Set Python
@@ -253,7 +253,7 @@ jobs:
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
-    runs-on: windows-latest
+    runs-on: windows-2019
     environment: PyPI
     steps:
       -

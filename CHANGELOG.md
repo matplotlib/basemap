@@ -14,10 +14,15 @@ https://semver.org/spec/v2.0.0.html
 
 ### Added
 - Support for Python 3.11 (PR [#563], solves issue [#561]).
+- Optional argument `toolset` in `GeosLibrary.build` method.
 
 ### Changed
 - Upgrade `matplotlib` upper pin to 3.7.
 - Upgrade `pyproj` upper pin to 3.5.
+
+### Fixed
+- Set MSVC 14.0 (VS2015) to build the precompiled Windows wheels in
+  GitHub workflows (PR [#564]).
 
 ## [1.3.5] - 2022-10-25
 
@@ -943,6 +948,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#564]:
+https://github.com/matplotlib/basemap/pull/564
 [#563]:
 https://github.com/matplotlib/basemap/pull/563
 [#561]:
