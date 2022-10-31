@@ -90,7 +90,7 @@ jobs:
         arch:
           ["x64", "x86"]
         msvc-toolset:
-          ["9.0", "14.16"]
+          ["9.0", "14.0"]
       max-parallel: 4
       fail-fast: false
     needs: lint
@@ -155,7 +155,7 @@ jobs:
           if ("${{ matrix.python-version }}" -eq "2.7") {
               echo "msvc-toolset=9.0" >> $env:GITHUB_ENV
           } else {
-              echo "msvc-toolset=14.16" >> $env:GITHUB_ENV
+              echo "msvc-toolset=14.0" >> $env:GITHUB_ENV
           }
       -
         name: Set MSVC toolset

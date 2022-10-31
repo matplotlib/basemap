@@ -16,6 +16,10 @@ https://semver.org/spec/v2.0.0.html
 - Upgrade `matplotlib` upper pin to 3.7.
 - Upgrade `pyproj` upper pin to 3.5.
 
+### Fixed
+- Set MSVC 14.0 (VS2015) to build the precompiled Windows wheels in
+  GitHub workflows.
+
 ## [1.3.5] - 2022-10-25
 
 ### Fixed
