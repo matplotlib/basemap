@@ -10,7 +10,7 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
-## [1.3.6]
+## [1.3.6] - 2022-10-31
 
 ### Added
 - Support for Python 3.11 (PR [#563], solves issue [#561]).
