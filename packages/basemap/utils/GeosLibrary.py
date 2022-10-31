@@ -242,7 +242,7 @@ class GeosLibrary(object):
 
         # Define custom configure and build options.
         if os.name == "nt":
-            config_opts += ["-DCMAKE_CXX_FLAGS='/wd4251 /wd4458 /wd4530'"]
+            config_opts += ["-DCMAKE_CXX_FLAGS='/wd4251 /wd4458 /wd4530 /EHsc'"]
             if version >= (3, 6, 0) and sys.version_info[:2] >= (3, 3):
                 build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
             else:
