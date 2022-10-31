@@ -3,7 +3,9 @@ name: basemap-data
 env:
   PKGDIR: "packages/basemap_data"
   PYTHONWARNINGS: "ignore:DEPRECATION"
-  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PIP_DISABLE_PIP_VERSION_CHECK: 1
+  PIP_TIMEOUT: 10
+  PIP_RETRIES: 0
 
 on:
   push:
