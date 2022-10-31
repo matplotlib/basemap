@@ -36,7 +36,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
       max-parallel: 3
       fail-fast: false
     needs: checkout
@@ -137,7 +137,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
       max-parallel: 3
       fail-fast: false
     needs: build-geos
@@ -179,7 +179,8 @@ jobs:
           Switch -regex ("${{ matrix.python-version }}") {
               "^2\.6|3\.[123]$"     { Set-Variable -Name "pkgvers" -Value "1.11.3" }
               "^2\.7|3\.[456789]$"  { Set-Variable -Name "pkgvers" -Value "1.16.6" }
-              default               { Set-Variable -Name "pkgvers" -Value "1.21.4" }
+              "^3\.10$"             { Set-Variable -Name "pkgvers" -Value "1.21.4" }
+              default               { Set-Variable -Name "pkgvers" -Value "1.23.3" }
           }
           $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
           python -m pip install "numpy == ${pkgvers}"
@@ -210,7 +211,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
       max-parallel: 3
       fail-fast: false
     needs: build
@@ -232,11 +233,15 @@ jobs:
         name: Install package
         run: |
           pip install --prefer-binary (Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)
+        # We need to skip Py311 x86 because of missing pyproj wheels.
+        if: matrix.arch != 'x86' || matrix.python-version != '3.11'
       -
         name: Test package
         run: |
           python -c "from mpl_toolkits.basemap import Basemap"
           python -c "from mpl_toolkits.basemap import cm"
+        # We need to skip Py311 x86 because of missing pyproj wheels.
+        if: matrix.arch != 'x86' || matrix.python-version != '3.11'
 
   upload:
     strategy:
@@ -244,7 +249,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
