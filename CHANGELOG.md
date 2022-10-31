@@ -12,6 +12,9 @@ https://semver.org/spec/v2.0.0.html
 
 ## [1.3.6]
 
+### Added
+- Support for Python 3.11 (PR [#563], solves issue [#561]).
+
 ### Changed
 - Upgrade `matplotlib` upper pin to 3.7.
 - Upgrade `pyproj` upper pin to 3.5.
@@ -940,6 +943,10 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#563]:
+https://github.com/matplotlib/basemap/pull/563
+[#561]:
+https://github.com/matplotlib/basemap/issues/561
 [#560]:
 https://github.com/matplotlib/basemap/pull/560
 [#559]:
