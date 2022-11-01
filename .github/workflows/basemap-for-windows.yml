@@ -111,10 +111,10 @@ jobs:
           path: .
       -
         name: Set MSVC toolset
-        uses: pylegacy/actions/setup-msvc@v1
+        uses: pylegacy/actions/setup-msvc@v2
         with:
-          architecture: ${{ matrix.arch }}
-          version: ${{ matrix.msvc-toolset }}
+          arch: ${{ matrix.arch }}
+          toolset: ${{ matrix.msvc-toolset }}
       -
         name: Set CMake
         uses: jwlawson/actions-setup-cmake@v1.13
@@ -187,10 +187,10 @@ jobs:
           }
       -
         name: Set MSVC toolset
-        uses: pylegacy/actions/setup-msvc@v1
+        uses: pylegacy/actions/setup-msvc@v2
         with:
-          architecture: ${{ matrix.arch }}
-          version: ${{ env.msvc-toolset }}
+          arch: ${{ matrix.arch }}
+          toolset: ${{ env.msvc-toolset }}
       -
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
