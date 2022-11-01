@@ -242,13 +242,17 @@ class GeosLibrary(object):
 
         # Define custom configure and build options.
         if os.name == "nt":
+            win64 = (8 * struct.calcsize("P") == 64)
             config_opts += ["-DCMAKE_CXX_FLAGS='/wd4251 /wd4458 /wd4530 /EHsc'"]
             if version >= (3, 6, 0) and sys.version_info[:2] >= (3, 3):
                 if toolset is not None:
-                    config_opts += ["-DCMAKE_GENERATOR_TOOLSET={0}".format(toolset)]
+                    try:
+                        msvc = "v{0:d}".format(int(float(toolset) * 10))
+                    except (TypeError, ValueError):
+                        msvc = toolset
+                    config_opts += ["-DCMAKE_GENERATOR_TOOLSET={0}".format(msvc)]
                 build_opts = ["-j", "{0:d}".format(njobs)] + build_opts
             else:
-                win64 = (8 * struct.calcsize("P") == 64)
                 config_opts = ["-G", "NMake Makefiles"] + config_opts
                 build_opts.extend([
                     "--",
