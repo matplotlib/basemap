@@ -245,6 +245,7 @@ class GeosLibrary(object):
             win64 = (8 * struct.calcsize("P") == 64)
             config_opts += ["-DCMAKE_CXX_FLAGS='/wd4251 /wd4458 /wd4530 /EHsc'"]
             if version >= (3, 6, 0) and sys.version_info[:2] >= (3, 3):
+                config_opts = ["-A", "x64" if win64 else "Win32"] + config_opts
                 if toolset is not None:
                     try:
                         msvc = "v{0:d}".format(int(float(toolset) * 10))
