@@ -21,6 +21,10 @@ https://semver.org/spec/v2.0.0.html
 ### Changed
 - Upgrade bundled GEOS library to 3.6.5.
 
+### Fixed
+- Set MSVC 14.0 (VS2015) to build the `_geoslib` module in the
+  precompiled Windows wheels (PR [#565]).
+
 ## [1.3.6] - 2022-10-31
 
 ### Added
@@ -32,8 +36,8 @@ https://semver.org/spec/v2.0.0.html
 - Upgrade `pyproj` upper pin to 3.5.
 
 ### Fixed
-- Set MSVC 14.0 (VS2015) to build the precompiled Windows wheels in
-  GitHub workflows (PR [#564]).
+- Set MSVC 14.0 (VS2015) to build the GEOS library bundled in the
+  precompiled Windows wheels (PR [#564]).
 
 ## [1.3.5] - 2022-10-25
 
@@ -959,6 +963,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#565]:
+https://github.com/matplotlib/basemap/pull/565
 [#564]:
 https://github.com/matplotlib/basemap/pull/564
 [#563]:

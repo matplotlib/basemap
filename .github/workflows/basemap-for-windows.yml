@@ -93,6 +93,11 @@ jobs:
           ["x64", "x86"]
         msvc-toolset:
           ["9.0", "14.0"]
+        include:
+          - msvc-toolset: "9.0"
+            python-version: "2.7"
+          - msvc-toolset: "14.0"
+            python-version: "3.5"
       max-parallel: 4
       fail-fast: false
     needs: lint
@@ -106,26 +111,26 @@ jobs:
           path: .
       -
         name: Set MSVC toolset
-        uses: pylegacy/actions/setup-msvc@v1
+        uses: pylegacy/actions/setup-msvc@v2
         with:
-          architecture: ${{ matrix.arch }}
-          version: ${{ matrix.msvc-toolset }}
+          arch: ${{ matrix.arch }}
+          toolset: ${{ matrix.msvc-toolset }}
       -
         name: Set CMake
         uses: jwlawson/actions-setup-cmake@v1.13
         with:
-          cmake-version: "3.14.7"
+          cmake-version: "3.24.2"
       -
         name: Set Python
         uses: actions/setup-python@v4
         with:
           architecture: ${{ matrix.arch }}
-          python-version: "3.6"
+          python-version: ${{ matrix.python-version }}
       -
         name: Build GEOS from source
         run: |
           cd ${{ env.PKGDIR }}
-          python -c "import utils; utils.GeosLibrary('3.6.5').build('extern', njobs=16)"
+          python -c "import utils; utils.GeosLibrary('3.6.5').build('extern', toolset='${{ matrix.msvc-toolset }}', njobs=16)"
       -
         name: Upload GEOS artifacts
         uses: actions/upload-artifact@v1
@@ -152,20 +157,6 @@ jobs:
           name: checkout
           path: .
       -
-        name: Set MSVC toolset version
-        run: |
-          if ("${{ matrix.python-version }}" -eq "2.7") {
-              echo "msvc-toolset=9.0" >> $env:GITHUB_ENV
-          } else {
-              echo "msvc-toolset=14.0" >> $env:GITHUB_ENV
-          }
-      -
-        name: Set MSVC toolset
-        uses: pylegacy/actions/setup-msvc@v1
-        with:
-          architecture: ${{ matrix.arch }}
-          version: ${{ env.msvc-toolset }}
-      -
         name: Set Python
         uses: actions/setup-python@v4
         with:
@@ -186,6 +177,20 @@ jobs:
           }
           $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
           python -m pip install "numpy == ${pkgvers}"
+      -
+        name: Set MSVC toolset version
+        run: |
+          if ("${{ matrix.python-version }}" -eq "2.7") {
+              echo "msvc-toolset=9.0" >> $env:GITHUB_ENV
+          } else {
+              echo "msvc-toolset=14.0" >> $env:GITHUB_ENV
+          }
+      -
+        name: Set MSVC toolset
+        uses: pylegacy/actions/setup-msvc@v2
+        with:
+          arch: ${{ matrix.arch }}
+          toolset: ${{ env.msvc-toolset }}
       -
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
