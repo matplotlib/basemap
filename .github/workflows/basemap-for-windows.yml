@@ -93,6 +93,11 @@ jobs:
           ["x64", "x86"]
         msvc-toolset:
           ["9.0", "14.0"]
+        include:
+          - msvc-toolset: "9.0"
+            python-version: "2.7"
+          - msvc-toolset: "14.0"
+            python-version: "3.5"
       max-parallel: 4
       fail-fast: false
     needs: lint
@@ -120,7 +125,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           architecture: ${{ matrix.arch }}
-          python-version: "3.6"
+          python-version: ${{ matrix.python-version }}
       -
         name: Build GEOS from source
         run: |
