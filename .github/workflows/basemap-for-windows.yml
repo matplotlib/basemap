@@ -119,7 +119,7 @@ jobs:
         name: Set CMake
         uses: jwlawson/actions-setup-cmake@v1.13
         with:
-          cmake-version: "3.14.7"
+          cmake-version: "3.24.2"
       -
         name: Set Python
         uses: actions/setup-python@v4
