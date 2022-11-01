@@ -157,20 +157,6 @@ jobs:
           name: checkout
           path: .
       -
-        name: Set MSVC toolset version
-        run: |
-          if ("${{ matrix.python-version }}" -eq "2.7") {
-              echo "msvc-toolset=9.0" >> $env:GITHUB_ENV
-          } else {
-              echo "msvc-toolset=14.0" >> $env:GITHUB_ENV
-          }
-      -
-        name: Set MSVC toolset
-        uses: pylegacy/actions/setup-msvc@v1
-        with:
-          architecture: ${{ matrix.arch }}
-          version: ${{ env.msvc-toolset }}
-      -
         name: Set Python
         uses: actions/setup-python@v4
         with:
@@ -191,6 +177,20 @@ jobs:
           }
           $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
           python -m pip install "numpy == ${pkgvers}"
+      -
+        name: Set MSVC toolset version
+        run: |
+          if ("${{ matrix.python-version }}" -eq "2.7") {
+              echo "msvc-toolset=9.0" >> $env:GITHUB_ENV
+          } else {
+              echo "msvc-toolset=14.0" >> $env:GITHUB_ENV
+          }
+      -
+        name: Set MSVC toolset
+        uses: pylegacy/actions/setup-msvc@v1
+        with:
+          architecture: ${{ matrix.arch }}
+          version: ${{ env.msvc-toolset }}
       -
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
