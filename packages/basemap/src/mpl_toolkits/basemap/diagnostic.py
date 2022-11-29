@@ -58,7 +58,6 @@ def package_versions():
     except ImportError:
         pillow_version = 'not installed'
 
-
     BasemapPackageVersions = namedtuple(
                                'BasemapPackageVersions',
                                """Python, basemap, matplotlib,

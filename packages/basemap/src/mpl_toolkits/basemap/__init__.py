@@ -1627,7 +1627,6 @@ class Basemap(object):
         boundaryll = _geoslib.Polygon(b)
         return lons, lats, boundaryll, boundaryxy
 
-
     def drawmapboundary(self,color='k',linewidth=1.0,fill_color=None,\
                         zorder=None,ax=None):
         """
@@ -3218,7 +3217,6 @@ class Basemap(object):
         if mpl.is_interactive():
             import matplotlib.pyplot as plt
             plt.draw_if_interactive()
-
 
     def _save_use_hold(self, ax, kwargs):
         h = kwargs.pop('hold', None)

@@ -19,6 +19,7 @@ except ImportError:
 # For Python 3.x this will be true
 PY3 = (sys.version_info[0] == 3)
 
+
 class TestRotateVector(TestCase):
 
     def make_array(self):
@@ -55,6 +56,7 @@ class TestRotateVector(TestCase):
         ru, rv = B.rotate_vector(u,v, lon, lat)
         assert_almost_equal(ru[2, :],[1,-1,-1,1], 6)
         assert_almost_equal(rv[2, :],[1,1,-1,-1], 6)
+
 
 class TestShiftGrid(TestCase):
 
@@ -138,7 +140,6 @@ class TestShiftdata(TestCase):
             assert lon >= bm.projparams["lon_0"] - 180
             assert lon <= bm.projparams["lon_0"] + 180
 
-
     def test_shiftdata_on_monotonous_lons(self):
         """
         Test that shiftdata with fix_wrap_around keyword added works as before,
@@ -152,8 +153,6 @@ class TestShiftdata(TestCase):
         lons_out = bm.shiftdata(lons_in, fix_wrap_around=True)
 
         assert_almost_equal(lons_out, lons_out_expect)
-
-
 
     def test_2_points_should_work(self):
         """
@@ -198,6 +197,7 @@ class TestShiftdata(TestCase):
         lonsout = bm.shiftdata(lonsin[:, :2])
         assert_almost_equal(lonsout_expected, lonsout)
 
+
 @skipIf(PY3 and LooseVersion(pyproj.__version__) <= LooseVersion("1.9.4"),
         "Test skipped in Python 3.x with pyproj version 1.9.4 and below.")
 class TestProjectCoords(TestCase):
@@ -206,7 +206,6 @@ class TestProjectCoords(TestCase):
         lats, lons = np.meshgrid(lats, lons)
         lons, lats = lons.copy(order="F"), lats.copy(order="F")
         return lons, lats, Basemap(projection="sinu", lon_0=0)
-
 
     def test_convert(self):
         """
@@ -218,7 +217,6 @@ class TestProjectCoords(TestCase):
         assert isinstance(bmp, Basemap)
 
         xx1, yy1 = bmp(lons, lats)
-
 
     def test_results_should_be_same_for_c_and_f_order_arrays(self):
         lons, lats, bmp = self.get_data()
@@ -249,6 +247,7 @@ class TestOrthoProjPolygons(TestCase):
             m = Basemap(projection='ortho',resolution=r,lat_1=45.,lat_2=55,lat_0=50,lon_0=-107.)
         pass
 
+
 @skipIf(not PY3, "Test skipped for Python 2.x as it requires PIL installed")
 class TestArcgisimage(TestCase):
 	def test_cyl_proj_should_not_fail(self):
@@ -256,7 +255,6 @@ class TestArcgisimage(TestCase):
 					llcrnrlon=-90,llcrnrlat=30,
 					urcrnrlon=-60,urcrnrlat=60)
 		m.arcgisimage(verbose=True)
-
 
 
 def test():
