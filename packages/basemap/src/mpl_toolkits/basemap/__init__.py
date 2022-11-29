@@ -21,9 +21,7 @@ import math
 import functools
 import numpy as np
 import numpy.ma as ma
-import matplotlib
-from matplotlib import rcParams
-from matplotlib import is_interactive
+import matplotlib as mpl
 from matplotlib.collections import LineCollection
 from matplotlib.collections import PolyCollection
 from matplotlib.image import imread
@@ -1668,7 +1666,7 @@ class Basemap(object):
         # if no fill_color given, use axes background color.
         # if fill_color is string 'none', really don't fill.
         if fill_color is None:
-            mpl_version = tuple(map(int, matplotlib.__version__.split(".")[:2]))
+            mpl_version = tuple(map(int, mpl.__version__.split(".")[:2]))
             if mpl_version >= (2, 0):
                 fill_color = ax.get_facecolor()
             else:
@@ -1767,7 +1765,7 @@ class Basemap(object):
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
         # get axis background color.
-        mpl_version = tuple(map(int, matplotlib.__version__.split(".")[:2]))
+        mpl_version = tuple(map(int, mpl.__version__.split(".")[:2]))
         if mpl_version >= (2, 0):
             axisbgc = ax.get_facecolor()
         else:
@@ -3184,7 +3182,7 @@ class Basemap(object):
         if (hash(ax) in self._initialized_axes
                                  and not ax.get_autoscalex_on()
                                  and not ax.get_autoscaley_on()):
-            if is_interactive():
+            if mpl.is_interactive():
                 import matplotlib.pyplot as plt
                 plt.draw_if_interactive()
             return
@@ -3226,7 +3224,7 @@ class Basemap(object):
             ax.set_xticks([])
             ax.set_yticks([])
         # force draw if in interactive mode.
-        if is_interactive():
+        if mpl.is_interactive():
             import matplotlib.pyplot as plt
             plt.draw_if_interactive()
 
@@ -5269,7 +5267,7 @@ def _setlonlab(fmt,lon,labelstyle):
         lonlab = fmt(lon)
     except: # fmt is a format string.
         if lon>180:
-            if rcParams['text.usetex']:
+            if mpl.rcParams['text.usetex']:
                 if labelstyle=='+/-':
                     lonlabstr = r'${\/-%s\/^{\circ}}$'%fmt
                 else:
@@ -5281,7 +5279,7 @@ def _setlonlab(fmt,lon,labelstyle):
                     lonlabstr = u'%s\N{DEGREE SIGN}W'%fmt
             lonlab = lonlabstr%np.fabs(lon-360)
         elif lon<180 and lon != 0:
-            if rcParams['text.usetex']:
+            if mpl.rcParams['text.usetex']:
                 if labelstyle=='+/-':
                     lonlabstr = r'${\/+%s\/^{\circ}}$'%fmt
                 else:
@@ -5293,7 +5291,7 @@ def _setlonlab(fmt,lon,labelstyle):
                     lonlabstr = u'%s\N{DEGREE SIGN}E'%fmt
             lonlab = lonlabstr%lon
         else:
-            if rcParams['text.usetex']:
+            if mpl.rcParams['text.usetex']:
                 lonlabstr = r'${%s\/^{\circ}}$'%fmt
             else:
                 lonlabstr = u'%s\N{DEGREE SIGN}'%fmt
@@ -5306,7 +5304,7 @@ def _setlatlab(fmt,lat,labelstyle):
            latlab = fmt(lat)
     except: # fmt is a format string.
         if lat<0:
-            if rcParams['text.usetex']:
+            if mpl.rcParams['text.usetex']:
                 if labelstyle=='+/-':
                     latlabstr = r'${\/-%s\/^{\circ}}$'%fmt
                 else:
@@ -5318,7 +5316,7 @@ def _setlatlab(fmt,lat,labelstyle):
                     latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
             latlab = latlabstr%np.fabs(lat)
         elif lat>0:
-            if rcParams['text.usetex']:
+            if mpl.rcParams['text.usetex']:
                 if labelstyle=='+/-':
                     latlabstr = r'${\/+%s\/^{\circ}}$'%fmt
                 else:
@@ -5330,7 +5328,7 @@ def _setlatlab(fmt,lat,labelstyle):
                     latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
             latlab = latlabstr%lat
         else:
-            if rcParams['text.usetex']:
+            if mpl.rcParams['text.usetex']:
                 latlabstr = r'${%s\/^{\circ}}$'%fmt
             else:
                 latlabstr = u'%s\N{DEGREE SIGN}'%fmt
