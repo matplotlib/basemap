@@ -1,14 +1,8 @@
 from __future__ import (absolute_import, division, print_function)
 
+import math
 import numpy as np
 import pyproj
-import math
-try:
-    from inspect import cleandoc as dedent
-except ImportError:
-    # Deprecated as of version 3.1. Not quite the same
-    # as textwrap.dedent.
-    from matplotlib.cbook import dedent
 
 
 __version__ = "1.3.6+dev"
@@ -119,10 +113,9 @@ class Proj(object):
             #x,y= p1(91,0)
             #lon,lat = p1(x,y,inverse=True) # lon is 89 instead of 91
             if self.ellipsoid:
-                msg = dedent("""
-                full disk (whole world) Azimuthal Equidistant projection can
-                only be drawn for a perfect sphere""")
-                raise ValueError(msg)
+                raise ValueError(
+                    "full disk (whole world) Azimuthal Equidistant projection "
+                    "can only be drawn for a perfect sphere")
             llcrnrx = -np.pi*self.rmajor
             llcrnry = -np.pi*self.rmajor
             self._width = -llcrnrx

@@ -27,6 +27,11 @@ https://semver.org/spec/v2.0.0.html
 - Reimplement `matplotlib` version checks without using `distutils` and
   remove old switches related to unsupported `matplotlib` versions.
 
+### Removed
+- Dependency on `dedent` function (either as alias of `inspect.cleandoc`
+  or the deprecated `matplotlib.cbook.dedent`) to write multi-line error
+  messages.
+
 ## [1.3.6] - 2022-10-31
 
 ### Added
