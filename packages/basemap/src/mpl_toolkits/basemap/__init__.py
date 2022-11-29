@@ -3358,10 +3358,7 @@ class Basemap(object):
         self._save_use_hold(ax, kwargs)
         try:
             if kwargs.pop('tri', False):
-                try:
-                    import matplotlib.tri as tri
-                except:
-                    raise ImportError('need matplotlib > 0.99.1 to plot on unstructured grids')
+                import matplotlib.tri as tri
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
                 if ma.isMA(data):
@@ -3527,10 +3524,7 @@ class Basemap(object):
         self._save_use_hold(ax, kwargs)
         try:
             if kwargs.pop('tri', False):
-                try:
-                    import matplotlib.tri as tri
-                except:
-                    raise ImportError('need matplotlib > 0.99.1 to plot on unstructured grids')
+                import matplotlib.tri as tri
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
                 if ma.isMA(data):
@@ -3624,10 +3618,7 @@ class Basemap(object):
         self._save_use_hold(ax, kwargs)
         try:
             if kwargs.get('tri', False):
-                try:
-                    import matplotlib.tri as tri
-                except:
-                    raise ImportError('need matplotlib > 0.99.1 to plot on unstructured grids')
+                import matplotlib.tri as tri
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
                 if ma.isMA(data):
