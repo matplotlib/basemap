@@ -15,34 +15,39 @@ heavy lifting), and the following functions:
 :func:`addcyclic`: Add cyclic (wraparound) point in longitude.
 """
 
-try:
-    from urllib import urlretrieve
-    from urllib2 import urlopen
-except ImportError:
-    from urllib.request import urlretrieve, urlopen
-
+import os
+import sys
+import math
+import functools
+import numpy as np
+import numpy.ma as ma
+import matplotlib
+from matplotlib import rcParams
+from matplotlib import is_interactive
+from matplotlib.collections import LineCollection
+from matplotlib.collections import PolyCollection
+from matplotlib.image import imread
+from matplotlib.lines import Line2D
+from matplotlib.patches import Circle
+from matplotlib.patches import Ellipse
+from matplotlib.patches import FancyArrowPatch
+from matplotlib.patches import Polygon
+from matplotlib.transforms import Bbox
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 try:
     from inspect import cleandoc as dedent
 except ImportError:
-    # Deprecated as of version 3.1. Not quite the same
-    # as textwrap.dedent.
+    # Deprecated as of version 3.1. Not quite the same as textwrap.dedent.
     from matplotlib.cbook import dedent
-
-import matplotlib
-from matplotlib import rcParams, is_interactive
-from matplotlib.collections import LineCollection, PolyCollection
-from matplotlib.patches import Ellipse, Circle, Polygon, FancyArrowPatch
-from matplotlib.lines import Line2D
-from matplotlib.transforms import Bbox
+try:
+    from urllib2 import urlopen
+    from urllib import urlretrieve
+except ImportError:
+    from urllib.request import urlopen
+    from urllib.request import urlretrieve
 import pyproj
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-from matplotlib.image import imread
-import sys, os, math
-from .proj import Proj
-import numpy as np
-import numpy.ma as ma
+from . proj import Proj
 import _geoslib
-import functools
 
 
 __version__ = "1.3.6+dev"
