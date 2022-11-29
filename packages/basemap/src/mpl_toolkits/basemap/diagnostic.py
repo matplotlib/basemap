@@ -17,12 +17,12 @@ def proj4_version():
         # for pyproj versions 1.9.5.1 and before, this will run
         # Get PROJ4 version in a floating point number
         proj4_ver_num = pyproj.Proj(proj='latlong').proj_version
-        
+
         # reformats floating point number into string (4.90 becomes '4.9.0')
         # Exploits single number version numbers for proj4,
         return '.'.join( str(int(proj4_ver_num*100)) )
-    
-    
+
+
 def package_versions():
     """
     Gives version information for dependent packages.
@@ -39,14 +39,14 @@ def package_versions():
 
     import _geoslib
     from mpl_toolkits.basemap import __version__ as basemap_version
-    
+
     try:
         # geodesic is a part of proj.4 library
         # new variable in pyproj versions greater than 1.9.5.1
         from pyproj import geodesic_version_str as geodesic_version
     except ImportError:
         geodesic_version = 'Unknown'
-    
+
     # import optional dependencies
     try:
         from OWSLib import __version__ as OWSLib_version
@@ -57,12 +57,12 @@ def package_versions():
         from PIL import __version__ as pillow_version
     except ImportError:
         pillow_version = 'not installed'
-    
-    
+
+
     BasemapPackageVersions = namedtuple(
                                'BasemapPackageVersions',
                                """Python, basemap, matplotlib,
-                                  numpy, pyproj, pyshp, PROJ4, geodesic, 
+                                  numpy, pyproj, pyshp, PROJ4, geodesic,
                                   GEOS, OWSLib, Pillow""")
 
     return BasemapPackageVersions(
@@ -83,7 +83,7 @@ def check_proj_inv_hammer(segfault_protection=True):
     """
     Check if the inverse of the hammer projection is supported by installed
     version of PROJ4.
-    
+
     segfault_protection   True (default) - test while protecting from segfault
                           False -  testing that might cause Python to segfault.
                                    BE CAREFUL setting this flag to False!
@@ -95,20 +95,20 @@ def check_proj_inv_hammer(segfault_protection=True):
     """
     from distutils.version import LooseVersion
     from pyproj import __version__ as pyproj_version
-    
+
     if LooseVersion(proj4_version()) > LooseVersion('4.9.2'):
         return True
-    
+
     if LooseVersion(pyproj_version) > LooseVersion('1.9.5.1') \
             or segfault_protection is False:
         from pyproj import Proj
         hammer = Proj(proj='hammer')
-        
+
         x, y = hammer(-30.0, 40.0)
         try:
             lon, lat = hammer(x, y, inverse=True)
             return True
-        except RuntimeError:            
+        except RuntimeError:
             return False
-    
+
     return 'Unknown'

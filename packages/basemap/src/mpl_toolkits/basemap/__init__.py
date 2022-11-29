@@ -4263,19 +4263,19 @@ f=image" %\
 (server,service,xmin,ymin,xmax,ymax,self.epsg,self.epsg,xpixels,ypixels,dpi)
         # print URL?
         if verbose: print(basemap_url)
-            
+
         if cachedir != None:
             # Generate a filename for the cached file.
             filename = "%s-bbox-%s-%s-%s-%s-bboxsr%s-imagesr%s-size-%s-%s-dpi%s.png" %\
             (service,xmin,ymin,xmax,ymax,self.epsg,self.epsg,xpixels,ypixels,dpi)
-            
+
              # Check if the cache directory exists, if not create it.
             if not os.path.exists(cachedir):
                 os.makedirs(cachedir)
-                
+
             # Check if the image is already in the cachedir folder.
             cache_path = cachedir + filename
-                
+
             if os.path.isfile(cache_path):
                 print('Image already in cache')
                 img = Image.open(cache_path)
@@ -4285,8 +4285,8 @@ f=image" %\
                 img = Image.open(urlopen(basemap_url))
                 img.save(cache_path)
         else:
-            img = Image.open(urlopen(basemap_url))   
-            
+            img = Image.open(urlopen(basemap_url))
+
         # return AxesImage instance.
         return self.imshow(img, ax=ax, origin='upper')
 

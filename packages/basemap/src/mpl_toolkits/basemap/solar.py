@@ -10,7 +10,7 @@ def JulianDayFromDate(date,calendar='standard'):
 creates a Julian Day from a 'datetime-like' object.  Returns the fractional
 Julian Day (resolution 1 second).
 
-if calendar='standard' or 'gregorian' (default), Julian day follows Julian 
+if calendar='standard' or 'gregorian' (default), Julian day follows Julian
 Calendar on and before 1582-10-5, Gregorian calendar after 1582-10-15.
 
 if calendar='proleptic_gregorian', Julian Day follows gregorian calendar.
@@ -34,7 +34,7 @@ Virginia. p. 63
     A = int(year/100)
     jd = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + \
          day - 1524.5
-    # optionally adjust the jd for the switch from 
+    # optionally adjust the jd for the switch from
     # the Julian to Gregorian Calendar
     # here assumed to have occurred the day after 1582 October 4
     if calendar in ['standard','gregorian']:
@@ -54,7 +54,7 @@ Virginia. p. 63
         raise ValueError('unknown calendar, must be one of julian,standard,gregorian,proleptic_gregorian, got %s' % calendar)
     # adjust for Julian calendar if necessary
     jd = jd + B
-    return jd 
+    return jd
 
 def epem(date):
     """
