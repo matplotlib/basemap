@@ -33,11 +33,6 @@ from matplotlib.patches import Polygon
 from matplotlib.transforms import Bbox
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 try:
-    from inspect import cleandoc as dedent
-except ImportError:
-    # Deprecated as of version 3.1. Not quite the same as textwrap.dedent.
-    from matplotlib.cbook import dedent
-try:
     from urllib2 import urlopen
     from urllib import urlretrieve
 except ImportError:
@@ -768,8 +763,7 @@ class Basemap(object):
                             'spaeqd', 'npaeqd']:
             if (projection == 'splaea' and boundinglat >= 0) or\
                (projection == 'nplaea' and boundinglat <= 0):
-                msg='boundinglat cannot extend into opposite hemisphere'
-                raise ValueError(msg)
+                raise ValueError('boundinglat cannot extend into opposite hemisphere')
             if boundinglat is None or lon_0 is None:
                 raise ValueError('must specify boundinglat and lon_0 for %s basemap' % _projnames[projection])
             if projection[0] == 's':
@@ -862,8 +856,7 @@ class Basemap(object):
             if 'R' not in projparams:
                 raise ValueError('near-sided perspective projection only works for perfect spheres - not ellipsoids')
             if lat_0 is None or lon_0 is None:
-                msg='must specify lon_0 and lat_0 for near-sided perspective Basemap'
-                raise ValueError(msg)
+                raise ValueError('must specify lon_0 and lat_0 for near-sided perspective Basemap')
             if width is not None or height is not None:
                 sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
             if not using_corners:
@@ -958,8 +951,7 @@ class Basemap(object):
                 projparams['lon_0']=0.5*(llcrnrlon+urcrnrlon)
         elif projection == 'rotpole':
             if lon_0 is None or o_lon_p is None or o_lat_p is None:
-                msg='must specify lon_0,o_lat_p,o_lon_p for rotated pole Basemap'
-                raise ValueError(msg)
+                raise ValueError('must specify lon_0,o_lat_p,o_lon_p for rotated pole Basemap')
             if width is not None or height is not None:
                 sys.stdout.write('warning: width and height keywords ignored for %s projection' % _projnames[self.projection])
             projparams['lon_0']=lon_0
@@ -1218,18 +1210,18 @@ class Basemap(object):
         """
         read boundary data, clip to map projection region.
         """
-        msg = dedent("""
-        Unable to open boundary dataset file. Only the 'crude', 'low' and
-        'intermediate' resolution datasets are installed by default. If you
-        are requesting a 'high' or 'full' resolution dataset, you need to
-        install the `basemap-data-hires` package.""")
+
         # only gshhs coastlines can be polygons.
         if name != 'gshhs': as_polygons=False
         try:
             bdatfile = open(os.path.join(basemap_datadir,name+'_'+self.resolution+'.dat'),'rb')
             bdatmetafile = open(os.path.join(basemap_datadir,name+'meta_'+self.resolution+'.dat'),'r')
         except:
-            raise IOError(msg)
+            raise IOError(
+                "Unable to open boundary dataset file. Only the 'crude', 'low' "
+                "and 'intermediate' resolution datasets are installed by default. "
+                "If you are requesting a 'high' or 'full' resolution dataset, "
+                "you need to install the `basemap-data-hires` package")
         polygons = []
         polygon_types = []
         # coastlines are polygons, other boundaries are line segments.
@@ -2147,11 +2139,11 @@ class Basemap(object):
             raise IOError('error reading shapefile %s.shp' % shapefile)
         fields = shf.fields
         coords = []; attributes = []
-        msg=dedent("""
-        shapefile must have lat/lon vertices  - it looks like this one has vertices
-        in map projection coordinates. You can convert the shapefile to geographic
-        coordinates using the shpproj utility from the shapelib tools
-        (http://shapelib.maptools.org/shapelib-tools.html)""")
+        msg = " ".join([
+            "shapefile must have lat/lon vertices - it looks like this one",
+            "has vertices in map projection coordinates. You can convert the",
+            "shapefile to geographic coordinates using the shpproj utility",
+            "from the shapelib tools (http://shapelib.maptools.org/shapelib-tools.html)"])
         shptype = shf.shapes()[0].shapeType
         bbox = shf.bbox.tolist()
         info = (shf.numRecords,shptype,bbox[0:2]+[0.,0.],bbox[2:]+[0.,0.])
@@ -2652,10 +2644,9 @@ class Basemap(object):
             labels = [0,0,0,0]
         if self.projection in ['ortho','geos','nsper','aeqd'] and max(labels):
             if self._fulldisk and self.boundinglat is None:
-                sys.stdout.write(dedent(
-                """'Warning: Cannot label meridians on full-disk
-                Geostationary, Orthographic or Azimuthal equidistant basemap
-                """))
+                sys.stdout.write(" ".join([
+                    "Warning: Cannot label meridians on full-disk Geostationary,"
+                    "Orthographic or Azimuthal equidistant basemap"]))
                 labels = [0,0,0,0]
         # search along edges of map to see if parallels intersect.
         # if so, find x,y location of intersection and draw a label there.
@@ -3370,8 +3361,7 @@ class Basemap(object):
                 try:
                     import matplotlib.tri as tri
                 except:
-                    msg='need matplotlib > 0.99.1 to plot on unstructured grids'
-                    raise ImportError(msg)
+                    raise ImportError('need matplotlib > 0.99.1 to plot on unstructured grids')
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
                 if ma.isMA(data):
@@ -3540,8 +3530,7 @@ class Basemap(object):
                 try:
                     import matplotlib.tri as tri
                 except:
-                    msg='need matplotlib > 0.99.1 to plot on unstructured grids'
-                    raise ImportError(msg)
+                    raise ImportError('need matplotlib > 0.99.1 to plot on unstructured grids')
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
                 if ma.isMA(data):
@@ -3574,13 +3563,14 @@ class Basemap(object):
                     xs = xl[:]
                     xs.sort()
                     if xl != xs:
-                        sys.stdout.write(dedent("""
-                             WARNING: x coordinate not montonically increasing - contour plot
-                             may not be what you expect.  If it looks odd, your can either
-                             adjust the map projection region to be consistent with your data, or
-                             (if your data is on a global lat/lon grid) use the shiftdata
-                             method to adjust the data to be consistent with the map projection
-                             region (see examples/shiftdata.py)."""))
+                        sys.stdout.write(" ".join([
+                            "WARNING: x coordinate not montonically increasing",
+                            "- contour plot may not be what you expect. If it",
+                            "looks odd, you can either adjust the map projection",
+                            "region to be consistent with your data, or (if your",
+                            "data is on a global lat/lon grid) use the shiftdata",
+                            "method to adjust the data to be consistent with the",
+                            "map projection region (see examples/shiftdata.py)"]))
                 # mask for points more than one grid length outside projection limb.
                 xx = ma.masked_where(x > 1.e20, x)
                 yy = ma.masked_where(y > 1.e20, y)
@@ -3637,8 +3627,7 @@ class Basemap(object):
                 try:
                     import matplotlib.tri as tri
                 except:
-                    msg='need matplotlib > 0.99.1 to plot on unstructured grids'
-                    raise ImportError(msg)
+                    raise ImportError('need matplotlib > 0.99.1 to plot on unstructured grids')
                 # for unstructured grids, toss out points outside
                 # projection limb (don't use those points in triangulation).
                 if ma.isMA(data):
@@ -3670,13 +3659,14 @@ class Basemap(object):
                     xs = xl[:]
                     xs.sort()
                     if xl != xs:
-                        sys.stdout.write(dedent("""
-                             WARNING: x coordinate not montonically increasing - contour plot
-                             may not be what you expect.  If it looks odd, your can either
-                             adjust the map projection region to be consistent with your data, or
-                             (if your data is on a global lat/lon grid) use the shiftgrid
-                             function to adjust the data to be consistent with the map projection
-                             region (see examples/contour_demo.py)."""))
+                        sys.stdout.write(" ".join([
+                            "WARNING: x coordinate not montonically increasing",
+                            "- contour plot may not be what you expect. If it",
+                            "looks odd, you can either adjust the map projection",
+                            "region to be consistent with your data, or (if your",
+                            "data is on a global lat/lon grid) use the shiftgrid",
+                            "function to adjust the data to be consistent with the",
+                            "map projection region (see examples/contour_demo.py)"]))
                 # mask for points more than one grid length outside projection limb.
                 xx = ma.masked_where(x > 1.e20, x)
                 yy = ma.masked_where(y > 1.e20, y)
@@ -4053,14 +4043,12 @@ class Basemap(object):
             try:
                 import Image
             except ImportError:
-                msg = ('warpimage method requires PIL '
-                       '(http://pillow.readthedocs.io)')
-                raise ImportError(msg)
+                raise ImportError("warpimage method requires PIL "
+                                  "(http://pillow.readthedocs.io)")
 
         from matplotlib.image import pil_to_array
         if self.celestial:
-            msg='warpimage does not work in celestial coordinates'
-            raise ValueError(msg)
+            raise ValueError("warpimage does not work in celestial coordinates")
         ax = kwargs.pop('ax', None) or self._check_ax()
         # default image file is blue marble next generation
         # from NASA (http://visibleearth.nasa.gov).
@@ -4241,7 +4229,6 @@ class Basemap(object):
         returns a matplotlib.image.AxesImage instance.
         """
 
-
         # fix PIL import on some versions of OSX and scipy
         try:
             from PIL import Image
@@ -4249,17 +4236,13 @@ class Basemap(object):
             try:
                 import Image
             except ImportError:
-                msg = ('arcgisimage method requires PIL '
-                       '(http://pillow.readthedocs.io)')
-                raise ImportError(msg)
-
-
+                raise ImportError("arcgisimage method requires PIL "
+                                  "(http://pillow.readthedocs.io)")
 
         if not hasattr(self,'epsg'):
-            msg = dedent("""
-            Basemap instance must be creating using an EPSG code
-            (http://spatialreference.org) in order to use the wmsmap method""")
-            raise ValueError(msg)
+            raise ValueError("the Basemap instance must be created using "
+                             "an EPSG code (http://spatialreference.org) "
+                             "in order to use the wmsmap method")
         ax = kwargs.pop('ax', None) or self._check_ax()
         # find the x,y values at the corner points.
         p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
@@ -4270,10 +4253,8 @@ class Basemap(object):
             _geoslib.Point(self(180.,0.5*(self.llcrnrlat+self.urcrnrlat)))
             hasDateline = Dateline.within(self._boundarypolyxy)
             if hasDateline:
-                msg=dedent("""
-                arcgisimage cannot handle images that cross
-                the dateline for cylindrical projections.""")
-                raise ValueError(msg)
+                raise ValueError("arcgisimage cannot handle images that cross "
+                                 "the dateline for cylindrical projections")
         # ypixels not given, find by scaling xpixels by the map aspect ratio.
         if ypixels is None:
             ypixels = int(self.aspect*xpixels)
@@ -4363,10 +4344,9 @@ f=image" %\
         import io
         ax = kwargs.pop('ax', None) or self._check_ax()
         if not hasattr(self,'epsg'):
-            msg = dedent("""
-            Basemap instance must be creating using an EPSG code
-            (http://spatialreference.org) in order to use the wmsmap method""")
-            raise ValueError(msg)
+            raise ValueError("the Basemap instance must be created using "
+                             "an EPSG code (http://spatialreference.org) "
+                             "in order to use the wmsmap method")
         if 'layers' not in kwargs:
             raise ValueError('no layers specified')
         # find the x,y values at the corner points.
@@ -4378,10 +4358,8 @@ f=image" %\
             _geoslib.Point(self(180.,0.5*(self.llcrnrlat+self.urcrnrlat)))
             hasDateline = Dateline.within(self._boundarypolyxy)
             if hasDateline:
-                msg=dedent("""
-                wmsimage cannot handle images that cross
-                the dateline for cylindrical projections.""")
-                raise ValueError(msg)
+                raise ValueError("wmsimage cannot handle images that cross "
+                                 "the dateline for cylindrical projections")
         if self.projection == 'cyl':
             xmin = (180./np.pi)*xmin; xmax = (180./np.pi)*xmax
             ymin = (180./np.pi)*ymin; ymax = (180./np.pi)*ymax
@@ -4470,9 +4448,8 @@ f=image" %\
         elif units == 'ft':
             length = length*0.3048
         elif units != 'm':
-            msg = "units must be 'm' (meters), 'km' (kilometers), "\
-            "'mi' (miles), 'nmi' (nautical miles), or 'ft' (feet)"
-            raise KeyError(msg)
+            raise KeyError("units must be 'm' (meters), 'km' (kilometers), "
+                           "'mi' (miles), 'nmi' (nautical miles), or 'ft' (feet)")
         # reference point and center of scale.
         x0,y0 = self(lon0,lat0)
         xc,yc = self(lon,lat)
@@ -4773,8 +4750,7 @@ f=image" %\
         masked and longitudes are set to 1.e30.
         """
         if lon_0 is None and 'lon_0' not in self.projparams:
-            msg='lon_0 keyword must be provided'
-            raise ValueError(msg)
+            raise ValueError('lon_0 keyword must be provided')
         lonsin = np.asarray(lonsin)
         if lonsin.ndim not in [1,2]:
             raise ValueError('1-d or 2-d longitudes required')
