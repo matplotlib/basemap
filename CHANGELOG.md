@@ -28,6 +28,7 @@ https://semver.org/spec/v2.0.0.html
   remove old switches related to unsupported `matplotlib` versions.
 
 ### Removed
+- Attribute `__version__` in `basemap.proj` module.
 - Dependency on `dedent` function (either as alias of `inspect.cleandoc`
   or the deprecated `matplotlib.cbook.dedent`) to write multi-line error
   messages.

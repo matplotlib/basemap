@@ -5,8 +5,6 @@ import numpy as np
 import pyproj
 
 
-__version__ = "1.3.6+dev"
-
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
 
