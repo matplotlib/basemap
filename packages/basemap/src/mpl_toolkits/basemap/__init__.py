@@ -14,7 +14,6 @@ heavy lifting), and the following functions:
 
 :func:`addcyclic`: Add cyclic (wraparound) point in longitude.
 """
-from distutils.version import LooseVersion
 
 try:
     from urllib import urlretrieve
@@ -22,22 +21,14 @@ try:
 except ImportError:
     from urllib.request import urlretrieve, urlopen
 
-from matplotlib import __version__ as _matplotlib_version
 try:
     from inspect import cleandoc as dedent
 except ImportError:
     # Deprecated as of version 3.1. Not quite the same
     # as textwrap.dedent.
     from matplotlib.cbook import dedent
-# check to make sure matplotlib is not too old.
-_matplotlib_version = LooseVersion(_matplotlib_version)
-_mpl_required_version = LooseVersion('0.98')
-if _matplotlib_version < _mpl_required_version:
-    msg = dedent("""
-    your matplotlib is too old - basemap requires version %s or
-    higher, you have version %s""" %
-    (_mpl_required_version,_matplotlib_version))
-    raise ImportError(msg)
+
+import matplotlib
 from matplotlib import rcParams, is_interactive
 from matplotlib.collections import LineCollection, PolyCollection
 from matplotlib.patches import Ellipse, Circle, Polygon, FancyArrowPatch
@@ -1672,7 +1663,8 @@ class Basemap(object):
         # if no fill_color given, use axes background color.
         # if fill_color is string 'none', really don't fill.
         if fill_color is None:
-            if _matplotlib_version >= '2.0':
+            mpl_version = tuple(map(int, matplotlib.__version__.split(".")[:2]))
+            if mpl_version >= (2, 0):
                 fill_color = ax.get_facecolor()
             else:
                 fill_color = ax.get_axis_bgcolor()
@@ -1770,7 +1762,8 @@ class Basemap(object):
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
         # get axis background color.
-        if _matplotlib_version >= '2.0':
+        mpl_version = tuple(map(int, matplotlib.__version__.split(".")[:2]))
+        if mpl_version >= (2, 0):
             axisbgc = ax.get_facecolor()
         else:
             axisbgc = ax.get_axis_bgcolor()
@@ -3759,11 +3752,6 @@ class Basemap(object):
 
         Other \*args and \**kwargs passed on to matplotlib.pyplot.streamplot.
         """
-        if _matplotlib_version < '1.2':
-            msg = dedent("""
-            streamplot method requires matplotlib 1.2 or higher,
-            you have %s""" % _matplotlib_version)
-            raise NotImplementedError(msg)
         ax, plt = self._ax_plt_from_kw(kwargs)
         self._save_use_hold(ax, kwargs)
         try:
@@ -3804,11 +3792,6 @@ class Basemap(object):
         Returns two matplotlib.axes.Barbs instances, one for the Northern
         Hemisphere and one for the Southern Hemisphere.
         """
-        if _matplotlib_version < '0.98.3':
-            msg = dedent("""
-            barb method requires matplotlib 0.98.3 or higher,
-            you have %s""" % _matplotlib_version)
-            raise NotImplementedError(msg)
         ax, plt = self._ax_plt_from_kw(kwargs)
         lons, lats = self(x, y, inverse=True)
         unh = ma.masked_where(lats <= 0, u)
@@ -4113,12 +4096,9 @@ class Basemap(object):
                 width = int(np.round(w*scale))
                 height = int(np.round(h*scale))
                 pilImage = pilImage.resize((width,height),Image.ANTIALIAS)
-            if _matplotlib_version >= '1.2':
-                # orientation of arrays returned by pil_to_array
-                # changed (https://github.com/matplotlib/matplotlib/pull/616)
-                self._bm_rgba = pil_to_array(pilImage)[::-1,:]
-            else:
-                self._bm_rgba = pil_to_array(pilImage)
+            # orientation of arrays returned by pil_to_array changed in
+            # matplotlib 1.2 (https://github.com/matplotlib/matplotlib/pull/616)
+            self._bm_rgba = pil_to_array(pilImage)[::-1,:]
             # define lat/lon grid that image spans.
             nlons = self._bm_rgba.shape[1]; nlats = self._bm_rgba.shape[0]
             delta = 360./float(nlons)
