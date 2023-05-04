@@ -10,6 +10,11 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
+## [1.3.7] - 2023-05-04
+
+### Changed
+- Upgrade `numpy` upper pin to 1.25.
+
 ## [1.3.6] - 2022-10-31
 
 ### Added
@@ -1040,7 +1045,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.6...develop
+https://github.com/matplotlib/basemap/compare/v1.3.7...develop
+[1.3.7]:
+https://github.com/matplotlib/basemap/compare/v1.3.6...v1.3.7
 [1.3.6]:
 https://github.com/matplotlib/basemap/compare/v1.3.5...v1.3.6
 [1.3.5]:
