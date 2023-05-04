@@ -14,6 +14,7 @@ https://semver.org/spec/v2.0.0.html
 
 ### Changed
 - Upgrade `numpy` upper pin to 1.25.
+- Upgrade `matplotlib` upper pin to 3.8.
 
 ## [1.3.6] - 2022-10-31
 
