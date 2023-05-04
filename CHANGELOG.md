@@ -14,7 +14,7 @@ https://semver.org/spec/v2.0.0.html
 
 ### Changed
 - Upgrade `numpy` upper pin to 1.25.
-- Upgrade `matplotlib` upper pin to 3.8.
+- Upgrade `matplotlib` upper pin to 3.8 (solves issue [#573]).
 - Upgrade `pyproj` upper pin to 3.6.
 
 ## [1.3.6] - 2022-10-31
@@ -955,6 +955,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#573]:
+https://github.com/matplotlib/basemap/issues/573
 [#564]:
 https://github.com/matplotlib/basemap/pull/564
 [#563]:
