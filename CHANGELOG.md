@@ -33,6 +33,15 @@ https://semver.org/spec/v2.0.0.html
   or the deprecated `matplotlib.cbook.dedent`) to write multi-line error
   messages.
 
+## [1.3.7] - 2023-05-04
+
+### Changed
+- Upgrade `numpy` upper pin to 1.25.
+- Upgrade `matplotlib` upper pin to 3.8 (solves issue [#573]).
+- Upgrade `pyproj` upper pin to 3.6.
+- Upgrade test dependency `netCDF4` upper pin to 1.7.
+- Upgrade test dependency `pillow` lower pin to 9.4.
+
 ## [1.3.6] - 2022-10-31
 
 ### Added
@@ -971,6 +980,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#573]:
+https://github.com/matplotlib/basemap/issues/573
 [#565]:
 https://github.com/matplotlib/basemap/pull/565
 [#564]:
@@ -1077,7 +1088,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.6...develop
+https://github.com/matplotlib/basemap/compare/v1.3.7...develop
+[1.3.7]:
+https://github.com/matplotlib/basemap/compare/v1.3.6...v1.3.7
 [1.3.6]:
 https://github.com/matplotlib/basemap/compare/v1.3.5...v1.3.6
 [1.3.5]:
