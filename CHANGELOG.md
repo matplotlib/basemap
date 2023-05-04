@@ -17,6 +17,7 @@ https://semver.org/spec/v2.0.0.html
 - Upgrade `matplotlib` upper pin to 3.8 (solves issue [#573]).
 - Upgrade `pyproj` upper pin to 3.6.
 - Upgrade test dependency `netCDF4` upper pin to 1.7.
+- Upgrade test dependency `pillow` lower pin to 9.4.
 
 ## [1.3.6] - 2022-10-31
 
