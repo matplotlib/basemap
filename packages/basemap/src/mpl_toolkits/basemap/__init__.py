@@ -54,7 +54,7 @@ import _geoslib
 import functools
 
 
-__version__ = "1.3.6"
+__version__ = "1.3.7"
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 # check to see if environment variable BASEMAPDATA set to a directory,
