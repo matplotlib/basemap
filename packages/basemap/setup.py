@@ -10,7 +10,7 @@ import sys
 import glob
 import warnings
 from setuptools import setup
-from setuptools import find_packages
+from setuptools import find_namespace_packages
 from setuptools.command.sdist import sdist
 from setuptools.extension import Extension
 
@@ -230,7 +230,7 @@ setup(**{
     "package_dir":
         {"": "src"},
     "packages":
-        find_packages(where="src"),
+        find_namespace_packages(where="src"),
     "ext_modules":
         ext_modules,
     "data_files":
