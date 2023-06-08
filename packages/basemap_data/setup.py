@@ -108,9 +108,6 @@ setup(**{
         "maps",
         "plots",
     ],
-    "namespace_packages": [
-        "mpl_toolkits.basemap_data",
-    ],
     "package_dir":
         {"": "src"},
     "packages":

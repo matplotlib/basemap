@@ -224,9 +224,6 @@ setup(**{
         "maps",
         "plots",
     ],
-    "namespace_packages": [
-        "mpl_toolkits",
-    ],
     "package_dir":
         {"": "src"},
     "packages":
