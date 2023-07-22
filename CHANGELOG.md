@@ -10,6 +10,12 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
+## [1.3.8]
+
+### Fixed
+- Downgrade upper pin for Cython requirement from 3.1 to 3.0 due to
+  build error triggered by `_geoslib.pyx` (solves issue [#581]).
+
 ## [1.3.7] - 2023-05-04
 
 ### Changed
@@ -957,6 +963,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#581]:
+https://github.com/matplotlib/basemap/issues/581
 [#573]:
 https://github.com/matplotlib/basemap/issues/573
 [#564]:
