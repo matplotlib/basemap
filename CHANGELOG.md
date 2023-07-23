@@ -13,7 +13,7 @@ https://semver.org/spec/v2.0.0.html
 ## [1.3.8]
 
 ### Changed
-- Upgrade documentation dependencies.
+- Upgrade documentation and linting dependencies.
 
 ### Fixed
 - Downgrade upper pin for Cython requirement from 3.1 to 3.0 due to
