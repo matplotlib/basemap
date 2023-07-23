@@ -20,6 +20,8 @@ https://semver.org/spec/v2.0.0.html
 ### Fixed
 - Downgrade upper pin for Cython requirement from 3.1 to 3.0 due to
   build error triggered by `_geoslib.pyx` (solves issue [#581]).
+- Downgrade lower pin for `numpy` to `>= 1.21` for Python >= 3.8, whose
+  upgrade is delayed until `basemap` 1.4.0.
 
 ## [1.3.7] - 2023-05-04
 
