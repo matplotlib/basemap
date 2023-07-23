@@ -15,9 +15,12 @@ https://semver.org/spec/v2.0.0.html
 ### Changed
 - Upgrade `numpy` upper pin to 1.26.
 - Upgrade `pyproj` upper pin to 3.7.
+- Upgrade optional `pillow` upper pin to 10.1.0.
 - Upgrade documentation and linting dependencies.
 
 ### Fixed
+- Fix deprecated `Image.ANTIALIAS` with `Image.LANCZOS` when `pillow`
+  version is at least 10.0.0 (PR [#580], thanks to @cgohlke).
 - Downgrade upper pin for Cython requirement from 3.1 to 3.0 due to
   build error triggered by `_geoslib.pyx` (solves issue [#581]).
 - Downgrade lower pin for `numpy` to `>= 1.21` for Python >= 3.8, whose
@@ -972,6 +975,8 @@ https://semver.org/spec/v2.0.0.html
 
 [#581]:
 https://github.com/matplotlib/basemap/issues/581
+[#580]:
+https://github.com/matplotlib/basemap/pull/580
 [#573]:
 https://github.com/matplotlib/basemap/issues/573
 [#564]:
