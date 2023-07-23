@@ -19,8 +19,10 @@ https://semver.org/spec/v2.0.0.html
 - Upgrade documentation and linting dependencies.
 
 ### Fixed
+- Fix Cygwin build error due to GCC passing `"--enable-new-dtags"` to
+  the linker (solves issue [#579], thanks to @DWesl for the help).
 - Fix deprecated `Image.ANTIALIAS` with `Image.LANCZOS` when `pillow`
-  version is at least 10.0.0 (PR [#580], thanks to @cgohlke).
+  version is at least 10.0.0 (PR [#580] by @cgohlke).
 - Downgrade upper pin for Cython requirement from 3.1 to 3.0 due to
   build error triggered by `_geoslib.pyx` (solves issue [#581]).
 - Downgrade lower pin for `numpy` to `>= 1.21` for Python >= 3.8, whose
@@ -977,6 +979,8 @@ https://semver.org/spec/v2.0.0.html
 https://github.com/matplotlib/basemap/issues/581
 [#580]:
 https://github.com/matplotlib/basemap/pull/580
+[#579]:
+https://github.com/matplotlib/basemap/issues/579
 [#573]:
 https://github.com/matplotlib/basemap/issues/573
 [#564]:
