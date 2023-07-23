@@ -13,6 +13,8 @@ https://semver.org/spec/v2.0.0.html
 ## [1.3.8]
 
 ### Changed
+- Upgrade `numpy` upper pin to 1.26.
+- Upgrade `pyproj` upper pin to 3.7.
 - Upgrade documentation and linting dependencies.
 
 ### Fixed
