@@ -20,13 +20,14 @@ https://semver.org/spec/v2.0.0.html
 
 ### Fixed
 - Fix Cygwin build error due to GCC passing `"--enable-new-dtags"` to
-  the linker (solves issue [#579], thanks to @DWesl for the help).
+  the linker (PR [#582] by @DWesl, solves issue [#579]).
 - Fix deprecated `Image.ANTIALIAS` with `Image.LANCZOS` when `pillow`
   version is at least 10.0.0 (PR [#580] by @cgohlke).
 - Downgrade upper pin for Cython requirement from 3.1 to 3.0 due to
-  build error triggered by `_geoslib.pyx` (solves issue [#581]).
-- Downgrade lower pin for `numpy` to `>= 1.21` for Python >= 3.8, whose
-  upgrade is delayed until `basemap` 1.4.0.
+  build error triggered by `_geoslib.pyx` (solves issues [#581] and
+  [#583]).
+- Downgrade `numpy` lower pin to `numpy >= 1.21` for Python >= 3.8,
+  whose upgrade is delayed until `basemap` 1.4.0.
 
 ## [1.3.7] - 2023-05-04
 
@@ -975,6 +976,10 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#583]:
+https://github.com/matplotlib/basemap/issues/583
+[#582]:
+https://github.com/matplotlib/basemap/pull/582
 [#581]:
 https://github.com/matplotlib/basemap/issues/581
 [#580]:
