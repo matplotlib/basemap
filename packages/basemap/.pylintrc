@@ -76,8 +76,11 @@ disable=
     assignment-from-none,
     # Allow freedom with error raises.
     raise-missing-from,
-    # Allow freedom with string formatting.
-    consider-using-f-string
+    # Allow freedom with using lambda functions.
+    unnecessary-lambda-assignment,
+    # Allow freedom with old ways of using basic types.
+    consider-using-f-string,
+    use-dict-literal
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -250,12 +253,6 @@ max-line-length=99
 
 # Maximum number of lines in a module.
 max-module-lines=999
-
-# List of optional constructs for which whitespace checking is disabled. `dict-
-# separator` is used to allow tabulation in dicts, etc.: {1  : 1,\n222: 2}.
-# `trailing-comma` allows a space between comma and closing bracket: (a, ).
-# `empty-line` allows space-only lines.
-no-space-check=dict-separator
 
 # Allow the body of a class to be on the same line as the declaration if body
 # contains single statement.
@@ -519,6 +516,6 @@ preferred-modules=
 [EXCEPTIONS]
 
 # Exceptions that will emit a warning when being caught. Defaults to
-# "BaseException, Exception".
-overgeneral-exceptions=BaseException,
-                       Exception
+# "builtins.BaseException, builtins.Exception".
+overgeneral-exceptions=builtins.BaseException,
+                       builtins.Exception
