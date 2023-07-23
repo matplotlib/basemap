@@ -224,10 +224,6 @@ jobs:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
       -
-        name: Fix APT sources
-        run: |
-          sed -i 's|deb\.debian\.org|archive\.debian\.org|g' /etc/apt/sources.list
-      -
         name: Install auditwheel
         run: |
           apt-get update
@@ -272,10 +268,6 @@ jobs:
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
-      -
-        name: Fix APT sources
-        run: |
-          sed -i 's|deb\.debian\.org|archive\.debian\.org|g' /etc/apt/sources.list
       -
         name: Install numpy from source
         run: |
