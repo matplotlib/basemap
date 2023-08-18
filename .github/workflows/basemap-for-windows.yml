@@ -59,7 +59,7 @@ jobs:
       -
         name: Set Python base packages
         run: |
-          pip install --upgrade pip setuptools wheel
+          pip install --upgrade setuptools wheel
       -
         name: Install lint requirements
         run: |
@@ -175,7 +175,7 @@ jobs:
       -
         name: Set Python base packages
         run: |
-          pip install --upgrade pip setuptools wheel
+          pip install --upgrade setuptools wheel
       -
         name: Build old numpy from source
         run: |
@@ -229,7 +229,7 @@ jobs:
       -
         name: Set Python base packages
         run: |
-          pip install --upgrade pip setuptools wheel
+          pip install --upgrade setuptools wheel
       -
         name: Download build artifacts
         uses: actions/download-artifact@v1
