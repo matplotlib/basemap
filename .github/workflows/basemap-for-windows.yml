@@ -227,6 +227,10 @@ jobs:
           architecture: ${{ matrix.arch }}
           python-version: ${{ matrix.python-version }}
       -
+        name: Set Python base packages
+        run: |
+          pip install --upgrade pip setuptools wheel
+      -
         name: Download build artifacts
         uses: actions/download-artifact@v1
         with:
