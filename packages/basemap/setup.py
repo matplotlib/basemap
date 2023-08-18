@@ -111,7 +111,7 @@ if geos_install_prefix is not None:
     library_dirs.append(os.path.join(geos_install_prefix, "lib"))
     library_dirs.append(os.path.join(geos_install_prefix, "lib64"))
     runtime_library_dirs = library_dirs
-    if os.name == "nt":
+    if os.name == "nt" or sys.platform == "cygwin":
         # On Windows:
         # - DLLs get installed under `bin`.
         # - We need to inject later the DLL in the wheel using `data_files`.
@@ -119,7 +119,7 @@ if geos_install_prefix is not None:
         #   `distutils` bug (http://bugs.python.org/issue2437).
         library_dirs.append(os.path.join(geos_install_prefix, "bin"))
         runtime_library_dirs = []
-        dlls = glob.glob(os.path.join(geos_install_prefix, "*", "geos_c.dll"))
+        dlls = glob.glob(os.path.join(geos_install_prefix, "*", "*geos_c*.dll"))
         if dlls:
             data_files.append(("../..", sorted(dlls)))
 
@@ -172,7 +172,7 @@ setup(**{
     "name":
         "basemap",
     "version":
-        "1.3.7+dev",
+        "1.3.8+dev",
     "license":
         "MIT",
     "description":

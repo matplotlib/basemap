@@ -4,6 +4,7 @@ env:
   PKGDIR: "packages/basemap"
   PYTHONWARNINGS: "ignore:DEPRECATION"
   PIP_DISABLE_PIP_VERSION_CHECK: 1
+  PIP_PREFER_BINARY: 1
   PIP_TIMEOUT: 10
   PIP_RETRIES: 0
 
@@ -59,7 +60,7 @@ jobs:
         name: Install library requirements
         run: |
           cd ${{ env.PKGDIR }}
-          pip install --prefer-binary -r requirements.txt
+          pip install -r requirements.txt
       -
         name: Run Flake8
         run: |
@@ -186,7 +187,7 @@ jobs:
           export NUMPY_INCLUDE_PATH=${sitepkgdir}/numpy/core/include
           if [ "${{ matrix.python-version }}" = "3.11" ]; then
               kwds="--no-build-isolation"
-              pip install setuptools wheel "cython >= 0.29, < 3.1"
+              pip install setuptools wheel "cython >= 0.29, < 3.0"
           fi
           cd ${{ env.PKGDIR }}
           python setup.py sdist
@@ -223,10 +224,6 @@ jobs:
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
-      -
-        name: Fix APT sources
-        run: |
-          sed -i 's|deb\.debian\.org|archive\.debian\.org|g' /etc/apt/sources.list
       -
         name: Install auditwheel
         run: |
@@ -273,10 +270,6 @@ jobs:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
       -
-        name: Fix APT sources
-        run: |
-          sed -i 's|deb\.debian\.org|archive\.debian\.org|g' /etc/apt/sources.list
-      -
         name: Install numpy from source
         run: |
           apt-get update
@@ -286,7 +279,7 @@ jobs:
       -
         name: Install package
         run: |
-          pip install --prefer-binary ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
+          pip install ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
       -
         name: Test package
         run: |
@@ -314,9 +307,9 @@ jobs:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
       -
-        name: Install requirements
+        name: Install upload requirements
         run: |
-          pip install --prefer-binary twine
+          pip install twine
       -
         name: Upload distributables
         env:

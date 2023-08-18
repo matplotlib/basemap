@@ -33,6 +33,25 @@ https://semver.org/spec/v2.0.0.html
   or the deprecated `matplotlib.cbook.dedent`) to write multi-line error
   messages.
 
+## [1.3.8] - 2023-08-18
+
+### Changed
+- Upgrade `numpy` upper pin to 1.26.
+- Upgrade `pyproj` upper pin to 3.7.
+- Upgrade optional `pillow` upper pin to 10.1.0.
+- Upgrade documentation and linting dependencies.
+
+### Fixed
+- Fix Cygwin build error due to GCC passing `"--enable-new-dtags"` to
+  the linker (PR [#582] by @DWesl, solves issue [#579]).
+- Fix deprecated `Image.ANTIALIAS` with `Image.LANCZOS` when `pillow`
+  version is at least 10.0.0 (PR [#580] by @cgohlke).
+- Downgrade upper pin for Cython requirement from 3.1 to 3.0 due to
+  build error triggered by `_geoslib.pyx` (solves issues [#581] and
+  [#583]).
+- Downgrade `numpy` lower pin to `numpy >= 1.21` for Python >= 3.8,
+  whose upgrade is delayed until `basemap` 1.4.0.
+
 ## [1.3.7] - 2023-05-04
 
 ### Changed
@@ -980,6 +999,16 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#583]:
+https://github.com/matplotlib/basemap/issues/583
+[#582]:
+https://github.com/matplotlib/basemap/pull/582
+[#581]:
+https://github.com/matplotlib/basemap/issues/581
+[#580]:
+https://github.com/matplotlib/basemap/pull/580
+[#579]:
+https://github.com/matplotlib/basemap/issues/579
 [#573]:
 https://github.com/matplotlib/basemap/issues/573
 [#565]:
@@ -1088,7 +1117,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.7...develop
+https://github.com/matplotlib/basemap/compare/v1.3.8...develop
+[1.3.8]:
+https://github.com/matplotlib/basemap/compare/v1.3.7...v1.3.8
 [1.3.7]:
 https://github.com/matplotlib/basemap/compare/v1.3.6...v1.3.7
 [1.3.6]:
