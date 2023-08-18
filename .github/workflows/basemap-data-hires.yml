@@ -4,6 +4,7 @@ env:
   PKGDIR: "packages/basemap_data_hires"
   PYTHONWARNINGS: "ignore:DEPRECATION"
   PIP_DISABLE_PIP_VERSION_CHECK: 1
+  PIP_PREFER_BINARY: 1
   PIP_TIMEOUT: 10
   PIP_RETRIES: 0
 
@@ -114,9 +115,9 @@ jobs:
           name: artifacts-build
           path: ${{ env.PKGDIR }}/dist
       -
-        name: Install requirements
+        name: Install upload requirements
         run: |
-          pip install --prefer-binary twine
+          pip install twine
       -
         name: Upload distributables
         env:

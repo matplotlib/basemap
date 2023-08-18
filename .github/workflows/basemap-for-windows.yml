@@ -4,6 +4,7 @@ env:
   PKGDIR: "packages/basemap"
   PYTHONWARNINGS: "ignore:DEPRECATION"
   PIP_DISABLE_PIP_VERSION_CHECK: 1
+  PIP_PREFER_BINARY: 1
   PIP_TIMEOUT: 10
   PIP_RETRIES: 0
 
@@ -58,17 +59,17 @@ jobs:
       -
         name: Set Python base packages
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          pip install --upgrade pip setuptools wheel
       -
         name: Install lint requirements
         run: |
           cd ${{ env.PKGDIR }}
-          python -m pip install -r requirements-lint.txt
+          pip install -r requirements-lint.txt
       -
         name: Install library requirements
         run: |
           cd ${{ env.PKGDIR }}
-          pip install --prefer-binary -r requirements.txt
+          pip install -r requirements.txt
       -
         name: Run Flake8
         run: |
@@ -174,7 +175,7 @@ jobs:
       -
         name: Set Python base packages
         run: |
-          python -m pip install --upgrade pip setuptools wheel
+          pip install --upgrade pip setuptools wheel
       -
         name: Build old numpy from source
         run: |
@@ -185,7 +186,7 @@ jobs:
               default               { Set-Variable -Name "pkgvers" -Value "1.23.3" }
           }
           $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
-          python -m pip install "numpy == ${pkgvers}"
+          pip install "numpy == ${pkgvers}"
       -
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
@@ -234,7 +235,7 @@ jobs:
       -
         name: Install package
         run: |
-          pip install --prefer-binary (Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)
+          pip install (Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)
         # We need to skip Py311 x86 because of missing pyproj wheels.
         if: matrix.arch != 'x86' || matrix.python-version != '3.11'
       -
@@ -271,9 +272,9 @@ jobs:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
       -
-        name: Install requirements
+        name: Install upload requirements
         run: |
-          pip install --prefer-binary twine
+          pip install twine
       -
         name: Upload distributables
         env:

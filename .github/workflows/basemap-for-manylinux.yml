@@ -4,6 +4,7 @@ env:
   PKGDIR: "packages/basemap"
   PYTHONWARNINGS: "ignore:DEPRECATION"
   PIP_DISABLE_PIP_VERSION_CHECK: 1
+  PIP_PREFER_BINARY: 1
   PIP_TIMEOUT: 10
   PIP_RETRIES: 0
 
@@ -59,7 +60,7 @@ jobs:
         name: Install library requirements
         run: |
           cd ${{ env.PKGDIR }}
-          pip install --prefer-binary -r requirements.txt
+          pip install -r requirements.txt
       -
         name: Run Flake8
         run: |
@@ -278,7 +279,7 @@ jobs:
       -
         name: Install package
         run: |
-          pip install --prefer-binary ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
+          pip install ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
       -
         name: Test package
         run: |
@@ -306,9 +307,9 @@ jobs:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
       -
-        name: Install requirements
+        name: Install upload requirements
         run: |
-          pip install --prefer-binary twine
+          pip install twine
       -
         name: Upload distributables
         env:
