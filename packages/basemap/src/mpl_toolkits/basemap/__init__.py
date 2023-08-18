@@ -54,7 +54,7 @@ import _geoslib
 import functools
 
 
-__version__ = "1.3.7"
+__version__ = "1.3.8"
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 # check to see if environment variable BASEMAPDATA set to a directory,
@@ -4107,7 +4107,7 @@ class Basemap(object):
                 w, h = pilImage.size
                 width = int(np.round(w*scale))
                 height = int(np.round(h*scale))
-                pilImage = pilImage.resize((width,height),Image.ANTIALIAS)
+                pilImage = pilImage.resize((width,height),Image.LANCZOS)
             if _matplotlib_version >= '1.2':
                 # orientation of arrays returned by pil_to_array
                 # changed (https://github.com/matplotlib/matplotlib/pull/616)
