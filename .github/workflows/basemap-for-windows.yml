@@ -59,17 +59,17 @@ jobs:
       -
         name: Set Python base packages
         run: |
-          pip install --upgrade setuptools wheel
+          python -m pip install --upgrade pip setuptools wheel
       -
         name: Install lint requirements
         run: |
           cd ${{ env.PKGDIR }}
-          pip install -r requirements-lint.txt
+          python -m pip install -r requirements-lint.txt
       -
         name: Install library requirements
         run: |
           cd ${{ env.PKGDIR }}
-          pip install -r requirements.txt
+          python -m pip install -r requirements.txt
       -
         name: Run Flake8
         run: |
@@ -175,7 +175,7 @@ jobs:
       -
         name: Set Python base packages
         run: |
-          pip install --upgrade setuptools wheel
+          python -m pip install --upgrade pip setuptools wheel
       -
         name: Build old numpy from source
         run: |
@@ -186,7 +186,7 @@ jobs:
               default               { Set-Variable -Name "pkgvers" -Value "1.23.3" }
           }
           $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
-          pip install "numpy == ${pkgvers}"
+          python -m pip install "numpy == ${pkgvers}"
       -
         name: Download GEOS artifacts
         uses: actions/download-artifact@v1
@@ -198,9 +198,9 @@ jobs:
         run: |
           cd ${{ env.PKGDIR }}
           $env:GEOS_DIR = "$env:GITHUB_WORKSPACE/${{ env.PKGDIR }}/extern"
-          pip install -r requirements-setup.txt
+          python -m pip install -r requirements-setup.txt
           python setup.py sdist
-          pip wheel -w dist --no-deps (Get-Item dist/*.zip)
+          python -m pip wheel -w dist --no-deps (Get-Item dist/*.zip)
       -
         name: Upload build artifacts
         uses: actions/upload-artifact@v1
@@ -229,7 +229,7 @@ jobs:
       -
         name: Set Python base packages
         run: |
-          pip install --upgrade setuptools wheel
+          python -m pip install --upgrade pip setuptools wheel
       -
         name: Download build artifacts
         uses: actions/download-artifact@v1
@@ -239,7 +239,7 @@ jobs:
       -
         name: Install package
         run: |
-          pip install (Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)
+          python -m pip install (Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)
       -
         name: Test package
         run: |
@@ -274,7 +274,7 @@ jobs:
       -
         name: Install upload requirements
         run: |
-          pip install twine
+          python -m pip install twine
       -
         name: Upload distributables
         env:
