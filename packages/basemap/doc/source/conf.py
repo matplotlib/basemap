@@ -42,6 +42,7 @@ release = myself.__version__
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode",
     "matplotlib.sphinxext.plot_directive",
 ]
 
