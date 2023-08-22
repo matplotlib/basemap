@@ -303,10 +303,16 @@ jobs:
           cd ${{ env.PKGDIR }}
           pip install -r requirements-doc.txt
       -
-        name: Install library requirements
+        name: Download build artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-build-x64-3.8
+          path: ${{ env.PKGDIR }}/dist
+      -
+        name: Install package
         run: |
           cd ${{ env.PKGDIR }}
-          pip install -r requirements.txt
+          pip install dist/*-manylinux1*.whl
       -
         name: Run sphinx
         run: |
