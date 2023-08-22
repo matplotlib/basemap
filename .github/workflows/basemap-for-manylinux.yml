@@ -43,7 +43,7 @@ jobs:
       max-parallel: 3
       fail-fast: false
     needs: checkout
-    container: "pylegacy/python:${{ matrix.python-version }}-debian-8"
+    container: "pylegacy/python:${{ matrix.python-version }}-debian-9"
     steps:
       -
         name: Download checkout
@@ -210,7 +210,7 @@ jobs:
       fail-fast: false
     needs: build
     runs-on: ubuntu-latest
-    container: "pylegacy/${{ matrix.arch }}-python:3.6-debian-8"
+    container: "pylegacy/${{ matrix.arch }}-python:3.6-debian-9"
     steps:
       -
         name: Download GEOS artifacts
@@ -255,7 +255,7 @@ jobs:
       fail-fast: false
     needs: repair
     runs-on: ubuntu-latest
-    container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-8"
+    container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-9"
     steps:
       -
         name: Download checkout
@@ -297,7 +297,7 @@ jobs:
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
     runs-on: ubuntu-latest
-    container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-8"
+    container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-9"
     environment: PyPI
     steps:
       -
