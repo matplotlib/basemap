@@ -5,6 +5,7 @@
 
 import io
 import os
+import re
 import sys
 import glob
 import warnings
@@ -25,6 +26,16 @@ def get_content(name, splitlines=False):
     if splitlines:
         content = [row for row in content.splitlines() if row]
     return content
+
+
+def get_version(pkgname):
+    """Return package version without importing the file."""
+
+    here = os.path.abspath(os.path.dirname(__file__))
+    path = os.path.join(*[here, "src"] + pkgname.split(".") + ["__init__.py"])
+    with io.open(path, "r", encoding="utf-8") as fd:
+        pattern = r"""\n__version__[ ]*=[ ]*["']([^"]+)["']"""
+        return re.search(pattern, fd.read()).group(1)
 
 
 def get_geos_install_prefix():
@@ -172,7 +183,7 @@ setup(**{
     "name":
         "basemap",
     "version":
-        "1.4.0-dev",
+        get_version("mpl_toolkits.basemap"),
     "license":
         "MIT",
     "description":
