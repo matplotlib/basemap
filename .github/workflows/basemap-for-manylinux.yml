@@ -286,6 +286,39 @@ jobs:
           python -c "from mpl_toolkits.basemap import Basemap"
           python -c "from mpl_toolkits.basemap import cm"
 
+  docs:
+    needs: test
+    runs-on: ubuntu-latest
+    container: "pylegacy/python:3.8-debian-9"
+    steps:
+      -
+        name: Download checkout
+        uses: actions/download-artifact@v1
+        with:
+          name: checkout
+          path: .
+      -
+        name: Install doc requirements
+        run: |
+          cd ${{ env.PKGDIR }}
+          pip install -r requirements-doc.txt
+      -
+        name: Install library requirements
+        run: |
+          cd ${{ env.PKGDIR }}
+          pip install -r requirements.txt
+      -
+        name: Run sphinx
+        run: |
+          cd ${{ env.PKGDIR }}
+          python -m sphinx doc/source public
+      -
+        name: Upload docs artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: docs
+          path: ${{ env.PKGDIR }}/public
+
   upload:
     strategy:
       matrix:
