@@ -42,6 +42,7 @@ release = myself.__version__
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "matplotlib.sphinxext.plot_directive",
 ]
@@ -51,6 +52,15 @@ autodoc_default_options = {
     "special-members": "__init__",
     "undoc-members": True,
     "exclude-members": "__weakref__",
+}
+
+intersphinx_mapping = {
+    "python":
+        ("https://docs.python.org/3", None),
+    "numpy":
+        ("https://numpy.org/doc/stable/", None),
+    "matplotlib":
+        ("https://matplotlib.org/stable/", None),
 }
 
 # Add any paths that contain templates here, relative to this directory.
