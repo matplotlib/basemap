@@ -146,7 +146,7 @@ latex_documents = [(
     master_doc, "{0}.tex".format(project),
     "{0} Documentation".format(project),
     author,
-    "manual"
+    "manual",
 )]
 
 
@@ -155,9 +155,11 @@ latex_documents = [(
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [(
-    master_doc, project,
+    master_doc,
+    project,
     "{0} Documentation".format(project),
-    [author], 1
+    [author],
+    1,
 )]
 
 
@@ -173,7 +175,7 @@ texinfo_documents = [(
     author,
     project,
     myself.__doc__,
-    "Miscellaneous"
+    "Miscellaneous",
 )]
 
 
@@ -202,7 +204,7 @@ plot_html_show_formats = False
 plot_include_source = True
 plot_rcparams = {
     "figure.figsize":
-        [8, 6]
+        [8, 6],
 }
 plot_formats = [
     ("png", 100),  # PNGs for HTML building
