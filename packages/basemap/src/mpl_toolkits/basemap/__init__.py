@@ -43,7 +43,7 @@ from . proj import Proj
 import _geoslib
 
 
-__version__ = "1.3.8+dev"
+__version__ = "1.4.0-dev"
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 # check to see if environment variable BASEMAPDATA set to a directory,
