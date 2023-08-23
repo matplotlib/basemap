@@ -12,10 +12,12 @@ on:
   push:
     paths:
       - ".github/workflows/basemap-for-windows.yml"
+      - "!packages/basemap/doc/**"
       - "packages/basemap/**"
   pull_request:
     paths:
       - ".github/workflows/basemap-for-windows.yml"
+      - "!packages/basemap/doc/**"
       - "packages/basemap/**"
   workflow_dispatch:
 
