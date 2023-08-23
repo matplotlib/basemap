@@ -26,10 +26,10 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v1
       -
         name: Upload checkout
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v1
         with:
           name: checkout
           path: .
@@ -47,7 +47,7 @@ jobs:
     steps:
       -
         name: Download checkout
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v1
         with:
           name: checkout
           path: .
@@ -214,13 +214,13 @@ jobs:
     steps:
       -
         name: Download GEOS artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v1
         with:
           name: artifacts-geos-${{ matrix.arch }}
           path: ${{ env.PKGDIR }}/extern
       -
         name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v1
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
@@ -239,7 +239,7 @@ jobs:
           auditwheel repair -w dist dist/*.whl
       -
         name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v1
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
@@ -259,13 +259,13 @@ jobs:
     steps:
       -
         name: Download checkout
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v1
         with:
           name: checkout
           path: .
       -
         name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v1
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
