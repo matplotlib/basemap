@@ -26,7 +26,7 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v1
       -
         name: Upload checkout
         uses: actions/upload-artifact@v1
@@ -85,7 +85,7 @@ jobs:
       fail-fast: false
     needs: lint
     runs-on: ubuntu-latest
-    container: "pylegacy/${{ matrix.arch }}-python:3.6-debian-4"
+    container: "pylegacy/${{ matrix.arch }}-python:3.8-debian-4"
     steps:
       -
         name: Download checkout
@@ -210,7 +210,7 @@ jobs:
       fail-fast: false
     needs: build
     runs-on: ubuntu-latest
-    container: "pylegacy/${{ matrix.arch }}-python:3.6-debian-9"
+    container: "pylegacy/${{ matrix.arch }}-python:3.8-debian-9"
     steps:
       -
         name: Download GEOS artifacts
@@ -333,7 +333,6 @@ jobs:
         python-version:
           ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
       max-parallel: 1
-    if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
     runs-on: ubuntu-latest
     container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-9"
@@ -350,15 +349,19 @@ jobs:
         run: |
           pip install twine
       -
+        name: Check distributables
+        run: |
+          python -m twine check                                               \
+              ${{ env.PKGDIR }}/dist/*.zip                                    \
+              ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
+      -
         name: Upload distributables
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
           TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
+        if: startsWith(github.event.ref, 'refs/tags/v')
         run: |
-          python -m twine check                                               \
-              ${{ env.PKGDIR }}/dist/*.zip                                    \
-              ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
           python -m twine upload --skip-existing                              \
               ${{ env.PKGDIR }}/dist/*.zip                                    \
               ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
