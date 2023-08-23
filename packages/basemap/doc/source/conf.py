@@ -18,7 +18,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath("../../src"))
 myself = getattr(__import__("mpl_toolkits.basemap"), "basemap")
-PY2 = (sys.version_info[0] == 2)
+PY2 = sys.version_info[0] == 2
 
 # -- Project information -----------------------------------------------
 
