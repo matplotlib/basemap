@@ -10,6 +10,8 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
+## [1.3.9]
+
 ## [1.3.8] - 2023-08-18
 
 ### Changed
@@ -1080,7 +1082,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.8...develop
+https://github.com/matplotlib/basemap/compare/v1.3.9...develop
+[1.3.9]:
+https://github.com/matplotlib/basemap/compare/v1.3.8...v1.3.9
 [1.3.8]:
 https://github.com/matplotlib/basemap/compare/v1.3.7...v1.3.8
 [1.3.7]:
