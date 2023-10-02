@@ -60,35 +60,35 @@ class TestShiftGrid(TestCase):
 
     def make_data_cyc(self):
         loncyc  =  np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300,\
-            330, 360],dtype=np.float)
+            330, 360],dtype=np.float64)
         gridcyc = np.array([[0,  1,  2,  3,   4,   5,   6,   7,   8,   9,  10,\
-            11,   0]],dtype=np.float)
+            11,   0]],dtype=np.float64)
         lonoutcyc  =  np.array([-180, -150, -120, -90, -60, -30, 0, 30,60,90,\
-            120, 150, 180],dtype=np.float)
+            120, 150, 180],dtype=np.float64)
         gridoutcyc = np.array([[   6,    7,   8,    9,  10,  11, 0,  1,  2,3,\
-            4,   5,   6]],dtype=np.float)
+            4,   5,   6]],dtype=np.float64)
         return loncyc, gridcyc, lonoutcyc, gridoutcyc
 
     def make_data_nocyc(self):
         lonnocyc  =  np.array([0, 30, 60, 90, 120, 150, 180, 210, 240, 270,\
-            300, 330],dtype=np.float)
+            300, 330],dtype=np.float64)
         gridnocyc = np.array([[0,  1,  2,  3,   4,   5,   6,   7,   8,   9,\
-            10,  11]],dtype=np.float)
+            10,  11]],dtype=np.float64)
         lonoutnocyc  =  np.array([-180, -150, -120, -90, -60, -30, 0, 30, 60,\
-            90, 120, 150],dtype=np.float)
+            90, 120, 150],dtype=np.float64)
         gridoutnocyc = np.array([[   6,    7,   8,    9,  10,  11, 0,  1,  2,\
-            3,   4,   5]],dtype=np.float)
+            3,   4,   5]],dtype=np.float64)
         return lonnocyc, gridnocyc, lonoutnocyc, gridoutnocyc
 
     def make_data_nocyc2(self):
         lonnocyc2  =  np.array([15, 45, 75, 105, 135, 165, 195, 225, 255, 285,\
-            315, 345],dtype=np.float)
+            315, 345],dtype=np.float64)
         gridnocyc2 = np.array([[0,  1,  2,  3,   4,   5,   6,   7,   8,   9,\
-            10,  11]],dtype=np.float)
+            10,  11]],dtype=np.float64)
         lonoutnocyc2  =  np.array([-165, -135, -105, -75, -45, -15, 15,45,75,\
-            105, 135, 165],dtype=np.float)
+            105, 135, 165],dtype=np.float64)
         gridoutnocyc2 = np.array([[   6,    7,   8,    9,  10,  11, 0,  1,  2,\
-            3,   4,   5]],dtype=np.float)
+            3,   4,   5]],dtype=np.float64)
         return lonnocyc2, gridnocyc2, lonoutnocyc2, gridoutnocyc2
 
     def test_cyc(self):

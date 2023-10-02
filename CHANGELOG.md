@@ -12,6 +12,10 @@ https://semver.org/spec/v2.0.0.html
 
 ## [1.3.9]
 
+### Fixed
+- Fix references to removed `numpy.float` alias (solves issue [#589],
+  thanks to @quickbrett).
+
 ## [1.3.8] - 2023-08-18
 
 ### Changed
@@ -978,6 +982,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#589]:
+https://github.com/matplotlib/basemap/issues/589
 [#583]:
 https://github.com/matplotlib/basemap/issues/583
 [#582]:
