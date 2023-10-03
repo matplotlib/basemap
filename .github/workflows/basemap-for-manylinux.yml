@@ -323,7 +323,13 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: docs
-          path: ${{ env.PKGDIR }}/public
+          path: ${{ env.PKGDIR }}/public/
+      -
+        name: Upload github-pages artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          name: github-pages
+          path: ${{ env.PKGDIR }}/public/
 
   upload:
     strategy:
