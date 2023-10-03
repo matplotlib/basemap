@@ -331,6 +331,20 @@ jobs:
           name: github-pages
           path: ${{ env.PKGDIR }}/public/
 
+  pages:
+    needs: docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy github-pages
+        uses: actions/deploy-pages@v2
+        id: deployment
+
   upload:
     strategy:
       matrix:
