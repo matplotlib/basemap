@@ -51,7 +51,7 @@ cdef extern from "geos_c.h":
         pass
     ctypedef struct GEOSCoordSeq:
         pass
-    ctypedef void (*GEOSMessageHandler)(char *fmt, char *list)
+    ctypedef void (*GEOSMessageHandler)(char *fmt, char *list) noexcept
     char *GEOSversion()
     void initGEOS(GEOSMessageHandler notice_function, GEOSMessageHandler error_function)
     void finishGEOS()
@@ -105,7 +105,7 @@ cdef extern from "geos_c.h":
     GEOSCoordSeq  *GEOSGeom_getCoordSeq(GEOSGeom* g)
     int GEOSCoordSeq_getSize(GEOSCoordSeq *s, unsigned int *size)
 
-cdef void notice_h(char *fmt, char*msg):
+cdef void notice_h(char *fmt, char*msg) noexcept:
     pass
     #format = PyBytes_FromString(fmt)
     #message = PyBytes_FromString(msg)
@@ -115,7 +115,7 @@ cdef void notice_h(char *fmt, char*msg):
     #    warn_msg = format
     #sys.stdout.write('GEOS_NOTICE: %s\n' % warn_msg)
 
-cdef void error_h(char *fmt, char*msg):
+cdef void error_h(char *fmt, char*msg) noexcept:
     format = PyBytes_FromString(fmt)
     message = PyBytes_FromString(msg)
     try:
