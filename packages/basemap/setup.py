@@ -15,6 +15,12 @@ from setuptools.command.sdist import sdist
 from setuptools.dist import Distribution
 from setuptools.extension import Extension
 
+try:
+    import Cython
+    cython_major_version = int(Cython.__version__.split(".")[0])
+except ImportError:
+    cython_major_version = 0
+
 
 def get_content(name, splitlines=False):
     """Return the file contents with project root as root folder."""
@@ -157,7 +163,8 @@ ext_modules = [
 for ext in ext_modules:
     ext.cython_directives = [
         ("language_level", str(sys.version_info[0])),
-    ]
+        ("legacy_implicit_noexcept", True),
+    ][:1 + int(cython_major_version >= 3)]
 
 # Define all the different requirements.
 setup_requires = get_content("requirements-setup.txt", splitlines=True)
