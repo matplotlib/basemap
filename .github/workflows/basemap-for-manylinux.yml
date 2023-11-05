@@ -294,6 +294,7 @@ jobs:
         python-version:
           ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
       max-parallel: 1
+    if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
     runs-on: ubuntu-latest
     container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-9"
@@ -321,7 +322,6 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
           TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
-        if: startsWith(github.event.ref, 'refs/tags/v')
         run: |
           python -m twine upload --skip-existing                              \
               ${{ env.PKGDIR }}/dist/*.zip                                    \
