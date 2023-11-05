@@ -20,12 +20,16 @@ https://semver.org/spec/v2.0.0.html
 
 ### Changed
 - Upgrade bundled GEOS library to 3.6.5.
+- Update build dependencies:
+  - Upgrade `Cython` upper pin to 3.1.
 
 ### Fixed
 - Set MSVC 14.0 (VS2015) to build the `_geoslib` module in the
   precompiled Windows wheels (PR [#565]).
 - Reimplement `matplotlib` version checks without using `distutils` and
   remove old switches related to unsupported `matplotlib` versions.
+- Fix `_geoslib.pyx` compilation with Cython 3.0+ using the compiler
+  directive "legacy_implicit_noexcept" (PR [#593] by @musicinmybrain).
 
 ### Removed
 - Attribute `__version__` in `basemap.proj` module.
@@ -999,6 +1003,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#593]:
+https://github.com/matplotlib/basemap/pull/593
 [#583]:
 https://github.com/matplotlib/basemap/issues/583
 [#582]:
