@@ -51,7 +51,10 @@ cdef extern from "geos_c.h":
         pass
     ctypedef struct GEOSCoordSeq:
         pass
-    ctypedef void (*GEOSMessageHandler)(char *fmt, char *list) noexcept
+    # Cython 3: Next ctypedef needs "noexcept" declaration unless
+    # the compiler directive "legacy_implicit_noexcept" is used
+    # ("noexcept" syntax supported since Cython 0.29.31).
+    ctypedef void (*GEOSMessageHandler)(char *fmt, char *list)
     char *GEOSversion()
     void initGEOS(GEOSMessageHandler notice_function, GEOSMessageHandler error_function)
     void finishGEOS()
@@ -105,7 +108,10 @@ cdef extern from "geos_c.h":
     GEOSCoordSeq  *GEOSGeom_getCoordSeq(GEOSGeom* g)
     int GEOSCoordSeq_getSize(GEOSCoordSeq *s, unsigned int *size)
 
-cdef void notice_h(char *fmt, char*msg) noexcept:
+# Cython 3: Next cdef needs "noexcept" declaration unless
+# the compiler directive "legacy_implicit_noexcept" is used
+# ("noexcept" syntax supported since Cython 0.29.31).
+cdef void notice_h(char *fmt, char*msg):
     pass
     #format = PyBytes_FromString(fmt)
     #message = PyBytes_FromString(msg)
@@ -115,7 +121,10 @@ cdef void notice_h(char *fmt, char*msg) noexcept:
     #    warn_msg = format
     #sys.stdout.write('GEOS_NOTICE: %s\n' % warn_msg)
 
-cdef void error_h(char *fmt, char*msg) noexcept:
+# Cython 3: Next cdef needs "noexcept" declaration unless
+# the compiler directive "legacy_implicit_noexcept" is used
+# ("noexcept" syntax supported since Cython 0.29.31).
+cdef void error_h(char *fmt, char*msg):
     format = PyBytes_FromString(fmt)
     message = PyBytes_FromString(msg)
     try:
