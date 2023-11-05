@@ -37,6 +37,12 @@ https://semver.org/spec/v2.0.0.html
   or the deprecated `matplotlib.cbook.dedent`) to write multi-line error
   messages.
 
+## [1.3.9]
+
+### Fixed
+- Fix references to removed `numpy.float` alias (solves issue [#589],
+  thanks to @quickbrett).
+
 ## [1.3.8] - 2023-08-18
 
 ### Changed
@@ -1005,6 +1011,8 @@ https://semver.org/spec/v2.0.0.html
 
 [#593]:
 https://github.com/matplotlib/basemap/pull/593
+[#589]:
+https://github.com/matplotlib/basemap/issues/589
 [#583]:
 https://github.com/matplotlib/basemap/issues/583
 [#582]:
@@ -1123,7 +1131,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.8...develop
+https://github.com/matplotlib/basemap/compare/v1.3.9...develop
+[1.3.9]:
+https://github.com/matplotlib/basemap/compare/v1.3.8...v1.3.9
 [1.3.8]:
 https://github.com/matplotlib/basemap/compare/v1.3.7...v1.3.8
 [1.3.7]:
