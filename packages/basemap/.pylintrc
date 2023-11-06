@@ -80,7 +80,10 @@ disable=
     unnecessary-lambda-assignment,
     # Allow freedom with old ways of using basic types.
     consider-using-f-string,
-    use-dict-literal
+    use-dict-literal,
+    # Allow freedom with multiline indentation.
+    useless-option-value,
+    bad-continuation
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
