@@ -78,7 +78,7 @@ jobs:
           cd ${{ env.PKGDIR }}
           if (Get-Command flake8 -errorAction SilentlyContinue)
           {
-              flake8 src/mpl_toolkits/basemap/cm.py;
+              flake8 src/mpl_toolkits/basemap/cm.py test;
           }
       -
         name: Run PyLint
@@ -86,7 +86,7 @@ jobs:
           cd ${{ env.PKGDIR }}
           if (Get-Command pylint -errorAction SilentlyContinue)
           {
-              pylint src/mpl_toolkits/basemap/cm.py;
+              pylint src/mpl_toolkits/basemap/cm.py test;
           }
 
   build-geos:
