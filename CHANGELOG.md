@@ -22,6 +22,9 @@ https://semver.org/spec/v2.0.0.html
 - Upgrade bundled GEOS library to 3.6.5.
 - Update build dependencies:
   - Upgrade `Cython` upper pin to 3.1.
+- Move optional dependencies on `netCDF4` and `pillow` to a new file
+  `requirements-full.txt` and set optional dependency on `cftime`
+  explicitly.
 
 ### Fixed
 - Set MSVC 14.0 (VS2015) to build the `_geoslib` module in the
