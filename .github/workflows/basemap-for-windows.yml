@@ -255,9 +255,10 @@ jobs:
           cd ${{ env.PKGDIR }}
           pip install -r requirements-test.txt
       -
-        name: Install package
+        name: Install package (full)
         run: |
-          python -m pip install (Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)
+          $whlpath = "$(Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)"
+          python -m pip install "${whlpath}[full]"
       -
         name: Test package
         run: |

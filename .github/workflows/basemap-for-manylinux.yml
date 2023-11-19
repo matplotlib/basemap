@@ -282,9 +282,10 @@ jobs:
           cd ${{ env.PKGDIR }}
           pip install -r requirements-test.txt
       -
-        name: Install package
+        name: Install package (full)
         run: |
-          pip install ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
+          whlpath=$(ls ${{ env.PKGDIR }}/dist/*-manylinux1*.whl | head -n1)
+          pip install "${whlpath}[full]"
       -
         name: Test package
         run: |
