@@ -1990,7 +1990,7 @@ class Basemap(object):
         county_info = self.readshapefile(gis_file,'counties',\
                       default_encoding='latin-1',drawbounds=drawbounds)
         counties = [coords for coords in self.counties]
-        counties = PolyCollection(counties)
+        counties = PolyCollection(counties, antialiaseds=(antialiased,))
         counties.set_linestyle(linestyle)
         counties.set_linewidth(linewidth)
         counties.set_edgecolor(color)
@@ -2203,7 +2203,7 @@ class Basemap(object):
             # get current axes instance (if none specified).
             ax = ax or self._check_ax()
             # make LineCollections for each polygon.
-            lines = LineCollection(coords,antialiaseds=(1,))
+            lines = LineCollection(coords,antialiaseds=(antialiased,))
             lines.set_color(color)
             lines.set_linewidth(linewidth)
             lines.set_label('_nolabel_')
