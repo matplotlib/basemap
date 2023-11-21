@@ -20,7 +20,8 @@ https://semver.org/spec/v2.0.0.html
   map boundary is not initialised manually (solves issue [#577], thanks
   to @YilongWang).
 - Fix flipped coastlines with pseudocylindrical projections when `lon_0`
-  is greater than 0 deg (solves issue [#463], thanks to @YilongWang).
+  is greater than 0 deg (solves issues [#443] and [#463], thanks to
+  @YilongWang).
 
 ## [1.3.8] - 2023-08-18
 
@@ -1080,6 +1081,8 @@ https://github.com/matplotlib/basemap/issues/461
 https://github.com/matplotlib/basemap/issues/456
 [#445]:
 https://github.com/matplotlib/basemap/issues/445
+[#443]:
+https://github.com/matplotlib/basemap/issues/443
 [#436]:
 https://github.com/matplotlib/basemap/issues/436
 [#422]:
