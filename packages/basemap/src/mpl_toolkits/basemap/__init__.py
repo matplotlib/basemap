@@ -3203,7 +3203,7 @@ class Basemap(object):
                 # first draw boundary, no fill
                 limb1 = self.drawmapboundary(fill_color='none', ax=ax)
                 # draw another filled patch, with no boundary.
-                limb2 = self.drawmapboundary(linewidth=0, ax=ax)
+                limb2 = self.drawmapboundary(fill_color='none', linewidth=0, ax=ax)
                 self._mapboundarydrawn = limb2
         # for elliptical map, always turn off axis_frame.
         if ((self.projection in ['ortho', 'geos', 'nsper', 'aeqd'] and
