@@ -4181,8 +4181,8 @@ class Basemap(object):
                     lonsr,latsr = self(x,y,inverse=True)
                     mask = ma.zeros((ny,nx,4),np.int8)
                     lon_0 = self.projparams['lon_0']
-                    lonright = lon_0+180.
-                    lonleft = lon_0-180.
+                    lonright = lon_0 + 180. - 1E-10
+                    lonleft = lon_0 - 180. + 1E-10
                     x1 = np.array(ny*[0.5*(self.xmax + self.xmin)],np.float64)
                     y1 = np.linspace(self.ymin, self.ymax, ny)
                     lons1, lats1 = self(x1,y1,inverse=True)

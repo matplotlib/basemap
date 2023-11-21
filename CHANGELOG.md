@@ -19,6 +19,8 @@ https://semver.org/spec/v2.0.0.html
   ETOPO, Shaded Relief) to be shown behind the map background when the
   map boundary is not initialised manually (solves issue [#577], thanks
   to @YilongWang).
+- Fix flipped coastlines with pseudocylindrical projections when `lon_0`
+  is greater than 0 deg (solves issue [#463], thanks to @YilongWang).
 
 ## [1.3.8] - 2023-08-18
 
@@ -1070,6 +1072,8 @@ https://github.com/matplotlib/basemap/issues/488
 https://github.com/matplotlib/basemap/issues/487
 [#476]:
 https://github.com/matplotlib/basemap/pull/476
+[#463]:
+https://github.com/matplotlib/basemap/issues/463
 [#461]:
 https://github.com/matplotlib/basemap/issues/461
 [#456]:
