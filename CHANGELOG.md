@@ -42,6 +42,15 @@ https://semver.org/spec/v2.0.0.html
 ### Fixed
 - Fix references to removed `numpy.float` alias (solves issue [#589],
   thanks to @quickbrett).
+- Fix bug with elliptical maps causing warped images (Blue Marble,
+  ETOPO, Shaded Relief) to be shown behind the map background when the
+  map boundary is not initialised manually (solves issue [#577], thanks
+  to @YilongWang).
+- Fix flipped coastlines with pseudocylindrical projections when `lon_0`
+  is greater than 0 deg (solves issues [#443] and [#463], thanks to
+  @YilongWang).
+- Fix `antialiased` argument being ignored in `Basemap.drawcounties` and
+  `Basemap.readshapefile` (solves issue [#501], thanks to @TheFizzWare).
 
 ## [1.3.8] - 2023-08-18
 
@@ -1023,6 +1032,8 @@ https://github.com/matplotlib/basemap/issues/581
 https://github.com/matplotlib/basemap/pull/580
 [#579]:
 https://github.com/matplotlib/basemap/issues/579
+[#577]:
+https://github.com/matplotlib/basemap/issues/577
 [#573]:
 https://github.com/matplotlib/basemap/issues/573
 [#565]:
@@ -1091,6 +1102,8 @@ https://github.com/matplotlib/basemap/issues/512
 https://github.com/matplotlib/basemap/issues/510
 [#505]:
 https://github.com/matplotlib/basemap/pull/505
+[#501]:
+https://github.com/matplotlib/basemap/issues/501
 [#491]:
 https://github.com/matplotlib/basemap/issues/491
 [#489]:
@@ -1103,6 +1116,8 @@ https://github.com/matplotlib/basemap/issues/487
 https://github.com/matplotlib/basemap/issues/481
 [#476]:
 https://github.com/matplotlib/basemap/pull/476
+[#463]:
+https://github.com/matplotlib/basemap/issues/463
 [#461]:
 https://github.com/matplotlib/basemap/issues/461
 [#456]:
@@ -1111,6 +1126,8 @@ https://github.com/matplotlib/basemap/issues/456
 https://github.com/matplotlib/basemap/issues/445
 [#444]:
 https://github.com/matplotlib/basemap/issues/444
+[#443]:
+https://github.com/matplotlib/basemap/issues/443
 [#437]:
 https://github.com/matplotlib/basemap/issues/437
 [#436]:

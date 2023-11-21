@@ -186,8 +186,8 @@ class Proj(object):
                     raise ValueError(_lower_left_out_of_bounds)
         elif self.projection in _pseudocyl:
             self._proj4 = pyproj.Proj(projparams)
-            xtmp,urcrnry = self(projparams['lon_0'],90.)
-            urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
+            xtmp, urcrnry = self(projparams['lon_0'], 90.)
+            urcrnrx, xtmp = self(projparams['lon_0'] + 180. - 1E-10, 0)
             llcrnrx = -urcrnrx
             llcrnry = -urcrnry
             if self.ellipsoid and self.projection in ['kav7','eck4','mbtfpq']:
@@ -227,8 +227,8 @@ class Proj(object):
                     if urcrnrx > 1.e20 or urcrnry > 1.e20:
                         raise ValueError(_upper_right_out_of_bounds)
             elif self.projection in _pseudocyl:
-                xtmp,urcrnry = self(projparams['lon_0'],90.)
-                urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
+                xtmp, urcrnry = self(projparams['lon_0'], 90.)
+                urcrnrx, xtmp = self(projparams['lon_0'] + 180. - 1E-10, 0)
         else:
             urcrnrx = urcrnrlon
             urcrnry = urcrnrlat
