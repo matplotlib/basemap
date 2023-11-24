@@ -24,6 +24,9 @@ https://semver.org/spec/v2.0.0.html
   @YilongWang).
 - Fix `antialiased` argument being ignored in `Basemap.drawcounties` and
   `Basemap.readshapefile` (solves issue [#501], thanks to @TheFizzWare).
+- Fix wrong reference to `ireland.py` example in FAQ, which should be
+  `hires.py` instead, and fix wrong use of locals and invalid syntax
+  in this example (solves issue [#592], thanks to @timcoote).
 
 ## [1.3.8] - 2023-08-18
 
@@ -991,6 +994,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#592]:
+https://github.com/matplotlib/basemap/issues/592
 [#589]:
 https://github.com/matplotlib/basemap/issues/589
 [#583]:
