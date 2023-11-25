@@ -2215,7 +2215,7 @@ class Basemap(object):
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None, \
                       fmt='%g',xoffset=None,yoffset=None,ax=None,latmax=None,
                       **text_kwargs):
-        """
+        r"""
         Draw and label parallels (latitude lines) for values (in degrees)
         given in the sequence ``circles``.
 
@@ -2493,7 +2493,7 @@ class Basemap(object):
                       dashes=[1,1],labels=[0,0,0,0],labelstyle=None,\
                       fmt='%g',xoffset=None,yoffset=None,ax=None,latmax=None,
                       **text_kwargs):
-        """
+        r"""
         Draw and label meridians (longitude lines) for values (in degrees)
         given in the sequence ``meridians``.
 
@@ -2800,7 +2800,7 @@ class Basemap(object):
         return meridict
 
     def tissot(self,lon_0,lat_0,radius_deg,npts,ax=None,**kwargs):
-        """
+        r"""
         Draw a polygon centered at ``lon_0,lat_0``.  The polygon
         approximates a circle on the surface of the earth with radius
         ``radius_deg`` degrees latitude along longitude ``lon_0``,
@@ -2857,7 +2857,7 @@ class Basemap(object):
         return x,y
 
     def drawgreatcircle(self,lon1,lat1,lon2,lat2,del_s=100.,**kwargs):
-        """
+        r"""
         Draw a great circle on the map from the longitude-latitude
         pair ``lon1,lat1`` to ``lon2,lat2``
 
@@ -3231,7 +3231,7 @@ class Basemap(object):
 
     @_transform1d
     def scatter(self, *args, **kwargs):
-        """
+        r"""
         Plot points with markers on the map
         (see matplotlib.pyplot.scatter documentation).
 
@@ -3263,7 +3263,7 @@ class Basemap(object):
 
     @_transform1d
     def plot(self, *args, **kwargs):
-        """
+        r"""
         Draw lines and/or markers on the map
         (see matplotlib.pyplot.plot documentation).
 
@@ -3291,7 +3291,7 @@ class Basemap(object):
         return ret
 
     def imshow(self, *args, **kwargs):
-        """
+        r"""
         Display an image over the map
         (see matplotlib.pyplot.imshow documentation).
 
@@ -3325,7 +3325,7 @@ class Basemap(object):
 
     @_transform
     def pcolor(self,x,y,data,**kwargs):
-        """
+        r"""
         Make a pseudo-color plot over the map
         (see matplotlib.pyplot.pcolor documentation).
 
@@ -3398,7 +3398,7 @@ class Basemap(object):
 
     @_transform
     def pcolormesh(self,x,y,data,**kwargs):
-        """
+        r"""
         Make a pseudo-color plot over the map
         (see matplotlib.pyplot.pcolormesh documentation).
 
@@ -3457,7 +3457,7 @@ class Basemap(object):
         return ret
 
     def hexbin(self,x,y,**kwargs):
-        """
+        r"""
         Make a hexagonal binning plot of x versus y, where x, y are 1-D
         sequences of the same length, N. If C is None (the default), this is a
         histogram of the number of occurences of the observations at
@@ -3499,7 +3499,7 @@ class Basemap(object):
 
     @_transform
     def contour(self,x,y,data,*args,**kwargs):
-        """
+        r"""
         Make a contour plot over the map
         (see matplotlib.pyplot.contour documentation).
 
@@ -3590,7 +3590,7 @@ class Basemap(object):
 
     @_transform
     def contourf(self,x,y,data,*args,**kwargs):
-        """
+        r"""
         Make a filled contour plot over the map
         (see matplotlib.pyplot.contourf documentation).
 
@@ -3686,7 +3686,7 @@ class Basemap(object):
 
     @_transformuv
     def quiver(self, x, y, u, v, *args, **kwargs):
-        """
+        r"""
         Make a vector plot (u, v) with arrows on the map.
 
         Arguments may be 1-D or 2-D arrays or sequences
@@ -3719,7 +3719,7 @@ class Basemap(object):
 
     @_transformuv
     def streamplot(self, x, y, u, v, *args, **kwargs):
-        """
+        r"""
         Draws streamlines of a vector flow.
         (see matplotlib.pyplot.streamplot documentation).
 
@@ -3756,7 +3756,7 @@ class Basemap(object):
 
     @_transformuv
     def barbs(self, x, y, u, v, *args, **kwargs):
-        """
+        r"""
         Make a wind barb plot (u, v) with on the map.
         (see matplotlib.pyplot.barbs documentation).
 
@@ -3801,7 +3801,7 @@ class Basemap(object):
 
     def drawlsmask(self,land_color="0.8",ocean_color="w",lsmask=None,
                    lsmask_lons=None,lsmask_lats=None,lakes=True,resolution='l',grid=5,**kwargs):
-        """
+        r"""
         Draw land-sea mask image.
 
         .. note::
@@ -4054,7 +4054,7 @@ class Basemap(object):
         return self.warpimage(image=image, scale=scale, **kwargs)
 
     def warpimage(self,image="bluemarble",scale=None,**kwargs):
-        """
+        r"""
         Display an image (filename given by ``image`` keyword) as a map background.
         If image is a URL (starts with 'http'), it is downloaded to a temp
         file using urllib.urlretrieve.
@@ -4344,7 +4344,7 @@ f=image" %\
     def wmsimage(self,server,\
                  xpixels=400,ypixels=None,\
                  format='png',alpha=None,verbose=False,**kwargs):
-        """
+        r"""
         Retrieve an image using from a WMS server using the
         Open Geospatial Consortium (OGC) standard interface
         and display on the map. Requires OWSLib
@@ -4621,7 +4621,7 @@ f=image" %\
         return rets
 
     def colorbar(self,mappable=None,location='right',size="5%",pad='2%',fig=None,ax=None,**kwargs):
-        """
+        r"""
         Add colorbar to axes associated with a map.
         The colorbar axes instance is created using the axes_grid toolkit.
 
