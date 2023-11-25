@@ -23,9 +23,6 @@ https://semver.org/spec/v2.0.0.html
 - Create optional library requirements file `requirements-full.txt`:
   - Move optional dependency `pillow` to optional requirements.
   - Upgrade `pillow` upper pin to 10.2.0.
-  - Upgrade `pillow` lower pin to 10.0.1 for Python 3.8+ due to
-    vulnerabilities [CVE-2023-4863], [CVE-2023-5129] and
-    [CVE-2023-44271].
 - Update build dependencies:
   - Upgrade `Cython` upper pin to 3.1.
 - Update doc dependencies:
@@ -1180,12 +1177,6 @@ https://github.com/matplotlib/basemap/compare/v1.0.3rel...v1.0.4rel
 [1.0.3]:
 https://github.com/matplotlib/basemap/tree/v1.0.3rel
 
-[CVE-2023-44271]:
-https://nvd.nist.gov/vuln/detail/CVE-2023-44271
-[CVE-2023-5129]:
-https://nvd.nist.gov/vuln/detail/CVE-2023-5129
-[CVE-2023-4863]:
-https://nvd.nist.gov/vuln/detail/CVE-2023-4863
 [CVE-2022-24303]:
 https://nvd.nist.gov/vuln/detail/CVE-2022-24303
 [CVE-2022-22817]:
