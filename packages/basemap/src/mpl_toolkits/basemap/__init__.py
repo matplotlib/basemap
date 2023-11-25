@@ -3948,57 +3948,110 @@ class Basemap(object):
         im,c = self._cliplimb(ax,im)
         return im
 
-    def bluemarble(self,ax=None,scale=None,**kwargs):
-        """
-        display blue marble image (from http://visibleearth.nasa.gov)
-        as map background.
-        Default image size is 5400x2700, which can be quite slow and
-        use quite a bit of memory.  The ``scale`` keyword can be used
-        to downsample the image (``scale=0.5`` downsamples to 2700x1350).
+    def bluemarble(self, ax=None, scale=None, **kwargs):
+        r"""Display blue marble image as map background.
 
-        \**kwargs passed on to :meth:`imshow`.
+        The original image is available at::
 
-        returns a matplotlib.image.AxesImage instance.
+            https://visibleearth.nasa.gov/
+
+        The default image size is 5400x2700, which can be a bit slow
+        memory-consuming. The ``scale`` keyword allows to downsample
+        the image (e.g. ``scale=0.5`` downsamples to 2700x1350).
+
+        Receives
+        --------
+
+        ax : matplotlib.image.AxesImage, optional
+            if given, alternative axes instance where the image is drawn
+
+        scale : float, optional
+            if given, rescale the image by the given factor
+
+        \**kwargs : dict, optional
+            keyword arguments passed on to :meth:`Basemap.imshow`.
+
+        Returns
+        -------
+
+        ax : matplotlib.image.AxesImage
+            axes instance
         """
+
+        image = "bluemarble"
         if ax is not None:
-            return self.warpimage(image='bluemarble',ax=ax,scale=scale,**kwargs)
-        else:
-            return self.warpimage(image='bluemarble',scale=scale,**kwargs)
+            return self.warpimage(image=image, ax=ax, scale=scale, **kwargs)
+        return self.warpimage(image=image, scale=scale, **kwargs)
 
-    def shadedrelief(self,ax=None,scale=None,**kwargs):
+    def shadedrelief(self, ax=None, scale=None, **kwargs):
+        r"""Display shaded relief image as map background.
+
+        The original image is available at::
+
+            https://www.shadedrelief.com/
+
+        The default image size is 5400x2700, which can be a bit slow
+        memory-consuming. The ``scale`` keyword allows to downsample
+        the image (e.g. ``scale=0.5`` downsamples to 2700x1350).
+
+        Receives
+        --------
+
+        ax : matplotlib.image.AxesImage, optional
+            if given, alternative axes instance where the image is drawn
+
+        scale : float, optional
+            if given, rescale the image by the given factor
+
+        \**kwargs : dict, optional
+            keyword arguments passed on to :meth:`Basemap.imshow`.
+
+        Returns
+        -------
+
+        ax : matplotlib.image.AxesImage
+            axes instance
         """
-        display shaded relief image (from http://www.shadedrelief.com)
-        as map background.
-        Default image size is 10800x5400, which can be quite slow and
-        use quite a bit of memory.  The ``scale`` keyword can be used
-        to downsample the image (``scale=0.5`` downsamples to 5400x2700).
 
-        \**kwargs passed on to :meth:`imshow`.
-
-        returns a matplotlib.image.AxesImage instance.
-        """
+        image = "shadedrelief"
         if ax is not None:
-            return self.warpimage(image='shadedrelief',ax=ax,scale=scale,**kwargs)
-        else:
-            return self.warpimage(image='shadedrelief',scale=scale,**kwargs)
+            return self.warpimage(image=image, ax=ax, scale=scale, **kwargs)
+        return self.warpimage(image=image, scale=scale, **kwargs)
 
-    def etopo(self,ax=None,scale=None,**kwargs):
+    def etopo(self, ax=None, scale=None, **kwargs):
+        r"""Display ETOPO relief image as map background.
+
+        The original image is available at::
+
+            http://www.ngdc.noaa.gov/mgg/global/global.html
+
+        The default image size is 5400x2700, which can be a bit slow
+        memory-consuming. The ``scale`` keyword allows to downsample
+        the image (e.g. ``scale=0.5`` downsamples to 2700x1350).
+
+        Receives
+        --------
+
+        ax : matplotlib.image.AxesImage, optional
+            if given, alternative axes instance where the image is drawn
+
+        scale : float, optional
+            if given, rescale the image by the given factor
+
+        \**kwargs : dict, optional
+            keyword arguments passed on to :meth:`Basemap.imshow`.
+
+        Returns
+        -------
+
+        ax : matplotlib.image.AxesImage
+            axes instance
         """
-        display etopo relief image (from
-        http://www.ngdc.noaa.gov/mgg/global/global.html)
-        as map background.
-        Default image size is 5400x2700, which can be quite slow and
-        use quite a bit of memory.  The ``scale`` keyword can be used
-        to downsample the image (``scale=0.5`` downsamples to 5400x2700).
 
-        \**kwargs passed on to :meth:`imshow`.
-
-        returns a matplotlib.image.AxesImage instance.
-        """
+        image = "etopo"
         if ax is not None:
-            return self.warpimage(image='etopo',ax=ax,scale=scale,**kwargs)
-        else:
-            return self.warpimage(image='etopo',scale=scale,**kwargs)
+            return self.warpimage(image=image, ax=ax, scale=scale, **kwargs)
+        return self.warpimage(image=image, scale=scale, **kwargs)
 
     def warpimage(self,image="bluemarble",scale=None,**kwargs):
         """
