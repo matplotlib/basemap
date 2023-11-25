@@ -19,8 +19,16 @@ import os
 import sys
 import math
 import functools
+try:
+    from urllib2 import urlopen
+    from urllib import urlretrieve
+except ImportError:
+    from urllib.request import urlopen
+    from urllib.request import urlretrieve
+
 import numpy as np
 import numpy.ma as ma
+
 import matplotlib as mpl
 from matplotlib.collections import LineCollection
 from matplotlib.collections import PolyCollection
@@ -32,15 +40,10 @@ from matplotlib.patches import FancyArrowPatch
 from matplotlib.patches import Polygon
 from matplotlib.transforms import Bbox
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-try:
-    from urllib2 import urlopen
-    from urllib import urlretrieve
-except ImportError:
-    from urllib.request import urlopen
-    from urllib.request import urlretrieve
+
 import pyproj
-from . proj import Proj
 import _geoslib
+from . proj import Proj
 
 
 __version__ = "1.4.0-dev"
