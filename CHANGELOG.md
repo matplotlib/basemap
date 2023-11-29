@@ -23,6 +23,8 @@ https://semver.org/spec/v2.0.0.html
 - Create optional library requirements file `requirements-full.txt`:
   - Move optional dependency `pillow` to optional requirements.
   - Upgrade `pillow` upper pin to 10.2.0.
+- Update library dependencies:
+  - Set dependency on `packaging` as replacement for `distutils`.
 - Update build dependencies:
   - Upgrade `Cython` upper pin to 3.1.
 - Update doc dependencies:

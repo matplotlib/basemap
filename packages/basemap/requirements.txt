@@ -29,3 +29,10 @@ pyproj >= 1.9.3, < 3.7.0; python_version >= "3.5"
 
 pyshp >= 1.2, < 2.0; python_version == "2.6"
 pyshp >= 1.2, < 2.4; python_version >= "2.7"
+
+packaging >= 16.0, < 17.0; python_version == "2.6"
+packaging >= 16.0, < 21.0; python_version == "2.7"
+packaging >= 16.0, < 17.0; python_version == "3.2"
+packaging >= 16.0, < 17.0; python_version == "3.3"
+packaging >= 16.0, < 21.0; python_version == "3.4"
+packaging >= 16.0, < 24.0; python_version >= "3.5"
