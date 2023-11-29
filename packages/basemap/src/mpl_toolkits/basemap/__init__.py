@@ -3962,8 +3962,8 @@ class Basemap(object):
         memory-consuming. The ``scale`` keyword allows to downsample
         the image (e.g. ``scale=0.5`` downsamples to 2700x1350).
 
-        Receives
-        --------
+        Parameters
+        ----------
 
         ax : matplotlib.image.AxesImage, optional
             if given, alternative axes instance where the image is drawn
@@ -3997,8 +3997,8 @@ class Basemap(object):
         memory-consuming. The ``scale`` keyword allows to downsample
         the image (e.g. ``scale=0.5`` downsamples to 2700x1350).
 
-        Receives
-        --------
+        Parameters
+        ----------
 
         ax : matplotlib.image.AxesImage, optional
             if given, alternative axes instance where the image is drawn
@@ -4032,8 +4032,8 @@ class Basemap(object):
         memory-consuming. The ``scale`` keyword allows to downsample
         the image (e.g. ``scale=0.5`` downsamples to 2700x1350).
 
-        Receives
-        --------
+        Parameters
+        ----------
 
         ax : matplotlib.image.AxesImage, optional
             if given, alternative axes instance where the image is drawn
