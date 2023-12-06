@@ -51,10 +51,10 @@ class Proj(object):
         try:
             self.rmajor = projparams["a"]
             self.rminor = projparams["b"]
-        except:
+        except:  # noqa: E722  # pylint: disable=bare-except
             try:
                 self.rmajor = projparams["R"]
-            except:
+            except:  # noqa: E722  # pylint: disable=bare-except
                 self.rmajor = projparams["bR_a"]
             self.rminor = self.rmajor
         if self.rmajor == self.rminor:
@@ -303,9 +303,11 @@ class Proj(object):
                 if onearray:
                     outxy[:, 0] = _rad2dg * (xy[:, 0] / rcurv) + self.llcrnrlon
                 else:
-                    try:  # x a scalar or an array
+                    try:
+                        # x is a scalar or an array.
                         outx = _rad2dg * (x / rcurv) + self.llcrnrlon
-                    except:  # x a sequence
+                    except:  # noqa: E722  # pylint: disable=bare-except
+                        # x is a sequence.
                         outx = [_rad2dg * (xi / rcurv) + self.llcrnrlon for xi in x]
         else:
             if self.projection in ["merc", "mill", "gall"]:
@@ -321,9 +323,11 @@ class Proj(object):
                 if onearray:
                     outxy[:, 0] = rcurv * _dg2rad * (xy[:, 0] - self.llcrnrlon)
                 else:
-                    try:  # x is a scalar or an array
+                    try:
+                        # x is a scalar or an array.
                         outx = rcurv * _dg2rad * (x - self.llcrnrlon)
-                    except:  # x is a sequence.
+                    except:  # noqa: E722  # pylint: disable=bare-except
+                        # x is a sequence.
                         outx = [rcurv * _dg2rad * (xi - self.llcrnrlon) for xi in x]
         if onearray:
             return outxy
