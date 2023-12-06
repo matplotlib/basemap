@@ -140,10 +140,10 @@ class Proj(object):  # pylint: disable=too-many-instance-attributes
             self._width = width
             if llcrnrlon == -180 and llcrnrlat == -90 and urcrnrlon == +180 and urcrnrlat == +90:
                 self._fulldisk = True
-                llcrnrx = -width
-                llcrnry = -height
-                urcrnrx = -llcrnrx
-                urcrnry = -llcrnry
+                llcrnrx = np.negative(width)
+                llcrnry = np.negative(height)
+                urcrnrx = np.negative(llcrnrx)
+                urcrnry = np.negative(llcrnry)
             else:
                 self._fulldisk = False
                 llcrnrx, llcrnry = self(llcrnrlon, llcrnrlat)
@@ -173,10 +173,10 @@ class Proj(object):  # pylint: disable=too-many-instance-attributes
             self._width = width
             if llcrnrlon == -180 and llcrnrlat == -90 and urcrnrlon == +180 and urcrnrlat == +90:
                 self._fulldisk = True
-                llcrnrx = -width
-                llcrnry = -height
-                urcrnrx = -llcrnrx
-                urcrnry = -llcrnry
+                llcrnrx = np.negative(width)
+                llcrnry = np.negative(height)
+                urcrnrx = np.negative(llcrnrx)
+                urcrnry = np.negative(llcrnry)
             else:
                 self._fulldisk = False
                 llcrnrx, llcrnry = self(llcrnrlon, llcrnrlat)
@@ -200,8 +200,8 @@ class Proj(object):  # pylint: disable=too-many-instance-attributes
         # Compute x_0, y_0 so ll corner of domain is x=0,y=0.
         # Note that for "cyl" we have x,y == lon,lat.
         if self.projection != "ob_tran":
-            self.projparams["x_0"] = -llcrnrx
-            self.projparams["y_0"] = -llcrnry
+            self.projparams["x_0"] = np.negative(llcrnrx)
+            self.projparams["y_0"] = np.negative(llcrnry)
         # Reset with x_0, y_0.
         if self.projection not in ["cyl", "ob_tran"]:
             self._proj4 = pyproj.Proj(projparams)
@@ -302,6 +302,7 @@ class Proj(object):  # pylint: disable=too-many-instance-attributes
                 # the plane of the meridian.
                 rcurv = self.rmajor * coslat / math.sqrt(1. - self.esq * sinlat**2)
                 if onearray:
+                    # pylint: disable=unsupported-assignment-operation
                     outxy[:, 0] = _rad2dg * (xy[:, 0] / rcurv) + self.llcrnrlon
                 else:
                     try:
@@ -322,6 +323,7 @@ class Proj(object):  # pylint: disable=too-many-instance-attributes
                 # the plane of the meridian.
                 rcurv = self.rmajor * coslat / math.sqrt(1. - self.esq * sinlat**2)
                 if onearray:
+                    # pylint: disable=unsupported-assignment-operation
                     outxy[:, 0] = rcurv * _dg2rad * (xy[:, 0] - self.llcrnrlon)
                 else:
                     try:
