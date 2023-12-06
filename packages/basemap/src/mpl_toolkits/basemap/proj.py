@@ -1,3 +1,4 @@
+"""Module with :mod:`Proj` class for cartographic transformations."""
 from __future__ import division
 
 import math
@@ -12,7 +13,7 @@ _cylproj = ["cyl", "merc", "mill", "gall"]
 _pseudocyl = ["moll", "kav7", "eck4", "robin", "sinu", "mbtfpq", "vandg", "hammer"]
 
 
-class Proj(object):
+class Proj(object):  # pylint: disable=too-many-instance-attributes
     """Perform cartographic transformations using :mod:`pyproj`.
 
     The cartographic transformations (from longitude/latitude to native
@@ -24,8 +25,8 @@ class Proj(object):
 
     See docstrings for __init__ and __call__ for details."""
 
-    def __init__(self, projparams, llcrnrlon, llcrnrlat,
-                 urcrnrlon, urcrnrlat, urcrnrislatlon=True):
+    def __init__(self, projparams,  # pylint: disable=too-many-arguments
+                 llcrnrlon, llcrnrlat, urcrnrlon, urcrnrlat, urcrnrislatlon=True):
         """Initialise a :mod:`Proj` instance.
 
         Input `projparams` is a dictionary with PROJ map projection
@@ -42,6 +43,7 @@ class Proj(object):
         x=0,y=0.
         """
 
+        # pylint: disable=too-many-statements,too-many-branches
         self.projparams = projparams
         self.projection = projparams["proj"]
 
@@ -129,10 +131,10 @@ class Proj(object):
             latmax = int(100 * latmax) / 100.
             lonmax = int(100 * lonmax) / 100.
             # Width and height of visible projection.
-            P = pyproj.Proj(proj="geos", a=self.rmajor, b=self.rminor,
-                            lat_0=0, lon_0=0, h=projparams["h"])
-            x1, y1 = P(0., latmax)
-            x2, y2 = P(lonmax, 0.)
+            projtmp = pyproj.Proj(proj="geos", a=self.rmajor, b=self.rminor,
+                                  lat_0=0, lon_0=0, h=projparams["h"])
+            _x1, y1 = projtmp(0., latmax)  # pylint: disable=unpacking-non-sequence
+            x2, _y2 = projtmp(lonmax, 0.)  # pylint: disable=unpacking-non-sequence
             width, height = x2, y1
             self._height = height
             self._width = width
@@ -162,10 +164,10 @@ class Proj(object):
             latmax = int(100 * latmax) / 100.
             lonmax = int(100 * lonmax) / 100.
             # Width and height of visible projection.
-            P = pyproj.Proj(proj="nsper", a=self.rmajor, b=self.rminor,
-                            lat_0=0, lon_0=0, h=projparams["h"])
-            x1, y1 = P(0., latmax)
-            x2, y2 = P(lonmax, 0.)
+            projtmp = pyproj.Proj(proj="nsper", a=self.rmajor, b=self.rminor,
+                                  lat_0=0, lon_0=0, h=projparams["h"])
+            _x1, y1 = projtmp(0., latmax)  # pylint: disable=unpacking-non-sequence
+            x2, _y2 = projtmp(lonmax, 0.)  # pylint: disable=unpacking-non-sequence
             width, height = x2, y1
             self._height = height
             self._width = width
@@ -183,8 +185,8 @@ class Proj(object):
                                      "is not in the map projection region")
         elif self.projection in _pseudocyl:
             self._proj4 = pyproj.Proj(projparams)
-            xtmp, urcrnry = self(projparams["lon_0"], 90.)
-            urcrnrx, xtmp = self(projparams["lon_0"] + 180., 0)
+            _, urcrnry = self(projparams["lon_0"], 90.)
+            urcrnrx, _ = self(projparams["lon_0"] + 180., 0)
             llcrnrx = -urcrnrx
             llcrnry = -urcrnry
             if self.ellipsoid and self.projection in ["kav7", "eck4", "mbtfpq"]:
@@ -228,8 +230,8 @@ class Proj(object):
                         raise ValueError("the upper right corner of the plot "
                                          "is not in the map projection region")
             elif self.projection in _pseudocyl:
-                xtmp, urcrnry = self(projparams["lon_0"], 90.)
-                urcrnrx, xtmp = self(projparams["lon_0"] + 180., 0)
+                _, urcrnry = self(projparams["lon_0"], 90.)
+                urcrnrx, _ = self(projparams["lon_0"] + 180., 0)
         else:
             urcrnrx = urcrnrlon
             urcrnry = urcrnrlat
@@ -273,15 +275,14 @@ class Proj(object):
         if len(args) == 1:
             xy = args[0]
             onearray = True
+            # Fast return for "cyl" since x,y == lon,lat.
+            if self.projection == "cyl":
+                return xy
         else:
             x, y = args
             onearray = False
-
-        # Fast return for "cyl" since x,y == lon,lat.
-        if self.projection == "cyl":
-            if onearray:
-                return xy
-            else:
+            # Fast return for "cyl" since x,y == lon,lat.
+            if self.projection == "cyl":
                 return x, y
 
         inverse = kw.get("inverse", False)
@@ -329,10 +330,10 @@ class Proj(object):
                     except:  # noqa: E722  # pylint: disable=bare-except
                         # x is a sequence.
                         outx = [rcurv * _dg2rad * (xi - self.llcrnrlon) for xi in x]
+
         if onearray:
             return outxy
-        else:
-            return outx, outy
+        return outx, outy
 
     def makegrid(self, nx, ny, returnxy=False):
         """Return regular grid in native projection.
@@ -348,10 +349,10 @@ class Proj(object):
         x = self.llcrnrx + dx * np.indices((ny, nx), np.float32)[1, :, :]
         y = self.llcrnry + dy * np.indices((ny, nx), np.float32)[0, :, :]
         lons, lats = self(x, y, inverse=True)
+
         if returnxy:
             return lons, lats, x, y
-        else:
-            return lons, lats
+        return lons, lats
 
     def makegrid3d(self, nx, ny, returnxy=False):
         """Return regular grid in native projection.
@@ -369,10 +370,10 @@ class Proj(object):
         xy[..., 0] = self.llcrnrx + dx * np.indices((ny, nx), np.float32)[1, :, :]
         xy[..., 1] = self.llcrnry + dy * np.indices((ny, nx), np.float32)[0, :, :]
         lonlat = self(xy, inverse=True)
+
         if returnxy:
             return lonlat, xy
-        else:
-            return lonlat
+        return lonlat
 
 
 if __name__ == "__main__":
