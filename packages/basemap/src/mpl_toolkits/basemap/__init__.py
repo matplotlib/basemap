@@ -4091,7 +4091,16 @@ class Basemap(object):
                 raise ImportError("warpimage method requires PIL "
                                   "(http://pillow.readthedocs.io)")
 
-        from matplotlib.image import pil_to_array
+        import warnings
+        import matplotlib.image as mpimg
+
+        def pil_to_array(*args, **kwargs):
+            """Call :func:`~mpimg.pil_to_array` ignoring deprecation warnings."""
+
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=DeprecationWarning)
+                return mpimg.pil_to_array(*args, **kwargs)
+
         if self.celestial:
             raise ValueError("warpimage does not work in celestial coordinates")
         ax = kwargs.pop('ax', None) or self._check_ax()
