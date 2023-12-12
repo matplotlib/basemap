@@ -22,6 +22,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix flipped coastlines with pseudocylindrical projections when `lon_0`
   is greater than 0 deg (solves issues [#443] and [#463], thanks to
   @YilongWang).
+- Fix broken `Proj.__call__` when the input arguments are provided as
+  a combined single array.
 - Fix `antialiased` argument being ignored in `Basemap.drawcounties` and
   `Basemap.readshapefile` (solves issue [#501], thanks to @TheFizzWare).
 - Fix wrong reference to `ireland.py` example in FAQ, which should be
