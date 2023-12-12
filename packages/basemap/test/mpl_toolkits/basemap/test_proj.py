@@ -96,8 +96,8 @@ class TestMplToolkitsBasemapProj(unittest.TestCase):
         nx, ny = 349, 277
         awips221 = self.get_awips_example()
 
-        lons, lats = awips221.makegrid(nx, ny)
-        lonlats, _ = awips221.makegrid3d(nx, ny, returnxy=True)
+        lons, lats = awips221.makegrid(nx, ny, returnxy=False)
+        lonlats = awips221.makegrid3d(nx, ny, returnxy=False)
 
         self.assertTrue((lons == lonlats[..., 0]).all())
         self.assertTrue((lats == lonlats[..., 1]).all())

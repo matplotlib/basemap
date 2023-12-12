@@ -287,7 +287,8 @@ class Proj(object):  # pylint: disable=too-many-instance-attributes
 
         inverse = kw.get("inverse", False)
         if onearray:
-            outxy = self._proj4(xy, inverse=inverse)
+            outx, outy = self._proj4(*xy.T, inverse=inverse)
+            outxy = np.asarray([outx, outy]).T
         else:
             outx, outy = self._proj4(x, y, inverse=inverse)
         if inverse:
