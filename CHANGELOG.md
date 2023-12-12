@@ -24,6 +24,7 @@ https://semver.org/spec/v2.0.0.html
   - Move optional dependency `pillow` to optional requirements.
   - Upgrade `pillow` upper pin to 10.2.0.
 - Update library dependencies:
+  - Downgrade `pyproj` upper pin to 2.2.0 for Python 2.7.
   - Set dependency on `packaging` as replacement for `distutils`.
 - Update build dependencies:
   - Upgrade `Cython` upper pin to 3.1.
