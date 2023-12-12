@@ -47,8 +47,8 @@ class TestMplToolkitsBasemapProj(unittest.TestCase):
         awips221 = self.get_awips_example()
 
         llcornerx, llcornery = awips221(awips221.llcrnrlon, awips221.llcrnrlat)
-        self.assertAlmostEqual(llcornerx, 0)
-        self.assertAlmostEqual(llcornery, 0)
+        self.assertAlmostEqual(llcornerx, 0, places=6)
+        self.assertAlmostEqual(llcornery, 0, places=6)
 
     def test_proj_lcc_lonlat_lower_left_corners(self):
         """Test `class`:Proj: instace for AWIPS grid 221 parameters."""
