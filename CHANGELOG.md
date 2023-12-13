@@ -35,6 +35,7 @@ https://semver.org/spec/v2.0.0.html
 ### Fixed
 - Reimplement `matplotlib` version checks without using `distutils` and
   remove old switches related to unsupported `matplotlib` versions.
+- Fix `DeprecationWarning` in `Basemap.shiftdata` method.
 - Fix `DeprecationWarning` in internal function `_validated_ll`.
 - Set MSVC 14.0 (VS2015) to build the `_geoslib` module in the
   precompiled Windows wheels (PR [#565]).
