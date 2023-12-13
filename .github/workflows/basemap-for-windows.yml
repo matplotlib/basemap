@@ -258,7 +258,7 @@ jobs:
         name: Install package (full)
         run: |
           $whlpath = "$(Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)"
-          python -m pip install "${whlpath}[full]"
+          python -m pip install "${whlpath}[owslib,pillow]"
       -
         name: Test package
         run: |

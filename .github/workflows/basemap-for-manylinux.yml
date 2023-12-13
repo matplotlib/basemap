@@ -285,7 +285,7 @@ jobs:
         name: Install package (full)
         run: |
           whlpath=$(ls ${{ env.PKGDIR }}/dist/*-manylinux1*.whl | head -n1)
-          pip install "${whlpath}[full]"
+          pip install "${whlpath}[owslib,pillow]"
       -
         name: Fix CA certificates location
         run: |

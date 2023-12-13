@@ -20,9 +20,10 @@ https://semver.org/spec/v2.0.0.html
 
 ### Changed
 - Upgrade bundled GEOS library to 3.6.5.
-- Create optional library requirements file `requirements-full.txt`:
-  - Move optional dependency `pillow` to optional requirements.
-  - Upgrade `pillow` upper pin to 10.2.0.
+- Create optional library requirements files:
+  - `requirements-owslib.txt` for optional dependency `OWSLib`.
+  - `requirements-pillow.txt` for optional dependency `pillow`, with
+    upper pin bumped to 10.2.0.
 - Update library dependencies:
   - Downgrade `pyproj` upper pin to 2.2.0 for Python 2.7.
   - Set dependency on `packaging` as replacement for `distutils`.
