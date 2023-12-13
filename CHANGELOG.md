@@ -22,8 +22,10 @@ https://semver.org/spec/v2.0.0.html
 - Upgrade bundled GEOS library to 3.6.5.
 - Create optional library requirements files:
   - `requirements-owslib.txt` for optional dependency `OWSLib`.
-  - `requirements-pillow.txt` for optional dependency `pillow`, with
-    upper pin bumped to 10.2.0.
+    - Set `OWSLib` lower pin to 0.28.1 for Python 3.6+ due to
+      vulnerability [CVE-2023-27476].
+  - `requirements-pillow.txt` for optional dependency `pillow`:
+    - Upgrade `pillow` upper pin to 10.2.0.
 - Update library dependencies:
   - Downgrade `pyproj` upper pin to 2.2.0 for Python 2.7.
   - Set dependency on `packaging` as replacement for `distutils`.
@@ -103,7 +105,8 @@ https://semver.org/spec/v2.0.0.html
 - Upgrade `matplotlib` upper pin to 3.8 (solves issue [#573]).
 - Upgrade `pyproj` upper pin to 3.6.
 - Upgrade test dependency `netCDF4` upper pin to 1.7.
-- Upgrade test dependency `pillow` lower pin to 9.4.
+- Upgrade test dependency `pillow` lower pin to 9.4 due to vulnerability
+  [CVE-2022-45198].
 
 ## [1.3.6] - 2022-10-31
 
@@ -197,8 +200,8 @@ https://semver.org/spec/v2.0.0.html
     [CVE-2020-10177], [CVE-2020-10378], [CVE-2020-10379],
     [CVE-2020-10994] and [CVE-2020-11538].
   - `pillow >= 6.2.2` For Python == 2.7 due to `pillow` vulnerabilities
-    [CVE-2019-16865], [CVE-2019-19911], [CVE-2020-5310], [CVE-2020-5312]
-    and [CVE-2020-5313].
+    [CVE-2019-16865], [CVE-2019-19911], [CVE-2020-5310],
+    [CVE-2020-5311], [CVE-2020-5312] and [CVE-2020-5313].
 
 ### Removed
 - Remove deprecation notices (issue [#527]).
@@ -1217,6 +1220,10 @@ https://github.com/matplotlib/basemap/compare/v1.0.3rel...v1.0.4rel
 [1.0.3]:
 https://github.com/matplotlib/basemap/tree/v1.0.3rel
 
+[CVE-2023-27476]:
+https://nvd.nist.gov/vuln/detail/CVE-2023-27476
+[CVE-2022-45198]:
+https://nvd.nist.gov/vuln/detail/CVE-2022-45198
 [CVE-2022-24303]:
 https://nvd.nist.gov/vuln/detail/CVE-2022-24303
 [CVE-2022-22817]:
@@ -1283,6 +1290,8 @@ https://nvd.nist.gov/vuln/detail/CVE-2020-10177
 https://nvd.nist.gov/vuln/detail/CVE-2020-5313
 [CVE-2020-5312]:
 https://nvd.nist.gov/vuln/detail/CVE-2020-5312
+[CVE-2020-5311]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-5311
 [CVE-2020-5310]:
 https://nvd.nist.gov/vuln/detail/CVE-2020-5310
 [CVE-2019-19911]:
