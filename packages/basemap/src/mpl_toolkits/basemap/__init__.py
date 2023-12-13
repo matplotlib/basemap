@@ -507,7 +507,8 @@ _unsupported_projection.append(supported_projections)
 _unsupported_projection = ''.join(_unsupported_projection)
 
 def _validated_ll(param, name, minval, maxval):
-    param = float(param)
+    item = np.squeeze(param)
+    param = float(param if item.shape else item)
     if param > maxval or param < minval:
         raise ValueError('%s must be between %f and %f degrees' %
                                            (name, minval, maxval))
