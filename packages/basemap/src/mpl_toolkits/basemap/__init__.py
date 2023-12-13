@@ -18,6 +18,7 @@ heavy lifting), and the following functions:
 import os
 import sys
 import math
+import warnings
 import functools
 try:
     from urllib2 import urlopen
@@ -3315,7 +3316,9 @@ class Basemap(object):
             kwargs['origin']='lower'
         self._save_use_hold(ax, kwargs)
         try:
-            ret =  ax.imshow(*args, **kwargs)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=DeprecationWarning)
+                ret = ax.imshow(*args, **kwargs)
         finally:
             self._restore_hold(ax)
         # reset current active image (only if pyplot is imported).
@@ -4092,7 +4095,6 @@ class Basemap(object):
                 raise ImportError("warpimage method requires PIL "
                                   "(http://pillow.readthedocs.io)")
 
-        import warnings
         import matplotlib.image as mpimg
 
         def pil_to_array(*args, **kwargs):
@@ -4300,7 +4302,6 @@ class Basemap(object):
                              "in order to use the wmsmap method")
         ax = kwargs.pop('ax', None) or self._check_ax()
         # find the x,y values at the corner points.
-        import warnings
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=FutureWarning)
             p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
@@ -4411,7 +4412,6 @@ f=image" %\
         if 'layers' not in kwargs:
             raise ValueError('no layers specified')
         # find the x,y values at the corner points.
-        import warnings
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=FutureWarning)
             p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
