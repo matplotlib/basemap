@@ -254,6 +254,8 @@ setup(**{
             get_content("requirements-lint.txt", splitlines=True),
         "test":
             get_content("requirements-test.txt", splitlines=True),
+        "full":
+            get_content("requirements-full.txt", splitlines=True),
     },
     "cmdclass": {
         "sdist": basemap_sdist,

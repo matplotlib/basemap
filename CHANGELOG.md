@@ -20,19 +20,35 @@ https://semver.org/spec/v2.0.0.html
 
 ### Changed
 - Upgrade bundled GEOS library to 3.6.5.
+- Create optional library requirements file `requirements-full.txt`:
+  - Move optional dependency `pillow` to optional requirements.
+  - Upgrade `pillow` upper pin to 10.2.0.
+- Update library dependencies:
+  - Downgrade `pyproj` upper pin to 2.2.0 for Python 2.7.
+  - Set dependency on `packaging` as replacement for `distutils`.
 - Update build dependencies:
   - Upgrade `Cython` upper pin to 3.1.
+- Update doc dependencies:
+  - Move dependency on `netCDF4` to `requirements-doc.txt`.
+  - Set dependency on `cftime` explicitly in `requirements-doc.txt`.
 
 ### Fixed
-- Set MSVC 14.0 (VS2015) to build the `_geoslib` module in the
-  precompiled Windows wheels (PR [#565]).
 - Reimplement `matplotlib` version checks without using `distutils` and
   remove old switches related to unsupported `matplotlib` versions.
+- Hide `FutureWarning` in `Basemap.arcgisimage` and `Basemap.wmsimage`
+  methods due to old initialisation EPSG string used with `pyproj.Proj`.
+- Fix `DeprecationWarning` in `Basemap.imshow` and `Basemap.shiftdata`
+  methods.
+- Fix `DeprecationWarning` in internal function `_validated_ll`.
+- Set MSVC 14.0 (VS2015) to build the `_geoslib` module in the
+  precompiled Windows wheels (PR [#565]).
 - Fix `_geoslib.pyx` compilation with Cython 3.0+ using the compiler
   directive "legacy_implicit_noexcept" (PR [#593] by @musicinmybrain).
 
 ### Removed
-- Attribute `__version__` in `basemap.proj` module.
+- Attribute `__version__` in `mpl_toolkits.basemap.proj` module.
+- Module `mpl_toolkits.basemap.test`, whose content is migrated to the
+  test suite in the `test` folder.
 - Dependency on `dedent` function (either as alias of `inspect.cleandoc`
   or the deprecated `matplotlib.cbook.dedent`) to write multi-line error
   messages.

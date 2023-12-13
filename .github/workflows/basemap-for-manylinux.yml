@@ -66,14 +66,14 @@ jobs:
         run: |
           cd ${{ env.PKGDIR }}
           if [ -x "$(command -v flake8)" ]; then
-              flake8 src/mpl_toolkits/basemap/cm.py;
+              flake8 src/mpl_toolkits/basemap/cm.py src/mpl_toolkits/basemap/diagnostic.py src/mpl_toolkits/basemap/proj.py src/mpl_toolkits/basemap/solar.py test;
           fi
       -
         name: Run PyLint
         run: |
           cd ${{ env.PKGDIR }}
           if [ -x "$(command -v pylint)" ]; then
-              pylint src/mpl_toolkits/basemap/cm.py;
+              pylint src/mpl_toolkits/basemap/cm.py src/mpl_toolkits/basemap/diagnostic.py src/mpl_toolkits/basemap/proj.py src/mpl_toolkits/basemap/solar.py test;
           fi
 
   build-geos:
@@ -277,14 +277,69 @@ jobs:
           pip install "numpy < 1.24"
         if: matrix.arch == 'x86' && (matrix.python-version >= '3.8' || matrix.python-version >= '3.10')
       -
-        name: Install package
+        name: Install test requirements
         run: |
-          pip install ${{ env.PKGDIR }}/dist/*-manylinux1*.whl
+          cd ${{ env.PKGDIR }}
+          pip install -r requirements-test.txt
+      -
+        name: Install package (full)
+        run: |
+          whlpath=$(ls ${{ env.PKGDIR }}/dist/*-manylinux1*.whl | head -n1)
+          pip install "${whlpath}[full]"
+      -
+        name: Fix CA certificates location
+        run: |
+          sslvers=$(python -c 'import ssl; print(".".join(map(str, ssl._OPENSSL_API_VERSION[:3])))')
+          sslfold=/opt/openssl-${sslvers}/ssl
+          mkdir -p "${sslfold}"
+          cp "/etc/ssl/cert.pem" "${sslfold}/cert.pem"
       -
         name: Test package
         run: |
-          python -c "from mpl_toolkits.basemap import Basemap"
-          python -c "from mpl_toolkits.basemap import cm"
+          cd ${{ env.PKGDIR }}
+          export COVERAGE_FILE=.coverage.${{ matrix.python-version }}
+          python -m pytest                                                    \
+              --cov="mpl_toolkits.basemap" --cov-report=term                  \
+              --ignore=dist --ignore=build
+      -
+        name: Upload test artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: test
+          path: ${{ env.PKGDIR }}/.coverage.${{ matrix.python-version }}
+
+  coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    container: "pylegacy/python:3.8-debian-9"
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v1
+      -
+        name: Download test artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: test
+          path: ${{ env.PKGDIR }}
+      -
+        name: Install test requirements
+        run: |
+          cd ${{ env.PKGDIR }}
+          pip install -r requirements-test.txt
+      -
+        name: Compute combined coverage
+        run: |
+          cd ${{ env.PKGDIR }}
+          coverage combine
+          coverage html
+          coverage report
+      -
+        name: Upload coverage artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: coverage
+          path: ${{ env.PKGDIR }}/htmlcov
 
   upload:
     strategy:

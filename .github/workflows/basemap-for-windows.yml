@@ -78,7 +78,7 @@ jobs:
           cd ${{ env.PKGDIR }}
           if (Get-Command flake8 -errorAction SilentlyContinue)
           {
-              flake8 src/mpl_toolkits/basemap/cm.py;
+              flake8 src/mpl_toolkits/basemap/cm.py src/mpl_toolkits/basemap/diagnostic.py src/mpl_toolkits/basemap/proj.py src/mpl_toolkits/basemap/solar.py test;
           }
       -
         name: Run PyLint
@@ -86,7 +86,7 @@ jobs:
           cd ${{ env.PKGDIR }}
           if (Get-Command pylint -errorAction SilentlyContinue)
           {
-              pylint src/mpl_toolkits/basemap/cm.py;
+              pylint src/mpl_toolkits/basemap/cm.py src/mpl_toolkits/basemap/diagnostic.py src/mpl_toolkits/basemap/proj.py src/mpl_toolkits/basemap/solar.py test;
           }
 
   build-geos:
@@ -228,6 +228,18 @@ jobs:
     runs-on: windows-2019
     steps:
       -
+        name: Download checkout
+        uses: actions/download-artifact@v3
+        with:
+          name: checkout
+          path: .
+      -
+        name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
+      -
         name: Set Python
         uses: pylegacy/actions/setup-pyenv-win@v2
         with:
@@ -238,20 +250,29 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools wheel
       -
-        name: Download build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
-          path: ${{ env.PKGDIR }}/dist
-      -
-        name: Install package
+        name: Install test requirements
         run: |
-          python -m pip install (Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)
+          cd ${{ env.PKGDIR }}
+          pip install -r requirements-test.txt
+      -
+        name: Install package (full)
+        run: |
+          $whlpath = "$(Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)"
+          python -m pip install "${whlpath}[full]"
       -
         name: Test package
         run: |
-          python -c "from mpl_toolkits.basemap import Basemap"
-          python -c "from mpl_toolkits.basemap import cm"
+          cd ${{ env.PKGDIR }}
+          $env:COVERAGE_FILE = ".coverage.${{ matrix.python-version }}"
+          python -m pytest                                                    `
+              --cov="mpl_toolkits.basemap" --cov-report=term                  `
+              --ignore=dist --ignore=build
+      -
+        name: Upload test artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: test
+          path: ${{ env.PKGDIR }}/.coverage.${{ matrix.python-version }}
 
   upload:
     strategy:

@@ -1,0 +1,8 @@
+pillow >= 3.4.0, < 4.0.0; python_version == "2.6"
+pillow >= 6.2.2, < 7.0.0; python_version == "2.7"
+pillow >= 3.4.0, < 4.0.0; python_version == "3.2"
+pillow >= 4.3.0, < 5.0.0; python_version == "3.3"
+pillow >= 5.4.0, < 6.0.0; python_version == "3.4"
+pillow >= 7.1.0, < 8.0.0; python_version == "3.5"
+pillow >= 8.3.2, < 9.0.0; python_version == "3.6"
+pillow >= 9.4.0, < 10.2.0; python_version >= "3.7"
