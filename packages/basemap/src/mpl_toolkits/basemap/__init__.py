@@ -4343,18 +4343,21 @@ f=image" %\
             # Check if the image is already in the cachedir folder.
             cache_path = cachedir + filename
 
-            if os.path.isfile(cache_path):
+            if os.path.isfile(cache_path) and verbose:
                 print('Image already in cache')
                 img = Image.open(cache_path)
                 return basemap.imshow(img, ax=ax, origin='upper')
-            else:
-                # Retrieve and save image
-                img = Image.open(urlopen(basemap_url))
-                img.save(cache_path)
-        else:
-            img = Image.open(urlopen(basemap_url))
 
-        # return AxesImage instance.
+        # Retrieve image from remote server.
+        import contextlib
+        conn = urlopen(basemap_url)
+        with contextlib.closing(conn):
+            img = Image.open(conn)
+            # Save to cache if requested.
+            if cachedir != None:
+                img.save(cache_path)
+
+        # Return AxesImage instance.
         return self.imshow(img, ax=ax, origin='upper')
 
     def wmsimage(self,server,\
