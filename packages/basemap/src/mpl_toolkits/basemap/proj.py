@@ -126,7 +126,7 @@ class Proj(object):  # pylint: disable=too-many-instance-attributes
             lonmax = 90. - (180. / np.pi) * np.arcsin(self.rmajor / h)
             # Longitude of horizon on equator.
             latmax = 90. - (180. / np.pi) * np.arcsin(self.rminor / h)
-            # Rruncate to nearest hundredth of a degree (to make sure
+            # Truncate to nearest hundredth of a degree (to make sure
             # they aren't slightly over the horizon).
             latmax = int(100 * latmax) / 100.
             lonmax = int(100 * lonmax) / 100.
