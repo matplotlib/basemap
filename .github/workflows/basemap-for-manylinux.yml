@@ -66,14 +66,14 @@ jobs:
         run: |
           cd ${{ env.PKGDIR }}
           if [ -x "$(command -v flake8)" ]; then
-              flake8 src/mpl_toolkits/basemap/cm.py src/mpl_toolkits/basemap/diagnostic.py src/mpl_toolkits/basemap/proj.py test;
+              flake8 src/mpl_toolkits/basemap/cm.py src/mpl_toolkits/basemap/diagnostic.py src/mpl_toolkits/basemap/proj.py src/mpl_toolkits/basemap/solar.py test;
           fi
       -
         name: Run PyLint
         run: |
           cd ${{ env.PKGDIR }}
           if [ -x "$(command -v pylint)" ]; then
-              pylint src/mpl_toolkits/basemap/cm.py src/mpl_toolkits/basemap/diagnostic.py src/mpl_toolkits/basemap/proj.py test;
+              pylint src/mpl_toolkits/basemap/cm.py src/mpl_toolkits/basemap/diagnostic.py src/mpl_toolkits/basemap/proj.py src/mpl_toolkits/basemap/solar.py test;
           fi
 
   build-geos:
