@@ -186,7 +186,7 @@ class Proj(object):  # pylint: disable=too-many-instance-attributes
         elif self.projection in _pseudocyl:
             self._proj4 = pyproj.Proj(projparams)
             _, urcrnry = self(projparams["lon_0"], 90.)
-            urcrnrx, _ = self(projparams["lon_0"] + 180., 0)
+            urcrnrx, _ = self(projparams["lon_0"] + 180. - 1E-10, 0)
             llcrnrx = -urcrnrx
             llcrnry = -urcrnry
             if self.ellipsoid and self.projection in ["kav7", "eck4", "mbtfpq"]:
@@ -231,7 +231,7 @@ class Proj(object):  # pylint: disable=too-many-instance-attributes
                                          "is not in the map projection region")
             elif self.projection in _pseudocyl:
                 _, urcrnry = self(projparams["lon_0"], 90.)
-                urcrnrx, _ = self(projparams["lon_0"] + 180., 0)
+                urcrnrx, _ = self(projparams["lon_0"] + 180. - 1E-10, 0)
         else:
             urcrnrx = urcrnrlon
             urcrnry = urcrnrlat

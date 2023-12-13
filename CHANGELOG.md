@@ -49,8 +49,25 @@ https://semver.org/spec/v2.0.0.html
 ## [1.3.9]
 
 ### Fixed
+- Fix `GeosLibrary` wrapper to also work with CMake >= 3.27.0 and
+  Python 2.7 on Windows by adding '/MANIFEST:NO' to override the new
+  default '/MANIFEST:EMBED,ID=2' provided to linker.
 - Fix references to removed `numpy.float` alias (solves issue [#589],
   thanks to @quickbrett).
+- Fix bug with elliptical maps causing warped images (Blue Marble,
+  ETOPO, Shaded Relief) to be shown behind the map background when the
+  map boundary is not initialised manually (solves issue [#577], thanks
+  to @YilongWang).
+- Fix flipped coastlines with pseudocylindrical projections when `lon_0`
+  is greater than 0 deg (solves issues [#443] and [#463], thanks to
+  @YilongWang).
+- Fix broken `Proj.__call__` when the input arguments are provided as
+  a combined single array.
+- Fix `antialiased` argument being ignored in `Basemap.drawcounties` and
+  `Basemap.readshapefile` (solves issue [#501], thanks to @TheFizzWare).
+- Fix wrong reference to `ireland.py` example in FAQ, which should be
+  `hires.py` instead, and fix wrong use of locals and invalid syntax
+  in this example (solves issue [#592], thanks to @timcoote).
 
 ## [1.3.8] - 2023-08-18
 
@@ -116,7 +133,7 @@ https://semver.org/spec/v2.0.0.html
 - Update `numpy` build dependency to ensure that builds also work on
   MacOS (fixes issue [#547], thanks to @SongJaeIn for testing).
 - Fix broken implementation of `Basemap.arcgisimage` (PR [#548], solves
-  issues [#481] and [#546]).
+  issues [#481], [#546] and [#591]).
 - Enforce up-to-date `numpy` dependency when possible:
   - Set `numpy >= 1.19` for Python == 3.6 due to `numpy` vulnerabilities
     [CVE-2021-41495] and [CVE-2021-41496].
@@ -1020,6 +1037,10 @@ https://semver.org/spec/v2.0.0.html
 
 [#593]:
 https://github.com/matplotlib/basemap/pull/593
+[#592]:
+https://github.com/matplotlib/basemap/issues/592
+[#591]:
+https://github.com/matplotlib/basemap/issues/591
 [#589]:
 https://github.com/matplotlib/basemap/issues/589
 [#583]:
@@ -1032,6 +1053,8 @@ https://github.com/matplotlib/basemap/issues/581
 https://github.com/matplotlib/basemap/pull/580
 [#579]:
 https://github.com/matplotlib/basemap/issues/579
+[#577]:
+https://github.com/matplotlib/basemap/issues/577
 [#573]:
 https://github.com/matplotlib/basemap/issues/573
 [#565]:
@@ -1100,6 +1123,8 @@ https://github.com/matplotlib/basemap/issues/512
 https://github.com/matplotlib/basemap/issues/510
 [#505]:
 https://github.com/matplotlib/basemap/pull/505
+[#501]:
+https://github.com/matplotlib/basemap/issues/501
 [#491]:
 https://github.com/matplotlib/basemap/issues/491
 [#489]:
@@ -1112,6 +1137,8 @@ https://github.com/matplotlib/basemap/issues/487
 https://github.com/matplotlib/basemap/issues/481
 [#476]:
 https://github.com/matplotlib/basemap/pull/476
+[#463]:
+https://github.com/matplotlib/basemap/issues/463
 [#461]:
 https://github.com/matplotlib/basemap/issues/461
 [#456]:
@@ -1120,6 +1147,8 @@ https://github.com/matplotlib/basemap/issues/456
 https://github.com/matplotlib/basemap/issues/445
 [#444]:
 https://github.com/matplotlib/basemap/issues/444
+[#443]:
+https://github.com/matplotlib/basemap/issues/443
 [#437]:
 https://github.com/matplotlib/basemap/issues/437
 [#436]:
