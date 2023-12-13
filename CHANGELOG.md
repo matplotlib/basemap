@@ -41,7 +41,9 @@ https://semver.org/spec/v2.0.0.html
   directive "legacy_implicit_noexcept" (PR [#593] by @musicinmybrain).
 
 ### Removed
-- Attribute `__version__` in `basemap.proj` module.
+- Attribute `__version__` in `mpl_toolkits.basemap.proj` module.
+- Module `mpl_toolkits.basemap.test`, whose content is migrated to the
+  test suite in the `test` folder.
 - Dependency on `dedent` function (either as alias of `inspect.cleandoc`
   or the deprecated `matplotlib.cbook.dedent`) to write multi-line error
   messages.
