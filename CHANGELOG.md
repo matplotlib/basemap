@@ -32,7 +32,9 @@ https://semver.org/spec/v2.0.0.html
   - Set dependency on `packaging` as replacement for `distutils`.
 - Update build dependencies:
   - Upgrade `Cython` upper pin to 3.1.
-- Update doc dependencies:
+- Update doc dependencies and require at least Python 3.8 for them:
+  - Upgrade upper limit for `sphinx` to 7.2.
+  - Upgrade upper limit for `furo` to 2023.9.11.
   - Move dependency on `netCDF4` to `requirements-doc.txt`.
   - Set dependency on `cftime` explicitly in `requirements-doc.txt`.
 
