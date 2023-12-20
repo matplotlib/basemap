@@ -1,5 +1,6 @@
 import sys
 import numpy
+cimport numpy as cnp
 
 __version__ = "0.3"
 
@@ -20,10 +21,9 @@ cdef extern from "numpy/arrayobject.h":
         cdef int flags
     npy_intp PyArray_SIZE(ndarray arr)
     npy_intp PyArray_ISCONTIGUOUS(ndarray arr)
-    void import_array()
 
 # Initialize numpy
-import_array()
+cnp.import_array()
 
 # GENERAL NOTES:
 #
