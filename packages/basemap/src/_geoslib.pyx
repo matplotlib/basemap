@@ -54,7 +54,7 @@ cdef extern from "geos_c.h":
     # Cython 3: Next ctypedef needs "noexcept" declaration unless
     # the compiler directive "legacy_implicit_noexcept" is used
     # ("noexcept" syntax supported since Cython 0.29.31).
-    ctypedef void (*GEOSMessageHandler)(char *fmt, char *list)
+    ctypedef void (*GEOSMessageHandler)(const char *fmt, ...)
     char *GEOSversion()
     void initGEOS(GEOSMessageHandler notice_function, GEOSMessageHandler error_function)
     void finishGEOS()
@@ -111,7 +111,7 @@ cdef extern from "geos_c.h":
 # Cython 3: Next cdef needs "noexcept" declaration unless
 # the compiler directive "legacy_implicit_noexcept" is used
 # ("noexcept" syntax supported since Cython 0.29.31).
-cdef void notice_h(char *fmt, char*msg):
+cdef void notice_h(const char *fmt, ...):
     pass
     #format = PyBytes_FromString(fmt)
     #message = PyBytes_FromString(msg)
@@ -124,7 +124,9 @@ cdef void notice_h(char *fmt, char*msg):
 # Cython 3: Next cdef needs "noexcept" declaration unless
 # the compiler directive "legacy_implicit_noexcept" is used
 # ("noexcept" syntax supported since Cython 0.29.31).
-cdef void error_h(char *fmt, char*msg):
+# FIXME: The type should be: error_h(const char *fmt, ...), but
+# Cython does not currently support varargs functions.
+cdef void error_h(const char *fmt, char*msg):
     format = PyBytes_FromString(fmt)
     message = PyBytes_FromString(msg)
     try:
@@ -142,7 +144,7 @@ __geos_major_version__ = GEOS_VERSION_MAJOR
 #     raise ValueError('version 2.2.3 of the geos library is required')
 
 # intialize GEOS (parameters are notice and error function callbacks).
-initGEOS(notice_h, error_h)
+initGEOS(notice_h, <GEOSMessageHandler>error_h)
 
 cdef class BaseGeometry:
     cdef GEOSGeometry *_geom
