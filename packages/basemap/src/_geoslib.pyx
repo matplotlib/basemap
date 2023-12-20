@@ -105,8 +105,8 @@ cdef extern from "geos_c.h":
     GEOSGeometry  *GEOSGetExteriorRing(GEOSGeometry* g)
 # Return NULL on exception.
 # Geometry must be a LineString, LinearRing or Point.
-    GEOSCoordSequence  *GEOSGeom_getCoordSeq(GEOSGeometry* g)
-    int GEOSCoordSeq_getSize(GEOSCoordSequence *s, unsigned int *size)
+    GEOSCoordSequence  *GEOSGeom_getCoordSeq(const GEOSGeometry* g)
+    int GEOSCoordSeq_getSize(const GEOSCoordSequence *s, unsigned int *size)
 
 # Cython 3: Next cdef needs "noexcept" declaration unless
 # the compiler directive "legacy_implicit_noexcept" is used
@@ -176,7 +176,7 @@ cdef class BaseGeometry:
         cdef GEOSGeometry *g1
         cdef GEOSGeometry *g2
         cdef GEOSGeometry *g3
-        cdef GEOSGeometry *gout
+        cdef const GEOSGeometry *gout
         cdef int numgeoms, i, typeid
         g1 = self._geom
         g2 = geom._geom
@@ -208,7 +208,7 @@ cdef class BaseGeometry:
     def simplify(self, tol):
         cdef GEOSGeometry *g1
         cdef GEOSGeometry *g3
-        cdef GEOSGeometry *gout
+        cdef const GEOSGeometry *gout
         cdef double tolerance
         cdef int numgeoms, i, typeid
         g1 = self._geom
@@ -241,7 +241,7 @@ cdef class BaseGeometry:
     def fix(self):
         cdef GEOSGeometry *g1
         cdef GEOSGeometry *g3
-        cdef GEOSGeometry *gout
+        cdef const GEOSGeometry *gout
         cdef int numgeoms, i, typeid
         g1 = self._geom
         g3 = GEOSBuffer(g1, 0., 0)
@@ -285,7 +285,7 @@ cdef class BaseGeometry:
         cdef GEOSGeometry *g1
         cdef GEOSGeometry *g2
         cdef GEOSGeometry *g3
-        cdef GEOSGeometry *gout
+        cdef const GEOSGeometry *gout
         cdef char answer
         cdef int numgeoms, i, typeid
         g1 = self._geom
@@ -439,9 +439,9 @@ cdef class Point(BaseGeometry):
         self._npts = 1
         self.boundary = b
 
-cdef _get_coords(GEOSGeometry *geom):
-    cdef GEOSCoordSequence *cs
-    cdef GEOSGeometry *lr
+cdef _get_coords(const GEOSGeometry *geom):
+    cdef const GEOSCoordSequence *cs
+    cdef const GEOSGeometry *lr
     cdef unsigned int i, M
     cdef double dx, dy
     cdef ndarray b
