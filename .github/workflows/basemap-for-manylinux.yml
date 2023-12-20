@@ -39,7 +39,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 3
       fail-fast: false
     needs: checkout
@@ -131,7 +131,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 3
       fail-fast: false
     needs: build-geos
@@ -162,10 +162,11 @@ jobs:
               2.6|3.[23])      pkgvers=1.11.3;;
               2.7|3.[456789])  pkgvers=1.16.6;;
               3.10)            pkgvers=1.21.4;;
-              *)               pkgvers=1.23.3;;
+              3.11)            pkgvers=1.23.3;;
+              *)               pkgvers=1.26.0;;
           esac
-          # Dirty solution to get NumPy headers for Python 3.11.
-          if [ "${{ matrix.python-version }}" = "3.11" ]; then
+          # Dirty solution to get NumPy headers for Python 3.11 and 3.12.
+          if [ "${{ matrix.python-version }}" = "3.11" -o "${{ matrix.python-version }}" = "3.12" ]; then
               case "${{ matrix.arch }}" in
                   x64)  kwds="--plat=manylinux_2_17_x86_64" ;;
                   x86)  kwds="--plat=manylinux_2_17_i686"   ;;
@@ -185,7 +186,7 @@ jobs:
           sitepkgdir=$(pip show numpy 2>/dev/null | grep Location: | cut -d' ' -f2)
           export GEOS_DIR="${GITHUB_WORKSPACE}/${{ env.PKGDIR }}/extern"
           export NUMPY_INCLUDE_PATH=${sitepkgdir}/numpy/core/include
-          if [ "${{ matrix.python-version }}" = "3.11" ]; then
+          if [ "${{ matrix.python-version }}" = "3.11" -o "${{ matrix.python-version }}" = "3.12" ]; then
               kwds="--no-build-isolation"
               pip install setuptools wheel "cython >= 0.29, < 3.1"
           fi
@@ -205,7 +206,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 3
       fail-fast: false
     needs: build
@@ -250,7 +251,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 3
       fail-fast: false
     needs: repair
@@ -347,7 +348,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
