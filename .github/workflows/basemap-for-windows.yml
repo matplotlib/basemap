@@ -177,7 +177,7 @@ jobs:
               "^2\.7|3\.[456789]$"  { Set-Variable -Name "pkgvers" -Value "1.16.6" }
               "^3\.10$"             { Set-Variable -Name "pkgvers" -Value "1.21.4" }
               "^3\.11$"             { Set-Variable -Name "pkgvers" -Value "1.23.3" }
-              default               { Set-Variable -Name "pkgvers" -Value "1.26.0" }
+              default               { Set-Variable -Name "pkgvers" -Value "1.26.1" }
           }
           $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
           python -m pip install "numpy == ${pkgvers}"
