@@ -59,6 +59,8 @@ https://semver.org/spec/v2.0.0.html
   precompiled Windows wheels (PR [#565]).
 - Fix `_geoslib.pyx` compilation with Cython 3.0+ using the compiler
   directive "legacy_implicit_noexcept" (PR [#593] by @musicinmybrain).
+- Fix `_geoslib.pyx` syntax to comply with newer compilers such as
+  Clang 16 and GCC 14 (PR [#595] by @fweimer-rh).
 
 ### Removed
 - Attribute `__version__` in `mpl_toolkits.basemap.proj` module.
@@ -1058,6 +1060,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#595]:
+https://github.com/matplotlib/basemap/pull/595
 [#593]:
 https://github.com/matplotlib/basemap/pull/593
 [#592]:
