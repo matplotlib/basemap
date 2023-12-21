@@ -13,6 +13,7 @@ https://semver.org/spec/v2.0.0.html
 ## [Unreleased]
 
 ### Added
+- Support for Python 3.12.
 - Optional argument `encoding_errors` for `Basemap.readshapefile` method
   (PR [#554] by @guziy, implements request [#552]).
 - Optional argument `cachedir` for `Basemap.arcgisimage` method to allow
@@ -22,18 +23,29 @@ https://semver.org/spec/v2.0.0.html
 - Upgrade bundled GEOS library to 3.6.5.
 - Create optional library requirements files:
   - `requirements-owslib.txt` for optional dependency `OWSLib`.
-    - Set `OWSLib` lower pin to 0.28.1 for Python 3.6+ due to
+    - Set `OWSLib` lower limit to 0.28.1 for Python 3.6+ due to
       vulnerability [CVE-2023-27476].
   - `requirements-pillow.txt` for optional dependency `pillow`:
-    - Upgrade `pillow` upper pin to 10.2.0.
+    - Upgrade `pillow` upper limit to 10.2.0.
 - Update library dependencies:
-  - Downgrade `pyproj` upper pin to 2.2.0 for Python 2.7.
+  - Upgrade upper limit for `numpy` to 1.27.0.
+  - Downgrade upper limit for `pyproj` to 2.2.0 for Python 2.7.
   - Set dependency on `packaging` as replacement for `distutils`.
 - Update build dependencies:
-  - Upgrade `Cython` upper pin to 3.1.
-- Update doc dependencies:
+  - Upgrade upper limit for `Cython` to 3.1.
+- Update doc dependencies and require at least Python 3.8 for them:
+  - Upgrade upper limit for `sphinx` to 7.2.
+  - Upgrade upper limit for `furo` to 2023.9.11.
   - Move dependency on `netCDF4` to `requirements-doc.txt`.
   - Set dependency on `cftime` explicitly in `requirements-doc.txt`.
+- Update lint dependencies:
+  - Downgrade upper limit for `flake8` to 6.2.
+  - Upgrade upper limit for `astropy` to 3.1.
+  - Upgrade lower limit for `pylint` to 3.1.
+- Update test dependencies:
+  - Upgrade upper limit for `pytest` to 7.5.
+  - Upgrade upper limit for `coverage` to 7.4.
+  - Upgrade upper limit for `pytest-cov` to 4.2.
 
 ### Fixed
 - Reimplement `matplotlib` version checks without using `distutils` and

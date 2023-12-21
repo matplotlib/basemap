@@ -39,7 +39,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 3
       fail-fast: false
     needs: checkout
@@ -131,7 +131,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 3
       fail-fast: false
     needs: build-geos
@@ -158,37 +158,44 @@ jobs:
       -
         name: Build old numpy from source
         run: |
-          case "${{ matrix.python-version }}" in
-              2.6|3.[23])      pkgvers=1.11.3;;
-              2.7|3.[456789])  pkgvers=1.16.6;;
-              3.10)            pkgvers=1.21.4;;
-              *)               pkgvers=1.23.3;;
+          case "${{ matrix.arch }}" in
+              x64)  arch="x86_64" ;;
+              x86)  arch="i686"   ;;
           esac
-          # Dirty solution to get NumPy headers for Python 3.11.
-          if [ "${{ matrix.python-version }}" = "3.11" ]; then
-              case "${{ matrix.arch }}" in
-                  x64)  kwds="--plat=manylinux_2_17_x86_64" ;;
-                  x86)  kwds="--plat=manylinux_2_17_i686"   ;;
-              esac
-              pip download --no-deps ${kwds} "numpy==${pkgvers}"
-              oldpkgfile=$(ls *.whl | head -n1)
-              newpkgfile=$(echo "${oldpkgfile}" | sed 's/manylinux_2_17/linux/')
-              mv "${oldpkgfile}" "${newpkgfile}"
-              pip install "${newpkgfile}"
-              rm "${newpkgfile}"
-          else
-              pip install "numpy == ${pkgvers}"
-          fi
+          case "${{ matrix.python-version }}" in
+              2.6|3.[23])      pkgvers=1.11.3; tag=manylinux1 ;;
+              2.7|3.[456789])  pkgvers=1.16.6; tag=manylinux1 ;;
+              3.10)            pkgvers=1.21.4; tag=manylinux1 ;;
+              3.11)            pkgvers=1.23.3; tag=manylinux_2_17 ;;
+              *)               pkgvers=1.26.1; tag=manylinux_2_28 ;;
+          esac
+          case "${{ matrix.python-version }}" in
+              3.11|3.12)
+                  # Dirty solution to get NumPy headers for Python 3.11 and 3.12.
+                  kwds="--plat=${tag}_${arch}"
+                  pip download --no-deps ${kwds} "numpy==${pkgvers}"
+                  oldpkgfile=$(ls *.whl | head -n1)
+                  newpkgfile=$(echo "${oldpkgfile}" | sed "s/${tag}/linux/")
+                  mv "${oldpkgfile}" "${newpkgfile}"
+                  pip install "${newpkgfile}"
+                  rm "${newpkgfile}"
+              ;;
+              *)
+                  pip install "numpy == ${pkgvers}"
+              ;;
+          esac
       -
         name: Build wheel
         run: |
           sitepkgdir=$(pip show numpy 2>/dev/null | grep Location: | cut -d' ' -f2)
           export GEOS_DIR="${GITHUB_WORKSPACE}/${{ env.PKGDIR }}/extern"
           export NUMPY_INCLUDE_PATH=${sitepkgdir}/numpy/core/include
-          if [ "${{ matrix.python-version }}" = "3.11" ]; then
-              kwds="--no-build-isolation"
-              pip install setuptools wheel "cython >= 0.29, < 3.1"
-          fi
+          case "${{ matrix.python-version }}" in
+              3.11|3.12)
+                kwds="--no-build-isolation"
+                pip install setuptools wheel "cython >= 0.29, < 3.1"
+              ;;
+          esac
           cd ${{ env.PKGDIR }}
           python setup.py sdist
           pip wheel -w dist --no-deps ${kwds} dist/*.zip
@@ -205,7 +212,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 3
       fail-fast: false
     needs: build
@@ -250,7 +257,16 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+        exclude:
+          # Missing precompiled binaries for `numpy`, `matplotlib`, `pillow`
+          # and `lxml`.
+          - arch: "x64"
+            python-version: "3.12"
+          # Missing precompiled binaries for `numpy`, `matplotlib`, `pyproj`,
+          # `pillow` and `lxml`.
+          - arch: "x86"
+            python-version: "3.12"
       max-parallel: 3
       fail-fast: false
     needs: repair
@@ -347,7 +363,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test

@@ -12,12 +12,11 @@ import warnings
 from setuptools import setup
 from setuptools import find_packages
 from setuptools.command.sdist import sdist
-from setuptools.dist import Distribution
 from setuptools.extension import Extension
 
 try:
     import Cython
-    cython_major_version = int(Cython.__version__.split(".")[0])
+    cython_major_version = int(Cython.__version__.split(".", 1)[0])
 except ImportError:
     cython_major_version = 0
 
@@ -84,7 +83,7 @@ def get_geos_install_prefix():
     return None
 
 
-class basemap_sdist(sdist):
+class basemap_sdist(sdist):  # pylint: disable=invalid-name
     """Custom `sdist` so that it will not pack DLLs on Windows if present."""
 
     def run(self):
@@ -117,8 +116,8 @@ else:
         import numpy
         include_dirs.append(numpy.get_include())
     except ImportError as err:
-        build_cmds = ("bdist_wheel", "build", "install")
-        if any(cmd in sys.argv[1:] for cmd in build_cmds):
+        cmds = ("bdist_wheel", "build", "install")
+        if any(cmd in sys.argv[1:] for cmd in cmds):
             warnings.warn("unable to locate NumPy headers", RuntimeWarning)
 
 # Define GEOS include, library and runtime dirs.
@@ -241,7 +240,7 @@ setup(**{
             ">=2.6",
             "!=3.0.*",
             "!=3.1.*",
-            "<3.12",
+            "<3.13",
         ]),
     "setup_requires":
         setup_requires,
