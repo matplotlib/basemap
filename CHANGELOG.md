@@ -13,6 +13,7 @@ https://semver.org/spec/v2.0.0.html
 ## [Unreleased]
 
 ### Added
+- Support for Python 3.12.
 - Optional argument `encoding_errors` for `Basemap.readshapefile` method
   (PR [#554] by @guziy, implements request [#552]).
 - Optional argument `cachedir` for `Basemap.arcgisimage` method to allow
