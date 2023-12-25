@@ -318,6 +318,30 @@ cdef class BaseGeometry:
                 b = _get_coords(gout)
                 p = LineString(b)
                 pout.append(p)
+        elif typeid == GEOS_GEOMETRYCOLLECTION:
+            numgeoms = GEOSGetNumGeometries(g3)
+            pout = []
+            for i from 0 <= i < numgeoms:
+                gout = GEOSGetGeometryN(g3, i)
+                typeid = GEOSGeomTypeId(gout)
+                if typeid == GEOS_POLYGON:
+                    b = _get_coords(gout)
+                    p = Polygon(b)
+                    pout.append(p)
+                elif typeid == GEOS_LINESTRING:
+                    b = _get_coords(gout)
+                    p = LineString(b)
+                    pout.append(p)
+                else:
+                    # More cases might need to be handled here:
+                    # - GEOS_MULTILINESTRING
+                    # - GEOS_MULTIPOLYGON
+                    # - GEOS_GEOMETRYCOLLECTION
+                    # The underlying problem is the need of a generic
+                    # converter from GEOSGeom pointers to `_geoslib`
+                    # objects, since postprocessing `GeometryCollections`
+                    # might need recursiveness.
+                    pass
         else:
             #type = PyBytes_FromString(GEOSGeomType(g3))
             #raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))

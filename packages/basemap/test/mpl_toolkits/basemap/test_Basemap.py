@@ -8,6 +8,7 @@ except ImportError:
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
 from matplotlib.image import AxesImage
 from matplotlib.patches import Polygon
 from mpl_toolkits.basemap import Basemap
@@ -84,6 +85,46 @@ class TestMplToolkitsBasemapBasemap(unittest.TestCase):
         bmap1 = Basemap(lat_1=bmap1_lat_1, **kwds)
         bmap2 = Basemap(lat_1=bmap2_lat_1, **kwds)
         self.assertEqual(bmap1.proj4string, bmap2.proj4string)
+
+    def test_drawcoastlines(self, axs=None, axslen0=10):
+        """Test that no lines are missing when drawing coastlines."""
+
+        axs_obj = plt.gca() if axs is None else axs
+        axs_children = axs_obj.get_children()
+        self.assertEqual(len(axs_children), axslen0)
+
+        bmap = Basemap(projection="merc", resolution="i", lat_ts=20,
+                       llcrnrlat=36.0, llcrnrlon=6.0,
+                       urcrnrlat=47.7, urcrnrlon=19.0)
+
+        collection = bmap.drawcoastlines(linewidth=1, color="red")
+        self.assertIsInstance(collection, LineCollection)
+
+        axs_children = axs_obj.get_children()
+        self.assertEqual(len(axs_children), axslen0 + 1)
+
+        lines = collection.get_paths()
+        self.assertEqual(len(lines), 27)
+
+    def test_drawcountries(self, axs=None, axslen0=10):
+        """Test that no lines are missing when drawing country boundaries."""
+
+        axs_obj = plt.gca() if axs is None else axs
+        axs_children = axs_obj.get_children()
+        self.assertEqual(len(axs_children), axslen0)
+
+        bmap = Basemap(projection="merc", resolution="i", lat_ts=20,
+                       llcrnrlat=36.0, llcrnrlon=6.0,
+                       urcrnrlat=47.7, urcrnrlon=19.0)
+
+        collection = bmap.drawcountries(linewidth=1, color="blue")
+        self.assertIsInstance(collection, LineCollection)
+
+        axs_children = axs_obj.get_children()
+        self.assertEqual(len(axs_children), axslen0 + 1)
+
+        lines = collection.get_paths()
+        self.assertEqual(len(lines), 29)
 
     @unittest.skipIf(PIL is None, reason="pillow unavailable")
     def test_arcgisimage_with_cyl(self, axs=None, axslen0=10):
