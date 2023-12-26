@@ -11,7 +11,7 @@ except ImportError:
     from matplotlib.cbook import dedent
 
 
-__version__ = "1.3.8"
+__version__ = "1.3.9"
 
 _dg2rad = math.radians(1.)
 _rad2dg = math.degrees(1.)
@@ -195,8 +195,8 @@ class Proj(object):
                     raise ValueError(_lower_left_out_of_bounds)
         elif self.projection in _pseudocyl:
             self._proj4 = pyproj.Proj(projparams)
-            xtmp,urcrnry = self(projparams['lon_0'],90.)
-            urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
+            xtmp, urcrnry = self(projparams['lon_0'], 90.)
+            urcrnrx, xtmp = self(projparams['lon_0'] + 180. - 1E-10, 0)
             llcrnrx = -urcrnrx
             llcrnry = -urcrnry
             if self.ellipsoid and self.projection in ['kav7','eck4','mbtfpq']:
@@ -236,8 +236,8 @@ class Proj(object):
                     if urcrnrx > 1.e20 or urcrnry > 1.e20:
                         raise ValueError(_upper_right_out_of_bounds)
             elif self.projection in _pseudocyl:
-                xtmp,urcrnry = self(projparams['lon_0'],90.)
-                urcrnrx,xtmp = self(projparams['lon_0']+180.,0)
+                xtmp, urcrnry = self(projparams['lon_0'], 90.)
+                urcrnrx, xtmp = self(projparams['lon_0'] + 180. - 1E-10, 0)
         else:
             urcrnrx = urcrnrlon
             urcrnry = urcrnrlat
@@ -290,7 +290,8 @@ class Proj(object):
                 return x,y
         inverse = kw.get('inverse', False)
         if onearray:
-            outxy = self._proj4(xy, inverse=inverse)
+            outx, outy = self._proj4(*xy.T, inverse=inverse)
+            outxy = np.asarray([outx, outy]).T
         else:
             outx,outy = self._proj4(x, y, inverse=inverse)
         if inverse:

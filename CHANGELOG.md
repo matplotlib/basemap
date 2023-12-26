@@ -10,6 +10,33 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
+## [1.3.9] - 2023-12-26
+
+### Fixed
+- Fix `GeosLibrary` wrapper to also work with CMake >= 3.27.0 and
+  Python 2.7 on Windows by adding '/MANIFEST:NO' to override the new
+  default '/MANIFEST:EMBED,ID=2' provided to linker.
+- Fix broken `Proj.__call__` when the input arguments are provided as
+  a combined single array.
+- Fix flipped coastlines with pseudocylindrical projections when `lon_0`
+  is greater than 0 deg (solves issues [#443] and [#463], thanks to
+  @YilongWang).
+- Fix `antialiased` argument being ignored in `Basemap.drawcounties` and
+  `Basemap.readshapefile` (solves issue [#501], thanks to @TheFizzWare).
+- Fix `BaseGeometry.intersection` in `_geoslib` so that it also works
+  with `GEOS_GEOMETRYCOLLECTION` objects returned by `GEOSIntersection`
+  (solves issue [#566], where country boundaries are missing due to this
+  bug, thanks to @guidocioni).
+- Fix bug with elliptical maps causing warped images (Blue Marble,
+  ETOPO, Shaded Relief) to be shown behind the map background when the
+  map boundary is not initialised manually (solves issue [#577], thanks
+  to @YilongWang).
+- Fix references to removed `numpy.float` alias (solves issue [#589],
+  thanks to @quickbrett).
+- Fix wrong reference to `ireland.py` example in FAQ, which should be
+  `hires.py` instead, and fix wrong use of locals and invalid syntax
+  in this example (solves issue [#592], thanks to @timcoote).
+
 ## [1.3.8] - 2023-08-18
 
 ### Changed
@@ -976,6 +1003,10 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#592]:
+https://github.com/matplotlib/basemap/issues/592
+[#589]:
+https://github.com/matplotlib/basemap/issues/589
 [#583]:
 https://github.com/matplotlib/basemap/issues/583
 [#582]:
@@ -986,8 +1017,12 @@ https://github.com/matplotlib/basemap/issues/581
 https://github.com/matplotlib/basemap/pull/580
 [#579]:
 https://github.com/matplotlib/basemap/issues/579
+[#577]:
+https://github.com/matplotlib/basemap/issues/577
 [#573]:
 https://github.com/matplotlib/basemap/issues/573
+[#566]:
+https://github.com/matplotlib/basemap/issues/566
 [#564]:
 https://github.com/matplotlib/basemap/pull/564
 [#563]:
@@ -1046,6 +1081,8 @@ https://github.com/matplotlib/basemap/issues/512
 https://github.com/matplotlib/basemap/issues/510
 [#505]:
 https://github.com/matplotlib/basemap/pull/505
+[#501]:
+https://github.com/matplotlib/basemap/issues/501
 [#491]:
 https://github.com/matplotlib/basemap/issues/491
 [#489]:
@@ -1056,12 +1093,16 @@ https://github.com/matplotlib/basemap/issues/488
 https://github.com/matplotlib/basemap/issues/487
 [#476]:
 https://github.com/matplotlib/basemap/pull/476
+[#463]:
+https://github.com/matplotlib/basemap/issues/463
 [#461]:
 https://github.com/matplotlib/basemap/issues/461
 [#456]:
 https://github.com/matplotlib/basemap/issues/456
 [#445]:
 https://github.com/matplotlib/basemap/issues/445
+[#443]:
+https://github.com/matplotlib/basemap/issues/443
 [#436]:
 https://github.com/matplotlib/basemap/issues/436
 [#422]:
@@ -1080,7 +1121,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.8...develop
+https://github.com/matplotlib/basemap/compare/v1.3.9...develop
+[1.3.9]:
+https://github.com/matplotlib/basemap/compare/v1.3.8...v1.3.9
 [1.3.8]:
 https://github.com/matplotlib/basemap/compare/v1.3.7...v1.3.8
 [1.3.7]:

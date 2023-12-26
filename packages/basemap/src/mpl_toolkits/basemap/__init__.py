@@ -54,7 +54,7 @@ import _geoslib
 import functools
 
 
-__version__ = "1.3.8"
+__version__ = "1.3.9"
 
 # basemap data files now installed in lib/matplotlib/toolkits/basemap/data
 # check to see if environment variable BASEMAPDATA set to a directory,
@@ -1990,7 +1990,7 @@ class Basemap(object):
         county_info = self.readshapefile(gis_file,'counties',\
                       default_encoding='latin-1',drawbounds=drawbounds)
         counties = [coords for coords in self.counties]
-        counties = PolyCollection(counties)
+        counties = PolyCollection(counties, antialiaseds=(antialiased,))
         counties.set_linestyle(linestyle)
         counties.set_linewidth(linewidth)
         counties.set_edgecolor(color)
@@ -2203,7 +2203,7 @@ class Basemap(object):
             # get current axes instance (if none specified).
             ax = ax or self._check_ax()
             # make LineCollections for each polygon.
-            lines = LineCollection(coords,antialiaseds=(1,))
+            lines = LineCollection(coords,antialiaseds=(antialiased,))
             lines.set_color(color)
             lines.set_linewidth(linewidth)
             lines.set_label('_nolabel_')
@@ -3203,7 +3203,7 @@ class Basemap(object):
                 # first draw boundary, no fill
                 limb1 = self.drawmapboundary(fill_color='none', ax=ax)
                 # draw another filled patch, with no boundary.
-                limb2 = self.drawmapboundary(linewidth=0, ax=ax)
+                limb2 = self.drawmapboundary(fill_color='none', linewidth=0, ax=ax)
                 self._mapboundarydrawn = limb2
         # for elliptical map, always turn off axis_frame.
         if ((self.projection in ['ortho', 'geos', 'nsper', 'aeqd'] and
@@ -4181,9 +4181,9 @@ class Basemap(object):
                     lonsr,latsr = self(x,y,inverse=True)
                     mask = ma.zeros((ny,nx,4),np.int8)
                     lon_0 = self.projparams['lon_0']
-                    lonright = lon_0+180.
-                    lonleft = lon_0-180.
-                    x1 = np.array(ny*[0.5*(self.xmax + self.xmin)],np.float)
+                    lonright = lon_0 + 180. - 1E-10
+                    lonleft = lon_0 - 180. + 1E-10
+                    x1 = np.array(ny*[0.5*(self.xmax + self.xmin)],np.float64)
                     y1 = np.linspace(self.ymin, self.ymax, ny)
                     lons1, lats1 = self(x1,y1,inverse=True)
                     lats1 = np.where(lats1 < -89.999999, -89.999999, lats1)
