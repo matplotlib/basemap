@@ -10,7 +10,7 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
-## [1.3.9]
+## [1.3.9] - 2023-12-26
 
 ### Fixed
 - Fix `GeosLibrary` wrapper to also work with CMake >= 3.27.0 and
