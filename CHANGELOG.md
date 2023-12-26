@@ -70,25 +70,29 @@ https://semver.org/spec/v2.0.0.html
   or the deprecated `matplotlib.cbook.dedent`) to write multi-line error
   messages.
 
-## [1.3.9]
+## [1.3.9] - 2023-12-26
 
 ### Fixed
 - Fix `GeosLibrary` wrapper to also work with CMake >= 3.27.0 and
   Python 2.7 on Windows by adding '/MANIFEST:NO' to override the new
   default '/MANIFEST:EMBED,ID=2' provided to linker.
-- Fix references to removed `numpy.float` alias (solves issue [#589],
-  thanks to @quickbrett).
+- Fix broken `Proj.__call__` when the input arguments are provided as
+  a combined single array.
+- Fix flipped coastlines with pseudocylindrical projections when `lon_0`
+  is greater than 0 deg (solves issues [#443] and [#463], thanks to
+  @YilongWang).
+- Fix `antialiased` argument being ignored in `Basemap.drawcounties` and
+  `Basemap.readshapefile` (solves issue [#501], thanks to @TheFizzWare).
+- Fix `BaseGeometry.intersection` in `_geoslib` so that it also works
+  with `GEOS_GEOMETRYCOLLECTION` objects returned by `GEOSIntersection`
+  (solves issue [#566], where country boundaries are missing due to this
+  bug, thanks to @guidocioni).
 - Fix bug with elliptical maps causing warped images (Blue Marble,
   ETOPO, Shaded Relief) to be shown behind the map background when the
   map boundary is not initialised manually (solves issue [#577], thanks
   to @YilongWang).
-- Fix flipped coastlines with pseudocylindrical projections when `lon_0`
-  is greater than 0 deg (solves issues [#443] and [#463], thanks to
-  @YilongWang).
-- Fix broken `Proj.__call__` when the input arguments are provided as
-  a combined single array.
-- Fix `antialiased` argument being ignored in `Basemap.drawcounties` and
-  `Basemap.readshapefile` (solves issue [#501], thanks to @TheFizzWare).
+- Fix references to removed `numpy.float` alias (solves issue [#589],
+  thanks to @quickbrett).
 - Fix wrong reference to `ireland.py` example in FAQ, which should be
   `hires.py` instead, and fix wrong use of locals and invalid syntax
   in this example (solves issue [#592], thanks to @timcoote).
@@ -1084,6 +1088,8 @@ https://github.com/matplotlib/basemap/issues/579
 https://github.com/matplotlib/basemap/issues/577
 [#573]:
 https://github.com/matplotlib/basemap/issues/573
+[#566]:
+https://github.com/matplotlib/basemap/issues/566
 [#565]:
 https://github.com/matplotlib/basemap/pull/565
 [#564]:
