@@ -4,7 +4,7 @@ import datetime
 from mpl_toolkits.basemap import Basemap, shiftgrid
 from netCDF4 import Dataset
 # specify date to plot.
-yyyy=1993; mm=03; dd=14; hh=00
+yyyy=1993; mm=3; dd=14; hh=0
 date = datetime.datetime(yyyy,mm,dd,hh)
 # set OpenDAP server URL.
 URLbase="http://nomads.ncdc.noaa.gov/thredds/dodsC/modeldata/cmd_pgbh/"
