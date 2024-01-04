@@ -38,6 +38,7 @@ https://semver.org/spec/v2.0.0.html
   - Upgrade upper limit for `furo` to 2023.9.11.
   - Move dependency on `netCDF4` to `requirements-doc.txt`.
   - Set dependency on `cftime` explicitly in `requirements-doc.txt`.
+  - Set dependency on `scipy` explicitly in `requirements-doc.txt`.
 - Update lint dependencies:
   - Downgrade upper limit for `flake8` to 6.2.
   - Upgrade upper limit for `astropy` to 3.1.
