@@ -2070,9 +2070,9 @@ class Basemap(object):
 
         .. tabularcolumns:: |l|L|
 
-        ==============   ====================================================
+        ================ ====================================================
         Argument         Description
-        ==============   ====================================================
+        ================ ====================================================
         shapefile        path to shapefile components.  Example:
                          shapefile='/home/jeff/esri/world_borders' assumes
                          that world_borders.shp, world_borders.shx and
@@ -2090,7 +2090,7 @@ class Basemap(object):
                          shapes are split out into separate polygons, and
                          additional keys 'RINGNUM' and 'SHAPENUM' are added
                          to the shape attribute dictionary.
-        ==============   ====================================================
+        ================ ====================================================
 
         The following optional keyword arguments are only relevant for Polyline
         and Polygon shape types, for Point and MultiPoint shapes they are
@@ -2098,9 +2098,9 @@ class Basemap(object):
 
         .. tabularcolumns:: |l|L|
 
-        ==============   ====================================================
+        ================ =====================================================
         Keyword          Description
-        ==============   ====================================================
+        ================ =====================================================
         drawbounds       draw boundaries of shapes (default True).
         zorder           shape boundary zorder (if not specified,
                          default for mathplotlib.lines.LineCollection
@@ -2114,7 +2114,7 @@ class Basemap(object):
                          (default utf-8)
         encoding_errors  encoding error handling (default strict), other
                          possible values: ignore, replace and backslashreplace
-        ==============   ====================================================
+        ================ =====================================================
 
         A tuple (num_shapes, type, min, max) containing shape file info
         is returned.
@@ -4785,17 +4785,17 @@ f=image" %\
 
         .. tabularcolumns:: |l|L|
 
-        ==============   ====================================================
+        ================ ======================================================
         Arguments        Description
-        ==============   ====================================================
+        ================ ======================================================
         lonsin           original 1-d or 2-d longitudes.
-        ==============   ====================================================
+        ================ ======================================================
 
         .. tabularcolumns:: |l|L|
 
-        ==============   ====================================================
+        ================ ======================================================
         Keywords         Description
-        ==============   ====================================================
+        ================ ======================================================
         datain           original 1-d or 2-d data. Default None.
         lon_0            center of map projection region. Defaut None,
                          given by current map projection.
@@ -4806,7 +4806,7 @@ f=image" %\
                          If False do not reindex longitudes and data, but do
                          make sure that longitudes are in the
                          [lon_0-180, lon_0+180] range.
-        ==============   ====================================================
+        ================ ======================================================
 
         if datain given, returns ``dataout,lonsout`` (data and longitudes shifted to fit in interval
         [lon_0-180,lon_0+180]), otherwise just returns longitudes.  If
