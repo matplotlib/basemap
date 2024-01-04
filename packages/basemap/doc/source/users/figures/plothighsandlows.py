@@ -23,11 +23,8 @@ def extrema(mat,mode='wrap',window=10):
 date = datetime.now().strftime('%Y%m%d')+'00'
 
 # open OpenDAP dataset.
-#data=Dataset("http://nomads.ncep.noaa.gov:9090/dods/gfs/gfs/%s/gfs_%sz_anl" %\
-#        (date[0:8],date[8:10]))
-data=Dataset("http://nomads.ncep.noaa.gov:9090/dods/gfs_hd/gfs_hd%s/gfs_hd_%sz"%\
+data=Dataset("https://nomads.ncep.noaa.gov/dods/gfs_0p50/gfs%s/gfs_0p50_%sz"%\
         (date[0:8],date[8:10]))
-
 
 
 # read lats,lons.
