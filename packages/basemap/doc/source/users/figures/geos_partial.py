@@ -1,13 +1,17 @@
 from mpl_toolkits.basemap import Basemap
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+mpl_version = tuple(map(int, mpl.__version__.split(".")))
+axkwds = {"axisbg" if mpl_version < (2,) else "facecolor": "k"}
+
 fig = plt.figure()
 # global geostationary map centered on lon_0
 lon_0=57.
 # resolution = None means don't process the boundary datasets.
 m1 = Basemap(projection='geos',lon_0=lon_0,resolution=None)
 # add an axes with a black background
-ax = fig.add_axes([0.1,0.1,0.8,0.8],axisbg='k')
+ax = fig.add_axes([0.1,0.1,0.8,0.8], **axkwds)
 # plot just upper right quadrant (corners determined from global map).
 # keywords llcrnrx,llcrnry,urcrnrx,urcrnry used to define the lower
 # left and upper right corners in map projection coordinates.
