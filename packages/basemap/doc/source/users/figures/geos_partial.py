@@ -18,7 +18,8 @@ ax = fig.add_axes([0.1,0.1,0.8,0.8], **axkwds)
 # llcrnrlat,llcrnrlon,urcrnrlon,urcrnrlat could be used to define
 # lat/lon values of corners - but this won't work in cases such as this
 # where one of the corners does not lie on the earth.
-m = Basemap(projection='geos',lon_0=lon_0,resolution='l',\
+m = Basemap(projection='geos',lon_0=lon_0,resolution='l',
+    rsphere=(6378137.00,6356752.3142),
     llcrnrx=0.,llcrnry=0.,urcrnrx=m1.urcrnrx/2.,urcrnry=m1.urcrnry/2.)
 m.drawcoastlines()
 m.drawmapboundary(fill_color='aqua')
