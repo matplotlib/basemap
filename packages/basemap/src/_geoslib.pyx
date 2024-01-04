@@ -1,5 +1,6 @@
 import sys
 import numpy
+cimport numpy as cnp
 
 __version__ = "0.3"
 
@@ -20,10 +21,9 @@ cdef extern from "numpy/arrayobject.h":
         cdef int flags
     npy_intp PyArray_SIZE(ndarray arr)
     npy_intp PyArray_ISCONTIGUOUS(ndarray arr)
-    void import_array()
 
 # Initialize numpy
-import_array()
+cnp.import_array()
 
 # GENERAL NOTES:
 #
@@ -47,65 +47,71 @@ cdef extern from "geos_c.h":
         GEOS_MULTIPOLYGON
         GEOS_GEOMETRYCOLLECTION
         GEOS_VERSION_MAJOR
-    ctypedef struct GEOSGeom:
+    ctypedef struct GEOSGeometry:
         pass
-    ctypedef struct GEOSCoordSeq:
+    ctypedef struct GEOSCoordSequence:
         pass
-    ctypedef void (*GEOSMessageHandler)(char *fmt, char *list)
+    # Cython 3: Next ctypedef needs "noexcept" declaration unless
+    # the compiler directive "legacy_implicit_noexcept" is used
+    # ("noexcept" syntax supported since Cython 0.29.31).
+    ctypedef void (*GEOSMessageHandler)(const char *fmt, ...)
     char *GEOSversion()
     void initGEOS(GEOSMessageHandler notice_function, GEOSMessageHandler error_function)
     void finishGEOS()
-    GEOSCoordSeq *GEOSCoordSeq_create(unsigned int size, unsigned int dims)
-    void GEOSCoordSeq_destroy(GEOSCoordSeq* s)
-    int GEOSCoordSeq_setX(GEOSCoordSeq* s,unsigned int idx, double val)
-    int GEOSCoordSeq_setY(GEOSCoordSeq* s,unsigned int idx, double val)
-    int GEOSCoordSeq_getX(GEOSCoordSeq* s, unsigned int idx, double *val)
-    int GEOSCoordSeq_getY(GEOSCoordSeq* s, unsigned int idx, double *val)
-    GEOSGeom *GEOSUnion(GEOSGeom* g1, GEOSGeom* g2)
-    GEOSGeom *GEOSUnaryUnion(GEOSGeom* g1)
-    GEOSGeom *GEOSEnvelope(GEOSGeom* g1)
-    GEOSGeom *GEOSConvexHull(GEOSGeom* g1)
-    GEOSGeom *GEOSGeom_createPoint(GEOSCoordSeq* s)
-    GEOSGeom *GEOSGeom_createLineString(GEOSCoordSeq* s)
-    GEOSGeom *GEOSGeom_createPolygon(GEOSGeom* shell, GEOSGeom** holes, unsigned int nholes)
-    GEOSGeom  *GEOSGeom_createLinearRing(GEOSCoordSeq* s)
-    void GEOSGeom_destroy(GEOSGeom* g)
+    GEOSCoordSequence *GEOSCoordSeq_create(unsigned int size, unsigned int dims)
+    void GEOSCoordSeq_destroy(GEOSCoordSequence* s)
+    int GEOSCoordSeq_setX(GEOSCoordSequence* s,unsigned int idx, double val)
+    int GEOSCoordSeq_setY(GEOSCoordSequence* s,unsigned int idx, double val)
+    int GEOSCoordSeq_getX(GEOSCoordSequence* s, unsigned int idx, double *val)
+    int GEOSCoordSeq_getY(GEOSCoordSequence* s, unsigned int idx, double *val)
+    GEOSGeometry *GEOSUnion(GEOSGeometry* g1, GEOSGeometry* g2)
+    GEOSGeometry *GEOSUnaryUnion(GEOSGeometry* g1)
+    GEOSGeometry *GEOSEnvelope(GEOSGeometry* g1)
+    GEOSGeometry *GEOSConvexHull(GEOSGeometry* g1)
+    GEOSGeometry *GEOSGeom_createPoint(GEOSCoordSequence* s)
+    GEOSGeometry *GEOSGeom_createLineString(GEOSCoordSequence* s)
+    GEOSGeometry *GEOSGeom_createPolygon(GEOSGeometry* shell, GEOSGeometry** holes, unsigned int nholes)
+    GEOSGeometry  *GEOSGeom_createLinearRing(GEOSCoordSequence* s)
+    void GEOSGeom_destroy(GEOSGeometry* g)
 # Topology operations - return NULL on exception.
-    GEOSGeom *GEOSIntersection(GEOSGeom* g1, GEOSGeom* g2)
-    GEOSGeom *GEOSSimplify(GEOSGeom* g1, double tolerance)
-    GEOSGeom *GEOSBuffer(GEOSGeom* g1, double width, int quadsegs)
-    GEOSGeom *GEOSTopologyPreserveSimplify(GEOSGeom* g1, double tolerance)
+    GEOSGeometry *GEOSIntersection(GEOSGeometry* g1, GEOSGeometry* g2)
+    GEOSGeometry *GEOSSimplify(GEOSGeometry* g1, double tolerance)
+    GEOSGeometry *GEOSBuffer(GEOSGeometry* g1, double width, int quadsegs)
+    GEOSGeometry *GEOSTopologyPreserveSimplify(GEOSGeometry* g1, double tolerance)
 # Binary/Unary predicate - return 2 on exception, 1 on true, 0 on false
-    char GEOSIntersects(GEOSGeom* g1, GEOSGeom* g2)
-    char GEOSWithin(GEOSGeom* g1, GEOSGeom* g2)
-    char GEOSContains(GEOSGeom* g1, GEOSGeom* g2)
-    char GEOSisEmpty(GEOSGeom* g1)
-    char GEOSisValid(GEOSGeom* g1)
-    char GEOSisSimple(GEOSGeom* g1)
-    char GEOSisRing(GEOSGeom* g1)
+    char GEOSIntersects(GEOSGeometry* g1, GEOSGeometry* g2)
+    char GEOSWithin(GEOSGeometry* g1, GEOSGeometry* g2)
+    char GEOSContains(GEOSGeometry* g1, GEOSGeometry* g2)
+    char GEOSisEmpty(GEOSGeometry* g1)
+    char GEOSisValid(GEOSGeometry* g1)
+    char GEOSisSimple(GEOSGeometry* g1)
+    char GEOSisRing(GEOSGeometry* g1)
 #  Geometry info
-    char *GEOSGeomType(GEOSGeom* g1)
-    int GEOSGeomTypeId(GEOSGeom* g1)
+    char *GEOSGeomType(GEOSGeometry* g1)
+    int GEOSGeomTypeId(GEOSGeometry* g1)
 # Functions: Return 0 on exception, 1 otherwise 
-    int GEOSArea(GEOSGeom* g1, double *area)
-    int GEOSLength(GEOSGeom* g1, double *length)
+    int GEOSArea(GEOSGeometry* g1, double *area)
+    int GEOSLength(GEOSGeometry* g1, double *length)
 # returns -1 on error and 1 for non-multi geoms
-    int GEOSGetNumGeometries(GEOSGeom* g1)
+    int GEOSGetNumGeometries(GEOSGeometry* g1)
 # Return NULL on exception, Geometry must be a Collection.
 # Returned object is a pointer to internal storage:
 # it must NOT be destroyed directly.
-    GEOSGeom  *GEOSGetGeometryN(GEOSGeom* g, int n)
-    int GEOSGetNumInteriorRings(GEOSGeom* g1)
+    GEOSGeometry  *GEOSGetGeometryN(GEOSGeometry* g, int n)
+    int GEOSGetNumInteriorRings(GEOSGeometry* g1)
 # Return NULL on exception, Geometry must be a Polygon.
 # Returned object is a pointer to internal storage:
 # it must NOT be destroyed directly.
-    GEOSGeom  *GEOSGetExteriorRing(GEOSGeom* g)
+    GEOSGeometry  *GEOSGetExteriorRing(GEOSGeometry* g)
 # Return NULL on exception.
 # Geometry must be a LineString, LinearRing or Point.
-    GEOSCoordSeq  *GEOSGeom_getCoordSeq(GEOSGeom* g)
-    int GEOSCoordSeq_getSize(GEOSCoordSeq *s, unsigned int *size)
+    GEOSCoordSequence  *GEOSGeom_getCoordSeq(const GEOSGeometry* g)
+    int GEOSCoordSeq_getSize(const GEOSCoordSequence *s, unsigned int *size)
 
-cdef void notice_h(char *fmt, char*msg):
+# Cython 3: Next cdef needs "noexcept" declaration unless
+# the compiler directive "legacy_implicit_noexcept" is used
+# ("noexcept" syntax supported since Cython 0.29.31).
+cdef void notice_h(const char *fmt, ...):
     pass
     #format = PyBytes_FromString(fmt)
     #message = PyBytes_FromString(msg)
@@ -115,7 +121,12 @@ cdef void notice_h(char *fmt, char*msg):
     #    warn_msg = format
     #sys.stdout.write('GEOS_NOTICE: %s\n' % warn_msg)
 
-cdef void error_h(char *fmt, char*msg):
+# Cython 3: Next cdef needs "noexcept" declaration unless
+# the compiler directive "legacy_implicit_noexcept" is used
+# ("noexcept" syntax supported since Cython 0.29.31).
+# FIXME: The type should be: error_h(const char *fmt, ...), but
+# Cython does not currently support varargs functions.
+cdef void error_h(const char *fmt, char*msg):
     format = PyBytes_FromString(fmt)
     message = PyBytes_FromString(msg)
     try:
@@ -133,10 +144,10 @@ __geos_major_version__ = GEOS_VERSION_MAJOR
 #     raise ValueError('version 2.2.3 of the geos library is required')
 
 # intialize GEOS (parameters are notice and error function callbacks).
-initGEOS(notice_h, error_h)
+initGEOS(notice_h, <GEOSMessageHandler>error_h)
 
 cdef class BaseGeometry:
-    cdef GEOSGeom *_geom
+    cdef GEOSGeometry *_geom
     cdef unsigned int _npts
     cdef public object boundary
 
@@ -152,8 +163,8 @@ cdef class BaseGeometry:
         return PyBytes_FromString(GEOSGeomType(self._geom))
 
     def within(self, BaseGeometry geom):
-        cdef GEOSGeom *g1
-        cdef GEOSGeom *g2
+        cdef GEOSGeometry *g1
+        cdef GEOSGeometry *g2
         cdef char answer
         g1 = self._geom
         g2 = geom._geom
@@ -164,10 +175,10 @@ cdef class BaseGeometry:
             return False
 
     def union(self, BaseGeometry geom):
-        cdef GEOSGeom *g1
-        cdef GEOSGeom *g2
-        cdef GEOSGeom *g3
-        cdef GEOSGeom *gout
+        cdef GEOSGeometry *g1
+        cdef GEOSGeometry *g2
+        cdef GEOSGeometry *g3
+        cdef const GEOSGeometry *gout
         cdef int numgeoms, i, typeid
         g1 = self._geom
         g2 = geom._geom
@@ -197,9 +208,9 @@ cdef class BaseGeometry:
         return p
 
     def simplify(self, tol):
-        cdef GEOSGeom *g1
-        cdef GEOSGeom *g3
-        cdef GEOSGeom *gout
+        cdef GEOSGeometry *g1
+        cdef GEOSGeometry *g3
+        cdef const GEOSGeometry *gout
         cdef double tolerance
         cdef int numgeoms, i, typeid
         g1 = self._geom
@@ -230,9 +241,9 @@ cdef class BaseGeometry:
         return p
 
     def fix(self):
-        cdef GEOSGeom *g1
-        cdef GEOSGeom *g3
-        cdef GEOSGeom *gout
+        cdef GEOSGeometry *g1
+        cdef GEOSGeometry *g3
+        cdef const GEOSGeometry *gout
         cdef int numgeoms, i, typeid
         g1 = self._geom
         g3 = GEOSBuffer(g1, 0., 0)
@@ -261,8 +272,8 @@ cdef class BaseGeometry:
         return p
 
     def intersects(self, BaseGeometry geom):
-        cdef GEOSGeom *g1
-        cdef GEOSGeom *g2
+        cdef GEOSGeometry *g1
+        cdef GEOSGeometry *g2
         cdef char answer
         g1 = self._geom
         g2 = geom._geom
@@ -273,10 +284,10 @@ cdef class BaseGeometry:
             return False
 
     def intersection(self, BaseGeometry geom):
-        cdef GEOSGeom *g1
-        cdef GEOSGeom *g2
-        cdef GEOSGeom *g3
-        cdef GEOSGeom *gout
+        cdef GEOSGeometry *g1
+        cdef GEOSGeometry *g2
+        cdef GEOSGeometry *g3
+        cdef const GEOSGeometry *gout
         cdef char answer
         cdef int numgeoms, i, typeid
         g1 = self._geom
@@ -307,6 +318,30 @@ cdef class BaseGeometry:
                 b = _get_coords(gout)
                 p = LineString(b)
                 pout.append(p)
+        elif typeid == GEOS_GEOMETRYCOLLECTION:
+            numgeoms = GEOSGetNumGeometries(g3)
+            pout = []
+            for i from 0 <= i < numgeoms:
+                gout = GEOSGetGeometryN(g3, i)
+                typeid = GEOSGeomTypeId(gout)
+                if typeid == GEOS_POLYGON:
+                    b = _get_coords(gout)
+                    p = Polygon(b)
+                    pout.append(p)
+                elif typeid == GEOS_LINESTRING:
+                    b = _get_coords(gout)
+                    p = LineString(b)
+                    pout.append(p)
+                else:
+                    # More cases might need to be handled here:
+                    # - GEOS_MULTILINESTRING
+                    # - GEOS_MULTIPOLYGON
+                    # - GEOS_GEOMETRYCOLLECTION
+                    # The underlying problem is the need of a generic
+                    # converter from GEOSGeom pointers to `_geoslib`
+                    # objects, since postprocessing `GeometryCollections`
+                    # might need recursiveness.
+                    pass
         else:
             #type = PyBytes_FromString(GEOSGeomType(g3))
             #raise NotImplementedError("intersections of type '%s' not yet implemented" % (type))
@@ -332,8 +367,8 @@ cdef class Polygon(BaseGeometry):
         cdef unsigned int M, m, i
         cdef double dx, dy
         cdef double *bbuffer
-        cdef GEOSCoordSeq *cs
-        cdef GEOSGeom *lr
+        cdef GEOSCoordSequence *cs
+        cdef GEOSGeometry *lr
 
 
 
@@ -387,7 +422,7 @@ cdef class Polygon(BaseGeometry):
 cdef class LineString(BaseGeometry):
     def __init__(self, ndarray b):
         cdef double dx, dy
-        cdef GEOSCoordSeq *cs
+        cdef GEOSCoordSequence *cs
         cdef int i, M
         cdef double *bbuffer
 
@@ -420,7 +455,7 @@ cdef class Point(BaseGeometry):
     cdef public x,y
     def __init__(self, b):
         cdef double dx, dy
-        cdef GEOSCoordSeq *cs
+        cdef GEOSCoordSequence *cs
         # Create a coordinate sequence
         cs = GEOSCoordSeq_create(1, 2)
         dx = b[0]; dy = b[1]
@@ -430,9 +465,9 @@ cdef class Point(BaseGeometry):
         self._npts = 1
         self.boundary = b
 
-cdef _get_coords(GEOSGeom *geom):
-    cdef GEOSCoordSeq *cs
-    cdef GEOSGeom *lr
+cdef _get_coords(const GEOSGeometry *geom):
+    cdef const GEOSCoordSequence *cs
+    cdef const GEOSGeometry *lr
     cdef unsigned int i, M
     cdef double dx, dy
     cdef ndarray b

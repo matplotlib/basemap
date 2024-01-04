@@ -12,8 +12,13 @@ import warnings
 from setuptools import setup
 from setuptools import find_packages
 from setuptools.command.sdist import sdist
-from setuptools.dist import Distribution
 from setuptools.extension import Extension
+
+try:
+    import Cython
+    cython_major_version = int(Cython.__version__.split(".", 1)[0])
+except ImportError:
+    cython_major_version = 0
 
 
 def get_content(name, splitlines=False):
@@ -78,7 +83,7 @@ def get_geos_install_prefix():
     return None
 
 
-class basemap_sdist(sdist):
+class basemap_sdist(sdist):  # pylint: disable=invalid-name
     """Custom `sdist` so that it will not pack DLLs on Windows if present."""
 
     def run(self):
@@ -111,8 +116,8 @@ else:
         import numpy
         include_dirs.append(numpy.get_include())
     except ImportError as err:
-        build_cmds = ("bdist_wheel", "build", "install")
-        if any(cmd in sys.argv[1:] for cmd in build_cmds):
+        cmds = ("bdist_wheel", "build", "install")
+        if any(cmd in sys.argv[1:] for cmd in cmds):
             warnings.warn("unable to locate NumPy headers", RuntimeWarning)
 
 # Define GEOS include, library and runtime dirs.
@@ -157,7 +162,8 @@ ext_modules = [
 for ext in ext_modules:
     ext.cython_directives = [
         ("language_level", str(sys.version_info[0])),
-    ]
+        ("legacy_implicit_noexcept", True),
+    ][:1 + int(cython_major_version >= 3)]
 
 # Define all the different requirements.
 setup_requires = get_content("requirements-setup.txt", splitlines=True)
@@ -234,7 +240,7 @@ setup(**{
             ">=2.6",
             "!=3.0.*",
             "!=3.1.*",
-            "<3.12",
+            "<3.13",
         ]),
     "setup_requires":
         setup_requires,
@@ -247,6 +253,10 @@ setup(**{
             get_content("requirements-lint.txt", splitlines=True),
         "test":
             get_content("requirements-test.txt", splitlines=True),
+        "owslib":
+            get_content("requirements-owslib.txt", splitlines=True),
+        "pillow":
+            get_content("requirements-pillow.txt", splitlines=True),
     },
     "cmdclass": {
         "sdist": basemap_sdist,

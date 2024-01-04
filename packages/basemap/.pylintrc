@@ -3,7 +3,8 @@
 # A comma-separated list of package or module names from where C extensions may
 # be loaded. Extensions are loading into the active Python interpreter and may
 # run arbitrary code.
-extension-pkg-whitelist=numpy
+extension-pkg-whitelist=numpy,
+                        _geoslib
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
@@ -78,9 +79,12 @@ disable=
     raise-missing-from,
     # Allow freedom with using lambda functions.
     unnecessary-lambda-assignment,
-    # Allow freedom with old ways of using basic types.
+    # Allow freedom with old ways of doing things.
+    use-dict-literal,
     consider-using-f-string,
-    use-dict-literal
+    # Allow freedom with multiline indentation.
+    useless-option-value,
+    bad-continuation
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -184,8 +188,10 @@ function-naming-style=snake_case
 
 # Good variable names which should always be accepted, separated by a comma.
 good-names=i, j, k, m, n,
-           t, x, y, z,
-           fd,
+           t, x, y, z, xy,
+           nx, dx, x1, x2,
+           ny, dy, y1, y2,
+           fd, ax, h,
            _
 
 # Include a hint for the correct naming format with invalid-name.
@@ -336,7 +342,9 @@ contextmanager-decorators=contextlib.contextmanager
 # system, and so shouldn't trigger E1101 when accessed. Python regular
 # expressions are accepted.
 generated-members=numpy,
-                  netCDF4
+                  pyproj,
+                  netCDF4,
+                  mpl_toolkits.basemap.Basemap
 
 # Tells whether missing members accessed in mixin class should be ignored. A
 # mixin class is detected if its name ends with "mixin" (case insensitive).
@@ -365,7 +373,7 @@ ignored-classes=optparse.Values,
 # (useful for modules/projects where namespaces are manipulated during runtime
 # and thus existing member attributes cannot be deduced by static analysis). It
 # supports qualified module names, as well as Unix pattern matching.
-ignored-modules=
+ignored-modules=_geoslib
 
 # Show a hint with possible names when a member name was not found. The aspect
 # of finding the hint is based on edit distance.

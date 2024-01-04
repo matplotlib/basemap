@@ -13,6 +13,7 @@ https://semver.org/spec/v2.0.0.html
 ## [Unreleased]
 
 ### Added
+- Support for Python 3.12.
 - Optional argument `encoding_errors` for `Basemap.readshapefile` method
   (PR [#554] by @guziy, implements request [#552]).
 - Optional argument `cachedir` for `Basemap.arcgisimage` method to allow
@@ -20,18 +21,81 @@ https://semver.org/spec/v2.0.0.html
 
 ### Changed
 - Upgrade bundled GEOS library to 3.6.5.
+- Create optional library requirements files:
+  - `requirements-owslib.txt` for optional dependency `OWSLib`.
+    - Set `OWSLib` lower limit to 0.28.1 for Python 3.6+ due to
+      vulnerability [CVE-2023-27476].
+  - `requirements-pillow.txt` for optional dependency `pillow`:
+    - Upgrade `pillow` upper limit to 10.2.0.
+- Update library dependencies:
+  - Upgrade upper limit for `numpy` to 1.27.0.
+  - Downgrade upper limit for `pyproj` to 2.2.0 for Python 2.7.
+  - Set dependency on `packaging` as replacement for `distutils`.
+- Update build dependencies:
+  - Upgrade upper limit for `Cython` to 3.1.
+- Update doc dependencies and require at least Python 3.8 for them:
+  - Upgrade upper limit for `sphinx` to 7.2.
+  - Upgrade upper limit for `furo` to 2023.9.11.
+  - Move dependency on `netCDF4` to `requirements-doc.txt`.
+  - Set dependency on `cftime` explicitly in `requirements-doc.txt`.
+- Update lint dependencies:
+  - Downgrade upper limit for `flake8` to 6.2.
+  - Upgrade upper limit for `astropy` to 3.1.
+  - Upgrade lower limit for `pylint` to 3.1.
+- Update test dependencies:
+  - Upgrade upper limit for `pytest` to 7.5.
+  - Upgrade upper limit for `coverage` to 7.4.
+  - Upgrade upper limit for `pytest-cov` to 4.2.
 
 ### Fixed
-- Set MSVC 14.0 (VS2015) to build the `_geoslib` module in the
-  precompiled Windows wheels (PR [#565]).
 - Reimplement `matplotlib` version checks without using `distutils` and
   remove old switches related to unsupported `matplotlib` versions.
+- Hide `FutureWarning` in `Basemap.arcgisimage` and `Basemap.wmsimage`
+  methods due to old initialisation EPSG string used with `pyproj.Proj`.
+- Fix `DeprecationWarning` in `Basemap.imshow` and `Basemap.shiftdata`
+  methods.
+- Fix `DeprecationWarning` in internal function `_validated_ll`.
+- Set MSVC 14.0 (VS2015) to build the `_geoslib` module in the
+  precompiled Windows wheels (PR [#565]).
+- Fix `_geoslib.pyx` compilation with Cython 3.0+ using the compiler
+  directive "legacy_implicit_noexcept" (PR [#593] by @musicinmybrain).
+- Fix `_geoslib.pyx` syntax to comply with newer compilers such as
+  Clang 16 and GCC 14 (PR [#595] by @fweimer-rh).
 
 ### Removed
-- Attribute `__version__` in `basemap.proj` module.
+- Attribute `__version__` in `mpl_toolkits.basemap.proj` module.
+- Module `mpl_toolkits.basemap.test`, whose content is migrated to the
+  test suite in the `test` folder.
 - Dependency on `dedent` function (either as alias of `inspect.cleandoc`
   or the deprecated `matplotlib.cbook.dedent`) to write multi-line error
   messages.
+
+## [1.3.9] - 2023-12-26
+
+### Fixed
+- Fix `GeosLibrary` wrapper to also work with CMake >= 3.27.0 and
+  Python 2.7 on Windows by adding '/MANIFEST:NO' to override the new
+  default '/MANIFEST:EMBED,ID=2' provided to linker.
+- Fix broken `Proj.__call__` when the input arguments are provided as
+  a combined single array.
+- Fix flipped coastlines with pseudocylindrical projections when `lon_0`
+  is greater than 0 deg (solves issues [#443] and [#463], thanks to
+  @YilongWang).
+- Fix `antialiased` argument being ignored in `Basemap.drawcounties` and
+  `Basemap.readshapefile` (solves issue [#501], thanks to @TheFizzWare).
+- Fix `BaseGeometry.intersection` in `_geoslib` so that it also works
+  with `GEOS_GEOMETRYCOLLECTION` objects returned by `GEOSIntersection`
+  (solves issue [#566], where country boundaries are missing due to this
+  bug, thanks to @guidocioni).
+- Fix bug with elliptical maps causing warped images (Blue Marble,
+  ETOPO, Shaded Relief) to be shown behind the map background when the
+  map boundary is not initialised manually (solves issue [#577], thanks
+  to @YilongWang).
+- Fix references to removed `numpy.float` alias (solves issue [#589],
+  thanks to @quickbrett).
+- Fix wrong reference to `ireland.py` example in FAQ, which should be
+  `hires.py` instead, and fix wrong use of locals and invalid syntax
+  in this example (solves issue [#592], thanks to @timcoote).
 
 ## [1.3.8] - 2023-08-18
 
@@ -59,7 +123,8 @@ https://semver.org/spec/v2.0.0.html
 - Upgrade `matplotlib` upper pin to 3.8 (solves issue [#573]).
 - Upgrade `pyproj` upper pin to 3.6.
 - Upgrade test dependency `netCDF4` upper pin to 1.7.
-- Upgrade test dependency `pillow` lower pin to 9.4.
+- Upgrade test dependency `pillow` lower pin to 9.4 due to vulnerability
+  [CVE-2022-45198].
 
 ## [1.3.6] - 2022-10-31
 
@@ -97,7 +162,7 @@ https://semver.org/spec/v2.0.0.html
 - Update `numpy` build dependency to ensure that builds also work on
   MacOS (fixes issue [#547], thanks to @SongJaeIn for testing).
 - Fix broken implementation of `Basemap.arcgisimage` (PR [#548], solves
-  issues [#481] and [#546]).
+  issues [#481], [#546] and [#591]).
 - Enforce up-to-date `numpy` dependency when possible:
   - Set `numpy >= 1.19` for Python == 3.6 due to `numpy` vulnerabilities
     [CVE-2021-41495] and [CVE-2021-41496].
@@ -153,8 +218,8 @@ https://semver.org/spec/v2.0.0.html
     [CVE-2020-10177], [CVE-2020-10378], [CVE-2020-10379],
     [CVE-2020-10994] and [CVE-2020-11538].
   - `pillow >= 6.2.2` For Python == 2.7 due to `pillow` vulnerabilities
-    [CVE-2019-16865], [CVE-2019-19911], [CVE-2020-5310], [CVE-2020-5312]
-    and [CVE-2020-5313].
+    [CVE-2019-16865], [CVE-2019-19911], [CVE-2020-5310],
+    [CVE-2020-5311], [CVE-2020-5312] and [CVE-2020-5313].
 
 ### Removed
 - Remove deprecation notices (issue [#527]).
@@ -999,6 +1064,16 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#595]:
+https://github.com/matplotlib/basemap/pull/595
+[#593]:
+https://github.com/matplotlib/basemap/pull/593
+[#592]:
+https://github.com/matplotlib/basemap/issues/592
+[#591]:
+https://github.com/matplotlib/basemap/issues/591
+[#589]:
+https://github.com/matplotlib/basemap/issues/589
 [#583]:
 https://github.com/matplotlib/basemap/issues/583
 [#582]:
@@ -1009,8 +1084,12 @@ https://github.com/matplotlib/basemap/issues/581
 https://github.com/matplotlib/basemap/pull/580
 [#579]:
 https://github.com/matplotlib/basemap/issues/579
+[#577]:
+https://github.com/matplotlib/basemap/issues/577
 [#573]:
 https://github.com/matplotlib/basemap/issues/573
+[#566]:
+https://github.com/matplotlib/basemap/issues/566
 [#565]:
 https://github.com/matplotlib/basemap/pull/565
 [#564]:
@@ -1077,6 +1156,8 @@ https://github.com/matplotlib/basemap/issues/512
 https://github.com/matplotlib/basemap/issues/510
 [#505]:
 https://github.com/matplotlib/basemap/pull/505
+[#501]:
+https://github.com/matplotlib/basemap/issues/501
 [#491]:
 https://github.com/matplotlib/basemap/issues/491
 [#489]:
@@ -1089,6 +1170,8 @@ https://github.com/matplotlib/basemap/issues/487
 https://github.com/matplotlib/basemap/issues/481
 [#476]:
 https://github.com/matplotlib/basemap/pull/476
+[#463]:
+https://github.com/matplotlib/basemap/issues/463
 [#461]:
 https://github.com/matplotlib/basemap/issues/461
 [#456]:
@@ -1097,6 +1180,8 @@ https://github.com/matplotlib/basemap/issues/456
 https://github.com/matplotlib/basemap/issues/445
 [#444]:
 https://github.com/matplotlib/basemap/issues/444
+[#443]:
+https://github.com/matplotlib/basemap/issues/443
 [#437]:
 https://github.com/matplotlib/basemap/issues/437
 [#436]:
@@ -1117,7 +1202,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.8...develop
+https://github.com/matplotlib/basemap/compare/v1.3.9...develop
+[1.3.9]:
+https://github.com/matplotlib/basemap/compare/v1.3.8...v1.3.9
 [1.3.8]:
 https://github.com/matplotlib/basemap/compare/v1.3.7...v1.3.8
 [1.3.7]:
@@ -1155,6 +1242,10 @@ https://github.com/matplotlib/basemap/compare/v1.0.3rel...v1.0.4rel
 [1.0.3]:
 https://github.com/matplotlib/basemap/tree/v1.0.3rel
 
+[CVE-2023-27476]:
+https://nvd.nist.gov/vuln/detail/CVE-2023-27476
+[CVE-2022-45198]:
+https://nvd.nist.gov/vuln/detail/CVE-2022-45198
 [CVE-2022-24303]:
 https://nvd.nist.gov/vuln/detail/CVE-2022-24303
 [CVE-2022-22817]:
@@ -1221,6 +1312,8 @@ https://nvd.nist.gov/vuln/detail/CVE-2020-10177
 https://nvd.nist.gov/vuln/detail/CVE-2020-5313
 [CVE-2020-5312]:
 https://nvd.nist.gov/vuln/detail/CVE-2020-5312
+[CVE-2020-5311]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-5311
 [CVE-2020-5310]:
 https://nvd.nist.gov/vuln/detail/CVE-2020-5310
 [CVE-2019-19911]:

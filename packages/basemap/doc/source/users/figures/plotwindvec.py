@@ -21,7 +21,7 @@ slpin = 0.01*data.variables['Pressure_msl'][:].squeeze()
 uin = data.variables['U-component_of_wind_height_above_ground'][:].squeeze()
 vin = data.variables['V-component_of_wind_height_above_ground'][:].squeeze()
 # add cyclic points manually (could use addcyclic function)
-slp = np.zeros((slpin.shape[0],slpin.shape[1]+1),np.float)
+slp = np.zeros((slpin.shape[0],slpin.shape[1]+1),np.float64)
 slp[:,0:-1] = slpin[::-1]; slp[:,-1] = slpin[::-1,0]
 u = np.zeros((uin.shape[0],uin.shape[1]+1),np.float64)
 u[:,0:-1] = uin[::-1]; u[:,-1] = uin[::-1,0]
