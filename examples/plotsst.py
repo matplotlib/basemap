@@ -1,24 +1,33 @@
-from __future__ import (absolute_import, division, print_function)
-
 from mpl_toolkits.basemap import Basemap
 from netCDF4 import Dataset, date2index
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
+try:
+    from urllib.request import urlretrieve
+except ImportError:
+    from urllib import urlretrieve
 date = datetime(2007,12,15,0) # date to plot.
 # open dataset.
-dataset = \
-Dataset('http://www.ncdc.noaa.gov/thredds/dodsC/OISST-V2-AVHRR_agg')
+sstpath, sstheader = urlretrieve("https://downloads.psl.noaa.gov/Datasets/noaa.oisst.v2.highres/sst.day.mean.{0}.nc".format(date.year))
+dataset = Dataset(sstpath)
 timevar = dataset.variables['time']
 timeindex = date2index(date,timevar) # find time index for desired date.
 # read sst.  Will automatically create a masked array using
 # missing_value variable attribute. 'squeeze out' singleton dimensions.
 sst = dataset.variables['sst'][timeindex,:].squeeze()
 # read ice.
-ice = dataset.variables['ice'][timeindex,:].squeeze()
+dataset.close()
+icepath, iceheader = urlretrieve("https://downloads.psl.noaa.gov/Datasets/noaa.oisst.v2.highres/icec.day.mean.{0}.nc".format(date.year))
+dataset = Dataset(icepath)
+ice = dataset.variables['icec'][timeindex,:].squeeze()
 # read lats and lons (representing centers of grid boxes).
 lats = dataset.variables['lat'][:]
 lons = dataset.variables['lon'][:]
+dataset.close()
+latstep, lonstep = np.diff(lats[:2]), np.diff(lons[:2])
+lats = np.append(lats - 0.5 * latstep, lats[-1] + 0.5 * latstep)
+lons = np.append(lons - 0.5 * lonstep, lons[-1] + 0.5 * lonstep)
 lons, lats = np.meshgrid(lons,lats)
 # create figure, axes instances.
 fig = plt.figure()

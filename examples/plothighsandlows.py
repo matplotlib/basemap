@@ -27,7 +27,7 @@ def main():
     """Main function."""
 
     # Plot 00 UTC today.
-    url = "http://nomads.ncep.noaa.gov/dods/gfs_0p25/gfs%Y%m%d/gfs_0p25_00z"
+    url = "http://nomads.ncep.noaa.gov/dods/gfs_0p50/gfs%Y%m%d/gfs_0p50_00z"
     date = dt.datetime.now()
 
     # Open OPeNDAP dataset.
