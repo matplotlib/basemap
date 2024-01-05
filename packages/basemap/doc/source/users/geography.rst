@@ -7,7 +7,7 @@ Basemap includes the GSSH (now
 `GSHHG <https://www.soest.hawaii.edu/pwessel/gshhg/>`_)
 coastline dataset, as well as datasets for rivers, state and
 country boundaries from 
-`GMT <http://gmt.soest.hawaii.edu>`_.
+`GMT <https://www.generic-mapping-tools.org/>`_.
 These datasets can be used to draw coastlines, rivers and political
 boundaries on maps at several different resolutions.  The relevant Basemap 
 methods are:
@@ -36,13 +36,13 @@ used as a map background.  Basemap provides several options for this:
   mask is derived from the GSHHS coastline data, and there are several 
   coastline options and pixel sizes to choose from.
 * :func:`~mpl_toolkits.basemap.Basemap.bluemarble`: draw a NASA
-  `Blue Marble <http://visibleearth.nasa.gov/view_set.php?categoryID=2363>`_
+  `Blue Marble <https://visibleearth.nasa.gov/images/73726/june-blue-marble-next-generation-w-topography-and-bathymetry>`_
   image as a map background.
 * :func:`~mpl_toolkits.basemap.Basemap.shadedrelief`: draw a  
-  `shaded relief <http://www.shadedrelief.com>`_ image
+  `shaded relief <https://www.shadedrelief.com/>`_ image
   as a map background.
 * :func:`~mpl_toolkits.basemap.Basemap.etopo`: draw an  
-  `etopo <http://www.ngdc.noaa.gov/mgg/global/global.html>`_
+  `etopo <https://www.ngdc.noaa.gov/mgg/global/global.html>`_
   relief image as map background.
 * :func:`~mpl_toolkits.basemap.Basemap.warpimage`: use an abitrary
   image as a map background.  The image must be global, covering the
