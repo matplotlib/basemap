@@ -1,76 +1,98 @@
-.. _installing:
-
-**********
-Installing
-**********
-
-Dependencies
-============
-
-**Requirements**
-
-These are external packages which you will need to install before
-installing Basemap.
-
-
-Matplotlib 1.0.0 (or later, `download <https://matplotlib.org/users/installing.html>`__)
-
-Python 2.6 (or later, including Python 3) (`download <http://www.python.org/download/>`__)
-    Matplotlib 2.2 LTS requires Python 2.7 or later
-    Matplotlib 3.0 requires Python 3.5 or later
-
-NumPy 1.2.1 (or later)
-    Array support for Python (`download <http://www.numpy.org/>`__)
-
-`PROJ4 <https://trac.osgeo.org/proj/>`__ Cartographic Projections Library.
-
-**Required library that ships with Basemap**
-
-`GEOS <http://trac.osgeo.org/geos/>`__ (Geometry Engine - Open Source) library 3.1.1 or later.
-    Source code is included in the geos-3.3.3 directory.
-    When building from source, must be built and installed separately
-    from basemap (see build instructions below).
-    Included in Windows binary installers.
-
-**Optional libraries**
-
-Pillow
-    Python Imaging Library (`download <https://python-pillow.org/>`__),
-    only needed for :func:`~mpl_toolkits.basemap.Basemap.bluemarble`, :func:`~mpl_toolkits.basemap.Basemap.etopo`, :func:`~mpl_toolkits.basemap.Basemap.shadedrelief` and :func:`~mpl_toolkits.basemap.Basemap.warpimage` instance methods.
-
 Installation
 ============
 
-Download either Windows binary installers or source tarballs
-`here <https://github.com/matplotlib/basemap/releases/>`__.
+Installing from PyPI
+--------------------
 
-To install from the source, follow these steps:
+Precompiled binary wheels for Windows and GNU/Linux are available in
+PyPI (architectures x86 and x64, Python 2.7 and 3.5+) and can be
+installed with `pip`_:
+
+.. code-block:: sh
+
+   python -m pip install basemap
+
+Installing ``basemap`` will also install ``basemap-data``, containing the
+minimal data assets required by ``basemap``. If you also need the
+high-resolution data assets, you can install them with `pip`_ too:
+
+.. code-block:: sh
+
+   python -m pip install basemap-data-hires
+
+Installing from conda-forge
+---------------------------
+
+For Miniforge users, ``basemap`` packages are available through the
+``conda-forge`` channel for Windows and GNU/Linux (x64) as well as
+for MacOS (x64 and arm64):
+
+.. code-block:: sh
+
+    conda install -c conda-forge basemap
+
+Similarly to the PyPI installation, the high-resolution data assets
+can be installed separately if needed:
+
+.. code-block:: sh
+
+    conda install -c conda-forge basemap-data-hires
+
+Installation from source
+------------------------
+
+Optionally, you can also install ``basemap`` from its source hosted
+on GitHub as indicated in the following steps:
+
+1. Install pre-requisite Python modules:
+
+   - `cython`_
+   - `numpy`_
+
+2. Download the ``basemap`` source code and move to the
+   ``packages/basemap`` folder:
+
+   .. code-block:: sh
+
+      git clone --depth 1 https://github.com/matplotlib/basemap.git
+      cd basemap/packages/basemap
+
+3. Build the `GEOS`_ library. You may use the helper provided in the
+   ``utils`` folder (please note that you need `CMake`_ and a working
+   C compiler in advance):
+
+   .. code-block:: sh
+
+      export GEOS_DIR=<your desired location>
+      python -c "import utils; utils.GeosLibrary('3.6.5').build(installdir='${GEOS_DIR}')"
+
+   or you can link directly to the system library if it is already
+   installed. ``GEOS_DIR`` must point to the GEOS installation prefix;
+   e.g. if ``libgeos_c.so`` is located in ``/usr/lib`` and ``geos_c.h``
+   is located in ``/usr/include``, then you must set ``GEOS_DIR`` to
+   ``/usr``.
+
+4. Build and install the ``basemap`` binary wheel:
+
+   .. code-block:: sh
+
+      python -m pip install .
+
+   On GNU/Linux, if your Python was installed through a package
+   management system, make sure that you have the Python header
+   ``Python.h`` required to build Cython extensions (e.g. on
+   Debian-like systems, you should have the package ``python-dev``
+   installed).
+
+5. Check that the package was installed correctly by executing:
+
+   .. code-block:: sh
+
+      python -c "from mpl_toolkits.basemap import Basemap"
 
 
-* Install pre-requisite requirements.
-
-* Untar the basemap version X.Y.Z source tar.gz file, and
-  and cd to the basemap-X.Y.Z directory.
-
-* Install the GEOS library.  If you already have it on your
-  system, just set the environment variable GEOS_DIR to point to the location
-  of libgeos_c and geos_c.h (if libgeos_c is in /usr/local/lib and
-  geos_c.h is in /usr/local/include, set GEOS_DIR to /usr/local).
-  Then go to next step.  If you don't have it, you can build it from
-  the source code included with basemap by following these steps::
-
-      cd geos-3.3.3
-      export GEOS_DIR=<where you want the libs and headers to go>
-      # A reasonable choice on a Unix-like system is /usr/local, or
-      # if you don't have permission to write there, your home directory.
-      ./configure --prefix=$GEOS_DIR
-      make; make install
-
-* cd back to the top level basemap directory (basemap-X.Y.Z) and
-  run the usual ``python setup.py install``.  Check your installation
-  by running ``from mpl_toolkits.basemap import Basemap`` at the Python
-  prompt.
-
-* To test, cd to the examples directory and run ``python simpletest.py``.
-  To run all the examples (except those that have extra dependencies
-  or require an internet connection), execute ``python run_all.py``.
+.. _pip: https://pip.pypa.io/
+.. _cython: https://github.com/cython/cython
+.. _numpy: https://github.com/numpy/numpy
+.. _GEOS: https://github.com/libgeos/geos
+.. _CMake: https://cmake.org/

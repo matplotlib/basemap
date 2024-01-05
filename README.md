@@ -25,7 +25,7 @@ Optional requirements include:
 ## Installation
 
 The `basemap-data` and `basemap-data-hires` packages are available in
-PyPI and can be installed with [`pip`](https:/pip.pypa.io/):
+PyPI and can be installed with [`pip`](https://pip.pypa.io/):
 ```sh
 python -m pip install basemap-data
 python -m pip install basemap-data-hires
@@ -37,7 +37,8 @@ available in PyPI (architectures x86 and x64, Python 2.7 and 3.5+):
 python -m pip install basemap
 ```
 
-Otherwise, you will need to install `basemap` from source as follows:
+Otherwise, you will need to install `basemap` from its source hosted
+on GitHub as indicated in the following steps:
 
 1. Install pre-requisite Python modules:
    - [cython](https://github.com/cython/cython)
@@ -51,7 +52,8 @@ Otherwise, you will need to install `basemap` from source as follows:
    ```
 
 3. Build the [GEOS](https://github.com/libgeos/geos) library. You may
-   use the helper provided in `utils`, i.e.
+   use the helper provided in `utils`, (please note that you need
+   [`CMake`](https://cmake.org/) and a working C compiler in advance):
    ```sh
    export GEOS_DIR=<your desired location>
    python -c "import utils; utils.GeosLibrary('3.6.5').build(installdir='${GEOS_DIR}')"
@@ -70,11 +72,10 @@ Otherwise, you will need to install `basemap` from source as follows:
    to build Cython extensions (e.g. on Debian-like systems, you should
    have the package `python-dev` installed).
 
-5. Check that the package installed correctly by executing:
+5. Check that the package was installed correctly by executing:
    ```sh
    python -c "from mpl_toolkits.basemap import Basemap"
    ```
-   You can also test the examples available in the `examples` folder.
 
 ## License
 
@@ -98,7 +99,7 @@ https://spdx.org/licenses/LGPL-3.0-or-later.html
 
 ## Documentation
 
-See https://matplotlib.github.io/basemap/
+See https://matplotlib.org/basemap/
 
 See scripts in `examples` directory for example usage.
 
