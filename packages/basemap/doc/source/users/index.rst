@@ -8,7 +8,7 @@ Basemap User's Guide
 
 .. toctree::
 
-    intro.rst
+    introduction.rst
     download.rst
     installing.rst
     mapsetup.rst
