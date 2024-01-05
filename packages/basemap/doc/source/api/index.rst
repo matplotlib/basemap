@@ -3,7 +3,7 @@
 Basemap API
 ===========
 
-:Release: |version|
+:Release: |release|
 :Date: |today|
 
 .. toctree::

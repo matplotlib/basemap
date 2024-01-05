@@ -3,7 +3,7 @@
 Basemap User's Guide
 ====================
 
-:Release: |version|
+:Release: |release|
 :Date: |today|
 
 .. toctree::
