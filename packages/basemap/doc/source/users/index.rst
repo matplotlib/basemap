@@ -8,8 +8,8 @@ Basemap User's Guide
 
 .. toctree::
 
-    download.rst
     intro.rst
+    download.rst
     installing.rst
     mapsetup.rst
     geography.rst
