@@ -10,7 +10,6 @@ Basemap User's Guide
 
     introduction.rst
     installation.rst
-    download.rst
     mapsetup.rst
     geography.rst
     graticule.rst
