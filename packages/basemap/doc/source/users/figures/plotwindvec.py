@@ -43,8 +43,8 @@ x, y = m(lons, lats)
 parallels = np.arange(-80.,90,20.)
 meridians = np.arange(0.,360.,20.)
 # plot SLP contours.
-CS1 = m.contour(x,y,slp,clevs,linewidths=0.5,colors='k',animated=True)
-CS2 = m.contourf(x,y,slp,clevs,cmap=plt.cm.RdBu_r,animated=True)
+CS1 = m.contour(x,y,slp,clevs,linewidths=0.5,colors='k')
+CS2 = m.contourf(x,y,slp,clevs,cmap=plt.cm.RdBu_r)
 # plot wind vectors on projection grid.
 # first, shift grid so it goes from -180 to 180 (instead of 0 to 360
 # in longitude).  Otherwise, interpolation is messed up.
@@ -72,8 +72,8 @@ plt.show()
 fig2 = plt.figure(figsize=(8,10))
 ax = fig2.add_axes([0.1,0.1,0.8,0.8])
 # plot SLP contours
-CS1 = m.contour(x,y,slp,clevs,linewidths=0.5,colors='k',animated=True)
-CS2 = m.contourf(x,y,slp,clevs,cmap=plt.cm.RdBu_r,animated=True)
+CS1 = m.contour(x,y,slp,clevs,linewidths=0.5,colors='k')
+CS2 = m.contourf(x,y,slp,clevs,cmap=plt.cm.RdBu_r)
 # plot wind barbs over map.
 barbs = m.barbs(xx,yy,uproj,vproj,length=5,barbcolor='k',flagcolor='r',linewidth=0.5)
 # draw coastlines, parallels, meridians.
