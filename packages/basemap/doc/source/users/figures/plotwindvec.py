@@ -7,7 +7,7 @@ from netCDF4 import Dataset
 yyyy=1993; mm=3; dd=14; hh=0
 date = datetime.datetime(yyyy,mm,dd,hh)
 # set OpenDAP server URL.
-URLbase="http://nomads.ncdc.noaa.gov/thredds/dodsC/modeldata/cmd_pgbh/"
+URLbase="https://www.ncei.noaa.gov/thredds/dodsC/model-cfs_reanl_6h_pgb/"
 URL=URLbase+"%04i/%04i%02i/%04i%02i%02i/pgbh00.gdas.%04i%02i%02i%02i.grb2" %\
              (yyyy,yyyy,mm,yyyy,mm,dd,yyyy,mm,dd,hh)
 data = Dataset(URL)
@@ -18,8 +18,8 @@ longitudes = data.variables['lon'][:].tolist()
 # get sea level pressure and 10-m wind data.
 # mult slp by 0.01 to put in units of hPa.
 slpin = 0.01*data.variables['Pressure_msl'][:].squeeze()
-uin = data.variables['U-component_of_wind_height_above_ground'][:].squeeze()
-vin = data.variables['V-component_of_wind_height_above_ground'][:].squeeze()
+uin = data.variables['u-component_of_wind_height_above_ground'][:].squeeze()
+vin = data.variables['v-component_of_wind_height_above_ground'][:].squeeze()
 # add cyclic points manually (could use addcyclic function)
 slp = np.zeros((slpin.shape[0],slpin.shape[1]+1),np.float64)
 slp[:,0:-1] = slpin[::-1]; slp[:,-1] = slpin[::-1,0]
