@@ -3,9 +3,14 @@ from netCDF4 import Dataset, date2index
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
+try:
+    from urllib.request import urlretrieve
+except ImportError:
+    from urllib import urlretrieve
 date = datetime(2007,12,15,0) # date to plot.
 # open dataset.
-dataset = Dataset("https://psl.noaa.gov/thredds/dodsC/Datasets/noaa.oisst.v2.highres/sst.day.mean.{0}.nc".format(date.year))
+sstpath, sstheader = urlretrieve("https://downloads.psl.noaa.gov/Datasets/noaa.oisst.v2.highres/sst.day.mean.{0}.nc".format(date.year))
+dataset = Dataset(sstpath)
 timevar = dataset.variables['time']
 timeindex = date2index(date,timevar) # find time index for desired date.
 # read sst.  Will automatically create a masked array using
@@ -13,7 +18,8 @@ timeindex = date2index(date,timevar) # find time index for desired date.
 sst = dataset.variables['sst'][timeindex,:].squeeze()
 # read ice.
 dataset.close()
-dataset = Dataset("https://psl.noaa.gov/thredds/dodsC/Datasets/noaa.oisst.v2.highres/icec.day.mean.{0}.nc".format(date.year))
+icepath, iceheader = urlretrieve("https://downloads.psl.noaa.gov/Datasets/noaa.oisst.v2.highres/icec.day.mean.{0}.nc".format(date.year))
+dataset = Dataset(icepath)
 ice = dataset.variables['icec'][timeindex,:].squeeze()
 # read lats and lons (representing centers of grid boxes).
 lats = dataset.variables['lat'][:]
