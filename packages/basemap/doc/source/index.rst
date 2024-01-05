@@ -1,4 +1,4 @@
-Welcome to the Basemap documentation!
+Welcome to the basemap documentation!
 =====================================
 
 .. toctree::
