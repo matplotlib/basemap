@@ -1,8 +1,7 @@
 .. _api-index:
 
-####################################
-  The Matplotlib Basemap Toolkit API
-####################################
+Basemap API
+===========
 
 :Release: |version|
 :Date: |today|
