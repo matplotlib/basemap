@@ -9,8 +9,8 @@ Basemap User's Guide
 .. toctree::
 
     introduction.rst
+    installation.rst
     download.rst
-    installing.rst
     mapsetup.rst
     geography.rst
     graticule.rst
