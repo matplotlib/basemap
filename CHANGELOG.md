@@ -14,6 +14,13 @@ https://semver.org/spec/v2.0.0.html
 
 ### Added
 - Support for Python 3.12.
+- Complete support for `basemap` in `conda-forge` channel for the major
+  platforms on x64 and for MacOS on arm64 (solves issue [#286]).
+- Precompiled wheels for MacOS x64 and arm64 on PyPI (solves issues
+  [#447] and [#574]).
+- Renewed documentation, with fixes for the broken links and examples,
+  an improved section on the installation process, and without the
+  deprecation/sunsetting section (solves issues [#527] and [#568]).
 - Optional argument `encoding_errors` for `Basemap.readshapefile` method
   (PR [#554] by @guziy, implements request [#552]).
 - Optional argument `cachedir` for `Basemap.arcgisimage` method to allow
@@ -1087,8 +1094,12 @@ https://github.com/matplotlib/basemap/pull/580
 https://github.com/matplotlib/basemap/issues/579
 [#577]:
 https://github.com/matplotlib/basemap/issues/577
+[#574]:
+https://github.com/matplotlib/basemap/issues/574
 [#573]:
 https://github.com/matplotlib/basemap/issues/573
+[#568]:
+https://github.com/matplotlib/basemap/issues/568
 [#566]:
 https://github.com/matplotlib/basemap/issues/566
 [#565]:
@@ -1177,6 +1188,8 @@ https://github.com/matplotlib/basemap/issues/463
 https://github.com/matplotlib/basemap/issues/461
 [#456]:
 https://github.com/matplotlib/basemap/issues/456
+[#447]:
+https://github.com/matplotlib/basemap/issues/447
 [#445]:
 https://github.com/matplotlib/basemap/issues/445
 [#444]:
@@ -1197,6 +1210,8 @@ https://github.com/matplotlib/basemap/issues/403
 https://github.com/matplotlib/basemap/issues/383
 [#362]:
 https://github.com/matplotlib/basemap/issues/362
+[#286]:
+https://github.com/matplotlib/basemap/issues/286
 [#228]:
 https://github.com/matplotlib/basemap/issues/228
 [#179]:
