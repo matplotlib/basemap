@@ -4,10 +4,10 @@ import datetime
 from mpl_toolkits.basemap import Basemap, shiftgrid
 from netCDF4 import Dataset
 # specify date to plot.
-yyyy=1993; mm=03; dd=14; hh=00
+yyyy=1993; mm=3; dd=14; hh=0
 date = datetime.datetime(yyyy,mm,dd,hh)
 # set OpenDAP server URL.
-URLbase="http://nomads.ncdc.noaa.gov/thredds/dodsC/modeldata/cmd_pgbh/"
+URLbase="https://www.ncei.noaa.gov/thredds/dodsC/model-cfs_reanl_6h_pgb/"
 URL=URLbase+"%04i/%04i%02i/%04i%02i%02i/pgbh00.gdas.%04i%02i%02i%02i.grb2" %\
              (yyyy,yyyy,mm,yyyy,mm,dd,yyyy,mm,dd,hh)
 data = Dataset(URL)
@@ -18,8 +18,8 @@ longitudes = data.variables['lon'][:].tolist()
 # get sea level pressure and 10-m wind data.
 # mult slp by 0.01 to put in units of hPa.
 slpin = 0.01*data.variables['Pressure_msl'][:].squeeze()
-uin = data.variables['U-component_of_wind_height_above_ground'][:].squeeze()
-vin = data.variables['V-component_of_wind_height_above_ground'][:].squeeze()
+uin = data.variables['u-component_of_wind_height_above_ground'][:].squeeze()
+vin = data.variables['v-component_of_wind_height_above_ground'][:].squeeze()
 # add cyclic points manually (could use addcyclic function)
 slp = np.zeros((slpin.shape[0],slpin.shape[1]+1),np.float64)
 slp[:,0:-1] = slpin[::-1]; slp[:,-1] = slpin[::-1,0]
@@ -43,8 +43,8 @@ x, y = m(lons, lats)
 parallels = np.arange(-80.,90,20.)
 meridians = np.arange(0.,360.,20.)
 # plot SLP contours.
-CS1 = m.contour(x,y,slp,clevs,linewidths=0.5,colors='k',animated=True)
-CS2 = m.contourf(x,y,slp,clevs,cmap=plt.cm.RdBu_r,animated=True)
+CS1 = m.contour(x,y,slp,clevs,linewidths=0.5,colors='k')
+CS2 = m.contourf(x,y,slp,clevs,cmap=plt.cm.RdBu_r)
 # plot wind vectors on projection grid.
 # first, shift grid so it goes from -180 to 180 (instead of 0 to 360
 # in longitude).  Otherwise, interpolation is messed up.
@@ -72,8 +72,8 @@ plt.show()
 fig2 = plt.figure(figsize=(8,10))
 ax = fig2.add_axes([0.1,0.1,0.8,0.8])
 # plot SLP contours
-CS1 = m.contour(x,y,slp,clevs,linewidths=0.5,colors='k',animated=True)
-CS2 = m.contourf(x,y,slp,clevs,cmap=plt.cm.RdBu_r,animated=True)
+CS1 = m.contour(x,y,slp,clevs,linewidths=0.5,colors='k')
+CS2 = m.contourf(x,y,slp,clevs,cmap=plt.cm.RdBu_r)
 # plot wind barbs over map.
 barbs = m.barbs(xx,yy,uproj,vproj,length=5,barbcolor='k',flagcolor='r',linewidth=0.5)
 # draw coastlines, parallels, meridians.

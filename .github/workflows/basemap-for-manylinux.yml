@@ -349,6 +349,65 @@ jobs:
           name: coverage
           path: ${{ env.PKGDIR }}/htmlcov
 
+  docs:
+    needs: test
+    runs-on: ubuntu-latest
+    container: "pylegacy/python:3.8-debian-9"
+    steps:
+      -
+        name: Download checkout
+        uses: actions/download-artifact@v1
+        with:
+          name: checkout
+          path: .
+      -
+        name: Install doc requirements
+        run: |
+          cd ${{ env.PKGDIR }}
+          pip install -r requirements-doc.txt
+      -
+        name: Download build artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: artifacts-build-x64-3.8
+          path: ${{ env.PKGDIR }}/dist
+      -
+        name: Install package
+        run: |
+          cd ${{ env.PKGDIR }}
+          pip install dist/*-manylinux1*.whl
+      -
+        name: Run sphinx
+        run: |
+          cd ${{ env.PKGDIR }}
+          python -m sphinx doc/source public
+      -
+        name: Upload docs artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: docs
+          path: ${{ env.PKGDIR }}/public
+      -
+        name: Upload github-pages artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          name: github-pages
+          path: ${{ env.PKGDIR }}/public
+
+  pages:
+    needs: docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy github-pages
+        uses: actions/deploy-pages@v2
+        id: deployment
+
   upload:
     strategy:
       matrix:

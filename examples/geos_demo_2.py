@@ -39,7 +39,7 @@ ax = fig.add_axes((0.1,0.1,0.8,0.8))
 m = Basemap(projection='geos', lon_0=lon_0, satellite_height=satellite_height,
             resolution='l', llcrnrlon=ll_lon, llcrnrlat=ll_lat, urcrnrlon=ur_lon, urcrnrlat=ur_lat)
 # add data
-m.imshow(data, cmap=plt.cm.gray, interpolation='nearest')
+m.imshow(data[::-1], cmap=plt.cm.gray, interpolation='nearest')
 plt.clim(0, 255)
 # draw coastlines.
 m.drawcoastlines(linewidth=0.5, color=overlay_color)

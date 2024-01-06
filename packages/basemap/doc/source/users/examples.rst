@@ -32,7 +32,7 @@ For more specifics of how to use the Basemap instance methods,
 see :ref:`api-index`.
 
 Here are the examples (many of which utilize the 
-`netcdf4-python <http://unidata.github.io/netcdf4-python/>`__ module
+`netcdf4-python <https://unidata.github.io/netcdf4-python/>`__ module
 to retrieve datasets over http):
 
 * Plot contour lines on a basemap
@@ -56,7 +56,7 @@ to retrieve datasets over http):
 
 .. plot:: users/figures/plotetopo5.py
  
-* Plot markers at locations of `ARGO <http://www.argo.ucsd.edu/>`__ floats.
+* Plot markers at locations of `ARGO <https://www.argo.ucsd.edu/>`__ floats.
 
 .. plot:: users/figures/plotargo.py
  

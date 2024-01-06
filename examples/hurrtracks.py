@@ -1,14 +1,13 @@
-from __future__ import (absolute_import, division, print_function)
-
 """
 draw Atlantic Hurricane Tracks for storms that reached Cat 4 or 5.
 part of the track for which storm is cat 4 or 5 is shown red.
 ESRI shapefile data from http://nationalatlas.gov/mld/huralll.html
 """
+import os
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap as Basemap
-# Lambert Conformal Conic maplt.
+from mpl_toolkits.basemap import Basemap
+# Lambert Conformal Conic map.
 m = Basemap(llcrnrlon=-100.,llcrnrlat=0.,urcrnrlon=-20.,urcrnrlat=57.,
             projection='lcc',lat_1=20.,lat_2=40.,lon_0=-60.,
             resolution ='l',area_thresh=1000.)
@@ -16,7 +15,6 @@ m = Basemap(llcrnrlon=-100.,llcrnrlat=0.,urcrnrlon=-20.,urcrnrlat=57.,
 fig=plt.figure()
 # read shapefile.
 shp_info = m.readshapefile('huralll020','hurrtracks',drawbounds=False)
-print(shp_info)
 # find names of storms that reached Cat 4.
 names = []
 for shapedict in m.hurrtracks_info:
@@ -25,8 +23,6 @@ for shapedict in m.hurrtracks_info:
     if cat in ['H4','H5'] and name not in names:
         # only use named storms.
         if name != 'NOT NAMED':  names.append(name)
-print(names)
-print(len(names))
 # plot tracks of those storms.
 for shapedict,shape in zip(m.hurrtracks_info,m.hurrtracks):
     name = shapedict['NAME']

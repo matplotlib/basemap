@@ -1,5 +1,5 @@
-Welcome to the Matplotlib Basemap Toolkit documentation
-=======================================================
+Welcome to the basemap documentation!
+=====================================
 
 .. toctree::
    :maxdepth: 2

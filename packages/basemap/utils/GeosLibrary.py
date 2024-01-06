@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2021-2023 Víctor Molina García
+# Copyright (c) 2021-2024 Víctor Molina García
 
 # GeosLibrary.py is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published

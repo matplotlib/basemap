@@ -2,14 +2,18 @@ from netCDF4 import Dataset, num2date
 import time, calendar, datetime, numpy
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
-import urllib, os
+import os
+try:
+    from urllib.request import urlretrieve
+except ImportError:
+    from urllib import urlretrieve
 # data downloaded from the form at
-# http://coastwatch.pfeg.noaa.gov/erddap/tabledap/apdrcArgoAll.html 
-filename, headers = urllib.urlretrieve('http://coastwatch.pfeg.noaa.gov/erddap/tabledap/apdrcArgoAll.nc?longitude,latitude,time&longitude>=0&longitude<=360&latitude>=-90&latitude<=90&time>=2010-01-01&time<=2010-01-08&distinct()')
+# http://coastwatch.pfeg.noaa.gov/erddap/tabledap/apdrcArgoAll.html
+filename, headers = urlretrieve("https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats-index.nc?date%2Clatitude%2Clongitude&date%3E=2010-01-01&date%3C=2010-01-08&latitude%3E=-90&latitude%3C=90&longitude%3E=-180&longitude%3C=180&distinct()")
 dset = Dataset(filename)
 lats = dset.variables['latitude'][:]
 lons = dset.variables['longitude'][:]
-time = dset.variables['time']
+time = dset.variables['date']  # seconds since epoch
 times = time[:]
 t1 = times.min(); t2 = times.max()
 date1 = num2date(t1, units=time.units)

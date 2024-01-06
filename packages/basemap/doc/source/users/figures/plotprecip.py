@@ -1,13 +1,15 @@
 from mpl_toolkits.basemap import Basemap, cm
 # requires netcdf4-python (netcdf4-python.googlecode.com)
 from netCDF4 import Dataset as NetCDFFile
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
 # plot rainfall from NWS using special precipitation
 # colormap used by the NWS, and included in basemap.
 
-nc = NetCDFFile('../../../examples/nws_precip_conus_20061222.nc')
+ncpath = os.path.join(*6 * [".."] + ["examples", "nws_precip_conus_20061222.nc"])
+nc = NetCDFFile(ncpath)
 # data from http://water.weather.gov/precip/
 prcpvar = nc.variables['amountofprecip']
 data = 0.01*prcpvar[:]
