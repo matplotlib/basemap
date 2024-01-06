@@ -43,6 +43,7 @@ release = myself.__version__
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "matplotlib.sphinxext.plot_directive",
@@ -55,6 +56,8 @@ autodoc_default_options = {
     "exclude-members": "__weakref__",
 }
 
+napoleon_use_ivar = True
+napoleon_use_rtype = False
 intersphinx_mapping = {
     "python":
         ("https://docs.python.org/3", None),
