@@ -395,6 +395,7 @@ jobs:
           path: ${{ env.PKGDIR }}/public
 
   pages:
+    if: startsWith(github.event.ref, 'refs/tags/v')
     needs: docs
     runs-on: ubuntu-latest
     environment:
