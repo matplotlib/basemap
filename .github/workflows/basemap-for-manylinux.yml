@@ -2,11 +2,12 @@ name: basemap-for-manylinux
 
 env:
   PKGDIR: "packages/basemap"
-  PYTHONWARNINGS: "ignore:DEPRECATION"
   PIP_DEFAULT_TIMEOUT: 10
   PIP_DISABLE_PIP_VERSION_CHECK: 1
   PIP_PREFER_BINARY: 1
   PIP_RETRIES: 0
+  PYTHONUNBUFFERED: "1"
+  PYTHONWARNINGS: "ignore:DEPRECATION"
 
 on:
   push:
