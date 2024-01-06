@@ -38,8 +38,8 @@ can be installed separately if needed:
 
     conda install -c conda-forge basemap-data-hires
 
-Installation from source
-------------------------
+Installing from source
+----------------------
 
 Optionally, you can also install ``basemap`` from its source hosted
 on GitHub as indicated in the following steps:

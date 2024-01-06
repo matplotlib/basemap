@@ -3,8 +3,7 @@
 Drawing a Map Background
 ========================
 
-Basemap includes the GSSH (now
-`GSHHG <https://www.soest.hawaii.edu/pwessel/gshhg/>`_)
+Basemap includes the `GSHHG <https://www.soest.hawaii.edu/pwessel/gshhg/>`_
 coastline dataset, as well as datasets for rivers, state and
 country boundaries from 
 `GMT <https://www.generic-mapping-tools.org/>`_.

@@ -16,7 +16,7 @@ Basic requirements are the following:
 Optional requirements include:
 
 * [OWSLib](https://github.com/geopython/OWSLib). It is needed for the
-  `Basemap.wmsimage` function.
+  method `Basemap.wmsimage`.
 
 * [Pillow](https://github.com/python-pillow/Pillow). It is needed for
   the methods `Basemap.bluemarble`, `Basemap.etopo`,
