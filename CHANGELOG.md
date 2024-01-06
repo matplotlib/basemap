@@ -69,6 +69,8 @@ https://semver.org/spec/v2.0.0.html
   directive "legacy_implicit_noexcept" (PR [#593] by @musicinmybrain).
 - Fix `_geoslib.pyx` syntax to comply with newer compilers such as
   Clang 16 and GCC 14 (PR [#595] by @fweimer-rh).
+- Apply basic cleanup of `_geoslib.pyx` source code (i.e. basic linting,
+  removal of commented code, version update).
 
 ### Removed
 - Attribute `__version__` in `mpl_toolkits.basemap.proj` module.
