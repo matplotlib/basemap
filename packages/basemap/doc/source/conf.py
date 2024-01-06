@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# flake8: noqa: E402
 # pylint: disable=redefined-builtin,wrong-import-position
 """Configuration file for the Sphinx documentation builder.
 
