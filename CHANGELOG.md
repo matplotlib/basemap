@@ -72,6 +72,10 @@ https://semver.org/spec/v2.0.0.html
   Clang 16 and GCC 14 (PR [#595] by @fweimer-rh).
 - Apply basic cleanup of `_geoslib.pyx` source code (i.e. basic linting,
   removal of commented code, version update).
+- Fix breaking change from `matplotlib` 3.8 due to the promotion of
+  `QuadContourSet` objects into `Artist` objects, which affected
+  `Basemap.contour`, `Basemap.contourf` and `Basemap.nightshade`
+  (solves issue [#594]).
 
 ### Removed
 - Attribute `__version__` in `mpl_toolkits.basemap.proj` module.
@@ -1077,6 +1081,8 @@ https://semver.org/spec/v2.0.0.html
 
 [#595]:
 https://github.com/matplotlib/basemap/pull/595
+[#594]
+https://github.com/matplotlib/basemap/issues/594
 [#593]:
 https://github.com/matplotlib/basemap/pull/593
 [#592]:
