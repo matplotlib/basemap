@@ -31,6 +31,7 @@ import numpy as np
 import numpy.ma as ma
 
 import matplotlib as mpl
+from matplotlib.artist import Artist
 from matplotlib.collections import LineCollection
 from matplotlib.collections import PolyCollection
 from matplotlib.image import imread
@@ -3592,7 +3593,11 @@ class Basemap(object):
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         # clip to map limbs
-        CS.collections,c = self._cliplimb(ax,CS.collections)
+        if isinstance(CS, Artist):
+            # Since MPL 3.8, `QuadContourSet` objects are `Artist` objects too.
+            CS, c = self._cliplimb(ax, CS)
+        else:
+            CS.collections, c = self._cliplimb(ax, CS.collections)
         return CS
 
     @_transform
@@ -3688,7 +3693,11 @@ class Basemap(object):
         # set axes limits to fit map region.
         self.set_axes_limits(ax=ax)
         # clip to map limbs
-        CS.collections,c = self._cliplimb(ax,CS.collections)
+        if isinstance(CS, Artist):
+            # Since MPL 3.8, `QuadContourSet` objects are `Artist` objects too.
+            CS, c = self._cliplimb(ax, CS)
+        else:
+            CS.collections, c = self._cliplimb(ax, CS.collections)
         return CS
 
     @_transformuv
@@ -4733,12 +4742,18 @@ f=image" %\
         # contour the day-night grid, coloring the night area
         # with the specified color and transparency.
         CS = self.contourf(x,y,daynight,1,colors=[color],alpha=alpha,ax=ax)
-        # set zorder on ContourSet collections show night shading
-        # is on top.
-        for c in CS.collections:
-            c.set_zorder(zorder)
-        # clip to map limbs
-        CS.collections,c = self._cliplimb(ax,CS.collections)
+        if isinstance(CS, Artist):
+            # Since MPL 3.8, `QuadContourSet` objects are `Artist` objects too.
+            CS.set_zorder(zorder)
+            # clip to map limbs
+            CS, c = self._cliplimb(ax, CS)
+        else:
+            # set zorder on ContourSet collections show night shading
+            # is on top.
+            for c in CS.collections:
+                c.set_zorder(zorder)
+            # clip to map limbs
+            CS.collections, c = self._cliplimb(ax, CS.collections)
         return CS
 
     def _check_ax(self):

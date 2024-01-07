@@ -18,7 +18,7 @@ matplotlib >= 1.5, < 3.0; python_version == "2.7"
 matplotlib >= 1.5, < 2.0; python_version == "3.2"
 matplotlib >= 1.5, < 2.0; python_version == "3.3"
 matplotlib >= 1.5, < 3.0; python_version == "3.4"
-matplotlib >= 1.5, < 3.8; python_version >= "3.5"
+matplotlib >= 1.5, < 3.9; python_version >= "3.5"
 
 pyproj >= 1.9.3, < 2.1.0; python_version == "2.6"
 pyproj >= 1.9.3, < 2.2.0; python_version == "2.7"
