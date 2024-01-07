@@ -258,21 +258,21 @@ https://semver.org/spec/v2.0.0.html
 
 ### Added
 - Precompiled binary wheels available in PyPI.
-- Complete workflow to build the project wheels for Windows and GNU/Linux
-  using GitHub Actions.
+- Complete workflow to build the project wheels for Windows and
+  GNU/Linux using GitHub Actions.
 
 ### Changed
-- Reorganise the package structure. In summary, the former `basemap` package
-  is split in three:
+- Reorganise the package structure. In summary, the former `basemap`
+  package is split in three:
   - `basemap` itself contains the Python modules.
-  - `basemap-data` contains the mandatory data assets required by `basemap`
-    to provide minimal functionality.
+  - `basemap-data` contains the mandatory data assets required by
+    `basemap` to provide minimal functionality.
   - `basemap-data-hires` contains the high-resolution data assets.
 
-  This change together with the precompiled binary wheels in PyPI should solve
-  most of the former installation problems (see issues [#403], [#405], [#422],
-  [#436], [#445], [#456], [#461], [#488], [#489], [#491], [#510], [#513],
-  [#525], [#526] and [#535]).
+  This change together with the precompiled binary wheels in PyPI should
+  solve most of the former installation problems (see issues [#403],
+  [#405], [#422], [#436], [#445], [#456], [#461], [#488], [#489],
+  [#491], [#510], [#513], [#525], [#526] and [#535]).
 - Upgrade default GEOS library dependency to 3.5.1.
 - Update and clarify licenses. In summary:
   - `basemap`: MIT license.
@@ -284,14 +284,14 @@ https://semver.org/spec/v2.0.0.html
 ### Fixed
 - Fix `Basemap.pcolormesh` for `"ortho"` projection (PR [#476]).
 - Fix `Basemap.arcgisimage` for cylindrical coordinates (PR [#505]).
-- Force `setup.py` to cythonize `_geoslib.pyx` at compile time (issues [#487],
-  [#518] and [#521]).
-- Update `README` files and apply corrections and changes to outdated content
-  (issue [#179]).
+- Force `setup.py` to cythonize `_geoslib.pyx` at compile time (issues
+  [#487], [#518] and [#521]).
+- Update `README` files and apply corrections and changes to outdated
+  content (issue [#179]).
 
 ### Removed
-- Bundled GEOS source code. The same source code can be downloaded using the
-  `GeosLibrary` class in `utils` (issue [#228]).
+- Bundled GEOS source code. The same source code can be downloaded using
+  the `GeosLibrary` class in `utils` (issue [#228]).
 - Precompiled `_geoslib.c` file (issue [#437]).
 
 ## [1.2.2] - 2020-08-04
