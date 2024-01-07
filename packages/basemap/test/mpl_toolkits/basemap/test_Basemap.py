@@ -1,5 +1,6 @@
 """Import test for the :mod:`mpl_toolkits.basemap.Basemap` class."""
 
+import datetime as dt
 try:
     import unittest2 as unittest
 except ImportError:
@@ -9,6 +10,7 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
+from matplotlib.contour import QuadContourSet
 from matplotlib.image import AxesImage
 from matplotlib.patches import Polygon
 from mpl_toolkits.basemap import Basemap
@@ -203,6 +205,48 @@ class TestMplToolkitsBasemapBasemap(unittest.TestCase):
 
         _, axs = plt.subplots()
         self.test_shadedrelief(axs=axs, axslen0=10)
+
+    def _test_generic_contour_function(self, function):
+        """Generic test for the `contour` and `contourf` methods."""
+
+        bmap = Basemap(projection="ortho", lat_0=45, lon_0=-100, resolution=None)
+
+        # Create a regular lat/lon grid.
+        nlats = 73
+        nlons = 145
+        delta = 2 * np.pi / (nlons - 1)
+        indx = np.indices((nlats, nlons))
+        lats = (0.5 * np.pi - delta * indx[0, :, :])
+        lons = (delta * indx[1, :, :])
+
+        # Create some data the regular lat/lon grid.
+        mean = 0.50 * np.cos(2 * lats) * ((np.sin(2 * lats))**2 + 2)
+        wave = 0.75 * np.cos(4 * lons) * np.sin(2 * lats)**8
+        data = mean + wave
+
+        # Compute native map projection coordinates of lat/lon grid.
+        x, y = bmap(np.degrees(lons), np.degrees(lats))
+
+        # Contour data over the map and check output.
+        cset = getattr(bmap, function)(x, y, data, 15)
+        self.assertIsInstance(cset, QuadContourSet)
+
+    def test_contour(self):
+        """Test drawing contours on a map."""
+
+        self._test_generic_contour_function("contour")
+
+    def test_contourf(self):
+        """Test drawing filled contours on a map."""
+
+        self._test_generic_contour_function("contourf")
+
+    def test_nightshade(self):
+        """Test drawing the day/night terminator and night shade on a map."""
+
+        bmap = Basemap(projection="mill", lon_0=180)
+        cset = bmap.nightshade(date=dt.datetime(1970, 1, 1))
+        self.assertIsInstance(cset, QuadContourSet)
 
 
 class TestMplToolkitsBasemapBasemapCall(unittest.TestCase):
