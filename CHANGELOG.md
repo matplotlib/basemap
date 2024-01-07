@@ -36,6 +36,7 @@ https://semver.org/spec/v2.0.0.html
     - Upgrade `pillow` upper limit to 10.2.0.
 - Update library dependencies:
   - Upgrade upper limit for `numpy` to 1.27.0.
+  - Upgrade upper limit for `matplotlib` to 3.9.0.
   - Downgrade upper limit for `pyproj` to 2.2.0 for Python 2.7.
   - Set dependency on `packaging` as replacement for `distutils`.
 - Update build dependencies:
