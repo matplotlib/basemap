@@ -4528,20 +4528,21 @@ f=image" %\
         xc,yc = self(lon,lat)
         # make sure lon_0 between -180 and 180
         lon_0 = ((lon0+360) % 360) - 360
+        degchar = b"\xc2\xb0".decode("utf-8")
         if lat0>0:
             if lon>0:
-                lonlatstr = u'%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
+                lonlatstr = '%g%sN, %g%sE' % (lat0, degchar, lon_0, degchar)
             elif lon<0:
-                lonlatstr = u'%g\N{DEGREE SIGN}N, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+                lonlatstr = '%g%sN, %g%sW' % (lat0, degchar, lon_0, degchar)
             else:
-                lonlatstr = u'%g\N{DEGREE SIGN}, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+                lonlatstr = '%g%s, %g%sW' % (lat0, degchar, lon_0, degchar)
         else:
             if lon>0:
-                lonlatstr = u'%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}E' % (lat0,lon_0)
+                lonlatstr = '%g%sS, %g%sE' % (lat0, degchar, lon_0, degchar)
             elif lon<0:
-                lonlatstr = u'%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}W' % (lat0,lon_0)
+                lonlatstr = '%g%sS, %g%sW' % (lat0, degchar, lon_0, degchar)
             else:
-                lonlatstr = u'%g\N{DEGREE SIGN}S, %g\N{DEGREE SIGN}' % (lat0,lon_0)
+                lonlatstr = '%g%sS, %g%s' % (lat0, degchar, lon_0, degchar)
         # left edge of scale
         lon1,lat1 = self(x0-length/2,y0,inverse=True)
         x1,y1 = self(lon1,lat1)
