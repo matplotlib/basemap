@@ -78,6 +78,7 @@ https://semver.org/spec/v2.0.0.html
   (solves issue [#594], thanks to @qianwu2 and @rcomer).
 
 ### Removed
+- Use of unicode literals within the library.
 - Attribute `__version__` in `mpl_toolkits.basemap.proj` module.
 - Module `mpl_toolkits.basemap.test`, whose content is migrated to the
   test suite in the `test` folder.
