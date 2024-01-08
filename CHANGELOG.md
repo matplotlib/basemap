@@ -13,7 +13,7 @@ https://semver.org/spec/v2.0.0.html
 ## [Unreleased]
 
 ### Added
-- Support for Python 3.12.
+- Support for Python 3.12 (solves issue [#590]).
 - Complete support for `basemap` in `conda-forge` channel for the major
   platforms on x64 and for MacOS on arm64 (solves issue [#286]).
 - Precompiled wheels for MacOS x64 and arm64 on PyPI (solves issues
@@ -1089,6 +1089,8 @@ https://github.com/matplotlib/basemap/pull/593
 https://github.com/matplotlib/basemap/issues/592
 [#591]:
 https://github.com/matplotlib/basemap/issues/591
+[#590]:
+https://github.com/matplotlib/basemap/issues/590
 [#589]:
 https://github.com/matplotlib/basemap/issues/589
 [#583]:
