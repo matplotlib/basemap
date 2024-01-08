@@ -5353,39 +5353,43 @@ def _setlonlab(fmt,lon,labelstyle):
             lonlab = lonlabstr%lon
     return lonlab
 
-def _setlatlab(fmt,lat,labelstyle):
-    # set lat label string (called by Basemap.drawparallels)
-    try: # fmt is a function that returns a formatted string
-           latlab = fmt(lat)
-    except: # fmt is a format string.
-        if lat<0:
-            if mpl.rcParams['text.usetex']:
-                if labelstyle=='+/-':
-                    latlabstr = r'${\/-%s\/^{\circ}}$'%fmt
+
+def _setlatlab(fmt, lat, labelstyle):
+    """Set latitude label string (called by :meth:`Basemap.drawparallels`)."""
+
+    try:
+        # `fmt` is a function that returns a formatted string.
+        latlab = fmt(lat)
+    except:
+        # `fmt` is a format string.
+        if lat < 0:
+            if mpl.rcParams["text.usetex"]:
+                if labelstyle == "+/-":
+                    latlabstr = r"${\/-%s\/^{\circ}}$" % fmt
                 else:
-                    latlabstr = r'${%s\/^{\circ}\/S}$'%fmt
+                    latlabstr = r"${%s\/^{\circ}\/S}$" % fmt
             else:
-                if labelstyle=='+/-':
-                    latlabstr = u'-%s\N{DEGREE SIGN}'%fmt
+                if labelstyle == "+/-":
+                    latlabstr = u"-%s\N{DEGREE SIGN}" % fmt
                 else:
-                    latlabstr = u'%s\N{DEGREE SIGN}S'%fmt
-            latlab = latlabstr%np.fabs(lat)
-        elif lat>0:
-            if mpl.rcParams['text.usetex']:
-                if labelstyle=='+/-':
-                    latlabstr = r'${\/+%s\/^{\circ}}$'%fmt
+                    latlabstr = u"%s\N{DEGREE SIGN}S" % fmt
+            latlab = latlabstr % np.fabs(lat)
+        elif lat > 0:
+            if mpl.rcParams["text.usetex"]:
+                if labelstyle == "+/-":
+                    latlabstr = r"${\/+%s\/^{\circ}}$" % fmt
                 else:
-                    latlabstr = r'${%s\/^{\circ}\/N}$'%fmt
+                    latlabstr = r"${%s\/^{\circ}\/N}$" % fmt
             else:
-                if labelstyle=='+/-':
-                    latlabstr = u'+%s\N{DEGREE SIGN}'%fmt
+                if labelstyle == "+/-":
+                    latlabstr = u"+%s\N{DEGREE SIGN}" % fmt
                 else:
-                    latlabstr = u'%s\N{DEGREE SIGN}N'%fmt
-            latlab = latlabstr%lat
+                    latlabstr = u"%s\N{DEGREE SIGN}N" % fmt
+            latlab = latlabstr % lat
         else:
-            if mpl.rcParams['text.usetex']:
-                latlabstr = r'${%s\/^{\circ}}$'%fmt
+            if mpl.rcParams["text.usetex"]:
+                latlabstr = r"${%s\/^{\circ}}$" % fmt
             else:
-                latlabstr = u'%s\N{DEGREE SIGN}'%fmt
-            latlab = latlabstr%lat
+                latlabstr = u"%s\N{DEGREE SIGN}" % fmt
+            latlab = latlabstr % lat
     return latlab
