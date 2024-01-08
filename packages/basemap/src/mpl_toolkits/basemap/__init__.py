@@ -5366,6 +5366,7 @@ def _setlatlab(fmt, lat, labelstyle):
         latlab = fmt(lat)
     except:
         # `fmt` is a format string.
+        degchar = b"\xc2\xb0".decode("utf-8")
         if lat < 0:
             if mpl.rcParams["text.usetex"]:
                 if labelstyle == "+/-":
@@ -5374,9 +5375,9 @@ def _setlatlab(fmt, lat, labelstyle):
                     latlabstr = r"${%s\/^{\circ}\/S}$" % fmt
             else:
                 if labelstyle == "+/-":
-                    latlabstr = u"-%s\N{DEGREE SIGN}" % fmt
+                    latlabstr = r"-%s%s" % (fmt, degchar)
                 else:
-                    latlabstr = u"%s\N{DEGREE SIGN}S" % fmt
+                    latlabstr = r"%s%sS" % (fmt, degchar)
             latlab = latlabstr % np.fabs(lat)
         elif lat > 0:
             if mpl.rcParams["text.usetex"]:
@@ -5386,14 +5387,14 @@ def _setlatlab(fmt, lat, labelstyle):
                     latlabstr = r"${%s\/^{\circ}\/N}$" % fmt
             else:
                 if labelstyle == "+/-":
-                    latlabstr = u"+%s\N{DEGREE SIGN}" % fmt
+                    latlabstr = r"+%s%s" % (fmt, degchar)
                 else:
-                    latlabstr = u"%s\N{DEGREE SIGN}N" % fmt
+                    latlabstr = r"%s%sN" % (fmt, degchar)
             latlab = latlabstr % lat
         else:
             if mpl.rcParams["text.usetex"]:
                 latlabstr = r"${%s\/^{\circ}}$" % fmt
             else:
-                latlabstr = u"%s\N{DEGREE SIGN}" % fmt
+                latlabstr = r"%s%s" % (fmt, degchar)
             latlab = latlabstr % lat
     return latlab
