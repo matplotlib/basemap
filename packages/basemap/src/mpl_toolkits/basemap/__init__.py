@@ -5325,6 +5325,7 @@ def _setlonlab(fmt, lon, labelstyle):
         lonlab = fmt(lon)
     except:
         # `fmt` is a format string.
+        degchar = b"\xc2\xb0".decode("utf-8")
         if lon > 180:
             if mpl.rcParams["text.usetex"]:
                 if labelstyle == "+/-":
@@ -5333,9 +5334,9 @@ def _setlonlab(fmt, lon, labelstyle):
                     lonlabstr = r"${%s\/^{\circ}\/W}$" % fmt
             else:
                 if labelstyle == "+/-":
-                    lonlabstr = u"-%s\N{DEGREE SIGN}" % fmt
+                    lonlabstr = r"-%s%s" % (fmt, degchar)
                 else:
-                    lonlabstr = u"%s\N{DEGREE SIGN}W" % fmt
+                    lonlabstr = r"%s%sW" % (fmt, degchar)
             lonlab = lonlabstr % np.fabs(lon - 360)
         elif lon < 180 and lon != 0:
             if mpl.rcParams["text.usetex"]:
@@ -5345,15 +5346,15 @@ def _setlonlab(fmt, lon, labelstyle):
                     lonlabstr = r"${%s\/^{\circ}\/E}$" % fmt
             else:
                 if labelstyle == "+/-":
-                    lonlabstr = u"+%s\N{DEGREE SIGN}" % fmt
+                    lonlabstr = r"+%s%s" % (fmt, degchar)
                 else:
-                    lonlabstr = u"%s\N{DEGREE SIGN}E" % fmt
+                    lonlabstr = r"%s%sE" % (fmt, degchar)
             lonlab = lonlabstr % lon
         else:
             if mpl.rcParams["text.usetex"]:
                 lonlabstr = r"${%s\/^{\circ}}$" % fmt
             else:
-                lonlabstr = u"%s\N{DEGREE SIGN}" % fmt
+                lonlabstr = r"%s%s" % (fmt, degchar)
             lonlab = lonlabstr % lon
     return lonlab
 
