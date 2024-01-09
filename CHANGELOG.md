@@ -10,7 +10,7 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
-## [Unreleased]
+## [1.4.0] - 2024-01-09
 
 ### Added
 - Support for Python 3.12 (solves issue [#590]).
@@ -1230,7 +1230,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.9...develop
+https://github.com/matplotlib/basemap/compare/v1.4.0...develop
+[1.4.0]:
+https://github.com/matplotlib/basemap/compare/v1.3.9...v1.4.0
 [1.3.9]:
 https://github.com/matplotlib/basemap/compare/v1.3.8...v1.3.9
 [1.3.8]:
