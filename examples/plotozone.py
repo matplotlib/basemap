@@ -66,7 +66,7 @@ WhGrYlBu = ListedColormap(['#ffffff', '#b7f6ff', '#70edff', '#29e4ff', '#00e1fb'
 
 toplot = np.ma.masked_values(o3[0, 0], 0.) * 1000.
 bounds = np.percentile(toplot.compressed().ravel(), np.linspace(5, 95, 9).tolist())
-ptch = m.pcolor(X, Y, toplot, cmap = WhGrYlBu, norm = plt.matplotlib.colors.BoundaryNorm(bounds, 20), vmin = bounds[0], vmax = bounds[-1])
+ptch = m.pcolor(X, Y, toplot, cmap = WhGrYlBu, norm = plt.matplotlib.colors.BoundaryNorm(bounds, 20))
 
 # Add a colorbar using proportional spacing, but
 # colors based on 10 distinct bins

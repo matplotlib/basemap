@@ -10,6 +10,82 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
+## [1.4.0] - 2024-01-09
+
+### Added
+- Support for Python 3.12 (solves issue [#590]).
+- Complete support for `basemap` in `conda-forge` channel for the major
+  platforms on x64 and for MacOS on arm64 (solves issue [#286]).
+- Precompiled wheels for MacOS x64 and arm64 on PyPI (solves issues
+  [#447] and [#574]).
+- Renewed documentation, with fixes for the broken links and examples,
+  an improved section on the installation process, and without the
+  deprecation/sunsetting section (solves issues [#527] and [#568]).
+- Optional argument `encoding_errors` for `Basemap.readshapefile` method
+  (PR [#554] by @guziy, implements request [#552]).
+- Optional argument `cachedir` for `Basemap.arcgisimage` method to allow
+  caching of ArcGIS image downloads (PR [#562] by @JoepdeJong).
+
+### Changed
+- Upgrade bundled GEOS library to 3.6.5.
+- Create optional library requirements files:
+  - `requirements-owslib.txt` for optional dependency `OWSLib`.
+    - Set `OWSLib` lower limit to 0.28.1 for Python 3.6+ due to
+      vulnerability [CVE-2023-27476].
+  - `requirements-pillow.txt` for optional dependency `pillow`:
+    - Upgrade `pillow` upper limit to 10.2.0.
+- Update library dependencies:
+  - Upgrade upper limit for `numpy` to 1.27.0.
+  - Upgrade upper limit for `matplotlib` to 3.9.0.
+  - Downgrade upper limit for `pyproj` to 2.2.0 for Python 2.7.
+  - Set dependency on `packaging` as replacement for `distutils`.
+- Update build dependencies:
+  - Upgrade upper limit for `Cython` to 3.1.
+- Update doc dependencies and require at least Python 3.8 for them:
+  - Upgrade upper limit for `sphinx` to 7.2.
+  - Upgrade upper limit for `furo` to 2023.9.11.
+  - Move dependency on `netCDF4` to `requirements-doc.txt`.
+  - Set dependency on `cftime` explicitly in `requirements-doc.txt`.
+  - Set dependency on `scipy` explicitly in `requirements-doc.txt`.
+- Update lint dependencies:
+  - Downgrade upper limit for `flake8` to 6.2.
+  - Upgrade upper limit for `astropy` to 3.1.
+  - Upgrade lower limit for `pylint` to 3.1.
+- Update test dependencies:
+  - Upgrade upper limit for `pytest` to 7.5.
+  - Upgrade upper limit for `coverage` to 7.4.
+  - Upgrade upper limit for `pytest-cov` to 4.2.
+
+### Fixed
+- Reimplement `matplotlib` version checks without using `distutils` and
+  remove old switches related to unsupported `matplotlib` versions.
+- Hide `FutureWarning` in `Basemap.arcgisimage` and `Basemap.wmsimage`
+  methods due to old initialisation EPSG string used with `pyproj.Proj`.
+- Fix `DeprecationWarning` in `Basemap.imshow` and `Basemap.shiftdata`
+  methods.
+- Fix `DeprecationWarning` in internal function `_validated_ll`.
+- Set MSVC 14.0 (VS2015) to build the `_geoslib` module in the
+  precompiled Windows wheels (PR [#565]).
+- Fix `_geoslib.pyx` compilation with Cython 3.0+ using the compiler
+  directive "legacy_implicit_noexcept" (PR [#593] by @musicinmybrain).
+- Fix `_geoslib.pyx` syntax to comply with newer compilers such as
+  Clang 16 and GCC 14 (PR [#595] by @fweimer-rh).
+- Apply basic cleanup of `_geoslib.pyx` source code (i.e. basic linting,
+  removal of commented code, version update).
+- Fix breaking change from `matplotlib` 3.8 due to the promotion of
+  `QuadContourSet` objects into `Artist` objects, which affected
+  `Basemap.contour`, `Basemap.contourf` and `Basemap.nightshade`
+  (solves issue [#594], thanks to @qianwu2 and @rcomer).
+
+### Removed
+- Use of unicode literals within the library.
+- Attribute `__version__` in `mpl_toolkits.basemap.proj` module.
+- Module `mpl_toolkits.basemap.test`, whose content is migrated to the
+  test suite in the `test` folder.
+- Dependency on `dedent` function (either as alias of `inspect.cleandoc`
+  or the deprecated `matplotlib.cbook.dedent`) to write multi-line error
+  messages.
+
 ## [1.3.9] - 2023-12-26
 
 ### Fixed
@@ -63,7 +139,8 @@ https://semver.org/spec/v2.0.0.html
 - Upgrade `matplotlib` upper pin to 3.8 (solves issue [#573]).
 - Upgrade `pyproj` upper pin to 3.6.
 - Upgrade test dependency `netCDF4` upper pin to 1.7.
-- Upgrade test dependency `pillow` lower pin to 9.4.
+- Upgrade test dependency `pillow` lower pin to 9.4 due to vulnerability
+  [CVE-2022-45198].
 
 ## [1.3.6] - 2022-10-31
 
@@ -76,8 +153,8 @@ https://semver.org/spec/v2.0.0.html
 - Upgrade `pyproj` upper pin to 3.5.
 
 ### Fixed
-- Set MSVC 14.0 (VS2015) to build the precompiled Windows wheels in
-  GitHub workflows (PR [#564]).
+- Set MSVC 14.0 (VS2015) to build the GEOS library bundled in the
+  precompiled Windows wheels (PR [#564]).
 
 ## [1.3.5] - 2022-10-25
 
@@ -101,7 +178,7 @@ https://semver.org/spec/v2.0.0.html
 - Update `numpy` build dependency to ensure that builds also work on
   MacOS (fixes issue [#547], thanks to @SongJaeIn for testing).
 - Fix broken implementation of `Basemap.arcgisimage` (PR [#548], solves
-  issue [#546]).
+  issues [#481], [#546] and [#591]).
 - Enforce up-to-date `numpy` dependency when possible:
   - Set `numpy >= 1.19` for Python == 3.6 due to `numpy` vulnerabilities
     [CVE-2021-41495] and [CVE-2021-41496].
@@ -141,7 +218,7 @@ https://semver.org/spec/v2.0.0.html
   vulnerability [CVE-2021-33430].
 - Fix wrong marker for `unittest2` in development requirements.
 - Fix `sdist` so that packages can be built from source distributions
-  (PR [#532] by @DWesl, fixes [#533]).
+  (PR [#532] by @DWesl, fixes [#444] and [#533]).
 - Specify Cython language level for `_geoslib` extension explicitly.
 - Enforce up-to-date `pillow` dependency when possible:
   - `pillow >= 9.0.0` for Python >= 3.7 due to `pillow` vulnerabilities
@@ -157,8 +234,8 @@ https://semver.org/spec/v2.0.0.html
     [CVE-2020-10177], [CVE-2020-10378], [CVE-2020-10379],
     [CVE-2020-10994] and [CVE-2020-11538].
   - `pillow >= 6.2.2` For Python == 2.7 due to `pillow` vulnerabilities
-    [CVE-2019-16865], [CVE-2019-19911], [CVE-2020-5310], [CVE-2020-5312]
-    and [CVE-2020-5313].
+    [CVE-2019-16865], [CVE-2019-19911], [CVE-2020-5310],
+    [CVE-2020-5311], [CVE-2020-5312] and [CVE-2020-5313].
 
 ### Removed
 - Remove deprecation notices (issue [#527]).
@@ -182,21 +259,21 @@ https://semver.org/spec/v2.0.0.html
 
 ### Added
 - Precompiled binary wheels available in PyPI.
-- Complete workflow to build the project wheels for Windows and GNU/Linux
-  using GitHub Actions.
+- Complete workflow to build the project wheels for Windows and
+  GNU/Linux using GitHub Actions.
 
 ### Changed
-- Reorganise the package structure. In summary, the former `basemap` package
-  is split in three:
+- Reorganise the package structure. In summary, the former `basemap`
+  package is split in three:
   - `basemap` itself contains the Python modules.
-  - `basemap-data` contains the mandatory data assets required by `basemap`
-    to provide minimal functionality.
+  - `basemap-data` contains the mandatory data assets required by
+    `basemap` to provide minimal functionality.
   - `basemap-data-hires` contains the high-resolution data assets.
 
-  This change together with the precompiled binary wheels in PyPI should solve
-  most of the former installation problems (see issues [#403], [#405], [#422],
-  [#436], [#445], [#456], [#461], [#488], [#489], [#491], [#510], [#513],
-  [#525], [#526] and [#535]).
+  This change together with the precompiled binary wheels in PyPI should
+  solve most of the former installation problems (see issues [#403],
+  [#405], [#422], [#436], [#445], [#456], [#461], [#488], [#489],
+  [#491], [#510], [#513], [#525], [#526] and [#535]).
 - Upgrade default GEOS library dependency to 3.5.1.
 - Update and clarify licenses. In summary:
   - `basemap`: MIT license.
@@ -208,15 +285,15 @@ https://semver.org/spec/v2.0.0.html
 ### Fixed
 - Fix `Basemap.pcolormesh` for `"ortho"` projection (PR [#476]).
 - Fix `Basemap.arcgisimage` for cylindrical coordinates (PR [#505]).
-- Force `setup.py` to cythonize `_geoslib.pyx` at compile time (issues [#487],
-  [#518] and [#521]).
-- Update `README` files and apply corrections and changes to outdated content
-  (issue [#179]).
+- Force `setup.py` to cythonize `_geoslib.pyx` at compile time (issues
+  [#487], [#518] and [#521]).
+- Update `README` files and apply corrections and changes to outdated
+  content (issue [#179]).
 
 ### Removed
-- Bundled GEOS source code. The same source code can be downloaded using the
-  `GeosLibrary` class in `utils` (issue [#228]).
-- Precompiled `_geoslib.c` file.
+- Bundled GEOS source code. The same source code can be downloaded using
+  the `GeosLibrary` class in `utils` (issue [#228]).
+- Precompiled `_geoslib.c` file (issue [#437]).
 
 ## [1.2.2] - 2020-08-04
 
@@ -1003,8 +1080,18 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#595]:
+https://github.com/matplotlib/basemap/pull/595
+[#594]:
+https://github.com/matplotlib/basemap/issues/594
+[#593]:
+https://github.com/matplotlib/basemap/pull/593
 [#592]:
 https://github.com/matplotlib/basemap/issues/592
+[#591]:
+https://github.com/matplotlib/basemap/issues/591
+[#590]:
+https://github.com/matplotlib/basemap/issues/590
 [#589]:
 https://github.com/matplotlib/basemap/issues/589
 [#583]:
@@ -1019,14 +1106,22 @@ https://github.com/matplotlib/basemap/pull/580
 https://github.com/matplotlib/basemap/issues/579
 [#577]:
 https://github.com/matplotlib/basemap/issues/577
+[#574]:
+https://github.com/matplotlib/basemap/issues/574
 [#573]:
 https://github.com/matplotlib/basemap/issues/573
+[#568]:
+https://github.com/matplotlib/basemap/issues/568
 [#566]:
 https://github.com/matplotlib/basemap/issues/566
+[#565]:
+https://github.com/matplotlib/basemap/pull/565
 [#564]:
 https://github.com/matplotlib/basemap/pull/564
 [#563]:
 https://github.com/matplotlib/basemap/pull/563
+[#562]:
+https://github.com/matplotlib/basemap/pull/562
 [#561]:
 https://github.com/matplotlib/basemap/issues/561
 [#560]:
@@ -1035,6 +1130,10 @@ https://github.com/matplotlib/basemap/pull/560
 https://github.com/matplotlib/basemap/pull/559
 [#555]:
 https://github.com/matplotlib/basemap/issues/555
+[#554]:
+https://github.com/matplotlib/basemap/pull/554
+[#552]:
+https://github.com/matplotlib/basemap/issues/552
 [#548]:
 https://github.com/matplotlib/basemap/pull/548
 [#547]:
@@ -1091,6 +1190,8 @@ https://github.com/matplotlib/basemap/issues/489
 https://github.com/matplotlib/basemap/issues/488
 [#487]:
 https://github.com/matplotlib/basemap/issues/487
+[#481]:
+https://github.com/matplotlib/basemap/issues/481
 [#476]:
 https://github.com/matplotlib/basemap/pull/476
 [#463]:
@@ -1099,10 +1200,16 @@ https://github.com/matplotlib/basemap/issues/463
 https://github.com/matplotlib/basemap/issues/461
 [#456]:
 https://github.com/matplotlib/basemap/issues/456
+[#447]:
+https://github.com/matplotlib/basemap/issues/447
 [#445]:
 https://github.com/matplotlib/basemap/issues/445
+[#444]:
+https://github.com/matplotlib/basemap/issues/444
 [#443]:
 https://github.com/matplotlib/basemap/issues/443
+[#437]:
+https://github.com/matplotlib/basemap/issues/437
 [#436]:
 https://github.com/matplotlib/basemap/issues/436
 [#422]:
@@ -1115,13 +1222,17 @@ https://github.com/matplotlib/basemap/issues/403
 https://github.com/matplotlib/basemap/issues/383
 [#362]:
 https://github.com/matplotlib/basemap/issues/362
+[#286]:
+https://github.com/matplotlib/basemap/issues/286
 [#228]:
 https://github.com/matplotlib/basemap/issues/228
 [#179]:
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.3.9...develop
+https://github.com/matplotlib/basemap/compare/v1.4.0...develop
+[1.4.0]:
+https://github.com/matplotlib/basemap/compare/v1.3.9...v1.4.0
 [1.3.9]:
 https://github.com/matplotlib/basemap/compare/v1.3.8...v1.3.9
 [1.3.8]:
@@ -1161,6 +1272,10 @@ https://github.com/matplotlib/basemap/compare/v1.0.3rel...v1.0.4rel
 [1.0.3]:
 https://github.com/matplotlib/basemap/tree/v1.0.3rel
 
+[CVE-2023-27476]:
+https://nvd.nist.gov/vuln/detail/CVE-2023-27476
+[CVE-2022-45198]:
+https://nvd.nist.gov/vuln/detail/CVE-2022-45198
 [CVE-2022-24303]:
 https://nvd.nist.gov/vuln/detail/CVE-2022-24303
 [CVE-2022-22817]:
@@ -1227,6 +1342,8 @@ https://nvd.nist.gov/vuln/detail/CVE-2020-10177
 https://nvd.nist.gov/vuln/detail/CVE-2020-5313
 [CVE-2020-5312]:
 https://nvd.nist.gov/vuln/detail/CVE-2020-5312
+[CVE-2020-5311]:
+https://nvd.nist.gov/vuln/detail/CVE-2020-5311
 [CVE-2020-5310]:
 https://nvd.nist.gov/vuln/detail/CVE-2020-5310
 [CVE-2019-19911]:

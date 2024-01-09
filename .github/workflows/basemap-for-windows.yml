@@ -2,20 +2,23 @@ name: basemap-for-windows
 
 env:
   PKGDIR: "packages/basemap"
-  PYTHONWARNINGS: "ignore:DEPRECATION"
+  PIP_DEFAULT_TIMEOUT: 10
   PIP_DISABLE_PIP_VERSION_CHECK: 1
   PIP_PREFER_BINARY: 1
-  PIP_TIMEOUT: 10
   PIP_RETRIES: 0
+  PYTHONUNBUFFERED: "1"
+  PYTHONWARNINGS: "ignore:DEPRECATION"
 
 on:
   push:
     paths:
       - ".github/workflows/basemap-for-windows.yml"
+      - "!packages/basemap/doc/**"
       - "packages/basemap/**"
   pull_request:
     paths:
       - ".github/workflows/basemap-for-windows.yml"
+      - "!packages/basemap/doc/**"
       - "packages/basemap/**"
   workflow_dispatch:
 
@@ -29,7 +32,7 @@ jobs:
         uses: actions/checkout@v3
       -
         name: Upload checkout
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: checkout
           path: .
@@ -39,14 +42,14 @@ jobs:
     strategy:
       matrix:
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 3
       fail-fast: false
     needs: checkout
     steps:
       -
         name: Download checkout
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: checkout
           path: .
@@ -76,7 +79,7 @@ jobs:
           cd ${{ env.PKGDIR }}
           if (Get-Command flake8 -errorAction SilentlyContinue)
           {
-              flake8 src/mpl_toolkits/basemap/cm.py;
+              flake8 src/mpl_toolkits/basemap/cm.py src/mpl_toolkits/basemap/diagnostic.py src/mpl_toolkits/basemap/proj.py src/mpl_toolkits/basemap/solar.py test;
           }
       -
         name: Run PyLint
@@ -84,7 +87,7 @@ jobs:
           cd ${{ env.PKGDIR }}
           if (Get-Command pylint -errorAction SilentlyContinue)
           {
-              pylint src/mpl_toolkits/basemap/cm.py;
+              pylint src/mpl_toolkits/basemap/cm.py src/mpl_toolkits/basemap/diagnostic.py src/mpl_toolkits/basemap/proj.py src/mpl_toolkits/basemap/solar.py test;
           }
 
   build-geos:
@@ -94,6 +97,11 @@ jobs:
           ["x64", "x86"]
         msvc-toolset:
           ["9.0", "14.0"]
+        include:
+          - msvc-toolset: "9.0"
+            python-version: "2.7"
+          - msvc-toolset: "14.0"
+            python-version: "3.5"
       max-parallel: 4
       fail-fast: false
     needs: lint
@@ -101,35 +109,35 @@ jobs:
     steps:
       -
         name: Download checkout
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: checkout
           path: .
       -
         name: Set MSVC toolset
-        uses: pylegacy/actions/setup-msvc@v1
+        uses: pylegacy/actions/setup-msvc@v2
         with:
-          architecture: ${{ matrix.arch }}
-          version: ${{ matrix.msvc-toolset }}
+          arch: ${{ matrix.arch }}
+          toolset: ${{ matrix.msvc-toolset }}
       -
         name: Set CMake
         uses: jwlawson/actions-setup-cmake@v1.13
         with:
-          cmake-version: "3.14.7"
+          cmake-version: "3.24.2"
       -
         name: Set Python
         uses: pylegacy/actions/setup-pyenv-win@v2
         with:
           architecture: ${{ matrix.arch }}
-          python-version: "3.6"
+          python-version: ${{ matrix.python-version }}
       -
         name: Build GEOS from source
         run: |
           cd ${{ env.PKGDIR }}
-          python -c "import utils; utils.GeosLibrary('3.5.1').build('extern', njobs=16)"
+          python -c "import utils; utils.GeosLibrary('3.6.5').build('extern', toolset='${{ matrix.msvc-toolset }}', njobs=16)"
       -
         name: Upload GEOS artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: artifacts-geos-${{ matrix.arch }}-msvc${{ matrix.msvc-toolset }}
           path: ${{ env.PKGDIR }}/extern
@@ -140,7 +148,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 3
       fail-fast: false
     needs: build-geos
@@ -148,24 +156,10 @@ jobs:
     steps:
       -
         name: Download checkout
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: checkout
           path: .
-      -
-        name: Set MSVC toolset version
-        run: |
-          if ("${{ matrix.python-version }}" -eq "2.7") {
-              echo "msvc-toolset=9.0" >> $env:GITHUB_ENV
-          } else {
-              echo "msvc-toolset=14.0" >> $env:GITHUB_ENV
-          }
-      -
-        name: Set MSVC toolset
-        uses: pylegacy/actions/setup-msvc@v1
-        with:
-          architecture: ${{ matrix.arch }}
-          version: ${{ env.msvc-toolset }}
       -
         name: Set Python
         uses: pylegacy/actions/setup-pyenv-win@v2
@@ -183,13 +177,28 @@ jobs:
               "^2\.6|3\.[123]$"     { Set-Variable -Name "pkgvers" -Value "1.11.3" }
               "^2\.7|3\.[456789]$"  { Set-Variable -Name "pkgvers" -Value "1.16.6" }
               "^3\.10$"             { Set-Variable -Name "pkgvers" -Value "1.21.4" }
-              default               { Set-Variable -Name "pkgvers" -Value "1.23.3" }
+              "^3\.11$"             { Set-Variable -Name "pkgvers" -Value "1.23.3" }
+              default               { Set-Variable -Name "pkgvers" -Value "1.26.1" }
           }
           $env:SETUPTOOLS_USE_DISTUTILS = "stdlib"
           python -m pip install "numpy == ${pkgvers}"
       -
+        name: Set MSVC toolset version
+        run: |
+          if ("${{ matrix.python-version }}" -eq "2.7") {
+              echo "msvc-toolset=9.0" >> $env:GITHUB_ENV
+          } else {
+              echo "msvc-toolset=14.0" >> $env:GITHUB_ENV
+          }
+      -
+        name: Set MSVC toolset
+        uses: pylegacy/actions/setup-msvc@v2
+        with:
+          arch: ${{ matrix.arch }}
+          toolset: ${{ env.msvc-toolset }}
+      -
         name: Download GEOS artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: artifacts-geos-${{ matrix.arch }}-msvc${{ env.msvc-toolset }}
           path: ${{ env.PKGDIR }}/extern
@@ -203,7 +212,7 @@ jobs:
           python -m pip wheel -w dist --no-deps (Get-Item dist/*.zip)
       -
         name: Upload build artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
@@ -214,12 +223,28 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+        exclude:
+          # Missing precompiled binaries for `numpy` and `matplotlib`.
+          - arch: "x86"
+            python-version: "3.12"
       max-parallel: 3
       fail-fast: false
     needs: build
     runs-on: windows-2019
     steps:
+      -
+        name: Download checkout
+        uses: actions/download-artifact@v3
+        with:
+          name: checkout
+          path: .
+      -
+        name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/dist
       -
         name: Set Python
         uses: pylegacy/actions/setup-pyenv-win@v2
@@ -231,20 +256,29 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools wheel
       -
-        name: Download build artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
-          path: ${{ env.PKGDIR }}/dist
-      -
-        name: Install package
+        name: Install test requirements
         run: |
-          python -m pip install (Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)
+          cd ${{ env.PKGDIR }}
+          pip install -r requirements-test.txt
+      -
+        name: Install package (full)
+        run: |
+          $whlpath = "$(Get-Item ${{ env.PKGDIR }}/dist/*-win*.whl)"
+          python -m pip install "${whlpath}[owslib,pillow]"
       -
         name: Test package
         run: |
-          python -c "from mpl_toolkits.basemap import Basemap"
-          python -c "from mpl_toolkits.basemap import cm"
+          cd ${{ env.PKGDIR }}
+          $env:COVERAGE_FILE = ".coverage.${{ matrix.python-version }}"
+          python -m pytest                                                    `
+              --cov="mpl_toolkits.basemap" --cov-report=term                  `
+              --ignore=dist --ignore=build
+      -
+        name: Upload test artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: test
+          path: ${{ env.PKGDIR }}/.coverage.${{ matrix.python-version }}
 
   upload:
     strategy:
@@ -252,7 +286,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
@@ -267,7 +301,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       -
         name: Download build artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
@@ -276,14 +310,17 @@ jobs:
         run: |
           python -m pip install twine
       -
+        name: Check distributables
+        run: |
+          python -m twine check                                               `
+              ${{ env.PKGDIR }}/dist/*.zip                                    `
+              ${{ env.PKGDIR }}/dist/*.whl
+      -
         name: Upload distributables
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
           TWINE_REPOSITORY_URL: "${{ secrets.PYPI_REPOSITORY_URL }}"
         run: |
-          python -m twine check                                               `
-              ${{ env.PKGDIR }}/dist/*.zip                                    `
-              ${{ env.PKGDIR }}/dist/*.whl
           python -m twine upload --skip-existing                              `
               ${{ env.PKGDIR }}/dist/*.whl
