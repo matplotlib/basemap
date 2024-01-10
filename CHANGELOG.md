@@ -22,7 +22,8 @@ https://semver.org/spec/v2.0.0.html
   [#447] and [#574]).
 - Renewed documentation, with fixes for the broken links and examples,
   an improved section on the installation process, and without the
-  deprecation/sunsetting section (solves issues [#527] and [#568]).
+  deprecation/sunsetting section (solves issues [#438], [#471], [#527]
+  and [#568]).
 - Optional argument `encoding_errors` for `Basemap.readshapefile` method
   (PR [#554] by @guziy, implements request [#552]).
 - Optional argument `cachedir` for `Basemap.arcgisimage` method to allow
@@ -1196,6 +1197,8 @@ https://github.com/matplotlib/basemap/issues/487
 https://github.com/matplotlib/basemap/issues/481
 [#476]:
 https://github.com/matplotlib/basemap/pull/476
+[#471]:
+https://github.com/matplotlib/basemap/issues/471
 [#463]:
 https://github.com/matplotlib/basemap/issues/463
 [#461]:
@@ -1210,6 +1213,8 @@ https://github.com/matplotlib/basemap/issues/445
 https://github.com/matplotlib/basemap/issues/444
 [#443]:
 https://github.com/matplotlib/basemap/issues/443
+[#438]:
+https://github.com/matplotlib/basemap/issues/438
 [#437]:
 https://github.com/matplotlib/basemap/issues/437
 [#436]:
