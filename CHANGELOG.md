@@ -12,6 +12,9 @@ https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Fixed
+- Set recursive exclusion for `.DS_Store` folders in `MANIFEST.in`.
+
 ## [1.4.0] - 2024-01-09
 
 ### Added
