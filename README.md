@@ -31,8 +31,9 @@ python -m pip install basemap-data
 python -m pip install basemap-data-hires
 ```
 
-Precompiled `basemap` binary wheels for Windows and GNU/Linux are also
-available in PyPI (architectures x86 and x64, Python 2.7 and 3.5+):
+Precompiled `basemap` binary wheels for Windows and GNU/Linux
+(architectures x86 and x64, Python 2.7 and 3.5+) as well as for MacOS
+(architectures x64 and arm64, Python 3.9+) are also available in PyPI:
 ```sh
 python -m pip install basemap
 ```
