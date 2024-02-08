@@ -4351,12 +4351,13 @@ f=image" %\
                 os.makedirs(cachedir)
 
             # Check if the image is already in the cachedir folder.
-            cache_path = cachedir + filename
+            cache_path = os.path.join(cachedir, filename)
 
-            if os.path.isfile(cache_path) and verbose:
-                print('Image already in cache')
+            if os.path.isfile(cache_path):
+                if verbose:
+                    print('Image already in cache')
                 img = Image.open(cache_path)
-                return basemap.imshow(img, ax=ax, origin='upper')
+                return self.imshow(img, ax=ax, origin='upper')
 
         # Retrieve image from remote server.
         import contextlib
