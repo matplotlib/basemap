@@ -13,8 +13,10 @@ https://semver.org/spec/v2.0.0.html
 ## [Unreleased]
 
 ### Changed
-- Update workflow actions from v3 to v4 if possible (`actions/checkout`,
-  `actions/upload-artifact` and `actions/download-artifact`).
+- Update workflow actions to use NodeJS 20:
+  - Update base actions from v3 to v4 when possible (`actions/checkout`,
+    `actions/upload-artifact` and `actions/download-artifact`).
+  - Update `jwlawson/actions-setup-cmake` from v1.13 to v2.0.
 - Update base image for `basemap-data` and `basemap-data-hires`
   GitHub workflows to use Debian 10.
 

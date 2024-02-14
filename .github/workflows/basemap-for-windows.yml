@@ -121,7 +121,7 @@ jobs:
           toolset: ${{ matrix.msvc-toolset }}
       -
         name: Set CMake
-        uses: jwlawson/actions-setup-cmake@v1.13
+        uses: jwlawson/actions-setup-cmake@v2.0
         with:
           cmake-version: "3.24.2"
       -
