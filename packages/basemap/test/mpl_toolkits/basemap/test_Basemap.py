@@ -1,5 +1,8 @@
 """Import test for the :mod:`mpl_toolkits.basemap.Basemap` class."""
 
+import os
+import shutil
+import tempfile
 import datetime as dt
 try:
     import unittest2 as unittest
@@ -144,6 +147,39 @@ class TestMplToolkitsBasemapBasemap(unittest.TestCase):
 
         axs_children = axs_obj.get_children()
         self.assertEqual(len(axs_children), axslen0 + 1)
+
+    @unittest.skipIf(PIL is None, reason="pillow unavailable")
+    def test_arcgisimage_with_cyl_using_cache(self, axs=None, axslen0=10):
+        """Test showing an ArcGIS image as background."""
+
+        axs_obj = plt.gca() if axs is None else axs
+        axs_children = axs_obj.get_children()
+        self.assertEqual(len(axs_children), axslen0)
+
+        bmap = Basemap(ax=axs, projection="cyl", resolution=None,
+                       llcrnrlon=-90, llcrnrlat=30,
+                       urcrnrlon=-60, urcrnrlat=60)
+
+        cachedir = tempfile.mkdtemp(prefix="tmp-basemap-cachedir-")
+        try:
+            # Check that the cache is initially empty.
+            self.assertEqual(len(os.listdir(cachedir)), 0)
+            # Check that the first call populates the cache.
+            img = bmap.arcgisimage(verbose=False, cachedir=cachedir)
+            self.assertEqual(len(os.listdir(cachedir)), 1)
+            # Check output properties after the first call.
+            self.assertIsInstance(img, AxesImage)
+            axs_children = axs_obj.get_children()
+            self.assertEqual(len(axs_children), axslen0 + 1)
+            # Check that the second call does not update the cache.
+            img = bmap.arcgisimage(verbose=False, cachedir=cachedir)
+            self.assertEqual(len(os.listdir(cachedir)), 1)
+            # Check output properties after the second call.
+            self.assertIsInstance(img, AxesImage)
+            axs_children = axs_obj.get_children()
+            self.assertEqual(len(axs_children), axslen0 + 2)
+        finally:
+            shutil.rmtree(cachedir)
 
     def _test_basemap_data_warpimage(self, method, axs=None, axslen0=10):
         """Test drawing a map background from :mod:`basemap_data`."""

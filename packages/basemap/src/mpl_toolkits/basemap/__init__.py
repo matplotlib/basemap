@@ -4353,7 +4353,7 @@ class Basemap(object):
         ]) % (server, service, xmin, ymin, xmax, ymax, self.epsg, self.epsg, xpixels, ypixels, dpi)
 
         # Print URL in verbose mode.
-        if verbose:
+        if verbose:  # pragma: no cover
             print(basemap_url)
 
         # Try to return fast if cache is enabled.
@@ -4367,7 +4367,7 @@ class Basemap(object):
             # Return fast if the image is already in the cache.
             cache_path = os.path.join(cachedir, filename)
             if os.path.isfile(cache_path):
-                if verbose:
+                if verbose:  # pragma: no cover
                     print("Image already in cache")
                 img = Image.open(cache_path)
                 return self.imshow(img, ax=ax, origin="upper")
