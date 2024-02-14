@@ -12,6 +12,12 @@ https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Changed
+- Update workflow actions from v3 to v4 if possible (`actions/checkout`,
+  `actions/upload-artifact` and `actions/download-artifact`).
+- Update base image for `basemap-data` and `basemap-data-hires`
+  GitHub workflows to use Debian 10.
+
 ### Fixed
 - Set recursive exclusion for `.DS_Store` folders in `MANIFEST.in`.
 - Fix broken implementation and docstrings of `Basemap.arcgisimage`
