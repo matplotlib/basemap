@@ -4330,17 +4330,17 @@ class Basemap(object):
             ypixels = int(self.aspect * xpixels)
 
         # Construct a URL using the ArcGIS Server REST API.
-        basemap_url = \
-"%s/rest/services/%s/MapServer/export?\
-bbox=%s,%s,%s,%s&\
-bboxSR=%s&\
-imageSR=%s&\
-size=%s,%s&\
-dpi=%s&\
-format=png32&\
-transparent=true&\
-f=image" %\
-(server, service, xmin, ymin, xmax, ymax, self.epsg, self.epsg, xpixels, ypixels, dpi)
+        basemap_url = "".join([
+            "%s/rest/services/%s/MapServer/export?",
+            "bbox=%s,%s,%s,%s&",
+            "bboxSR=%s&",
+            "imageSR=%s&",
+            "size=%s,%s&",
+            "dpi=%s&",
+            "format=png32&",
+            "transparent=true&",
+            "f=image",
+        ]) % (server, service, xmin, ymin, xmax, ymax, self.epsg, self.epsg, xpixels, ypixels, dpi)
 
         # Print URL in verbose mode.
         if verbose:
@@ -4349,8 +4349,8 @@ f=image" %\
         if cachedir is not None:
 
             # Generate a filename for the cached file.
-            filename = "%s-bbox-%s-%s-%s-%s-bboxsr%s-imagesr%s-size-%s-%s-dpi%s.png" %\
-            (service, xmin, ymin, xmax, ymax, self.epsg, self.epsg, xpixels, ypixels, dpi)
+            filename = "%s-bbox-%s-%s-%s-%s-bboxsr%s-imagesr%s-size-%s-%s-dpi%s.png" % \
+                (service, xmin, ymin, xmax, ymax, self.epsg, self.epsg, xpixels, ypixels, dpi)
 
             # Check if the cache directory exists, if not create it.
             if not os.path.exists(cachedir):
