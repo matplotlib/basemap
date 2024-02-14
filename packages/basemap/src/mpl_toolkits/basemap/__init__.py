@@ -4361,9 +4361,6 @@ class Basemap(object):
             # Generate a filename for the cached file.
             filename = "%s-bbox-%s-%s-%s-%s-bboxsr%s-imagesr%s-size-%s-%s-dpi%s.png" % \
                 (service, xmin, ymin, xmax, ymax, self.epsg, self.epsg, xpixels, ypixels, dpi)
-            # Check if the cache directory exists, if not create it.
-            if not os.path.exists(cachedir):
-                os.makedirs(cachedir)
             # Return fast if the image is already in the cache.
             cache_path = os.path.join(cachedir, filename)
             if os.path.isfile(cache_path):
@@ -4379,6 +4376,9 @@ class Basemap(object):
             img = Image.open(conn)
             # Save to cache if requested.
             if cachedir is not None:
+                # Check if the cache directory exists, if not create it.
+                if not os.path.exists(cachedir):
+                    os.makedirs(cachedir)
                 img.save(cache_path)
         return self.imshow(img, ax=ax, origin="upper")
 
