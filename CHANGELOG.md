@@ -14,6 +14,8 @@ https://semver.org/spec/v2.0.0.html
 
 ### Fixed
 - Set recursive exclusion for `.DS_Store` folders in `MANIFEST.in`.
+- Fix broken implementation and docstrings of `Basemap.arcgisimage`
+  method (PR [#598] by @nitram96).
 
 ## [1.4.0] - 2024-01-09
 
@@ -1086,6 +1088,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#598]:
+https://github.com/matplotlib/basemap/pull/598
 [#595]:
 https://github.com/matplotlib/basemap/pull/595
 [#594]:
