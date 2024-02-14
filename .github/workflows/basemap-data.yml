@@ -47,7 +47,7 @@ jobs:
     steps:
       -
         name: Download checkout
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: checkout
           path: .
@@ -78,13 +78,13 @@ jobs:
     steps:
       -
         name: Download checkout
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: checkout
           path: .
       -
         name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: artifacts-build
           path: ${{ env.PKGDIR }}/dist
@@ -111,7 +111,7 @@ jobs:
     steps:
       -
         name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: artifacts-build
           path: ${{ env.PKGDIR }}/dist

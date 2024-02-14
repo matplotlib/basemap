@@ -49,7 +49,7 @@ jobs:
     steps:
       -
         name: Download checkout
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: checkout
           path: .
@@ -109,7 +109,7 @@ jobs:
     steps:
       -
         name: Download checkout
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: checkout
           path: .
@@ -156,7 +156,7 @@ jobs:
     steps:
       -
         name: Download checkout
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: checkout
           path: .
@@ -198,7 +198,7 @@ jobs:
           toolset: ${{ env.msvc-toolset }}
       -
         name: Download GEOS artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: artifacts-geos-${{ matrix.arch }}-msvc${{ env.msvc-toolset }}
           path: ${{ env.PKGDIR }}/extern
@@ -235,13 +235,13 @@ jobs:
     steps:
       -
         name: Download checkout
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: checkout
           path: .
       -
         name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
@@ -301,7 +301,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       -
         name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
