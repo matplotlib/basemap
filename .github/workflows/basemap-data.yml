@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v4
       -
         name: Upload checkout
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: checkout
           path: .
@@ -59,7 +59,7 @@ jobs:
           pip wheel -w dist --no-deps dist/*.zip
       -
         name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: artifacts-build
           path: ${{ env.PKGDIR }}/dist

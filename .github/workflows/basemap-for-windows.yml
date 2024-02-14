@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v4
       -
         name: Upload checkout
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: checkout
           path: .
@@ -137,7 +137,7 @@ jobs:
           python -c "import utils; utils.GeosLibrary('3.6.5').build('extern', toolset='${{ matrix.msvc-toolset }}', njobs=16)"
       -
         name: Upload GEOS artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: artifacts-geos-${{ matrix.arch }}-msvc${{ matrix.msvc-toolset }}
           path: ${{ env.PKGDIR }}/extern
@@ -212,7 +212,7 @@ jobs:
           python -m pip wheel -w dist --no-deps (Get-Item dist/*.zip)
       -
         name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
