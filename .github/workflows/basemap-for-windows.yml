@@ -269,16 +269,16 @@ jobs:
         name: Test package
         run: |
           cd ${{ env.PKGDIR }}
-          $env:COVERAGE_FILE = ".coverage.${{ matrix.python-version }}"
+          $env:COVERAGE_FILE = ".coverage.${{ matrix.arch }}.${{ matrix.python-version }}"
           python -m pytest                                                    `
               --cov="mpl_toolkits.basemap" --cov-report=term                  `
               --ignore=dist --ignore=build
       -
         name: Upload test artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
-          name: test
-          path: ${{ env.PKGDIR }}/.coverage.${{ matrix.python-version }}
+          name: artifacts-test-${{ matrix.arch }}-${{ matrix.python-version }}
+          path: ${{ env.PKGDIR }}/.coverage.${{ matrix.arch }}.${{ matrix.python-version }}
 
   upload:
     strategy:
