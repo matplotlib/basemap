@@ -4260,40 +4260,50 @@ class Basemap(object):
     def arcgisimage(self, server="http://server.arcgisonline.com/ArcGIS",
                     service="World_Imagery", xpixels=400, ypixels=None,
                     dpi=96, cachedir=None, verbose=False, **kwargs):
-        """
-        Retrieve an image using the ArcGIS Server REST API and display it on
-        the map. In order to use this method, the Basemap instance must be
-        created using the ``epsg`` keyword to define the map projection, unless
-        the ``cyl`` projection is used (in which case the epsg code 4326 is
-        assumed).
+        r"""Display background image using ArcGIS Server REST API.
 
-        .. tabularcolumns:: |l|L|
+        In order to use this method, the :class:`Basemap` instance
+        must be created using the ``epsg`` keyword to define the
+        map projection, unless the "cyl" projection is used (in
+        which case the EPSG code 4326 is assumed).
 
-        ==============   ====================================================
-        Keywords         Description
-        ==============   ====================================================
-        server           web map server URL (default
-                         http://server.arcgisonline.com/ArcGIS).
-        service          service (image type) hosted on server (default
-                         'World_Imagery', which is NASA 'Blue Marble'
-                         image).
-        xpixels          requested number of image pixels in x-direction
-                         (default 400).
-        ypixels          requested number of image pixels in y-direction.
-                         Default (None) is to infer the number from
-                         from xpixels and the aspect ratio of the
-                         map projection region.
-        dpi              The device resolution of the exported image (dots per
-                         inch, default 96).
-        cachedir         An optional directory to use as cache folder for the
-                         retrieved images.
-        verbose          if True, print URL used to retrieve image (default
-                         False).
-        ==============   ====================================================
+        Parameters
+        ----------
 
-        Extra keyword ``ax`` can be used to override the default axis instance.
+        server : str, optional
+            base URL of the web map server
 
-        returns a matplotlib.image.AxesImage instance.
+        service : str, optional
+            service (image type) hosted by the server
+
+        xpixels : int, optional
+            requested number of image pixels in the `x`-direction
+
+        ypixels : int, optional
+            requested number of image pixels in the `y`-direction;
+            if not given, it is inferred from ``xpixels`` and the
+            aspect ratio of the map projection region
+
+        dpi : int, optional
+            device resolution of the exported image
+
+        cachedir : str, optional
+            if given, directory to use as cache folder for the images
+            retrieved from the server
+
+        verbose : bool, optional
+            if True, print debugging information
+
+        \**kwargs : dict, optional
+            keyword-only arguments; currently, only ``ax`` is supported
+            to override the default :class:`matplotlib.axes.Axes`
+            instance
+
+        Returns
+        -------
+
+        aximg : matplotlib.image.AxesImage
+            image axes instance
         """
 
         # Fix PIL import on some versions of OSX and scipy.
@@ -4313,7 +4323,7 @@ class Basemap(object):
 
         ax = kwargs.pop("ax", None) or self._check_ax()
 
-        # Find the (x, y) values at the corner points.
+        # Find the `(x, y)` values at the corner points.
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=FutureWarning)
             p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
@@ -4346,17 +4356,15 @@ class Basemap(object):
         if verbose:
             print(basemap_url)
 
+        # Try to return fast if cache is enabled.
         if cachedir is not None:
-
             # Generate a filename for the cached file.
             filename = "%s-bbox-%s-%s-%s-%s-bboxsr%s-imagesr%s-size-%s-%s-dpi%s.png" % \
                 (service, xmin, ymin, xmax, ymax, self.epsg, self.epsg, xpixels, ypixels, dpi)
-
             # Check if the cache directory exists, if not create it.
             if not os.path.exists(cachedir):
                 os.makedirs(cachedir)
-
-            # Check if the image is already in the cachedir folder.
+            # Return fast if the image is already in the cache.
             cache_path = os.path.join(cachedir, filename)
             if os.path.isfile(cache_path):
                 if verbose:
@@ -4364,7 +4372,7 @@ class Basemap(object):
                 img = Image.open(cache_path)
                 return self.imshow(img, ax=ax, origin="upper")
 
-        # Retrieve image from remote server.
+        # Retrieve image from the remote server.
         import contextlib
         conn = urlopen(basemap_url)
         with contextlib.closing(conn):
@@ -4372,8 +4380,6 @@ class Basemap(object):
             # Save to cache if requested.
             if cachedir is not None:
                 img.save(cache_path)
-
-        # Return AxesImage instance.
         return self.imshow(img, ax=ax, origin="upper")
 
     def wmsimage(self,server,\
