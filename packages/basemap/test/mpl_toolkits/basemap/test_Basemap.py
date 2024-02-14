@@ -1,5 +1,8 @@
 """Import test for the :mod:`mpl_toolkits.basemap.Basemap` class."""
 
+import os
+import shutil
+import tempfile
 import datetime as dt
 try:
     import unittest2 as unittest
@@ -144,6 +147,49 @@ class TestMplToolkitsBasemapBasemap(unittest.TestCase):
 
         axs_children = axs_obj.get_children()
         self.assertEqual(len(axs_children), axslen0 + 1)
+
+    @unittest.skipIf(PIL is None, reason="pillow unavailable")
+    def test_arcgisimage_with_cyl_using_cache(self, existing=False, axs=None, axslen0=10):
+        """Test showing an ArcGIS image as background."""
+
+        axs_obj = plt.gca() if axs is None else axs
+        axs_children = axs_obj.get_children()
+        self.assertEqual(len(axs_children), axslen0)
+
+        bmap = Basemap(ax=axs, projection="cyl", resolution=None,
+                       llcrnrlon=-90, llcrnrlat=30,
+                       urcrnrlon=-60, urcrnrlat=60)
+
+        # Create cache directory string and check it is empty.
+        tmpdir = tempfile.mkdtemp(prefix="tmp-basemap-cachedir-")
+        cachedir = tmpdir if existing else os.path.join(tmpdir, "cachedir")
+        if os.path.isdir(cachedir):
+            self.assertEqual(len(os.listdir(cachedir)), 0)
+
+        try:
+            # Check that the first call populates the cache.
+            img = bmap.arcgisimage(verbose=False, cachedir=cachedir)
+            self.assertEqual(len(os.listdir(cachedir)), 1)
+            # Check output properties after the first call.
+            self.assertIsInstance(img, AxesImage)
+            axs_children = axs_obj.get_children()
+            self.assertEqual(len(axs_children), axslen0 + 1)
+            # Check that the second call does not update the cache.
+            img = bmap.arcgisimage(verbose=False, cachedir=cachedir)
+            self.assertEqual(len(os.listdir(cachedir)), 1)
+            # Check output properties after the second call.
+            self.assertIsInstance(img, AxesImage)
+            axs_children = axs_obj.get_children()
+            self.assertEqual(len(axs_children), axslen0 + 2)
+        finally:
+            if os.path.isdir(tmpdir):
+                shutil.rmtree(tmpdir)
+
+    @unittest.skipIf(PIL is None, reason="pillow unavailable")
+    def test_arcgisimage_with_cyl_using_cache_already_existing(self):
+        """Test showing an ArcGIS image as background."""
+
+        self.test_arcgisimage_with_cyl_using_cache(existing=True)
 
     def _test_basemap_data_warpimage(self, method, axs=None, axslen0=10):
         """Test drawing a map background from :mod:`basemap_data`."""

@@ -4257,45 +4257,56 @@ class Basemap(object):
         im,c = self._cliplimb(ax,im)
         return im
 
-    def arcgisimage(self,server='http://server.arcgisonline.com/ArcGIS',\
-                 service='World_Imagery',xpixels=400,ypixels=None,\
-                 dpi=96,cachedir=None,verbose=False,**kwargs):
+    def arcgisimage(self, server="http://server.arcgisonline.com/ArcGIS",
+                    service="World_Imagery", xpixels=400, ypixels=None,
+                    dpi=96, cachedir=None, verbose=False, **kwargs):
+        r"""Display background image using ArcGIS Server REST API.
+
+        In order to use this method, the :class:`Basemap` instance
+        must be created using the ``epsg`` keyword to define the
+        map projection, unless the "cyl" projection is used (in
+        which case the EPSG code 4326 is assumed).
+
+        Parameters
+        ----------
+
+        server : str, optional
+            base URL of the web map server
+
+        service : str, optional
+            service (image type) hosted by the server
+
+        xpixels : int, optional
+            requested number of image pixels in the `x`-direction
+
+        ypixels : int, optional
+            requested number of image pixels in the `y`-direction;
+            if not given, it is inferred from ``xpixels`` and the
+            aspect ratio of the map projection region
+
+        dpi : int, optional
+            device resolution of the exported image
+
+        cachedir : str, optional
+            if given, directory to use as cache folder for the images
+            retrieved from the server
+
+        verbose : bool, optional
+            if True, print debugging information
+
+        \**kwargs : dict, optional
+            keyword-only arguments; currently, only ``ax`` is supported
+            to override the default :class:`matplotlib.axes.Axes`
+            instance
+
+        Returns
+        -------
+
+        aximg : matplotlib.image.AxesImage
+            image axes instance
         """
-        Retrieve an image using the ArcGIS Server REST API and display it on
-        the map. In order to use this method, the Basemap instance must be
-        created using the ``epsg`` keyword to define the map projection, unless
-        the ``cyl`` projection is used (in which case the epsg code 4326 is
-        assumed).
 
-        .. tabularcolumns:: |l|L|
-
-        ==============   ====================================================
-        Keywords         Description
-        ==============   ====================================================
-        server           web map server URL (default
-                         http://server.arcgisonline.com/ArcGIS).
-        service          service (image type) hosted on server (default
-                         'World_Imagery', which is NASA 'Blue Marble'
-                         image).
-        xpixels          requested number of image pixels in x-direction
-                         (default 400).
-        ypixels          requested number of image pixels in y-direction.
-                         Default (None) is to infer the number from
-                         from xpixels and the aspect ratio of the
-                         map projection region.
-        dpi              The device resolution of the exported image (dots per
-                         inch, default 96).
-        cachedir         An optional directory to use as cache folder for the retrieved images.
-        verbose          if True, print URL used to retrieve image (default
-                         False).
-        ==============   ====================================================
-
-        Extra keyword ``ax`` can be used to override the default axis instance.
-
-        returns a matplotlib.image.AxesImage instance.
-        """
-
-        # fix PIL import on some versions of OSX and scipy
+        # Fix PIL import on some versions of OSX and scipy.
         try:
             from PIL import Image
         except ImportError:
@@ -4305,70 +4316,71 @@ class Basemap(object):
                 raise ImportError("arcgisimage method requires PIL "
                                   "(http://pillow.readthedocs.io)")
 
-        if not hasattr(self,'epsg'):
+        if not hasattr(self, "epsg"):
             raise ValueError("the Basemap instance must be created using "
                              "an EPSG code (http://spatialreference.org) "
                              "in order to use the wmsmap method")
-        ax = kwargs.pop('ax', None) or self._check_ax()
-        # find the x,y values at the corner points.
+
+        ax = kwargs.pop("ax", None) or self._check_ax()
+
+        # Find the `(x, y)` values at the corner points.
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=FutureWarning)
             p = pyproj.Proj(init="epsg:%s" % self.epsg, preserve_units=True)
-        xmin,ymin = p(self.llcrnrlon,self.llcrnrlat)
-        xmax,ymax = p(self.urcrnrlon,self.urcrnrlat)
+        xmin, ymin = p(self.llcrnrlon, self.llcrnrlat)
+        xmax, ymax = p(self.urcrnrlon, self.urcrnrlat)
         if self.projection in _cylproj:
-            Dateline =\
-            _geoslib.Point(self(180.,0.5*(self.llcrnrlat+self.urcrnrlat)))
-            hasDateline = Dateline.within(self._boundarypolyxy)
-            if hasDateline:
+            dateline = _geoslib.Point(self(180., 0.5 * (self.llcrnrlat + self.urcrnrlat)))
+            if dateline.within(self._boundarypolyxy):
                 raise ValueError("arcgisimage cannot handle images that cross "
                                  "the dateline for cylindrical projections")
-        # ypixels not given, find by scaling xpixels by the map aspect ratio.
+
+        # If ypixels is not given, compute it with xpixels and aspect ratio.
         if ypixels is None:
-            ypixels = int(self.aspect*xpixels)
-        # construct a URL using the ArcGIS Server REST API.
-        basemap_url = \
-"%s/rest/services/%s/MapServer/export?\
-bbox=%s,%s,%s,%s&\
-bboxSR=%s&\
-imageSR=%s&\
-size=%s,%s&\
-dpi=%s&\
-format=png32&\
-transparent=true&\
-f=image" %\
-(server,service,xmin,ymin,xmax,ymax,self.epsg,self.epsg,xpixels,ypixels,dpi)
-        # print URL?
-        if verbose: print(basemap_url)
+            ypixels = int(self.aspect * xpixels)
 
-        if cachedir != None:
+        # Construct a URL using the ArcGIS Server REST API.
+        basemap_url = "".join([
+            "%s/rest/services/%s/MapServer/export?",
+            "bbox=%s,%s,%s,%s&",
+            "bboxSR=%s&",
+            "imageSR=%s&",
+            "size=%s,%s&",
+            "dpi=%s&",
+            "format=png32&",
+            "transparent=true&",
+            "f=image",
+        ]) % (server, service, xmin, ymin, xmax, ymax, self.epsg, self.epsg, xpixels, ypixels, dpi)
+
+        # Print URL in verbose mode.
+        if verbose:  # pragma: no cover
+            print(basemap_url)
+
+        # Try to return fast if cache is enabled.
+        if cachedir is not None:
             # Generate a filename for the cached file.
-            filename = "%s-bbox-%s-%s-%s-%s-bboxsr%s-imagesr%s-size-%s-%s-dpi%s.png" %\
-            (service,xmin,ymin,xmax,ymax,self.epsg,self.epsg,xpixels,ypixels,dpi)
-
-             # Check if the cache directory exists, if not create it.
-            if not os.path.exists(cachedir):
-                os.makedirs(cachedir)
-
-            # Check if the image is already in the cachedir folder.
-            cache_path = cachedir + filename
-
-            if os.path.isfile(cache_path) and verbose:
-                print('Image already in cache')
+            filename = "%s-bbox-%s-%s-%s-%s-bboxsr%s-imagesr%s-size-%s-%s-dpi%s.png" % \
+                (service, xmin, ymin, xmax, ymax, self.epsg, self.epsg, xpixels, ypixels, dpi)
+            # Return fast if the image is already in the cache.
+            cache_path = os.path.join(cachedir, filename)
+            if os.path.isfile(cache_path):
+                if verbose:  # pragma: no cover
+                    print("Image already in cache")
                 img = Image.open(cache_path)
-                return basemap.imshow(img, ax=ax, origin='upper')
+                return self.imshow(img, ax=ax, origin="upper")
 
-        # Retrieve image from remote server.
+        # Retrieve image from the remote server.
         import contextlib
         conn = urlopen(basemap_url)
         with contextlib.closing(conn):
             img = Image.open(conn)
             # Save to cache if requested.
-            if cachedir != None:
+            if cachedir is not None:
+                # Check if the cache directory exists, if not create it.
+                if not os.path.exists(cachedir):
+                    os.makedirs(cachedir)
                 img.save(cache_path)
-
-        # Return AxesImage instance.
-        return self.imshow(img, ax=ax, origin='upper')
+        return self.imshow(img, ax=ax, origin="upper")
 
     def wmsimage(self,server,\
                  xpixels=400,ypixels=None,\
