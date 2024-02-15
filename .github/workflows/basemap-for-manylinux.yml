@@ -389,7 +389,7 @@ jobs:
         name: Upload github-pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          name: artifacts-github-pages
+          name: github-pages
           path: ${{ env.PKGDIR }}/public
 
   pages:
