@@ -387,7 +387,7 @@ jobs:
           path: ${{ env.PKGDIR }}/public
       -
         name: Upload github-pages artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           name: artifacts-github-pages
           path: ${{ env.PKGDIR }}/public
@@ -404,7 +404,7 @@ jobs:
       id-token: write
     steps:
       - name: Deploy github-pages
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v3
         id: deployment
 
   upload:
