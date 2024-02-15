@@ -311,7 +311,7 @@ jobs:
         name: Upload test artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: test
+          name: artifacts-test
           path: ${{ env.PKGDIR }}/.coverage.${{ matrix.python-version }}
 
   coverage:
@@ -326,7 +326,7 @@ jobs:
         name: Download test artifacts
         uses: actions/download-artifact@v1
         with:
-          name: test
+          name: artifacts-test
           path: ${{ env.PKGDIR }}
       -
         name: Install test requirements
@@ -344,7 +344,7 @@ jobs:
         name: Upload coverage artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: coverage
+          name: artifacts-coverage
           path: ${{ env.PKGDIR }}/htmlcov
 
   docs:
@@ -383,13 +383,13 @@ jobs:
         name: Upload docs artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: docs
+          name: artifacts-docs
           path: ${{ env.PKGDIR }}/public
       -
         name: Upload github-pages artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: github-pages
+          name: artifacts-github-pages
           path: ${{ env.PKGDIR }}/public
 
   pages:
@@ -404,7 +404,7 @@ jobs:
       id-token: write
     steps:
       - name: Deploy github-pages
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v3
         id: deployment
 
   upload:

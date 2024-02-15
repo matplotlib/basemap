@@ -10,6 +10,21 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
+## [1.4.1] - 2024-02-15
+
+### Changed
+- Update workflow actions to use NodeJS 20:
+  - Update base actions from v3 to v4 when possible (`actions/checkout`,
+    `actions/upload-artifact` and `actions/download-artifact`).
+  - Update `jwlawson/actions-setup-cmake` from v1.13 to v2.0.
+- Update base image for `basemap-data` and `basemap-data-hires`
+  GitHub workflows to use Debian 10.
+
+### Fixed
+- Set recursive exclusion for `.DS_Store` folders in `MANIFEST.in`.
+- Fix broken implementation and docstrings of `Basemap.arcgisimage`
+  method (PR [#598] by @nitram96).
+
 ## [1.4.0] - 2024-01-09
 
 ### Added
@@ -20,7 +35,8 @@ https://semver.org/spec/v2.0.0.html
   [#447] and [#574]).
 - Renewed documentation, with fixes for the broken links and examples,
   an improved section on the installation process, and without the
-  deprecation/sunsetting section (solves issues [#527] and [#568]).
+  deprecation/sunsetting section (solves issues [#438], [#471], [#527]
+  and [#568]).
 - Optional argument `encoding_errors` for `Basemap.readshapefile` method
   (PR [#554] by @guziy, implements request [#552]).
 - Optional argument `cachedir` for `Basemap.arcgisimage` method to allow
@@ -1080,6 +1096,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#598]:
+https://github.com/matplotlib/basemap/pull/598
 [#595]:
 https://github.com/matplotlib/basemap/pull/595
 [#594]:
@@ -1194,6 +1212,8 @@ https://github.com/matplotlib/basemap/issues/487
 https://github.com/matplotlib/basemap/issues/481
 [#476]:
 https://github.com/matplotlib/basemap/pull/476
+[#471]:
+https://github.com/matplotlib/basemap/issues/471
 [#463]:
 https://github.com/matplotlib/basemap/issues/463
 [#461]:
@@ -1208,6 +1228,8 @@ https://github.com/matplotlib/basemap/issues/445
 https://github.com/matplotlib/basemap/issues/444
 [#443]:
 https://github.com/matplotlib/basemap/issues/443
+[#438]:
+https://github.com/matplotlib/basemap/issues/438
 [#437]:
 https://github.com/matplotlib/basemap/issues/437
 [#436]:
@@ -1230,7 +1252,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.4.0...develop
+https://github.com/matplotlib/basemap/compare/v1.4.1...develop
+[1.4.1]:
+https://github.com/matplotlib/basemap/compare/v1.4.0...v1.4.1
 [1.4.0]:
 https://github.com/matplotlib/basemap/compare/v1.3.9...v1.4.0
 [1.3.9]:
