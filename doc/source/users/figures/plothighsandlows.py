@@ -2,7 +2,9 @@
 plot H's and L's on a sea-level pressure map
 (uses scipy.ndimage.filters and netcdf4-python)
 """
-import datetime as dt
+import os
+import time
+import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap, addcyclic
@@ -23,7 +25,8 @@ def extrema(mat,mode='wrap',window=10):
 
 # Plot 00 UTC yesterday.
 url = "http://nomads.ncep.noaa.gov/dods/gfs_0p50/gfs%Y%m%d/gfs_0p50_00z"
-date = dt.datetime.now() - dt.timedelta(days=1)
+date = datetime.datetime.utcfromtimestamp(
+        int(os.environ.get('SOURCE_DATE_EPOCH', time.time()))) - datetime.timedelta(days=1)
 
 # open OpenDAP dataset.
 data = Dataset(date.strftime(url))
