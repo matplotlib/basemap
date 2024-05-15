@@ -4452,7 +4452,10 @@ class Basemap(object):
         if ypixels is None:
             ypixels = int(self.aspect*xpixels)
         if verbose: print(server)
-        wms = WebMapService(server)
+        wmsInitKeys = ['version', 'xml', 'username', 'password','parse_remote_metadata', 'timeout', 'headers', 'auth']
+        wms_options = {k:kwargs[v] for k in wmsInitKeys if k in kwargs}
+        kwargs = {k:kwargs[v] for k in kwargs if k not in wmsInitKeys}
+        wms = WebMapService(server, **wms_options)
         if verbose:
             print('id: %s, version: %s' %
             (wms.identification.type,wms.identification.version))
