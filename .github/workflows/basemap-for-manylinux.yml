@@ -40,7 +40,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+          ["3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 3
       fail-fast: false
     needs: checkout
@@ -132,7 +132,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+          ["3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 3
       fail-fast: false
     needs: build-geos
@@ -164,8 +164,6 @@ jobs:
               x86)  arch="i686"   ;;
           esac
           case "${{ matrix.python-version }}" in
-              2.6|3.[23])      pkgvers=1.11.3; tag=manylinux1 ;;
-              2.7|3.[456789])  pkgvers=1.16.6; tag=manylinux1 ;;
               3.10)            pkgvers=1.21.4; tag=manylinux1 ;;
               3.11)            pkgvers=1.23.3; tag=manylinux_2_17 ;;
               *)               pkgvers=1.26.1; tag=manylinux_2_28 ;;
@@ -213,7 +211,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+          ["3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 3
       fail-fast: false
     needs: build
@@ -258,7 +256,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+          ["3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
         exclude:
           # Missing precompiled binaries for `numpy`, `matplotlib`,
           # `pyproj`, `pillow` and `lxml`.
@@ -413,7 +411,7 @@ jobs:
         arch:
           ["x64", "x86"]
         python-version:
-          ["2.7", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
+          ["3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
       max-parallel: 1
     if: startsWith(github.event.ref, 'refs/tags/v')
     needs: test
