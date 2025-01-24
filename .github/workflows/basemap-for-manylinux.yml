@@ -54,7 +54,7 @@ jobs:
     container: "pylegacy/python:${{ matrix.python-version }}-debian-10"
     steps:
       - name: Download checkout
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: checkout
           path: .
