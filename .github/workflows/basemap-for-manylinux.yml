@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Upload checkout
         uses: actions/upload-artifact@v3
         with:
@@ -325,7 +325,7 @@ jobs:
     container: "pylegacy/python:3.8-debian-10"
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Download test artifacts
         uses: actions/download-artifact@v4
         with:
@@ -375,7 +375,7 @@ jobs:
           cd ${{ env.PKGDIR }}
           python -m sphinx doc/source public
       - name: Upload docs artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: artifacts-docs
           path: ${{ env.PKGDIR }}/public
