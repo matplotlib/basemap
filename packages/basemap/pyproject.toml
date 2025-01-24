@@ -1,15 +1,79 @@
+[project]
+name = "basemap"
+description = "Plot data on map projections with matplotlib"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "MIT"}
+authors = [
+    {name = "Jeff Whitaker", email = "jeffrey.s.whitaker@noaa.gov"},
+]
+maintainers = [
+    {name = "Matplotlib Developers", email = "matplotlib-developers@python.org"}
+]
+keywords = ["matplotlib", "mapping", "map projections", "gis"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+dependencies = [
+    "numpy>=1.16",
+    "matplotlib>=3.1",
+    "pyproj>=3.0",
+    "pyshp>=2.1",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://matplotlib.org/basemap"
+Documentation = "https://matplotlib.org/basemap/users/intro.html"
+Repository = "https://github.com/matplotlib/basemap"
+"Bug Tracker" = "https://github.com/matplotlib/basemap/issues"
+
 [build-system]
 requires = [
-    'setuptools',
-    'wheel',
-    'numpy == 1.26.1; python_version >= "3.12"',
-    'numpy == 1.23.3; python_version == "3.11"',
-    'numpy == 1.21.4; python_version == "3.10"',
-    'numpy == 1.21.4; sys_platform == "darwin" and (python_version >= "3.7" and python_version <= "3.9")',
-    'numpy == 1.16.6; sys_platform != "darwin" and (python_version >= "3.7" and python_version <= "3.9")',
-    'numpy == 1.16.6; python_version == "2.7" or (python_version >= "3.4" and python_version <= "3.6")',
-    'numpy == 1.11.3; python_version == "2.6" or (python_version >= "3.2" and python_version <= "3.3")',
-    'cython >= 0.29, < 3.1; python_version >= "3.3" or python_version < "3.0"',
-    'cython >= 0.26, < 0.27; python_version == "3.2"'
+    "setuptools>=45",
+    "wheel",
+    "setuptools_scm[toml]>=6.2",
+    "numpy >= 2.0.0; python_version >= '3.10'",
+    "numpy == 1.21.4; sys_platform == 'darwin' and (python_version >= '3.7' and python_version <= '3.9')",
+    "numpy == 1.16.6; sys_platform != 'darwin' and (python_version >= '3.7' and python_version <= '3.9')",
+    "cython>=0.29,<3.1",
+    "cmake>=3.12",
 ]
+pre-hook.geos = "build_geos.py"
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["mpl_toolkits.basemap"]
+include-package-data = true
+
+[tool.setuptools_scm]
+write_to = "basemap/_scm_version.py"
+version_scheme = "post-release"
+local_scheme = "node-and-timestamp"
+
+
+[tool.geos]
+version = "3.6.5"
+build-options = { enable-shared = true, enable-static = false }
+install-dir = "${GEOS_DIR}"
+
+[tool.setuptools.package-data]
+"mpl_toolkits.basemap" = [
+    "data/*",
+    "data/boundaryfiles/*",
+    "data/5min/*",
+    "data/10min/*",
+]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["*.pyc", "*.pyo", "*.pyd", "*.so", "*.dylib"]

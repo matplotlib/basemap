@@ -14,6 +14,17 @@ heavy lifting), and the following functions:
 
 :func:`addcyclic`: Add cyclic (wraparound) point in longitude.
 """
+# SCM versioning
+name = "basemap"
+try:
+    from importlib.metadata import version as get_version
+    version = __version__ = get_version(name)
+except Exception:
+    try:
+        from ._scm_version import version as __version__
+        version = __version__
+    except ImportError:
+        version = __version__ = "unknown"
 
 import os
 import sys

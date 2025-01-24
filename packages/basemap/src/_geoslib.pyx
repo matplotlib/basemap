@@ -2,9 +2,6 @@ import sys
 import numpy
 cimport numpy as cnp
 
-__version__ = "1.5.0-dev"
-
-
 # Need some Python C-API functions for strings.
 cdef extern from "Python.h":
     object PyBytes_FromString(char *)
