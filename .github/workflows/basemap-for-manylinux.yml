@@ -90,7 +90,7 @@ jobs:
     container: "pylegacy/${{ matrix.arch }}-python:3.8-debian-4"
     steps:
       - name: Download checkout
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: checkout
           path: .
@@ -145,12 +145,12 @@ jobs:
     container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-4"
     steps:
       - name: Download checkout
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: checkout
           path: .
       - name: Download GEOS artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: artifacts-geos-${{ matrix.arch }}
           path: ${{ env.PKGDIR }}/extern
@@ -229,12 +229,12 @@ jobs:
     container: "pylegacy/${{ matrix.arch }}-python:3.8-debian-10"
     steps:
       - name: Download GEOS artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: artifacts-geos-${{ matrix.arch }}
           path: ${{ env.PKGDIR }}/extern
       - name: Download build artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
@@ -283,12 +283,12 @@ jobs:
     container: "pylegacy/${{ matrix.arch }}-python:${{ matrix.python-version }}-debian-10"
     steps:
       - name: Download checkout
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4444
         with:
           name: checkout
           path: .
       - name: Download build artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
@@ -327,7 +327,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Download test artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: artifacts-test
           path: ${{ env.PKGDIR }}
@@ -353,7 +353,7 @@ jobs:
     container: "pylegacy/python:3.8-debian-10"
     steps:
       - name: Download checkout
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: checkout
           path: .
@@ -362,7 +362,7 @@ jobs:
           cd ${{ env.PKGDIR }}
           pip install -r requirements-doc.txt
       - name: Download build artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: artifacts-build-x64-3.8
           path: ${{ env.PKGDIR }}/dist
@@ -424,7 +424,7 @@ jobs:
     environment: PyPI
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: artifacts-build-${{ matrix.arch }}-${{ matrix.python-version }}
           path: ${{ env.PKGDIR }}/dist
