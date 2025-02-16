@@ -11,14 +11,10 @@ on:
     paths:
       - ".github/workflows/**"
       - "packages/basemap/**"
-      - "packages/basemap_data/**"
-      - "packages/basemap_data_hires/**"
   pull_request:
     paths:
       - ".github/workflows/**"
       - "packages/basemap/**"
-      - "packages/basemap_data/**"
-      - "packages/basemap_data_hires/**"
   workflow_dispatch:
 
 jobs:
@@ -32,6 +28,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install GEOS (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository ppa:ubuntugis/ppa
+          sudo apt-get update
+          sudo apt-get install -y libgeos-dev
+
+      - name: Install GEOS (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install geos
+
+      - name: Install GEOS (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install geos
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -42,25 +57,13 @@ jobs:
 
       - name: Build wheels
         env:
-          CIBW_SKIP: "pp* *-musllinux*" # Skip PyPy and musllinux
-          CIBW_BEFORE_ALL: >
-            if [ "$runner_os" == "linux" ]; then
-              sudo apt-get update &&
-              sudo apt-get install -y software-properties-common &&
-              sudo add-apt-repository ppa:ubuntugis/ppa &&
-              sudo apt-get update &&
-              sudo apt-get install -y libgeos-dev
-            elif [ "$runner_os" == "windows" ]; then
-              choco install geos
-            elif [ "$runner_os" == "macos" ]; then
-              brew install geos
-            fi
+          CIBW_SKIP: "pp* *-musllinux*"
           CIBW_BEFORE_BUILD: >
             pip install --upgrade pip &&
             pip install numpy>=1.21.4 cython>=0.29.21 &&
             python -c "import utils; utils.GeosLibrary('3.6.5').build('extern', njobs=16)"
           CIBW_ENVIRONMENT: >
-            GEOS_DIR=/project/packages/basemap/extern
+            GEOS_DIR={project}/extern
             SETUPTOOLS_USE_DISTUTILS=stdlib
           CIBW_TEST_COMMAND: >
             cd {project} && python -m pytest --cov="mpl_toolkits.basemap"
@@ -74,75 +77,3 @@ jobs:
         with:
           name: wheels-${{ matrix.os }}
           path: ${{ env.PKGDIR }}/wheelhouse/*.whl
-
-  build_sdist:
-    name: Build source distribution
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.9"
-
-      - name: Build sdist
-        run: |
-          cd ${{ env.PKGDIR }}
-          pip install build
-          python -m build --sdist
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: sdist
-          path: ${{ env.PKGDIR }}/dist/*.tar.gz
-
-  upload_testpypi:
-    needs: [build_wheels, build_sdist]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    environment:
-      name: TestPyPI
-      url: https://test.pypi.org/p/basemap
-    permissions:
-      id-token: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: wheels-*
-          path: dist
-          merge-multiple: true
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: sdist
-          path: dist
-
-      - name: Upload to TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
-
-  upload_pypi:
-    needs: [build_wheels, build_sdist, upload_testpypi]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    environment:
-      name: PyPI
-      url: https://pypi.org/p/basemap
-    permissions:
-      id-token: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: wheels-*
-          path: dist
-          merge-multiple: true
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: sdist
-          path: dist
-
-      - name: Upload to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
