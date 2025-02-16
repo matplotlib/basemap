@@ -14,9 +14,39 @@ build-backend = "setuptools.build_meta"
 name = "basemap"
 dynamic = ["version"]
 description = "Plot data on map projections with matplotlib"
+readme = "README.md"
 requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Jeff Whitaker", email = "jeffrey.s.whitaker@noaa.gov"}
+]
+maintainers = [
+    {name = "The Matplotlib Developers"}
+]
+keywords = ["matplotlib", "plotting", "map", "projection"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
 dependencies = [
     "numpy>=1.21.4",
     "matplotlib>=3.4.0",
     "pyproj>=3.0.0"
 ]
+
+[project.urls]
+Homepage = "https://matplotlib.org/basemap"
+Documentation = "https://matplotlib.org/basemap/api/basemap_api.html"
+Repository = "https://github.com/matplotlib/basemap"
+"Bug Tracker" = "https://github.com/matplotlib/basemap/issues"
+
+[tool.setuptools]
+packages = ["mpl_toolkits.basemap"]
+package-dir = {"" = "src"}
