@@ -1,4 +1,12 @@
 name: Build and Test
+
+env:
+  PKGDIR: "packages/basemap"
+  CIBW_BUILD_VERBOSITY: 1
+  PYTHONUNBUFFERED: "1"
+  PYTHONWARNINGS: "ignore:DEPRECATION"
+  GEO_VERSION: "3.6.5"
+
 on:
   push:
     branches: [main, master, develop]
@@ -41,16 +49,8 @@ jobs:
         env:
           CIBW_SKIP: "pp* *-musllinux*"
           CIBW_BEFORE_BUILD: >
-            pip install --upgrade pip
-            pip install numpy cython
-            python -c "import utils; utils.GeosLibrary('3.6.5').build('extern', njobs=16)"
-          CIBW_ENVIRONMENT_WINDOWS: >
-            GEOS_DIR=${{ env.GEOS_DIR }}
-            SETUPTOOLS_USE_DISTUTILS=stdlib
-          CIBW_ENVIRONMENT_LINUX: >
-            GEOS_DIR={project}/extern
-            SETUPTOOLS_USE_DISTUTILS=stdlib
-          CIBW_ENVIRONMENT_MACOS: >
+            python -c "import utils; utils.GeosLibrary(${{ env.GEO_VERSION }}).build('extern', njobs=16)"
+          CIBW_ENVIRONMENT: >
             GEOS_DIR={project}/extern
             SETUPTOOLS_USE_DISTUTILS=stdlib
           CIBW_TEST_COMMAND: >
