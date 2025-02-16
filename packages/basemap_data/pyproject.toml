@@ -1,0 +1,63 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "basemap_data"
+version = "1.3.2"
+description = "Data assets for matplotlib basemap"
+readme = "README.md"
+requires-python = ">=3.9"  # Updated to match main package
+license = {text = "GNU Lesser General Public License v3 or later (LGPLv3+)"}
+authors = [
+    {name = "Jeff Whitaker", email = "jeffrey.s.whitaker@noaa.gov"}
+]
+maintainers = [
+    {name = "Víctor Molina García", email = "molinav@users.noreply.github.com"}
+]
+keywords = ["GIS", "maps", "plots"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+
+[project.urls]
+Homepage = "https://matplotlib.org/basemap"
+Documentation = "https://matplotlib.org/basemap/"
+Repository = "https://github.com/matplotlib/basemap"
+"Bug Tracker" = "https://github.com/matplotlib/basemap/issues"
+
+[tool.setuptools]
+packages = ["mpl_toolkits.basemap_data"]
+package-dir = {"" = "src"}
+license-files = [
+    "COPYING",
+    "COPYING.LESSER",
+    "LICENSE.epsg",
+    "LICENSE.mit"
+]
+
+[tool.setuptools.package-data]
+"mpl_toolkits.basemap_data" = [
+    # This will be populated from build.py
+    "data/*"
+]
+
+[tool.setuptools.sdist]
+formats = ["zip"]
+
+[tool.setuptools.bdist-wheel]
+universal = true
