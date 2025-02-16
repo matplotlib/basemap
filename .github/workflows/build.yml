@@ -1,4 +1,17 @@
 name: Build and Test
+on:
+  push:
+    branches: [main, master, develop]
+    tags: ["v*"]
+    paths:
+      - ".github/workflows/**"
+      - "packages/basemap/**"
+  pull_request:
+    branches: [main, master, develop]
+    paths:
+      - ".github/workflows/**"
+      - "packages/basemap/**"
+  workflow_dispatch: # Allows manual workflow runs
 
 env:
   PKGDIR: "packages/basemap"
