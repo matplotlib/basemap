@@ -1,15 +1,15 @@
 [build-system]
 requires = [
-    'setuptools>=42',
-    'wheel',
-    'numpy==2.0.0; python_version >= "3.9"',
-    'cython>=0.29.21,<3.1'
+    "setuptools>=42",
+    "wheel",
+    "numpy==2.0.0; python_version >= '3.9'",
+    "cython>=0.29.21,<3.1"
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "basemap"
-dynamic = ["version", "optional-dependencies"]
+dynamic = ["version", "dependencies", "optional-dependencies"]
 description = "Plot data on map projections with matplotlib"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -17,22 +17,75 @@ license = {text = "MIT"}
 authors = [
     {name = "Jeff Whitaker", email = "jeffrey.s.whitaker@noaa.gov"}
 ]
-dependencies = [
-    "numpy>=2.0",
-    "matplotlib>=3.4.0",
-    "pyproj>=3.0.0",
-    "packaging >= 16.0, < 25.0",
-    "pyshp >= 1.2, < 2.4",
-    "basemap_data >= 1.3.2, < 1.4"
+maintainers = [
+    {name = "Víctor Molina García", email = "molinav@users.noreply.github.com"}
 ]
+keywords = ["GIS", "maps", "plots"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+
+[project.urls]
+Homepage = "https://matplotlib.org/basemap"
+Documentation = "https://matplotlib.org/basemap/"
+Repository = "https://github.com/matplotlib/basemap"
+"Bug Tracker" = "https://github.com/matplotlib/basemap/issues"
 
 [tool.setuptools]
 packages = ["mpl_toolkits.basemap"]
 package-dir = {"" = "src"}
-py-modules = []
+license-files = ["LICENSE", "LICENSE.geos"]
 
 [tool.setuptools.package-data]
 "mpl_toolkits.basemap" = ["data/*"]
 
 [tool.setuptools.exclude-package-data]
-"*" = ["*.pyc", "**/__pycache__/*", "**/.DS_Store/*"]
+"*" = ["*.pyc", "**/__pycache__/*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "mpl_toolkits.basemap.__version__"}
+dependencies = {file = "requirements.txt"}
+
+[tool.setuptools.dynamic.optional-dependencies]
+doc = {file = ["requirements-doc.txt"]}
+lint = {file = ["requirements-lint.txt"]}
+test = {file = ["requirements-test.txt"]}
+owslib = {file = ["requirements-owslib.txt"]}
+pillow = {file = ["requirements-pillow.txt"]}
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+    "ignore:Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated:DeprecationWarning:unittest2.compatibility:143",
+    "ignore:datetime.datetime.utcfromtimestamp() is deprecated:DeprecationWarning:dateutil.tz.tz:37"
+]
+
+[tool.coverage.paths]
+source = [
+    "src",
+    "/opt/pyenv/versions/**/site-packages"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "def __str__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:"]
+
+
+
+[tool.flake8]
+ignore = ["E301", "E306", "E402", "E501", "E731", "F401", "F403", "W503", "W504"]
