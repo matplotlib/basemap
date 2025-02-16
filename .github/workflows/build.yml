@@ -24,7 +24,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-2019, macos-11]
+        os: [ubuntu-latest, windows-2019, macos-11]
 
     steps:
       - uses: actions/checkout@v4
@@ -45,18 +45,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential
 
-      - name: Setup C++ toolchain (Windows)
-        if: runner.os == 'Windows'
-        uses: microsoft/setup-msbuild@v1.1
-
       - name: Setup Visual Studio Developer Command Prompt
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
-
-      - name: Install Windows development tools
-        if: runner.os == 'Windows'
-        run: |
-          choco install visualstudio2019buildtools visualstudio2019-workload-vctools cmake
 
       - name: Setup C++ toolchain (macOS)
         if: runner.os == 'macOS'
@@ -66,21 +57,71 @@ jobs:
       - name: Install cibuildwheel
         run: python -m pip install cibuildwheel==2.16.2
 
+      - name: Set GEO src directory
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            echo "GEO_DIR=D:/a/basemap/basemap/geo" >> $GITHUB_ENV
+          else
+            echo "GEO_DIR=/project/geo" >> $GITHUB_ENV
+          fi
+
       - name: Build wheels
         env:
-          CIBW_SKIP: "pp* *-musllinux*"
+          CIBW_BUILD: "cp{39,310,311,312}-{manylinux_x86_64,win_amd64,macosx_x86_64}"
+          CIBW_SKIP: "*-manylinux_i686 *-musllinux* pp*"
           CIBW_BEFORE_BUILD: >
-            python -c "import utils; utils.GeosLibrary('${{ env.GEO_VERSION }}').build('extern', njobs=16)"
-          CIBW_ENVIRONMENT: >
-            GEOS_DIR=${{ github.workspace }}${{ runner.os == 'Windows' && '\\extern' || '/extern' }}
-            CFLAGS=-I${{ github.workspace }}${{ runner.os == 'Windows' && '\\extern\\include' || '/extern/include' }}
-            LDFLAGS=-L${{ github.workspace }}${{ runner.os == 'Windows' && '\\extern\\lib' || '/extern/lib' }}
-          CIBW_TEST_COMMAND: >
-            cd {project}
-            pip install pytest
-            python -m pytest --cov="mpl_toolkits.basemap"
-            --cov-report=term --ignore=dist --ignore=build
-          CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*"
+            python -c "import utils; utils.GeosLibrary('${{ env.GEO_VERSION }}').build('${{ env.GEO_DIR}}', njobs=16)"
+
+          CIBW_ENVIRONMENT_WINDOWS: |
+            GEOS_DIR=${{ env.GEO_DIR }}
+            INCLUDE=${{ env.GEO_DIR }}/include;%%INCLUDE%%
+            LIB=${{ env.GEO_DIR }}/lib;%%LIB%%
+            PATH=${{ env.GEO_DIR }}/bin;%%PATH%%
+
+          CIBW_ENVIRONMENT_LINUX: |
+            GEOS_DIR=${{ env.GEO_DIR }}
+            CFLAGS="-I${{ env.GEO_DIR }}/include"
+            LDFLAGS="-L${{ env.GEO_DIR }}/lib"
+            LD_LIBRARY_PATH="${{ env.GEO_DIR }}/lib:$LD_LIBRARY_PATH"
+
+          CIBW_ENVIRONMENT_MACOS: |
+            GEOS_DIR=${{ env.GEO_DIR }}
+            CFLAGS=-I${{ env.GEO_DIR }}/include
+            LDFLAGS=-L${{ env.GEO_DIR }}/lib
+            DYLD_LIBRARY_PATH=${{ env.GEO_DIR }}/lib:$DYLD_LIBRARY_PATH
+
+          CIBW_REPAIR_WHEEL_COMMAND_LINUX: >-
+            mkdir -p {dest_dir}/.libs &&
+            cp ${{ env.GEO_DIR }}/lib/libgeos*.so* {dest_dir}/.libs/ &&
+            auditwheel repair
+            --lib-sdir .libs
+            -w {dest_dir}
+            {wheel}
+
+          CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: >-
+            mkdir "{dest_dir}\libs" &&
+            copy "%GEO_DIR%\bin\geos*.dll" "{dest_dir}\libs\" &&
+            copy "{wheel}" "{dest_dir}\" &&
+            dir /s /b "{dest_dir}\libs"
+
+          CIBW_REPAIR_WHEEL_COMMAND_MACOS: >-
+            mkdir -p {dest_dir}/.libs &&
+            cp ${{ env.GEO_DIR }}/lib/libgeos*.dylib {dest_dir}/.libs/ &&
+            delocate-wheel -w {dest_dir} -v {wheel}
+
+          CIBW_TEST_COMMAND_WINDOWS: >-
+            pip install pytest pytest-cov &&
+            echo "Project path: {project}" &&
+            dir /s /b "{project}" &&
+            dir /s /b "{project}\packages\basemap" &&
+            python -m pytest "{project}\packages\basemap\test" --cov="mpl_toolkits.basemap" --cov-report=term --ignore=dist --ignore=build
+
+          CIBW_TEST_COMMAND: >-
+            cd {project} &&
+            pip install pytest pytest-cov &&
+            python -m pytest --cov="mpl_toolkits.basemap" --cov-report=term --ignore=dist --ignore=build
+
         run: |
           cd ${{ env.PKGDIR }}
           python -m cibuildwheel --output-dir wheelhouse
