@@ -50,7 +50,7 @@ jobs:
           CIBW_TEST_COMMAND: >
             cd {project} && python -m pytest --cov="mpl_toolkits.basemap"
             --cov-report=term --ignore=dist --ignore=build
-          CIBW_BUILD: "cp27-* cp35-* cp36-* cp37-* cp38-* cp39-* cp310-* cp311-* cp312-*"
+          CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-*"
           CIBW_ENVIRONMENT: "GEOS_DIR={project}/extern"
         run: |
           cd ${{ env.PKGDIR }}
