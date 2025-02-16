@@ -61,7 +61,7 @@ jobs:
         env:
           CIBW_SKIP: "pp* *-musllinux*"
           CIBW_BEFORE_BUILD: >
-            python -c "import utils; utils.GeosLibrary(${{ env.GEO_VERSION }}).build('extern', njobs=16)"
+            python -c "import utils; utils.GeosLibrary('${{ env.GEO_VERSION }}').build('extern', njobs=16)"
           CIBW_ENVIRONMENT: >
             GEOS_DIR={project}/extern
             SETUPTOOLS_USE_DISTUTILS=stdlib
