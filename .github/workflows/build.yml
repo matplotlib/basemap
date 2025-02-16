@@ -9,23 +9,14 @@ env:
 
 on:
   push:
-    branches: [main, master, develop]
-    tags: ["v*"]
     paths:
       - ".github/workflows/**"
       - "packages/basemap/**"
   pull_request:
-    branches: [main, master, develop]
     paths:
       - ".github/workflows/**"
       - "packages/basemap/**"
-  workflow_dispatch: # Allows manual workflow runs
-env:
-  PKGDIR: "packages/basemap"
-  CIBW_BUILD_VERBOSITY: 1
-  PYTHONUNBUFFERED: "1"
-  PYTHONWARNINGS: "ignore:DEPRECATION"
-  GEOS_VERSION: "3.6.5"
+  workflow_dispatch:
 
 jobs:
   build_wheels:
@@ -37,10 +28,31 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
+
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v1.13
+        with:
+          cmake-version: "3.16.x"
+
+      - name: Setup C++ toolchain (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+
+      - name: Setup C++ toolchain (Windows)
+        if: runner.os == 'Windows'
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Setup C++ toolchain (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          xcode-select --install || true
 
       - name: Install cibuildwheel
         run: python -m pip install cibuildwheel==2.16.2
