@@ -44,6 +44,9 @@ jobs:
         env:
           CIBW_SKIP: "pp* *-musllinux*" # Skip PyPy and musllinux
           CIBW_BEFORE_ALL: >
+            sudo apt-get install software-properties-common
+            sudo add-apt-repository ppa:ubuntugis/ppa
+            sudo apt-get install geos
             yum install -y geos-devel ||
             apt-get update && apt-get install -y libgeos-dev ||
             brew install geos
