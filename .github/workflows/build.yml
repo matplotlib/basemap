@@ -12,7 +12,6 @@ on:
       - ".github/workflows/**"
       - "packages/basemap/**"
   workflow_dispatch: # Allows manual workflow runs
-
 env:
   PKGDIR: "packages/basemap"
   CIBW_BUILD_VERBOSITY: 1
