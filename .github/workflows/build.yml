@@ -64,6 +64,9 @@ jobs:
             python -c "import utils; utils.GeosLibrary('${{ env.GEO_VERSION }}').build('extern', njobs=16)"
           CIBW_ENVIRONMENT: >
             GEOS_DIR={project}/extern
+            CPATH={project}/extern/include
+            LIBRARY_PATH={project}/extern/lib
+            LD_LIBRARY_PATH={project}/extern/lib
             SETUPTOOLS_USE_DISTUTILS=stdlib
           CIBW_TEST_COMMAND: >
             cd {project} && python -m pytest --cov="mpl_toolkits.basemap"
