@@ -5,17 +5,7 @@ env:
   CIBW_BUILD_VERBOSITY: 1
   PYTHONUNBUFFERED: "1"
   PYTHONWARNINGS: "ignore:DEPRECATION"
-
-on:
-  push:
-    paths:
-      - ".github/workflows/**"
-      - "packages/basemap/**"
-  pull_request:
-    paths:
-      - ".github/workflows/**"
-      - "packages/basemap/**"
-  workflow_dispatch:
+  GEOS_VERSION: "3.6.5"
 
 jobs:
   build_wheels:
@@ -39,8 +29,16 @@ jobs:
 
       - name: Install GEOS (Windows)
         if: runner.os == 'Windows'
+        shell: bash
         run: |
-          choco install geos
+          wget https://download.osgeo.org/geos/geos-${GEOS_VERSION}.tar.bz2
+          tar xjf geos-${GEOS_VERSION}.tar.bz2
+          cd geos-${GEOS_VERSION}
+          mkdir build
+          cd build
+          cmake -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/geos-install ..
+          cmake --build . --config Release --target install
+          echo "GEOS_DIR=$GITHUB_WORKSPACE/geos-install" >> $GITHUB_ENV
 
       - name: Install GEOS (macOS)
         if: runner.os == 'macOS'
@@ -60,9 +58,14 @@ jobs:
           CIBW_SKIP: "pp* *-musllinux*"
           CIBW_BEFORE_BUILD: >
             pip install --upgrade pip &&
-            pip install numpy>=1.21.4 cython>=0.29.21 &&
-            python -c "import utils; utils.GeosLibrary('3.6.5').build('extern', njobs=16)"
-          CIBW_ENVIRONMENT: >
+            pip install numpy>=1.21.4 cython>=0.29.21
+          CIBW_ENVIRONMENT_WINDOWS: >
+            GEOS_DIR=${{ env.GEOS_DIR }}
+            SETUPTOOLS_USE_DISTUTILS=stdlib
+          CIBW_ENVIRONMENT_LINUX: >
+            GEOS_DIR={project}/extern
+            SETUPTOOLS_USE_DISTUTILS=stdlib
+          CIBW_ENVIRONMENT_MACOS: >
             GEOS_DIR={project}/extern
             SETUPTOOLS_USE_DISTUTILS=stdlib
           CIBW_TEST_COMMAND: >
