@@ -29,34 +29,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install GEOS (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y software-properties-common
-          sudo add-apt-repository ppa:ubuntugis/ppa
-          sudo apt-get update
-          sudo apt-get install -y libgeos-dev
-
-      - name: Install GEOS (Windows)
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          wget https://download.osgeo.org/geos/geos-${GEOS_VERSION}.tar.bz2
-          tar xjf geos-${GEOS_VERSION}.tar.bz2
-          cd geos-${GEOS_VERSION}
-          mkdir build
-          cd build
-          cmake -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/geos-install ..
-          cmake --build . --config Release --target install
-          echo "GEOS_DIR=$GITHUB_WORKSPACE/geos-install" >> $GITHUB_ENV
-
-      - name: Install GEOS (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew install geos
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -69,8 +41,9 @@ jobs:
         env:
           CIBW_SKIP: "pp* *-musllinux*"
           CIBW_BEFORE_BUILD: >
-            pip install --upgrade pip &&
-            pip install numpy>=1.21.4 cython>=0.29.21
+            pip install --upgrade pip
+            pip install numpy cython
+            python -c "import utils; utils.GeosLibrary('3.6.5').build('extern', njobs=16)"
           CIBW_ENVIRONMENT_WINDOWS: >
             GEOS_DIR=${{ env.GEOS_DIR }}
             SETUPTOOLS_USE_DISTUTILS=stdlib
