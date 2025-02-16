@@ -49,6 +49,15 @@ jobs:
         if: runner.os == 'Windows'
         uses: microsoft/setup-msbuild@v1.1
 
+      - name: Setup Visual Studio Developer Command Prompt
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install Windows development tools
+        if: runner.os == 'Windows'
+        run: |
+          choco install visualstudio2019buildtools visualstudio2019-workload-vctools cmake
+
       - name: Setup C++ toolchain (macOS)
         if: runner.os == 'macOS'
         run: |
@@ -63,13 +72,13 @@ jobs:
           CIBW_BEFORE_BUILD: >
             python -c "import utils; utils.GeosLibrary('${{ env.GEO_VERSION }}').build('extern', njobs=16)"
           CIBW_ENVIRONMENT: >
-            GEOS_DIR=/project/packages/basemap/extern
-            CPATH=/project/packages/basemap/extern/include
-            LIBRARY_PATH=/project/packages/basemap/extern/lib
-            LD_LIBRARY_PATH=/project/packages/basemap/extern/lib
-            SETUPTOOLS_USE_DISTUTILS=stdlib
+            GEOS_DIR=${{ github.workspace }}${{ runner.os == 'Windows' && '\\extern' || '/extern' }}
+            CFLAGS=-I${{ github.workspace }}${{ runner.os == 'Windows' && '\\extern\\include' || '/extern/include' }}
+            LDFLAGS=-L${{ github.workspace }}${{ runner.os == 'Windows' && '\\extern\\lib' || '/extern/lib' }}
           CIBW_TEST_COMMAND: >
-            cd {project} && python -m pytest --cov="mpl_toolkits.basemap"
+            cd {project}
+            pip install pytest
+            python -m pytest --cov="mpl_toolkits.basemap"
             --cov-report=term --ignore=dist --ignore=build
           CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*"
         run: |
