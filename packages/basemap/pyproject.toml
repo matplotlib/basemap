@@ -44,6 +44,7 @@ Repository = "https://github.com/matplotlib/basemap"
 
 [tool.setuptools]
 packages = ["mpl_toolkits.basemap"]
+namespace-packages = ["mpl_toolkits"]
 package-dir = {"" = "src"}
 license-files = ["LICENSE", "LICENSE.geos"]
 
