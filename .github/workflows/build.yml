@@ -103,6 +103,15 @@ jobs:
         with:
           python-version: "3.9"
 
+      - name: Build SDist
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          pip install build
+          mkdir -p wheelhouse
+          cd packages/basemap
+          python -m build --sdist
+          mv dist/* ../../wheelhouse/
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.22.0
         env:
@@ -119,7 +128,9 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          path: ./wheelhouse/*.whl
+          path: |
+            ./wheelhouse/*.whl
+            ./wheelhouse/*.tar.gz
           name: wheels-basemap-${{ matrix.os }}
 
   upload_pypi:
