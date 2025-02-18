@@ -65,6 +65,7 @@ jobs:
             environment: >-
               CFLAGS="-I/project/packages/basemap/extern/include -I/project/packages/basemap/extern/include/geos"
               LDFLAGS="-L/project/packages/basemap/extern/lib"
+              LD_LIBRARY_PATH="/project/packages/basemap/extern/lib"
               PIP_DEFAULT_TIMEOUT=10
               PIP_DISABLE_PIP_VERSION_CHECK=1
               PIP_PREFER_BINARY=1
