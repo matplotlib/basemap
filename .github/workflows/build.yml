@@ -63,11 +63,10 @@ jobs:
               PYTHONUNBUFFERED=1
           - os: windows-latest
             before_all: >-
-              pwsh -Command "
-              Write-Host 'Starting BEFORE_ALL script';
-              Set-Location '{package}';
-              python -c 'import utils; utils.GeosLibrary(\"${env:GEOS_VERSION}\").build(\"${env:GEOS_DIR}\", njobs=2)'
-              "
+              Write-Host "Starting BEFORE_ALL script"
+              Write-Host "GEOS_DIR set to: ${env:GEOS_DIR}"
+              Set-Location "{package}"
+              python -c "import utils; utils.GeosLibrary('${env:GEOS_VERSION}').build('${env:GEOS_DIR}', njobs=2)"
             environment: >-
               GEOS_VERSION="3.6.5"
               GEOS_DIR="D:/a/basemap/basemap/packages/basemap/extern"
