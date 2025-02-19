@@ -65,7 +65,6 @@ jobs:
             environment: >-
               GEOS_DIR="/project/packages/basemap/extern"
               LD_LIBRARY_PATH="/project/packages/basemap/extern/lib"
-              PIP_DISABLE_PIP_VERSION_CHECK=1
               PIP_PREFER_BINARY=1
               PYTHONUNBUFFERED=1
               PYTHONWARNINGS="ignore:DEPRECATION"
@@ -82,7 +81,6 @@ jobs:
               "
             environment: >-
               GEOS_DIR="D:/a/basemap/basemap/packages/basemap/extern"
-              PIP_DISABLE_PIP_VERSION_CHECK=1
               PIP_PREFER_BINARY=1
               PYTHONUNBUFFERED=1
               PYTHONWARNINGS="ignore:DEPRECATION"
