@@ -65,13 +65,11 @@ jobs:
             before_all: >-
               pwsh -Command "
               Write-Host 'Starting BEFORE_ALL script';
-              $pwd = Get-Location;
-              Write-Host 'Current directory:' $pwd;
               Set-Location '{package}';
-              $env:GEOS_DIR = '{package}/extern';
-              python -c 'import sys, os; sys.path.append(\"utils\"); from GeosLibrary import GeosLibrary; GeosLibrary(\"3.6.5\").build(\"extern\", njobs=16)'
+              python -c 'import utils; utils.GeosLibrary(\"${env:GEOS_VERSION}\").build(\"${env:GEOS_DIR}\", njobs=2)'
               "
             environment: >-
+              GEOS_VERSION="3.6.5"
               GEOS_DIR="D:/a/basemap/basemap/packages/basemap/extern"
               PIP_PREFER_BINARY=1
               PYTHONUNBUFFERED=1
