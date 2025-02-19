@@ -63,6 +63,7 @@ jobs:
               echo "GEOS_DIR set to: $GEOS_DIR"
               python -c "import sys; sys.path.append('utils'); from GeosLibrary import GeosLibrary; GeosLibrary('3.6.5', root='extern').build('extern', njobs=16)"
             environment: >-
+              GEOS_DIR="/project/packages/basemap/extern"
               CFLAGS="-I/project/packages/basemap/extern/include -I/project/packages/basemap/extern/include/geos"
               LDFLAGS="-L/project/packages/basemap/extern/lib"
               LD_LIBRARY_PATH="/project/packages/basemap/extern/lib"
