@@ -62,11 +62,11 @@ jobs:
               PIP_PREFER_BINARY=1
               PYTHONUNBUFFERED=1
           - os: windows-latest
-            before_all: >-
-              Write-Host "Starting BEFORE_ALL script"
-              Write-Host "GEOS_DIR set to: ${env:GEOS_DIR}"
-              Set-Location "{package}"
-              python -c "import utils; utils.GeosLibrary('${env:GEOS_VERSION}').build('${env:GEOS_DIR}', njobs=2)"
+            before_all: |
+              echo Starting BEFORE_ALL script
+              echo GEOS_DIR set to: %GEOS_DIR%
+              cd "{package}"
+              python -c "import utils; utils.GeosLibrary('%GEOS_VERSION%').build('%GEOS_DIR%', njobs=2)"
             environment: >-
               GEOS_VERSION="3.6.5"
               GEOS_DIR="D:/a/basemap/basemap/packages/basemap/extern"
