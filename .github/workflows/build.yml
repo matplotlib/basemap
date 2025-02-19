@@ -35,13 +35,12 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install build wheel
+          python -m pip install build wheel
 
       - name: Build package
         run: |
           cd packages/${{ matrix.package }}
-          python -m build --wheel --sdist
+          python -m build --sdist --wheel
 
       - uses: actions/upload-artifact@v4
         with:
@@ -66,10 +65,8 @@ jobs:
             environment: >-
               GEOS_DIR="/project/packages/basemap/extern"
               LD_LIBRARY_PATH="/project/packages/basemap/extern/lib"
-              PIP_DEFAULT_TIMEOUT=10
               PIP_DISABLE_PIP_VERSION_CHECK=1
               PIP_PREFER_BINARY=1
-              PIP_RETRIES=0
               PYTHONUNBUFFERED=1
               PYTHONWARNINGS="ignore:DEPRECATION"
 
@@ -85,10 +82,8 @@ jobs:
               "
             environment: >-
               GEOS_DIR="D:/a/basemap/basemap/packages/basemap/extern"
-              PIP_DEFAULT_TIMEOUT=10
               PIP_DISABLE_PIP_VERSION_CHECK=1
               PIP_PREFER_BINARY=1
-              PIP_RETRIES=0
               PYTHONUNBUFFERED=1
               PYTHONWARNINGS="ignore:DEPRECATION"
 
@@ -104,7 +99,7 @@ jobs:
       - name: Build SDist
         if: matrix.os == 'ubuntu-latest'
         run: |
-          pip install build
+          python -m pip install build
           mkdir -p wheelhouse
           cd packages/basemap
           python -m build --sdist
