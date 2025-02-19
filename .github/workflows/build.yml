@@ -62,10 +62,9 @@ jobs:
               export GEOS_DIR="$(pwd)/extern"
               echo "GEOS_DIR set to: $GEOS_DIR"
               python -c "import sys; sys.path.append('utils'); from GeosLibrary import GeosLibrary; GeosLibrary('3.6.5', root='extern').build('extern', njobs=16)"
+            # LD_LIBRARY_PATH in environment is needed by auditwheel.
             environment: >-
               GEOS_DIR="/project/packages/basemap/extern"
-              CFLAGS="-I/project/packages/basemap/extern/include -I/project/packages/basemap/extern/include/geos"
-              LDFLAGS="-L/project/packages/basemap/extern/lib"
               LD_LIBRARY_PATH="/project/packages/basemap/extern/lib"
               PIP_DEFAULT_TIMEOUT=10
               PIP_DISABLE_PIP_VERSION_CHECK=1
@@ -86,8 +85,6 @@ jobs:
               "
             environment: >-
               GEOS_DIR="D:/a/basemap/basemap/packages/basemap/extern"
-              CFLAGS="-ID:/a/basemap/basemap/packages/basemap/extern/include -ID:/a/basemap/basemap/packages/basemap/extern/include/geos/include"
-              LDFLAGS="-LD:/a/basemap/basemap/packages/basemap/extern/lib"
               PIP_DEFAULT_TIMEOUT=10
               PIP_DISABLE_PIP_VERSION_CHECK=1
               PIP_PREFER_BINARY=1
