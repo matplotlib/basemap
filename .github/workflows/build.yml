@@ -1,6 +1,4 @@
 name: Build
-env:
-  GEOS_VERSION: "3.6.5"
 
 on:
   push:
@@ -58,6 +56,7 @@ jobs:
               python -c "import utils; utils.GeosLibrary('${GEOS_VERSION}').build('${GEOS_DIR}', njobs=2)"
             # LD_LIBRARY_PATH in environment is needed by auditwheel.
             environment: >-
+              GEOS_VERSION="3.6.5"
               GEOS_DIR="/project/packages/basemap/extern"
               LD_LIBRARY_PATH="/project/packages/basemap/extern/lib"
               PIP_PREFER_BINARY=1
