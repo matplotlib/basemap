@@ -109,27 +109,39 @@ jobs:
           path: |
             ./wheelhouse/*.whl
             ./wheelhouse/*.tar.gz
-          name: wheels-basemap-${{ matrix.os }}
+          name: dist-basemap-${{ matrix.os }}
 
-  upload_pypi:
+  check:
+    name: Check basemap packages
     needs: [build_data, build_basemap]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    strategy:
-      matrix:
-        package: [basemap, basemap_data, basemap_data_hires]
-        include:
-          - package: basemap
-            artifact_pattern: "wheels-basemap-*"
-          - package: basemap_data
-            artifact_pattern: "dist-basemap_data"
-          - package: basemap_data_hires
-            artifact_pattern: "dist-basemap_data_hires"
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: ${{ matrix.artifact_pattern }}
           path: dist
+          pattern: "dist-*"
+          merge-multiple: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Check packages with twine
+        run: |
+          python -m pip install twine
+          python -m twine check dist/*
+
+  upload:
+    name: Upload basemap packages
+    needs: [build_data, build_basemap, check]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: "dist-*"
           merge-multiple: true
 
       - name: Publish to PyPI
