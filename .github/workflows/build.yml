@@ -112,7 +112,7 @@ jobs:
           name: dist-basemap-${{ matrix.os }}
 
   check:
-    name: Check basemap packages
+    name: Check packages
     needs: [build_data, build_basemap]
     runs-on: ubuntu-latest
     steps:
@@ -130,10 +130,11 @@ jobs:
       - name: Check packages with twine
         run: |
           python -m pip install twine
-          python -m twine check dist/*
+          python -m twine check dist/*.tar.gz
+          python -m twine check dist/*.whl
 
   upload:
-    name: Upload basemap packages
+    name: Upload packages
     needs: [build_data, build_basemap, check]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
