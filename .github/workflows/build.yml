@@ -38,7 +38,9 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          path: packages/${{ matrix.package }}/dist/*
+          path: |
+            packages/${{ matrix.package }}/dist/*.tar.gz
+            packages/${{ matrix.package }}/dist/*.whl
           name: dist-${{ matrix.package }}
 
   build_basemap:
@@ -84,11 +86,9 @@ jobs:
       - name: Build sdist
         if: matrix.os == 'ubuntu-latest'
         run: |
-          mkdir -p wheelhouse
           cd packages/basemap
           python -m pip install build
           python -m build --sdist
-          mv dist/* ../../wheelhouse/
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.22.0
@@ -100,13 +100,14 @@ jobs:
           CIBW_BEFORE_ALL: ${{ matrix.before_all }}
           CIBW_ENVIRONMENT: ${{ matrix.environment }}
         with:
-          package-dir: packages/basemap
+          package-dir: "packages/basemap"
+          output-dir: "packages/basemap/dist"
 
       - uses: actions/upload-artifact@v4
         with:
           path: |
-            ./wheelhouse/*.whl
-            ./wheelhouse/*.tar.gz
+            packages/basemap/dist/*.tar.gz
+            packages/basemap/dist/*.whl
           name: dist-basemap-${{ matrix.os }}
 
   check:
