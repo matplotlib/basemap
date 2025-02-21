@@ -93,7 +93,6 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.22.0
         env:
-          CIBW_PROJECT_REQUIRES_PYTHON: ">=3.9"
           CIBW_ARCHS_LINUX: auto64
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD: "cp39* cp310* cp311* cp312*"
