@@ -18,10 +18,10 @@ on:
 jobs:
   build_data:
     name: Build data packages
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         package: [basemap_data, basemap_data_hires]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
