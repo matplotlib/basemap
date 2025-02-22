@@ -51,13 +51,13 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            before_all: |
-              echo "Starting BEFORE_ALL script"
-              echo "GEOS_DIR set to: ${GEOS_DIR}"
-              cd "{package}"
+            before_all: >
+              echo "Starting BEFORE_ALL script" &&
+              echo "GEOS_DIR set to: ${GEOS_DIR}" &&
+              cd "{package}" &&
               python -c "import utils; utils.GeosLibrary('${GEOS_VERSION}').build('${GEOS_DIR}', njobs=2)"
           - os: windows-latest
-            before_all: >-
+            before_all: >
               echo Starting BEFORE_ALL script &&
               echo GEOS_DIR set to: %GEOS_DIR% &&
               cd "{package}" &&
