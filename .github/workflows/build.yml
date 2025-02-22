@@ -56,24 +56,12 @@ jobs:
               echo "GEOS_DIR set to: ${GEOS_DIR}"
               cd "{package}"
               python -c "import utils; utils.GeosLibrary('${GEOS_VERSION}').build('${GEOS_DIR}', njobs=2)"
-            # LD_LIBRARY_PATH in environment is needed by auditwheel.
-            environment: >-
-              GEOS_VERSION="3.6.5"
-              GEOS_DIR="$(pwd)/extern"
-              LD_LIBRARY_PATH="${GEOS_DIR}/lib"
-              PIP_PREFER_BINARY=1
-              PYTHONUNBUFFERED=1
           - os: windows-latest
             before_all: >-
               echo Starting BEFORE_ALL script &&
               echo GEOS_DIR set to: %GEOS_DIR% &&
               cd "{package}" &&
               python -c "import utils; utils.GeosLibrary('%GEOS_VERSION%').build('%GEOS_DIR%', njobs=2)"
-            environment: >-
-              GEOS_VERSION="3.6.5"
-              GEOS_DIR="$(pwd)/extern"
-              PIP_PREFER_BINARY=1
-              PYTHONUNBUFFERED=1
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -98,7 +86,13 @@ jobs:
           CIBW_BUILD: "cp39* cp310* cp311* cp312*"
           CIBW_SKIP: "pp* *-musllinux_* *-win32 *-manylinux_i686 *-musllinux_i686 *-aarch64 *-armv7l"
           CIBW_BEFORE_ALL: ${{ matrix.before_all }}
-          CIBW_ENVIRONMENT: ${{ matrix.environment }}
+          CIBW_ENVIRONMENT: >
+            GEOS_VERSION="3.6.5"
+            GEOS_DIR="$(pwd)/extern"
+            PIP_PREFER_BINARY=1
+            PYTHONUNBUFFERED=1
+            LD_LIBRARY_PATH="${GEOS_DIR}/lib"
+          # LD_LIBRARY_PATH in environment is needed by auditwheel (Linux).
         with:
           package-dir: "packages/basemap"
           output-dir: "packages/basemap/dist"
