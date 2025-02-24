@@ -12,6 +12,18 @@ https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Added
+- Support `numpy` 2.0 (PR [#614] by @cvanelteren, solves issue [#604]).
+
+### Changed
+- **BREAKING CHANGE**: Set Python minimum supported version to 3.9.
+- **BREAKING CHANGE**: Migrate `basemap` libraries to use implicit
+  namespace packages (PR [#576] by @ksunden).
+- Migrate workflows to use `cibuildwheel` (PR [#614] by @cvanelteren).
+
+### Fixed
+- Fix Cython extension to use `noexcept` (PR [#615] by @cvanelteren).
+
 ## [1.4.1] - 2024-02-15
 
 ### Changed
@@ -1098,6 +1110,12 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#615]:
+https://github.com/matplotlib/basemap/pull/615
+[#614]:
+https://github.com/matplotlib/basemap/pull/614
+[#604]:
+https://github.com/matplotlib/basemap/issues/604
 [#598]:
 https://github.com/matplotlib/basemap/pull/598
 [#595]:
@@ -1126,6 +1144,8 @@ https://github.com/matplotlib/basemap/pull/580
 https://github.com/matplotlib/basemap/issues/579
 [#577]:
 https://github.com/matplotlib/basemap/issues/577
+[#576]:
+https://github.com/matplotlib/basemap/pull/576
 [#574]:
 https://github.com/matplotlib/basemap/issues/574
 [#573]:
