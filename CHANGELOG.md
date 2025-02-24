@@ -36,6 +36,14 @@ https://semver.org/spec/v2.0.0.html
     vulnerabilities [CVE-2023-50447] and [CVE-2024-28219].
   - Upgrade upper limit for `pillow` to 11.2.
   - Upgrade upper limit for `OWSLib` to 0.33.
+- Update lint dependencies:
+  - Remove dependency on `unittest2`.
+  - Upgrade lower limit for `flake8` to 3.9.
+  - Upgrade upper limit for `flake8` to 7.2.
+  - Upgrade lower limit for `astroid` to 3.0.
+  - Upgrade upper limit for `astroid` to 3.4.
+  - Upgrade lower limit for `pylint` to 3.0.
+  - Upgrade upper limit for `pylint` to 3.4.
 - Update test dependencies:
   - Remove dependency on `unittest2`.
   - Upgrade lower limit for `pytest` to 7.0.
