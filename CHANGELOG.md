@@ -31,6 +31,11 @@ https://semver.org/spec/v2.0.0.html
   - Upgrade lower limit for `pyproj` to 3.0.
   - Upgrade upper limit for `pyproj` to 3.8.
   - Upgrade lower limit for `pyshp` to 2.0.
+- Update optional library dependencies:
+  - Upgrade lower limit for `pillow` to 10.3 due to
+    vulnerabilities [CVE-2023-50447] and [CVE-2024-28219].
+  - Upgrade upper limit for `pillow` to 11.2.
+  - Upgrade upper limit for `OWSLib` to 0.33.
 - Update test dependencies:
   - Remove dependency on `unittest2`.
   - Upgrade lower limit for `pytest` to 7.0.
@@ -1340,6 +1345,10 @@ https://github.com/matplotlib/basemap/compare/v1.0.3rel...v1.0.4rel
 [1.0.3]:
 https://github.com/matplotlib/basemap/tree/v1.0.3rel
 
+[CVE-2024-28219]:
+https://nvd.nist.gov/vuln/detail/CVE-2024-28219
+[CVE-2023-50447]:
+https://nvd.nist.gov/vuln/detail/CVE-2023-50447
 [CVE-2023-27476]:
 https://nvd.nist.gov/vuln/detail/CVE-2023-27476
 [CVE-2022-45198]:
