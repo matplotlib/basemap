@@ -237,9 +237,7 @@ setup(**{
         data_files,
     "python_requires":
         ", ".join([
-            ">=2.6",
-            "!=3.0.*",
-            "!=3.1.*",
+            ">=3.9",
             "<3.13",
         ]),
     "setup_requires":
