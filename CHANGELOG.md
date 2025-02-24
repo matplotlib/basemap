@@ -31,6 +31,14 @@ https://semver.org/spec/v2.0.0.html
   - Upgrade lower limit for `pyproj` to 3.0.
   - Upgrade upper limit for `pyproj` to 3.8.
   - Upgrade lower limit for `pyshp` to 2.0.
+- Update test dependencies:
+  - Remove dependency on `unittest2`.
+  - Upgrade lower limit for `pytest` to 7.0.
+  - Upgrade upper limit for `pytest` to 8.4.
+  - Upgrade lower limit for `pytest-cov` to 3.0.
+  - Upgrade upper limit for `pytest-cov` to 6.1.
+  - Downgrade lower limit for `coverage` to 5.0.
+  - Upgrade upper limit for `coverage` to 7.7.
 
 ### Fixed
 - Fix Cython extension to use `noexcept` (PR [#615] by @cvanelteren).

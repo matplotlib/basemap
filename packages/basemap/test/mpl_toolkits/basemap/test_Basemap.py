@@ -4,10 +4,7 @@ import os
 import shutil
 import tempfile
 import datetime as dt
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 
 import numpy as np
 import matplotlib as mpl
