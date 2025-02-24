@@ -20,6 +20,17 @@ https://semver.org/spec/v2.0.0.html
 - **BREAKING CHANGE**: Migrate `basemap` libraries to use implicit
   namespace packages (PR [#576] by @ksunden).
 - Migrate workflows to use `cibuildwheel` (PR [#614] by @cvanelteren).
+- Update library dependencies:
+  - Upgrade upper limit for `basemap_data` to 3.0.
+  - Upgrade lower limit for `packaging` to 20.5.
+  - Upgrade upper limit for `packaging` to 25.0.
+  - Upgrade lower limit for `numpy` to 2.0.
+  - Upgrade upper limit for `numpy` to 2.3.
+  - Upgrade lower limit for `matplotlib` to 3.4.
+  - Upgrade upper limit for `matplotlib` to 3.11.
+  - Upgrade lower limit for `pyproj` to 3.0.
+  - Upgrade upper limit for `pyproj` to 3.8.
+  - Upgrade lower limit for `pyshp` to 2.0.
 
 ### Fixed
 - Fix Cython extension to use `noexcept` (PR [#615] by @cvanelteren).
