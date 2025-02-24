@@ -21,4 +21,3 @@ pytest-cov >= 2.5, < 2.6; python_version == "3.2"
 pytest-cov >= 2.5, < 2.6; python_version == "3.3"
 pytest-cov >= 2.5, < 2.9; python_version == "3.4"
 pytest-cov >= 2.9, < 4.2; python_version >= "3.5"
-pytest
