@@ -162,7 +162,6 @@ ext_modules = [
 for ext in ext_modules:
     ext.cython_directives = [
         ("language_level", str(sys.version_info[0])),
-        ("legacy_implicit_noexcept", True),
     ][:1 + int(cython_major_version >= 3)]
 
 # Define all the different requirements.
