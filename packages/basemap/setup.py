@@ -14,12 +14,6 @@ from setuptools import find_namespace_packages
 from setuptools.command.sdist import sdist
 from setuptools.extension import Extension
 
-try:
-    import Cython
-    cython_major_version = int(Cython.__version__.split(".", 1)[0])
-except ImportError:
-    cython_major_version = 0
-
 
 def get_content(name, splitlines=False):
     """Return the file contents with project root as root folder."""
@@ -162,7 +156,7 @@ ext_modules = [
 for ext in ext_modules:
     ext.cython_directives = [
         ("language_level", str(sys.version_info[0])),
-    ][:1 + int(cython_major_version >= 3)]
+    ]
 
 setup(**{
     "name":
