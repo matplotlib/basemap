@@ -36,6 +36,13 @@ https://semver.org/spec/v2.0.0.html
     vulnerabilities [CVE-2023-50447] and [CVE-2024-28219].
   - Upgrade upper limit for `pillow` to 11.2.
   - Upgrade upper limit for `OWSLib` to 0.33.
+- Update doc dependencies:
+  - Upgrade upper limit for `sphinx` to 8.0.
+  - Upgrade lower limit for `furo` to 2023.9.10.
+  - Upgrade upper limit for `furo` to 2024.8.7.
+  - Upgrade lower limit for `scipy` to 1.6.
+  - Upgrade upper limit for `scipy` to 1.16.
+  - Upgrade upper limit for `netCDF4` to 1.8.0.
 - Update lint dependencies:
   - Remove dependency on `unittest2`.
   - Upgrade lower limit for `flake8` to 3.9.
