@@ -1,0 +1,143 @@
+name: Build
+
+on:
+  push:
+    paths:
+      - ".github/workflows/**"
+      - "packages/basemap/**"
+      - "packages/basemap_data/**"
+      - "packages/basemap_data_hires/**"
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "packages/basemap/**"
+      - "packages/basemap_data/**"
+      - "packages/basemap_data_hires/**"
+  workflow_dispatch:
+
+jobs:
+  build_data:
+    name: Build data packages
+    strategy:
+      matrix:
+        package: [basemap_data, basemap_data_hires]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Build sdist and wheels
+        run: |
+          cd packages/${{ matrix.package }}
+          python -m pip install build wheel
+          python -m build --sdist --wheel
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: |
+            packages/${{ matrix.package }}/dist/*.tar.gz
+            packages/${{ matrix.package }}/dist/*.whl
+          name: dist-${{ matrix.package }}
+
+  build_basemap:
+    name: Build basemap package (${{ matrix.os }})
+    needs: [build_data]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            before_all: >-
+              echo "Starting BEFORE_ALL script" &&
+              echo "GEOS_DIR set to: ${GEOS_DIR}" &&
+              cd "{package}" &&
+              python -c "import utils; utils.GeosLibrary('${GEOS_VERSION}').build('${GEOS_DIR}', njobs=2)"
+          - os: windows-latest
+            before_all: >-
+              echo Starting BEFORE_ALL script &&
+              echo GEOS_DIR set to: %GEOS_DIR% &&
+              cd "{package}" &&
+              python -c "import utils; utils.GeosLibrary('%GEOS_VERSION%').build('%GEOS_DIR%', njobs=2)"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Build sdist
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          cd packages/basemap
+          python -m pip install build
+          python -m build --sdist
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.22.0
+        env:
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_BUILD: "cp39* cp310* cp311* cp312*"
+          CIBW_SKIP: "pp* *-musllinux_* *-win32 *-manylinux_i686 *-musllinux_i686 *-aarch64 *-armv7l"
+          CIBW_BEFORE_ALL: ${{ matrix.before_all }}
+          CIBW_ENVIRONMENT: >-
+            GEOS_VERSION="3.6.5"
+            GEOS_DIR="$(pwd)/extern"
+            PIP_PREFER_BINARY=1
+            PYTHONUNBUFFERED=1
+            LD_LIBRARY_PATH="${GEOS_DIR}/lib"
+          # LD_LIBRARY_PATH in environment is needed by auditwheel (Linux).
+        with:
+          package-dir: "packages/basemap"
+          output-dir: "packages/basemap/dist"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: |
+            packages/basemap/dist/*.tar.gz
+            packages/basemap/dist/*.whl
+          name: dist-basemap-${{ matrix.os }}
+
+  check:
+    name: Check packages
+    needs: [build_data, build_basemap]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: "dist-*"
+          merge-multiple: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Check packages with twine
+        run: |
+          python -m pip install twine
+          python -m twine check dist/*.tar.gz
+          python -m twine check dist/*.whl
+
+  upload:
+    name: Upload packages
+    needs: [build_data, build_basemap, check]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: "dist-*"
+          merge-multiple: true
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
