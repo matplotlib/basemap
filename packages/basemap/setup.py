@@ -164,26 +164,6 @@ for ext in ext_modules:
         ("language_level", str(sys.version_info[0])),
     ][:1 + int(cython_major_version >= 3)]
 
-# Define all the different requirements.
-setup_requires = get_content("requirements-setup.txt", splitlines=True)
-install_requires = get_content("requirements.txt", splitlines=True)
-if sys.version_info[:2] == (3, 2):
-    # Hack for Python 3.2 because pip < 8 cannot handle version markers.
-    marker1 = '; python_version == "3.2"'
-    marker2 = '; python_version >= "2.7"'
-    setup_requires = [
-        item.replace(marker1, "").replace(marker2, "") for item in setup_requires
-        if item.endswith(marker1) or item.endswith(marker2)
-        or "python_version" not in item]
-    install_requires = [
-        item.replace(marker1, "").replace(marker2, "") for item in install_requires
-        if item.endswith(marker1) or item.endswith(marker2)
-        or "python_version" not in item]
-else:
-    marker1 = '; python_version == "3.2"'
-    setup_requires = [item for item in setup_requires if not item.endswith(marker1)]
-    install_requires = [item for item in install_requires if not item.endswith(marker1)]
-
 setup(**{
     "name":
         "basemap",
@@ -236,9 +216,9 @@ setup(**{
             "<3.13",
         ]),
     "setup_requires":
-        setup_requires,
+        get_content("requirements-setup.txt", splitlines=True),
     "install_requires":
-        install_requires,
+        get_content("requirements.txt", splitlines=True),
     "extras_require": {
         "doc":
             get_content("requirements-doc.txt", splitlines=True),
