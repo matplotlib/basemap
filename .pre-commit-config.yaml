@@ -1,7 +1,6 @@
 ci:
   autofix_commit_msg: |
     [pre-commit.ci] auto fixes from pre-commit.com hooks
-
     for more information, see https://pre-commit.ci
   autofix_prs: false
   autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
@@ -10,13 +9,14 @@ ci:
   submodules: false
 
 repos:
-  - repo: https://github.com/psf/black-pre-commit-mirror
+  - repo: https://github.com/psf/black
     rev: 25.1.0
     hooks:
       - id: black
-        files: ^src/
+        exclude: ^(examples/|packages/basemap_data/|packages/basemap_data_hires/)
+
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
     hooks:
       - id: flake8
-        files: ^src/
+        exclude: ^(examples/|packages/basemap_data/|packages/basemap_data_hires/)
