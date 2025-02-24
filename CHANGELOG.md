@@ -13,7 +13,9 @@ https://semver.org/spec/v2.0.0.html
 ## [Unreleased]
 
 ### Added
-- Support `numpy` 2.0 (PR [#614] by @cvanelteren, solves issue [#604]).
+- Support for Python 3.13 (PR [#619], solves issue [#608]).
+- Support for NumPy 2.0 (PR [#614] by @cvanelteren, solves issue
+  [#604]).
 
 ### Changed
 - **BREAKING CHANGE**: Set Python minimum supported version to 3.9.
@@ -1152,10 +1154,14 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#619]:
+https://github.com/matplotlib/basemap/pull/619
 [#615]:
 https://github.com/matplotlib/basemap/pull/615
 [#614]:
 https://github.com/matplotlib/basemap/pull/614
+[#608]:
+https://github.com/matplotlib/basemap/issues/608
 [#604]:
 https://github.com/matplotlib/basemap/issues/604
 [#598]:
