@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2021-2024 Víctor Molina García
+# Copyright (c) 2021-2025 Víctor Molina García
 #
 # GeosLibrary.py is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published
@@ -62,7 +62,7 @@ class GeosLibrary(object):
     def __del__(self):
         """Clean up after :class:`GeosLibrary` destruction."""
 
-        if self.temp:
+        if getattr(self, "temp", None) and getattr(self, "root", None):
             try:
                 shutil.rmtree(self.root)
             except OSError:
