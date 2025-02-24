@@ -24,6 +24,9 @@ https://semver.org/spec/v2.0.0.html
 ### Fixed
 - Fix Cython extension to use `noexcept` (PR [#615] by @cvanelteren).
 
+### Removed
+- Deprecated `bdist_wheel.universal` option when building wheels.
+
 ## [1.4.1] - 2024-02-15
 
 ### Changed
