@@ -10,6 +10,8 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
+## [Unreleased]
+
 ## [1.4.1] - 2024-02-15
 
 ### Changed

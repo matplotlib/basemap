@@ -2,7 +2,7 @@ import sys
 import numpy
 cimport numpy as cnp
 
-__version__ = "1.4.1"
+__version__ = "1.5.0-dev"
 
 
 # Need some Python C-API functions for strings.
@@ -112,7 +112,7 @@ cdef extern from "geos_c.h":
 # Cython 3: Next cdef needs "noexcept" declaration unless
 # the compiler directive "legacy_implicit_noexcept" is used
 # ("noexcept" syntax supported since Cython 0.29.31).
-cdef void notice_h(const char *fmt, ...):
+cdef void notice_h(const char *fmt, ...) noexcept:
     pass
     #format = PyBytes_FromString(fmt)
     #message = PyBytes_FromString(msg)

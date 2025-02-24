@@ -162,7 +162,6 @@ ext_modules = [
 for ext in ext_modules:
     ext.cython_directives = [
         ("language_level", str(sys.version_info[0])),
-        ("legacy_implicit_noexcept", True),
     ][:1 + int(cython_major_version >= 3)]
 
 # Define all the different requirements.
@@ -234,9 +233,7 @@ setup(**{
         data_files,
     "python_requires":
         ", ".join([
-            ">=2.6",
-            "!=3.0.*",
-            "!=3.1.*",
+            ">=3.9",
             "<3.13",
         ]),
     "setup_requires":
