@@ -7,7 +7,7 @@ import io
 import os
 import itertools
 from setuptools import setup
-from setuptools import find_packages
+from setuptools import find_namespace_packages
 
 
 def get_content(name, splitlines=False):
@@ -86,13 +86,10 @@ setup(**{
         "maps",
         "plots",
     ],
-    "namespace_packages": [
-        "mpl_toolkits.basemap_data",
-    ],
     "package_dir":
         {"": "src"},
     "packages":
-        find_packages(where="src"),
+        find_namespace_packages(where="src"),
     "package_data": {
         "mpl_toolkits.basemap_data":
             data_files,
