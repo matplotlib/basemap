@@ -68,10 +68,10 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.22.0
         env:
-          CIBW_BUILD_VERBOSITY: 1
-          CIBW_BUILD: "cp39* cp310* cp311* cp312* cp313*"
           CIBW_ARCHS: "native"
-          CIBW_SKIP: "pp* *-musllinux_* *-win32 *-manylinux_i686 *-musllinux_i686 *-linux_aarch64 *-linux_armv7l"
+          CIBW_BUILD: "cp39* cp310* cp311* cp312* cp313*"
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_SKIP: "*-musllinux_*"
           CIBW_BEFORE_ALL: "python {project}/.github/workflows/run_before_all.py"
           CIBW_TEST_EXTRAS: "test"
           CIBW_TEST_COMMAND: "python -m pytest {project}/packages/basemap"
