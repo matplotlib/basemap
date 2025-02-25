@@ -23,7 +23,7 @@ https://semver.org/spec/v2.0.0.html
 - **BREAKING CHANGE**: Migrate `basemap` libraries to use implicit
   namespace packages (PR [#576] by @ksunden).
 - Migrate workflows to use `cibuildwheel` (PRs [#614] and [#618] by
-  @cvanelteren, solves sunset of v1 of GitHub artifact actions).
+  @cvanelteren, solves sunset of GitHub artifact actions v1).
 - Update library dependencies:
   - Upgrade upper limit for `basemap_data` to 3.0.
   - Upgrade lower limit for `packaging` to 20.5.
