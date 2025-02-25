@@ -61,7 +61,6 @@ jobs:
           - os: macos-13
             arch: x86_64
             before_all: >-
-              ARCHFLAGS="-arch x86_64 -arch arm64"
               echo "Starting BEFORE_ALL script" &&
               echo "GEOS_DIR set to: ${GEOS_DIR}" &&
               cd "{package}" &&
@@ -69,7 +68,6 @@ jobs:
           - os: macos-14
             arch: arm64
             before_all: >-
-              ARCHFLAGS="-arch x86_64 -arch arm64"
               echo "Starting BEFORE_ALL script" &&
               echo "GEOS_DIR set to: ${GEOS_DIR}" &&
               cd "{package}" &&
