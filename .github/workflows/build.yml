@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         package: [basemap_data, basemap_data_hires]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
@@ -49,7 +49,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             arch: x86_64
             before_all: >-
               echo "Starting BEFORE_ALL script" &&
@@ -70,7 +70,7 @@ jobs:
               echo "GEOS_DIR set to: ${GEOS_DIR}" &&
               cd "{package}" &&
               python -c "import utils; utils.GeosLibrary('${GEOS_VERSION}').build('${GEOS_DIR}', njobs=2)"
-          - os: windows-latest
+          - os: windows-2019
             arch: x86_64
             before_all: >-
               echo Starting BEFORE_ALL script &&
@@ -87,7 +87,7 @@ jobs:
           python-version: "3.9"
 
       - name: Build sdist
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-22.04'
         run: |
           cd packages/basemap
           python -m pip install build
@@ -125,7 +125,7 @@ jobs:
   check:
     name: Check packages
     needs: [build_data, build_basemap]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -147,7 +147,7 @@ jobs:
   upload:
     name: Upload packages
     needs: [build_data, build_basemap, check]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/download-artifact@v4
