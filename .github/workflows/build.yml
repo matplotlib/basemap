@@ -48,15 +48,7 @@ jobs:
     needs: [build_data]
     strategy:
       matrix:
-        include:
-          - os: ubuntu-22.04
-            arch: x86_64
-          - os: windows-2019
-            arch: x86_64
-          - os: macos-13
-            arch: x86_64
-          - os: macos-14
-            arch: arm64
+        os: [ubuntu-22.04, windows-2019, macos-13, macos-14]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -78,7 +70,7 @@ jobs:
         env:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BUILD: "cp39* cp310* cp311* cp312* cp313*"
-          CIBW_ARCHS_MACOS: ${{ matrix.arch }}
+          CIBW_ARCHS: "native"
           CIBW_SKIP: "pp* *-musllinux_* *-win32 *-manylinux_i686 *-musllinux_i686 *-linux_aarch64 *-linux_armv7l"
           CIBW_BEFORE_ALL: "python {project}/.github/workflows/run_before_all.py"
           CIBW_TEST_EXTRAS: "test"
