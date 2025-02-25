@@ -48,8 +48,6 @@ jobs:
     needs: [build_data]
     strategy:
       matrix:
-        os:
-          [ubuntu-latest, windows-latest, macos-13, macos-14]
         include:
           - os: ubuntu-latest
             arch: x86_64
