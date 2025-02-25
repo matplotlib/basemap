@@ -48,7 +48,7 @@ jobs:
     needs: [build_data]
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         include:
           - os: ubuntu-latest
             before_all: >-
