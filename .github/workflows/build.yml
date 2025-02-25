@@ -51,32 +51,12 @@ jobs:
         include:
           - os: ubuntu-22.04
             arch: x86_64
-            before_all: >-
-              echo "Starting BEFORE_ALL script" &&
-              echo "GEOS_DIR set to: ${GEOS_DIR}" &&
-              cd "{package}" &&
-              python -c "import utils; utils.GeosLibrary('${GEOS_VERSION}').build('${GEOS_DIR}', njobs=2)"
-          - os: macos-13
-            arch: x86_64
-            before_all: >-
-              echo "Starting BEFORE_ALL script" &&
-              echo "GEOS_DIR set to: ${GEOS_DIR}" &&
-              cd "{package}" &&
-              python -c "import utils; utils.GeosLibrary('${GEOS_VERSION}').build('${GEOS_DIR}', njobs=2)"
-          - os: macos-14
-            arch: arm64
-            before_all: >-
-              echo "Starting BEFORE_ALL script" &&
-              echo "GEOS_DIR set to: ${GEOS_DIR}" &&
-              cd "{package}" &&
-              python -c "import utils; utils.GeosLibrary('${GEOS_VERSION}').build('${GEOS_DIR}', njobs=2)"
           - os: windows-2019
             arch: x86_64
-            before_all: >-
-              echo Starting BEFORE_ALL script &&
-              echo GEOS_DIR set to: %GEOS_DIR% &&
-              cd "{package}" &&
-              python -c "import utils; utils.GeosLibrary('%GEOS_VERSION%').build('%GEOS_DIR%', njobs=2)"
+          - os: macos-13
+            arch: x86_64
+          - os: macos-14
+            arch: arm64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -100,12 +80,13 @@ jobs:
           CIBW_BUILD: "cp39* cp310* cp311* cp312* cp313*"
           CIBW_ARCHS_MACOS: ${{ matrix.arch }}
           CIBW_SKIP: "pp* *-musllinux_* *-win32 *-manylinux_i686 *-musllinux_i686 *-linux_aarch64 *-linux_armv7l"
-          CIBW_BEFORE_ALL: ${{ matrix.before_all }}
+          CIBW_BEFORE_ALL: "python {project}/.github/workflows/run_before_all.py"
           CIBW_TEST_EXTRAS: "test"
           CIBW_TEST_COMMAND: "python -m pytest {project}/packages/basemap"
           CIBW_ENVIRONMENT: >-
             GEOS_VERSION="3.6.5"
             GEOS_DIR="$(pwd)/extern"
+            GEOS_NJOBS=4
             PIP_PREFER_BINARY=1
             PYTHONUNBUFFERED=1
             LD_LIBRARY_PATH="${GEOS_DIR}/lib"
