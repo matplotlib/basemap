@@ -48,7 +48,8 @@ jobs:
     needs: [build_data]
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+        os:
+          [ubuntu-latest, windows-latest, macos-latest, macos-13]
         include:
           - os: ubuntu-latest
             arch: x86_64
@@ -57,7 +58,7 @@ jobs:
               echo "GEOS_DIR set to: ${GEOS_DIR}" &&
               cd "{package}" &&
               python -c "import utils; utils.GeosLibrary('${GEOS_VERSION}').build('${GEOS_DIR}', njobs=2)"
-          - os: macos-13:
+          - os: macos-13
             before_all: >-
               LD_LIBRARY_PATH="${GEOS_DIR}/lib:$LD_LIBRARY_PATH"
               DYLD_FALLBACK_LIBRARY_PATH="${GEOS_DIR}/lib:$DYLD_FALLBACK_LIBRARY_PATH"
