@@ -111,7 +111,8 @@ jobs:
             PIP_PREFER_BINARY=1
             PYTHONUNBUFFERED=1
             LD_LIBRARY_PATH="${GEOS_DIR}/lib"
-          # LD_LIBRARY_PATH in environment is needed by auditwheel (Linux).
+          # LD_LIBRARY_PATH in environment is needed by
+          # auditwheel (Linux) and delocate (MacOS).
         with:
           package-dir: "packages/basemap"
           output-dir: "packages/basemap/dist"
