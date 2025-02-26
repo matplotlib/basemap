@@ -121,6 +121,7 @@ jobs:
     name: Upload packages
     needs: [build_data, build_basemap, check]
     runs-on: ubuntu-22.04
+    environment: PyPI
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/download-artifact@v4
@@ -133,3 +134,5 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_TOKEN }}
+          repository-url: ${{ secrets.PYPI_REPOSITORY_URL }}
+          skip-existing: true
