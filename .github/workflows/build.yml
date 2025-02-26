@@ -277,25 +277,32 @@ jobs:
 
       - name: Install packages
         run: |
-          # Get Python version to find matching wheel
-          PYTHON_VERSION=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
-          echo "Using Python $PYTHON_VERSION"
+          # Get Python version
+          PY_VER=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
+          echo "Using Python $PY_VER"
 
-          # Install matching wheel for Linux
-          MATCHING_WHEEL=$(find ./wheels -name "basemap-*-cp3${PYTHON_VERSION/./}*.whl" | head -1)
+          # List available wheels
+          echo "Available wheels:"
+          ls -la ./wheels/
+
+          # Find wheel matching current Python version
+          MATCHING_WHEEL=$(find ./wheels -name "*-cp${PY_VER}-cp${PY_VER}*" | head -1)
+
           if [ -n "$MATCHING_WHEEL" ]; then
-            echo "Installing wheel: $MATCHING_WHEEL"
+            echo "Installing matching wheel: $MATCHING_WHEEL"
             python -m pip install "$MATCHING_WHEEL"
           else
-            echo "No matching wheel found for Python $PYTHON_VERSION. Available wheels:"
-            ls -la ./wheels/
-            echo "Falling back to installing any available wheel..."
+            echo "No matching wheel found for Python $PY_VER. Installing any available wheel..."
             python -m pip install ./wheels/*.whl
           fi
 
           # Install data packages
-          echo "Installing data packages..."
+          echo "Installing data packages:"
+          ls -la ./data_packages/
           python -m pip install ./data_packages/*.whl
+
+          # Verify installation
+          python -c "import mpl_toolkits.basemap; print('Basemap version:', mpl_toolkits.basemap.__version__)"
 
       - name: Install documentation requirements
         run: |
