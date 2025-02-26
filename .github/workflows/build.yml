@@ -86,6 +86,57 @@ jobs:
           name: basemap-sdist
           path: ./sdist/
 
+      - name: Download data packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: dist-basemap_data*
+          path: ./data_packages/
+          merge-multiple: true
+
+      - name: Install data packages (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          # Debug - show what we downloaded
+          ls -la ./data_packages/
+
+          # Install the data packages
+          python -m pip install ./data_packages/*.whl
+
+          # Verify they're installed
+          python -c "import mpl_toolkits.basemap_data; print('Data package installed')"
+          python -c "import mpl_toolkits.basemap_data_hires; print('Hires data package installed')" || echo "Optional hires package not installed"
+
+      # Install the data packages (Windows)
+      - name: Install data packages (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # Debug - show what we downloaded
+          Get-ChildItem -Path "./data_packages" -Recurse
+
+          # Find all wheel files
+          $wheels = Get-ChildItem -Path "./data_packages" -Filter "*.whl" -Recurse
+
+          # Install each wheel file
+          foreach ($wheel in $wheels) {
+            Write-Host "Installing $($wheel.FullName)"
+            python -m pip install $wheel.FullName
+          }
+
+          # Verify they're installed
+          try {
+            python -c "import mpl_toolkits.basemap_data; print('Data package installed')"
+          } catch {
+            Write-Host "Error importing basemap_data"
+          }
+
+          try {
+            python -c "import mpl_toolkits.basemap_data_hires; print('Hires data package installed')"
+          } catch {
+            Write-Host "Optional hires package not installed"
+          }
+
       - name: Extract sdist (Linux/macOS)
         if: runner.os != 'Windows'
         shell: bash
@@ -148,6 +199,8 @@ jobs:
             PIP_PREFER_BINARY=1
             PYTHONUNBUFFERED=1
             LD_LIBRARY_PATH="${GEOS_DIR}/lib"
+          # LD_LIBRARY_PATH in environment is needed by
+          # auditwheel (Linux) and delocate (MacOS).
         with:
           package-dir: ${{ env.SDIST_DIR }} # Use extracted sdist
           output-dir: "dist"
