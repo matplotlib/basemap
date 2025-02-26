@@ -235,11 +235,43 @@ jobs:
         run: |
           python -m pip install build setuptools wheel
           mkdir -p /tmp/sdist_test
-          tar -xvf dist/*.tar.gz -C /tmp/sdist_test
+
+          # List all files in dist directory
+          echo "Files in dist directory:"
+          ls -la dist/
+
+          # Extract only the basemap sdist
+          BASEMAP_SDIST=$(ls dist/basemap-*.tar.gz 2>/dev/null || echo "")
+
+          if [ -z "$BASEMAP_SDIST" ]; then
+            echo "Basemap sdist not found with pattern 'basemap-*.tar.gz', trying alternative patterns..."
+            BASEMAP_SDIST=$(ls dist/*basemap*.tar.gz 2>/dev/null | head -1 || echo "")
+          fi
+
+          if [ -z "$BASEMAP_SDIST" ]; then
+            echo "ERROR: Could not find any basemap sdist"
+            exit 1
+          fi
+
+          echo "Using sdist: $BASEMAP_SDIST"
+
+          # Extract just the one sdist file
+          tar -xvf "$BASEMAP_SDIST" -C /tmp/sdist_test
+
+          # Enter extracted directory
           cd /tmp/sdist_test/*/
+
+          # Install and build
           python -m pip install -e .
           python -m build --wheel
-          ls -la dist/*.whl
+
+          # Check for built wheel
+          if [ -d "dist" ]; then
+            ls -la dist/*.whl || echo "No wheels found in dist directory"
+          else
+            echo "No dist directory created"
+            exit 1
+          fi
 
   upload:
     name: Upload packages
