@@ -105,7 +105,6 @@ jobs:
 
           # Verify they're installed
           python -c "import mpl_toolkits.basemap_data; print('Data package installed')"
-          python -c "import mpl_toolkits.basemap_data_hires; print('Hires data package installed')" || echo "Optional hires package not installed"
 
       # Install the data packages (Windows)
       - name: Install data packages (Windows)
@@ -124,18 +123,12 @@ jobs:
             python -m pip install $wheel.FullName
           }
 
-          # Verify they're installed
-          try {
-            python -c "import mpl_toolkits.basemap_data; print('Data package installed')"
-          } catch {
-            Write-Host "Error importing basemap_data"
-          }
+          # Show installed packages
+          python -m pip list | Select-String "mpl_toolkits.basemap"
 
-          try {
-            python -c "import mpl_toolkits.basemap_data_hires; print('Hires data package installed')"
-          } catch {
-            Write-Host "Optional hires package not installed"
-          }
+          # Try different import paths
+          Write-Host "Trying to import basemap_data..."
+          python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data imported successfully')"
 
       - name: Extract sdist (Linux/macOS)
         if: runner.os != 'Windows'
