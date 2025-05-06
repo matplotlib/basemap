@@ -80,17 +80,3 @@ better_great_circle(m, -147.7164, 64.8378, 33.0846, 68.9585, color='green', line
 
 ax.set_title("Fixed Great Circles on Mercator Projection")
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
