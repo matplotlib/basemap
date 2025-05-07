@@ -6,7 +6,7 @@ from datetime import datetime
 
 # lon_0 is central longitude of projection.
 # resolution = 'c' means use crude resolution coastlines.
-m = Basemap(projection='robin',lon_0=180,resolution='c')
+m = Basemap(projection='robin',lon_0=0,resolution='c')
 
 m.drawcoastlines()
 m.fillcontinents(color='coral',lake_color='aqua')
