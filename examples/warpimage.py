@@ -39,7 +39,6 @@ print('warp to McBryde-Thomas Flat-Polar Quartic map ...')
 fig=plt.figure()
 # define projection centered on North America.
 m = Basemap(projection='hammer',lon_0=-100,resolution='l')
-m.bluemarble(scale=0.5)
 # draw coastlines.
 m.drawcoastlines(linewidth=0.5,color='0.5')
 # draw lat/lon grid lines every 30 degrees.
