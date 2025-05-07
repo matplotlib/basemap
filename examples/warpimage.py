@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # illustrate use of warpimage method to display an image background
 # on the map projection region.  Default background is the 'blue
 # marble' image from NASA (http://visibleearth.nasa.gov).
-
+ 
 # create new figure
 fig=plt.figure()
 # define orthographic projection centered on North America.
