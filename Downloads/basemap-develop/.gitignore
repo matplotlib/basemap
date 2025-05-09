@@ -1,0 +1,40 @@
+.eggs
+build
+dist
+*.egg-info
+*.pyc
+*.pyd
+*.so
+
+htmlcov
+.cache
+.coverage
+.pytest_cache
+
+# File manager files.
+.gdb_history
+.DS_Store
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Temporary files.
+.#*
+[#]*#
+*~
+*$
+*.bak
+
+# IDE files.
+.project
+.pydevproject
+.vscode
+
+# Things specific to this project.
+*.pickle
+examples/*.png
+packages/basemap/doc/examples
+packages/basemap/doc/users/installing.rst
+packages/basemap/doc/_static/matplotlibrc
+packages/basemap/doc/_templates/gallery.html

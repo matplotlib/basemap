@@ -47,9 +47,9 @@ def JulianDayFromDate(date, calendar="standard"):
         year = year - 1
     A = int(year / 100)
     jd = (
-            int(365.25 * (year + 4716)) +
-            int(30.6001 * (month + 1)) +
-            day - 1524.5
+        int(365.25 * (year + 4716)) +
+        int(30.6001 * (month + 1)) +
+        day - 1524.5
     )
 
     # Optionally adjust `jd` for the switch from Julian to Gregorian calendar.

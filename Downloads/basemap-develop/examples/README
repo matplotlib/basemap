@@ -1,0 +1,168 @@
+Basemap example scripts
+
+allskymap_cr_example.py is an all-sky plot that uses the module allskymap.py
+to make sky maps used in astronomy.
+
+simpletest.py is the simple example given in the Basemap docstrings.
+
+simpletest_oo.py is the same example, but using the "OO" interface (does
+not import pylab).
+
+test.py exercises all the available map projections by plotting the etopo 
+20 minute bathymetry/topography data using imshow.
+
+contour_demo.py demonstrates the use of filled contours with map projections.
+
+customticks.py shows how to create custom tick labels for a cylindrical
+projection.
+
+plotcities.py shows how to read and plot data from a shapefile containing
+Point data.
+
+plotmap.py is the example on the matplotlib 'screenshots' page (included
+in test.py) which shows the ETOPO topography as an image on a Lambert
+Conformal projection (using imshow).
+
+plotmap_shaded.py shows how to make a 'shaded relief' plot by specifying
+the location of a lightsource.
+
+plotmap_oo.py is a version of plotmap.py that does not import pylab - it uses
+the matplotlib OO interface instead.
+
+plotmap_masked.py is a version of plotmap.py that shows how to mask out
+portions of the plot (in this case the oceans) using pcolor and imshow.
+
+nytolondon.py shows how to draw a great circle on a map (NY to London)
+
+hires.py illustrates the use of the high-resolution coastlines, by
+drawing the coastlines, political boundaries and rivers of the British
+Isles. Shows how to pickle and re-load a Basemap class instance (useful
+for high-res coastlines when you are plotting the same small map region
+many times in different scripts).
+
+quiver_demo.py shows how to plot wind vectors on a map.
+
+barbs_demo.py shows how to plot wind barbs on a map.
+
+randompoints.py demonstrates the use of scatter to plot randomly distributed
+points on the earth.
+
+ortho_demo.py demonstrates the orthographic projection - you can interactively
+enter the reference lat/lon (the viewpoint of the satellite). Also shows
+how to plot the default 5 minute land-sea mask, specifying the colors
+to be used for land and ocean areas.
+
+geos_demo.py demonstrates the geostationary projection - you can interactively
+enter the reference longitude and height above the equator of the
+satellite.
+
+geos_demo_2.py demonstrates how to read in a geostationary satellite image
+from a jpeg file, then plot only a portion of the full earth (contributed
+by Scott Sinclair, requires PIL).
+
+geos_demo_3.py shows how to make a regional geostationary or orthographic 
+plot, where part of the region is outside the projection limb.
+
+fcstmaps.py is a sample multi-panel plot that accesses
+data over http using the dap module. An internet connection is required.
+
+fcstmaps_axesgrid.py is the same as above, but illustrates the use
+of the AxesGrid toolkit.
+
+plotsst.py also uses dap client to access the data, and also illustrates
+how the NetCDFFile function deals with missing values.
+
+wiki_example.py is the example from the MatplotlibCookbook scipy wiki page
+(http://www.scipy.org/wikis/topical_software/MatplotlibCookbook/wikipage_view).
+
+fillstates.py is an example that shows how to draw 
+and fill polygons (in this case U.S. States) from
+and ESRI shapefile. 
+
+hurrtrack.py plots hurricane tracks from shapefile data 
+(from nationalatlas.gov).
+
+testgdal.py is an example that shows how to plot GIS data 
+using the gdal module (http://gdal.maptools.org).
+
+panelplot.py shows how to make multi-panel plots, taking special care to 
+make sure that map aspect ratios are preserved (so you don't get squished
+and/or stretched maps).
+
+polarmaps.py illustrates the use of the special-case versions of the 
+stereographic, lambert azimuthal equal area, azimuthal equidistant 
+projections (prefixed by 'np' and 'sp').
+
+warpimage.py shows how to use an image as a map background with the
+'warpimage' and 'bluemarble' Basemap methods. Requires PIL.
+
+garp.py makes a 'World According to Garp' map - an azimuthal equidistant
+projection centered on a specified location.  Straight lines from that
+location to any point on the map have true scale and show the shortest
+route.  Shows how to use the 'width' and 'height' keywords
+to specify the map projection region (instead of specifying
+the lat/lon of the upper right and lower left corners).
+
+More examples of using the 'width' and 'height' keywords (instead of
+'llcrnrlat','llcrnrlon','urcrnrlat','urcrnrlon') are given in setwh.py.
+
+plot_tissot.py - tissot's indicatrix, shows the distorting effects of
+different map projections.
+
+animate.py shows how to make an animation.
+
+ccsm_popgrid.py shows how to plot data on 2d grids which are not 
+rectilinear in map projection or geographic coordinates.  The NCAR
+Parallel Ocean Program grid is used as an example.
+
+show_colormaps.py plots the extra colormaps included with basemap.
+
+plotprecip.py use nonlinear precip colormap included with basemap
+to make a rainfall plot.
+
+cubed_sphere.py - plot a "cubed globe" suitable for cutting and folding,
+a la http://www.progonos.com/furuti/MapProj/Normal/ProjPoly/Foldout/Cube/cube.html.
+
+run_all.py is a driver script that runs all the examples except fcstmaps.py,
+testgdal.py, geos_demo_2.py, warpimage.py, and pnganim.py (which
+rely on external dependencies and/or an internet connection).
+
+embedding_map_in_wx.py is an example of how to embed Basemap using wx or wxagg
+in a GUI application.
+
+save_background.py shows how to save a map background and reuse it in another
+figure (without having to redraw coastlines).
+
+maskoceans.py shows how to mask 'wet' areas on a plot.
+
+plothighsandlows.py shows to plot H's and L's at the local extrema of a pressure map
+(requires scipy).
+
+daynight.py shows how to shade the regions of a map where the sun has set.
+
+ploticos.py demonstrates plotting on unstructured grids.
+
+lic_demo.py shows how to use vectorplot scikit to visualize vector fields with
+Line Integral Convolutions (LIC).
+
+streamplot_demo.py shows how to use new matplotlib streamplot method to visualize wind fields.
+
+hexbin_demo.py shows how to plot scattered data using matplotlib hexbin function.
+
+make_inset.py shows how to make an inset showing the location of the map projection region
+from a global perspective.
+
+utmtest.py shows how to plot a UTM zone.
+
+shiftdata.py shows how to use the 'latlon' keyword to automatically transform to map
+projection coordinates and shift the data longitudinally to fit the map projection region.
+
+counties.py shows how to draw U.S. county boundaries.
+
+testarcgis.py tests using arcgisimage method to retrieve a background image from a 
+ArcGIS server using the REST API.
+
+testwmsimage.py shows how to retrieve an image from a WMS server and display
+it on a map.
+
+test_rotpole.py shows how to plot regional climate model data in the native 'rotated pole' projection.
