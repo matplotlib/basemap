@@ -1,4 +1,5 @@
 flake8 >= 3.9, < 7.3
+flake8-pyproject >= 1.0, < 1.3
 
 astroid >= 3.0, < 3.4
 pylint >= 3.0, < 3.4
