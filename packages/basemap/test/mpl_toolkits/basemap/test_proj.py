@@ -1,10 +1,6 @@
 """Import test for :mod:`mpl_toolkits.basemap.proj`."""
 
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
+import unittest
 from mpl_toolkits.basemap.proj import Proj
 
 

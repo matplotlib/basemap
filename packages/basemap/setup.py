@@ -10,15 +10,9 @@ import sys
 import glob
 import warnings
 from setuptools import setup
-from setuptools import find_packages
+from setuptools import find_namespace_packages
 from setuptools.command.sdist import sdist
 from setuptools.extension import Extension
-
-try:
-    import Cython
-    cython_major_version = int(Cython.__version__.split(".", 1)[0])
-except ImportError:
-    cython_major_version = 0
 
 
 def get_content(name, splitlines=False):
@@ -162,28 +156,7 @@ ext_modules = [
 for ext in ext_modules:
     ext.cython_directives = [
         ("language_level", str(sys.version_info[0])),
-        ("legacy_implicit_noexcept", True),
-    ][:1 + int(cython_major_version >= 3)]
-
-# Define all the different requirements.
-setup_requires = get_content("requirements-setup.txt", splitlines=True)
-install_requires = get_content("requirements.txt", splitlines=True)
-if sys.version_info[:2] == (3, 2):
-    # Hack for Python 3.2 because pip < 8 cannot handle version markers.
-    marker1 = '; python_version == "3.2"'
-    marker2 = '; python_version >= "2.7"'
-    setup_requires = [
-        item.replace(marker1, "").replace(marker2, "") for item in setup_requires
-        if item.endswith(marker1) or item.endswith(marker2)
-        or "python_version" not in item]
-    install_requires = [
-        item.replace(marker1, "").replace(marker2, "") for item in install_requires
-        if item.endswith(marker1) or item.endswith(marker2)
-        or "python_version" not in item]
-else:
-    marker1 = '; python_version == "3.2"'
-    setup_requires = [item for item in setup_requires if not item.endswith(marker1)]
-    install_requires = [item for item in install_requires if not item.endswith(marker1)]
+    ]
 
 setup(**{
     "name":
@@ -214,7 +187,6 @@ setup(**{
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Visualization",
         "Topic :: Software Development :: Libraries :: Python Modules",
@@ -224,28 +196,23 @@ setup(**{
         "maps",
         "plots",
     ],
-    "namespace_packages": [
-        "mpl_toolkits",
-    ],
     "package_dir":
         {"": "src"},
     "packages":
-        find_packages(where="src"),
+        find_namespace_packages(where="src"),
     "ext_modules":
         ext_modules,
     "data_files":
         data_files,
     "python_requires":
         ", ".join([
-            ">=2.6",
-            "!=3.0.*",
-            "!=3.1.*",
-            "<3.13",
+            ">=3.9",
+            "<3.14",
         ]),
     "setup_requires":
-        setup_requires,
+        get_content("requirements-setup.txt", splitlines=True),
     "install_requires":
-        install_requires,
+        get_content("requirements.txt", splitlines=True),
     "extras_require": {
         "doc":
             get_content("requirements-doc.txt", splitlines=True),

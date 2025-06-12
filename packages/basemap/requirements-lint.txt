@@ -1,17 +1,4 @@
-unittest2; python_version <= "3.9"
+flake8 >= 3.9, < 7.2
 
-flake8 >= 2.6, < 3.0; python_version == "2.6"
-flake8 >= 2.6, < 4.0; python_version == "2.7"
-flake8 >= 2.6, < 3.0; python_version == "3.2"
-flake8 >= 2.6, < 3.0; python_version == "3.3"
-flake8 >= 2.6, < 3.9; python_version == "3.4"
-flake8 >= 2.6, < 6.2; python_version >= "3.5"
-
-astroid >= 1.6, < 2.0; python_version == "2.7"
-astroid >= 2.4, < 2.5; python_version == "3.5"
-astroid >= 2.5, < 2.7; python_version == "3.6"
-astroid >= 2.8, < 3.1; python_version >= "3.7"
-pylint >= 1.9, < 2.0; python_version == "2.7"
-pylint >= 2.6, < 2.7; python_version == "3.5"
-pylint >= 2.7, < 2.10; python_version == "3.6"
-pylint >= 2.11, < 3.1; python_version >= "3.7"
+astroid >= 3.0, < 3.4
+pylint >= 3.0, < 3.4

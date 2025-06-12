@@ -12,6 +12,65 @@ https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Added
+- Python 3.13 support (PR [#619], solves issue [#608]).
+- NumPy 2.0 support (PR [#614] by @cvanelteren, solves issue [#604]).
+- Automated wheels for x86_64 and arm64 (PR [#620] by @cvanelteren,
+  solves issue [#608]).
+
+### Changed
+- **BREAKING CHANGE**: Set Python minimum supported version to 3.9.
+- **BREAKING CHANGE**: Migrate `basemap` libraries to use implicit
+  namespace packages (PR [#576] by @ksunden).
+- Migrate workflows to use `cibuildwheel` (PRs [#614], [#618], [#622]
+  and [#623] by @cvanelteren and PR [#621], solves GitHub artifact
+  actions v1 sunset).
+- Update library dependencies:
+  - Upgrade upper limit for `basemap_data` to 3.0.
+  - Upgrade lower limit for `packaging` to 20.5.
+  - Upgrade upper limit for `packaging` to 25.0.
+  - Upgrade lower limit for `numpy` to 2.0.
+  - Upgrade upper limit for `numpy` to 2.3.
+  - Upgrade lower limit for `matplotlib` to 3.4.
+  - Upgrade upper limit for `matplotlib` to 3.11.
+  - Upgrade lower limit for `pyproj` to 3.0.
+  - Upgrade upper limit for `pyproj` to 3.8.
+  - Upgrade lower limit for `pyshp` to 2.0.
+- Update optional library dependencies:
+  - Upgrade lower limit for `pillow` to 10.3 due to
+    vulnerabilities [CVE-2023-50447] and [CVE-2024-28219].
+  - Upgrade upper limit for `pillow` to 11.2.
+  - Upgrade upper limit for `OWSLib` to 0.33.
+- Update doc dependencies:
+  - Upgrade upper limit for `sphinx` to 8.0.
+  - Upgrade lower limit for `furo` to 2023.9.10.
+  - Upgrade upper limit for `furo` to 2024.8.7.
+  - Upgrade lower limit for `scipy` to 1.6.
+  - Upgrade upper limit for `scipy` to 1.16.
+  - Upgrade upper limit for `netCDF4` to 1.8.0.
+- Update lint dependencies:
+  - Remove dependency on `unittest2`.
+  - Upgrade lower limit for `flake8` to 3.9.
+  - Upgrade upper limit for `flake8` to 7.2.
+  - Upgrade lower limit for `astroid` to 3.0.
+  - Upgrade upper limit for `astroid` to 3.4.
+  - Upgrade lower limit for `pylint` to 3.0.
+  - Upgrade upper limit for `pylint` to 3.4.
+- Update test dependencies:
+  - Remove dependency on `unittest2`.
+  - Upgrade lower limit for `pytest` to 7.0.
+  - Upgrade upper limit for `pytest` to 8.4.
+  - Upgrade lower limit for `pytest-cov` to 3.0.
+  - Upgrade upper limit for `pytest-cov` to 6.1.
+  - Downgrade lower limit for `coverage` to 5.0.
+  - Upgrade upper limit for `coverage` to 7.7.
+
+### Fixed
+- Fix Cython extension to use `noexcept` (PR [#615] by @cvanelteren).
+
+### Removed
+- Deprecated `bdist_wheel.universal` option when building wheels.
+
 ## [1.4.1] - 2024-02-15
 
 ### Changed
@@ -1098,6 +1157,26 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#623]:
+https://github.com/matplotlib/basemap/pull/623
+[#622]:
+https://github.com/matplotlib/basemap/pull/622
+[#621]:
+https://github.com/matplotlib/basemap/pull/621
+[#620]:
+https://github.com/matplotlib/basemap/pull/620
+[#619]:
+https://github.com/matplotlib/basemap/pull/619
+[#618]:
+https://github.com/matplotlib/basemap/pull/618
+[#615]:
+https://github.com/matplotlib/basemap/pull/615
+[#614]:
+https://github.com/matplotlib/basemap/pull/614
+[#608]:
+https://github.com/matplotlib/basemap/issues/608
+[#604]:
+https://github.com/matplotlib/basemap/issues/604
 [#598]:
 https://github.com/matplotlib/basemap/pull/598
 [#595]:
@@ -1126,6 +1205,8 @@ https://github.com/matplotlib/basemap/pull/580
 https://github.com/matplotlib/basemap/issues/579
 [#577]:
 https://github.com/matplotlib/basemap/issues/577
+[#576]:
+https://github.com/matplotlib/basemap/pull/576
 [#574]:
 https://github.com/matplotlib/basemap/issues/574
 [#573]:
@@ -1298,6 +1379,10 @@ https://github.com/matplotlib/basemap/compare/v1.0.3rel...v1.0.4rel
 [1.0.3]:
 https://github.com/matplotlib/basemap/tree/v1.0.3rel
 
+[CVE-2024-28219]:
+https://nvd.nist.gov/vuln/detail/CVE-2024-28219
+[CVE-2023-50447]:
+https://nvd.nist.gov/vuln/detail/CVE-2023-50447
 [CVE-2023-27476]:
 https://nvd.nist.gov/vuln/detail/CVE-2023-27476
 [CVE-2022-45198]:

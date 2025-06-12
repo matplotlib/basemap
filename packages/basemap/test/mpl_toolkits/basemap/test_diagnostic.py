@@ -1,11 +1,7 @@
 """Import test for :mod:`mpl_toolkits.basemap.diagnostic`."""
 
+import unittest
 from collections import namedtuple
-try:
-    import unittest2 as unittest
-except ImportError:
-    import unittest
-
 from mpl_toolkits.basemap import diagnostic
 
 

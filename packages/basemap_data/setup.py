@@ -7,7 +7,7 @@ import io
 import os
 import itertools
 from setuptools import setup
-from setuptools import find_packages
+from setuptools import find_namespace_packages
 
 
 def get_content(name, splitlines=False):
@@ -73,7 +73,7 @@ setup(**{
     "name":
         "basemap_data",
     "version":
-        "1.3.2",
+        "2.0.0-dev",
     "license":
         "GNU Lesser General Public License v3 or later (LGPLv3+)",
     "description":
@@ -98,7 +98,6 @@ setup(**{
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Visualization",
         "Topic :: Software Development :: Libraries :: Python Modules",
@@ -108,22 +107,17 @@ setup(**{
         "maps",
         "plots",
     ],
-    "namespace_packages": [
-        "mpl_toolkits.basemap_data",
-    ],
     "package_dir":
         {"": "src"},
     "packages":
-        find_packages(where="src"),
+        find_namespace_packages(where="src"),
     "package_data": {
         "mpl_toolkits.basemap_data":
             data_files,
     },
     "python_requires":
         ", ".join([
-            ">=2.6",
-            "!=3.0.*",
-            "!=3.1.*",
+            ">=3.9",
             "<4",
         ]),
     "project_urls": {

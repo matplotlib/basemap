@@ -22,7 +22,7 @@ PY2 = sys.version_info[0] == 2
 # -- Project information -----------------------------------------------
 
 project = myself.__name__.rsplit(".", 1)[-1]
-copyright = "2011-2014 Jeffrey Whitaker; 2015-2024 The Matplotlib development team"
+copyright = "2011-2014 Jeffrey Whitaker; 2015-2025 The Matplotlib development team"
 author = "Jeffrey Whitaker"
 
 # The short X.Y version
