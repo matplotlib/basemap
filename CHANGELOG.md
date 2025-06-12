@@ -39,8 +39,8 @@ https://semver.org/spec/v2.0.0.html
 - Update optional library dependencies:
   - Upgrade lower limit for `pillow` to 10.3 due to
     vulnerabilities [CVE-2023-50447] and [CVE-2024-28219].
-  - Upgrade upper limit for `pillow` to 11.2.
-  - Upgrade upper limit for `OWSLib` to 0.33.
+  - Upgrade upper limit for `pillow` to 11.3.
+  - Upgrade upper limit for `OWSLib` to 0.35.
 - Update doc dependencies:
   - Upgrade upper limit for `sphinx` to 8.0.
   - Upgrade lower limit for `furo` to 2023.9.10.
