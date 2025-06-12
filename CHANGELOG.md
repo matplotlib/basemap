@@ -67,6 +67,8 @@ https://semver.org/spec/v2.0.0.html
 
 ### Fixed
 - Fix Cython extension to use `noexcept` (PR [#615] by @cvanelteren).
+- Fix incorrect return order described in `Basemap.shiftdata` docstring
+  (PR [#624] by @Cdiaz1234, solves issue [#599]).
 
 ### Removed
 - Deprecated `bdist_wheel.universal` option when building wheels.
@@ -1157,6 +1159,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#624]:
+https://github.com/matplotlib/basemap/pull/624
 [#623]:
 https://github.com/matplotlib/basemap/pull/623
 [#622]:
@@ -1177,6 +1181,8 @@ https://github.com/matplotlib/basemap/pull/614
 https://github.com/matplotlib/basemap/issues/608
 [#604]:
 https://github.com/matplotlib/basemap/issues/604
+[#599]:
+https://github.com/matplotlib/basemap/issues/599
 [#598]:
 https://github.com/matplotlib/basemap/pull/598
 [#595]:
