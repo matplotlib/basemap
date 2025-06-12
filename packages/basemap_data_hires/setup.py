@@ -58,8 +58,6 @@ setup(**{
         get_content("README.md"),
     "long_description_content_type":
         "text/markdown",
-    "url":
-        "https://matplotlib.org/basemap",
     "author":
         "Jeff Whitaker",
     "author_email":
@@ -103,11 +101,13 @@ setup(**{
             "<4",
         ]),
     "project_urls": {
-        "Bug Tracker":
-            "https://github.com/matplotlib/basemap/issues",
-        "Documentation":
-            "https://matplotlib.org/basemap/",
-        "Source":
+        "Homepage":
             "https://github.com/matplotlib/basemap",
+        "Documentation":
+            "https://matplotlib.org/basemap",
+        "Repository":
+            "https://github.com/matplotlib/basemap.git",
+        "Issues":
+            "https://github.com/matplotlib/basemap/issues",
     },
 })
