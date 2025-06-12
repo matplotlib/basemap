@@ -4836,10 +4836,11 @@ class Basemap(object):
                          [lon_0-180, lon_0+180] range.
         ================ ======================================================
 
-        If datain is given, returns ``lonsout, dataout`` (longitudes and data shifted to fit in the interval
-[lon_0-180, lon_0+180]); otherwise, returns just the shifted longitudes. If
-transformed longitudes lie outside the map projection region, data is
-masked and longitudes are set to 1.e30.
+        If datain is given, returns ``lonsout, dataout`` (longitudes and data
+        shifted to fit in the interval [lon_0-180, lon_0+180]); otherwise,
+        returns just the shifted longitudes. If transformed longitudes lie
+        outside the map projection region, data is masked and longitudes are
+        set to 1.e30.
         """
         if lon_0 is None and 'lon_0' not in self.projparams:
             raise ValueError('lon_0 keyword must be provided')
