@@ -15,15 +15,16 @@ https://semver.org/spec/v2.0.0.html
 ### Added
 - Python 3.13 support (PR [#619], solves issue [#608]).
 - NumPy 2.0 support (PR [#614] by @cvanelteren, solves issue [#604]).
-- Automated wheels for x86_64 and arm64 (PRs [#620] and [#622] by
-  @cvanelteren, solves issue [#608]).
+- Automated wheels for x86_64 and arm64 (PR [#620] by @cvanelteren,
+  solves issue [#608]).
 
 ### Changed
 - **BREAKING CHANGE**: Set Python minimum supported version to 3.9.
 - **BREAKING CHANGE**: Migrate `basemap` libraries to use implicit
   namespace packages (PR [#576] by @ksunden).
-- Migrate workflows to use `cibuildwheel` (PRs [#614] and [#618] by
-  @cvanelteren and PR [#621], solves GitHub artifact actions v1 sunset).
+- Migrate workflows to use `cibuildwheel` (PRs [#614], [#618], [#622]
+  and [#623] by @cvanelteren and PR [#621], solves GitHub artifact
+  actions v1 sunset).
 - Update library dependencies:
   - Upgrade upper limit for `basemap_data` to 3.0.
   - Upgrade lower limit for `packaging` to 20.5.
@@ -1156,6 +1157,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#623]:
+https://github.com/matplotlib/basemap/pull/623
 [#622]:
 https://github.com/matplotlib/basemap/pull/622
 [#621]:
