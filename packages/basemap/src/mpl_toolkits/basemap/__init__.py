@@ -4413,6 +4413,7 @@ class Basemap(object):
         verbose          if True, print WMS server info (default
                          False).
         \**kwargs        extra keyword arguments passed on to
+                         OWSLib.wms.WebMapService and
                          OWSLib.wms.WebMapService.getmap.
         ==============   ====================================================
 
