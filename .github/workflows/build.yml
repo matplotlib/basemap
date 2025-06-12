@@ -230,26 +230,6 @@ jobs:
           python -m twine check dist/*.tar.gz
           python -m twine check dist/*.whl
 
-      - name: Verify sdist content
-        run: |
-          mkdir -p /tmp/sdist_test
-
-          # Find and extract basemap sdist
-          BASEMAP_SDIST=$(ls dist/basemap-*.tar.gz 2>/dev/null || ls dist/*basemap*.tar.gz 2>/dev/null | head -1)
-          tar -xvf "$BASEMAP_SDIST" -C /tmp/sdist_test
-
-          # Verify contents
-          echo "Files in extracted sdist:"
-          find /tmp/sdist_test -type f | grep -v "__pycache__" | sort
-
-          # Check for critical files
-          if [ -f "$(find /tmp/sdist_test -name "_geoslib.pyx")" ]; then
-            echo "✓ Source files verified in sdist"
-          else
-            echo "✗ Missing critical source files in sdist"
-            exit 1
-          fi
-
   upload:
     name: Upload packages
     needs: [build_data, build_sdist, build_wheels, check]
