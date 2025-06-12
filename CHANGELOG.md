@@ -42,6 +42,13 @@ https://semver.org/spec/v2.0.0.html
     vulnerabilities [CVE-2023-50447] and [CVE-2024-28219].
   - Upgrade upper limit for `pillow` to 11.3.
   - Upgrade upper limit for `OWSLib` to 0.35.
+- Update build dependencies:
+  - Upgrade lower limit for `setuptools` to 67.0.
+  - Upgrade upper limit for `setuptools` to 81.0.
+  - Upgrade lower limit for `wheel` to 0.40.
+  - Upgrade upper limit for `wheel` to 0.46.
+  - Upgrade lower limit for `cython` to 3.0.
+  - Upgrade upper limit for `cython` to 3.2.
 - Update doc dependencies:
   - Upgrade upper limit for `sphinx` to 8.0.
   - Upgrade lower limit for `furo` to 2023.9.10.
@@ -122,7 +129,7 @@ https://semver.org/spec/v2.0.0.html
   - Downgrade upper limit for `pyproj` to 2.2.0 for Python 2.7.
   - Set dependency on `packaging` as replacement for `distutils`.
 - Update build dependencies:
-  - Upgrade upper limit for `Cython` to 3.1.
+  - Upgrade upper limit for `cython` to 3.1.
 - Update doc dependencies and require at least Python 3.8 for them:
   - Upgrade upper limit for `sphinx` to 7.2.
   - Upgrade upper limit for `furo` to 2023.9.11.
