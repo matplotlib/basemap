@@ -163,8 +163,6 @@ setup(**{
         "basemap",
     "version":
         get_version("mpl_toolkits.basemap"),
-    "license":
-        "MIT",
     "description":
         "Plot data on map projections with matplotlib",
     "long_description":
@@ -181,6 +179,12 @@ setup(**{
         "Víctor Molina García",
     "maintainer_email":
         "molinav@users.noreply.github.com",
+    "license":
+        "MIT",
+    "license_files": [
+        "LICENSE",
+        "LICENSE.geos",
+    ],
     "classifiers": [
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Education",

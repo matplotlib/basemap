@@ -52,8 +52,6 @@ setup(**{
         "basemap_data_hires",
     "version":
         "2.0.0-dev",
-    "license":
-        "GNU Lesser General Public License v3 or later (LGPLv3+)",
     "description":
         "High-resolution data assets for matplotlib basemap",
     "long_description":
@@ -70,6 +68,12 @@ setup(**{
         "Víctor Molina García",
     "maintainer_email":
         "molinav@users.noreply.github.com",
+    "license":
+        "GNU Lesser General Public License v3 or later (LGPLv3+)",
+    "license_files": [
+        "COPYING",
+        "COPYING.LESSER",
+    ],
     "classifiers": [
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Education",
