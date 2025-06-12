@@ -63,7 +63,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           path: packages/basemap/dist/*.tar.gz
-          name: basemap-sdist
+          name: dist-basemap-sdist
 
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -126,7 +126,7 @@ jobs:
       - name: Download basemap sdist
         uses: actions/download-artifact@v4
         with:
-          name: basemap-sdist
+          name: dist-basemap-sdist
           path: ./sdist/
 
       - name: Extract sdist (Linux/macOS)
@@ -213,11 +213,6 @@ jobs:
           pattern: "dist-*"
           merge-multiple: true
 
-      - uses: actions/download-artifact@v4
-        with:
-          path: dist
-          name: basemap-sdist
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -241,11 +236,6 @@ jobs:
           path: dist
           pattern: "dist-*"
           merge-multiple: true
-
-      - uses: actions/download-artifact@v4
-        with:
-          path: dist
-          name: basemap-sdist
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
