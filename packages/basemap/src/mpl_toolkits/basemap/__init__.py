@@ -4454,8 +4454,8 @@ class Basemap(object):
         if verbose: print(server)
         wms_keys = ["version", "xml", "username", "password", "auth",
                     "headers", "timeout", "parse_remote_metadata"]
-        wms_options = {k: kwargs[v] for k in wms_keys if k in kwargs}
-        kwargs = {k: kwargs[v] for k in kwargs if k not in wms_keys}
+        wms_options = {k: kwargs[k] for k in wms_keys if k in kwargs}
+        kwargs = {k: kwargs[k] for k in kwargs if k not in wms_keys}
         wms = WebMapService(server, **wms_options)
         if verbose:
             print('id: %s, version: %s' %
