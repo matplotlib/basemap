@@ -51,7 +51,7 @@ setup(**{
     "name":
         "basemap_data_hires",
     "version":
-        "2.0.0-dev",
+        "2.0.0.dev0",
     "description":
         "High-resolution data assets for matplotlib basemap",
     "long_description":

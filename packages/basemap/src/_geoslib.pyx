@@ -2,7 +2,7 @@ import sys
 import numpy
 cimport numpy as cnp
 
-__version__ = "2.0.0-dev"
+__version__ = "2.0.0.dev0"
 
 
 # Need some Python C-API functions for strings.

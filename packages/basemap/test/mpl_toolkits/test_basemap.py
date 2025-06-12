@@ -14,8 +14,8 @@ class TestMplToolkitsBasemap(unittest.TestCase):
         basemap_version = basemap.__version__
 
         num = r"(?:0|[1-9]\d*)"
-        build = r"(?:dev|a[1-4]|b[1-3]|rc[1-2])"
-        semver = r"^({0}\.{0}\.{0})(?:[+-]?({1}))?$".format(num, build)
+        build = r"(?:dev[0]?|a[1-4]|b[1-3]|rc[1-2])"
+        semver = r"^({0}\.{0}\.{0})(?:[+-\.]?({1}))?$".format(num, build)
         self.assertRegex(basemap_version, semver)
 
 
