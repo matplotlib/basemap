@@ -80,13 +80,6 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Download data packages
-        uses: actions/download-artifact@v4
-        with:
-          pattern: dist-basemap_data*
-          path: ./data_packages/
-          merge-multiple: true
-
       - name: Download basemap sdist
         uses: actions/download-artifact@v4
         with:
