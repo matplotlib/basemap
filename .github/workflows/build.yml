@@ -87,30 +87,6 @@ jobs:
           path: ./data_packages/
           merge-multiple: true
 
-      - name: Install data packages (Linux/macOS)
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          # Install the wheel data packages with wildcard
-          python -m pip install ./data_packages/*.whl
-
-          # Verify that the data packages can be imported
-          python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data installed successfully')"
-
-      - name: Install data packages (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          # Install the wheel data packages sequentially
-          $wheels = Get-ChildItem -Path "./data_packages" -Filter "*.whl" -Recurse
-          foreach ($wheel in $wheels) {
-            Write-Host "Installing $($wheel.FullName)"
-            python -m pip install $wheel.FullName
-          }
-
-          # Verify that the data packages can be imported
-          python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data installed successfully')"
-
       - name: Download basemap sdist
         uses: actions/download-artifact@v4
         with:
