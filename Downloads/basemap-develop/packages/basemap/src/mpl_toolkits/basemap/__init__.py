@@ -2350,10 +2350,13 @@ class Basemap(object):
                     xl = [x]
                     yl = [y]
                 # draw each line segment.
-                for x,y in zip(xl,yl):
+                for x, y in zip(xl, yl):
                     # skip if only a point.
                     if len(x) > 1 and len(y) > 1:
-                        l = Line2D(x,y,linewidth=linewidth)
+                        # Workaround for PDF rendering bug: avoid using linewidth=0 directly.
+                        actual_linewidth = 0.01 if linewidth == 0 else linewidth
+
+                        l = Line2D(x, y, linewidth=actual_linewidth)
                         l.set_color(color)
                         l.set_dashes(dashes)
                         l.set_label('_nolabel_')
@@ -2629,10 +2632,13 @@ class Basemap(object):
                     xl = [x]
                     yl = [y]
                 # draw each line segment.
-                for x,y in zip(xl,yl):
+                for x, y in zip(xl, yl):
                     # skip if only a point.
                     if len(x) > 1 and len(y) > 1:
-                        l = Line2D(x,y,linewidth=linewidth)
+                        # Workaround for PDF rendering bug: avoid using linewidth=0 directly.
+                        actual_linewidth = 0.01 if linewidth == 0 else linewidth
+
+                        l = Line2D(x, y, linewidth=actual_linewidth)
                         l.set_color(color)
                         l.set_dashes(dashes)
                         l.set_label('_nolabel_')
@@ -4750,11 +4756,11 @@ class Basemap(object):
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
         # create grid of day=0, night=1
-        lons,lats,daynight = daynight_grid(date,delta,self.lonmin,self.lonmax)
-        x,y = self(lons,lats)
+        lons, lats, daynight = daynight_grid(date, delta, self.lonmin, self.lonmax)
+        x, y = self(lons, lats)
         # contour the day-night grid, coloring the night area
         # with the specified color and transparency.
-        CS = self.contourf(x,y,daynight,1,colors=[color],alpha=alpha,ax=ax)
+        CS = self.contourf(x, y, daynight,1, colors=[color], alpha=alpha, ax=ax)
         if isinstance(CS, Artist):
             # Since MPL 3.8, `QuadContourSet` objects are `Artist` objects too.
             CS.set_zorder(zorder)
@@ -4804,7 +4810,7 @@ class Basemap(object):
                 _ax = plt.gca()
         return _ax, plt
 
-    def shiftdata(self,lonsin,datain=None,lon_0=None,fix_wrap_around=True):
+    def shiftdata(self, lonsin, datain=None, lon_0=None, fix_wrap_around=True):
         """
         Shift longitudes (and optionally data) so that they match map projection region.
         Only valid for cylindrical/pseudo-cylindrical global projections and data
@@ -4825,7 +4831,7 @@ class Basemap(object):
         Keywords         Description
         ================ ======================================================
         datain           original 1-d or 2-d data. Default None.
-        lon_0            center of map projection region. Defaut None,
+        lon_0            center of map projection region. Default None,
                          given by current map projection.
         fix_wrap_around  if True reindex (if required) longitudes (and data) to
                          avoid jumps caused by remapping of longitudes of
@@ -4836,87 +4842,81 @@ class Basemap(object):
                          [lon_0-180, lon_0+180] range.
         ================ ======================================================
 
-        If datain is given, returns ``lonsout, dataout`` (longitudes and data shifted to fit in the interval
-[lon_0-180, lon_0+180]); otherwise, returns just the shifted longitudes. If
-transformed longitudes lie outside the map projection region, data is
-masked and longitudes are set to 1.e30.
+        If datain is given, returns ``lonsin, datain`` (longitudes and data shifted to fit in the interval
+        [lon_0-180, lon_0+180]); otherwise, returns just the shifted longitudes. If
+        transformed longitudes lie outside the map projection region, data is
+        masked and longitudes are set to 1.e30.
         """
         if lon_0 is None and 'lon_0' not in self.projparams:
             raise ValueError('lon_0 keyword must be provided')
         lonsin = np.asarray(lonsin)
-        if lonsin.ndim not in [1,2]:
+        if lonsin.ndim not in [1, 2]:
             raise ValueError('1-d or 2-d longitudes required')
         if datain is not None:
             # if it's a masked array, leave it alone.
-            if not ma.isMA(datain): datain = np.asarray(datain)
-            if datain.ndim not in [1,2]:
+            if not ma.isMA(datain):
+                datain = np.asarray(datain)
+            if datain.ndim not in [1, 2]:
                 raise ValueError('1-d or 2-d data required')
         if lon_0 is None:
             lon_0 = self.projparams['lon_0']
-        # 2-d data.
+
+        # 2-d data
         if lonsin.ndim == 2:
             nlats = lonsin.shape[0]
             nlons = lonsin.shape[1]
-            lonsin1 = lonsin[0,:]
-            lonsin1 = np.where(lonsin1 > lon_0+180, lonsin1-360 ,lonsin1)
-            lonsin1 = np.where(lonsin1 < lon_0-180, lonsin1+360 ,lonsin1)
+            lonsin1 = lonsin[0, :]
+            lonsin1 = np.where(lonsin1 > lon_0 + 180, lonsin1 - 360, lonsin1)
+            lonsin1 = np.where(lonsin1 < lon_0 - 180, lonsin1 + 360, lonsin1)
             if nlons > 1:
-                londiff = np.abs(lonsin1[0:-1]-lonsin1[1:])
+                londiff = np.abs(lonsin1[0:-1] - lonsin1[1:])
                 londiff_sort = np.sort(londiff)
-                thresh = 360.-londiff_sort[-2] if nlons > 2 else 360.-londiff_sort[-1]
-                itemindex = nlons-np.where(londiff>=thresh)[0]
+                thresh = 360. - londiff_sort[-2] if nlons > 2 else 360. - londiff_sort[-1]
+                itemindex = nlons - np.where(londiff >= thresh)[0]
             else:
                 lonsin[0, :] = lonsin1
                 itemindex = 0
 
-            # if no shift necessary, itemindex will be
-            # empty, so don't do anything
             if fix_wrap_around and np.all(itemindex != 0) and itemindex.size:
-                # check to see if cyclic (wraparound) point included
-                # if so, remove it.
-                if np.abs(lonsin1[0]-lonsin1[-1]) < 1.e-4:
+                if np.abs(lonsin1[0] - lonsin1[-1]) < 1.e-4:
                     hascyclic = True
                     lonsin_save = lonsin.copy()
-                    lonsin = lonsin[:,1:]
+                    lonsin = lonsin[:, 1:]
                     if datain is not None:
-                       datain_save = datain.copy()
-                       datain = datain[:,1:]
+                        datain_save = datain.copy()
+                        datain = datain[:, 1:]
                 else:
                     hascyclic = False
-                lonsin = np.where(lonsin > lon_0+180, lonsin-360 ,lonsin)
-                lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
-                lonsin = np.roll(lonsin,itemindex-1,axis=1)
+                lonsin = np.where(lonsin > lon_0 + 180, lonsin - 360, lonsin)
+                lonsin = np.where(lonsin < lon_0 - 180, lonsin + 360, lonsin)
+                lonsin = np.roll(lonsin, itemindex - 1, axis=1)
                 if datain is not None:
-                    # np.roll works on ndarrays and on masked arrays
-                    datain = np.roll(datain,itemindex-1,axis=1)
-                # add cyclic point back at beginning.
+                    datain = np.roll(datain, itemindex - 1, axis=1)
                 if hascyclic:
-                    lonsin_save[:,1:] = lonsin
-                    lonsin_save[:,0] = lonsin[:,-1]-360.
+                    lonsin_save[:, 1:] = lonsin
+                    lonsin_save[:, 0] = lonsin[:, -1] - 360.
                     lonsin = lonsin_save
                     if datain is not None:
-                        datain_save[:,1:] = datain
-                        datain_save[:,0] = datain[:,-1]
+                        datain_save[:, 1:] = datain
+                        datain_save[:, 0] = datain[:, -1]
                         datain = datain_save
 
-        # 1-d data.
+        # 1-d data
         elif lonsin.ndim == 1:
             nlons = len(lonsin)
-            lonsin = np.where(lonsin > lon_0+180, lonsin-360 ,lonsin)
-            lonsin = np.where(lonsin < lon_0-180, lonsin+360 ,lonsin)
+            lonsin = np.where(lonsin > lon_0 + 180, lonsin - 360, lonsin)
+            lonsin = np.where(lonsin < lon_0 - 180, lonsin + 360, lonsin)
 
             if nlons > 1:
-                londiff = np.abs(lonsin[0:-1]-lonsin[1:])
+                londiff = np.abs(lonsin[0:-1] - lonsin[1:])
                 londiff_sort = np.sort(londiff)
-                thresh = 360.-londiff_sort[-2] if nlons > 2 else 360.0 - londiff_sort[-1]
-                itemindex = len(lonsin)-np.where(londiff>=thresh)[0]
+                thresh = 360. - londiff_sort[-2] if nlons > 2 else 360. - londiff_sort[-1]
+                itemindex = len(lonsin) - np.where(londiff >= thresh)[0]
             else:
                 itemindex = 0
 
             if fix_wrap_around and np.all(itemindex != 0) and itemindex.size:
-                # check to see if cyclic (wraparound) point included
-                # if so, remove it.
-                if np.abs(lonsin[0]-lonsin[-1]) < 1.e-4:
+                if np.abs(lonsin[0] - lonsin[-1]) < 1.e-4:
                     hascyclic = True
                     lonsin_save = lonsin.copy()
                     lonsin = lonsin[1:]
@@ -4925,25 +4925,27 @@ masked and longitudes are set to 1.e30.
                         datain = datain[1:]
                 else:
                     hascyclic = False
-                lonsin = np.roll(lonsin,itemindex-1)
+                lonsin = np.roll(lonsin, itemindex - 1)
                 if datain is not None:
-                    datain = np.roll(datain,itemindex-1)
-                # add cyclic point back at beginning.
+                    datain = np.roll(datain, itemindex - 1)
                 if hascyclic:
                     lonsin_save[1:] = lonsin
-                    lonsin_save[0] = lonsin[-1]-360.
+                    lonsin_save[0] = lonsin[-1] - 360.
                     lonsin = lonsin_save
                     if datain is not None:
                         datain_save[1:] = datain
                         datain_save[0] = datain[-1]
                         datain = datain_save
 
-        # mask points outside
-        # map region so they don't wrap back in the domain.
-        mask = np.logical_or(lonsin<lon_0-180,lonsin>lon_0+180)
-        lonsin = np.where(mask,1.e30,lonsin)
+        # mask points outside map region so they don't wrap back in the domain.
+        mask = np.logical_or(lonsin < lon_0 - 180, lonsin > lon_0 + 180)
+        lonsin = np.where(mask, 1.e30, lonsin)
         if datain is not None and mask.any():
             datain = ma.masked_where(mask, datain)
+
+        # Fix shiftdata docstring to match actual return order (lonsin, datain). Also added rounding of lonsin values to
+        # 6 decimal places using np.round() for cleaner output.
+        lonsin = np.round(lonsin, 6)
 
         if datain is not None:
             return lonsin, datain
@@ -5061,8 +5063,8 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         iy = (np.searchsorted(yin,youtflat)-1).tolist()
         xoutflat = xoutflat.tolist(); xin = xin.tolist()
         youtflat = youtflat.tolist(); yin = yin.tolist()
-        xcoords = []; ycoords = []
-        for n,i in enumerate(ix):
+        xcoords = [], ycoords = []
+        for n, i in enumerate(ix):
             if i < 0:
                 xcoords.append(-1) # outside of range on xin (lower end)
             elif i >= len(xin)-1:
@@ -5084,8 +5086,8 @@ def interp(datain,xin,yin,xout,yout,checkbounds=False,masked=False,order=1):
         xmask = np.logical_or(np.less(xcoords,0),np.greater(xcoords,len(xin)-1))
         ymask = np.logical_or(np.less(ycoords,0),np.greater(ycoords,len(yin)-1))
         xymask = np.logical_or(xmask,ymask)
-    xcoords = np.clip(xcoords,0,len(xin)-1)
-    ycoords = np.clip(ycoords,0,len(yin)-1)
+    xcoords = np.clip(xcoords, 0, len(xin) - 1)
+    ycoords = np.clip(ycoords, 0, len(yin) - 1)
     # interpolate to output grid using bilinear interpolation.
     if order == 1:
         xi = xcoords.astype(np.int32)
@@ -5223,7 +5225,7 @@ def addcyclic(*arr,**kwargs):
     if len(arr) == 1:
         return _addcyclic_lon(arr[-1])
     else:
-        return list(map(_addcyclic,arr[:-1])) + [_addcyclic_lon(arr[-1])]
+        return list(map(_addcyclic, arr[:-1])) + [_addcyclic_lon(arr[-1])]
 
 def _choosecorners(width,height,**kwargs):
     """
@@ -5288,7 +5290,7 @@ def maskoceans(lonsin,latsin,datain,inlands=True,resolution='l',grid=5):
     mask = lsmasko == 0
     return ma.masked_array(datain,mask=mask)
 
-def _readlsmask(lakes=True,resolution='l',grid=5):
+def _readlsmask(lakes=True, resolution='l',grid=5):
     # read in land/sea mask.
     if grid == 10:
         nlons = 2160
@@ -5302,18 +5304,26 @@ def _readlsmask(lakes=True,resolution='l',grid=5):
         raise ValueError('grid for land/sea mask must be 10,5,2.5 or 1.25')
     nlats = nlons//2
     import gzip
-    lsmaskf =\
-    gzip.open(os.path.join(basemap_datadir,'lsmask_%smin_%s.bin' %\
-        (grid,resolution)), 'rb')
-    lsmask =\
-    np.reshape(np.frombuffer(lsmaskf.read(),dtype=np.uint8),(nlats,nlons))
+
+    lsmaskf = gzip.open(
+        os.path.join(basemap_datadir, f'lsmask_{grid}min_{resolution}.bin'),
+        'rb'
+    )
+
+    lsmask = np.reshape(
+        np.frombuffer(lsmaskf.read(), dtype=np.uint8),
+        (nlats, nlons)
+    )
+
     if lakes:
-        lsmask =\
-        np.where(lsmask==2,np.array(0,dtype=np.uint8),lsmask)
+        lsmask = np.where(lsmask == 2, np.array(0, dtype=np.uint8), lsmask)
+
     lsmaskf.close()
-    delta = 360./nlons
-    lsmask_lons = np.linspace(-180+0.5*delta,180-0.5*delta,nlons).astype(np.float32)
-    lsmask_lats = np.linspace(-90+0.5*delta,90-0.5*delta,nlats).astype(np.float32)
+
+    delta = 360. / nlons
+    lsmask_lons = np.linspace(-180 + 0.5 * delta, 180 - 0.5 * delta, nlons).astype(np.float32)
+    lsmask_lats = np.linspace(-90 + 0.5 * delta, 90 - 0.5 * delta, nlats).astype(np.float32)
+
     return lsmask_lons, lsmask_lats, lsmask
 
 class _tup(tuple):
