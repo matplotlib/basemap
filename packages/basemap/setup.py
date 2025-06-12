@@ -221,8 +221,6 @@ setup(**{
             get_content("dep/requirements-test.txt", splitlines=True),
         "owslib":
             get_content("dep/requirements-owslib.txt", splitlines=True),
-        "pillow":
-            get_content("dep/requirements-pillow.txt", splitlines=True),
     },
     "cmdclass": {
         "sdist": basemap_sdist,

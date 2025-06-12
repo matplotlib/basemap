@@ -38,9 +38,6 @@ https://semver.org/spec/v2.0.0.html
   - Upgrade upper limit for `pyproj` to 3.8.
   - Upgrade lower limit for `pyshp` to 2.0.
 - Update optional library dependencies:
-  - Upgrade lower limit for `pillow` to 10.3 due to
-    vulnerabilities [CVE-2023-50447] and [CVE-2024-28219].
-  - Upgrade upper limit for `pillow` to 11.3.
   - Upgrade upper limit for `OWSLib` to 0.35.
 - Update build dependencies:
   - Upgrade lower limit for `setuptools` to 67.0.
@@ -83,6 +80,8 @@ https://semver.org/spec/v2.0.0.html
 - Deprecated use of `setup_requires` in `setup.py` file.
 - Deprecated `bdist_wheel.universal` option when building wheels.
 - Configuration of `sdist` format as zip (replaced by default tar.gz).
+- Remove `pillow` as optional dependency, since it is now a transitive
+  dependency through `matplotlib >= 3.3`.
 
 ## [1.4.1] - 2024-02-15
 
