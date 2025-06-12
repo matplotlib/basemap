@@ -98,7 +98,7 @@ jobs:
           python -m pip install ./data_packages/*.whl
 
           # Verify they're installed
-          python -c "import mpl_toolkits.basemap_data; print('Data package installed')"
+          python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data installed successfully')"
 
       - name: Install data packages (Windows)
         if: runner.os == 'Windows'
@@ -121,7 +121,7 @@ jobs:
 
           # Try different import paths
           Write-Host "Trying to import basemap_data..."
-          python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data imported successfully')"
+          python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data installed successfully')"
 
       - name: Download basemap sdist
         uses: actions/download-artifact@v4
