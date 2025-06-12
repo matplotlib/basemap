@@ -106,7 +106,6 @@ jobs:
           # Verify they're installed
           python -c "import mpl_toolkits.basemap_data; print('Data package installed')"
 
-      # Install the data packages (Windows)
       - name: Install data packages (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
