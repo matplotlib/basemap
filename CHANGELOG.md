@@ -71,6 +71,7 @@ https://semver.org/spec/v2.0.0.html
   (PR [#624] by @Cdiaz1234, solves issue [#599]).
 
 ### Removed
+- Deprecated use of `setup_requires` in `setup.py` file.
 - Deprecated `bdist_wheel.universal` option when building wheels.
 - Configuration of `sdist` format as zip (replaced by default tar.gz).
 

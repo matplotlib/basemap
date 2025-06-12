@@ -210,8 +210,6 @@ setup(**{
             ">=3.9",
             "<3.14",
         ]),
-    "setup_requires":
-        get_content("requirements-setup.txt", splitlines=True),
     "install_requires":
         get_content("requirements.txt", splitlines=True),
     "extras_require": {
