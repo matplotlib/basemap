@@ -80,12 +80,6 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Download basemap sdist
-        uses: actions/download-artifact@v4
-        with:
-          name: basemap-sdist
-          path: ./sdist/
-
       - name: Download data packages
         uses: actions/download-artifact@v4
         with:
@@ -128,6 +122,12 @@ jobs:
           # Try different import paths
           Write-Host "Trying to import basemap_data..."
           python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data imported successfully')"
+
+      - name: Download basemap sdist
+        uses: actions/download-artifact@v4
+        with:
+          name: basemap-sdist
+          path: ./sdist/
 
       - name: Extract sdist (Linux/macOS)
         if: runner.os != 'Windows'
