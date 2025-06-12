@@ -43,9 +43,31 @@ jobs:
             packages/${{ matrix.package }}/dist/*.whl
           name: dist-${{ matrix.package }}
 
-  build_basemap:
-    name: Build basemap package (${{ matrix.os }})
-    needs: [build_data]
+  build_sdist:
+    name: Build basemap sdist
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Build sdist
+        run: |
+          cd packages/basemap
+          python -m pip install build
+          python -m build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: packages/basemap/dist/*.tar.gz
+          name: dist-basemap-sdist
+
+  build_wheels:
+    name: Build basemap wheels
+    needs: [build_data, build_sdist]
     strategy:
       matrix:
         os: [ubuntu-22.04, windows-2019, macos-13, macos-14]
@@ -58,14 +80,83 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Build sdist
-        if: matrix.os == 'ubuntu-22.04'
-        run: |
-          cd packages/basemap
-          python -m pip install build
-          python -m build --sdist
+      - name: Download data packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: dist-basemap_data*
+          path: ./data_packages/
+          merge-multiple: true
 
-      - name: Build wheels
+      - name: Install data packages (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          # Install the wheel data packages with wildcard
+          python -m pip install ./data_packages/*.whl
+
+          # Verify that the data packages can be imported
+          python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data installed successfully')"
+
+      - name: Install data packages (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # Install the wheel data packages sequentially
+          $wheels = Get-ChildItem -Path "./data_packages" -Filter "*.whl" -Recurse
+          foreach ($wheel in $wheels) {
+            Write-Host "Installing $($wheel.FullName)"
+            python -m pip install $wheel.FullName
+          }
+
+          # Verify that the data packages can be imported
+          python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data installed successfully')"
+
+      - name: Download basemap sdist
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-basemap-sdist
+          path: ./sdist/
+
+      - name: Extract sdist (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          # Create extraction directory in the workspace
+          mkdir -p ./sdist_extract
+
+          # Extract with tar using wildcard
+          tar -xvf ./sdist/*.tar.gz -C ./sdist_extract
+
+          # Get the extracted directory name
+          EXTRACTED_DIR="$(ls -d ./sdist_extract/*/ | head -1)"
+
+          # Verify contents
+          ls -la "${EXTRACTED_DIR}"
+
+          # Set the environment variable
+          echo "SDIST_DIR=$(pwd)/${EXTRACTED_DIR}" >> $GITHUB_ENV
+
+      - name: Extract sdist (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # Create extraction directory in the workspace
+          New-Item -ItemType Directory -Force -Path "sdist_extract"
+
+          # Extract with tar using the specific file path (no wildcard)
+          $tarball = Get-ChildItem -Path "sdist" -Filter "*.tar.gz" | Select-Object -First 1
+          tar -xvf $tarball.FullName -C "sdist_extract"
+
+          # Get the extracted directory name
+          $extractedDir = (Get-ChildItem -Path "sdist_extract" -Directory | Select-Object -First 1).FullName
+
+          # Verify contents
+          Get-ChildItem "$extractedDir"
+
+          # Set the environment variable
+          echo "SDIST_DIR=$extractedDir" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Build wheels from sdist
         uses: pypa/cibuildwheel@v2.22.0
         env:
           CIBW_ARCHS: "native"
@@ -85,19 +176,22 @@ jobs:
           # LD_LIBRARY_PATH in environment is needed by
           # auditwheel (Linux) and delocate (MacOS).
         with:
-          package-dir: "packages/basemap"
-          output-dir: "packages/basemap/dist"
+          package-dir: ${{ env.SDIST_DIR }}
+          output-dir: "dist"
+          # Set `package-dir` to a folder with the extracted sdist;
+          # otherwise, `cibuildwheel` uses `python -m pip wheel` or
+          # `python -m build --wheel` with the repository package
+          # folder and we cannot guarantee that wheels can be built
+          # from the sdist.
 
       - uses: actions/upload-artifact@v4
         with:
-          path: |
-            packages/basemap/dist/*.tar.gz
-            packages/basemap/dist/*.whl
-          name: dist-basemap-${{ matrix.os }}
+          path: dist/*.whl
+          name: dist-basemap-wheels-${{ matrix.os }}
 
   check:
     name: Check packages
-    needs: [build_data, build_basemap]
+    needs: [build_data, build_sdist, build_wheels]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/download-artifact@v4
@@ -119,7 +213,7 @@ jobs:
 
   upload:
     name: Upload packages
-    needs: [build_data, build_basemap, check]
+    needs: [build_data, build_sdist, build_wheels, check]
     runs-on: ubuntu-22.04
     environment: PyPI
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
