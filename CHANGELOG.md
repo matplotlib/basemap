@@ -26,11 +26,12 @@ https://semver.org/spec/v2.0.0.html
   and [#623] by @cvanelteren and PR [#621], solves GitHub artifact
   actions v1 sunset).
 - Update library dependencies:
+  - Upgrade lower limit for `basemap_data` to 2.0.
   - Upgrade upper limit for `basemap_data` to 3.0.
   - Upgrade lower limit for `packaging` to 20.5.
-  - Upgrade upper limit for `packaging` to 25.0.
+  - Upgrade upper limit for `packaging` to 26.0.
   - Upgrade lower limit for `numpy` to 2.0.
-  - Upgrade upper limit for `numpy` to 2.3.
+  - Upgrade upper limit for `numpy` to 2.4.
   - Upgrade lower limit for `matplotlib` to 3.4.
   - Upgrade upper limit for `matplotlib` to 3.11.
   - Upgrade lower limit for `pyproj` to 3.0.
