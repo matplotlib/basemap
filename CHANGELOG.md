@@ -15,8 +15,10 @@ https://semver.org/spec/v2.0.0.html
 ### Added
 - Python 3.13 support (PR [#619], solves issue [#608]).
 - NumPy 2.0 support (PR [#614] by @cvanelteren, solves issue [#604]).
-- Automated wheels for x86_64 and arm64 (PR [#620] by @cvanelteren,
-  solves issue [#608]).
+- Automated MacOS wheels for x86_64 and arm64 (PR [#620] by
+  @cvanelteren, solves issue [#608]).
+- Support in `Basemap.wmsimage` to redirect `WebMapService` constructor
+  parameters when available (PR [#603] by @Kurea, solves issue [#602]).
 
 ### Changed
 - **BREAKING CHANGE**: Set Python minimum supported version to 3.9.
@@ -1181,6 +1183,10 @@ https://github.com/matplotlib/basemap/pull/614
 https://github.com/matplotlib/basemap/issues/608
 [#604]:
 https://github.com/matplotlib/basemap/issues/604
+[#603]:
+https://github.com/matplotlib/basemap/pull/603
+[#602]:
+https://github.com/matplotlib/basemap/issues/602
 [#599]:
 https://github.com/matplotlib/basemap/issues/599
 [#598]:
