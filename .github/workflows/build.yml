@@ -176,8 +176,13 @@ jobs:
           # LD_LIBRARY_PATH in environment is needed by
           # auditwheel (Linux) and delocate (MacOS).
         with:
-          package-dir: ${{ env.SDIST_DIR }} # Use extracted sdist
+          package-dir: ${{ env.SDIST_DIR }}
           output-dir: "dist"
+          # Set `package-dir` to a folder with the extracted sdist;
+          # otherwise, `cibuildwheel` uses `python -m pip wheel` or
+          # `python -m build --wheel` with the repository package
+          # folder and we cannot guarantee that wheels can be built
+          # from the sdist.
 
       - uses: actions/upload-artifact@v4
         with:
