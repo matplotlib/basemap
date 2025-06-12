@@ -226,15 +226,16 @@ jobs:
       - name: Download data packages
         uses: actions/download-artifact@v4
         with:
-          pattern: dist-basemap_data*
           path: ./data_packages/
+          pattern: "dist-basemap_data*"
           merge-multiple: true
 
       - name: Download basemap wheel for Linux
         uses: actions/download-artifact@v4
         with:
-          name: dist-basemap-wheels-ubuntu-*
           path: ./wheels/
+          pattern: "dist-basemap-wheels-ubuntu-*"
+          merge-multiple: true
 
       - name: Install packages
         run: |
