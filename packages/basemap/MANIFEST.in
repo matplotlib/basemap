@@ -1,4 +1,4 @@
-include requirements*.txt
+include dep/requirements*.txt
 recursive-include doc *
 recursive-exclude doc/build *
 recursive-include test *

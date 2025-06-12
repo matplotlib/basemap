@@ -228,7 +228,7 @@ jobs:
       - name: Install docs requirements
         run: |
           cd packages/basemap
-          python -m pip install -r requirements-doc.txt
+          python -m pip install -r dep/requirements-doc.txt
 
       - name: Run sphinx
         run: |

@@ -211,18 +211,18 @@ setup(**{
             "<3.14",
         ]),
     "install_requires":
-        get_content("requirements.txt", splitlines=True),
+        get_content("dep/requirements.txt", splitlines=True),
     "extras_require": {
         "doc":
-            get_content("requirements-doc.txt", splitlines=True),
+            get_content("dep/requirements-doc.txt", splitlines=True),
         "lint":
-            get_content("requirements-lint.txt", splitlines=True),
+            get_content("dep/requirements-lint.txt", splitlines=True),
         "test":
-            get_content("requirements-test.txt", splitlines=True),
+            get_content("dep/requirements-test.txt", splitlines=True),
         "owslib":
-            get_content("requirements-owslib.txt", splitlines=True),
+            get_content("dep/requirements-owslib.txt", splitlines=True),
         "pillow":
-            get_content("requirements-pillow.txt", splitlines=True),
+            get_content("dep/requirements-pillow.txt", splitlines=True),
     },
     "cmdclass": {
         "sdist": basemap_sdist,
