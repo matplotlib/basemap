@@ -34,7 +34,7 @@ jobs:
         run: |
           cd packages/${{ matrix.package }}
           python -m pip install build wheel
-          python -m build --sdist --wheel
+          python -m build
 
       - uses: actions/upload-artifact@v4
         with:
@@ -63,10 +63,10 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           path: packages/basemap/dist/*.tar.gz
-          name: basemap-sdist
+          name: dist-basemap-sdist
 
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
+    name: Build basemap wheels
     needs: [build_data, build_sdist]
     strategy:
       matrix:
@@ -80,12 +80,6 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Download basemap sdist
-        uses: actions/download-artifact@v4
-        with:
-          name: basemap-sdist
-          path: ./sdist/
-
       - name: Download data packages
         uses: actions/download-artifact@v4
         with:
@@ -97,38 +91,31 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          # Debug - show what we downloaded
-          ls -la ./data_packages/
-
-          # Install the data packages
+          # Install the wheel data packages with wildcard
           python -m pip install ./data_packages/*.whl
 
-          # Verify they're installed
-          python -c "import mpl_toolkits.basemap_data; print('Data package installed')"
+          # Verify that the data packages can be imported
+          python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data installed successfully')"
 
-      # Install the data packages (Windows)
       - name: Install data packages (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          # Debug - show what we downloaded
-          Get-ChildItem -Path "./data_packages" -Recurse
-
-          # Find all wheel files
+          # Install the wheel data packages sequentially
           $wheels = Get-ChildItem -Path "./data_packages" -Filter "*.whl" -Recurse
-
-          # Install each wheel file
           foreach ($wheel in $wheels) {
             Write-Host "Installing $($wheel.FullName)"
             python -m pip install $wheel.FullName
           }
 
-          # Show installed packages
-          python -m pip list | Select-String "mpl_toolkits.basemap"
+          # Verify that the data packages can be imported
+          python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data installed successfully')"
 
-          # Try different import paths
-          Write-Host "Trying to import basemap_data..."
-          python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data imported successfully')"
+      - name: Download basemap sdist
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-basemap-sdist
+          path: ./sdist/
 
       - name: Extract sdist (Linux/macOS)
         if: runner.os != 'Windows'
@@ -137,43 +124,37 @@ jobs:
           # Create extraction directory in the workspace
           mkdir -p ./sdist_extract
 
-          # Extract using tar (Unix-style)
+          # Extract with tar using wildcard
           tar -xvf ./sdist/*.tar.gz -C ./sdist_extract
 
           # Get the extracted directory name
-          EXTRACTED_DIR=$(ls -d ./sdist_extract/*/ | head -1)
-          echo "SDIST_DIR=$(pwd)/${EXTRACTED_DIR}" >> $GITHUB_ENV
+          EXTRACTED_DIR="$(ls -d ./sdist_extract/*/ | head -1)"
 
           # Verify contents
-          ls -la ${EXTRACTED_DIR}
+          ls -la "${EXTRACTED_DIR}"
+
+          # Set the environment variable
+          echo "SDIST_DIR=$(pwd)/${EXTRACTED_DIR}" >> $GITHUB_ENV
 
       - name: Extract sdist (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          # Create extraction directory
+          # Create extraction directory in the workspace
           New-Item -ItemType Directory -Force -Path "sdist_extract"
 
-          # Find the tarball file (without using wildcards)
+          # Extract with tar using the specific file path (no wildcard)
           $tarball = Get-ChildItem -Path "sdist" -Filter "*.tar.gz" | Select-Object -First 1
-
-          # Debug - show what we found
-          Write-Host "Found tarball: $($tarball.FullName)"
-
-          # Extract using the specific file path (not wildcard)
           tar -xvf $tarball.FullName -C "sdist_extract"
 
           # Get the extracted directory name
           $extractedDir = (Get-ChildItem -Path "sdist_extract" -Directory | Select-Object -First 1).FullName
 
-          # Debug - show what we found
-          Write-Host "Extracted directory: $extractedDir"
+          # Verify contents
+          Get-ChildItem "$extractedDir"
 
           # Set the environment variable
           echo "SDIST_DIR=$extractedDir" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-          # Verify contents
-          Get-ChildItem $extractedDir
 
       - name: Build wheels from sdist
         uses: pypa/cibuildwheel@v2.22.0
@@ -195,8 +176,13 @@ jobs:
           # LD_LIBRARY_PATH in environment is needed by
           # auditwheel (Linux) and delocate (MacOS).
         with:
-          package-dir: ${{ env.SDIST_DIR }} # Use extracted sdist
+          package-dir: ${{ env.SDIST_DIR }}
           output-dir: "dist"
+          # Set `package-dir` to a folder with the extracted sdist;
+          # otherwise, `cibuildwheel` uses `python -m pip wheel` or
+          # `python -m build --wheel` with the repository package
+          # folder and we cannot guarantee that wheels can be built
+          # from the sdist.
 
       - uses: actions/upload-artifact@v4
         with:
@@ -214,11 +200,6 @@ jobs:
           pattern: "dist-*"
           merge-multiple: true
 
-      - uses: actions/download-artifact@v4
-        with:
-          path: dist
-          name: basemap-sdist
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -229,26 +210,6 @@ jobs:
           python -m pip install twine
           python -m twine check dist/*.tar.gz
           python -m twine check dist/*.whl
-
-      - name: Verify sdist content
-        run: |
-          mkdir -p /tmp/sdist_test
-
-          # Find and extract basemap sdist
-          BASEMAP_SDIST=$(ls dist/basemap-*.tar.gz 2>/dev/null || ls dist/*basemap*.tar.gz 2>/dev/null | head -1)
-          tar -xvf "$BASEMAP_SDIST" -C /tmp/sdist_test
-
-          # Verify contents
-          echo "Files in extracted sdist:"
-          find /tmp/sdist_test -type f | grep -v "__pycache__" | sort
-
-          # Check for critical files
-          if [ -f "$(find /tmp/sdist_test -name "_geoslib.pyx")" ]; then
-            echo "✓ Source files verified in sdist"
-          else
-            echo "✗ Missing critical source files in sdist"
-            exit 1
-          fi
 
   docs:
     name: Build documentation
@@ -354,11 +315,6 @@ jobs:
           path: dist
           pattern: "dist-*"
           merge-multiple: true
-
-      - uses: actions/download-artifact@v4
-        with:
-          path: dist
-          name: basemap-sdist
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

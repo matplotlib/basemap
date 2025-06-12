@@ -15,8 +15,8 @@ https://semver.org/spec/v2.0.0.html
 ### Added
 - Python 3.13 support (PR [#619], solves issue [#608]).
 - NumPy 2.0 support (PR [#614] by @cvanelteren, solves issue [#604]).
-- Automated wheels for x86_64 and arm64 (PR [#620] by @cvanelteren,
-  solves issue [#608]).
+- Automated wheels for x86_64 and arm64 (PRs [#620] and [#622] by
+  @cvanelteren, solves issue [#608]).
 
 ### Changed
 - **BREAKING CHANGE**: Set Python minimum supported version to 3.9.
@@ -1156,6 +1156,8 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#622]:
+https://github.com/matplotlib/basemap/pull/622
 [#621]:
 https://github.com/matplotlib/basemap/pull/621
 [#620]:
