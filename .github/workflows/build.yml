@@ -223,12 +223,6 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Download basemap wheel for Linux
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-basemap-wheels-ubuntu-22.04
-          path: ./wheels/
-
       - name: Download data packages
         uses: actions/download-artifact@v4
         with:
@@ -236,41 +230,35 @@ jobs:
           path: ./data_packages/
           merge-multiple: true
 
+      - name: Download basemap wheel for Linux
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-basemap-wheels-ubuntu-*
+          path: ./wheels/
+
       - name: Install packages
         run: |
-          # Get Python version
-          PY_VER=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
-          echo "Using Python $PY_VER"
+          # Get Python version.
+          IMPL=cp$(python -c "import sys; print('{0}{1}'.format(*sys.version_info[:2]))")
 
-          # List available wheels
-          echo "Available wheels:"
-          ls -la ./wheels/
-
-          # Find wheel matching current Python version
-          MATCHING_WHEEL=$(find ./wheels -name "*-cp${PY_VER}-cp${PY_VER}*" | head -1)
-
-          if [ -n "$MATCHING_WHEEL" ]; then
-            echo "Installing matching wheel: $MATCHING_WHEEL"
-            python -m pip install "$MATCHING_WHEEL"
+          # Install basemap wheel matching current Python version.
+          WHEEL=$(find ./wheels -name "*-${IMPL}-${IMPL}*.whl" | head -1)
+          if [ -n "${WHEEL}" ]; then
+            python -m pip install "${WHEEL}"
           else
-            echo "No matching wheel found for Python $PY_VER. Installing any available wheel..."
-            python -m pip install ./wheels/*.whl
+            echo "No matching wheel found for ${IMPL}-${IMPL}"
+            exit 1
           fi
 
-          # Install data packages
-          echo "Installing data packages:"
-          ls -la ./data_packages/
+          # Install basemap data packages.
           python -m pip install ./data_packages/*.whl
 
-          # Verify installation
-          python -c "import mpl_toolkits.basemap; print('Basemap version:', mpl_toolkits.basemap.__version__)"
-
-      - name: Install documentation requirements
+      - name: Install docs requirements
         run: |
           cd packages/basemap
           python -m pip install -r requirements-doc.txt
 
-      - name: Build documentation
+      - name: Run sphinx
         run: |
           cd packages/basemap
           python -m sphinx doc/source public
@@ -278,7 +266,7 @@ jobs:
       - name: Upload docs artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: docs-artifact
+          name: docs
           path: packages/basemap/public
 
       - name: Upload github-pages artifact
