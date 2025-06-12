@@ -140,11 +140,11 @@ jobs:
           tar -xvf ./sdist/*.tar.gz -C ./sdist_extract
 
           # Get the extracted directory name
-          EXTRACTED_DIR=$(ls -d ./sdist_extract/*/ | head -1)
+          EXTRACTED_DIR="$(ls -d ./sdist_extract/*/ | head -1)"
           echo "SDIST_DIR=$(pwd)/${EXTRACTED_DIR}" >> $GITHUB_ENV
 
           # Verify contents
-          ls -la ${EXTRACTED_DIR}
+          ls -la "${EXTRACTED_DIR}"
 
       - name: Extract sdist (Windows)
         if: runner.os == 'Windows'
@@ -172,7 +172,7 @@ jobs:
           echo "SDIST_DIR=$extractedDir" | Out-File -FilePath $env:GITHUB_ENV -Append
 
           # Verify contents
-          Get-ChildItem $extractedDir
+          Get-ChildItem "$extractedDir"
 
       - name: Build wheels from sdist
         uses: pypa/cibuildwheel@v2.22.0
