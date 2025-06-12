@@ -1,4 +1,4 @@
 pytest >= 7.0, < 8.5
 
 pytest-cov >= 3.0, < 6.3
-coverage >= 5.0, < 7.10
+coverage[toml] >= 5.0, < 7.10
