@@ -91,36 +91,24 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          # Debug - show what we downloaded
-          ls -la ./data_packages/
-
-          # Install the data packages
+          # Install the wheel data packages with wildcard
           python -m pip install ./data_packages/*.whl
 
-          # Verify they're installed
+          # Verify that the data packages can be imported
           python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data installed successfully')"
 
       - name: Install data packages (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          # Debug - show what we downloaded
-          Get-ChildItem -Path "./data_packages" -Recurse
-
-          # Find all wheel files
+          # Install the wheel data packages sequentially
           $wheels = Get-ChildItem -Path "./data_packages" -Filter "*.whl" -Recurse
-
-          # Install each wheel file
           foreach ($wheel in $wheels) {
             Write-Host "Installing $($wheel.FullName)"
             python -m pip install $wheel.FullName
           }
 
-          # Show installed packages
-          python -m pip list | Select-String "mpl_toolkits.basemap"
-
-          # Try different import paths
-          Write-Host "Trying to import basemap_data..."
+          # Verify that the data packages can be imported
           python -c "import mpl_toolkits.basemap_data; print('mpl_toolkits.basemap_data installed successfully')"
 
       - name: Download basemap sdist
@@ -136,43 +124,37 @@ jobs:
           # Create extraction directory in the workspace
           mkdir -p ./sdist_extract
 
-          # Extract using tar (Unix-style)
+          # Extract with tar using wildcard
           tar -xvf ./sdist/*.tar.gz -C ./sdist_extract
 
           # Get the extracted directory name
           EXTRACTED_DIR="$(ls -d ./sdist_extract/*/ | head -1)"
-          echo "SDIST_DIR=$(pwd)/${EXTRACTED_DIR}" >> $GITHUB_ENV
 
           # Verify contents
           ls -la "${EXTRACTED_DIR}"
+
+          # Set the environment variable
+          echo "SDIST_DIR=$(pwd)/${EXTRACTED_DIR}" >> $GITHUB_ENV
 
       - name: Extract sdist (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          # Create extraction directory
+          # Create extraction directory in the workspace
           New-Item -ItemType Directory -Force -Path "sdist_extract"
 
-          # Find the tarball file (without using wildcards)
+          # Extract with tar using the specific file path (no wildcard)
           $tarball = Get-ChildItem -Path "sdist" -Filter "*.tar.gz" | Select-Object -First 1
-
-          # Debug - show what we found
-          Write-Host "Found tarball: $($tarball.FullName)"
-
-          # Extract using the specific file path (not wildcard)
           tar -xvf $tarball.FullName -C "sdist_extract"
 
           # Get the extracted directory name
           $extractedDir = (Get-ChildItem -Path "sdist_extract" -Directory | Select-Object -First 1).FullName
 
-          # Debug - show what we found
-          Write-Host "Extracted directory: $extractedDir"
+          # Verify contents
+          Get-ChildItem "$extractedDir"
 
           # Set the environment variable
           echo "SDIST_DIR=$extractedDir" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-          # Verify contents
-          Get-ChildItem "$extractedDir"
 
       - name: Build wheels from sdist
         uses: pypa/cibuildwheel@v2.22.0
