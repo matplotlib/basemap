@@ -76,7 +76,6 @@ setup(**{
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Education",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Visualization",

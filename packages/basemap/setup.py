@@ -187,7 +187,6 @@ setup(**{
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Education",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Visualization",
