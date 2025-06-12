@@ -72,6 +72,7 @@ https://semver.org/spec/v2.0.0.html
 
 ### Removed
 - Deprecated `bdist_wheel.universal` option when building wheels.
+- Configuration of `sdist` format as zip (replaced by default tar.gz).
 
 ## [1.4.1] - 2024-02-15
 
