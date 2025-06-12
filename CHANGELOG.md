@@ -59,11 +59,11 @@ https://semver.org/spec/v2.0.0.html
 - Update test dependencies:
   - Remove dependency on `unittest2`.
   - Upgrade lower limit for `pytest` to 7.0.
-  - Upgrade upper limit for `pytest` to 8.4.
+  - Upgrade upper limit for `pytest` to 8.5.
   - Upgrade lower limit for `pytest-cov` to 3.0.
-  - Upgrade upper limit for `pytest-cov` to 6.1.
+  - Upgrade upper limit for `pytest-cov` to 6.3.
   - Downgrade lower limit for `coverage` to 5.0.
-  - Upgrade upper limit for `coverage` to 7.7.
+  - Upgrade upper limit for `coverage` to 7.10.
 
 ### Fixed
 - Fix Cython extension to use `noexcept` (PR [#615] by @cvanelteren).
