@@ -6,6 +6,7 @@ global-exclude *.py[cod]
 global-exclude *.dll
 global-exclude *.so
 
+recursive-exclude data *
 recursive-include doc *
 recursive-exclude doc/build *
 recursive-include test *
