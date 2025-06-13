@@ -11,43 +11,9 @@ on PyPI and can be installed with [`pip`]:
 python -m pip install basemap
 ```
 
-Otherwise, you will need to install `basemap` from its source hosted
-on GitHub as indicated in the following steps:
-
-1. Install pre-requisite Python modules:
-   - [cython](https://github.com/cython/cython)
-   - [numpy](https://github.com/numpy/numpy)
-
-2. Download the `basemap` source code:
-   ```sh
-   git clone --depth 1 https://github.com/matplotlib/basemap.git
-   ```
-
-3. Build the [GEOS](https://github.com/libgeos/geos) library. You may
-   use the helper provided in `utils`, (please note that you need
-   [`CMake`](https://cmake.org/) and a working C compiler in advance):
-   ```sh
-   export GEOS_DIR=<your desired location>
-   python -c "import utils; utils.GeosLibrary('3.6.5').build(installdir='${GEOS_DIR}')"
-   ```
-   or you can link directly to the system library if it is already
-   installed. `GEOS_DIR` must point to the GEOS installation prefix;
-   e.g. if `libgeos_c.so` is located in `/usr/lib` and `geos_c.h` is
-   located in `/usr/include`, then you must set `GEOS_DIR` to `/usr`.
-
-4. Build and install the `basemap` binary wheel:
-   ```sh
-   python -m pip install .
-   ```
-   On Linux, if your Python was installed through a package management
-   system, make sure that you have the Python header `Python.h` required
-   to build Cython extensions (e.g. on Debian-like systems, you should
-   have the package `python-dev` installed).
-
-5. Check that the package was installed correctly by executing:
-   ```sh
-   python -c "from mpl_toolkits.basemap import Basemap"
-   ```
+For specific details on how to install `basemap` through `conda` or
+from source, please refer to the [`basemap` installation instructions]
+in the documentation.
 
 ## Requirements
 
@@ -117,6 +83,9 @@ https://pypi.org/project/basemap-data
 https://pypi.org/project/basemap-data-hires
 [`OWSLib`]:
 https://pypi.org/project/OWSLib
+
+[`basemap` installation instructions]:
+https://matplotlib.org/basemap/stable/users/installation.html
 
 [MIT]:
 https://spdx.org/licenses/MIT.html
