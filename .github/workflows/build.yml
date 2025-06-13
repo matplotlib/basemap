@@ -129,7 +129,7 @@ jobs:
           CIBW_SKIP: "*-musllinux_*"
           CIBW_BEFORE_ALL: "python {project}/.github/workflows/run_before_all.py"
           CIBW_TEST_EXTRAS: "test"
-          CIBW_TEST_COMMAND: "python -m pytest {project}"
+          CIBW_TEST_COMMAND: "python -m pytest {project}/test"
           CIBW_ENVIRONMENT: >-
             GEOS_VERSION="3.6.5"
             GEOS_DIR="$(pwd)/extern"
