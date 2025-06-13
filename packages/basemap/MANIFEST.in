@@ -1,9 +1,12 @@
-include requirements*.txt
+include .pylintrc
+include pyproject.toml
+include dep/requirements*.txt
+recursive-exclude **/__pycache__ *
+global-exclude *.py[cod]
+global-exclude *.dll
+global-exclude *.so
+
 recursive-include doc *
 recursive-exclude doc/build *
 recursive-include test *
 recursive-include utils *.py
-recursive-exclude **/__pycache__ *
-recursive-exclude **/.DS_Store *
-exclude **/*.pyc
-exclude **/.gitkeep

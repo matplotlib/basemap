@@ -51,17 +51,13 @@ setup(**{
     "name":
         "basemap_data_hires",
     "version":
-        "2.0.0-dev",
-    "license":
-        "GNU Lesser General Public License v3 or later (LGPLv3+)",
+        "2.0.0.dev0",
     "description":
         "High-resolution data assets for matplotlib basemap",
     "long_description":
         get_content("README.md"),
     "long_description_content_type":
         "text/markdown",
-    "url":
-        "https://matplotlib.org/basemap",
     "author":
         "Jeff Whitaker",
     "author_email":
@@ -70,11 +66,16 @@ setup(**{
         "Víctor Molina García",
     "maintainer_email":
         "molinav@users.noreply.github.com",
+    "license":
+        "GNU Lesser General Public License v3 or later (LGPLv3+)",
+    "license_files": [
+        "COPYING",
+        "COPYING.LESSER",
+    ],
     "classifiers": [
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Education",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Visualization",
@@ -99,11 +100,13 @@ setup(**{
             "<4",
         ]),
     "project_urls": {
-        "Bug Tracker":
-            "https://github.com/matplotlib/basemap/issues",
-        "Documentation":
-            "https://matplotlib.org/basemap/",
-        "Source":
+        "Homepage":
             "https://github.com/matplotlib/basemap",
+        "Documentation":
+            "https://matplotlib.org/basemap",
+        "Repository":
+            "https://github.com/matplotlib/basemap.git",
+        "Issues":
+            "https://github.com/matplotlib/basemap/issues",
     },
 })

@@ -24,25 +24,30 @@ https://semver.org/spec/v2.0.0.html
 - **BREAKING CHANGE**: Set Python minimum supported version to 3.9.
 - **BREAKING CHANGE**: Migrate `basemap` libraries to use implicit
   namespace packages (PR [#576] by @ksunden).
+- **BREAKING CHANGE**: Move requirements files to its own `dep` folder.
 - Migrate workflows to use `cibuildwheel` (PRs [#614], [#618], [#622]
   and [#623] by @cvanelteren and PR [#621], solves GitHub artifact
   actions v1 sunset).
 - Update library dependencies:
   - Upgrade upper limit for `basemap_data` to 3.0.
   - Upgrade lower limit for `packaging` to 20.5.
-  - Upgrade upper limit for `packaging` to 25.0.
+  - Upgrade upper limit for `packaging` to 26.0.
   - Upgrade lower limit for `numpy` to 2.0.
-  - Upgrade upper limit for `numpy` to 2.3.
+  - Upgrade upper limit for `numpy` to 2.4.
   - Upgrade lower limit for `matplotlib` to 3.4.
   - Upgrade upper limit for `matplotlib` to 3.11.
   - Upgrade lower limit for `pyproj` to 3.0.
   - Upgrade upper limit for `pyproj` to 3.8.
   - Upgrade lower limit for `pyshp` to 2.0.
 - Update optional library dependencies:
-  - Upgrade lower limit for `pillow` to 10.3 due to
-    vulnerabilities [CVE-2023-50447] and [CVE-2024-28219].
-  - Upgrade upper limit for `pillow` to 11.2.
-  - Upgrade upper limit for `OWSLib` to 0.33.
+  - Upgrade upper limit for `OWSLib` to 0.35.
+- Update build dependencies:
+  - Upgrade lower limit for `setuptools` to 67.0.
+  - Upgrade upper limit for `setuptools` to 81.0.
+  - Upgrade lower limit for `wheel` to 0.40.
+  - Upgrade upper limit for `wheel` to 0.46.
+  - Upgrade lower limit for `cython` to 3.0.
+  - Upgrade upper limit for `cython` to 3.2.
 - Update doc dependencies:
   - Upgrade upper limit for `sphinx` to 8.0.
   - Upgrade lower limit for `furo` to 2023.9.10.
@@ -53,7 +58,8 @@ https://semver.org/spec/v2.0.0.html
 - Update lint dependencies:
   - Remove dependency on `unittest2`.
   - Upgrade lower limit for `flake8` to 3.9.
-  - Upgrade upper limit for `flake8` to 7.2.
+  - Upgrade upper limit for `flake8` to 7.3.
+  - Include dependency on `flake8-pyproject`.
   - Upgrade lower limit for `astroid` to 3.0.
   - Upgrade upper limit for `astroid` to 3.4.
   - Upgrade lower limit for `pylint` to 3.0.
@@ -61,11 +67,11 @@ https://semver.org/spec/v2.0.0.html
 - Update test dependencies:
   - Remove dependency on `unittest2`.
   - Upgrade lower limit for `pytest` to 7.0.
-  - Upgrade upper limit for `pytest` to 8.4.
+  - Upgrade upper limit for `pytest` to 8.5.
   - Upgrade lower limit for `pytest-cov` to 3.0.
-  - Upgrade upper limit for `pytest-cov` to 6.1.
+  - Upgrade upper limit for `pytest-cov` to 6.3.
   - Downgrade lower limit for `coverage` to 5.0.
-  - Upgrade upper limit for `coverage` to 7.7.
+  - Upgrade upper limit for `coverage` to 7.10.
 
 ### Fixed
 - Fix Cython extension to use `noexcept` (PR [#615] by @cvanelteren).
@@ -73,7 +79,11 @@ https://semver.org/spec/v2.0.0.html
   (PR [#624] by @Cdiaz1234, solves issue [#599]).
 
 ### Removed
+- Deprecated use of `setup_requires` in `setup.py` file.
 - Deprecated `bdist_wheel.universal` option when building wheels.
+- Configuration of `sdist` format as zip (replaced by default tar.gz).
+- Remove `pillow` as optional dependency, since it is now a transitive
+  dependency through `matplotlib >= 3.3`.
 
 ## [1.4.1] - 2024-02-15
 
@@ -121,7 +131,7 @@ https://semver.org/spec/v2.0.0.html
   - Downgrade upper limit for `pyproj` to 2.2.0 for Python 2.7.
   - Set dependency on `packaging` as replacement for `distutils`.
 - Update build dependencies:
-  - Upgrade upper limit for `Cython` to 3.1.
+  - Upgrade upper limit for `cython` to 3.1.
 - Update doc dependencies and require at least Python 3.8 for them:
   - Upgrade upper limit for `sphinx` to 7.2.
   - Upgrade upper limit for `furo` to 2023.9.11.

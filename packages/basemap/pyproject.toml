@@ -1,9 +1,42 @@
 [build-system]
 requires = [
-    'setuptools >= 67.0, < 76.0',
-    'wheel >= 0.40, < 0.46',
-    'cython >= 0.29.31, < 3.1',
-    'numpy == 2.1.0; python_version == "3.13"',
-    'numpy == 2.0.0; python_version <= "3.12"',
+    "setuptools >= 67.0, < 81.0",
+    "wheel >= 0.40, < 0.46",
+    "cython >= 3.0, < 3.2",
+    "numpy == 2.1.0; python_version == '3.13'",
+    "numpy == 2.0.0; python_version <= '3.12'",
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.flake8]
+ignore = [
+    "E301",  # expected-blank-line-missing
+    "E306",  # no-blank-line-before-nested-def
+    "E402",  # module-import-not-at-top-file
+    "E501",  # line-too-long
+    "E731",  # used-lambda
+    "F401",  # unused-import
+    "F403",  # wildcard-import
+    "W503",  # line-break-before-binary-operator
+    "W504",  # line-break-after-binary-operator
+]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+]
+
+[tool.coverage.paths]
+source = [
+    "src",
+    "*/site-packages",
+]
+
+[tool.coverage.report]
+exclude_also = [
+    "pragma: no cover",
+    "def __repr__",
+    "def __str__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+]

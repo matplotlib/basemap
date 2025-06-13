@@ -163,16 +163,12 @@ setup(**{
         "basemap",
     "version":
         get_version("mpl_toolkits.basemap"),
-    "license":
-        "MIT",
     "description":
         "Plot data on map projections with matplotlib",
     "long_description":
         get_content("README.md"),
     "long_description_content_type":
         "text/markdown",
-    "url":
-        "https://matplotlib.org/basemap",
     "author":
         "Jeff Whitaker",
     "author_email":
@@ -181,11 +177,16 @@ setup(**{
         "Víctor Molina García",
     "maintainer_email":
         "molinav@users.noreply.github.com",
+    "license":
+        "MIT",
+    "license_files": [
+        "LICENSE",
+        "LICENSE.geos",
+    ],
     "classifiers": [
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Education",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
         "Topic :: Scientific/Engineering :: Visualization",
@@ -209,31 +210,29 @@ setup(**{
             ">=3.9",
             "<3.14",
         ]),
-    "setup_requires":
-        get_content("requirements-setup.txt", splitlines=True),
     "install_requires":
-        get_content("requirements.txt", splitlines=True),
+        get_content("dep/requirements.txt", splitlines=True),
     "extras_require": {
         "doc":
-            get_content("requirements-doc.txt", splitlines=True),
+            get_content("dep/requirements-doc.txt", splitlines=True),
         "lint":
-            get_content("requirements-lint.txt", splitlines=True),
+            get_content("dep/requirements-lint.txt", splitlines=True),
         "test":
-            get_content("requirements-test.txt", splitlines=True),
+            get_content("dep/requirements-test.txt", splitlines=True),
         "owslib":
-            get_content("requirements-owslib.txt", splitlines=True),
-        "pillow":
-            get_content("requirements-pillow.txt", splitlines=True),
+            get_content("dep/requirements-owslib.txt", splitlines=True),
     },
     "cmdclass": {
         "sdist": basemap_sdist,
     },
     "project_urls": {
-        "Bug Tracker":
-            "https://github.com/matplotlib/basemap/issues",
-        "Documentation":
-            "https://matplotlib.org/basemap/",
-        "Source":
+        "Homepage":
             "https://github.com/matplotlib/basemap",
+        "Documentation":
+            "https://matplotlib.org/basemap",
+        "Repository":
+            "https://github.com/matplotlib/basemap.git",
+        "Issues":
+            "https://github.com/matplotlib/basemap/issues",
     },
 })
