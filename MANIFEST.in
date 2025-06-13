@@ -1,3 +1,7 @@
+include CHANGELOG.md
+include LICENSE
+include LICENSE.geos
+include README.md
 include .pylintrc
 include pyproject.toml
 include dep/requirements*.txt
