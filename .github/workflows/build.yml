@@ -62,7 +62,7 @@ jobs:
 
   build_wheels:
     name: Build wheels
-    needs: [build_data, build_sdist]
+    needs: [build_sdist]
     strategy:
       matrix:
         os: [ubuntu-22.04, windows-2022, macos-13, macos-14]
@@ -259,7 +259,7 @@ jobs:
 
   upload:
     name: Upload packages
-    needs: [build_data, build_sdist, build_wheels, check]
+    needs: [check]
     runs-on: ubuntu-22.04
     environment: PyPI
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
