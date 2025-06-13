@@ -73,7 +73,7 @@ setup(**{
     "name":
         "basemap_data",
     "version":
-        "2.0.0.dev0",
+        "2.0.0",
     "description":
         "Data assets for matplotlib basemap",
     "long_description":
