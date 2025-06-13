@@ -208,6 +208,9 @@ jobs:
           # Get Python version.
           IMPL=cp$(python -c "import sys; print('{0}{1}'.format(*sys.version_info[:2]))")
 
+          # Install data packages.
+          python -m pip install ./data_packages/*.whl
+
           # Install basemap wheel matching current Python version.
           WHEEL=$(find ./wheels -name "*-${IMPL}-${IMPL}*.whl" | head -1)
           if [ -n "${WHEEL}" ]; then
@@ -216,9 +219,6 @@ jobs:
             echo "No matching wheel found for ${IMPL}-${IMPL}"
             exit 1
           fi
-
-          # Install basemap data packages.
-          python -m pip install ./data_packages/*.whl
 
       - name: Install docs requirements
         run: |
