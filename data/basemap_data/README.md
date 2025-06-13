@@ -17,8 +17,8 @@ python -m pip install basemap-data
 
 The land-sea mask, coastline, lake, river and political boundary data
 are extracted from the [GSHHG] datasets (version 2.3.6) using [GMT]
-(5.x series) and are included under the terms of the [LGPLv3+] license
-(see [`COPYING`] and [`COPYING.LESSER`]).
+(5.x series) and are included under the terms of the [LGPL-3.0-or-later]
+license (see [`COPYING`] and [`COPYING.LESSER`]).
 
 The other files are included under the terms of the [MIT] license. See
 [`LICENSE.epsg`] for the EPSG file (taken from the PROJ.4 package) and
@@ -37,7 +37,7 @@ https://www.soest.hawaii.edu/pwessel/gshhg
 [GMT]:
 https://www.generic-mapping-tools.org/
 
-[LGPLv3+]:
+[LGPL-3.0-or-later]:
 https://spdx.org/licenses/LGPL-3.0-or-later.html
 [MIT]:
 https://spdx.org/licenses/MIT.html
