@@ -1,0 +1,138 @@
+name: Build
+
+on:
+  push:
+    paths:
+      - ".github/workflows/**"
+      - "packages/basemap/**"
+      - "packages/basemap_data/**"
+      - "packages/basemap_data_hires/**"
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "packages/basemap/**"
+      - "packages/basemap_data/**"
+      - "packages/basemap_data_hires/**"
+  workflow_dispatch:
+
+jobs:
+  build_data:
+    name: Build data packages
+    strategy:
+      matrix:
+        package: [basemap_data, basemap_data_hires]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Build sdist and wheels
+        run: |
+          cd packages/${{ matrix.package }}
+          python -m pip install build wheel
+          python -m build --sdist --wheel
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: |
+            packages/${{ matrix.package }}/dist/*.tar.gz
+            packages/${{ matrix.package }}/dist/*.whl
+          name: dist-${{ matrix.package }}
+
+  build_basemap:
+    name: Build basemap package (${{ matrix.os }})
+    needs: [build_data]
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, windows-2019, macos-13, macos-14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Build sdist
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          cd packages/basemap
+          python -m pip install build
+          python -m build --sdist
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.22.0
+        env:
+          CIBW_ARCHS: "native"
+          CIBW_BUILD: "cp39* cp310* cp311* cp312* cp313*"
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_SKIP: "*-musllinux_*"
+          CIBW_BEFORE_ALL: "python {project}/.github/workflows/run_before_all.py"
+          CIBW_TEST_EXTRAS: "test"
+          CIBW_TEST_COMMAND: "python -m pytest {project}/packages/basemap"
+          CIBW_ENVIRONMENT: >-
+            GEOS_VERSION="3.6.5"
+            GEOS_DIR="$(pwd)/extern"
+            GEOS_NJOBS=4
+            PIP_PREFER_BINARY=1
+            PYTHONUNBUFFERED=1
+            LD_LIBRARY_PATH="${GEOS_DIR}/lib"
+          # LD_LIBRARY_PATH in environment is needed by
+          # auditwheel (Linux) and delocate (MacOS).
+        with:
+          package-dir: "packages/basemap"
+          output-dir: "packages/basemap/dist"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: |
+            packages/basemap/dist/*.tar.gz
+            packages/basemap/dist/*.whl
+          name: dist-basemap-${{ matrix.os }}
+
+  check:
+    name: Check packages
+    needs: [build_data, build_basemap]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: "dist-*"
+          merge-multiple: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Check packages with twine
+        run: |
+          python -m pip install twine
+          python -m twine check dist/*.tar.gz
+          python -m twine check dist/*.whl
+
+  upload:
+    name: Upload packages
+    needs: [build_data, build_basemap, check]
+    runs-on: ubuntu-22.04
+    environment: PyPI
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: "dist-*"
+          merge-multiple: true
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
+          repository-url: ${{ secrets.PYPI_REPOSITORY_URL }}
+          skip-existing: true

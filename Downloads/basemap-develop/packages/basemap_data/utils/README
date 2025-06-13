@@ -1,0 +1,44 @@
+Utilities for Updating Coastline/Border Data
+============================================
+
+This folder contains utilities for updating basemap's version of GMT's GSHHS
+shoreline, river, and political border dataset.
+
+The coastline, etc data used by basemap can be updated in two ways:
+
+A) Download the GSHHS shapefiles and use them
+B) Use GMT if you already have it installed, and avoid the download.
+
+The preferred method is to use the GSHHS shapefiles.
+
+Option A - GSHHS Shapefiles
+---------------------------
+
+1) Download the shapefile formatted versions of GSHHS and extract them in the
+   "utils" directory. The data is available at: 
+   https://www.soest.hawaii.edu/pwessel/gshhg/
+   (Last updated with: ftp://ftp.soest.hawaii.edu/gshhg/gshhg-shp-2.3.5-1.zip)
+2) Run readboundaries_shp.py.
+
+Option B - Generic Mapping Tools
+--------------------------------
+
+1) Install GMT. Note that you may need to install a separate gmt-suplemental
+   package to get "gmt gshhg" on some systems.  
+2) Download gshhg native binary-formatted data from 
+   https://www.soest.hawaii.edu/pwessel/gshhg/
+   (Last updated using: ftp://ftp.soest.hawaii.edu/gshhg/gshhg-bin-2.3.5.zip)
+3) run dumpbounds.sh to create states, countries, rivers text files.
+4) run readboundaries.py to process into binary files, with metadata in
+   separate text files.
+
+Updating Landmask Data
+----------------------
+
+In most cases, you will not need to update the raster landmasks used by
+basemap.  However, if GSHHS has had a large number of new islands or lakes
+added, you may want to update the landmasks in addition to the vector data.
+
+You'll need GMT installed to update the landmasks. Once you have it (and the
+full-resolution GSHHS data, which is usually a separate package), run
+``update_landmasks.py``.
