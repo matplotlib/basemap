@@ -2,15 +2,11 @@ on:
   push:
     paths:
       - ".github/workflows/**"
-      - "packages/basemap/**"
-      - "packages/basemap_data/**"
-      - "packages/basemap_data_hires/**"
+      - "**"
   pull_request:
     paths:
       - ".github/workflows/**"
-      - "packages/basemap/**"
-      - "packages/basemap_data/**"
-      - "packages/basemap_data_hires/**"
+      - "**"
   workflow_dispatch:
 
 jobs:
@@ -30,7 +26,7 @@ jobs:
 
       - name: Build data sdist and wheel
         run: |
-          cd packages/${{ matrix.package }}
+          cd data/${{ matrix.package }}
           python -m pip install build wheel
           python -m build
 
@@ -38,8 +34,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: |
-            packages/${{ matrix.package }}/dist/*.tar.gz
-            packages/${{ matrix.package }}/dist/*.whl
+            data/${{ matrix.package }}/dist/*.tar.gz
+            data/${{ matrix.package }}/dist/*.whl
           name: dist-${{ matrix.package }}
 
   build_sdist:
@@ -55,14 +51,13 @@ jobs:
 
       - name: Build basemap sdist
         run: |
-          cd packages/basemap
           python -m pip install build
           python -m build --sdist
 
       - name: Upload basemap sdist
         uses: actions/upload-artifact@v4
         with:
-          path: packages/basemap/dist/*.tar.gz
+          path: dist/*.tar.gz
           name: dist-basemap-sdist
 
   build_wheels:
@@ -134,7 +129,7 @@ jobs:
           CIBW_SKIP: "*-musllinux_*"
           CIBW_BEFORE_ALL: "python {project}/.github/workflows/run_before_all.py"
           CIBW_TEST_EXTRAS: "test"
-          CIBW_TEST_COMMAND: "python -m pytest {project}/packages/basemap"
+          CIBW_TEST_COMMAND: "python -m pytest {project}"
           CIBW_ENVIRONMENT: >-
             GEOS_VERSION="3.6.5"
             GEOS_DIR="$(pwd)/extern"
@@ -227,25 +222,23 @@ jobs:
 
       - name: Install docs requirements
         run: |
-          cd packages/basemap
           python -m pip install -r dep/requirements-doc.txt
 
       - name: Run sphinx
         run: |
-          cd packages/basemap
           python -m sphinx doc/source public
 
       - name: Upload docs artifacts
         uses: actions/upload-artifact@v4
         with:
           name: docs
-          path: packages/basemap/public
+          path: public
 
       - name: Upload github-pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
-          path: packages/basemap/public
+          path: public
 
   pages:
     name: Deploy docs
