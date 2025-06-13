@@ -2,8 +2,8 @@
 build
 dist
 *.egg-info
-*.pyc
-*.pyd
+*.py[cod]
+*.dll
 *.so
 
 htmlcov
