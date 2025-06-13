@@ -174,9 +174,9 @@ setup(**{
     "author_email":
         "jeffrey.s.whitaker@noaa.gov",
     "maintainer":
-        "Víctor Molina García",
+        "The Matplotlib development team",
     "maintainer_email":
-        "molinav@users.noreply.github.com",
+        "matplotlib-users@python.org",
     "license":
         "MIT",
     "license_files": [

@@ -11,7 +11,7 @@ on PyPI and can be installed with [`pip`]:
 python -m pip install basemap
 ```
 
-For specific details on how to install `basemap` through `conda` or
+For specific details on how to install [`basemap`] through [`conda`] or
 from source, please refer to the [`basemap` installation instructions]
 in the documentation.
 
@@ -74,6 +74,9 @@ polygons (this is illustrated in the [`ortho_demo.py`] example).
 
 [`pip`]:
 https://pip.pypa.io/
+[`conda`]:
+https://github.com/conda/conda
+
 [`matplotlib`]:
 https://matplotlib.org/
 [`basemap`]:

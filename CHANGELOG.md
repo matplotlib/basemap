@@ -10,7 +10,7 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
-## [Unreleased]
+## [2.0.0] - 2025-06-13
 
 ### Added
 - Python 3.13 support (PR [#619], solves issue [#608]).
@@ -29,9 +29,9 @@ https://semver.org/spec/v2.0.0.html
   - The `examples` folder is moved inside the `doc` folder.
 - **BREAKING CHANGE**: Migrate `basemap` libraries to use implicit
   namespace packages (PR [#576] by @ksunden).
-- Migrate workflows to use `cibuildwheel` (PRs [#614], [#618], [#622]
-  and [#623] by @cvanelteren and PR [#621], solves GitHub artifact
-  actions v1 sunset).
+- Migrate GitHub CI workflows to use `cibuildwheel` (PRs [#614], [#618],
+  [#622] and [#623] by @cvanelteren and PR [#621], solves GitHub
+  artifact actions v1 sunset issue).
 - Update library dependencies:
   - Upgrade lower limit for `basemap_data` to 2.0.
   - Upgrade upper limit for `basemap_data` to 3.0.
@@ -1364,7 +1364,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.4.1...develop
+https://github.com/matplotlib/basemap/compare/v2.0.0...develop
+[2.0.0]:
+https://github.com/matplotlib/basemap/compare/v1.4.1...v2.0.0
 [1.4.1]:
 https://github.com/matplotlib/basemap/compare/v1.4.0...v1.4.1
 [1.4.0]:
