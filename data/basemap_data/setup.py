@@ -89,7 +89,7 @@ setup(**{
     "maintainer_email":
         "matplotlib-users@python.org",
     "license":
-        "GNU Lesser General Public License v3 or later (LGPLv3+)",
+        "LGPL-3.0-or-later",
     "license_files": [
         "COPYING",
         "COPYING.LESSER",
