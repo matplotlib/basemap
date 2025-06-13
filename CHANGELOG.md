@@ -29,9 +29,9 @@ https://semver.org/spec/v2.0.0.html
   - The `examples` folder is moved inside the `doc` folder.
 - **BREAKING CHANGE**: Migrate `basemap` libraries to use implicit
   namespace packages (PR [#576] by @ksunden).
-- Migrate workflows to use `cibuildwheel` (PRs [#614], [#618], [#622]
-  and [#623] by @cvanelteren and PR [#621], solves GitHub artifact
-  actions v1 sunset).
+- Migrate GitHub CI workflows to use `cibuildwheel` (PRs [#614], [#618],
+  [#622] and [#623] by @cvanelteren and PR [#621], solves GitHub
+  artifact actions v1 sunset issue).
 - Update library dependencies:
   - Upgrade lower limit for `basemap_data` to 2.0.
   - Upgrade upper limit for `basemap_data` to 3.0.
