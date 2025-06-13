@@ -22,9 +22,13 @@ https://semver.org/spec/v2.0.0.html
 
 ### Changed
 - **BREAKING CHANGE**: Set Python minimum supported version to 3.9.
+- **BREAKING CHANGE**: Migrate project structure:
+  - The repository root is repurposed again for the `basemap` project.
+  - The auxiliary data packages are moved inside the `data` folder.
+  - The requirements files are moved to its own `dep` folder.
+  - The `examples` folder is moved inside the `doc` folder.
 - **BREAKING CHANGE**: Migrate `basemap` libraries to use implicit
   namespace packages (PR [#576] by @ksunden).
-- **BREAKING CHANGE**: Move requirements files to its own `dep` folder.
 - Migrate workflows to use `cibuildwheel` (PRs [#614], [#618], [#622]
   and [#623] by @cvanelteren and PR [#621], solves GitHub artifact
   actions v1 sunset).
