@@ -1,39 +1,12 @@
-# Basemap
+# basemap
 
-Plot on map projections (with coastlines and political boundaries)
-using matplotlib.
-
-## Requirements
-
-Basic requirements are the following:
-
-* Python 2.6 (or higher)
-* [matplotlib](https://github.com/matplotlib/matplotlib)
-* [numpy](https://github.com/numpy/numpy)
-* [pyproj](https://github.com/pyproj4/pyproj)
-* [pyshp](https://github.com/GeospatialPython/pyshp)
-
-Optional requirements include:
-
-* [OWSLib](https://github.com/geopython/OWSLib). It is needed for the
-  method `Basemap.wmsimage`.
-
-* [Pillow](https://github.com/python-pillow/Pillow). It is needed for
-  the methods `Basemap.bluemarble`, `Basemap.etopo`,
-  `Basemap.shadedrelief` and `Basemap.warpimage`.
+Plot on map projections (with coastlines and political boundaries) using
+[`matplotlib`].
 
 ## Installation
 
-The `basemap-data` and `basemap-data-hires` packages are available in
-PyPI and can be installed with [`pip`](https://pip.pypa.io/):
-```sh
-python -m pip install basemap-data
-python -m pip install basemap-data-hires
-```
-
-Precompiled `basemap` binary wheels for Windows and GNU/Linux
-(architectures x86 and x64, Python 2.7 and 3.5+) as well as for MacOS
-(architectures x64 and arm64, Python 3.9+) are also available in PyPI:
+Precompiled binary wheels for Windows, GNU/Linux and MacOS are available
+on PyPI and can be installed with [`pip`]:
 ```sh
 python -m pip install basemap
 ```
@@ -45,11 +18,9 @@ on GitHub as indicated in the following steps:
    - [cython](https://github.com/cython/cython)
    - [numpy](https://github.com/numpy/numpy)
 
-2. Download the `basemap` source code and move to the `packages/basemap`
-   folder:
+2. Download the `basemap` source code:
    ```sh
    git clone --depth 1 https://github.com/matplotlib/basemap.git
-   cd basemap/packages/basemap
    ```
 
 3. Build the [GEOS](https://github.com/libgeos/geos) library. You may
@@ -78,29 +49,30 @@ on GitHub as indicated in the following steps:
    python -c "from mpl_toolkits.basemap import Basemap"
    ```
 
+## Requirements
+
+This package depends on [`basemap-data`] with the basic [`basemap`]
+data assets supporting the essential functionality.
+
+This package depends optionally on [`basemap-data-hires`] with the
+high-resolution data assets, which can be installed with [`pip`]:
+```sh
+python -m pip install basemap-data-hires
+```
+
+This package depends optionally on [`OWSLib`] for the `Basemap` method
+`Basemap.wmsimage`.
+
 ## License
 
-The source code and data assets are under the following licenses:
-
-* `basemap`: [MIT].
-  * GEOS bundled dynamic library is under the [LGPL-2.1-only] license.
-* `basemap-data`: [LGPL-3.0-or-later].
-  * The EPSG file and the JPG images are also under the [MIT] license.
-* `basemap-data-hires`: [LGPL-3.0-or-later].
-
-For a full description, please visit the `README` and `LICENSE` files of
-each package.
-
-[MIT]:
-https://spdx.org/licenses/MIT.html
-[LGPL-2.1-only]:
-https://spdx.org/licenses/LGPL-2.1-only.html
-[LGPL-3.0-or-later]:
-https://spdx.org/licenses/LGPL-3.0-or-later.html
+The library is licensed under the terms of the [MIT] license (see
+[`LICENSE`]). The GEOS dynamic library bundled with the package wheels
+is provided under the terms of the [LGPL-2.1-only] license as given in
+[`LICENSE.geos`].
 
 ## Documentation
 
-See https://matplotlib.org/basemap/
+See https://matplotlib.org/basemap/.
 
 See scripts in `examples` directory for example usage.
 
@@ -130,4 +102,28 @@ situations, what is the inside of a coastline polygon can be ambiguous,
 and the outside may be filled instead of the inside. A workaround is to
 change the map projection region slightly or mask the land areas with
 the `Basemap.drawlsmask` method instead of filling the coastline
-polygons (this is illustrated in the `ortho_demo.py` example). 
+polygons (this is illustrated in the `ortho_demo.py` example).
+
+
+[`pip`]:
+https://pip.pypa.io/
+[`matplotlib`]:
+https://matplotlib.org/
+[`basemap`]:
+https://matplotlib.org/basemap/
+[`basemap-data`]:
+https://pypi.org/project/basemap-data
+[`basemap-data-hires`]:
+https://pypi.org/project/basemap-data-hires
+[`OWSLib`]:
+https://pypi.org/project/OWSLib
+
+[MIT]:
+https://spdx.org/licenses/MIT.html
+[LGPL-2.1-only]:
+https://spdx.org/licenses/LGPL-2.1-only.html
+
+[`LICENSE`]:
+https://github.com/matplotlib/basemap/blob/v2.0.0/LICENSE
+[`LICENSE.geos`]:
+https://github.com/matplotlib/basemap/blob/v2.0.0/LICENSE.geos
