@@ -34,7 +34,6 @@ Thumbs.db
 # Things specific to this project.
 *.pickle
 examples/*.png
-packages/basemap/doc/examples
-packages/basemap/doc/users/installing.rst
-packages/basemap/doc/_static/matplotlibrc
-packages/basemap/doc/_templates/gallery.html
+doc/users/installing.rst
+doc/_static/matplotlibrc
+doc/_templates/gallery.html
