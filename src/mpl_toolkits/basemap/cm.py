@@ -11,7 +11,7 @@ The module provides additional colormaps to those provided with
 * A sea surface temperature anomaly colormap: sstanom.
 * A stepped-sequential scheme: StepSeq.
 
-Run `examples/show_colormaps.py` to see what these colormaps look like.
+Run `doc/examples/show_colormaps.py` to see what these colormaps look like.
 """
 
 from matplotlib import rcParams

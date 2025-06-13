@@ -12,7 +12,7 @@ m = Basemap(llcrnrlon=-100.,llcrnrlat=0.,urcrnrlon=-20.,urcrnrlat=57.,
             projection='lcc',lat_1=20.,lat_2=40.,lon_0=-60.,
             resolution ='l',area_thresh=1000.)
 # read shapefile.
-shp_path = os.path.join(*6 * [".."] + ["examples", "huralll020"])
+shp_path = os.path.join(*3 * [".."] + ["examples", "huralll020"])
 shp_info = m.readshapefile(shp_path,'hurrtracks',drawbounds=False)
 # find names of storms that reached Cat 4.
 names = []

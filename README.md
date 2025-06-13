@@ -74,7 +74,7 @@ is provided under the terms of the [LGPL-2.1-only] license as given in
 
 See https://matplotlib.org/basemap/.
 
-See scripts in `examples` directory for example usage.
+See scripts in the `doc/examples` directory for example usage.
 
 Read the FAQ and/or email the matplotlib-users mailing list if you have
 problems or questions.

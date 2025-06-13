@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # plot rainfall from NWS using special precipitation
 # colormap used by the NWS, and included in basemap.
 
-ncpath = os.path.join(*6 * [".."] + ["examples", "nws_precip_conus_20061222.nc"])
+ncpath = os.path.join(*3 * [".."] + ["examples", "nws_precip_conus_20061222.nc"])
 nc = NetCDFFile(ncpath)
 # data from http://water.weather.gov/precip/
 prcpvar = nc.variables['amountofprecip']

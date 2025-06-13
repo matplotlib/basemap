@@ -3,9 +3,9 @@
 Plotting data on a map (Example Gallery)
 ========================================
 
-Following are a series of examples that illustrate how to use
-Basemap instance methods to plot your data on a map.  More examples
-are included in the examples directory of the basemap source distribution.
+Following are a series of examples that illustrate how to use Basemap
+instance methods to plot your data on a map.  More examples are included
+in the doc/examples directory of the basemap source distribution.
 There are a number of Basemap instance methods for plotting data:
 
 * :func:`~mpl_toolkits.basemap.Basemap.contour`: draw contour lines.
