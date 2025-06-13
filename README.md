@@ -20,8 +20,9 @@ in the documentation.
 This package depends on [`basemap-data`] with the basic [`basemap`]
 data assets supporting the essential functionality.
 
-This package depends optionally on [`basemap-data-hires`] with the
-high-resolution data assets, which can be installed with [`pip`]:
+This package depends optionally on [`basemap-data-hires`] with
+the high-resolution data assets, which can be installed manually
+with [`pip`]:
 ```sh
 python -m pip install basemap-data-hires
 ```
@@ -68,7 +69,7 @@ situations, what is the inside of a coastline polygon can be ambiguous,
 and the outside may be filled instead of the inside. A workaround is to
 change the map projection region slightly or mask the land areas with
 the `Basemap.drawlsmask` method instead of filling the coastline
-polygons (this is illustrated in the `ortho_demo.py` example).
+polygons (this is illustrated in the [`ortho_demo.py`] example).
 
 
 [`pip`]:
@@ -86,6 +87,8 @@ https://pypi.org/project/OWSLib
 
 [`basemap` installation instructions]:
 https://matplotlib.org/basemap/stable/users/installation.html
+[`ortho_demo.py`]:
+https://github.com/matplotlib/basemap/blob/v2.0.0/doc/examples/ortho_demo.py
 
 [MIT]:
 https://spdx.org/licenses/MIT.html
