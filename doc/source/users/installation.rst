@@ -4,16 +4,15 @@ Installation
 Installing from PyPI
 --------------------
 
-Precompiled binary wheels for Windows and GNU/Linux are available in
-PyPI (architectures x86 and x64, Python 2.7 and 3.5+) and can be
-installed with `pip`_:
+Precompiled binary wheels for Windows, GNU/Linux and MacOS are available
+on PyPI and can be installed with `pip`_:
 
 .. code-block:: sh
 
    python -m pip install basemap
 
-Installing ``basemap`` will also install ``basemap-data``, containing the
-minimal data assets required by ``basemap``. If you also need the
+Installing ``basemap`` will also install ``basemap-data``, containing
+the minimal data assets required by ``basemap``. If you also need the
 high-resolution data assets, you can install them with `pip`_ too:
 
 .. code-block:: sh
@@ -24,8 +23,7 @@ Installing from conda-forge
 ---------------------------
 
 For Miniforge users, ``basemap`` packages are available through the
-``conda-forge`` channel for Windows and GNU/Linux (x64) as well as
-for MacOS (x64 and arm64):
+``conda-forge`` channel:
 
 .. code-block:: sh
 
@@ -49,13 +47,11 @@ on GitHub as indicated in the following steps:
    - `cython`_
    - `numpy`_
 
-2. Download the ``basemap`` source code and move to the
-   ``packages/basemap`` folder:
+2. Download the ``basemap`` source code:
 
    .. code-block:: sh
 
       git clone --depth 1 https://github.com/matplotlib/basemap.git
-      cd basemap/packages/basemap
 
 3. Build the `GEOS`_ library. You may use the helper provided in the
    ``utils`` folder (please note that you need `CMake`_ and a working

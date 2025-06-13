@@ -2,8 +2,8 @@
 build
 dist
 *.egg-info
-*.pyc
-*.pyd
+*.py[cod]
+*.dll
 *.so
 
 htmlcov
@@ -33,8 +33,7 @@ Thumbs.db
 
 # Things specific to this project.
 *.pickle
-examples/*.png
-packages/basemap/doc/examples
-packages/basemap/doc/users/installing.rst
-packages/basemap/doc/_static/matplotlibrc
-packages/basemap/doc/_templates/gallery.html
+doc/build
+doc/examples/*.png
+doc/source/_static/matplotlibrc
+doc/source/_templates/gallery.html

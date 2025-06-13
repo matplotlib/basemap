@@ -3570,7 +3570,7 @@ class Basemap(object):
                             "region to be consistent with your data, or (if your",
                             "data is on a global lat/lon grid) use the shiftdata",
                             "method to adjust the data to be consistent with the",
-                            "map projection region (see examples/shiftdata.py)"]))
+                            "map projection region (see doc/examples/shiftdata.py)"]))
                 # mask for points more than one grid length outside projection limb.
                 xx = ma.masked_where(x > 1.e20, x)
                 yy = ma.masked_where(y > 1.e20, y)
@@ -3667,7 +3667,7 @@ class Basemap(object):
                             "region to be consistent with your data, or (if your",
                             "data is on a global lat/lon grid) use the shiftgrid",
                             "function to adjust the data to be consistent with the",
-                            "map projection region (see examples/contour_demo.py)"]))
+                            "map projection region (see doc/examples/contour_demo.py)"]))
                 # mask for points more than one grid length outside projection limb.
                 xx = ma.masked_where(x > 1.e20, x)
                 yy = ma.masked_where(y > 1.e20, y)
