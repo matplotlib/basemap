@@ -128,6 +128,7 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_SKIP: "*-musllinux_*"
           CIBW_BEFORE_ALL: "python {project}/.github/workflows/run_before_all.py"
+          CIBW_BEFORE_TEST: "python -m pip install {project}/data/basemap_data {project}/data/basemap_data_hires"
           CIBW_TEST_EXTRAS: "test"
           CIBW_TEST_COMMAND: "python -m pytest {project}/test"
           CIBW_ENVIRONMENT: >-
