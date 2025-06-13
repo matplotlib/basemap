@@ -8,7 +8,7 @@ required by [`basemap`] to work.
 
 ## Installation
 
-The package is available in PyPI and can be installed with [`pip`]:
+The package is available on PyPI and can be installed with [`pip`]:
 ```python
 python -m pip install basemap-data
 ```
