@@ -1,4 +1,4 @@
-basemap_data >= 1.3.2, < 3.0
+basemap_data >= 2.0, < 3.0
 packaging >= 20.5, < 26.0
 
 numpy >= 2.0, < 2.4
