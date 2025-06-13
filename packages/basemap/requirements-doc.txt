@@ -1,6 +1,0 @@
-sphinx >= 5.3, < 7.2; python_version >= "3.8"
-furo >= 2022.4.7, < 2023.9.11; python_version >= "3.8"
-
-scipy >= 1.2, < 1.12; python_version >= "3.5"
-cftime >= 1.4.0, < 1.7.0; python_version >= "3.6"
-netCDF4 >= 1.5.6, < 1.7.0; python_version >= "3.6"

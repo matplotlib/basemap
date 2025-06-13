@@ -1,0 +1,18 @@
+include CHANGELOG.md
+include LICENSE
+include LICENSE.geos
+include README.md
+include .pylintrc
+include pyproject.toml
+include dep/requirements*.txt
+recursive-exclude **/__pycache__ *
+global-exclude *.py[cod]
+global-exclude *.dll
+global-exclude *.so
+
+recursive-exclude data *
+recursive-include doc *
+recursive-exclude doc/build *
+recursive-exclude doc/examples *
+recursive-include test *
+recursive-include utils *.py

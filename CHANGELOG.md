@@ -10,6 +10,86 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
+## [2.0.0] - 2025-06-13
+
+### Added
+- Python 3.13 support (PR [#619], solves issue [#608]).
+- NumPy 2.0 support (PR [#614] by @cvanelteren, solves issue [#604]).
+- Automated MacOS wheels for x86_64 and arm64 (PR [#620] by
+  @cvanelteren, solves issue [#608]).
+- Support in `Basemap.wmsimage` to redirect `WebMapService` constructor
+  parameters when available (PR [#603] by @Kurea, solves issue [#602]).
+
+### Changed
+- **BREAKING CHANGE**: Set Python minimum supported version to 3.9.
+- **BREAKING CHANGE**: Migrate project structure (solves issue [#616]):
+  - The repository root is repurposed again for the `basemap` project.
+  - The auxiliary data packages are moved inside the `data` folder.
+  - The requirements files are moved to its own `dep` folder.
+  - The `examples` folder is moved inside the `doc` folder.
+- **BREAKING CHANGE**: Migrate `basemap` libraries to use implicit
+  namespace packages (PR [#576] by @ksunden).
+- Migrate GitHub CI workflows to use `cibuildwheel` (PRs [#614], [#618],
+  [#622] and [#623] by @cvanelteren and PR [#621], solves GitHub
+  artifact actions v1 sunset issue).
+- Update library dependencies:
+  - Upgrade lower limit for `basemap_data` to 2.0.
+  - Upgrade upper limit for `basemap_data` to 3.0.
+  - Upgrade lower limit for `packaging` to 20.5.
+  - Upgrade upper limit for `packaging` to 26.0.
+  - Upgrade lower limit for `numpy` to 2.0.
+  - Upgrade upper limit for `numpy` to 2.4.
+  - Upgrade lower limit for `matplotlib` to 3.4.
+  - Upgrade upper limit for `matplotlib` to 3.11.
+  - Upgrade lower limit for `pyproj` to 3.0.
+  - Upgrade upper limit for `pyproj` to 3.8.
+  - Upgrade lower limit for `pyshp` to 2.0.
+- Update optional library dependencies:
+  - Upgrade upper limit for `OWSLib` to 0.35.
+- Update build dependencies:
+  - Upgrade lower limit for `setuptools` to 67.0.
+  - Upgrade upper limit for `setuptools` to 81.0.
+  - Upgrade lower limit for `wheel` to 0.40.
+  - Upgrade upper limit for `wheel` to 0.46.
+  - Upgrade lower limit for `cython` to 3.0.
+  - Upgrade upper limit for `cython` to 3.2.
+- Update doc dependencies:
+  - Upgrade upper limit for `sphinx` to 8.0.
+  - Upgrade lower limit for `furo` to 2023.9.10.
+  - Upgrade upper limit for `furo` to 2024.8.7.
+  - Upgrade lower limit for `scipy` to 1.6.
+  - Upgrade upper limit for `scipy` to 1.16.
+  - Upgrade upper limit for `netCDF4` to 1.8.0.
+- Update lint dependencies:
+  - Remove dependency on `unittest2`.
+  - Upgrade lower limit for `flake8` to 3.9.
+  - Upgrade upper limit for `flake8` to 7.3.
+  - Include dependency on `flake8-pyproject`.
+  - Upgrade lower limit for `astroid` to 3.0.
+  - Upgrade upper limit for `astroid` to 3.4.
+  - Upgrade lower limit for `pylint` to 3.0.
+  - Upgrade upper limit for `pylint` to 3.4.
+- Update test dependencies:
+  - Remove dependency on `unittest2`.
+  - Upgrade lower limit for `pytest` to 7.0.
+  - Upgrade upper limit for `pytest` to 8.5.
+  - Upgrade lower limit for `pytest-cov` to 3.0.
+  - Upgrade upper limit for `pytest-cov` to 6.3.
+  - Downgrade lower limit for `coverage` to 5.0.
+  - Upgrade upper limit for `coverage` to 7.10.
+
+### Fixed
+- Fix Cython extension to use `noexcept` (PR [#615] by @cvanelteren).
+- Fix incorrect return order described in `Basemap.shiftdata` docstring
+  (PR [#624] by @Cdiaz1234, solves issue [#599]).
+
+### Removed
+- Deprecated use of `setup_requires` in `setup.py` file.
+- Deprecated `bdist_wheel.universal` option when building wheels.
+- Configuration of `sdist` format as zip (replaced by default tar.gz).
+- Remove `pillow` as optional dependency, since it is now a transitive
+  dependency through `matplotlib >= 3.3`.
+
 ## [1.4.1] - 2024-02-15
 
 ### Changed
@@ -56,7 +136,7 @@ https://semver.org/spec/v2.0.0.html
   - Downgrade upper limit for `pyproj` to 2.2.0 for Python 2.7.
   - Set dependency on `packaging` as replacement for `distutils`.
 - Update build dependencies:
-  - Upgrade upper limit for `Cython` to 3.1.
+  - Upgrade upper limit for `cython` to 3.1.
 - Update doc dependencies and require at least Python 3.8 for them:
   - Upgrade upper limit for `sphinx` to 7.2.
   - Upgrade upper limit for `furo` to 2023.9.11.
@@ -1096,6 +1176,36 @@ https://semver.org/spec/v2.0.0.html
 - Fix glitches in drawing of parallels and meridians.
 
 
+[#624]:
+https://github.com/matplotlib/basemap/pull/624
+[#623]:
+https://github.com/matplotlib/basemap/pull/623
+[#622]:
+https://github.com/matplotlib/basemap/pull/622
+[#621]:
+https://github.com/matplotlib/basemap/pull/621
+[#620]:
+https://github.com/matplotlib/basemap/pull/620
+[#619]:
+https://github.com/matplotlib/basemap/pull/619
+[#618]:
+https://github.com/matplotlib/basemap/pull/618
+[#616]:
+https://github.com/matplotlib/basemap/issues/616
+[#615]:
+https://github.com/matplotlib/basemap/pull/615
+[#614]:
+https://github.com/matplotlib/basemap/pull/614
+[#608]:
+https://github.com/matplotlib/basemap/issues/608
+[#604]:
+https://github.com/matplotlib/basemap/issues/604
+[#603]:
+https://github.com/matplotlib/basemap/pull/603
+[#602]:
+https://github.com/matplotlib/basemap/issues/602
+[#599]:
+https://github.com/matplotlib/basemap/issues/599
 [#598]:
 https://github.com/matplotlib/basemap/pull/598
 [#595]:
@@ -1124,6 +1234,8 @@ https://github.com/matplotlib/basemap/pull/580
 https://github.com/matplotlib/basemap/issues/579
 [#577]:
 https://github.com/matplotlib/basemap/issues/577
+[#576]:
+https://github.com/matplotlib/basemap/pull/576
 [#574]:
 https://github.com/matplotlib/basemap/issues/574
 [#573]:
@@ -1252,7 +1364,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.4.1...develop
+https://github.com/matplotlib/basemap/compare/v2.0.0...develop
+[2.0.0]:
+https://github.com/matplotlib/basemap/compare/v1.4.1...v2.0.0
 [1.4.1]:
 https://github.com/matplotlib/basemap/compare/v1.4.0...v1.4.1
 [1.4.0]:
@@ -1296,6 +1410,10 @@ https://github.com/matplotlib/basemap/compare/v1.0.3rel...v1.0.4rel
 [1.0.3]:
 https://github.com/matplotlib/basemap/tree/v1.0.3rel
 
+[CVE-2024-28219]:
+https://nvd.nist.gov/vuln/detail/CVE-2024-28219
+[CVE-2023-50447]:
+https://nvd.nist.gov/vuln/detail/CVE-2023-50447
 [CVE-2023-27476]:
 https://nvd.nist.gov/vuln/detail/CVE-2023-27476
 [CVE-2022-45198]:
