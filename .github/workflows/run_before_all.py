@@ -6,7 +6,7 @@ import sys
 
 HERE = os.path.abspath(__file__)
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
-sys.path.insert(0, os.path.join(ROOT, "packages", "basemap"))
+sys.path.insert(0, os.path.join(ROOT))
 import utils  # noqa: E402  # pylint: disable=imports
 
 
