@@ -26,9 +26,9 @@ def extrema(mat, mode="wrap", window=10):
 def main():
     """Main function."""
 
-    # Plot 00 UTC today.
+    # Plot 00 UTC yesterday.
     url = "http://nomads.ncep.noaa.gov/dods/gfs_0p50/gfs%Y%m%d/gfs_0p50_00z"
-    date = dt.datetime.now()
+    date = dt.datetime.now() - dt.timedelta(days=1)
 
     # Open OPeNDAP dataset.
     data = netCDF4.Dataset(date.strftime(url))
@@ -100,7 +100,8 @@ def main():
                 xyplotted.append((x, y))
 
     # Set plot title and show.
-    plt.title("Mean Sea-Level Pressure (with Highs and Lows) %s" % date)
+    datestr = date.strftime("%Y%m%d00")
+    plt.title("Mean Sea-Level Pressure (with Highs and Lows) %s" % datestr)
     plt.show()
 
 

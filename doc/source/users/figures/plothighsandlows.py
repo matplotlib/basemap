@@ -2,12 +2,13 @@
 plot H's and L's on a sea-level pressure map
 (uses scipy.ndimage.filters and netcdf4-python)
 """
+import datetime as dt
 import numpy as np
 import matplotlib.pyplot as plt
-from datetime import datetime
 from mpl_toolkits.basemap import Basemap, addcyclic
 from scipy.ndimage.filters import minimum_filter, maximum_filter
 from netCDF4 import Dataset
+
 
 def extrema(mat,mode='wrap',window=10):
     """find the indices of local extrema (min and max)
@@ -19,13 +20,13 @@ def extrema(mat,mode='wrap',window=10):
     # Return the indices of the maxima, minima
     return np.nonzero(mat == mn), np.nonzero(mat == mx)
 
-# plot 00 UTC today.
-date = datetime.now().strftime('%Y%m%d')+'00'
+
+# Plot 00 UTC yesterday.
+url = "http://nomads.ncep.noaa.gov/dods/gfs_0p50/gfs%Y%m%d/gfs_0p50_00z"
+date = dt.datetime.now() - dt.timedelta(days=1)
 
 # open OpenDAP dataset.
-data=Dataset("https://nomads.ncep.noaa.gov/dods/gfs_0p50/gfs%s/gfs_0p50_%sz"%\
-        (date[0:8],date[8:10]))
-
+data = Dataset(date.strftime(url))
 
 # read lats,lons.
 lats = data.variables['lat'][:]
@@ -85,5 +86,7 @@ for x,y,p in zip(xhighs, yhighs, highvals):
                     ha='center',va='top',color='r',
                     bbox = dict(boxstyle="square",ec='None',fc=(1,1,1,0.5)))
             xyplotted.append((x,y))
-plt.title('Mean Sea-Level Pressure (with Highs and Lows) %s' % date)
+
+datestr = date.strftime("%Y%m%d00")
+plt.title('Mean Sea-Level Pressure (with Highs and Lows) %s' % datestr)
 plt.show()
