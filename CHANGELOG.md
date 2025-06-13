@@ -10,7 +10,7 @@ https://keepachangelog.com/en/1.0.0/
 https://semver.org/spec/v2.0.0.html
 
 
-## [Unreleased]
+## [2.0.0] - 2025-06-13
 
 ### Added
 - Python 3.13 support (PR [#619], solves issue [#608]).
@@ -1364,7 +1364,9 @@ https://github.com/matplotlib/basemap/issues/228
 https://github.com/matplotlib/basemap/issues/179
 
 [Unreleased]:
-https://github.com/matplotlib/basemap/compare/v1.4.1...develop
+https://github.com/matplotlib/basemap/compare/v2.0.0...develop
+[2.0.0]:
+https://github.com/matplotlib/basemap/compare/v1.4.1...v2.0.0
 [1.4.1]:
 https://github.com/matplotlib/basemap/compare/v1.4.0...v1.4.1
 [1.4.0]:
