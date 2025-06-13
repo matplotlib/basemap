@@ -22,7 +22,7 @@ https://semver.org/spec/v2.0.0.html
 
 ### Changed
 - **BREAKING CHANGE**: Set Python minimum supported version to 3.9.
-- **BREAKING CHANGE**: Migrate project structure:
+- **BREAKING CHANGE**: Migrate project structure (solves issue [#616]):
   - The repository root is repurposed again for the `basemap` project.
   - The auxiliary data packages are moved inside the `data` folder.
   - The requirements files are moved to its own `dep` folder.
@@ -1190,6 +1190,8 @@ https://github.com/matplotlib/basemap/pull/620
 https://github.com/matplotlib/basemap/pull/619
 [#618]:
 https://github.com/matplotlib/basemap/pull/618
+[#616]:
+https://github.com/matplotlib/basemap/issues/616
 [#615]:
 https://github.com/matplotlib/basemap/pull/615
 [#614]:
