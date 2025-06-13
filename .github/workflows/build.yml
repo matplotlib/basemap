@@ -227,7 +227,7 @@ jobs:
 
       - name: Run sphinx
         run: |
-          python -m sphinx doc/source public
+          python -m sphinx -j auto doc/source public
 
       - name: Upload docs artifacts
         uses: actions/upload-artifact@v4
