@@ -33,7 +33,7 @@ Thumbs.db
 
 # Things specific to this project.
 *.pickle
-examples/*.png
+doc/examples/*.png
 doc/users/installing.rst
 doc/_static/matplotlibrc
 doc/_templates/gallery.html
