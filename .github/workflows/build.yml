@@ -244,7 +244,7 @@ jobs:
           path: public
 
       - name: Upload github-pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           name: github-pages
           path: public
