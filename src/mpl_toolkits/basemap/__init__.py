@@ -43,6 +43,8 @@ from matplotlib.patches import Polygon
 from matplotlib.transforms import Bbox
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+from packaging.version import Version
+
 import pyproj
 import _geoslib
 from . proj import Proj
@@ -1663,8 +1665,8 @@ class Basemap(object):
         # if no fill_color given, use axes background color.
         # if fill_color is string 'none', really don't fill.
         if fill_color is None:
-            mpl_version = tuple(map(int, mpl.__version__.split(".")[:2]))
-            if mpl_version >= (2, 0):
+            mpl_version = Version(mpl.__version__)
+            if mpl_version >= Version("2.0"):
                 fill_color = ax.get_facecolor()
             else:
                 fill_color = ax.get_axis_bgcolor()
@@ -1762,8 +1764,8 @@ class Basemap(object):
         # get current axes instance (if none specified).
         ax = ax or self._check_ax()
         # get axis background color.
-        mpl_version = tuple(map(int, mpl.__version__.split(".")[:2]))
-        if mpl_version >= (2, 0):
+        mpl_version = Version(mpl.__version__)
+        if mpl_version >= Version("2.0"):
             axisbgc = ax.get_facecolor()
         else:
             axisbgc = ax.get_axis_bgcolor()
