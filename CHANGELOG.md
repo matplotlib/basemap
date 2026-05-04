@@ -12,6 +12,11 @@ https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Changed
+- Update library dependencies:
+  - Upgrade upper limit for `numpy` to 2.5.
+  - Upgrade upper limit for `packaging` to 27.0.
+
 ## [2.0.0] - 2025-06-13
 
 ### Added
