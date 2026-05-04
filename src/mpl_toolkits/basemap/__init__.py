@@ -2149,7 +2149,7 @@ class Basemap(object):
             "shapefile to geographic coordinates using the shpproj utility",
             "from the shapelib tools (http://shapelib.maptools.org/shapelib-tools.html)"])
         shptype = shf.shapes()[0].shapeType
-        bbox = shf.bbox.tolist()
+        bbox = list(shf.bbox)
         info = (shf.numRecords,shptype,bbox[0:2]+[0.,0.],bbox[2:]+[0.,0.])
         npoly = 0
         for shprec in shf.shapeRecords():
