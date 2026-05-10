@@ -16,13 +16,15 @@ from matplotlib.patches import Polygon
 from mpl_toolkits.basemap import Basemap
 from mpl_toolkits.basemap import shiftgrid
 
+from packaging.version import Version
+
 try:
     import PIL
 except ImportError:
     PIL = None
 
 
-mpl_version = tuple(map(int, mpl.__version__.split(".")[:2]))
+mpl_version = Version(mpl.__version__)
 
 
 class TestMplToolkitsBasemapBasemap(unittest.TestCase):
@@ -199,7 +201,7 @@ class TestMplToolkitsBasemapBasemap(unittest.TestCase):
         img = getattr(bmap, method)(ax=axs, scale=0.1)
         self.assertIsInstance(img, AxesImage)
 
-        flag = int(mpl_version < (3, 5))
+        flag = int(mpl_version < Version("3.5"))
         axs_children = axs_obj.get_children()
         self.assertEqual(len(axs_children), axslen0 + 3)
         self.assertIsInstance(axs_children[1 - flag], Polygon)

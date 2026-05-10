@@ -2,8 +2,9 @@ from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-mpl_version = tuple(map(int, mpl.__version__.split(".")))
-axkwds = {"axisbg" if mpl_version < (2,) else "facecolor": "k"}
+from packaging.version import Version
+mpl_version = Version(mpl.__version__)
+axkwds = {"axisbg" if mpl_version < Version("2") else "facecolor": "k"}
 
 fig = plt.figure()
 # global geostationary map centered on lon_0
