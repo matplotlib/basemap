@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from __future__ import (absolute_import, division, print_function)
 
 # example showing how to use Line Integral Convolution to visualize a vector
