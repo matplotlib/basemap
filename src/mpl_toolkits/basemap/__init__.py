@@ -3537,8 +3537,8 @@ class Basemap(object):
                     masked=True
                 else:
                     masked=False
-                mask = np.logical_or(x<self.xmin,y<self.xmin) +\
-                       np.logical_or(x>self.xmax,y>self.xmax)
+                mask = np.logical_and(np.logical_and(x>=self.xmin, x<=self.xmax),
+                                      np.logical_and(y>=self.ymin, y<=self.ymax))
                 x = np.compress(mask,x)
                 y = np.compress(mask,y)
                 data = np.compress(mask,data)
