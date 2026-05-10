@@ -1,7 +1,9 @@
+import os
+import time
+import datetime
 import numpy as np
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
-from datetime import datetime
 # miller projection 
 map = Basemap(projection='mill',lon_0=180)
 # plot coastlines, draw label meridians and parallels.
@@ -13,7 +15,8 @@ map.drawmapboundary(fill_color='aqua')
 map.fillcontinents(color='coral',lake_color='aqua')
 # shade the night areas, with alpha transparency so the 
 # map shows through. Use current time in UTC.
-date = datetime.utcnow()
+date = datetime.datetime.utcfromtimestamp(
+        int(os.environ.get('SOURCE_DATE_EPOCH', time.time())))
 CS=map.nightshade(date)
 plt.title('Day/Night Map for %s (UTC)' % date.strftime("%d %b %Y %H:%M:%S"))
 plt.show()

@@ -7,7 +7,7 @@ import shutil
 import sys
 
 def html():
-    os.system('sphinx-build -b html -d build/doctrees . build/html')
+    os.system('LC_ALL=C.UTF-8 sphinx-build -b html -c source/ -d build/doctrees . build/html')
 
 def latex():
     if sys.platform != 'win32':
