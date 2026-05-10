@@ -82,7 +82,7 @@ jobs:
           python-version: "3.9"
 
       - name: Download basemap sdist
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: dist-basemap-sdist
           path: ./sdist/
@@ -167,7 +167,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Download basemap and data packages
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: dist
           pattern: "dist-*"
@@ -199,14 +199,14 @@ jobs:
           python-version: "3.9"
 
       - name: Download data packages
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: ./data_packages/
           pattern: "dist-basemap_data*"
           merge-multiple: true
 
       - name: Download basemap wheels for Linux
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: ./wheels/
           pattern: "dist-basemap-wheels-ubuntu-*"
@@ -273,7 +273,7 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: Download basemap and data packages
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: dist
           pattern: "dist-*"
