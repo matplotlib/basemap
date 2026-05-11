@@ -2103,7 +2103,7 @@ class Basemap(object):
         ================ =====================================================
         drawbounds       draw boundaries of shapes (default True).
         zorder           shape boundary zorder (if not specified,
-                         default for mathplotlib.lines.LineCollection
+                         default for matplotlib.lines.LineCollection
                          is used).
         linewidth        shape boundary line width (default 0.5)
         color            shape boundary line color (default black)
