@@ -4604,13 +4604,13 @@ class Basemap(object):
             ybottom = yc-yoffset/2
             ytick = ybottom - yoffset/2
             ytext = ytick - yoffset/2
-            rets.append(self.plot([x1,x4],[ytop,ytop],color=linecolor, linewidth=linewidth)[0])
+            rets.append(self.plot([x1,x4],[ytop,ytop],color=linecolor, linewidth=linewidth, ax=ax)[0])
             #plot bottom line
-            rets.append(self.plot([x1,x4],[ybottom,ybottom],color=linecolor, linewidth=linewidth)[0])
+            rets.append(self.plot([x1,x4],[ybottom,ybottom],color=linecolor, linewidth=linewidth, ax=ax)[0])
             #plot left edge
-            rets.append(self.plot([x1,x1],[ybottom,ytop],color=linecolor, linewidth=linewidth)[0])
+            rets.append(self.plot([x1,x1],[ybottom,ytop],color=linecolor, linewidth=linewidth, ax=ax)[0])
             #plot right edge
-            rets.append(self.plot([x4,x4],[ybottom,ytop],color=linecolor, linewidth=linewidth)[0])
+            rets.append(self.plot([x4,x4],[ybottom,ytop],color=linecolor, linewidth=linewidth, ax=ax)[0])
             #make a filled black box from left edge to 1/4 way across
             rets.append(ax.fill([x1,x2,x2,x1,x1],[ytop,ytop,ybottom,ybottom,ytop],\
                         ec=fontcolor,fc=fillcolor1)[0])
@@ -4624,9 +4624,9 @@ class Basemap(object):
             rets.append(ax.fill([x3,x4,x4,x3,x3],[ytop,ytop,ybottom,ybottom,ytop],\
                         ec=fontcolor,fc=fillcolor2)[0])
             #plot 3 tick marks at left edge, center, and right edge
-            rets.append(self.plot([x1,x1],[ytick,ybottom],color=linecolor, linewidth=linewidth)[0])
-            rets.append(self.plot([xc,xc],[ytick,ybottom],color=linecolor, linewidth=linewidth)[0])
-            rets.append(self.plot([x4,x4],[ytick,ybottom],color=linecolor, linewidth=linewidth)[0])
+            rets.append(self.plot([x1,x1],[ytick,ybottom],color=linecolor, linewidth=linewidth, ax=ax)[0])
+            rets.append(self.plot([xc,xc],[ytick,ybottom],color=linecolor, linewidth=linewidth, ax=ax)[0])
+            rets.append(self.plot([x4,x4],[ytick,ybottom],color=linecolor, linewidth=linewidth, ax=ax)[0])
             #label 3 tick marks
             rets.append(ax.text(x1,ytext,format % (0),\
             horizontalalignment='center',\
@@ -4647,9 +4647,9 @@ class Basemap(object):
             fontsize=fontsize,color=fontcolor))
         # 'simple' style
         elif barstyle == 'simple':
-            rets.append(self.plot([x1,x4],[yc,yc],color=linecolor, linewidth=linewidth)[0])
-            rets.append(self.plot([x1,x1],[yc-yoffset,yc+yoffset],color=linecolor, linewidth=linewidth)[0])
-            rets.append(self.plot([x4,x4],[yc-yoffset,yc+yoffset],color=linecolor, linewidth=linewidth)[0])
+            rets.append(self.plot([x1,x4],[yc,yc],color=linecolor, linewidth=linewidth, ax=ax)[0])
+            rets.append(self.plot([x1,x1],[yc-yoffset,yc+yoffset],color=linecolor, linewidth=linewidth, ax=ax)[0])
+            rets.append(self.plot([x4,x4],[yc-yoffset,yc+yoffset],color=linecolor, linewidth=linewidth, ax=ax)[0])
             rets.append(ax.text(xc,yc-yoffset,format % lenlab,\
             verticalalignment='top',horizontalalignment='center',\
             fontsize=fontsize,color=fontcolor))
